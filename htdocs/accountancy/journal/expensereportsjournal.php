@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2007-2010  Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2016  Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,7 +298,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]);
+					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %';
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -498,7 +498,7 @@ if (empty($action) || $action == 'view') {
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
-	$builddate = time();
+	$builddate=dol_now();
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
@@ -510,19 +510,20 @@ if (empty($action) || $action == 'view') {
 
 	// Button to write into Ledger
 	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
-	    print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuFinancial").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	    print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
 	    print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
-	   print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	   print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	}
-	//print '<input type="button" class="butAction" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	//print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	print '</div>';
 
+	// TODO Avoid using js. We can use a direct link with $param
 	print '
 	<script type="text/javascript">
 		function launch_export() {
@@ -543,6 +544,7 @@ if (empty($action) || $action == 'view') {
 	print '<br>';
 
 	$i = 0;
+    print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print "<td></td>";
@@ -550,7 +552,7 @@ if (empty($action) || $action == 'view') {
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("ExpenseReportRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
-	print "<td>" . $langs->trans("Label") . "</td>";
+	print "<td>" . $langs->trans("LabelOperation") . "</td>";
 	print "<td align='right'>" . $langs->trans("Debit") . "</td>";
 	print "<td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
@@ -657,7 +659,7 @@ if (empty($action) || $action == 'view') {
 				// Subledger account
 				print "<td>";
 				print '</td>';
-				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).($numtax?' - Localtax '.$numtax:'');
+				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ',$def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 				print "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -668,6 +670,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	print "</table>";
+	print '</div>';
 
 	// End of page
 	llxFooter();

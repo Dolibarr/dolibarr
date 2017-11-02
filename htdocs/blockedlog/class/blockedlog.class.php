@@ -21,12 +21,14 @@
 
 class BlockedLog
 {
-
 	/**
 	 * Id of the log
 	 * @var int
 	 */
 	public $id;
+
+	public $error = '';
+	public $errors = array();
 
 	/**
 	 * Unique fingerprint of the log
@@ -78,7 +80,7 @@ class BlockedLog
 
 	public $object_data = null;
 
-	public $error = 0;
+
 
 	/**
 	 *      Constructor
@@ -94,7 +96,8 @@ class BlockedLog
 	/**
 	 *      try to retrieve logged object link
 	 */
-	public function getObjectLink() {
+	public function getObjectLink()
+	{
 		global $langs;
 
 		if($this->element === 'facture') {
@@ -148,8 +151,9 @@ class BlockedLog
 
 	/**
 	 *      try to retrieve user author
-	*/
-	public function getUser() {
+	 */
+	public function getUser()
+	{
 		global $langs, $cachedUser;
 
 		if(empty($cachedUser))$cachedUser=array();
@@ -169,16 +173,22 @@ class BlockedLog
 	}
 
 	/**
-	 *      populate log by object
+	 *      Populate properties of log from object data
 	 *
-	 *      @param		payment|facture		$object      object to store
+	 *      @param		Object		$object      object to store
 	 */
-	public function setObjectData(&$object) {
-
-		if($object->element=='payment' || $object->element=='payment_supplier') {
+	public function setObjectData(&$object)
+	{
+		// Set date
+		if ($object->element == 'payment' || $object->element == 'payment_supplier')
+		{
 			$this->date_object = $object->datepaye;
 		}
-		else{
+		elseif ($object->element=='payment_salary')
+		{
+			$this->date_object = $object->datev;
+		}
+		else {
 			$this->date_object = $object->date;
 		}
 
@@ -188,7 +198,23 @@ class BlockedLog
 
 		$this->object_data=new stdClass();
 
-		if($this->element === 'facture') {
+		if ($this->element == 'facture')
+		{
+			if(empty($object->thirdparty))$object->fetch_thirdparty();
+			$this->object_data->thirdparty = new stdClass();
+
+			foreach($object->thirdparty as $key=>$value) {
+				if(!is_object($value)) $this->object_data->thirdparty->{$key} = $value;
+			}
+
+			$this->object_data->total_ht 	= (double) $object->total_ht;
+			$this->object_data->total_tva	= (double) $object->total_tva;
+			$this->object_data->total_ttc	= (double) $object->total_ttc;
+			$this->object_data->total_localtax1= (double) $object->total_localtax1;
+			$this->object_data->total_localtax2= (double) $object->total_localtax2;
+			$this->object_data->note_public	= (double) $object->note_public;
+		}
+		if($this->element == 'invoice_supplier') {
 			if(empty($object->thirdparty))$object->fetch_thirdparty();
 			$this->object_data->thirdparty = new stdClass();
 
@@ -205,27 +231,13 @@ class BlockedLog
 			$this->object_data->note_private= (double) $object->note_private;
 
 		}
-		if($this->element === 'invoice_supplier') {
-			if(empty($object->thirdparty))$object->fetch_thirdparty();
-			$this->object_data->thirdparty = new stdClass();
-
-			foreach($object->thirdparty as $key=>$value) {
-				if(!is_object($value)) $this->object_data->thirdparty->{$key} = $value;
-			}
-
-			$this->object_data->total_ht 	= (double) $object->total_ht;
-			$this->object_data->total_tva	= (double) $object->total_tva;
-			$this->object_data->total_ttc	= (double) $object->total_ttc;
-			$this->object_data->total_localtax1= (double) $object->total_localtax1;
-			$this->object_data->total_localtax2= (double) $object->total_localtax2;
-			$this->object_data->note_public	= (double) $object->note_public;
-			$this->object_data->note_private= (double) $object->note_private;
-
-		}
-		elseif($this->element==='payment'|| $object->element=='payment_supplier'){
-
+		elseif ($this->element == 'payment'|| $object->element == 'payment_supplier')
+		{
 			$this->object_data->amounts = $object->amounts;
-
+		}
+		elseif($this->element == 'payment_salary')
+		{
+			$this->object_data->amounts = array($object->amount);
 		}
 	}
 
@@ -268,7 +280,7 @@ class BlockedLog
 				$this->action			= $obj->action;
 				$this->element			= $obj->element;
 
-				$this->fk_object		= trim($obj->fk_object);
+				$this->fk_object		= $obj->fk_object;
 				$this->date_object		= $this->db->jdate($obj->date_object);
 				$this->ref_object		= $obj->ref_object;
 
@@ -469,10 +481,10 @@ class BlockedLog
 	/**
 	 *	return log object for a element.
 	 *
-	 *	@param	string $element      	element to search
-	 *	@param	int $fk_object			id of object to search
-	 *	@param	int $limit      		max number of element, 0 for all
-	 *	@param	string $order      		sort of query
+	 *	@param	string 	$element      	element to search
+	 *	@param	int 	$fk_object		id of object to search
+	 *	@param	int 	$limit      	max number of element, 0 for all
+	 *	@param	string 	$order      	sort of query
 	 *	@return	array					array of object log
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $order = -1) {

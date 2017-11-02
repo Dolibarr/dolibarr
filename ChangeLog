@@ -3,6 +3,32 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+
+***** ChangeLog for 7.0.0 compared to 6.0.* *****
+For users:
+
+For developers:
+NEW: Add hook addAdminLdapOptions and doAction in ldap admin page
+NEW: complete_head_from_modules() in ldap_prepare_head()
+
+WARNING: 
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The methode "cloture" on contract were renamed into "closeAll".
+* The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
+  __PROPALREF__, ...)
+* The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to standardize naming conventions. 
+* Substitution keys with syntax %XXX% were renamed into __XXX__ to match others.
+* Some REST API to access the dictionary (country, town, ...) were moved into a common API. 
+* Page bank/index.php and bank/bankentries.php were renamed into bank/list.php and bank/bankentries_list.php to
+  follow page naming conventions (so default filter/sort order features can also work).
+* The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED
+* The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY
+* The parameter note into method cloture() is added at end of private note (previously in v6, it replaced)
+* The parameter $user is now mandatory for method createFromOrder and createFromPropal. 
+* Remove js library fileupload that was not used by core code.
+
+
 ***** ChangeLog for 6.0.3 compared to 6.0.2 *****
 FIX: #7211 Update qty dispatched on qty change
 FIX: #7458
@@ -102,7 +128,7 @@ FIX: View of timespent for another user
 FIX: ODT generation
 FIX: CVE-2017-9840, CVE-2017-14238, CVE-2017-14239, CVE-2017-14240, CVE-2017-14241,
      CVE-2017-14242 
-
+     
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****
 NEW: Add experimental BlockeLog module (to log business events in a non reversible log file).
 NEW: Add a payment module for Stripe. 

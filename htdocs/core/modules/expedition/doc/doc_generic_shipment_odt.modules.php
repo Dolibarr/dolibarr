@@ -510,6 +510,8 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

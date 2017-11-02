@@ -1,65 +1,131 @@
-<project>
-<task>
-	<pID>10</pID>
-	<pName>WCF Changes</pName>
-	<pStart></pStart>
-	<pEnd></pEnd>
-	<pColor>0000ff</pColor>
-	<pLink></pLink>
-	<pMile>0</pMile>
-	<pRes></pRes>
-	<pComp>0</pComp>
-	<pGroup>1</pGroup>
-	<pParent>0</pParent>
-	<pOpen>1</pOpen>
-	<pDepend />
-</task>
-<task>
-	<pID>20</pID>
-	<pName>Move to WCF from remoting</pName>
-	<pStart>9/11/2008</pStart>
-	<pEnd>9/15/2008</pEnd>
-	<pColor>0000ff</pColor>
-	<pLink></pLink>
-	<pMile>0</pMile>
-	<pRes>Rich</pRes>
-	<pComp>10</pComp>
-	<pGroup>0</pGroup>
-	<pParent>10</pParent>
-	<pOpen>1</pOpen>
-	<pDepend></pDepend>
-	<pCaption>Brian</pCaption>
-</task>
-<task>
-	<pID>30</pID>
-	<pName>add Auditing</pName>
-	<pStart>9/19/2008</pStart>
-	<pEnd>9/21/2008</pEnd>
-	<pColor>0000ff</pColor>
-	<pLink></pLink>
-	<pMile>0</pMile>
-	<pRes>Shlomy</pRes>
-	<pComp>50</pComp>
-	<pGroup>0</pGroup>
-	<pParent>10</pParent>
-	<pOpen>1</pOpen>
-	<pDepend>20</pDepend>
-	<pCaption>Shlomy</pCaption>
-</task>
-<task>
-	<pID>40</pID>
-	<pName>Yet another task</pName>
-	<pStart>9/23/2008</pStart>
-	<pEnd>9/24/2008</pEnd>
-	<pColor>0000ff</pColor>
-	<pLink></pLink>
-	<pMile>0</pMile>
-	<pRes>Shlomy</pRes>
-	<pComp>30</pComp>
-	<pGroup>0</pGroup>
-	<pParent>0</pParent>
-	<pOpen>1</pOpen>
-	<pDepend>20,30</pDepend>
-	<pCaption>Shlomy</pCaption>
-</task>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<task>
+		<pID>10</pID>
+		<pName>WCF Changes</pName>
+		<pStart></pStart>
+		<pEnd></pEnd>
+		<pClass>ggroupblack</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes></pRes>
+		<pComp>0</pComp>
+		<pGroup>1</pGroup>
+		<pParent>0</pParent>
+		<pOpen>1</pOpen>
+		<pDepend />
+	</task>
+	<task>
+		<pID>20</pID>
+		<pName>Move to WCF from remoting</pName>
+		<pStart>2017-05-11 09:00</pStart>
+		<pEnd>2017-05-15</pEnd>
+		<pClass>gtaskblue</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes>Paul</pRes>
+		<pComp>10</pComp>
+		<pGroup>0</pGroup>
+		<pParent>10</pParent>
+		<pOpen>1</pOpen>
+		<pDepend></pDepend>
+		<pCaption>Paul</pCaption>
+		<pNotes>This text is only available in tool tips</pNotes>
+	</task>
+	<task>
+		<pID>30</pID>
+		<pName>add Auditing</pName>
+		<pStart>2017-05-18 10:30</pStart>
+		<pEnd>2017-05-20 12:00</pEnd>
+		<pClass>gtaskblue</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes>Eduardo</pRes>
+		<pComp>50</pComp>
+		<pGroup>0</pGroup>
+		<pParent>10</pParent>
+		<pOpen>1</pOpen>
+		<pDepend>20</pDepend>
+		<pCaption>Eduardo</pCaption>
+	</task>
+	<task>
+		<pID>40</pID>
+		<pName>Yet another task</pName>
+		<pStart>2017-05-24</pStart>
+		<pEnd>2017-05-25</pEnd>
+		<pClass>gtaskblue</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes>Ricardo</pRes>
+		<pComp>30</pComp>
+		<pGroup>0</pGroup>
+		<pParent>0</pParent>
+		<pOpen>1</pOpen>
+		<pDepend>20,30</pDepend>
+		<pCaption>Ricardo</pCaption>
+	</task>
+	<task>
+		<pID>50</pID>
+		<pName>Another Group</pName>
+		<pStart></pStart>
+		<pEnd></pEnd>
+		<pClass>ggroupblack</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes></pRes>
+		<pComp>0</pComp>
+		<pGroup>1</pGroup>
+		<pParent>0</pParent>
+		<pOpen>1</pOpen>
+		<pDepend />
+	</task>
+	<task>
+		<pID>60</pID>
+		<pName>Move to GitHub</pName>
+		<pStart>2017-05-14 09:00</pStart>
+		<pEnd>2017-05-16</pEnd>
+		<pClass>gtaskblue</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes>Ricardo</pRes>
+		<pComp>10</pComp>
+		<pGroup>0</pGroup>
+		<pParent>50</pParent>
+		<pOpen>1</pOpen>
+		<pDepend></pDepend>
+		<pCaption>Ricardo</pCaption>
+		<pNotes>This text is only available in tool tips</pNotes>
+	</task>
+	<task>
+		<pID>70</pID>
+		<pName>Updating files</pName>
+		<pStart>2017-05-18 10:30</pStart>
+		<pEnd>2017-05-21 12:00</pEnd>
+		<pClass>gtaskred</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes>Paul</pRes>
+		<pComp>50</pComp>
+		<pGroup>0</pGroup>
+		<pParent>50</pParent>
+		<pOpen>1</pOpen>
+		<pDepend>60</pDepend>
+		<pCaption>Paul</pCaption>
+	</task>
+	<task>
+		<pID>80</pID>
+		<pName>Yet another task</pName>
+		<pStart>2017-05-23</pStart>
+		<pEnd>2017-05-25</pEnd>
+		<pClass>gtaskyellow</pClass>
+		<pLink></pLink>
+		<pMile>0</pMile>
+		<pRes>Eduardo</pRes>
+		<pComp>30</pComp>
+		<pGroup>0</pGroup>
+		<pParent>50</pParent>
+		<pOpen>1</pOpen>
+		<pDepend>60,70</pDepend>
+		<pCaption>Eduardo</pCaption>
+	</task>
 </project>

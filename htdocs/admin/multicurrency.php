@@ -312,7 +312,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</td></tr>';
 
 	print '</table>';
-	print '<br />';
+	print '<br>';
 }
 
 

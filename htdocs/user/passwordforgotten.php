@@ -48,19 +48,19 @@ $action=GETPOST('action', 'alpha');
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
-$username 		= GETPOST('username');
-$passwordhash	= GETPOST('passwordhash');
-$conf->entity 	= (GETPOST('entity') ? GETPOST('entity') : 1);
+$username 		= GETPOST('username','alpha');
+$passwordhash	= GETPOST('passwordhash','alpha');
+$conf->entity 	= (GETPOST('entity','int') ? GETPOST('entity','int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
 $hookmanager->initHooks(array('passwordforgottenpage'));
 
 
-if (GETPOST('dol_hide_leftmenu') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
-if (GETPOST('dol_hide_topmenu') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
-if (GETPOST('dol_optimize_smallscreen') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
-if (GETPOST('dol_no_mouse_hover') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
-if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_leftmenu','alpha') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
+if (GETPOST('dol_hide_topmenu','alpha') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
+if (GETPOST('dol_optimize_smallscreen','alpha') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
+if (GETPOST('dol_no_mouse_hover','alpha') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
+if (GETPOST('dol_use_jmobile','alpha') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
 
 
 /**

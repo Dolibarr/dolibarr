@@ -47,6 +47,7 @@ create table llx_user
   town              varchar(50),                         		-- town
   fk_state          integer        DEFAULT 0,            		--
   fk_country        integer        DEFAULT 0,            		--
+  birth             date,             -- birthday
   job				varchar(128),
   skype             varchar(255),
   office_phone      varchar(20),
@@ -85,5 +86,7 @@ create table llx_user
   dateemployment	date,					-- denormalized value coming from llx_user_employment
   weeklyhours		double(16,8),			-- denormalized value coming from llx_user_employment
 
-  import_key        varchar(14)                          		-- import key
+  import_key        varchar(14),                          		-- import key
+  default_range     integer,
+  default_c_exp_tax_cat     integer
 )ENGINE=innodb;

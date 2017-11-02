@@ -64,6 +64,7 @@ ProposalLine=خط پیشنهاد
 AvailabilityPeriod=تاخیر در دسترس
 SetAvailability=تنظیم تاخیر در دسترس
 AfterOrder=پس از سفارش
+OtherProposals=طرح های دیگر
 ##### Availability #####
 AvailabilityTypeAV_NOW=فوری
 AvailabilityTypeAV_1W=1 هفته

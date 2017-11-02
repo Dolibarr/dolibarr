@@ -31,6 +31,9 @@ ConfirmDeleteCptCategory=Jste si jisti, že chcete odstranit tento účetní ú�
 JournalizationInLedgerStatus=Status of journalization
 AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
+GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
+DetailByAccount=Show detail by account
+AccountWithNonZeroValues=Accounts with non zero values
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -54,7 +57,7 @@ AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for speci
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
 AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
-AccountancyAreaDescBank=KROK %s: Definovat účetní účty pro každou banku a finančních účtů. Za tímto účelem přejděte na kartu každého finančního účtu. Můžete začít od strana %s.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
@@ -63,6 +66,7 @@ AccountancyAreaDescAnalyze=KROK %s: Přidat nebo upravit stávající transakce 
 
 AccountancyAreaDescClosePeriod=KROK %s: Uzavřené období, takže nemůžeme udělat změny v budoucnosti.
 
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
 MenuAccountancy=Účetnictví
 Selectchartofaccounts=Vybrat aktivní účtové osnovy
 ChangeAndLoad=Změna a load
@@ -74,6 +78,7 @@ ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Zobrazit účetní deník
 AccountAccountingSuggest=Účetní účet navrhl
 MenuDefaultAccounts=výchozí účty
+MenuBankAccounts=Bankovní účty
 MenuVatAccounts=Účty DPH
 MenuTaxAccounts=daňové účty
 MenuExpenseReportAccounts=Náklady zpráva účty
@@ -143,14 +148,19 @@ Doctype=Typ dokumentu
 Docdate=Datum
 Docref=Reference
 Code_tiers=Třetí strana
-Labelcompte=Štítek účtu
+LabelAccount=Štítek účtu
+LabelOperation=Label operation
 Sens=Sens
 Codejournal=Deník
 NumPiece=počet kusů
 TransactionNumShort=Num. transakce
-AccountingCategory=Skupiny účetnictví účtů
+AccountingCategory=Personalized groups
 GroupByAccountAccounting=Skupina účetním účtu
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
 ByAccounts=By accounts
+ByPredefinedAccountGroups=By predefined groups
+ByPersonalizedAccountGroups=By personalized groups
+ByYear=Podle roku
 NotMatch=Nenastaveno
 DeleteMvt=Delete Ledger lines
 DelYear=Odstrannění roku
@@ -161,7 +171,7 @@ DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finanční deník
 ExpenseReportsJournal=Výdajové zprávy journal
 DescFinanceJournal=Finanční deník včetně všech typů plateb prostřednictvím bankovního účtu
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Účet pro DPH není definován
 ThirdpartyAccountNotDefined=Účet pro třetí stranu není definováno
 ProductAccountNotDefined=Účet pro výrobek není definován
@@ -180,8 +190,9 @@ ListAccounts=Seznam účetních účtů
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 
-Pcgtype=Třída účtu
-Pcgsubtype=Subclass of account
+Pcgtype=Group of account
+Pcgsubtype=Subgroup of account
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Celkový obrat před zdaněním
 TotalMarge=Celkové tržby marže
@@ -213,14 +224,14 @@ ChangeBinding=Změnit vazby
 
 ## Admin
 ApplyMassCategories=Aplikovat hmotnostní kategorie
-AddAccountFromBookKeepingWithNoCategories=Přidejte acccount již použit s žádnými kategoriemi
+AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
 CategoryDeleted=Kategorie účetního účtu byla odstraněna
 AccountingJournals=účetní deníky
 AccountingJournal=Účetní deník
 NewAccountingJournal=Nový účetní deník
 ShowAccoutingJournal=Zobrazit účetní deník
 Nature=Příroda
-AccountingJournalType1=Různé operace
+AccountingJournalType1=Miscellaneous operation
 AccountingJournalType2=Odbyt
 AccountingJournalType3=Nákupy
 AccountingJournalType4=Banka
@@ -246,16 +257,16 @@ ChartofaccountsId=Schéma Id účtů
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=init účetnictví
-InitAccountancyDesc=Tato stránka může být použita k inicializaci účetnictví u produktů a služeb, které nemají účetní účet definovaný pro prodej a nákup.
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=Tato stránka může být použit k nastavení výchozí účet použít k propojení transakcí záznam o platebních platy, darování, daní a DPH, pokud se žádný zvláštní účetní účet již nastaven.
 Options=možnosti
 OptionModeProductSell=prodejní režim
 OptionModeProductBuy=Nákupní režim
 OptionModeProductSellDesc=Zobrazit všechny produkty s vyúčtováním pro přímý prodej.
 OptionModeProductBuyDesc=Zobrazit všechny produkty které připadají v úvahu pro nákupy.
-CleanFixHistory=Odstraňte evidenční skupiny kód z řádků, které neexistují do map z účtu
+CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Obnovit všechny vazby pro vybraný rok
-
+PredefinedGroups=Predefined groups
 WithoutValidAccount=Bez platného zvláštním účtu
 WithValidAccount=S platným zvláštním účtu
 ValueNotIntoChartOfAccount=Tato hodnota účetního účtu neexistuje v účtu
@@ -273,5 +284,6 @@ BookeppingLineAlreayExists=Linky již existující do bookeeping
 NoJournalDefined=No journal defined
 Binded=linky vázané
 ToBind=Linky k vazbě
+UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. It will be replaced by a more complete report in a next version.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.

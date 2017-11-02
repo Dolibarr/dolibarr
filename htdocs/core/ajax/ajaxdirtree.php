@@ -45,13 +45,14 @@ if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/','',$selecteddir);  
 
 $langs->load("ecm");
 
-// Define selecteddir (fullpath).
+// Define fullpathselecteddir.
+$fullpathselecteddir='<none>';
 if ($modulepart == 'ecm') $fullpathselecteddir=$conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
+if ($modulepart == 'medias') $fullpathselecteddir=$dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
 
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./',$fullpathselecteddir) || preg_match('/[<>|]/',$fullpathselecteddir))
 {
     dol_syslog("Refused to deliver file ".$original_file);
@@ -63,9 +64,12 @@ if (preg_match('/\.\./',$fullpathselecteddir) || preg_match('/[<>|]/',$fullpaths
 // Check permissions
 if ($modulepart == 'ecm')
 {
-    if (! $user->rights->ecm->read) accessforbidden();
+	if (! $user->rights->ecm->read) accessforbidden();
 }
-
+if ($modulepart == 'medias')
+{
+	// Always allowed
+}
 
 
 /*
@@ -97,7 +101,8 @@ foreach($sqltree as $keycursor => $val)
 if (file_exists($fullpathselecteddir))
 {
 	$files = @scandir($fullpathselecteddir);
-    if ($files)
+
+	if ($files)
     {
     	natcasesort($files);
     	if ( count($files) > 2 )    /* The 2 accounts for . and .. */
@@ -206,15 +211,26 @@ if (file_exists($fullpathselecteddir))
     		}
 
     		// Enable jquery handlers on new generated HTML objects
-            print '<script type="text/javascript">';
-            print 'jQuery(".classfortooltip").tipTip({ maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});';
-			// TODO Remove this. Is replaced with function as 3rd parameter of fileTree
-            print 'jQuery(".fmdirlia").click(function(e) {
+			print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+    		print '<script type="text/javascript">
+            	jQuery(document).ready(function () {
+            		jQuery(".classfortooltip").tooltip({
+						show: { collision: "flipfit", effect:\'toggle\', delay:50 },
+						hide: { effect:\'toggle\', delay: 50 },
+						tooltipClass: "mytooltip",
+						content: function () {
+              				return $(this).prop(\'title\');		/* To force to get title as is */
+          				}
+            		});
+
+					/* TODO Remove this. Is replaced with function as 3rd parameter of fileTree */
+            		jQuery(".fmdirlia").click(function(e) {
             			id=jQuery(this).attr(\'id\').substr(12);
             			jQuery("#formuserfile_section_dir").val(jQuery(this).attr(\'rel\'));
             			jQuery("#formuserfile_section_id").val(id);
-    				});';
-            print '</script>';
+    				});
+            	});
+            	</script>';
 
     		echo "</ul>\n";
 

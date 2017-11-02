@@ -806,7 +806,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
 
-        dol_fiche_head();
+        dol_fiche_head('', '', '', -1);
 
         $out='';
         $typeleaves=$object->getTypes(1,1);
@@ -824,7 +824,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         dol_fiche_head();
 
-        //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br /><br />';
+        //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
         print '<table class="border" width="100%">';
         print '<tbody>';
@@ -1045,7 +1045,7 @@ else
 
                 dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
-                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
+                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
                 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
 
@@ -1282,14 +1282,14 @@ else
             } else {
                 print '<div class="tabBar">';
                 print $langs->trans('ErrorUserViewCP');
-                print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+                print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
                 print '</div>';
             }
 
         } else {
             print '<div class="tabBar">';
             print $langs->trans('ErrorIDFicheCP');
-            print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+            print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
             print '</div>';
         }
 

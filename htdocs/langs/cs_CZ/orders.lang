@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Druhý schválení již učinili
 SupplierOrderReceivedInDolibarr=Dodavatel pořadí %s obdržel %s
 SupplierOrderSubmitedInDolibarr=Dodavatel pořadí %s odeslán
 SupplierOrderClassifiedBilled=Dodavatel pořadí %s set účtoval
+OtherOrders=Ostatní objednávky
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Zástupce následující-up, zákaznické objednávky
 TypeContact_commande_internal_SHIPPING=Zástupce následující-up dopravy

@@ -134,12 +134,12 @@ class EcmDirectory // extends CommonObject
 			$sql.= "fk_user_c";
 			$sql.= ") VALUES (";
 			$sql.= " '".$this->db->escape($this->label)."',";
-			$sql.= " '".$conf->entity."',";
-			$sql.= " '".$this->fk_parent."',";
+			$sql.= " '".$this->db->escape($conf->entity)."',";
+			$sql.= " '".$this->db->escape($this->fk_parent)."',";
 			$sql.= " '".$this->db->escape($this->description)."',";
 			$sql.= " ".$this->cachenbofdoc.",";
 			$sql.= " '".$this->db->idate($this->date_c)."',";
-			$sql.= " '".$this->fk_user_c."'";
+			$sql.= " '".$this->db->escape($this->fk_user_c)."'";
 			$sql.= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);

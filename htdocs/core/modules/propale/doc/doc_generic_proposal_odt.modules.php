@@ -494,6 +494,8 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

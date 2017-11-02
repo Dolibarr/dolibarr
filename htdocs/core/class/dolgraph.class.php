@@ -81,14 +81,16 @@ class DolGraph
 
 	/**
 	 * Constructor
+	 *
+	 * @param	string	$library		'jflot' (default) or 'artichow' (no more supported)
 	 */
-	function __construct()
+	function __construct($library='jflot')
 	{
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 
 		// To use old feature
-		if (isset($conf->global->MAIN_GRAPH_LIBRARY) && $conf->global->MAIN_GRAPH_LIBRARY == 'artichow')
+		if ($library == 'artichow')
 		{
 			$this->_library='artichow';
 
@@ -586,7 +588,7 @@ class DolGraph
 	}
 
 	/**
-	 * Build a graph onto disk using correct library
+	 * Build a graph into memory using correct library  (may also be wrote on disk, depending on library used)
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
 	 * @param	string	$fileurl	Url path to show image if saved onto disk

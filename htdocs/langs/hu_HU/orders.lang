@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Másod jóváhagyás már elvégezve
 SupplierOrderReceivedInDolibarr=Beszállítói megrendelés %s megérkezett %s
 SupplierOrderSubmitedInDolibarr=Beszállítói megrendelés %s küldve
 SupplierOrderClassifiedBilled=Beszállítói megrendelés %s számlázandóra állítva
+OtherOrders=Egyéb megrendelések
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Reprezentatív nyomon követése az ügyfelek érdekében
 TypeContact_commande_internal_SHIPPING=Képviselő-up a következő hajózási

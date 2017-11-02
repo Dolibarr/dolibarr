@@ -233,7 +233,7 @@ foreach ($dirmodels as $reldir)
 
 print '</table>';
 
-print "<br />";
+print "<br>";
 
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
 

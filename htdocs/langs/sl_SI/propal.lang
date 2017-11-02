@@ -64,6 +64,7 @@ ProposalLine=Vrstica ponudbe
 AvailabilityPeriod=Dobavni rok
 SetAvailability=Nastavi dobavni rok
 AfterOrder=od naročila
+OtherProposals=Ostale ponudbe
 ##### Availability #####
 AvailabilityTypeAV_NOW=Takoj
 AvailabilityTypeAV_1W=1 teden

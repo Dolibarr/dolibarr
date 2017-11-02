@@ -86,7 +86,7 @@ class MembersTypes extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -272,7 +272,6 @@ class MembersTypes extends DolibarrApi
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->cotisation);
-        unset($object->libelle);
 
         unset($object->array_options);
         unset($object->linkedObjectsIds);

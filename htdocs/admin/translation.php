@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +65,8 @@ $hookmanager->initHooks(array('admintranslation','globaladmin'));
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -88,7 +89,45 @@ if ($action == 'setMAIN_ENABLE_OVERWRITE_TRANSLATION')
     else dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', 0, 'chaine', 0, '', $conf->entity);
 }
 
-if ($action == 'add' || (GETPOST('add') && $action != 'update'))
+if ($action == 'update')
+{
+	if ($transvalue == '')
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewTranslationStringToShow")), null, 'errors');
+		$error++;
+	}
+	if (! $error)
+	{
+		$db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".GETPOST('rowid','int');
+		$result = $db->query($sql);
+		if ($result > 0)
+		{
+			$db->commit();
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			$action="";
+			$transkey="";
+			$transvalue="";
+		}
+		else
+		{
+
+			$db->rollback();
+			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
+			}
+			else
+			{
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+			$action='';
+		}
+	}
+}
+
+if ($action == 'add')
 {
 	$error=0;
 
@@ -132,7 +171,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 		    else
 		    {
 		        setEventMessages($db->lasterror(), null, 'errors');
-		    }
+            }
 			$action='';
 		}
 	}
@@ -170,7 +209,8 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 $param='&mode='.$mode;
 
-$enabledisablehtml = $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml='';
+$enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
@@ -188,7 +228,9 @@ else
 
 print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_setup');
 
+//print '<span class="opacitymedium">';
 print $langs->trans("TranslationDesc")."<br>\n";
+//print '</span>';
 print "<br>\n";
 
 $current_language_code=$langs->defaultlang;
@@ -209,7 +251,6 @@ print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
@@ -222,16 +263,18 @@ if ($mode == 'overwrite')
 {
     //print load_fiche_titre($langs->trans("TranslationOverwriteKey"), '', '')."\n";
 
+	print '<div class="justify"><span class="opacitymedium">';
     print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
     $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
-    print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a>)<br>';
+    print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$langs->trans("Here").'</a>)<br>';
     print $langs->trans("TranslationOverwriteDesc",$langs->transnoentitiesnoconv("Language"),$langs->transnoentitiesnoconv("Key"),$langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
     print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
+    print '</span></div>';
+
     print '<br>';
 
 
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" id="action" name="action" value="">';
+	print '<input type="hidden" name="action" value="'.($action=='edit'?'update':'add').'">';
     print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -248,13 +291,16 @@ if ($mode == 'overwrite')
     // Line to add new record
     print "\n";
 
+    $disablededit='';
+    if ($action == 'edit') $disablededit=' disabled';
+
     print '<tr class="oddeven"><td>';
-    print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, 0, 'maxwidthonsmartphone', 1);
+    print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="">';
+    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
     print '</td><td>';
-    print '<input type="text" class="quatrevingtpercent" name="transvalue" value="">';
+    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
     print '</td>';
     // Limit to superadmin
     /*if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -270,7 +316,7 @@ if ($mode == 'overwrite')
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
     $disabled='';
-    if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
+    if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
     print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
     print "</td>\n";
     print '</tr>';
@@ -280,7 +326,7 @@ if ($mode == 'overwrite')
     $sql = "SELECT rowid, entity, lang, transkey, transvalue";
     $sql.= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
     $sql.= " WHERE 1 = 1";
-    //$sql.= " AND entity IN (".$user->entity.",".$conf->entity.")";
+    $sql.= " AND entity IN (".getEntity('overwrite_trans').")";
     $sql.= $db->order($sortfield, $sortorder);
 
     dol_syslog("translation::select from table", LOG_DEBUG);
@@ -308,11 +354,30 @@ if ($mode == 'overwrite')
     		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
     		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
     		*/
-    		print $obj->transvalue;
+    		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
+    		{
+    			print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.$obj->transvalue.'">';
+    		}
+    		else
+    		{
+    			print $obj->transvalue;
+    		}
     		print '</td>';
 
     		print '<td align="center">';
-    		print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
+    		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
+    		{
+    			print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';
+    			print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+    			print ' &nbsp; ';
+    			print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+    		}
+    		else
+    		{
+    			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=edit'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_edit().'</a>';
+				print ' &nbsp; ';
+    			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug)?'&debug=1':'').'">'.img_delete().'</a>';
+    		}
     		print '</td>';
 
     		print "</tr>\n";
@@ -393,7 +458,6 @@ if ($mode == 'searchkey')
     if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.')';
     print print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
 
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" id="action" name="action" value="search">';
     print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
 
@@ -430,7 +494,7 @@ if ($mode == 'searchkey')
     //}
     print '</td>';
     // Action column
-    print '<td class="liste_titre nowrap" align="right">';
+    print '<td class="nowrap" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
     print $searchpicto;
     print '</td>';
@@ -455,8 +519,35 @@ if ($mode == 'searchkey')
         {
             if ($val != $newlangfileonly->tab_translate[$key])
             {
+                // retrieve rowid
+                $sql = "SELECT rowid";
+                $sql.= " FROM " . MAIN_DB_PREFIX . "overwrite_trans";
+                $sql.= " WHERE transkey = '".$key."'";
+                $sql.= " AND entity IN (" . getEntity('overwrite_trans') . ")";
+                dol_syslog("translation::select from table", LOG_DEBUG);
+                $result = $db->query($sql);
+                if ($result)
+                {
+                    $obj = $db->fetch_object($result);
+                }
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?rowid=' . $obj->rowid . '&entity=' . $conf->entity . '&action=edit">' . img_edit() . '</a>';
+                print '&nbsp;&nbsp;';
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?rowid=' . $obj->rowid . '&entity=' . $conf->entity . '&action=delete">' . img_delete() . '</a>';
+                print '&nbsp;&nbsp;';
                 $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
                 print $form->textwithpicto('', $htmltext, 1, 'info');
+            }
+            else if (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+            {
+            	//print $key.'-'.$val;
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?mode=overwrite&amp;langcode=' . $langcode . '&amp;transkey=' . $key . '">' . img_edit_add($langs->trans("Overwrite")) . '</a>';
+            }
+
+            if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+            {
+            	$transifexlangfile='$';		// $ means 'All'
+            	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
+            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'object_globe').'</a>';
             }
         }
         else

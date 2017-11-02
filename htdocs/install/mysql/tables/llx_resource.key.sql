@@ -15,4 +15,6 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
+
 ALTER TABLE llx_resource ADD INDEX fk_code_type_resource_idx (fk_code_type_resource);

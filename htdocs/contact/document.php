@@ -107,8 +107,8 @@ if ($object->id)
         $totalsize+=$file['size'];
     }
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-    
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
     $morehtmlref='<div class="refidno">';
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
@@ -120,11 +120,11 @@ if ($object->id)
         else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
     }
     $morehtmlref.='</div>';
-    
+
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
@@ -147,7 +147,7 @@ if ($object->id)
     		print '</td></tr>';
     	}
     }*/
-    
+
     // Civility
     print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $object->getCivilityLabel();
@@ -160,7 +160,7 @@ if ($object->id)
     print '</div>';
 
     dol_fiche_end();
-    
+
     $modulepart = 'contact';
     $permission = $user->rights->societe->contact->creer;
     $permtoedit = $user->rights->societe->contact->creer;

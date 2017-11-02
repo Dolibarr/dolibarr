@@ -48,7 +48,7 @@ class SupplierProposal extends CommonObject
     public $table_element='supplier_proposal';
     public $table_element_line='supplier_proposaldet';
     public $fk_element='fk_supplier_proposal';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='propal';
 
     /**
@@ -1141,8 +1141,8 @@ class SupplierProposal extends CommonObject
         $sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
         $sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."supplier_proposal as p";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN (' . getEntity('c_paiement').')';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN (' . getEntity('c_payment_term').')';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
         if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -1222,9 +1222,7 @@ class SupplierProposal extends CommonObject
 
                 $this->lines = array();
 
-                /*
-                 * Lignes askprice liees a un produit ou non
-                 */
+                // Lines of supplier proposals
                 $sql = "SELECT d.rowid, d.fk_supplier_proposal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
@@ -1330,44 +1328,6 @@ class SupplierProposal extends CommonObject
     }
 
     /**
-     *	Update value of extrafields on the proposal
-     *
-     *	@param      User	$user       Object user that modify
-     *	@return     int         		<0 if ko, >0 if ok
-     */
-    function update_extrafields($user)
-    {
-    	$action='update';
-
-    	// Actions on extra fields (by external module or standard code)
-    	$hookmanager->initHooks(array('supplier_proposaldao'));
-    	$parameters=array('id'=>$this->id);
-    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-    	if (empty($reshook))
-    	{
-    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-    		{
-    			$result=$this->insertExtraFields();
-    			if ($result < 0)
-    			{
-    				$error++;
-    			}
-    		}
-    	}
-    	else if ($reshook < 0) $error++;
-
-		if (!$error)
-	    {
-	    	return 1;
-	    }
-	    else
-	    {
-	    	return -1;
-	    }
-
-    }
-
-    /**
      *  Set status to validated
      *
      *  @param	User	$user       Object user that validate
@@ -1404,7 +1364,7 @@ class SupplierProposal extends CommonObject
             $this->newref = $num;
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-            $sql.= " SET ref = '".$num."',";
+            $sql.= " SET ref = '".$this->db->escape($num)."',";
             $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
@@ -1473,6 +1433,11 @@ class SupplierProposal extends CommonObject
             	$this->db->rollback();
             	return -1;
             }
+        }
+        else
+        {
+        	dol_syslog("You don't have permission to validate supplier proposal", LOG_WARNING);
+        	return -2;
         }
     }
 
@@ -2389,13 +2354,14 @@ class SupplierProposal extends CommonObject
     /**
      *	Return clicable link of object (with eventually picto)
      *
-     *	@param      int		$withpicto		Add picto into link
-     *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
-     *	@param      string	$get_params    	Parametres added to url
-     *  @param	    int   	$notooltip		1=Disable tooltip
-     *	@return     string          		String with URL
+     *	@param      int		$withpicto					Add picto into link
+     *	@param      string	$option						Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param      string	$get_params    				Parametres added to url
+     *  @param	    int   	$notooltip					1=Disable tooltip
+     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return     string          					String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
+    function getNomUrl($withpicto=0, $option='', $get_params='', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $langs, $conf, $user;
 
@@ -2420,6 +2386,14 @@ class SupplierProposal extends CommonObject
         }
         if ($option == 'document') {
             $url = DOL_URL_ROOT.'/supplier_proposal/document.php?id='.$this->id. $get_params;
+        }
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 
         $linkclose='';
@@ -2854,27 +2828,27 @@ class SupplierProposalLine extends CommonObjectLine
         $sql.= ' ref_fourn,';
 		$sql.= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
         $sql.= " VALUES (".$this->fk_supplier_proposal.",";
-        $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
+        $sql.= " ".($this->fk_parent_line>0?"'".$this->db->escape($this->fk_parent_line)."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
-        $sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
-        $sql.= " '".$this->product_type."',";
-        $sql.= " ".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
+        $sql.= " ".($this->fk_product?"'".$this->db->escape($this->fk_product)."'":"null").",";
+        $sql.= " '".$this->db->escape($this->product_type)."',";
+        $sql.= " ".($this->fk_remise_except?"'".$this->db->escape($this->fk_remise_except)."'":"null").",";
         $sql.= " ".price2num($this->qty).",";
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
-		$sql.= " '".$this->localtax1_type."',";
-		$sql.= " '".$this->localtax2_type."',";
+		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
+		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
         $sql.= " ".(!empty($this->subprice)?price2num($this->subprice):"null").",";
         $sql.= " ".price2num($this->remise_percent).",";
-        $sql.= " ".(isset($this->info_bits)?"'".$this->info_bits."'":"null").",";
+        $sql.= " ".(isset($this->info_bits)?"'".$this->db->escape($this->info_bits)."'":"null").",";
         $sql.= " ".price2num($this->total_ht).",";
         $sql.= " ".price2num($this->total_tva).",";
         $sql.= " ".price2num($this->total_localtax1).",";
         $sql.= " ".price2num($this->total_localtax2).",";
         $sql.= " ".price2num($this->total_ttc).",";
-        $sql.= " ".(!empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null").",";
+        $sql.= " ".(!empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null").",";
         $sql.= " ".(isset($this->pa_ht)?"'".price2num($this->pa_ht)."'":"null").",";
         $sql.= ' '.$this->special_code.',';
         $sql.= ' '.$this->rang.',';
@@ -3050,7 +3024,7 @@ class SupplierProposalLine extends CommonObjectLine
             $sql.= " , total_localtax1=".price2num($this->total_localtax1)."";
             $sql.= " , total_localtax2=".price2num($this->total_localtax2)."";
         }
-		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->fk_fournprice."'":"null");
+		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= " , buy_price_ht=".price2num($this->pa_ht);
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");

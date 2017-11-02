@@ -89,15 +89,14 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 }
 
 $nom=$langs->trans("SellsJournal");
-$nomlink='';
 $periodlink='';
 $exportlink='';
-$builddate=time();
+$builddate=dol_now();
 $description=$langs->trans("DescSellsJournal").'<br>';
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 else  $description.= $langs->trans("DepositsAreIncluded");
 $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
@@ -170,7 +169,7 @@ if ($result)
 		$prev_progress = 0;
 		if ($obj->type==Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
-			if ($obj->situation_percent == 0) { 
+			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
 		        $prev_progress = $line->get_prev_progress($obj->rowid);   // id on invoice

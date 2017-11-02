@@ -4,6 +4,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017      	Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2017       ATM-CONSULTING		<contact@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,6 +151,16 @@ function invoice_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'attributeslines';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facture_rec_cust_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoicesRec");
+	$head[$h][2] = 'attributesrec';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_rec_cust_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
+	$head[$h][2] = 'attributeslinesrec';
 	$h++;
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'invoice_admin','remove');

@@ -75,7 +75,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
-		
+
     	$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
@@ -128,7 +128,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		
+
 		require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/mod_facture_mercure.php';
 
@@ -153,7 +153,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1, $result3, 'Test validation of invoice with forced ref is ok');	// counter must start to 1
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(1, $result, 'Test for is_erasable, 1st invoice');						    // Can be deleted
+		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, 1st invoice');						    // Can be deleted
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1916);	// we use following year for second invoice (there is no reset into mask)
@@ -171,7 +171,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1, $result3, 'Test validation of invoice with forced ref is ok');	// counter must start to 1
 		$result=$localobject2->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(1, $result);						// Can be deleted
+		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertEquals(0, $result, 'Test for {yyyy}-{0000} that is_erasable is 0 for 1st invoice');						// 1 can no more be deleted (2 is more recent)
@@ -218,7 +218,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('192001-0001', $result, 'Test for {yyyy}{mm}-{0000@1} 1st invoice');			// counter must start to 1
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(1, $result);						// Can be deleted
+		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1921);	// we use following year for second invoice (and there is a reset required)
@@ -230,10 +230,10 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals('192101-0001', $result);			// counter must be reseted to 1
     	$result=$localobject2->is_erasable();
     	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertEquals(1, $result);						// Can be deleted
+    	$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
     	$result=$localobject->is_erasable();
     	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertEquals(1, $result);						// Case 1 can be deleted (because there was a reset for case 2)
+    	$this->assertGreaterThanOrEqual(1, $result);						// Case 1 can be deleted (because there was a reset for case 2)
 
 		// Same but we add month before year and use a year on 2 digits
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='[mm}{yy}-{0000@1}';
@@ -249,7 +249,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('0125-0001', $result, 'Test for {mm}{yy}-{0000@1} 1st invoice');				// counter must start to 1
 		$result=$localobject->is_erasable();					// This call get getNextNumRef with param 'last'
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(1, $result);						// Can be deleted
+		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
 		$localobject2=new Facture($this->savdb);
 		$localobject2->initAsSpecimen();
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1925);	// we use same year 1925 for second invoice (and there is a reset required)
@@ -261,7 +261,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals('0125-0002', $result, 'Test for {mm}{yy}-{0000@1} 2st invoice');			// counter must be now 2
     	$result=$localobject2->is_erasable();
     	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertEquals(1, $result);						// Can be deleted
+    	$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
     	$result=$localobject->is_erasable();
     	print __METHOD__." is_erasable=".$result."\n";
     	$this->assertEquals(0, $result);						// Case 1 can not be deleted (because there is an invoice 2)

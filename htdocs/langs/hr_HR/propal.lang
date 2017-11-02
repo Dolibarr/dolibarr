@@ -64,6 +64,7 @@ ProposalLine=Stavka ponude
 AvailabilityPeriod=Odgoda dostupnosti
 SetAvailability=Odredi odgodu dostupnosti
 AfterOrder=poslije narudžbe
+OtherProposals=Ostale ponude
 ##### Availability #####
 AvailabilityTypeAV_NOW=Odmah
 AvailabilityTypeAV_1W=Tjedan dana
