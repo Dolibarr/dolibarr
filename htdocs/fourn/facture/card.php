@@ -2898,5 +2898,14 @@ else
 
 
 // End of page
+print '<script type="text/javascript">
+$(document).ready(function() {
+
+			$("#idprodfournprice").select2();
+
+		});
+		</script>';
+
+
 llxFooter();
 $db->close();
