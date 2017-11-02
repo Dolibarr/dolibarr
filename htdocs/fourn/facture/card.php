@@ -1003,7 +1003,11 @@ if (empty($reshook))
 	            	0,
 	            	$array_options,
 	            	$productsupplier->fk_unit
-	            );
+                );
+                if ($result<0) {
+                    $error++;
+                    setEventMessages($object->line->error, $object->line->errors, 'errors');
+                }
 	        }
 	    	if ($idprod == -99 || $idprod == 0)
 	        {
@@ -1048,7 +1052,11 @@ if (empty($reshook))
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-			$result=$object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_ht_devise);
+            $result=$object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_ht_devise);
+            if ($result<0) {
+                $error++;
+                setEventMessages($object->line->error, $object->line->errors, 'errors');
+            }
 	    }
 
 	    //print "xx".$tva_tx; exit;
