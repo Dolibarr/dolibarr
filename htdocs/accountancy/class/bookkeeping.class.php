@@ -802,6 +802,8 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} else {
 					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}

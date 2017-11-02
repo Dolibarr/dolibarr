@@ -46,6 +46,8 @@ $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST(
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
 $search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
+$search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
+$search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
 
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';
@@ -55,7 +57,6 @@ if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOS
 }
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
-
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
@@ -66,7 +67,6 @@ if ($search_accountancy_code_end == - 1) {
 }
 
 $search_accountancy_aux_code = GETPOST("search_accountancy_aux_code");
-
 $search_accountancy_aux_code_start = GETPOST('search_accountancy_aux_code_start', 'alpha');
 if ($search_accountancy_aux_code_start == - 1) {
 	$search_accountancy_aux_code_start = '';
@@ -115,7 +115,9 @@ $arrayfields=array(
 	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
 	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
+	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 );
+
 
 /*
  * Actions
@@ -145,6 +147,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_date_end = '';
 	$search_date_creation_start = '';
 	$search_date_creation_end = '';
+	$search_date_modification_start = '';
+	$search_date_modification_end = '';
 }
 
 // Must be after the remove filter action, before the export.
@@ -220,8 +224,18 @@ if (! empty($search_date_creation_start)) {
 }
 if (! empty($search_date_creation_end)) {
 	$filter['t.date_creation<='] = $search_date_creation_end;
-	$tmp=dol_getdate($search_date_end);
+	$tmp=dol_getdate($search_date_creation_end);
 	$param .= '&date_creation_endmonth=' . $tmp['mon'] . '&date_creation_endday=' . $tmp['mday'] . '&date_creation_endyear=' . $tmp['year'];
+}
+if (! empty($search_date_modification_start)) {
+	$filter['t.tms>='] = $search_date_modification_start;
+	$tmp=dol_getdate($search_date_modification_start);
+	$param .= '&date_modification_startmonth=' . $tmp['mon'] . '&date_modification_startday=' . $tmp['mday'] . '&date_modification_startyear=' . $tmp['year'];
+}
+if (! empty($search_date_modification_end)) {
+	$filter['t.tms<='] = $search_date_modification_end;
+	$tmp=dol_getdate($search_date_modification_end);
+	$param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
 }
 
 if ($action == 'delbookkeeping') {
@@ -512,6 +526,20 @@ if (! empty($arrayfields['t.date_creation']['checked']))
 	print '</div>';
 	print '</td>';
 }
+// Date modification
+if (! empty($arrayfields['t.tms']['checked']))
+{
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->select_date($search_date_modification_start, 'date_modification_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->select_date($search_date_modification_end, 'date_modification_end', 0, 0, 1);
+	print '</div>';
+	print '</td>';
+}
 // Action column
 print '<td class="liste_titre center">';
 $searchpicto=$form->showFilterButtons();
@@ -530,6 +558,7 @@ if (! empty($arrayfields['t.debit']['checked']))				print_liste_field_titre("Deb
 if (! empty($arrayfields['t.credit']['checked']))				print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'align="right"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre("Codejournal", $_SERVER['PHP_SELF'], "t.code_journal", "", $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['t.date_creation']['checked']))		print_liste_field_titre("DateCreation", $_SERVER['PHP_SELF'], "t.date_creation", "", $param, 'align="center"', $sortfield, $sortorder);
+if (! empty($arrayfields['t.tms']['checked']))					print_liste_field_titre("DateModification", $_SERVER['PHP_SELF'], "t.tms", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -621,6 +650,13 @@ if ($num > 0)
 		if (! empty($arrayfields['t.date_creation']['checked']))
 		{
 			print '<td align="center">' . dol_print_date($line->date_creation, 'day') . '</td>';
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// Modification operation date
+		if (! empty($arrayfields['t.tms']['checked']))
+		{
+			print '<td align="center">' . dol_print_date($line->date_modification, 'day') . '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
