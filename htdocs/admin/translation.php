@@ -298,9 +298,9 @@ if ($mode == 'overwrite')
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
+    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" id="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
     print '</td><td>';
-    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
+    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" id="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
     print '</td>';
     // Limit to superadmin
     /*if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -570,6 +570,10 @@ dol_fiche_end();
 
 print "</form>\n";
 
+if (! empty($langcode))
+{
+	dol_set_focus('#transvalue');
+}
 
 llxFooter();
 
