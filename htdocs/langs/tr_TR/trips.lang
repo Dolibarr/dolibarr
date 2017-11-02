@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Gider raporu
-ExpenseReports=Gider raporları
 ShowExpenseReport=Gider raporu göster
 Trips=Gider raporları
 TripsAndExpenses=Giderler raporları
@@ -12,6 +10,8 @@ ListOfFees=Ücretler listesi
 TypeFees=Ücret türleri
 ShowTrip=Gider raporu göster
 NewTrip=Yeni gider raporu
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Tutar ya da kilometre
 DeleteTrip=Gider raporu sil
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Varsayılan aralık numarası
 
 ErrorDoubleDeclaration=Benzer bir tarih aralığı için başka bir gider raporu bildirdiniz.
 AucuneLigne=Bildirilen hiç gider raporu yok

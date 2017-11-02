@@ -607,13 +607,13 @@ if (empty($reshook))
 		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
-		
+
 		$num_prod = count($lines);
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
-			if ($lines[$i]->id == $line_id) 
+			if ($lines[$i]->id == $line_id)
 			{
-				if (count($lines[$i]->details_entrepot) > 1) 
+				if (count($lines[$i]->details_entrepot) > 1)
 				{
 					// delete multi warehouse lines
 					foreach ($lines[$i]->details_entrepot as $details_entrepot) {
@@ -624,7 +624,7 @@ if (empty($reshook))
 						}
 					}
 				}
-				else 
+				else
 				{
 					// delete single warehouse line
 					$line->id = $line_id;
@@ -636,12 +636,12 @@ if (empty($reshook))
 			}
 			unset($_POST["lineid"]);
 		}
-		
+
 		if(! $error) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit();
 		}
-		else 
+		else
 		{
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
@@ -657,12 +657,12 @@ if (empty($reshook))
 		$qty=0;
 		$entrepot_id = 0;
 		$batch_id = 0;
-		
+
 		$lines = $object->lines;
 		$num_prod = count($lines);
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
-			if ($lines[$i]->id == $line_id) 
+			if ($lines[$i]->id == $line_id)
 			{
 				// line to update
 				$line = new ExpeditionLigne($db);
@@ -680,7 +680,7 @@ if (empty($reshook))
 				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
 				{
 					// line with lot
-					foreach ($lines[$i]->detail_batch as $detail_batch) 
+					foreach ($lines[$i]->detail_batch as $detail_batch)
 					{
 						$lotStock = new Productbatch($db);
 						$batch="batchl".$detail_batch->fk_expeditiondet."_".$detail_batch->fk_origin_stock;
@@ -689,13 +689,17 @@ if (empty($reshook))
 						$batch_qty = GETPOST($qty, 'int');
 						if (! empty($batch_id) && ($batch_id != $detail_batch->fk_origin_stock || $batch_qty != $detail_batch->dluo_qty))
 						{
-							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0) 
+							if ($lotStock->fetch($batch_id) > 0 && $line->fetch($detail_batch->fk_expeditiondet) > 0)	// $line is ExpeditionLine
 							{
 								if ($lines[$i]->entrepot_id != 0)
 								{
 									// allow update line entrepot_id if not multi warehouse shipping
 									$line->entrepot_id = $lotStock->warehouseid;
 								}
+
+								// detail_batch can be an object with keys, or an array of ExpeditionLineBatch
+								if (empty($line->detail_batch)) $line->detail_batch=new stdClass();
+
 								$line->detail_batch->fk_origin_stock = $batch_id;
 								$line->detail_batch->batch = $lotStock->batch;
 								$line->detail_batch->id = $detail_batch->id;
@@ -706,7 +710,7 @@ if (empty($reshook))
 									$error++;
 								}
 							}
-							else 
+							else
 							{
 								setEventMessages($lotStock->error, $lotStock->errors, 'errors');
 								$error++;
@@ -790,7 +794,7 @@ if (empty($reshook))
 						}
 					}
 				}
-				else 
+				else
 				{
 					// line without lot
 					if ($lines[$i]->entrepot_id > 0)
@@ -856,7 +860,7 @@ if (empty($reshook))
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
-		else 
+		else
 		{
 			header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 			exit();
@@ -1600,7 +1604,13 @@ if ($action == 'create')
 
             print "</table>";
 
-            print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+            print '<br>';
+
+            print '<div class="center">';
+            print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+            print '&nbsp; ';
+            print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
+            print '</div>';
 
             print '</form>';
 
@@ -2051,7 +2061,7 @@ else if ($id || $ref)
 			}
 			print '</td>';
 		}
-		else 
+		else
 		{
 			if ($object->statut <= 1)
 			{
@@ -2065,7 +2075,7 @@ else if ($id || $ref)
 			{
 				print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
 			}
-	
+
 			if (! empty($conf->productbatch->enabled))
 			{
 				print '<td align="left">'.$langs->trans("Batch").'</td>';
@@ -2240,7 +2250,7 @@ else if ($id || $ref)
 				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
 				{
 					$line = new ExpeditionLigne($db);
-					foreach ($lines[$i]->detail_batch as $detail_batch) 
+					foreach ($lines[$i]->detail_batch as $detail_batch)
 					{
 						print '<tr>';
 						// Qty to ship or shipped
@@ -2401,7 +2411,7 @@ else if ($id || $ref)
 				{
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 				}
-				else 
+				else
 				{
 					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
 				}
@@ -2561,136 +2571,6 @@ else if ($id || $ref)
 	$trackid = 'shi'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-
-	/*
-	if ($action == 'presend')
-	{
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref, '/').'[^\-]+');
-		$file=$fileparams['fullname'];
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-			$newlang = $_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->thirdparty->default_lang;
-
-		if (!empty($newlang))
-		{
-			$outputlangs = new Translate('', $conf);
-			$outputlangs->setDefaultLang($newlang);
-			$outputlangs->load('sendings');
-		}
-
-		// Build document if it not exists
-		if (! $file || ! is_readable($file))
-		{
-			$result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			if ($result <= 0)
-			{
-				dol_print_error($db,$object->error,$object->errors);
-				exit;
-			}
-			$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref, '/').'[^\-]+');
-			$file=$fileparams['fullname'];
-		}
-
-		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-		print '<div class="clearboth"></div>';
-		print '<br>';
-		print load_fiche_titre($langs->trans('SendShippingByEMail'));
-
-		dol_fiche_head('');
-
-		// Cree l'objet formulaire mail
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		$formmail = new FormMail($db);
-		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-        $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-        if($formmail->fromtype === 'user'){
-            $formmail->fromid = $user->id;
-
-        }
-		$formmail->trackid='shi'.$object->id;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-		{
-			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'shi'.$object->id);
-		}
-		$formmail->withfrom=1;
-		$liste=array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
-		$formmail->withtocc=$liste;
-		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$outputlangs->trans('SendShippingRef','__SHIPPINGREF__');
-		$formmail->withfile=2;
-		$formmail->withbody=1;
-		$formmail->withdeliveryreceipt=1;
-		$formmail->withcancel=1;
-		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object, $outputlangs);
-		$formmail->substit['__SHIPPINGREF__']=$object->ref;
-		$formmail->substit['__SHIPPINGTRACKNUM__']=$object->tracking_number;
-		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
-
-		//Find the good contact adress
-		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))	{
-			$objectsrc=new Commande($db);
-			$objectsrc->fetch($object->$typeobject->id);
-		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))	{
-			$objectsrc=new Propal($db);
-			$objectsrc->fetch($object->$typeobject->id);
-		}
-		$custcontact='';
-		$contactarr=array();
-		if (is_object($objectsrc))    // For the case the shipment was created without orders
-		{
-    		$contactarr=$objectsrc->liste_contact(-1,'external');
-		}
-
-		if (is_array($contactarr) && count($contactarr)>0) {
-			foreach($contactarr as $contact) {
-
-				if ($contact['libelle']==$langs->trans('TypeContact_commande_external_CUSTOMER')) {
-
-					require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-
-					$contactstatic=new Contact($db);
-					$contactstatic->fetch($contact['id']);
-					$custcontact=$contactstatic->getFullName($langs,1);
-				}
-			}
-
-			if (!empty($custcontact)) {
-				$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-			}
-		}
-
-		// Tableau des parametres complementaires
-		$formmail->param['action']='send';
-		$formmail->param['models']='shipping_send';
-		$formmail->param['models_id']=GETPOST('modelmailselected','int');
-		$formmail->param['shippingid']=$object->id;
-		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-		// Init list of files
-		if (GETPOST("mode")=='init')
-		{
-			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-		}
-
-		// Show form
-		print $formmail->get_form();
-
-		dol_fiche_end();
-	}*/
 }
 
 

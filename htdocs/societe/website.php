@@ -257,7 +257,7 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."websiteaccount_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($objectwebsiteaccount->getIsmultientitymanaged() == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
+if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
 else $sql.=" WHERE 1 = 1";
 $sql.=" AND fk_soc = ".$object->id;
 foreach($search as $key => $val)

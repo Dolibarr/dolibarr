@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Çifte kayıt hatalarını gözardı et (GÖZARDI ET EKLE
 AutoDetectLang=Otoalgıla (tarayıcı dili)
 FeatureDisabledInDemo=Özellik demoda devre dışıdır
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=İzinler
 BoxesDesc=Ekran etiketleri, sayfaları kişiselleştirmek için ekleyeceğiniz bazı bilgiler gösteren ekran araçlarıdır. Bu ekran etiketlerini gösterip göstermemeyi seçebilirsiniz ya da hedef sayfayı seçip 'Etkinleştir'e tıklayabilir ya da engellemek için çöp kutusuna tıklayabilirsiniz.
 OnlyActiveElementsAreShown=Yalnızca <ahref="modules.php">etkinleştirilmiş modüllerin</a> öğeleri gösterilmiştir.
 ModulesDesc=Dolibarr modülleri, yazılımda hangi uygulamanın/özelliğin etkinleştirildiğini tanımlar. Bazı uygulamalar/modüller onları etkinleştirdikten sonra kullanıcılara vermeniz gereken izinleri gerektirir. Bir modülü/uygulamayı etkinleştirmek için aç/kapat butonuna tıklayın.
@@ -593,7 +592,7 @@ Module5000Desc=Birden çok firmayı yönetmenizi sağlar
 Module6000Name=İş akışı
 Module6000Desc=İş akışı yönetimi
 Module10000Name=Websiteleri
-Module10000Desc=Bir WYSIWG düzenleyici ile genel websiteleri oluturun. Internet üzerinde çevrimiçi görünmesi için Web sunucunuzu size ayrılmış dizini gösterecek şekilde ayarlayın.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=İzin İstekleri yönetimi
 Module20000Desc=Çalışanların izin isteklerini bildirin ve izleyin
 Module39000Name=Ürün partisi
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA="PHP doğrudan posta" yöntemini kullanarak posta
 TranslationSetup=Çeviri ayarları
 TranslationKeySearch=Çeviri anahtarı veya dizesi ara
 TranslationOverwriteKey=Çeviri dizesinin üzerine yaz
-TranslationDesc=Ekran görüntü dilinin nasıl değiştirileceği :<br>* Tüm sistemde: <strong>Giriş - Ayarlar - Ekran</strong><br>* Her kullanıcı için: <strong>Kullanıcı ekranı ayarları</strong> kullanıcı kartı sekmesindeki (ekranın tepesindeki kullanıcı adına tıklayın).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=Ayrıca aşağıdaki tabloyu doldurarak dizeleri geçersiz kılabilirsiniz. Dilinizi "%s" açılır tablosundan seçin, anahtar dizeyi "%s" içine ekleyin ve yeni çevirinizi de "%s" içine ekleyin.
 TranslationOverwriteDesc2=You can use the other tab to help you know translation key to use
 TranslationString=Çeviri dizesi
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Önerilen parola oluşturmak ya da parola doğrulamak 
 DisableForgetPasswordLinkOnLogonPage=Oturum açma sayfasında “Parola unutuldu” bağlantısını gösterme
 UsersSetup=Kullanıcılar modülü kurulumu
 UserMailRequired=Yeni bir kullanıcı oluşturmak için gerekli EPosta
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Varsayılan aralık numarası
 ##### HRM setup #####
 HRMSetup=İK modülü ayarları
 ##### Company setup #####

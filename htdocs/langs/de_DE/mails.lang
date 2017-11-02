@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Einzigartige Partnerkontakte
 MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail Kampagne kann nicht mehr geändert werden
 SearchAMailing=Suche E-Mail Kampagne
 SendMailing=E-Mail Kampagne versenden
-SendMail=sende E-Mail
 SentBy=Gesendet von
 MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mails von der Kommandozeile aus versandt werden. Bitten Sie Ihren Server Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
 MailingNeedCommand2=Sie können den Versand jedoch auch online starten, indem Sie den Parameter MAILING_LIMIT_SENDBYWEB auf den Wert der pro Sitzung gleichzeitig zu versendenden Mails setzen. Die entsprechenden Einstellungen finden Sie unter Übersicht-Einstellungen-Andere.

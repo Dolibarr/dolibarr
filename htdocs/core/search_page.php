@@ -77,9 +77,6 @@ if ($conf->use_javascript_ajax && 1 == 2)   // select2 is ko with jmobile
 }
 else
 {
-    $conf->global->MAIN_HTML5_PLACEHOLDER = 1;
-
-
     $usedbyinclude = 1; // Used into next include
     include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 

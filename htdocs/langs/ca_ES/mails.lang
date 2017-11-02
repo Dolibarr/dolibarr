@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Contactes/adreces únics
 MailNoChangePossible=Destinataris d'un E-Mailing validat no modificables
 SearchAMailing=Cercar un E-Mailing
 SendMailing=Envia e-mailing
-SendMail=Envia e-mail
 SentBy=Enviat por
 MailingNeedCommand=L'enviament d'un emailing pot realitzar-se desde la línia de comandos. Solicita a l'administrador del servidor que executi el següent comando per enviar l'emailing a tots els destinataris:
 MailingNeedCommand2=Podeu enviar en línia afegint el paràmetre MAILING_LIMIT_SENDBYWEB amb un valor nombre que indica el màxim nombre d'e-mails enviats per sessió. Per això aneu a Inici - Configuració - Varis

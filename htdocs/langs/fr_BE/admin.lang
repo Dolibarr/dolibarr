@@ -24,6 +24,9 @@ AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Propales
 Module30Name=Factures
+Module50000Desc=Module to offer an online payment page by credit card with PayBox
+Module50200Desc=Module to offer an online payment page by credit card with Paypal
 DictionaryPaymentConditions=Conditions de paiement
 SuppliersPayment=Paiements fournisseurs
 Target=Objectif
+AGENDA_REMINDER_BROWSER=Enable event reminder on users browser (when event date is reached, each user is able to refuse this from the browser confirmation question)

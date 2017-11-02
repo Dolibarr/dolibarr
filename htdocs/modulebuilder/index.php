@@ -375,7 +375,7 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		'arrayofkeyval'=>GETPOST('proparrayofkeyval','none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 		'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
 		'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
-		'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp'));
+		'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp','alpha'));
 
 	if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
 	{
@@ -401,14 +401,14 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 
 	if (! $error)
 	{
-		clearstatcache();
-
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
-		// Make a redirect to reload all data
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
+		clearstatcache(true);
+		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
-		clearstatcache();
+		// Make a redirect to reload all data
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname.'&nocache='.time());
+
 		exit;
 	}
 }
@@ -437,14 +437,14 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 
 	if (! $error)
 	{
-		clearstatcache();
-
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
+
+		clearstatcache(true);
+		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
 
-		clearstatcache();
 		exit;
 	}
 }
@@ -766,6 +766,7 @@ if ($action == 'reset' && $user->admin)
 	header("Location: ".$_SERVER["PHP_SELF"]."?".$param);
 	exit;
 }
+
 
 
 /*
@@ -1528,9 +1529,10 @@ elseif (! empty($module))
 						if (! empty($tmpobjet))
 						{
 							$reflector = new ReflectionClass($tabobj);
-							$properties = $reflector->getProperties();          // Can also use get_object_vars
-							//$propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+							$reflectorproperties = $reflector->getProperties();          // Can also use get_object_vars
+							$reflectorpropdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
 							//$propstat = $reflector->getStaticProperties();
+							//var_dump($reflectorpropdefault);
 
 							print load_fiche_titre($langs->trans("Properties"), '', '');
 
@@ -1565,7 +1567,10 @@ elseif (! empty($module))
 							print '<td></td>';
 							print '</tr>';
 
-							$properties = dol_sort_array($tmpobjet->fields, 'position');
+							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobjet->fields may have been
+							// modified during the constructor and we want value into head of class before constructor is called.
+							//$properties = dol_sort_array($tmpobjet->fields, 'position');
+							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
 
 							if (! empty($properties))
 							{

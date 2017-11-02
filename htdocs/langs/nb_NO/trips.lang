@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Reiseregning
-ExpenseReports=Reiseregninger
 ShowExpenseReport=Vis utgiftsrapport
 Trips=Reiseregninger
 TripsAndExpenses=Reiseregninger
@@ -12,6 +10,8 @@ ListOfFees=Oversikt over avgifter
 TypeFees=Avgiftstyper
 ShowTrip=Vis utgiftsrapport
 NewTrip=Ny reiseregning
+LastExpenseReports=Siste %s utgiftsrapporter
+AllExpenseReports=Alle utgiftsrapporter
 CompanyVisited=Firma/organisasjon besøkt
 FeesKilometersOrAmout=Beløp eller kilometer
 DeleteTrip=Slett reiseregning
@@ -71,6 +71,8 @@ EX_FUE_VP=Drivstoff PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parkering PV
 EX_CAM_VP=PV vedlikehold og reparasjon
+DefaultCategoryCar=Standard transportmetode
+DefaultRangeNumber=Standard område nummer
 
 ErrorDoubleDeclaration=Du har opprettet en annen reiseregning i overlappende tidsperiode
 AucuneLigne=Ingen reiseregning er opprettet enda

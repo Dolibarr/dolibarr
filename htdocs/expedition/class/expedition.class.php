@@ -1504,11 +1504,11 @@ class Expedition extends CommonObject
 		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		$picto='sending';
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -2220,7 +2220,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $fk_expedition;
 
-	var $db;	
+	var $db;
 
 	// From llx_expeditiondet
 	var $qty;
@@ -2232,7 +2232,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var int
 	 */
 	public $entrepot_id;
-	
+
 
 	// From llx_commandedet or llx_propaldet
 	var $qty_asked;
@@ -2249,7 +2249,7 @@ class ExpeditionLigne extends CommonObjectLine
 	var $total_localtax1;   // Total Local tax 1
 	var $total_localtax2;   // Total Local tax 2
 
-	
+
 
 	// Deprecated
 	/**
@@ -2395,7 +2395,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 	/**
 	 * 	Delete shipment line.
-	 *  
+	 *
 	 *	@param		User	$user			User that modify
 	 *	@param		int		$notrigger		0=launch triggers after, 1=disable triggers
 	 * 	@return		int		>0 if OK, <0 if KO
@@ -2407,7 +2407,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$error=0;
 
 		$this->db->begin();
-				
+
 		// delete batch expedition line
 		if ($conf->productbatch->enabled)
 		{
@@ -2420,7 +2420,7 @@ class ExpeditionLigne extends CommonObjectLine
 				$error++;
 			}
 		}
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 		$sql.= " WHERE rowid = ".$this->id;
 
@@ -2436,7 +2436,7 @@ class ExpeditionLigne extends CommonObjectLine
 					$error++;
 				}
 			}
-			if (! $error && ! $notrigger) 
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINESHIPPING_DELETE',$user);
@@ -2458,7 +2458,7 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->db->commit();
 			return 1;
 		}
-		else 
+		else
 		{
 			foreach($this->errors as $errmsg)
 			{
@@ -2469,10 +2469,10 @@ class ExpeditionLigne extends CommonObjectLine
 			return -1*$error;
 		}
 	}
-	
+
 	/**
 	 *  Update a line in database
-	 * 
+	 *
 	 *	@param		User	$user			User that modify
 	 *	@param		int		$notrigger		1 = disable triggers
 	 *  @return		int					< 0 if KO, > 0 if OK
@@ -2480,12 +2480,10 @@ class ExpeditionLigne extends CommonObjectLine
 	function update($user = null, $notrigger = 0)
 	{
 		global $conf;
-		
+
 		$error=0;
 
 		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
-
-		
 
 		$this->db->begin();
 
@@ -2496,9 +2494,9 @@ class ExpeditionLigne extends CommonObjectLine
 		$batch = null;
 		$batch_id = null;
 		$expedition_batch_id = null;
-		if (is_array($this->detail_batch)) 
+		if (is_array($this->detail_batch)) 	// array of ExpeditionLineBatch
 		{
-			if (count($this->detail_batch) > 1) 
+			if (count($this->detail_batch) > 1)
 			{
 				dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
 				$this->errors[]='ErrorBadParameters';
@@ -2560,24 +2558,24 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[]=$this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
 				$error++;
 			}
-			else 
+			else
 			{
 				// caculate new total line qty
-				foreach ($lotArray as $lot) 
+				foreach ($lotArray as $lot)
 				{
-					if ($expedition_batch_id != $lot->id) 
+					if ($expedition_batch_id != $lot->id)
 					{
 						$remainingQty += $lot->dluo_qty;
 					}
 				}
 				$qty += $remainingQty;
-				
+
 				//fetch lot details
-				
+
 				// fetch from product_lot
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 				$lot = new Productlot($this->db);
-				if ($lot->fetch(0,$this->fk_product,$batch) < 0) 
+				if ($lot->fetch(0,$this->fk_product,$batch) < 0)
 				{
 					$this->errors[] = $lot->errors;
 					$error++;
@@ -2588,6 +2586,7 @@ class ExpeditionLigne extends CommonObjectLine
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
 					$sql.= " WHERE fk_expeditiondet = ".$this->id;
 					$sql.= " AND rowid = ".$expedition_batch_id;
+
 					if (!$this->db->query($sql))
 					{
 						$this->errors[]=$this->db->lasterror()." - sql=$sql";
@@ -2622,8 +2621,8 @@ class ExpeditionLigne extends CommonObjectLine
 			$sql.= " fk_entrepot = ".$this->entrepot_id;
 			$sql.= " , qty = ".$qty;
 			$sql.= " WHERE rowid = ".$this->id;
-			
-			if (!$this->db->query($sql)) 
+
+			if (!$this->db->query($sql))
 			{
 				$this->errors[]=$this->db->lasterror()." - sql=$sql";
 				$error++;
@@ -2641,7 +2640,7 @@ class ExpeditionLigne extends CommonObjectLine
 				}
 			}
 		}
-		if (! $error && ! $notrigger) 
+		if (! $error && ! $notrigger)
 		{
 			// Call trigger
 			$result=$this->call_trigger('LINESHIPPING_UPDATE',$user);
@@ -2656,7 +2655,7 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->db->commit();
 			return 1;
 		}
-		else 
+		else
 		{
 			foreach($this->errors as $errmsg)
 			{

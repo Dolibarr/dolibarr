@@ -6,7 +6,6 @@ WEBSITE_CSS_URL=URL van extern CSS bestand
 MediaFiles=Mediabibliotheek
 EditMenu=Bewerk menu
 EditPageMeta=Meta bewerken
-Website=Website
 PreviewOfSiteNotYetAvailable=De voorvertoning van uw website <strong>%s</strong> is nog niet beschikbaar. U moet eerst een pagina toevoegen.
 ViewSiteInNewTab=Bekijk de site in een nieuwe tab
 ViewPageInNewTab=Bekijk de pagina in een nieuwe tab

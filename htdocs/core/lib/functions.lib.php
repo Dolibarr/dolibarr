@@ -517,22 +517,31 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			if (preg_match('/[^0-9,]+/i',$out)) $out='';
 			break;
 		case 'alpha':
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				if (preg_match('/"/',$out)) $out='';
+				else if (preg_match('/\.\.\//',$out)) $out='';
+			}
 			break;
 		case 'san_alpha':
 			$out=filter_var($out,FILTER_SANITIZE_STRING);
 			break;
 		case 'aZ':
-			$out=trim($out);
-			if (preg_match('/[^a-z]+/i',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z]+/i',$out)) $out='';
+			}
 			break;
 		case 'aZ09':
-			$out=trim($out);
-			if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+			}
 			break;
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
@@ -541,12 +550,15 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			$out=dol_string_nohtmltag($out);
 			break;
 		case 'alphanohtml':	// Recommended for search params
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
-			$out=dol_string_nohtmltag($out);
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				if (preg_match('/"/',$out)) $out='';
+				else if (preg_match('/\.\.\//',$out)) $out='';
+				$out=dol_string_nohtmltag($out);
+			}
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
@@ -927,10 +939,10 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
 function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
-	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html form content
+	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html tags
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
 	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html form content
+	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html tags
 }
 
 
@@ -4952,7 +4964,7 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8')
 {
-	// TODO Try to replace with strip_tags($stringtoclean)
+	// TODO Try to replace with  strip_tags($stringtoclean)
 	$pattern = "/<[^<>]+>/";
 	$stringtoclean = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
 	$temp = dol_html_entity_decode($stringtoclean,ENT_COMPAT,$pagecodeto);

@@ -35,7 +35,7 @@ AgendaAutoActionDesc= Définissez ici les événements pour lesquels Dolibarr cr
 AgendaSetupOtherDesc= Cette page permet de configurer quelques options permettant d'exporter une vue de votre agenda Dolibarr vers un calendrier externe (Thunderbird, Google calendar, …)
 AgendaExtSitesDesc=Cette page permet d'ajouter des sources de calendriers externes pour les visualiser au sein de l'agenda Dolibarr.
 ActionsEvents=Événements pour lesquels Dolibarr doit insérer un évènement dans l'agenda en automatique.
-EventRemindersByEmailNotEnabled=Les rappels d'événements par courrier électronique n'ont pas été activés dans la configuration du module Agenda.
+EventRemindersByEmailNotEnabled=Les rappels d'événements par email n'ont pas été activés dans la configuration du module Agenda.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tiers %s créé
 ContractValidatedInDolibarr=Contrat %s validé

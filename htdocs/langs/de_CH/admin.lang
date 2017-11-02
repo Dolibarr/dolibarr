@@ -72,7 +72,6 @@ Module400Desc=Projektmanagement, Aufträge oder Leads. Anschliessend können Sie
 Module1200Desc=Mantis-Integation
 Module2000Desc=Texte mit dem WYSIWYG Editor bearbeiten (Basierend auf CKEditor)
 Module3100Desc=Skypebutton bei Kontakten / Drittparteien / Mitgliedern hinzufügen
-Module10000Desc=Erstellen Sie öffentliche Webauftritte mit einem WYSIWIG Editor. Konfigurieren Sie dazu Ihren Webserver so, dass es auf das dedizierte Verzeichnis zeigt um den Webauftritt öffentlich zugänglich zu machen.
 Module50100Desc=Kassenmodul
 Module63000Desc=Resourcen verwalten(Drucker, Autos, Räume,...) diese können dann im Kalender verwendet werden
 Permission26=Angebote schliessen

@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Doppelte Zeilen Fehler ignorieren (INSERT IGNORE)
 AutoDetectLang=Automatische Erkennung (Browser-Sprache)
 FeatureDisabledInDemo=Funktion in der Demoversion deaktiviert
 FeatureAvailableOnlyOnStable=Diese Funktion steht nur in offiziellen stabilen Versionen zur Verfügung
-Rights=Berechtigungen
 BoxesDesc=Boxen sind auf einigen Seiten angezeigte Informationsbereiche. Sie können die Anzeige einer Box einstellen, indem Sie auf die Zielseite klicken und 'Aktivieren' wählen. Zum Ausblenden einer Box klicken Sie einfach auf den Papierkorb.
 OnlyActiveElementsAreShown=Nur Elemente aus <a href="%s">aktiven Module</a> werden angezeigt.
 ModulesDesc=Die Module bestimmen, welche Funktionalität in Dolibarr verfügbar ist. Manche Module erfordern zusätzlich Berechtigungen die Benutzern zugewiesen werden muss, nachdem das Modul aktiviert wurde. \nKlicken Sie auf die Schaltfläche on/off, um ein Modul/Anwendung zu aktivieren. 
@@ -593,7 +592,7 @@ Module5000Desc=Ermöglicht Ihnen die Verwaltung mehrerer Firmen
 Module6000Name=Workflow
 Module6000Desc=Workflow Management
 Module10000Name=Webseiten
-Module10000Desc=Erstelle öffentliche Webseiten mit dem WYSIWYG-Editor.\nDer Webserver muss auf das Verzeichnis verweisen. 
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Urlaubsantrags-Verwaltung
 Module20000Desc=Definieren und beobachten sie die Urlaubsanträge Ihrer Angestellten.
 Module39000Name=Chargen-/ Seriennummern
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Feature-Mails mit der Methode "PHP mail direkt" s
 TranslationSetup=Konfiguration der Übersetzung
 TranslationKeySearch=Übersetzungsschlüssel oder -Zeichenkette suchen
 TranslationOverwriteKey=Überschreiben der Übersetzung
-TranslationDesc=Angezeichten Systemsprachen einstellen:<br>* Systemweit: Menü <strong>Start - Konfiguration - Anzeigen</strong><br>* Nach Benutzer: <strong>Benutzer konfigurieren</strong>Benutzer Karteireiter (Benutzername anklicken ganz oben auf dem Bildschirm).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=Sie können Zeichenketten durch Füllen der folgenden Tabelle überschreiben. Wählen Sie Ihre Sprache aus dem "%s" Drop-Down und tragen Sie den Schlüssel in "%s" und Ihre neue Übersetzung in "%s" ein.
 TranslationOverwriteDesc2=Sie können die andere Registerkarte verwenden, um Ihnen zu helfen, den Übersetzungsschlüssel zu verwenden
 TranslationString=Übersetzung Zeichenkette
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Regel für automatisch erstellte Passwörter
 DisableForgetPasswordLinkOnLogonPage='Passwort vergessen'-Link nicht auf der Anmeldeseite anzeigen
 UsersSetup=Benutzermoduleinstellungen
 UserMailRequired=Für das Erstellen eines neuen Benutzers ist dessen E-Mail-Adresse erforderlich
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=PV Modul Einstellungen
 ##### Company setup #####

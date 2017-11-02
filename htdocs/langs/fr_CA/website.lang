@@ -7,7 +7,6 @@ WEBSITE_CSS_URL=URL du fichier CSS externe
 MediaFiles=Médiathèque
 EditMenu=Menu Edition
 EditPageMeta=Modifier Meta
-Website=Site Internet
 PreviewOfSiteNotYetAvailable=Aperçu de votre site web <strong>%s</strong> n'est pas encore disponible. Vous devez d'abord ajouter une page.
 ViewSiteInNewTab=Afficher le site dans un nouvel onglet
 ViewPageInNewTab=Afficher la page dans un nouvel onglet

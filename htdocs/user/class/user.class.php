@@ -2131,7 +2131,7 @@ class User extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link='<a href="'.$url.'"';
+		$linkstart='<a href="'.$url.'"';
 		$linkclose="";
 		if (empty($notooltip))
 		{
@@ -2154,11 +2154,11 @@ class User extends CommonObject
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
-		$link.=$linkclose.'>';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
 		//if ($withpictoimg == -1) $result.='<div class="nowrap">';
-		$result.=$link;
+		$result.=$linkstart;
 		if ($withpictoimg)
 		{
 		  	$paddafterimage='';
@@ -2185,7 +2185,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Renvoie login clicable (avec eventuellement le picto)
+	 *  Return clickable link of login (eventualy with picto)
 	 *
 	 *	@param	int		$withpicto		Include picto into link
 	 *	@param	string	$option			Sur quoi pointe le lien
@@ -2197,17 +2197,19 @@ class User extends CommonObject
 
 		$result='';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$linkend='</a>';
 
 		if ($option == 'xxx')
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 		}
 
-		if ($withpicto) $result.=($link.img_object($langs->trans("ShowUser"),'user').$linkend.' ');
-		$result.=$link.$this->login.$linkend;
+		$result.=$linkstart;
+		if ($withpicto) $result.=img_object($langs->trans("ShowUser"), 'user', 'class="paddingright"');
+		$result.=$this->login;
+		$result.=$linkend;
 		return $result;
 	}
 

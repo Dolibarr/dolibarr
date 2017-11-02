@@ -341,16 +341,6 @@ abstract class CommonObject
 	// No constructor as it is an abstract class
 
 	/**
-	 * Return if an object manage the multicompany field and how.
-	 *
-	 * @return	int				0=No entity field managed, 1=Test with field entity, 2=Test with link to thirdparty (and sales representative)
-	 */
-	function getIsmultientitymanaged()
-	{
-		return $this->ismultientitymanaged;
-	}
-
-	/**
 	 * Check an object id/ref exists
 	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
 	 *
@@ -3712,8 +3702,7 @@ abstract class CommonObject
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
 			$label = (! empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
-			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
-			else $placeholder=' title="'.$langs->trans("Label").'"';
+			$placeholder=' placeholder="'.$langs->trans("Label").'"';
 
 			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
