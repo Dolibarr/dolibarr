@@ -517,24 +517,31 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			if (preg_match('/[^0-9,]+/i',$out)) $out='';
 			break;
 		case 'alpha':
-			if (!is_string($out))
-			return $out;
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				if (preg_match('/"/',$out)) $out='';
+				else if (preg_match('/\.\.\//',$out)) $out='';
+			}
 			break;
 		case 'san_alpha':
 			$out=filter_var($out,FILTER_SANITIZE_STRING);
 			break;
 		case 'aZ':
-			$out=trim($out);
-			if (preg_match('/[^a-z]+/i',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z]+/i',$out)) $out='';
+			}
 			break;
 		case 'aZ09':
-			$out=trim($out);
-			if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+			}
 			break;
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
@@ -543,12 +550,15 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			$out=dol_string_nohtmltag($out);
 			break;
 		case 'alphanohtml':	// Recommended for search params
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
-			$out=dol_string_nohtmltag($out);
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				if (preg_match('/"/',$out)) $out='';
+				else if (preg_match('/\.\.\//',$out)) $out='';
+				$out=dol_string_nohtmltag($out);
+			}
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
