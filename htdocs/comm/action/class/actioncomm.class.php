@@ -1135,7 +1135,6 @@ class ActionComm extends CommonObject
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
 		}
 
-
 		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1204,10 +1203,13 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="valigntextbottom"':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend;
         }
-        if ($withpicto==1) $result.=' ';
-        $result.=$linkstart.$libelleshort.$linkend;
+
+        $result.=$linkstart;
+        if ($withpicto)	$result.=img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"':'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+        $result.=$libelleshort;
+        $result.=$linkend;
+
         return $result;
     }
 

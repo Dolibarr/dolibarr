@@ -1324,11 +1324,14 @@ class Account extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link = '<a href="'.$url.$linkclose;
-		$linkend='</a>';
+		$linkstart = '<a href="'.$url.$linkclose;
+		$linkend = '</a>';
 
-		if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '').$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
+		$result .= $linkend;
+
 		return $result;
 	}
 
