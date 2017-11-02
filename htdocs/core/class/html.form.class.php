@@ -2564,6 +2564,8 @@ class Form
 
 			$this->db->free($result);
 
+			$out.=ajax_combobox($htmlname);
+
 			if (empty($outputmode)) return $out;
 			return $outarray;
 		}
