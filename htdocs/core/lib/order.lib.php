@@ -61,10 +61,13 @@ function commande_prepare_head(Commande $object)
 	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
 	|| ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire))
 	{
+		$nbShipments=$object->getNbOfShipments(); $nbReceiption=0;
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
 		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipments");
+		if ($nbShipments > 0) $text.= ' <span class="badge">'.$nbShipments.'</span>';
 		if ($conf->expedition_bon->enabled && $conf->livraison_bon->enabled) $text.='/';
 		if ($conf->livraison_bon->enabled)  $text.=$langs->trans("Receivings");
+		if ($nbReceiption > 0) $text.= ' <span class="badge">'.$nbReceiption.'</span>';
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
 		$h++;
