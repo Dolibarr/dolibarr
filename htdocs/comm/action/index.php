@@ -488,7 +488,7 @@ if (! empty($actioncode))
         {
 		if (is_array($actioncode))
 		{
-	        	$sql.=" AND ca.code IN ('".implode("','", $TActionCode)."')";
+	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
 		}
 		else
 		{
