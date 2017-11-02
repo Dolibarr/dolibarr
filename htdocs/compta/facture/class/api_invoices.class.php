@@ -794,7 +794,7 @@ class Invoices extends DolibarrApi
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
      *
-     * @url     POST {id}/addpayment
+     * @url     POST {id}/payments
      *
      * @return int  Payment ID
      * @throws 400
@@ -818,29 +818,29 @@ class Invoices extends DolibarrApi
         }
 
         $request_data = (object) $payment_data;
-        
+
         if (! empty($conf->banque->enabled)) {
             if(empty($accountid)) {
                 throw new RestException(400, 'Account ID is mandatory');
             }
         }
-        
+
         if(empty($paiementid)) {
             throw new RestException(400, 'Paiement ID or Paiement Code is mandatory');
         }
-        
+
 
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Invoice not found');
         }
-        
+
         // Calculate amount to pay
         $totalpaye = $this->invoice->getSommePaiement();
         $totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
         $totaldeposits = $this->invoice->getSumDepositsUsed();
         $resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-        
+
         $this->db->begin();
         // Clean parameters amount if payment is for a credit note
         if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
@@ -857,7 +857,7 @@ class Invoices extends DolibarrApi
             $multicurrency_amounts[$id] = $newvalue;
         }
 
-        
+
         // Creation of payment line
         $paiement = new Paiement($this->db);
         $paiement->datepaye     = $datepaye;
@@ -874,10 +874,10 @@ class Invoices extends DolibarrApi
             $this->db->rollback();
             throw new RestException(400, 'Payment error : '.$paiement->error);
         }
-        
+
         if (! empty($conf->banque->enabled)) {
             $label='(CustomerInvoicePayment)';
-            
+
             if($paiement->paiementcode == 'CHQ' && empty($chqemetteur)) {
                   throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paiement->paiementcode);
             }
