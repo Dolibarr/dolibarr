@@ -710,9 +710,9 @@ class Invoices extends DolibarrApi
      * @throws 405
      */
     function useCreditNote($id, $discountid) {
-    
+
         require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
-        
+
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
         }
@@ -745,7 +745,7 @@ class Invoices extends DolibarrApi
      *
      * @param int   $id             Id of invoice
      *
-     * @url     GET {id}/getpayments
+     * @url     GET {id}/payments
      *
      * @return array
      * @throws 400
@@ -775,7 +775,7 @@ class Invoices extends DolibarrApi
         if( $result < 0) {
                 throw new RestException(405, $this->invoice->error);
         }
-        
+
         return $result;
     }
 
