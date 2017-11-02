@@ -2547,7 +2547,7 @@ class ExpeditionLigne extends CommonObjectLine
 		{
 			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");			
 			
-			if (empty($batch_id) || empty($expedition_batch_id) || empty($this->fk_product)) {
+			if (empty($batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
 				$this->errors[]='ErrorMandatoryParametersNotProvided';
 				$error++;
@@ -2555,7 +2555,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 			// fetch remaining lot qty
 			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-			if (($lotArray = ExpeditionLineBatch::fetchAll($this->db, $this->id)) < 0)
+			if (! $error && ($lotArray = ExpeditionLineBatch::fetchAll($this->db, $this->id)) < 0)
 			{
 				$this->errors[]=$this->db->lasterror()." - ExpeditionLineBatch::fetchAll";
 				$error++;
@@ -2582,34 +2582,34 @@ class ExpeditionLigne extends CommonObjectLine
 					$this->errors[] = $lot->errors;
 					$error++;
 				}
-				else
+				if (! $error && ! empty($expedition_batch_id))
 				{
 					// delete lot expedition line
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
 					$sql.= " WHERE fk_expeditiondet = ".$this->id;
 					$sql.= " AND rowid = ".$expedition_batch_id;
-		
 					if (!$this->db->query($sql))
 					{
 						$this->errors[]=$this->db->lasterror()." - sql=$sql";
 						$error++;
 					}
-					else if ($qty > 0) 
+				}
+				if (! $error && $this->detail_batch->dluo_qty > 0) 
+				{
+					// create lot expedition line
+					if (isset($lot->id)) 
 					{
-						if (isset($lot->id)) 
+						$shipmentLot = new ExpeditionLineBatch($this->db);
+						$shipmentLot->batch = $lot->batch;
+						$shipmentLot->eatby = $lot->eatby;
+						$shipmentLot->sellby = $lot->sellby;
+						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
+						$shipmentLot->dluo_qty = $this->detail_batch->dluo_qty;
+						$shipmentLot->fk_origin_stock = $batch_id;
+						if ($shipmentLot->create($this->id) < 0) 
 						{
-							$shipmentLot = new ExpeditionLineBatch($this->db);
-							$shipmentLot->batch = $lot->batch;
-							$shipmentLot->eatby = $lot->eatby;
-							$shipmentLot->sellby = $lot->sellby;
-							$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
-							$shipmentLot->dluo_qty = $this->detail_batch->dluo_qty;
-							$shipmentLot->fk_origin_stock = $batch_id;
-							if ($shipmentLot->create($this->id) < 0) 
-							{
-								$this->errors[]=$shipmentLot->errors;
-								$error++;
-							}
+							$this->errors[]=$shipmentLot->errors;
+							$error++;
 						}
 					}
 				}
