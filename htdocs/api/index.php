@@ -128,7 +128,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
     foreach ($modulesdir as $dir)
     {
         // Search available module
-        dol_syslog("Scan directory ".$dir." for module descriptor to after search for API files");
+        dol_syslog("Scan directory ".$dir." for module descriptor files, then search for API files");
 
         $handle=@opendir(dol_osencode($dir));
         if (is_resource($handle))
@@ -140,13 +140,13 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                     $module = strtolower($regmod[1]);
                     $moduledirforclass = getModuleDirForApiClass($module);
                     $modulenameforenabled = $module;
-                    if ($module == 'propale') { $moduleforenabled='propal'; }
+                    if ($module == 'propale') { $modulenameforenabled='propal'; }
 
-                    //dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
+                    dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
 
                     // Defined if module is enabled
                     $enabled=true;
-                    if (empty($conf->$moduleforenabled->enabled)) $enabled=false;
+                    if (empty($conf->$modulenameforenabled->enabled)) $enabled=false;
 
                     if ($enabled)
                     {
