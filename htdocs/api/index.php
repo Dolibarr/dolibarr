@@ -235,7 +235,13 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
         if ($module == 'order')    { $classname='Commande'; }
         //var_dump($classfile);var_dump($classname);exit;
 
-        require_once $dir_part_file;
+        $res = include_once $dir_part_file;
+        if (! $res) 
+        {
+        	print 'API not found (failed to include API file)';
+        	header('HTTP/1.1 501 API not found (failed to include API file)');
+        	exit(0);
+        }
         if (class_exists($classname.'Api')) $api->r->addAPIClass($classname.'Api', '/');
     }
     else
@@ -246,7 +252,14 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php');
         $classname=ucwords($module);
 
-        require_once $dir_part_file;
+        $res = include_once $dir_part_file;
+        if (! $res) 
+        {
+        	print 'API not found (failed to include API file)';
+        	header('HTTP/1.1 501 API not found (failed to include API file)');
+        	exit(0);
+        }
+        	
         if (class_exists($classname)) $api->r->addAPIClass($classname);
     }
 }
