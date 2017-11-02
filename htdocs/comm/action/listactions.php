@@ -231,8 +231,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
         else
         {
-        	$TActionCode=(Array)$actioncode;
-        	$sql.=" AND c.code IN ('".implode("','", $TActionCode)."')";
+		if (is_array($actioncode))
+ 		{
+ 	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
+ 		}
+ 		else
+ 		{
+ 	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+ 		}		
         }
     }
 }
