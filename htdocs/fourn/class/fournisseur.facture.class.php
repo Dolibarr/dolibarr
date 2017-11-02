@@ -1497,6 +1497,7 @@ class FactureFournisseur extends CommonInvoice
         else
         {
             $this->error=$this->line->error;
+            $this->errors=$this->line->errors;
             $this->db->rollback();
             return -2;
         }
