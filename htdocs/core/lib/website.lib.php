@@ -294,6 +294,8 @@ function exportWebSite($website)
  */
 function importWebSite($pathtofile)
 {
+	global $db;
+
 	$result = 0;
 
 	$filename = basename($pathtofile);
