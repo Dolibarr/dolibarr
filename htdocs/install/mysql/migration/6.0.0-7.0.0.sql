@@ -494,3 +494,31 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_uniq
 
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
+
+-- SPEC : use database type "double" to store monetary values
+ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
+ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_don MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_expensereport_rules MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_loan MODIFY COLUMN capital double(24,8);
+ALTER TABLE llx_loan MODIFY COLUMN capital_position double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_capital double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_insurance double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_interest double(24,8);
+ALTER TABLE llx_paiementcharge MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_paiementfourn MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_donation MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_expensereport MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_capital double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_insurance double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_interest double(24,8);
+ALTER TABLE llx_payment_salary MODIFY COLUMN salary double(24,8);
+ALTER TABLE llx_payment_salary MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_bons MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_lignes MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_societe MODIFY COLUMN capital double(24,8);
+ALTER TABLE llx_tva MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);
