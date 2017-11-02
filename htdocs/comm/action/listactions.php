@@ -233,11 +233,11 @@ if (! empty($actioncode))
         {
 		if (is_array($actioncode))
  		{
- 	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
+ 	        	$sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
  		}
  		else
  		{
- 	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+ 	        	$sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
  		}		
         }
     }
