@@ -37,6 +37,10 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');       // Do not lo
 if (! defined("NOLOGIN"))        define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 
+// Force entity if a value is provided into HTTP header. Otherwise, will use the entity of user of token used.
+if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
+
+
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
 if (! $res) die("Include of main fails");
@@ -124,7 +128,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
     foreach ($modulesdir as $dir)
     {
         // Search available module
-        dol_syslog("Scan directory ".$dir." for module descriptor to after search for API files");
+        dol_syslog("Scan directory ".$dir." for module descriptor files, then search for API files");
 
         $handle=@opendir(dol_osencode($dir));
         if (is_resource($handle))
@@ -135,14 +139,14 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                 {
                     $module = strtolower($regmod[1]);
                     $moduledirforclass = getModuleDirForApiClass($module);
-                    $moduleforperm = $module;
-                    if ($module == 'propale') { $moduleforperm='propal'; }
+                    $modulenameforenabled = $module;
+                    if ($module == 'propale') { $modulenameforenabled='propal'; }
 
-                    //dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
+                    dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
 
                     // Defined if module is enabled
                     $enabled=true;
-                    if (empty($conf->$moduleforperm->enabled)) $enabled=false;
+                    if (empty($conf->$modulenameforenabled->enabled)) $enabled=false;
 
                     if ($enabled)
                     {
@@ -231,7 +235,13 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
         if ($module == 'order')    { $classname='Commande'; }
         //var_dump($classfile);var_dump($classname);exit;
 
-        require_once $dir_part_file;
+        $res = include_once $dir_part_file;
+        if (! $res) 
+        {
+        	print 'API not found (failed to include API file)';
+        	header('HTTP/1.1 501 API not found (failed to include API file)');
+        	exit(0);
+        }
         if (class_exists($classname.'Api')) $api->r->addAPIClass($classname.'Api', '/');
     }
     else
@@ -242,7 +252,14 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php');
         $classname=ucwords($module);
 
-        require_once $dir_part_file;
+        $res = include_once $dir_part_file;
+        if (! $res) 
+        {
+        	print 'API not found (failed to include API file)';
+        	header('HTTP/1.1 501 API not found (failed to include API file)');
+        	exit(0);
+        }
+        	
         if (class_exists($classname)) $api->r->addAPIClass($classname);
     }
 }

@@ -589,6 +589,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 	}
 
     //dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
+
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;

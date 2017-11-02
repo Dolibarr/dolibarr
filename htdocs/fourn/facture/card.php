@@ -738,38 +738,6 @@ if (empty($reshook))
 					{
 						$error++;
 					}
-
-					if (! $error)
-					{
-						// If some invoice's lines already known
-						for ($i = 1 ; $i < 9 ; $i++)
-						{
-							$label = $_POST['label'.$i];
-							$amountht  = price2num($_POST['amount'.$i]);
-							$amountttc = price2num($_POST['amountttc'.$i]);
-							$tauxtva   = price2num($_POST['tauxtva'.$i]);
-							$qty = $_POST['qty'.$i];
-							$fk_product = $_POST['fk_product'.$i];
-							if ($label)
-							{
-								if ($amountht)
-								{
-									$price_base='HT'; $amount=$amountht;
-								}
-								else
-								{
-									$price_base='TTC'; $amount=$amountttc;
-								}
-								$atleastoneline=1;
-
-								$product=new Product($db);
-								$product->fetch($_POST['idprod'.$i]);
-
-								$ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base, $_POST['rang'.$i], 1);
-								if ($ret < 0) $error++;
-							}
-						}
-					}
 				}
 			}
 		}
@@ -810,7 +778,7 @@ if (empty($reshook))
 			$object->fetch($id);
 	        $object->fetch_thirdparty();
 
-	        $tva_tx = GETPOST('tva_tx');
+	        $tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
 			if (GETPOST('price_ht') != '')
 	    	{
@@ -841,8 +809,16 @@ if (empty($reshook))
 		    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
-	        $localtax1_tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-	        $localtax2_tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
+		    // Define info_bits
+		    $info_bits = 0;
+		    if (preg_match('/\*/', $tva_tx))
+		    	$info_bits |= 0x01;
+
+		    // Define vat_rate
+		    $tva_tx = str_replace('*', '', $tva_tx);
+	        $localtax1_tx= get_localtax($tva_tx, 1, $mysoc,$object->thirdparty);
+	        $localtax2_tx= get_localtax($tva_tx, 2, $mysoc,$object->thirdparty);
+
 	        $remise_percent=GETPOST('remise_percent');
 			$pu_ht_devise = GETPOST('multicurrency_subprice');
 
@@ -857,7 +833,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, 0, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
@@ -1154,7 +1130,7 @@ if (empty($reshook))
 
 
 	// Set invoice to draft status
-	elseif ($action == 'edit' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_edit' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
 	    $object->fetch($id);
 
@@ -1167,7 +1143,33 @@ if (empty($reshook))
 	    // On verifie si aucun paiement n'a ete effectue
 	    if ($resteapayer == $object->total_ttc	&& $object->paye == 0 && $ventilExportCompta == 0)
 	    {
-	        $object->set_draft($user);
+            $idwarehouse = GETPOST('idwarehouse');
+
+            $object->fetch_thirdparty();
+
+            $qualified_for_stock_change=0;
+            if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+            {
+                $qualified_for_stock_change=$object->hasProductsOrServices(2);
+            }
+            else
+            {
+                $qualified_for_stock_change=$object->hasProductsOrServices(1);
+            }
+
+            // Check parameters
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+            {
+                $langs->load("stocks");
+                if (! $idwarehouse || $idwarehouse == -1)
+                {
+                    $error++;
+                    setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+                    $action='';
+                }
+            }
+
+            $object->set_draft($user, $idwarehouse);
 
 	        // Define output language
 	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -1974,14 +1976,57 @@ else
                 $langs->load("stocks");
                 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
                 $formproduct=new FormProduct($db);
-                $formquestion=array(
-                //'text' => $langs->trans("ConfirmClone"),
-                //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
-                //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-                array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+                $warehouse = new Entrepot($db);
+                $warehouse_array = $warehouse->list_array();
+                if (count($warehouse_array) == 1) {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockDecrease", current($warehouse_array)) : $langs->trans("WarehouseForStockIncrease", current($warehouse_array));
+                    $value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+                } else {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+                    $value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+                }
+                $formquestion = array(
+                    array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value)
+                );
             }
 
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1);
+
+        }
+
+        // Confirmation edit (back to draft)
+        if ($action == 'edit')
+        {
+            $formquestion = array();
+
+            $qualified_for_stock_change = 0;
+            if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+            {
+                $qualified_for_stock_change = $object->hasProductsOrServices(2);
+            }
+            else
+            {
+                $qualified_for_stock_change = $object->hasProductsOrServices(1);
+            }
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+            {
+                $langs->load("stocks");
+                require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+                $formproduct = new FormProduct($db);
+                $warehouse = new Entrepot($db);
+                $warehouse_array = $warehouse->list_array();
+                if (count($warehouse_array) == 1) {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("WarehouseForStockIncrease", current($warehouse_array)) : $langs->trans("WarehouseForStockDecrease", current($warehouse_array));
+                    $value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
+                } else {
+                    $label = $object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
+                    $value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
+                }
+                $formquestion = array(
+                    array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value)
+                );
+            }
+            $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateBill'), $langs->trans('ConfirmUnvalidateBill', $object->ref), 'confirm_edit', $formquestion, 1, 1);
 
         }
 
@@ -2606,7 +2651,7 @@ else
         /*
          * Lines
          */
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#addline':'#line_'.GETPOST('lineid')).'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">';
 		print '<input type="hidden" name="mode" value="">';
@@ -2666,7 +2711,7 @@ else
 			{
 
 			    // Modify a validated invoice with no payments
-				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
+				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'confirm_edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a></div>';
 				}
@@ -2699,13 +2744,13 @@ else
 	            }
 
 	            // Make payments
-	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
 	            {
 	                print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account>0?'&amp;accountid='.$object->fk_account:'').'">'.$langs->trans('DoPayment').'</a></div>';	// must use facid because id is for payment id not invoice
 	            }
 
 	            // Classify paid
-	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
 	            {
 	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
 	                print '>'.$langs->trans('ClassifyPaid').'</a></div>';
@@ -2740,7 +2785,7 @@ else
 				}
 
 	            // Validate
-	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
+	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
 	            {
 	                if (count($object->lines))
 	                {
@@ -2765,7 +2810,7 @@ else
 				}
 
 	            // Clone
-	            if ($action != 'edit' && $user->rights->fournisseur->facture->creer)
+	            if ($action != 'confirm_edit' && $user->rights->fournisseur->facture->creer)
 	            {
 	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=clone&amp;socid='.$object->socid.'">'.$langs->trans('ToClone').'</a></div>';
 	            }
@@ -2780,7 +2825,7 @@ else
 				}
 
 	            // Delete
-	            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
+	            if ($action != 'confirm_edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
                     if ($object->getSommePaiement()) {
                         print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
@@ -2790,7 +2835,7 @@ else
 	            }
 	            print '</div>';
 
-	            if ($action != 'edit')
+	            if ($action != 'confirm_edit')
 	            {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 

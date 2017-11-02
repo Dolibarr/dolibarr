@@ -107,7 +107,7 @@ class DolibarrApiAccess implements iAuthenticate
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql.= " WHERE u.api_key = '".$db->escape($api_key)."'";
 			// TODO Check if 2 users has same API key.
-			
+
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -118,9 +118,12 @@ class DolibarrApiAccess implements iAuthenticate
 					$stored_key = $obj->api_key;
 					$userentity = $obj->entity;
 
-					if (! defined("DOLENTITY"))		// If API was not forced with HTTP_DOLENTITY, we set entity to entity of user
+					if (! defined("DOLENTITY") && $conf->entity != ($obj->entity?$obj->entity:1))		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
 					{
 						$conf->entity = ($obj->entity?$obj->entity:1);
+						// We must also reload global conf to get params from the entity
+						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity .") and we have to reload configuration.", LOG_WARNING);
+						$conf->setValues($db);
 					}
 				}
 			}

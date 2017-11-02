@@ -108,10 +108,32 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+		if($this->element === 'invoice_supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
+			$object = new FactureFournisseur($this->db);
+			if($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
 		else if($this->element === 'payment') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 			$object = new Paiement($this->db);
+			if($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
+		else if($this->element === 'payment_supplier') {
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+
+			$object = new PaiementFourn($this->db);
 			if($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
@@ -153,7 +175,7 @@ class BlockedLog
 	 */
 	public function setObjectData(&$object) {
 
-		if($object->element=='payment') {
+		if($object->element=='payment' || $object->element=='payment_supplier') {
 			$this->date_object = $object->datepaye;
 		}
 		else{
@@ -183,13 +205,28 @@ class BlockedLog
 			$this->object_data->note_private= (double) $object->note_private;
 
 		}
-		elseif($this->element==='payment'){
+		if($this->element === 'invoice_supplier') {
+			if(empty($object->thirdparty))$object->fetch_thirdparty();
+			$this->object_data->thirdparty = new stdClass();
+
+			foreach($object->thirdparty as $key=>$value) {
+				if(!is_object($value)) $this->object_data->thirdparty->{$key} = $value;
+			}
+
+			$this->object_data->total_ht 	= (double) $object->total_ht;
+			$this->object_data->total_tva	= (double) $object->total_tva;
+			$this->object_data->total_ttc	= (double) $object->total_ttc;
+			$this->object_data->total_localtax1= (double) $object->total_localtax1;
+			$this->object_data->total_localtax2= (double) $object->total_localtax2;
+			$this->object_data->note_public	= (double) $object->note_public;
+			$this->object_data->note_private= (double) $object->note_private;
+
+		}
+		elseif($this->element==='payment'|| $object->element=='payment_supplier'){
 
 			$this->object_data->amounts = $object->amounts;
 
 		}
-
-
 	}
 
 	/**
@@ -504,6 +541,15 @@ class BlockedLog
 
 		if($this->element === 'payment') {
 			$sql="SELECT amount FROM ".MAIN_DB_PREFIX."paiement WHERE rowid=".$this->fk_object;
+
+			$res = $this->db->query($sql);
+
+			if($res && $obj = $this->db->fetch_object($res)) {
+				$this->amounts = (double) $obj->amount;
+			}
+		}
+		if($this->element === 'payment_supplier') {
+			$sql="SELECT amount FROM ".MAIN_DB_PREFIX."paiementfourn WHERE rowid=".$this->fk_object;
 
 			$res = $this->db->query($sql);
 

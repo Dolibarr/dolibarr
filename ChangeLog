@@ -3,8 +3,33 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 6.0.2 compared to 6.0.1 *****
+***** ChangeLog for 6.0.3 compared to 6.0.2 *****
+FIX: #7211 Update qty dispatched on qty change
+FIX: #7458
+FIX: #7593
+FIX: #7616
+FIX: #7619
+FIX: #7626
+FIX: #7648
+FIX: #7675
+FIX: Agenda events are not exported in the ICAL, VCAL if begin exactly with the same $datestart
+FIX: API to get object does not return data of linked objects
+FIX: Bad localtax apply
+FIX: Bad ressource list in popup in gantt view
+FIX: bankentries search conciliated if val 0
+FIX: hook formObjectOptions() must use $expe and not $object
+FIX: make of link to other object during creation
+FIX: Missing function getLinesArray
+FIX: old batch not shown in multi shipping
+FIX: paid supplier invoices are shown as abandoned
+FIX: selection of thirdparty was lost on stats page of invoices
+FIX: sql syntax error because of old field accountancy_journal
+FIX: Stats on invoices show nothing
+FIX: substitution in ODT of thirdparties documents
+FIX: wrong key in selectarray
+FIX: wrong personnal project time spent
 
+***** ChangeLog for 6.0.2 compared to 6.0.1 *****
 FIX: #7148
 FIX: #7288
 FIX: #7366 renaming table with pgsql
@@ -38,7 +63,6 @@ FIX: wrong basePath in the swagger view
 FIX: Implementation of a Luracast recommandation for the REST api server
 
 ***** ChangeLog for 6.0.1 compared to 6.0.* *****
-
 FIX: #7000 Dashboard link for late pending payment supplier invoices do not work
 FIX: #7325 Default VAT rate when editing template invoices is 0%
 FIX: #7330
@@ -80,7 +104,6 @@ FIX: CVE-2017-9840, CVE-2017-14238, CVE-2017-14239, CVE-2017-14240, CVE-2017-142
      CVE-2017-14242 
 
 ***** ChangeLog for 6.0.0 compared to 5.0.* *****
-
 NEW: Add experimental BlockeLog module (to log business events in a non reversible log file).
 NEW: Add a payment module for Stripe. 
 NEW: Add module "Product variant" (like red, blue for the product shoes)

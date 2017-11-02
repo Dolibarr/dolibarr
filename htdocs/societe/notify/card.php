@@ -180,7 +180,7 @@ if ($result > 0)
         print '</td></tr>';
     }
 
-    if ($object->fournisseur)
+    if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         print '<tr><td class="titlefield">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
