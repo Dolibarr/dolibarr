@@ -428,7 +428,7 @@ class Societe extends CommonObject
 	 *    @param	User	$user       Object of user that ask creation
 	 *    @return   int         		>= 0 if OK, < 0 if KO
 	 */
-	function create($user)
+	function create(User $user)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -725,7 +725,7 @@ class Societe extends CommonObject
 	/**
 	 *      Update parameters of third party
 	 *
-	 *      @param	int		$id              			id societe
+	 *      @param	int		$id              			Id of company (deprecated, use 0 here and call update on an object loaded by a fetch)
 	 *      @param  User	$user            			Utilisateur qui demande la mise a jour
 	 *      @param  int		$call_trigger    			0=non, 1=oui
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
@@ -738,6 +738,8 @@ class Societe extends CommonObject
 	{
 		global $langs,$conf,$hookmanager;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		if (empty($id)) $id = $this->id;
 
 		$error=0;
 
@@ -766,7 +768,7 @@ class Societe extends CommonObject
 		$this->skype		= trim($this->skype);
 		$this->url		= $this->url?clean_url($this->url,0):'';
 		$this->note_private 	= trim($this->note_private);
-        	$this->note_public  	= trim($this->note_public);
+		$this->note_public  	= trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
@@ -882,7 +884,7 @@ class Societe extends CommonObject
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",note_private = ".(! empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
-            		$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+			$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 
 			$sql .= ",siren   = '". $this->db->escape($this->idprof1) ."'";
 			$sql .= ",siret   = '". $this->db->escape($this->idprof2) ."'";
