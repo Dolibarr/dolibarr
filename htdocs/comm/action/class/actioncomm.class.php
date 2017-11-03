@@ -1541,7 +1541,7 @@ class ActionComm extends CommonObject
 
 
     	// Delete also very old past events (we do not keep more than 1 month record in past)
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->jdate($now - (3600 * 24 * 32))."'";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
 		$this->db->query($sql);
 
     	return 0;
