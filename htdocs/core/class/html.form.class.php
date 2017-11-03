@@ -1010,8 +1010,7 @@ class Form
 			$out.='<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
 			else if ($hidelabel > 1) {
-				if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
-				else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					$out.=  img_picto($langs->trans("Search"), 'search');
 				}
@@ -1818,8 +1817,7 @@ class Form
 			}
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
 			else if ($hidelabel > 1) {
-				if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
-				else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					print img_picto($langs->trans("Search"), 'search');
 				}
@@ -2565,6 +2563,8 @@ class Form
 			$out.='</select>';
 
 			$this->db->free($result);
+
+			$out.=ajax_combobox($htmlname);
 
 			if (empty($outputmode)) return $out;
 			return $outarray;
@@ -5642,9 +5642,9 @@ class Form
 
 
 	/**
-	 *	Show a multiselect form from an array.
+	 *	Show a multiselect dropbox from an array.
 	 *
-	 *	@param	string	$htmlname		Name of select
+	 *	@param	string	$htmlname		Name of HTML field
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
 	 *  @param  string  $varpage        Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 *	@return	string					HTML multiselect string

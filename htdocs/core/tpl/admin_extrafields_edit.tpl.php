@@ -37,6 +37,7 @@ $langs->load("modulebuilder");
         	console.log("select new type "+type);
     		var size = jQuery("#size");
     		var computed_value = jQuery("#computed_value");
+    		var langfile = jQuery("#langfile");
     		var default_value = jQuery("#default_value");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
@@ -50,7 +51,7 @@ $langs->load("modulebuilder");
 
     		if (GETPOST('type','alpha') == "separate")
     		{
-				print "jQuery('#size, #default_value').val('').prop('disabled', true);";
+				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
     			print 'jQuery("#value_choice").hide();';
     		}
     		?>
@@ -99,7 +100,8 @@ $langs->load("modulebuilder");
 			if (type == 'separate')
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
-				jQuery('#size, #default_value').val('').prop('disabled', true);
+				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
+				jQuery('#list').val(3);
 			}
 			else
 			{

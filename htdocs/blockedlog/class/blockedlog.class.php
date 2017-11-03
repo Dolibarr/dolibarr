@@ -180,11 +180,11 @@ class BlockedLog
 	public function setObjectData(&$object)
 	{
 		// Set date
-		if($object->element == 'payment' || $object->element == 'payment_supplier')
+		if ($object->element == 'payment' || $object->element == 'payment_supplier')
 		{
 			$this->date_object = $object->datepaye;
 		}
-		if ($object->element=='payment_salary')
+		elseif ($object->element=='payment_salary')
 		{
 			$this->date_object = $object->datev;
 		}

@@ -35,9 +35,10 @@ $langs->load("modulebuilder");
     jQuery(document).ready(function() {
     	function init_typeoffields(type)
     	{
-        	console.log("selected type is "+type);
-    		var size = jQuery("#size");
+        	console.log("We select a new type = "+type);
+        	var size = jQuery("#size");
     		var computed_value = jQuery("#computed_value");
+    		var langfile = jQuery("#langfile");
     		var default_value = jQuery("#default_value");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
@@ -51,7 +52,7 @@ $langs->load("modulebuilder");
 
     		if (GETPOST('type','alpha') == "separate")
     		{
-				print "jQuery('#size, #default_value').val('').prop('disabled', true);";
+				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
     			print 'jQuery("#value_choice").hide();';
     		}
     		?>
@@ -93,7 +94,7 @@ $langs->load("modulebuilder");
 			else if (type == 'chkbxlst') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();jQuery("#helplink").hide();}
 			else if (type == 'link')     { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").show();}
 			else if (type == 'separate') {
-				size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true);
+				langfile.val('').prop('disabled',true);size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true);
 				jQuery("#value_choice").hide();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();
 			}
 			else {	// type = string
@@ -104,12 +105,13 @@ $langs->load("modulebuilder");
 			if (type == 'separate')
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
-				jQuery('#size, #default_value').val('').prop('disabled', true);
+				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
+				jQuery('#list').val(3);
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
+				langfile.removeAttr('disabled');required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
 			}
     	}
     	init_typeoffields('<?php echo GETPOST('type','alpha'); ?>');
@@ -162,7 +164,7 @@ $langs->load("modulebuilder");
 <!-- Position -->
 <tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo GETPOST('pos','int'); ?>"></td></tr>
 <!-- Language file -->
-<tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile','alpha')); ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile','alpha')); ?>"></td></tr>
 <!-- Computed Value -->
 <tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" type="text" name="computed_value" class="quatrevingtpercent" value="<?php echo (GETPOST('computed_value','none')?GETPOST('computed_value','none'):''); ?>"></td></tr>
 <!-- Default Value (at sql setup level) -->

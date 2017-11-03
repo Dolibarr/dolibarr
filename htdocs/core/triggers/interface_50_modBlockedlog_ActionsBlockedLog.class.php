@@ -83,7 +83,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$b=new BlockedLog($this->db);
 		$b->action = $action;
 		$b->amounts= $amounts;
-		$b->setObjectData($object);		// Set field ref_object, fk_object, element, object_data
+		$b->setObjectData($object);		// Set field date_object, ref_object, fk_object, element, object_data
 
 		$res = $b->create($user);
 

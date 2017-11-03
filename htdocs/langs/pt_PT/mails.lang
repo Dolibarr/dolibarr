@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Contactos únicos de empresas
 MailNoChangePossible=Destinatarios de um mailing validado não modificaveis
 SearchAMailing=Procurar um mailing
 SendMailing=Enviar mailing
-SendMail=Enviar e-mail
 SentBy=Enviado por
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Pode enviar em linha adicionando o parâmetro MAILING_LIMIT_SENDBYWEB com um valor número que indica o máximo nº de e-mails enviados por Sessão.

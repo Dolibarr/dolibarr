@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Spesenabrechnung
-ExpenseReports=Spesenabrechnungen
 ShowExpenseReport=Spesenabrechnung anzeigen
 Trips=Spesenabrechnungen
 TripsAndExpenses=Reise- und Fahrtspesen
@@ -12,6 +10,8 @@ ListOfFees=Liste der Spesen
 TypeFees=Gebührenarten
 ShowTrip=Spesenabrechnung anzeigen
 NewTrip=neue Spesenabrechnung
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Besuchter Partner
 FeesKilometersOrAmout=Spesenbetrag bzw. Kilometergeld
 DeleteTrip=Spesenabrechnung löschen
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnlichen Datumsbereich erstellt.
 AucuneLigne=Es wurde noch keine Spesenabrechnung erstellt.

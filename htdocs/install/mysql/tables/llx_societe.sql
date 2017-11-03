@@ -64,7 +64,7 @@ create table llx_societe
   idprof5                  varchar(128),                         		-- IDProf5: nu for france
   idprof6                  varchar(128),                         		-- IDProf6: nu for france
   tva_intra                varchar(20),                         		-- tva
-  capital                  real,                                		-- capital de la societe
+  capital                  double(24,8),                       		-- capital de la societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      	-- commercial statut
   note_private             text,                                		--
   note_public              text,                                        --

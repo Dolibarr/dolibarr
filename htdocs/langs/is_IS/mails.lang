@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Einstök tengiliðum fyrirtækja
 MailNoChangePossible=Viðtakendur fyrir staðfestar póst getur ekki breytt
 SearchAMailing=Leita póstlista
 SendMailing=Senda póst
-SendMail=Senda tölvupóst
 SentBy=Sendur
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Þú getur hins vegar sent þær á netinu með því að bæta breytu MAILING_LIMIT_SENDBYWEB við gildi frá fjölda max tölvupóst þú vilt senda við setu.

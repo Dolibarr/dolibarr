@@ -31,8 +31,14 @@
  */
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
-// Pour autre que bittorrent, on charge environnement + info issus de logon (comme le user)
+// For bittorent link, we don't need to load/check we are into a login session
 if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'bittorrent' && ! defined("NOLOGIN"))
+{
+	define("NOLOGIN",1);
+	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+}
+// For direct external download link, we don't need to load/check we are into a login session
+if (isset($_GET["hashp"]) && ! defined("NOLOGIN"))
 {
 	define("NOLOGIN",1);
 	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
@@ -111,21 +117,23 @@ if (! empty($hashp))
 	$result = $ecmfile->fetch(0, '', '', '', $hashp);
 	if ($result > 0)
 	{
-		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepatch is relative to document directory
+		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepath is relative to document directory
 		$moduleparttocheck = $tmp[0];
 		if ($moduleparttocheck == $modulepart)
 		{
+			// We remove first level of directory
 			$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
 			//var_dump($original_file); exit;
 		}
 		else
 		{
-			accessforbidden('Bad link. File owns to another module part.',0,0,1);
+			accessforbidden('Bad link. File is from another module part.',0,0,1);
 		}
 	}
 	else
 	{
-		accessforbidden('Bad link. File was not found or sharing attribute removed recently.',0,0,1);
+		$langs->load("errors");
+		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"),0,0,1);
 	}
 }
 
@@ -138,30 +146,38 @@ $refname=basename(dirname($original_file)."/");
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file'];               // $fullpath_original_file is now a full path name
 
-// Basic protection (against external users only)
-if ($user->societe_id > 0)
+if (! empty($hashp))
 {
-	if ($sqlprotectagainstexternals)
+	$accessallowed = 1;			// When using hashp, link is public so we force $accessallowed
+}
+else
+{
+	// Basic protection (against external users only)
+	if ($user->societe_id > 0)
 	{
-		$resql = $db->query($sqlprotectagainstexternals);
-		if ($resql)
+		if ($sqlprotectagainstexternals)
 		{
-			$num=$db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
+			$resql = $db->query($sqlprotectagainstexternals);
+			if ($resql)
 			{
-				$obj = $db->fetch_object($resql);
-				if ($user->societe_id != $obj->fk_soc)
+				$num=$db->num_rows($resql);
+				$i=0;
+				while ($i < $num)
 				{
-					$accessallowed=0;
-					break;
+					$obj = $db->fetch_object($resql);
+					if ($user->societe_id != $obj->fk_soc)
+					{
+						$accessallowed=0;
+						break;
+					}
+					$i++;
 				}
-				$i++;
 			}
 		}
 	}

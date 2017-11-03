@@ -553,10 +553,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
 		{
 			// If module name translation exists
-			return $langs->trans("Module".$this->numero."Name");
+			return $langs->transnoentitiesnoconv("Module".$this->numero."Name");
 		}
 		else
 		{
@@ -572,11 +572,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			if ($langs->trans("Module".$this->name."Name") != ("Module".$this->name."Name"))
 			{
 				// If module name translation exists
-				return $langs->trans("Module".$this->name."Name");
+				return $langs->transnoentitiesnoconv("Module".$this->name."Name");
 			}
 
 			// Last chance with simple label
-			return $langs->trans($this->name);
+			return $langs->transnoentitiesnoconv($this->name);
 		}
 	}
 
@@ -591,10 +591,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
 		{
 			// If module description translation exists
-			return $langs->trans("Module".$this->numero."Desc");
+			return $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
 		}
 		else
 		{
@@ -607,7 +607,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				}
 			}
 
-			if ($langs->trans("Module".$this->name."Desc") != ("Module".$this->name."Desc"))
+			if ($langs->transnoentitiesnoconv("Module".$this->name."Desc") != ("Module".$this->name."Desc"))
 			{
 				// If module name translation exists
 				return $langs->trans("Module".$this->name."Desc");
@@ -665,7 +665,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					}
 				}
 
-				$content = $langs->trans($this->descriptionlong);
+				$content = $langs->transnoentitiesnoconv($this->descriptionlong);
 			}
 		}
 
@@ -797,13 +797,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$ret='';
 
 		$newversion=preg_replace('/_deprecated/','',$this->version);
-		if ($newversion == 'experimental') $ret=($translated?$langs->trans("VersionExperimental"):$newversion);
-		elseif ($newversion == 'development') $ret=($translated?$langs->trans("VersionDevelopment"):$newversion);
+		if ($newversion == 'experimental') $ret=($translated?$langs->transnoentitiesnoconv("VersionExperimental"):$newversion);
+		elseif ($newversion == 'development') $ret=($translated?$langs->transnoentitiesnoconv("VersionDevelopment"):$newversion);
 		elseif ($newversion == 'dolibarr') $ret=DOL_VERSION;
 		elseif ($newversion) $ret=$newversion;
-		else $ret=($translated?$langs->trans("VersionUnknown"):'unknown');
+		else $ret=($translated?$langs->transnoentitiesnoconv("VersionUnknown"):'unknown');
 
-		if (preg_match('/_deprecated/',$this->version)) $ret.=($translated?' ('.$langs->trans("Deprecated").')':$this->version);
+		if (preg_match('/_deprecated/',$this->version)) $ret.=($translated?' ('.$langs->transnoentitiesnoconv("Deprecated").')':$this->version);
 		return $ret;
 	}
 
@@ -874,12 +874,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		if ($langs->trans($langstring) == $langstring)
 		{
 			// Translation not found
-			return $langs->trans($this->import_label[$r]);
+			return $langs->transnoentitiesnoconv($this->import_label[$r]);
 		}
 		else
 		{
 			// Translation found
-			return $langs->trans($langstring);
+			return $langs->transnoentitiesnoconv($langstring);
 		}
 	}
 

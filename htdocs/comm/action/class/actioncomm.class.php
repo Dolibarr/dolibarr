@@ -2,8 +2,8 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1135,7 +1135,6 @@ class ActionComm extends CommonObject
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
 		}
 
-
 		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1204,10 +1203,13 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="valigntextbottom"':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend;
         }
-        if ($withpicto==1) $result.=' ';
-        $result.=$linkstart.$libelleshort.$linkend;
+
+        $result.=$linkstart;
+        if ($withpicto)	$result.=img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"':'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+        $result.=$libelleshort;
+        $result.=$linkend;
+
         return $result;
     }
 
@@ -1341,6 +1343,7 @@ class ActionComm extends CommonObject
             {
                 // Note: Output of sql request is encoded in $conf->file->character_set_client
                 // This assignment in condition is not a bug. It allows walking the results.
+				$diff = 0;
                 while ($obj=$this->db->fetch_object($resql))
                 {
                     $qualified=true;
@@ -1377,6 +1380,7 @@ class ActionComm extends CommonObject
                     {
                         $eventarray[]=$event;
                     }
+                    $diff++;
                 }
             }
             else
@@ -1528,9 +1532,17 @@ class ActionComm extends CommonObject
     		return 0;
     	}
 
+    	$now = dol_now();
+
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
+		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
+
+
+    	// Delete also very old past events (we do not keep more than 1 month record in past)
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->jdate($now - (3600 * 24 * 32))."'";
+		$this->db->query($sql);
 
     	return 0;
     }

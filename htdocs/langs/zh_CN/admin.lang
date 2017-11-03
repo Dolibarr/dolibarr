@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignore errors of duplicate record (INSERT IGNORE)
 AutoDetectLang=自动检测(浏览器的语言)
 FeatureDisabledInDemo=功能在演示版中已禁用
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=权限
 BoxesDesc=小组件展示一些可以添加到您个人页面的信息。您可以通过选择目标页面点击“激活”或关闭按钮来选择显示或关闭这些小组件。
 OnlyActiveElementsAreShown=仅显示 <a href="%s">已启用模块</a> 的元素。
 ModulesDesc=Dolibarr modules define which application/feature is enabled in software. Some application/modules require permissions you must grant to users, after activating it. Click on button on/off to enable a module/application.
@@ -593,7 +592,7 @@ Module5000Desc=允许你管理多个公司
 Module6000Name=工作流程
 Module6000Desc=工作流管理
 Module10000Name=网站
-Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=请假申请管理
 Module20000Desc=请假申请提交和跟进管理模块
 Module39000Name=产品库
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail dire
 TranslationSetup=翻译设置
 TranslationKeySearch=搜索翻译键值或字符串
 TranslationOverwriteKey=覆盖翻译字符串
-TranslationDesc=如何设置显示的应用程序的语言 :<br>* 系统侧边栏: 菜单 <strong>主页 - 设置 - 主题</strong><br>* 用户个性主题: <strong>用户看板设置</strong> 菜单在用户个人资料信息卡中 (点击屏幕右上角的用户名).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the translation key string into "%s" and your new translation into "%s"
 TranslationOverwriteDesc2=You can use the other tab to help you know translation key to use
 TranslationString=翻译字符串
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=生成推荐密码和验证密码的规则
 DisableForgetPasswordLinkOnLogonPage=禁用登陆页面的“找回密码”功能超链接
 UsersSetup=用户模块设置
 UserMailRequired=新创建用户时需要输入电子邮箱地址
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=人力资源管理模块设置
 ##### Company setup #####

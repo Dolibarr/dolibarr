@@ -13,3 +13,5 @@ TJM=Average daily rate
 CurrentSalary=Τρέχον μισθός
 THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
 TJMDescription=Αυτή η τιμή εμφανίζεται μόνο σαν πληροφορία και δεν χρησιμοποιείται για κανένα υπολογισμό
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

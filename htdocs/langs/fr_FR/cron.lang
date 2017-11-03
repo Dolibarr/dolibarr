@@ -61,7 +61,7 @@ CronStatusInactiveBtn=Désactiver
 CronTaskInactive=Cette tâche est désactivée
 CronId=Id
 CronClassFile=Nom de fichier intégrant la classe
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronModuleHelp=Nom du dossier du module dans Dolibarr (fonctionne aussi avec les modules externes). <BR>Par exemple, pour appeler la méthode d'appel des produits Dolibarr /htdocs/<u>product</u>/class/product.class.php, la valeur du module est <br><i>product</i>.
 CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
 CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
 CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
@@ -72,7 +72,7 @@ CronFrom=A partir du
 # Info
 # Common
 CronType=Type de travail planifié
-CronType_method=Méthode d'appel de la classe PHP
+CronType_method=Appelle d'une méthode d'une classe Dolibarr
 CronType_command=Commande terminal
 CronCannotLoadClass=Impossible de charger la classe %s ou l'objet %s
 UseMenuModuleToolsToAddCronJobs=Aller à la page "Accueil - Outils administration - Travaux planifiées" pour voir la listes des travaux programmées et les modifier.

@@ -567,7 +567,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 				$input_files.=' '.escapeshellarg($f);
 			}
 
-			$cmd = 'pdftk '.$input_files.' cat output '.escapeshellarg($file);
+			$cmd = 'pdftk '.escapeshellarg($input_files).' cat output '.escapeshellarg($file);
 			exec($cmd);
 
 			if (! empty($conf->global->MAIN_UMASK))

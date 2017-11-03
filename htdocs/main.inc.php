@@ -1618,7 +1618,6 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$selected=-1;
 			$usedbyinclude=1;
 			include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
-			$conf->global->MAIN_HTML5_PLACEHOLDER=1;
 
 			foreach($arrayresult as $key => $val)
 			{
@@ -1818,7 +1817,8 @@ function getHelpParamFor($helppagename,$langs)
 
 
 /**
- *  Show a search area
+ *  Show a search area.
+ *  Used when the javascript quick search is not used.
  *
  *  @param  string	$urlaction          Url post
  *  @param  string	$urlobject          Url of the link under the search box
@@ -1832,7 +1832,7 @@ function getHelpParamFor($helppagename,$langs)
  */
 function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='')
 {
-	global $conf,$langs;
+	global $conf,$langs,$user;
 
 	if (empty($htmlinputid)) {
 		$htmlinputid = $htmlinputname;
@@ -1840,26 +1840,13 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 
 	$ret='';
 	$ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
-	if (empty($conf->global->MAIN_HTML5_PLACEHOLDER))
-	{
-		$ret.='<div class="menu_titre menu_titre_search"';
-		if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
-		$ret.='>';
-		$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
-		$ret.='<a class="vsmenu" href="'.$urlobject.'">';
-	   	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
-	   	else if ($img || $title) $ret.=$img.' '.$title;
-		$ret.='</a>';
-		$ret.='</label>';
-		$ret.='</div>';
-	}
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
+	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	$ret.='<input type="text" class="flat '.$htmlmorecss.'"';
-	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
+	$ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
-	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.strip_tags($title).'"';		// Will work only if MAIN_HTML5_PLACEHOLDER is set to 1
-	else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
+	$ret.=' placeholder="'.strip_tags($title).'"';
 	$ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
 	$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
 	$ret.="</form>\n";

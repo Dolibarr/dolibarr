@@ -13,3 +13,5 @@ TJM=Average daily rate
 CurrentSalary=เงินเดือนปัจจุบัน
 THMDescription=ค่านี้อาจจะใช้ในการคำนวณค่าใช้จ่ายของเวลาที่ใช้ในโครงการที่ป้อนโดยผู้ใช้หากโครงการโมดูลถูกนำมาใช้
 TJMDescription=ค่านี้เป็นในปัจจุบันเป็นข้อมูลเท่านั้นและไม่ได้ใช้ในการคำนวณใด ๆ
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

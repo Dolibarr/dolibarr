@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013 Florian Henry  <florian.henry@open-concept.pro>
- * Copyright (C) 2013 Juanjo Menent  <jmenent@2byte.es>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2013 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015 Frederic France	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter",$max));
 
-		if ($user->rights->ficheinter->lire)
+		if (! empty($user->rights->ficheinter->lire))
 		{
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut,";
 			$sql.= " f.datec,";

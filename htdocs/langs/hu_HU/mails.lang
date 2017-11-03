@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Egyedi kapcsolatok a vállalatok
 MailNoChangePossible=A címzettek validált emailing nem lehet megváltoztatni
 SearchAMailing=Keresés levelezési
 SendMailing=Küldés e-mailezés
-SendMail=E-mail küldése
 SentBy=Által küldött
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Ön azonban elküldheti őket az interneten hozzáadásával paraméter MAILING_LIMIT_SENDBYWEB az értéke max e-mailek száma szeretne küldeni a session. Ehhez menj a Home - telepítés - Más.

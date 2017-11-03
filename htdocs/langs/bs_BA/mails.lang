@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Jedinstveni kontakti/adrese
 MailNoChangePossible=Primaoci za potvrđenu e-poštu ne mogu biti promijenjeni
 SearchAMailing=Traži e-poštu
 SendMailing=Pošalji e-poštu
-SendMail=Pošalji e-mail
 SentBy=Poslano od
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Možete ih poslati online dodavanjem parametra MAILING_LIMIT_SENDBYWEB sa vrijednosti za maksimalni broj e-mailova koje želite poslati po sesiji. Za ovo idite na Početna - Postavke - Ostalo

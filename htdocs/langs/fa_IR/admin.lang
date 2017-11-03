@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignore errors of duplicate record (INSERT IGNORE)
 AutoDetectLang=آشکارسازی خودکار (زبان مرورگر)
 FeatureDisabledInDemo=از ویژگی های غیر فعال در نسخه ی نمایشی
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=مجوز
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=تنها عناصر از <a href="%s">ماژول های فعال</a> نمایش داده می شود.
 ModulesDesc=Dolibarr modules define which application/feature is enabled in software. Some application/modules require permissions you must grant to users, after activating it. Click on button on/off to enable a module/application.
@@ -593,7 +592,7 @@ Module5000Desc=اجازه می دهد تا به شما برای مدیریت ش�
 Module6000Name=گردش کار
 Module6000Desc=مدیریت گردش کار
 Module10000Name=Websites
-Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Leave Requests management
 Module20000Desc=Declare and follow employees leaves requests
 Module39000Name=Product lot
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail dire
 TranslationSetup=Setup of translation
 TranslationKeySearch=Search a translation key or string
 TranslationOverwriteKey=Overwrite a translation string
-TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: <strong>User display setup</strong> tab of user card (click on username at the top of the screen).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the translation key string into "%s" and your new translation into "%s"
 TranslationOverwriteDesc2=You can use the other tab to help you know translation key to use
 TranslationString=Translation string
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=حکومت برای تولید کلمه عبور پی�
 DisableForgetPasswordLinkOnLogonPage=آیا لینک را نشان نمی دهد "فراموش کردن رمز عبور» در صفحه ورود
 UsersSetup=راه اندازی ماژول کاربران
 UserMailRequired=ایمیل مورد نیاز برای ایجاد یک کاربر جدید
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=HRM module setup
 ##### Company setup #####

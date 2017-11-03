@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Numero contatti di società
 MailNoChangePossible=I destinatari convalidati non possono essere modificati
 SearchAMailing=Cerca invio
 SendMailing=Invia email massiva
-SendMail=Invia una email
 SentBy=Inviato da
 MailingNeedCommand=L'invio di un mailing si può fare da linea di comando. Chiedi all'amministratore del server di eseguire il seguente comando per inviare il mailing a tutti i destinatari:
 MailingNeedCommand2=Puoi inviare comunque online aggiungendo il parametro MAILING_LIMIT_SENDBYWEB impostato al valore massimo corrispondente al numero di email che si desidera inviare durante una sessione.

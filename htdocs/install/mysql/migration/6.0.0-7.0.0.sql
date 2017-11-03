@@ -353,6 +353,7 @@ ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
 -- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list != 3;		
 
 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
 --VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN list SET DEFAULT 1;
@@ -460,6 +461,26 @@ UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMB
 UPDATE llx_accounting_system SET fk_country = 12 WHERE pcg_version = 'PCG';
 
 
+
+CREATE TABLE llx_actioncomm_reminder(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	dateremind datetime NOT NULL, 
+	typeremind varchar(32) NOT NULL, 
+	fk_user integer NOT NULL, 
+	offsetvalue integer NOT NULL, 
+	offsetunit varchar(1) NOT NULL,
+	status integer NOT NULL DEFAULT 0
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_rowid (rowid);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_dateremind (dateremind);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_user (fk_user);
+
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_user, typeremind, offsetvalue, offsetunit);
+
+
 -- VPGSQL8.2 CREATE SEQUENCE llx_supplier_proposal_rowid_seq;
 -- VPGSQL8.2 ALTER TABLE llx_supplier_proposal ALTER COLUMN rowid SET DEFAULT nextval('llx_supplier_proposal_rowid_seq');
 -- VPGSQL8.2 ALTER TABLE llx_supplier_proposal ALTER COLUMN rowid SET NOT NULL;
@@ -476,3 +497,31 @@ ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
 
 ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER accountancy_code_sell;
 ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
+
+-- SPEC : use database type "double" to store monetary values
+ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
+ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_don MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_expensereport_rules MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_loan MODIFY COLUMN capital double(24,8);
+ALTER TABLE llx_loan MODIFY COLUMN capital_position double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_capital double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_insurance double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_interest double(24,8);
+ALTER TABLE llx_paiementcharge MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_paiementfourn MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_donation MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_expensereport MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_capital double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_insurance double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_interest double(24,8);
+ALTER TABLE llx_payment_salary MODIFY COLUMN salary double(24,8);
+ALTER TABLE llx_payment_salary MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_bons MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_lignes MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_societe MODIFY COLUMN capital double(24,8);
+ALTER TABLE llx_tva MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);

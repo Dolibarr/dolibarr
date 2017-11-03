@@ -17,4 +17,4 @@ rate=rate
 MulticurrencyReceived=Mottatt, originalvaluta
 MulticurrencyRemainderToTake=Restbeløp, opprinnelig valuta
 MulticurrencyPaymentAmount=Beløp, original valuta
-AmountToOthercurrency=Amount To (in currency of receiving account)
+AmountToOthercurrency=Beløp til (i valuta for mottakskonto)
