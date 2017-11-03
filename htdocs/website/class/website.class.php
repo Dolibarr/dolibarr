@@ -44,7 +44,11 @@ class Website extends CommonObject
 	 */
 	public $table_element = 'website';
 	/**
-	 * @var string String with name of icon for websiteaccount. Must be the part after the 'object_' into object_myobject.png
+	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 */
+	public $ismultientitymanaged = 1;
+	/**
+	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'globe';
 

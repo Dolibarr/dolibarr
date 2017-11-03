@@ -488,12 +488,10 @@ while ($i < min($num, $limit))
 			if ($key == 'status') $align.=($align?' ':'').'center';
 			if (! empty($arrayfields['t.'.$key]['checked']))
 			{
-				print '<td'.($align?' class="'.$align.'"':'').'>';
-				if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
-				elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
-				elseif ($key == 'ref') print $object->getNomUrl(1, '', 0, '', 1);
-				elseif ($key == 'status') print $object->getLibStatut(3);
-				else print $obj->$key;
+				print '<td';
+				if ($align) print ' class="'.$align.'"';
+				print '>';
+				print $object->showOutputField($val, $key, $obj->$key, '');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 				if (! empty($val['isameasure']))
@@ -510,12 +508,12 @@ while ($i < min($num, $limit))
 	   {
 			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
-				print '<td';
 				$align=$extrafields->getAlignFlag($key);
+				print '<td';
 				if ($align) print ' align="'.$align.'"';
 				print '>';
 				$tmpkey='options_'.$key;
-				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+				print $extrafields->showOutputField($key, $obj->$tmpkey, '');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 				if (! empty($val['isameasure']))

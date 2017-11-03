@@ -209,10 +209,10 @@ function societe_prepare_head(Societe $object)
     if (! empty($conf->website->enabled) && (!empty($user->rights->societe->lire) ))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("WebSites");
+    	$head[$h][1] = $langs->trans("WebSiteAccounts");
     	$nbNote = 0;
     	$sql = "SELECT COUNT(n.rowid) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as n";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."website_account as n";
     	$sql.= " WHERE fk_soc = ".$object->id;
     	$resql=$db->query($sql);
     	if ($resql)

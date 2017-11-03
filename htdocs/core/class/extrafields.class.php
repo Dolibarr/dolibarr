@@ -1315,7 +1315,7 @@ class ExtraFields
 	 *
 	 * @param   string	$key            Key of attribute
 	 * @param   string	$value          Value to show
-	 * @param	string	$moreparam		To add more parametes on html input tag (only checkbox use html input for output rendering)
+	 * @param	string	$moreparam		To add more parameters on html input tag (only checkbox use html input for output rendering)
 	 * @return	string					Formated value
 	 */
 	function showOutputField($key,$value,$moreparam='')
@@ -1334,7 +1334,7 @@ class ExtraFields
 		$perms=$this->attribute_perms[$key];
 		$langfile=$this->attribute_langfile[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=(abs($list)!=1 ? 1 : 0);
+		$hidden=(($list != 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 

@@ -42,7 +42,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
-		// Discard if extrafield is a hidden field
+		// Discard if extrafield is a hidden field on form
 		if (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 1) continue;
 
 		// Load language if required
