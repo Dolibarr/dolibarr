@@ -175,9 +175,14 @@ if (empty($reshook))
 					}
 				}
 
-				// TODO Merge categories
+				// Merge categories
+				$static_cat = new Categorie($db);
+				$custcats = $static_cat->containing($soc_origin->id, 'customer', 'id');
+				$object->setCategories($custcats, 'customer');
+				$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+				$object->setCategories($suppcats, 'supplier');
 
-
+				// Update
 				$object->update($object->id, $user);
 
 				// Move links
