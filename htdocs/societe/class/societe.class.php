@@ -1463,11 +1463,11 @@ class Societe extends CommonObject
 				// Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
 				if ($this->client || $this->prospect)
 				{
-					$toute_categs['societe'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
+					$toute_categs['customer'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
 				}
 				if ($this->fournisseur)
 				{
-					$toute_categs['fournisseur'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
+					$toute_categs['supplier'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
 				}
 
 				// Remove each "Categorie"
