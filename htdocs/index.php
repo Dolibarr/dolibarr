@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -265,23 +265,23 @@ if (empty($user->societe_id))
 	    // Dashboard Link lines
 	    $links=array(
 	        DOL_URL_ROOT.'/user/index.php',
-    	    DOL_URL_ROOT.'/societe/list.php?type=c',
-    	    DOL_URL_ROOT.'/societe/list.php?type=p',
-    	    DOL_URL_ROOT.'/societe/list.php?type=f',
-    	    DOL_URL_ROOT.'/contact/list.php',
+    	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
+    	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
+    	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
+    	    DOL_URL_ROOT.'/contact/list.php?mainmenu=companies',
     	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
     	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
-    	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
-    	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
-    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
-    	    DOL_URL_ROOT.'/contrat/list.php',
-    	    DOL_URL_ROOT.'/fichinter/list.php',
-    	    DOL_URL_ROOT.'/fourn/commande/list.php',
-	        DOL_URL_ROOT.'/fourn/facture/list.php',
-	        DOL_URL_ROOT.'/supplier_proposal/list.php',
+    	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
+    	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial&leftmenu=orders',
+    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy&leftmenu=customers_bills',
+    	    DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
+    	    DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=ficheinter',
+    	    DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers',
+	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=accountancy&leftmenu=suppliers_bills',
+	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
-    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm',
+    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
 			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
@@ -375,7 +375,7 @@ if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	$board=new ActionComm($db);
-	
+
 	$dashboardlines[] = $board->load_board($user);
 }
 
@@ -688,13 +688,13 @@ $db->close();
 function showWeather($totallate,$text,$options)
 {
     global $conf;
-    
+
     $out='';
     $offset=0;
     $factor=10; // By default
 
     $used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
-    
+
     $level0=$offset;           if (! empty($conf->global->{$used_conf.'0'})) $level0=$conf->global->{$used_conf.'0'};
     $level1=$offset+1*$factor; if (! empty($conf->global->{$used_conf.'1'})) $level1=$conf->global->{$used_conf.'1'};
     $level2=$offset+2*$factor; if (! empty($conf->global->{$used_conf.'2'})) $level2=$conf->global->{$used_conf.'2'};

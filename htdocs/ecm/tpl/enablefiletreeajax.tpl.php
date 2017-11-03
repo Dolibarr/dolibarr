@@ -26,8 +26,6 @@
 <?php
 if (empty($module)) $module='ecm';
 
-print 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working2.gif".'\';'."\n";
-
 $openeddir='/';
 ?>
 

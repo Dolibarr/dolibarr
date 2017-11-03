@@ -386,7 +386,7 @@ class Account extends CommonObject
 	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
 	 *
 	 *  @param	int	        $date			Date operation
-	 *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
+	 *  @param	string		$oper			1,2,3,4... (deprecated) or 'TYP','VIR','PRE','LIQ','VAD','CB','CHQ'...
 	 *  @param	string		$label			Descripton
 	 *  @param	float		$amount			Amount
 	 *  @param	string		$num_chq		Numero cheque ou virement
@@ -1324,11 +1324,14 @@ class Account extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link = '<a href="'.$url.$linkclose;
-		$linkend='</a>';
+		$linkstart = '<a href="'.$url.$linkclose;
+		$linkend = '</a>';
 
-		if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '').$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
+		$result .= $linkend;
+
 		return $result;
 	}
 

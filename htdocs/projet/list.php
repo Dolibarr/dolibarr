@@ -137,7 +137,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
    foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
    }
 }
 
@@ -607,8 +607,9 @@ if (! empty($arrayfields['p.fk_statut']['checked']))
 	print '<td class="liste_titre nowrap" align="right">';
 	$arrayofstatus = array();
 	foreach($object->statuts_short as $key => $val) $arrayofstatus[$key]=$langs->trans($val);
-	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	$arrayofstatus['99']=$langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 selectarrowonleft');
+	print ajax_combobox('search_status');
 	print '</td>';
 }
 // Action column
@@ -668,6 +669,7 @@ while ($i < min($num,$limit))
 	$object->datee = $db->jdate($obj->date_end);
 	$object->statut = $obj->fk_statut;
 	$object->opp_status = $obj->fk_opp_status;
+	$object->title = $obj->title;
 
 	$userAccess = $object->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)

@@ -296,9 +296,11 @@ if (empty($reshook))
             // some hooks
             if (empty($reshook)) {
                 $result = $object->insertExtraFields();
-                if ($result < 0) {
-                    $error++;
-                }
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
             } else if ($reshook < 0)
                 $error++;
         }
@@ -2396,8 +2398,8 @@ if ($action != 'presend')
 		$filename	=	dol_sanitizeFileName($object->ref);
 		$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed	=	1;
-		$delallowed	=	1;
+		$genallowed	=	$user->rights->expensereport->export;
+		$delallowed	=	$user->rights->expensereport->export;
 		$var 		= 	true;
 		print $formfile->showdocuments('expensereport',$filename,$filedir,$urlsource,$genallowed,$delallowed);
 		$somethingshown = $formfile->numoffiles;

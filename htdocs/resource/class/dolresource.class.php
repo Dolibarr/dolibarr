@@ -169,10 +169,11 @@ class Dolresource extends CommonObject
     /**
      *    Load object in memory from database
      *
-     *    @param      int	$id          id object
-     *    @return     int         <0 if KO, >0 if OK
+     *    @param    int		$id     Id of object
+     *    @param	string	$ref	Ref of object
+     *    @return   int         	<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id, $ref='')
     {
     	global $langs;
     	$sql = "SELECT";
@@ -187,7 +188,8 @@ class Dolresource extends CommonObject
     	$sql.= " ty.label as type_label";
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
-    	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
+    	if ($id) $sql.= " WHERE t.rowid = ".$this->db->escape($id);
+    	else $sql.= " WHERE t.ref = '".$this->db->escape($ref)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
     	$resql=$this->db->query($sql);
@@ -750,75 +752,6 @@ class Dolresource extends CommonObject
     	}
     	return 0;
     }
-
-    /**
-     *      Load properties id_previous and id_next
-     *
-     *      @param	string	$filter		Optional filter
-     *	    @param  	int		$fieldid   	Name of field to use for the select MAX and MIN
-     *	    @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     *      @return int         		<0 if KO, >0 if OK
-     */
-    function load_previous_next_ref($filter, $fieldid, $nodbprefix =0)
-    {
-    	global $conf, $user;
-
-    	if (! $this->table_element)
-    	{
-    		dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
-    		return -1;
-    	}
-
-    	// this->ismultientitymanaged contains
-    	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    	$alias = 's';
-
-
-    	$sql = "SELECT MAX(te.".$fieldid.")";
-    	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
-    	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-    	if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
-    	$sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->id)."'";
-    	if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
-    	if (! empty($filter)) $sql.=" AND ".$filter;
-    	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-    	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
-
-    	//print $sql."<br>";
-    	$result = $this->db->query($sql);
-    	if (! $result)
-    	{
-    		$this->error=$this->db->error();
-    		return -1;
-    	}
-    	$row = $this->db->fetch_row($result);
-    	$this->ref_previous = $row[0];
-
-
-    	$sql = "SELECT MIN(te.".$fieldid.")";
-    	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
-    	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-    	if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
-    	$sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->id)."'";
-    	if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
-    	if (! empty($filter)) $sql.=" AND ".$filter;
-    	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-    	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
-    	// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
-
-    	//print $sql."<br>";
-    	$result = $this->db->query($sql);
-    	if (! $result)
-    	{
-    		$this->error=$this->db->error();
-    		return -2;
-    	}
-    	$row = $this->db->fetch_row($result);
-    	$this->ref_next = $row[0];
-
-    	return 1;
-    }
-
 
     /**
      *  Update element resource into database

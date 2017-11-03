@@ -438,8 +438,11 @@ class Form
 
 		$s='';$textfordialog='';
 
-		$htmltext=str_replace('"',"&quot;",$htmltext);
-		if ($tooltiptrigger != '')
+		if ($tooltiptrigger == '')
+		{
+			$htmltext=str_replace('"',"&quot;",$htmltext);
+		}
+		else
 		{
 			$classfortooltip='classfortooltiponclick';
 			$textfordialog.='<div style="display: none;" id="idfortooltiponclick_'.$tooltiptrigger.'" class="classfortooltiponclicktext">'.$htmltext.'</div>';
@@ -501,7 +504,7 @@ class Form
 		global $conf, $langs;
 
 		$alt = '';
-		if ($tooltiptrigger) $alt=$langs->trans("ClickToShowHelp");
+		if ($tooltiptrigger) $alt=$langs->transnoentitiesnoconv("ClickToShowHelp");
 
 		//For backwards compatibility
 		if ($type == '0') $type = 'info';
@@ -724,7 +727,7 @@ class Form
 	 *  @param	string	$page       			Defined the form action
 	 *  @param  string	$htmlname       		Name of html select object
 	 *  @param  string	$htmloption     		Options html on select object
-	 * 	@param	int		$forcecombo				Force to use standard combo box (no ajax use)
+	 * 	@param	int		$forcecombo				Force to load all values and output a standard combobox (with no beautification)
 	 *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @return string           				HTML string with select and input
 	 */
@@ -956,7 +959,7 @@ class Form
 	 *  @param		int			$filter					Filter on thirdparty
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
-	 * 	@param		int			$forcecombo				Force to use combo box
+	 * 	@param		int			$forcecombo				Force to load all values and output a standard combobox (with no beautification)
 	 *  @return		string								Return select box for thirdparty.
 	 *  @deprecated	3.8 Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
 	 */
@@ -973,7 +976,7 @@ class Form
 	 *  @param  string	$filter         		optional filters criteras (example: 's.rowid <> x', 's.client IN (1,3)')
 	 *	@param	string	$showempty				Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
 	 * 	@param	int		$showtype				Show third party type in combolist (customer, prospect or supplier)
-	 * 	@param	int		$forcecombo				Force to use combo box
+	 * 	@param	int		$forcecombo				Force to load all values and output a standard combobox (with no beautification)
 	 *  @param	array	$events					Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *	@param	int		$limit					Maximum number of elements
 	 *  @param	string	$morecss				Add more css styles to the SELECT component
@@ -1004,20 +1007,15 @@ class Form
 			// mode 1
 			$urloption='htmlname='.$htmlname.'&outjson=1&filter='.$filter.($showtype?'&showtype='.$showtype:'');
 			$out.=  ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-			$out.='<style type="text/css">
-					.ui-autocomplete {
-						z-index: 250;
-					}
-				</style>';
+			$out.='<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
 			else if ($hidelabel > 1) {
-				if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
-				else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					$out.=  img_picto($langs->trans("Search"), 'search');
 				}
 			}
-			$out.=  '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
+			$out.= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' '.(!empty($conf->global->THIRDPARTY_SEARCH_AUTOFOCUS) ? 'autofocus' : '').' />';
 			if ($hidelabel == 3) {
 				$out.=  img_picto($langs->trans("Search"), 'search');
 			}
@@ -1040,7 +1038,7 @@ class Form
 	 *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
 	 *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
-	 * 	@param	int		$forcecombo		Force to use combo box
+	 * 	@param	int		$forcecombo		Force to use standard HTML select component without beautification
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	string	$filterkey		Filter on key value
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array
@@ -1149,16 +1147,22 @@ class Form
 						if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
 						if ($obj->client || $obj->fournisseur) $label.=')';
 					}
-					if ($selected > 0 && $selected == $obj->rowid)
+
+					if (empty($outputmode))
 					{
-						$out.= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
+						if ($selected > 0 && $selected == $obj->rowid)
+						{
+							$out.= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
+						}
+						else
+						{
+							$out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+						}
 					}
 					else
 					{
-						$out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
 					}
-
-					array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
 
 					$i++;
 					if (($i % 10) == 0) $out.="\n";
@@ -1813,8 +1817,7 @@ class Form
 			}
 			if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
 			else if ($hidelabel > 1) {
-				if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
-				else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+				$placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
 				if ($hidelabel == 2) {
 					print img_picto($langs->trans("Search"), 'search');
 				}
@@ -2560,6 +2563,8 @@ class Form
 			$out.='</select>';
 
 			$this->db->free($result);
+
+			$out.=ajax_combobox($htmlname);
 
 			if (empty($outputmode)) return $out;
 			return $outarray;
@@ -4519,6 +4524,8 @@ class Form
 	{
 		global $langs,$conf,$mysoc;
 
+		$langs->load('errors');
+
 		$return='';
 
 		// Define defaultnpr, defaultttx and defaultcode
@@ -4687,7 +4694,7 @@ class Form
 	 *
 	 *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
 	 *	@param	string		$prefix			Prefix for fields name
-	 *	@param	int			$h				1=Show also hours
+	 *	@param	int			$h				1=Show also hours (-1 has same effect, but hour and minutes are prefilled with 23:59 if $set_time = -1)
 	 *	@param	int			$m				1=Show also minutes
 	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 *	@param	string		$form_name 		Not used
@@ -4742,6 +4749,13 @@ class Form
 			{
 				$shour = dol_print_date($set_time, "%H");
 				$smin = dol_print_date($set_time, "%M");
+				$ssec = dol_print_date($set_time, "%S");
+			}
+			else
+			{
+				$shour = '';
+				$smin = '';
+				$ssec = '';
 			}
 		}
 		else
@@ -4750,8 +4764,9 @@ class Form
 			$syear = '';
 			$smonth = '';
 			$sday = '';
-			$shour = !isset($conf->global->MAIN_DEFAULT_DATE_HOUR) ? '' : $conf->global->MAIN_DEFAULT_DATE_HOUR;
-			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? '' : $conf->global->MAIN_DEFAULT_DATE_MIN;
+			$shour = !isset($conf->global->MAIN_DEFAULT_DATE_HOUR) ? ($h == -1 ? '23' : '') : $conf->global->MAIN_DEFAULT_DATE_HOUR;
+			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
+			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
 		}
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
@@ -4932,6 +4947,8 @@ class Form
 				$retstring.='<option value="'.$min.'"'.(($min == $smin)?' selected':'').'>'.$min.(empty($conf->dol_optimize_smallscreen)?'':'').'</option>';
 			}
 			$retstring.='</select>';
+
+			$retstring.='<input type="hidden" name="'.$prefix.'sec" value="'.$ssec.'">';
 		}
 
 		// Add a "Now" link
@@ -5113,6 +5130,202 @@ class Form
 
 
 	/**
+	 * Generic method to select a component from a combo list.
+	 * This is the generic method that will replace all specific existing methods.
+	 *
+	 * @param 	string			$objectdesc			Objectclassname:Objectclasspath
+	 * @param	string			$htmlname			Name of HTML select component
+	 * @param	int				$preselectedvalue	Preselected value (ID of element)
+	 * @param	string			$showempty			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param	string			$searchkey			Search criteria
+	 * @param	string			$placeholder		Place holder
+	 * @param	string			$morecss			More CSS
+	 * @param	string			$moreparams			More params provided to ajax call
+	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
+	 * @return	string								Return HTML string
+	 * @see selectForFormsList select_thirdparty
+	 */
+	function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty='', $searchkey='', $placeholder='', $morecss='', $moreparams='', $forcecombo=0)
+	{
+		global $conf, $user;
+
+		$objecttmp = null;
+
+		$InfoFieldList = explode(":", $objectdesc);
+		$classname=$InfoFieldList[0];
+		$classpath=$InfoFieldList[1];
+		if (! empty($classpath))
+		{
+			dol_include_once($classpath);
+			if ($classname && class_exists($classname))
+			{
+				$objecttmp = new $classname($this->db);
+			}
+		}
+		if (! is_object($objecttmp))
+		{
+			dol_syslog('Error bad setup of type for field '.$InfoFieldList, LOG_WARNING);
+			return 'Error bad setup of type for field '.join(',', $InfoFieldList);
+		}
+
+		$prefixforautocompletemode=$objecttmp->element;
+		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode='company';
+		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
+
+		dol_syslog(get_class($this)."::selectForForms", LOG_DEBUG);
+
+		$out='';
+		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->$confkeyforautocompletemode) && ! $forcecombo)
+		{
+			$objectdesc=$classname.':'.$classpath;
+			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
+			//if ($objecttmp->element == 'societe') $urlforajaxcall = DOL_URL_ROOT.'/societe/ajax/company.php';
+
+			// No immediate load of all database
+			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.($moreparams?$moreparams:'');
+			// Activate the auto complete using ajax call.
+			$out.=  ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
+			$out.= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
+			if ($placeholder) $placeholder=' placeholder="'.$placeholder.'"';
+			$out.= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$preselectedvalue.'"'.$placeholder.' />';
+		}
+		else
+		{
+			// Immediate load of all database
+			$out.=$this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo);
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Output html form to select an object.
+	 * Note, this function is called by selectForForms or by ajax selectobject.php
+	 *
+	 * @param 	Object			$objecttmp			Object
+	 * @param	string			$htmlname			Name of HTML select component
+	 * @param	int				$preselectedvalue	Preselected value (ID of element)
+	 * @param	string			$showempty			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
+	 * @param	string			$searchkey			Search value
+	 * @param	string			$placeholder		Place holder
+	 * @param	string			$morecss			More CSS
+	 * @param	string			$moreparams			More params provided to ajax call
+	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
+	 * @param	int				$outputmode			0=HTML select string, 1=Array
+	 * @return	string								Return HTML string
+	 * @see selectForForms
+	 */
+	function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty='', $searchkey='', $placeholder='', $morecss='', $moreparams='', $forcecombo=0, $outputmode=0)
+	{
+		global $conf, $langs, $user;
+
+		$prefixforautocompletemode=$objecttmp->element;
+		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode='company';
+		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
+
+		$fieldstoshow='t.ref';
+		if (! empty($objecttmp->fields))
+		{
+			$tmpfieldstoshow='';
+			foreach($objecttmp->fields as $key => $val)
+			{
+				if ($val['showoncombobox']) $tmpfieldstoshow.=($tmpfieldstoshow?',':'').'t.'.$key;
+			}
+			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
+		}
+
+		$out='';
+		$outarray=array();
+
+		$num=0;
+
+		// Search data
+		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX .$objecttmp->table_element." as t";
+		if ($objecttmp->ismultientitymanaged == 2)
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE t.entity IN (".getEntity($objecttmp->table_element).")";
+		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->societe_id)) $sql.= " AND t.fk_soc = ".$user->societe_id;
+		if ($searchkey != '') $sql.=natural_search(explode(',',$fieldstoshow), $searchkey);
+		if ($objecttmp->ismultientitymanaged == 2)
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND t.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		$sql.=$this->db->order($fieldstoshow,"ASC");
+		//$sql.=$this->db->plimit($limit, 0);
+
+		// Build output string
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($conf->use_javascript_ajax && ! $forcecombo)
+			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				$comboenhancement =ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+				$out.= $comboenhancement;
+			}
+
+			// Construct $out and $outarray
+			$out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($moreparams?' '.$moreparams:'').' name="'.$htmlname.'">'."\n";
+
+			// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
+			$textifempty='&nbsp;';
+
+			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+			if (! empty($conf->global->$confkeyforautocompletemode))
+			{
+				if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
+				else $textifempty.=$langs->trans("All");
+			}
+			if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
+
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$label='';
+					$tmparray=explode(',', $fieldstoshow);
+					foreach($tmparray as $key => $val)
+					{
+						$val = preg_replace('/t\./','',$val);
+						$label .= (($label && $obj->$val)?' - ':'').$obj->$val;
+					}
+					if (empty($outputmode))
+					{
+						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid)
+						{
+							$out.= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
+						}
+						else
+						{
+							$out.= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+						}
+					}
+					else
+					{
+						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
+					}
+
+					$i++;
+					if (($i % 10) == 0) $out.="\n";
+				}
+			}
+
+			$out.= '</select>'."\n";
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		$this->result=array('nbofelement'=>$num);
+
+		if ($outputmode) return $outarray;
+		return $out;
+	}
+
+
+	/**
 	 *	Return a HTML select string, built from an array of key+value.
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
@@ -5163,7 +5376,9 @@ class Form
 			}
 		}
 
-		$out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'" name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'').'>';
+		$out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'"';
+		$out.=' name="'.preg_replace('/^\./','',$htmlname).'" '.($moreparam?$moreparam:'');
+		$out.='>';
 
 		if ($show_empty)
 		{
@@ -5200,10 +5415,6 @@ class Form
 						$style=' class="warning"';
 					}
 				}
-				$out.='<option value="'.$key.'"';
-				$out.=$style.$disabled;
-				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
-				$out.='>';
 
 				if ($key_in_label)
 				{
@@ -5216,6 +5427,12 @@ class Form
 					else $selectOptionValue = $maxlen?dol_trunc($value,$maxlen):$value;
 					if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
 				}
+
+				$out.='<option value="'.$key.'"';
+				$out.=$style.$disabled;
+				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
+				if ($nohtmlescape) $out.=' html="'.dol_escape_htmltag($selectOptionValue).'"';
+				$out.='>';
 				//var_dump($selectOptionValue);
 				$out.=$selectOptionValue;
 				$out.="</option>\n";
@@ -5243,6 +5460,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
+	 *  @see ajax_combobox in ajax.lib.php
 	 */
 	static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
 	{
@@ -5252,7 +5470,7 @@ class Form
 		// TODO Use an internal dolibarr component instead of select2
 		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
 
-		$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
+		$out='<select type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'"></select>';
 
 		$tmpplugin='select2';
 		$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
@@ -5267,51 +5485,48 @@ class Form
 				    	url: "'.$url.'",
 				    	dataType: \'json\',
 				    	delay: 250,
-				    	data: function (searchTerm, pageNumber, context) {
+				    	data: function (params) {
 				    		return {
-						    	q: searchTerm, // search term
-				    			page: pageNumber
+						    	q: params.term, 	// search term
+				    			page: params.page
 				    		};
 			    		},
-			    		results: function (remoteData, pageNumber, query) {
-			    			console.log(remoteData);
-				    	    saveRemoteData = remoteData;
+			    		processResults: function (data) {
+			    			// parse the results into the format expected by Select2.
+			    			// since we are using custom formatting functions we do not need to alter the remote JSON data
+			    			//console.log(data);
+							saveRemoteData = data;
 				    	    /* format json result for select2 */
 				    	    result = []
-				    	    $.each( remoteData, function( key, value ) {
+				    	    $.each( data, function( key, value ) {
 				    	       result.push({id: key, text: value.text});
                             });
 			    			//return {results:[{id:\'none\', text:\'aa\'}, {id:\'rrr\', text:\'Red\'},{id:\'bbb\', text:\'Search a into projects\'}], more:false}
-			    			return {results: result, more:false}
-    					},
-			    		/*processResults: function (data, page) {
-			    			// parse the results into the format expected by Select2.
-			    			// since we are using custom formatting functions we do not need to
-			    			// alter the remote JSON data
-			    			console.log(data);
-			    			return {
-			    				results: data.items
-			    			};
-			    		},*/
+			    			//console.log(result);
+			    			return {results: result, more: false}
+			    		},
 			    		cache: true
 			    	},
-			        dropdownCssClass: "css-'.$htmlname.'",
+	 				language: select2arrayoflanguage,
+					containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
 				    placeholder: "'.dol_escape_js($placeholder).'",
-			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
 			        formatResult: function(result, container, query, escapeMarkup) {
                         return escapeMarkup(result.text);
-                    }
+                    },
 			    });
 
                 '.($callurlonselect ? '
+                /* Code to execute a GET when we select a value */
                 $(".'.$htmlname.'").change(function() {
-			    	var selected = $(".'.$htmlname.'").select2("val");
-			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */
+			    	var selected = $(".'.$htmlname.'").val();
+                	console.log("We select "+selected)
+			        $(".'.$htmlname.'").val("");  /* reset visible combo value */
     			    $.each( saveRemoteData, function( key, value ) {
     				        if (key == selected)
     			            {
-    			                 console.log("Do a redirect into selectArrayAjax to "+value.url)
+    			                 console.log("selectArrayAjax - Do a redirect to "+value.url)
     			                 location.assign(value.url);
     			            }
                     });
@@ -5427,11 +5642,11 @@ class Form
 
 
 	/**
-	 *	Show a multiselect form from an array.
+	 *	Show a multiselect dropbox from an array.
 	 *
-	 *	@param	string	$htmlname		Name of select
+	 *	@param	string	$htmlname		Name of HTML field
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
-	 *  @param  string  $varpage        Id of context for page. Can be set with $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	 *  @param  string  $varpage        Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray
 	 */
@@ -5943,13 +6158,13 @@ class Form
 
 	/**
 	 *    Return a HTML area with the reference of object and a navigation bar for a business object
-	 *    Note: To add a particular filter on select, you can have $object->next_prev_filter set to add SQL criterias.
+	 *    Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criterias.
 	 *
 	 *    @param	object	$object			Object to show.
 	 *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link.
 	 *    @param	string	$morehtml  		More html content to output just before the nav bar.
 	 *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1).
-	 *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field). Use 'none' to disable next/prev.
+	 *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field compared to $object->ref). Use 'none' to disable next/prev.
 	 *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
 	 *    @param	string	$morehtmlref  	More html to show after ref.
 	 *    @param	string	$moreparam  	More param to add in nav link url. Must start with '&...'.
@@ -5979,7 +6194,7 @@ class Form
 		if ($shownav)
 		{
 			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
-			$object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
+			$object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
 			// Special case for project/task page
@@ -6442,7 +6657,7 @@ class Form
 	 */
 	function selectExpenseCategories($selected='', $htmlname='fk_c_exp_tax_cat', $useempty=0, $excludeid=array(), $target='', $default_selected=0, $params=array())
 	{
-		global $db,$conf,$langs;
+		global $db, $conf, $langs, $user;
 
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql.= ' AND entity IN (0,'.getEntity('').')';
@@ -6453,13 +6668,14 @@ class Form
 		if ($resql)
 		{
 			$out = '<select name="'.$htmlname.'" class="'.$htmlname.' flat minwidth75imp">';
-			if ($useempty) $out.= '<option value="0"></option>';
+			if ($useempty) $out.= '<option value="0">&nbsp;</option>';
 
 			while ($obj = $db->fetch_object($resql))
 			{
 				$out.= '<option '.($selected == $obj->rowid ? 'selected="selected"' : '').' value="'.$obj->rowid.'">'.$langs->trans($obj->label).'</option>';
 			}
 			$out.= '</select>';
+			if (! empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 
 			if (!empty($target))
 			{

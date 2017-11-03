@@ -152,237 +152,27 @@ jQuery(function($){
 
 
 /**
- * Set select2 translations (if module was loaded).
+ * Set array used for select2 translations
  */
-(function ($) {
-    "use strict";
 
-    if (typeof $.fn.select2 != "undefined") {
-	/* console.log($.fn.select2);
-    console.log("ok"); */
-
-    $.fn.select2.locales['xx'] = {
-        formatMatches: function (matches) { return matches + " <?php echo dol_escape_js($langs->trans("Select2ResultFoundUseArrows")); ?>"; },
-        formatNoMatches: function () { return "<?php echo dol_escape_js($langs->trans("Select2NotFound")); ?>"; },
-        formatInputTooShort: function (input, min) { var n = min - input.length;
-        	if (n > 1) return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacters")); ?>";
-        	else return "<?php echo dol_escape_js($langs->trans("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->trans("Select2MoreCharacter")); ?>"
-        	},
-        formatLoadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->trans("Select2LoadingMoreResults")); ?>"; },
-        formatSearching: function () { return "<?php echo dol_escape_js($langs->trans("Select2SearchInProgress")); ?>"; }
-    };
-
-    $.extend($.fn.select2.defaults, $.fn.select2.locales['xx']);
-
-    }
-})(jQuery);
+var select2arrayoflanguage = {
+	matches: function (matches) { return matches + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2ResultFoundUseArrows")); ?>"; },
+	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
+	inputTooShort: function (input) {
+		var n = input.minimum;
+		/*console.log(input);
+		console.log(input.minimum);*/
+		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
+			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
+		},
+	loadMore: function (pageNumber) { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults")); ?>"; },
+	searching: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress")); ?>"; }
+};
 
 
-/*
- * =================================================================
- * Purpose:
- * Pour la saisie des dates par calendrier Input: base "/theme/eldy" dateFieldID
- * "dateo" Nom du champ format "dd/MM/yyyy" Format issu de Dolibarr de
- * SimpleDateFormat a utiliser pour retour
- * ==================================================================
+/**
+ * For calendar input
  */
- /*
-function showDP(base,dateFieldID,format,codelang)
-{
-	// check to see if another box is already showing
-	var alreadybox=getObjectFromID("DPCancel");
-	if (alreadybox) closeDPBox();	// This erase value of showDP.datefieldID
-
-	// alert("showDP "+codelang);
-	showDP.datefieldID=dateFieldID;	// Must be after the close
-
-	var dateField=getObjectFromID(dateFieldID);
-
-	// get positioning
-	var thetop=getTop(dateField)+dateField.offsetHeight;
-
-// var xxx=getObjectFromID('bottompage');
-// alert(xxx.style.pixelTop);
-// alert(document.body.clientHeight);
-// alert(document.body.style.offsetTop);
-// alert(thetop);
-// alert(window.innerHeight);
-	if (thetop+160 > window.innerHeight)
-		thetop=thetop-160-20;
-	var theleft=getLeft(dateField);
-	if (theleft+140 > window.innerWidth)
-		theleft= theleft-140+dateField.offsetWidth-15;
-
-	showDP.box=document.createElement("div");
-	showDP.box.className="bodyline";
-	showDP.box.style.display="block";
-	showDP.box.style.zIndex="1000";
-	showDP.box.style.position="absolute";
-	showDP.box.style.top=thetop + "px";
-	showDP.box.style.left=theleft + "px";
-
-	if (dateField.value)	// Si il y avait valeur initiale dans champ
-	{
-		selDate=getDateFromFormat(dateField.value,format);
-		if (selDate)
-		{
-			// Success to parse value in field according to format
-			year=selDate.getFullYear();
-			month=selDate.getMonth()+1;
-			day=selDate.getDate();
-			datetime=selDate.getTime();
-			ymd=formatDate(selDate,'yyyyMMdd');
-		}
-		else
-		{
-			// Failed to parse value in field according to format
-			selDate=new Date();
-			year=selDate.getFullYear();
-			month=selDate.getUTCMonth()+1;
-			day=selDate.getDate();
-			datetime=selDate.getTime();
-			ymd=formatDate(selDate,'yyyyMMdd');
-		}
-	}
-	else
-	{
-		selDate=new Date();
-		year=selDate.getFullYear();
-		month=selDate.getUTCMonth()+1;
-		day=selDate.getDate();
-		datetime=selDate.getTime();
-		ymd=formatDate(selDate,'yyyyMMdd');
-	}
-	loadMonth(base,month,year,ymd,codelang);
-	hideSelectBoxes();
-	document.body.appendChild(showDP.box);
-}
-
-function resetDP(base,dateFieldID,format,codelang)
-{
-	var dateField=getObjectFromID(dateFieldID);
-	dateField.value = formatDate(new Date(), format);
-	dpChangeDay(dateFieldID,format);
-
-	var alreadybox=getObjectFromID("DPCancel");
-	if (alreadybox) showDP(base,dateFieldID,format,codelang);
-}
-
-function loadMonth(base,month,year,ymd,codelang)
-{
-	// showDP.box.innerHTML="Loading...";
-	// alert(codelang);
-	var theURL=base+"datepicker.php?cm=shw&lang="+codelang;
-	theURL+="&m="+encodeURIComponent(month);
-	theURL+="&y="+encodeURIComponent(year);
-	if (selDate)
-	{
-		theURL+="&sd="+ymd;
-	}
-
-	var req=null;
-
-	req=loadXMLDoc(theURL,null,false);
-	if (req.responseText == '') alert('Failed to get URL '.theURL);
- 	// alert(theURL+' - '+req.responseText); // L'url doit avoir la meme racine
-	// que la pages et elements sinon pb de securite.
-	showDP.box.innerHTML=req.responseText;
-}
-
-function closeDPBox()
-{
-	document.body.removeChild(showDP.box);
-	displaySelectBoxes();
-	showDP.box=null;
-	showDP.datefieldID=null;
-}
-
-function dpClickDay(year,month,day,format)
-{
-	var thefield=getObjectFromID(showDP.datefieldID);
-	var thefieldday=getObjectFromID(showDP.datefieldID+"day");
-	var thefieldmonth=getObjectFromID(showDP.datefieldID+"month");
-	var thefieldyear=getObjectFromID(showDP.datefieldID+"year");
-
-	var dt = new Date(year, month-1, day);
-
-	thefield.value=formatDate(dt,format);
-	if(thefield.onchange) thefield.onchange.call(thefield);
-
-	thefieldday.value=day;
-	if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-	thefieldmonth.value=month;
-	if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-	thefieldyear.value=year;
-	if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
-
-	closeDPBox();
-}
-
-function dpHighlightDay(year,month,day,months){
-	var displayinfo=getObjectFromID("dpExp");
-	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
-}
-
-// This Function returns the top position of an object
-function getTop(theitem){
-	var offsetTrail = theitem;
-	var offsetTop = 0;
-	while (offsetTrail) {
-		offsetTop += offsetTrail.offsetTop;
-		offsetTrail = offsetTrail.offsetParent;
-	}
-	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined")
-		offsetTop += document.body.TopMargin;
-	return offsetTop;
-}
-
-// This Function returns the left position of an object
-function getLeft(theitem){
-	var offsetTrail = theitem;
-	var offsetLeft = 0;
-	while (offsetTrail) {
-		offsetLeft += offsetTrail.offsetLeft;
-		offsetTrail = offsetTrail.offsetParent;
-	}
-	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined")
-		offsetLeft += document.body.leftMargin;
-	return offsetLeft;
-}
-
-// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
-// not put popup completely on the front)
-// Used only bu popup calendar
-function hideSelectBoxes() {
-	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
-	{
-		for(var i = 0; i < document.all.length; i++)
-		{
-			if(document.all[i].tagName)
-				if(document.all[i].tagName == "SELECT")
-			  		document.all[i].style.visibility="hidden";
-		}
-	}
-}
-// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
-// not put popup completely on the front)
-// Used only bu popup calendar
-function displaySelectBoxes() {
-	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
-	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1)
-	{
-	       for(var i = 0; i < document.all.length; i++)
-	       {
-	               if(document.all[i].tagName)
-	                       if(document.all[i].tagName == "SELECT")
-	                               document.all[i].style.visibility="visible";
-	       }
-	}
-}
-
-*/
-
 
 // Returns an object given an id
 function getObjectFromID(id){
@@ -425,69 +215,6 @@ function dpChangeDay(dateFieldID,format)
 		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
 	}
 }
-
-
-
-
-
-// Create XMLHttpRequest object and load url
-// Used by calendar or other ajax processes
-// Return req built or false if error
-function loadXMLDoc(url,readyStateFunction,async)
-{
-	// req must be defined by caller with
-	// var req = false;
-
-	// branch for native XMLHttpRequest object (Mozilla, Safari...)
-	if (window.XMLHttpRequest)
-	{
-		req = new XMLHttpRequest();
-
-// if (req.overrideMimeType) {
-// req.overrideMimeType('text/xml');
-// }
-	}
-	// branch for IE/Windows ActiveX version
-	else if (window.ActiveXObject)
-	{
-        try
-        {
-            req = new ActiveXObject("Msxml2.XMLHTTP");
-        }
-        catch (e)
-        {
-            try {
-                req = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch (e) {}
-        }
-	}
-
-	// If XMLHttpRequestObject req is ok, call URL
-	if (! req)
-	{
-    	alert('Cannot create XMLHTTP instance');
-      	return false;
-	}
-
-	if (readyStateFunction) req.onreadystatechange = readyStateFunction;
-	// Exemple of function for readyStateFuncyion:
-	// function ()
-       // {
-       // if ( (req.readyState == 4) && (req.status == 200) ) {
-       // if (req.responseText == 1) { newStatus = 'AAA'; }
-       // if (req.responseText == 0) { newStatus = 'BBB'; }
-       // if (currentStatus != newStatus) {
-       // if (newStatus == "AAA") { obj.innerHTML = 'AAA'; }
-       // else { obj.innerHTML = 'BBB'; }
-       // currentStatus = newStatus;
-       // }
-       // }
-       // }
-	req.open("GET", url, async);
-	req.send(null);
-	return req;
-}
-
 
 /*
  * =================================================================
@@ -552,9 +279,9 @@ function formatDate(date,format)
 
 /*
  * =================================================================
- * Function:
- * getDateFromFormat(date_string, format_string) Purpose: This function takes a
- * date string and a format string. It parses the date string with format and it
+ * Function: getDateFromFormat(date_string, format_string)
+ * Purpose:  This function takes a date string and a format string.
+ * It parses the date string with format and it
  * returns the date as a javascript Date() object. If date does not match
  * format, it returns 0. The format string can use the following tags:
  * Field        | Tags
@@ -650,9 +377,8 @@ function getDateFromFormat(val,format)
 
 /*
  * =================================================================
- * Function:
- * stringIsInteger(string)
- * Purpose: Return true if string is an integer
+ * Function: stringIsInteger(string)
+ * Purpose:  Return true if string is an integer
  * ==================================================================
  */
 function stringIsInteger(str)
@@ -670,9 +396,8 @@ function stringIsInteger(str)
 
 /*
  * =================================================================
- * Function:
- * getIntegerInString(string,pos,minlength,maxlength)
- * Purpose: Return part of string from position i that is integer
+ * Function: getIntegerInString(string,pos,minlength,maxlength)
+ * Purpose:  Return part of string from position i that is integer
  * ==================================================================
  */
 function getIntegerInString(str,i,minlength,maxlength)
@@ -689,10 +414,9 @@ function getIntegerInString(str,i,minlength,maxlength)
 
 /*
  * =================================================================
- * Purpose:
- * Clean string to have it url encoded
- * Input: s
- * Author: Laurent Destailleur
+ * Purpose: Clean string to have it url encoded
+ * Input:   s
+ * Author:  Laurent Destailleur
  * Licence: GPL
  * ==================================================================
  */
@@ -703,11 +427,32 @@ function urlencode(s) {
 	return news;
 }
 
+/*
+ * =================================================================
+ * Purpose: Clean string to have it url encoded
+ * Input:   s
+ * Author:  Laurent Destailleur
+ * Licence: GPL
+ * ==================================================================
+ */
+function htmlEntityDecodeJs(inp){
+	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
+	if (inp)
+	{
+	  for(var r in replacements){
+	    inp = inp.replace(new RegExp(r,'g'),replacements[r]);
+	  }
+	  return inp.replace(/&#(\d+);/g, function(match, dec) {
+	    return String.fromCharCode(dec);
+	  });
+	}
+	else { return ''; }
+}
+
 
 /*
  * =================================================================
- * Purpose:
- * Applique un delai avant execution. Used for autocompletion of companies.
+ * Purpose: Applique un delai avant execution. Used for autocompletion of companies.
  * Input:   funct, delay
  * Author:  Regis Houssin
  * Licence: GPL
@@ -955,6 +700,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 	}
 }
 
+
 /*
  * =================================================================
  * This is to allow to transform all select box into ajax autocomplete box
@@ -1068,6 +814,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
         }
     });
 })( jQuery );
+
 
 
 /**
@@ -1303,7 +1050,7 @@ function price2numjs(amount) {
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
-	amount = amount.replace(' ', '');            // To avoid spaces
+	amount = amount.replace(' ', '');             // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
 	//console.log("amount before="+amount+" rouding="+rounding)

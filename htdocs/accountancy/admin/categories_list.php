@@ -569,6 +569,7 @@ if ($id)
         print "</tr>";
 
         $colspan=count($fieldlist)+3;
+        if ($id == 32) $colspan++;
 
         print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
     }

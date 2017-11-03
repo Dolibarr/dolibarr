@@ -151,7 +151,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
     }
 }
 
@@ -1114,7 +1114,7 @@ if ($resql)
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
-    	                print $bankstatic->getNomUrl(1);
+    	                print $bankstatic->getNomUrl(1,'transactions');
     	                print ' '.$langs->trans("toward").' ';
     	                $bankstatic->id=$objp->bankid;
     	                $bankstatic->label=$objp->bankref;
@@ -1131,7 +1131,7 @@ if ($resql)
     	                $banklinestatic->fetch($links[$key]['url_id']);
     	                $bankstatic->id=$banklinestatic->fk_account;
     	                $bankstatic->label=$banklinestatic->bank_account_ref;
-    	                print $bankstatic->getNomUrl(1);
+    	                print $bankstatic->getNomUrl(1,'transactions');
     	                print ')';
     	            }
     	            //var_dump($links);

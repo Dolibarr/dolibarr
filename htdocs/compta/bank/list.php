@@ -74,7 +74,7 @@ $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('bankaccount');
+$extralabels = $extrafields->fetch_name_optionals_label('bank_account');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
@@ -103,7 +103,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
     }
 }
 
@@ -143,7 +143,7 @@ $title=$langs->trans('BankAccounts');
 // Load array of financial accounts (opened by default)
 $accounts = array();
 
-$sql  = "SELECT rowid, label, courant, rappro, account_number, fk_accountancy_journal, currency_code, datec as date_creation, tms as date_update";
+$sql  = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_update";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -151,7 +151,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bankcacount_extrafields as ef on (c.rowid = ef.fk_object)";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account_extrafields as ef on (b.rowid = ef.fk_object)";
 $sql.= " WHERE entity IN (".getEntity('bank_account').")";
 if ($search_status == 'opened')  $sql.= " AND clos = 0";
 if ($search_status == 'closed')  $sql.= " AND clos = 1";

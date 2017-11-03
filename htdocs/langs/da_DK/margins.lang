@@ -2,7 +2,7 @@
 
 Margin=Margin
 Margins=Margins
-TotalMargin=Total Margin
+TotalMargin=Margin i alt
 MarginOnProducts=Margin / Products
 MarginOnServices=Margin / Services
 MarginRate=Margin rate
@@ -17,15 +17,15 @@ ProductMargins=Product margins
 CustomerMargins=Customer margins
 SalesRepresentativeMargins=Sales representative margins
 UserMargins=User margins
-ProductService=Produkt eller tjeneste
-AllProducts=All products and services
-ChooseProduct/Service=Choose product or service
+ProductService=Vare eller ydelse
+AllProducts=Alle varer og ydelser
+ChooseProduct/Service=Vælg vare eller ydelse
 ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
 ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
 MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
-UseDiscountAsProduct=As a product
+UseDiscountAsProduct=Som en vare
 UseDiscountAsService=As a service
-UseDiscountOnTotal=On subtotal
+UseDiscountOnTotal=Subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Margin on Best supplier price
@@ -35,7 +35,7 @@ MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier pri
 CostPrice=Cost price
 UnitCharges=Unit charges
 Charges=Charges
-AgentContactType=Commercial agent contact type
+AgentContactType=Kontakttype for handelsagent
 AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
 rateMustBeNumeric=Rate must be a numeric value
 markRateShouldBeLesserThan100=Mark rate should be lower than 100

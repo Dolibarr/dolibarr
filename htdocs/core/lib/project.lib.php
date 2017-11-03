@@ -589,9 +589,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @param	int			$preselectedday			Preselected day
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
+ * @param	int			$oldprojectforbreak		Old project id of last project break
  * @return  $inc
  */
-function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable)
+function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -611,7 +612,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 		}
 	}
 
-	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_BREAK_ON_PROJECT)?0:-1);	// 0 to start break , -1 no break
+	if (empty($oldprojectforbreak))
+	{
+		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:-1);	// 0 to start break , -1 no break
+	}
 
 	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 	for ($i = 0 ; $i < $numlines ; $i++)
@@ -776,7 +780,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$idw = 0;
 
 				$tableCell='';
-				$tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+				$tableCell.='<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 				$tableCell.='<span class="hideonsmartphone"> + </span>';
 				//$tableCell.='&nbsp;&nbsp;&nbsp;';
 				$tableCell.=$form->select_duration($lines[$i]->id.'duration','',$disabledtask,'text',0,1);
@@ -818,8 +822,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 			$level++;
 			if ($lines[$i]->id > 0)
 			{
-				if ($parent == 0) projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable);
-				else projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable);
+				if ($parent == 0) projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak);
+				else projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak);
 			}
 			$level--;
 		}
@@ -847,9 +851,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
+ * @param	int			$oldprojectforbreak		Old project id of last project break
  * @return  $inc
  */
-function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable)
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak=0)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -871,7 +876,10 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	//dol_syslog('projectLinesPerWeek inc='.$inc.' firstdaytoshow='.$firstdaytoshow.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
 
-	$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_BREAK_ON_PROJECT)?0:-1);	// 0 = start break, -1 = never break
+	if (empty($oldprojectforbreak))
+	{
+		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:-1);	// 0 = start break, -1 = never break
+	}
 
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
@@ -1032,7 +1040,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					$tableCell ='<td align="center" class="hide'.$idw.($cssonholiday?' '.$cssonholiday:'').'">';
 					if ($alreadyspent)
 					{
-						$tableCell.='<span class="timesheetalreadyrecorded"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
+						$tableCell.='<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 						//$placeholder=' placeholder="00:00"';
 						$placeholder='';
 					 	//$tableCell.='+';
@@ -1065,8 +1073,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			$level++;
 			if ($lines[$i]->id > 0)
 			{
-				if ($parent == 0) projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable);
-				else projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable);
+				if ($parent == 0) projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak);
+				else projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak);
 			}
 			$level--;
 		}
@@ -1147,6 +1155,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 
 	$arrayidtypeofcontact=array();
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -1346,6 +1355,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	}
 
 	print "</table>";
+	print '</div>';
 
 	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
 	{

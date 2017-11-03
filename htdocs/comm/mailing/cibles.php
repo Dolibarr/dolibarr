@@ -224,6 +224,8 @@ if ($object->fetch($id) >= 0)
 
 	dol_fiche_end();
 
+	print '<br>';
+
 
 	$allowaddtarget=($object->statut == 0);
 

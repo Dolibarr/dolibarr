@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal mooduli seadistamine
 PaypalDesc=See moodul pakub lehti, mis võimaldavad <a href="http://www.paypal.com" target="_blank">PayPali</a> abil maksmist. Seda võib kasutada nii suvalise maksena kui maksena teatud Dolibarri objekti jaoks (arve, tellimus jne)
-PaypalOrCBDoPayment=Maksa krediitkaardiga või Paypaliga
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Maksa Paypaliga
 PAYPAL_API_SANDBOX=Testimise/liivakasti režii
 PAYPAL_API_USER=API kasutajanimi
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku "terviklik" (krediitkaart + Paypal) või ainult "Paypal" makseviisi
 PaypalModeIntegral=Terviklik
 PaypalModeOnlyPaypal=Ainult PayPal
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=See on tehingu ID: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Lisa PayPali makse URL, kui dokument saadetakse postiga
 PredefinedMailContentLink=Kui makset ei ole veel sooritatud, võid klõpsata allpool asuval lingil makse sooritamiseks (PayPal).\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=Kasutad hetkel "liivakasti" režiimi.
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=E-posti aadress pärast makset hoiatuse saatmiseks (õnnestus või mitte)
+ONLINE_PAYMENT_SENDEMAIL=E-posti aadress pärast makset hoiatuse saatmiseks (õnnestus või mitte)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

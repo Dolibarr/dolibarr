@@ -172,7 +172,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $localobjectcom->initAsSpecimen();
 
         $localobject=new Facture($this->savdb);
-        $localobject->createFromOrder($localobjectcom);
+        $localobject->createFromOrder($localobjectcom, $user);
         $localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
 
         // Crabe (english)

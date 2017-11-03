@@ -79,7 +79,7 @@ matrix:
 notifications:
   email:
     on_success: never # [always|never|change] default: change
-    on_failure: change # [always|never|change] default: always
+    on_failure: never # [always|never|change] default: always
   irc:
     channels:
     - "chat.freenode.net#dolibarr"
@@ -313,13 +313,13 @@ script:
   php upgrade2.php 3.9.0 4.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL > $TRAVIS_BUILD_DIR/upgrade390400-2.log
   php step5.php 3.9.0 4.0.0 > $TRAVIS_BUILD_DIR/upgrade390400-3.log
   php upgrade.php 4.0.0 5.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade400500.log
-  php upgrade2.php 4.0.0 5.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL > $TRAVIS_BUILD_DIR/upgrade400500-2.log
+  php upgrade2.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-2.log
   php step5.php 4.0.0 5.0.0 > $TRAVIS_BUILD_DIR/upgrade400500-3.log
   php upgrade.php 5.0.0 6.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade500600.log
-  php upgrade2.php 5.0.0 6.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL > $TRAVIS_BUILD_DIR/upgrade500600-2.log
+  php upgrade2.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-2.log
   php step5.php 5.0.0 6.0.0 > $TRAVIS_BUILD_DIR/upgrade500600-3.log
   php upgrade.php 6.0.0 7.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade600700.log
-  php upgrade2.php 6.0.0 7.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL > $TRAVIS_BUILD_DIR/upgrade600700-2.log
+  php upgrade2.php 6.0.0 7.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_SUPPLIERPROPOSAL > $TRAVIS_BUILD_DIR/upgrade600700-2.log
   php step5.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-3.log
   cd -
   set +e

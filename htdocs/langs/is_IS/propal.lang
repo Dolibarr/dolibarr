@@ -64,6 +64,7 @@ ProposalLine=Tillaga línu
 AvailabilityPeriod=Framboð töf
 SetAvailability=Setja framboð töf
 AfterOrder=eftir því skyni
+OtherProposals=Aðrar tillögur
 ##### Availability #####
 AvailabilityTypeAV_NOW=Strax
 AvailabilityTypeAV_1W=1 viku

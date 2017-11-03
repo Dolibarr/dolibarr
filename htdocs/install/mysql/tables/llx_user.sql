@@ -34,6 +34,7 @@ create table llx_user
   fk_user_creat     integer,
   fk_user_modif     integer,
   login             varchar(50) NOT NULL,
+  pass_encoding     varchar(24);
   pass              varchar(128),
   pass_crypted      varchar(128),
   pass_temp         varchar(128),			    -- temporary password when asked for forget password

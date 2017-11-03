@@ -197,7 +197,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
    foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
    }
 }
 
@@ -387,7 +387,7 @@ if ($resql)
 }
 else dol_print_error($db);
 
-$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, ";
+$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
 $sql.= " s.email, s.phone, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
@@ -1024,10 +1024,12 @@ while ($i < min($num, $limit))
 
 	$companystatic->id=$obj->rowid;
 	$companystatic->name=$obj->name;
+	$companystatic->logo=$obj->logo;
 	$companystatic->name_alias=$obj->name_alias;
 	$companystatic->canvas=$obj->canvas;
 	$companystatic->client=$obj->client;
 	$companystatic->status=$obj->status;
+	$companystatic->email=$obj->email;
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
@@ -1048,7 +1050,16 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="tdoverflowmax200">';
+		//if (! empty($arrayfields['s.name_alias']['checked']))	// Hide alias from output
+		//{
+			$savalias=$companystatic->name_alias;
+			$companystatic->name_alias='';
+		//}
 		print $companystatic->getNomUrl(1,'',100);
+		//if (! empty($arrayfields['s.name_alias']['checked']))	// Hide alias from output
+		//{
+			$companystatic->name_alias=$savalias;
+		//}
 		print "</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
@@ -1190,21 +1201,21 @@ while ($i < min($num, $limit))
 		{
 	  		$companystatic->name=$langs->trans("Customer");
 	  		$companystatic->name_alias='';
-			$s.=$companystatic->getNomUrl(0,'customer');
+			$s.=$companystatic->getNomUrl(0,'customer',0,1);
 		}
 		if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
 			if ($s) $s.=" / ";
 			$companystatic->name=$langs->trans("Prospect");
 	  		$companystatic->name_alias='';
-			$s.=$companystatic->getNomUrl(0,'prospect');
+			$s.=$companystatic->getNomUrl(0,'prospect',0,1);
 		}
 		if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
 		{
 			if ($s) $s.=" / ";
 			$companystatic->name=$langs->trans("Supplier");
 	  		$companystatic->name_alias='';
-			$s.=$companystatic->getNomUrl(0,'supplier');
+			$s.=$companystatic->getNomUrl(0,'supplier',0,1);
 		}
 		print $s;
 		print '</td>';

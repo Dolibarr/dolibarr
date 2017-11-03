@@ -64,6 +64,7 @@ ProposalLine=Linie Ofertă
 AvailabilityPeriod=Disponibilitate Livrare
 SetAvailability=Setează  disponibilitatea livrării
 AfterOrder=după comandă
+OtherProposals=Alte oferte
 ##### Availability #####
 AvailabilityTypeAV_NOW=Imediat
 AvailabilityTypeAV_1W=1 săptămână

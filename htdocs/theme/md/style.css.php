@@ -345,12 +345,14 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 280px;
+	min-width: 290px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
+	padding-left: 30px;
+	text-align: <?php echo $left; ?>;
 	border: 2px solid #666666;
 }
 input.buttonpaymentcb {
@@ -407,7 +409,7 @@ select.flat, form.flat select {
 	font-weight: normal;
 }
 .optionblue {
-	color: rgb(<?php echo $colortextlink; ?>) !important;
+	color: rgb(<?php echo $colortextlink; ?>);
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
@@ -455,7 +457,8 @@ input:-webkit-autofill {
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
-
+input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
+input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 
@@ -584,6 +587,9 @@ textarea.centpercent {
 .right {
 	text-align: <?php print $right; ?>;
 }
+.justify {
+	text-align: justify;
+}
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
@@ -663,6 +669,10 @@ div.myavailability {
 .googlerefreshcal {
 	padding-top: 4px;
 	padding-bottom: 4px;
+}
+.paddingtopbottom {
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 .checkallactions {
 	/*vertical-align: text-bottom;
@@ -801,6 +811,13 @@ div.fiche>form>div.div-table-responsive {
     align-self: flex-start;
 }
 
+select.selectarrowonleft {
+	direction: rtl;
+}
+select.selectarrowonleft option {
+	direction: ltr;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -835,6 +852,7 @@ div.fiche>form>div.div-table-responsive {
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
 .maxwidth100 { max-width: 100px; }
+.maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
@@ -1102,6 +1120,10 @@ div.login_block {
 	position: auto;
 	top: auto;
 	z-index: 90;
+}
+
+div.backgroundsemitransparent {
+	background:rgba(255,255,255,0.6);
 }
 div.login_block {
 	/* position: initial !important;*/
@@ -1591,7 +1613,7 @@ div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
 
-div.mainmenu.websites {
+div.mainmenu.website {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png',1) ?>);
 }
 
@@ -1615,7 +1637,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','websites');
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
 $divnotrequired=array('multicurrency','salaries','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
@@ -2447,6 +2469,10 @@ td.border, div.tagtable div div.border {
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
+.liste_titre_bydiv {
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
@@ -2460,6 +2486,9 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-width: 1px;
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
+
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
 
 	margin: 0px 0px 8px 0px;
 
@@ -2819,7 +2848,7 @@ div.liste_titre_bydiv {
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	width: 100%;
+	width: calc(100% - 1px);
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -2840,7 +2869,7 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 	border-bottom: 1px solid #aaa;
 }
 /* TODO Once title line is moved under title search, make border bottom of all th black and force to whit when it's first tr */
-tr:first-child th.liste_titre {
+tr:first-child th.liste_titre, tr:first-child th.liste_titre_sel {
     border-bottom: 1px solid #FFF ! important;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
@@ -2894,6 +2923,8 @@ input.liste_titre {
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     white-space: nowrap;
+    line-height: 1.5em;
+}
 }
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;
@@ -3356,32 +3387,28 @@ table.valid {
 /* Tooltips                                                                       */
 /* ============================================================================== */
 
-#tooltip {
-position: absolute;
-width: <?php print dol_size(450,'width'); ?>px;
-border-top: solid 1px #BBBBBB;
-border-<?php print $left; ?>: solid 1px #BBBBBB;
-border-<?php print $right; ?>: solid 1px #444444;
-border-bottom: solid 1px #444444;
-padding: 2px;
-z-index: 3000;
-background-color: #EFCFAA;
-opacity: 1;
--moz-border-radius:0px;
--webkit-border-radius: 0px;
-border-radius: 0px;
+/* For tooltip using dialog */
+.ui-dialog.highlight.ui-widget.ui-widget-content.ui-front {
+    z-index: 3000;
 }
 
-#tiptip_content {
--moz-border-radius:0px;
--webkit-border-radius: 0px;
-border-radius: 0px;
-background-color: rgb(255,255,255);
-/*    background-color: rgb(252,248,246);
-	background-color: rgba(252,248,246,0.95);*/
-	line-height: 1.4em;
-	min-width: 200px;
+div.ui-tooltip {
+	max-width: <?php print dol_size(600,'width'); ?>px !important;
 }
+
+.mytooltip {
+	width: <?php print dol_size(450,'width'); ?>px;
+	border-top: solid 1px #BBBBBB;
+	border-<?php print $left; ?>: solid 1px #BBBBBB;
+	border-<?php print $right; ?>: solid 1px #444444;
+	border-bottom: solid 1px #444444;
+	padding: 5px 20px;
+	border-radius: 0;
+	box-shadow: 0 0 4px grey;
+	margin: 2px;
+	font-stretch: condensed;
+}
+
 
 /* ============================================================================== */
 /* Calendar                                                                       */
@@ -3392,6 +3419,8 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .bodyline {
@@ -3545,6 +3574,9 @@ a.websitebuttonsitepreviewdisabled img {
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
+.dayevent .tagtr:first-of-type {
+    height: 24px;
+}
 .agendacell { height: 60px; }
 table.cal_month    { border-spacing: 0px; }
 table.cal_month td:first-child  { border-left: 0px; }
@@ -4186,6 +4218,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: unset;
+}
 .select2-container .select2-choice {
 	border-bottom: 1px solid #ccc;
 }
@@ -4221,9 +4256,38 @@ div.dataTables_length select {
 .select2-drop.select2-drop-above {
 	box-shadow: none !important;
 }
+.select2-container--open .select2-dropdown--above {
+    border-bottom: solid 1px rgba(0,0,0,.2);
+}
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
+}
+.select2-container--default .select2-selection--single
+{
+	outline: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: solid 1px rgba(0,0,0,.2);
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+}
+.select2-container--default .select2-selection--multiple {
+	border: solid 1px rgba(0,0,0,.2);
+	border-radius: 0 !important;
+}
+.select2-search__field
+{
+	outline: none;
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: solid 1px rgba(0,0,0,.2) !important;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices
 {
@@ -4290,9 +4354,6 @@ a span.select2-chosen
 .select2-results {
 	max-height:	400px;
 }
-.css-searchselectcombo ul.select2-results {
-	max-height:	none;
-}
 .select2-container.select2-container-disabled .select2-choice, .select2-container-multi.select2-container-disabled .select2-choices {
 	background-color: #FFFFFF;
 	background-image: none;
@@ -4313,13 +4374,23 @@ a span.select2-chosen
 	border-top: none;
 	border-left: 1px solid #ddd;
 }
+.select2-container--default .select2-results>.select2-results__options{
+    max-height: 400px;
+}
 
 
 
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
-    text-align: left;
+    text-align: <?php echo $left; ?>;;
     opacity: 0.3;
+}
+span#select2-boxbookmark-container, span#select2-boxcombo-container {
+    text-align: <?php echo $left; ?>;
+    opacity: 0.5;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+	padding-left: 6px;
 }
 /* Style used before the select2 js is executed on boxcombo */
 #boxbookmark.boxcombo, #boxcombo.boxcombo {

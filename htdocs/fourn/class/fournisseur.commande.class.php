@@ -43,7 +43,7 @@ class CommandeFournisseur extends CommonOrder
     public $table_element='commande_fournisseur';
     public $table_element_line = 'commande_fournisseurdet';
     public $fk_element = 'fk_commande';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='order';
 
     /**
@@ -1235,23 +1235,44 @@ class CommandeFournisseur extends CommonOrder
 	            {
 					// Add link with price request and supplier order
 					if ($this->id)
-                    {
-                        $this->ref="(PROV".$this->id.")";
+					{
+						$this->ref="(PROV".$this->id.")";
 
-                        // Add object linked
-                        if (is_array($this->linked_objects) && ! empty($this->linked_objects))
-                        {
-                        	foreach($this->linked_objects as $origin => $origin_id)
-                        	{
-                        		$ret = $this->add_object_linked($origin, $origin_id);
-                        		if (! $ret)
-                        		{
-                        			dol_print_error($this->db);
-                        			$error++;
-                        		}
-                        	}
-                        }
-                    }
+						if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+						{
+							$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+						}
+
+						// Add object linked
+						if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+						{
+							foreach($this->linked_objects as $origin => $tmp_origin_id)
+							{
+							    if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+							    {
+							        foreach($tmp_origin_id as $origin_id)
+							        {
+							            $ret = $this->add_object_linked($origin, $origin_id);
+							            if (! $ret)
+							            {
+							                dol_print_error($this->db);
+							                $error++;
+							            }
+							        }
+							    }
+							    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+							    {
+							        $origin_id = $tmp_origin_id;
+									$ret = $this->add_object_linked($origin, $origin_id);
+									if (! $ret)
+									{
+										dol_print_error($this->db);
+										$error++;
+									}
+							    }
+							}
+						}
+					}
 
 	                if (! $error)
                     {
@@ -1446,10 +1467,10 @@ class CommandeFournisseur extends CommonOrder
 
                         // We use 'none' instead of $fourn_ref, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
                         // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', $this->fk_soc);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
+                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref/$this->fk_soc
                         if ($result > 0)
                         {
-                            $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
                             $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
 			    // is remise percent not keyed but present for the product we add it
                             if ($remise_percent == 0 && $prod->remise_percent !=0)

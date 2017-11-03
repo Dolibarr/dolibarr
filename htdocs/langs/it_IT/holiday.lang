@@ -79,6 +79,8 @@ HolidaysCancelation=Cancellazione ferie
 EmployeeLastname=Employee last name
 EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Ultimo aggiornamento automatico dell'assegnazione ferie

@@ -48,7 +48,7 @@ $API_version="56";
  ' For the sandbox, the URL is       https://www.sandbox.paypal.com/webscr&cmd=_express-checkout&token=
  ' For the live site, the URL is        https://www.paypal.com/webscr&cmd=_express-checkout&token=
  */
-if (! empty($conf->global->PAYPAL_API_SANDBOX))
+if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))		// We can force sand box with param 'forcesandbox'
 {
     $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
     $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";

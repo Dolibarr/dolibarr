@@ -590,16 +590,17 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 
 
 /**
- *   	Return array of possible substitutions for PDF content (without external module substitutions).
+ *	Return array of possible substitutions for PDF content (without external module substitutions).
  *
- *		@param	Translate	$outputlangs	Output language
- *      @param  array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
- *      @param  Object      $object         Object
- *      @return	array						Array of substitutions
+ *	@param	Translate	$outputlangs	Output language
+ *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ *	@param	Object      $object         Object
+ *	@param	int         $onlykey       1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *	@return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null)
+function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null, $onlykey=0)
 {
-    $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $exclude, $object);
+    $substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object);
     $substitutionarray['__FROM_NAME__']='__FROM_NAME__';
     $substitutionarray['__FROM_EMAIL__']='__FROM_EMAIL__';
     return $substitutionarray;
@@ -1822,7 +1823,7 @@ function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
 {
 	if (empty($hookmanager)) global $hookmanager;
-	
+
 	$reshook=0;
     $result='';
     //if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )

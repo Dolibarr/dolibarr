@@ -540,164 +540,164 @@ if ($socid && $action != 'edit' && $action != "create")
 					print ' '.img_picto($langs->trans("SwiftValid"),'info');
 				}
 			}
-            print '</td>';
+			print '</td>';
 
-            if (! empty($conf->prelevement->enabled))
-            {
-            	// RUM
+			if (! empty($conf->prelevement->enabled))
+			{
+				// RUM
 				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
-                print '<td>'.$rib->rum.'</td>';
+				print '<td>'.$rib->rum.'</td>';
 
 				// FRSTRECUR
 				print '<td>'.$rib->frstrecur.'</td>';
-            }
+			}
 
-            // Default
-            print '<td align="center" width="70">';
-            if (!$rib->default_rib) {
-                print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&ribid='.$rib->id.'&action=setasdefault">';
-                print img_picto($langs->trans("Disabled"),'off');
-                print '</a>';
-            } else {
-                print img_picto($langs->trans("Enabled"),'on');
-            }
-            print '</td>';
+			// Default
+			print '<td align="center" width="70">';
+			if (!$rib->default_rib) {
+				print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&ribid='.$rib->id.'&action=setasdefault">';
+				print img_picto($langs->trans("Disabled"),'off');
+				print '</a>';
+			} else {
+				print img_picto($langs->trans("Enabled"),'on');
+			}
+			print '</td>';
 
-            // Generate doc
-            print '<td align="center">';
+			// Generate doc
+			print '<td align="center">';
 
-            $buttonlabel = $langs->trans("BuildDoc");
-            $forname='builddocrib'.$rib->id;
+			$buttonlabel = $langs->trans("BuildDoc");
+			$forname='builddocrib'.$rib->id;
 
-            include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
-            $modellist=ModeleBankAccountDoc::liste_modeles($db);
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
+			$modellist=ModeleBankAccountDoc::liste_modeles($db);
 
-            $out = '';
-            if (is_array($modellist) && count($modellist))
-            {
-                $out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
-                $out.= '<input type="hidden" name="action" value="builddocrib">';
-                $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                $out.= '<input type="hidden" name="socid" value="'.$object->id.'">';
-                $out.= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
+			$out = '';
+			if (is_array($modellist) && count($modellist))
+			{
+				$out.= '<form action="'.$urlsource.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc').'" name="'.$forname.'" id="'.$forname.'_form" method="post">';
+				$out.= '<input type="hidden" name="action" value="builddocrib">';
+				$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$out.= '<input type="hidden" name="socid" value="'.$object->id.'">';
+				$out.= '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
 
-                if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
-                {
-                    $arraykeys=array_keys($modellist);
-                    $modelselected=$arraykeys[0];
-                }
-                if (! empty($conf->global->BANKADDON_PDF)) $modelselected = $conf->global->BANKADDON_PDF;
+				if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
+				{
+					$arraykeys=array_keys($modellist);
+					$modelselected=$arraykeys[0];
+				}
+				if (! empty($conf->global->BANKADDON_PDF)) $modelselected = $conf->global->BANKADDON_PDF;
 
-                $out.= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
-                $out.= ajax_combobox('modelrib'.$rib->id);
+				$out.= $form->selectarray('modelrib'.$rib->id, $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+				$out.= ajax_combobox('modelrib'.$rib->id);
 
-                // Language code (if multilang)
-                if ($conf->global->MAIN_MULTILANGS)
-                {
-                    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-                    $formadmin=new FormAdmin($db);
-                    $defaultlang=$codelang?$codelang:$langs->getDefaultLang();
-                    $morecss='maxwidth150';
-                    if (! empty($conf->browser->phone)) $morecss='maxwidth100';
-                    $out.= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
-                }
-                // Button
-                $genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
-                $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
-                if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled';
-                $genbutton.= '>';
-                if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid')
-                {
-                    $langs->load("errors");
-                    $genbutton.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
-                }
-                if (! $allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') $genbutton='';
-                if (empty($modellist) && ! $showempty && $modulepart != 'unpaid') $genbutton='';
-                $out.= $genbutton;
-                $out.= '</form>';
-            }
-            print $out;
-            print '</td>';
+				// Language code (if multilang)
+				if ($conf->global->MAIN_MULTILANGS)
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+					$formadmin=new FormAdmin($db);
+					$defaultlang=$codelang?$codelang:$langs->getDefaultLang();
+					$morecss='maxwidth150';
+					if (! empty($conf->browser->phone)) $morecss='maxwidth100';
+					$out.= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
+				}
+				// Button
+				$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$genbutton.= ' type="submit" value="'.$buttonlabel.'"';
+				if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled';
+				$genbutton.= '>';
+				if ($allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid')
+				{
+					$langs->load("errors");
+					$genbutton.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
+				}
+				if (! $allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') $genbutton='';
+				if (empty($modellist) && ! $showempty && $modulepart != 'unpaid') $genbutton='';
+				$out.= $genbutton;
+				$out.= '</form>';
+			}
+			print $out;
+			print '</td>';
 
-            // Edit/Delete
-            print '<td align="right">';
-            if ($user->rights->societe->creer)
-            {
-            	print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
-            	print img_picto($langs->trans("Modify"),'edit');
-            	print '</a>';
+			// Edit/Delete
+			print '<td align="right">';
+			if ($user->rights->societe->creer)
+			{
+				print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
+				print img_picto($langs->trans("Modify"),'edit');
+				print '</a>';
 
-           		print '&nbsp;';
+		   		print '&nbsp;';
 
-           		print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
-           		print img_picto($langs->trans("Delete"),'delete');
-           		print '</a>';
-            }
-        	print '</td>';
+		   		print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
+		   		print img_picto($langs->trans("Delete"),'delete');
+		   		print '</a>';
+			}
+			print '</td>';
 
-	        print '</tr>';
-        }
+			print '</tr>';
+		}
 
-        if (count($rib_list) == 0)
-        {
-        	$colspan=8;
-        	if (! empty($conf->prelevement->enabled)) $colspan+=2;
-            print '<tr '.$bc[0].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
-        }
+		if (count($rib_list) == 0)
+		{
+			$colspan=8;
+			if (! empty($conf->prelevement->enabled)) $colspan+=2;
+			print '<tr '.$bc[0].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
+		}
 
-        print '</table>';
-        print '</div>';
-    } else {
-        dol_print_error($db);
-    }
+		print '</table>';
+		print '</div>';
+	} else {
+		dol_print_error($db);
+	}
 
-    dol_fiche_end();
+	dol_fiche_end();
 
 
 
-    if ($socid && $action != 'edit' && $action != 'create')
-    {
-        /*
+	if ($socid && $action != 'edit' && $action != 'create')
+	{
+		/*
          * Barre d'actions
          */
-        print '<div class="tabsAction">';
+		print '<div class="tabsAction">';
 
-        if ($user->rights->societe->creer)
-        {
-            print '<a class="butAction" href="rib.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
-        }
+		if ($user->rights->societe->creer)
+		{
+			print '<a class="butAction" href="rib.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
+		}
 
-        print '</div>';
-    }
-
-
+		print '</div>';
+	}
 
 
-    if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
-    {
-        print '<div class="fichecenter"><div class="fichehalfleft">';
-        print '<a name="builddoc"></a>'; // ancre
 
-        /*
+
+	if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
+	{
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+
+		/*
          * Documents generes
          */
-        $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
-        $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-        $genallowed=$user->rights->societe->creer;
-        $delallowed=$user->rights->societe->supprimer;
+		$filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
+		$urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+		$genallowed=$user->rights->societe->lire;
+		$delallowed=$user->rights->societe->creer;
 
-        $var=true;
+		$var=true;
 
-        print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
-        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
-        print '</div></div></div>';
+		print '</div></div></div>';
 
-        print '<br>';
-    }
-    /*
+		print '<br>';
+	}
+	/*
     include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
     $modellist=ModeleBankAccountDoc::liste_modeles($db);
     //print '<td>';

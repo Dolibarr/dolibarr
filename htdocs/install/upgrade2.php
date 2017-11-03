@@ -61,11 +61,11 @@ error_reporting(0);
 @set_time_limit(300);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
+$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
-$enablemodules=GETPOST("enablemodules",'',3)?GETPOST("enablemodules",'',3):(empty($argv[3])?'':$argv[3]);
+$versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
+$enablemodules=GETPOST("enablemodules",'alpha',3)?GETPOST("enablemodules",'alpha',3):(empty($argv[3])?'':$argv[3]);
 
 $langs->load('admin');
 $langs->load('install');
@@ -416,6 +416,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     {
         // Reload modules (this must be always done and only into last targeted version)
         $listofmodules=array();
+        $enablemodules=preg_replace('/enablemodules=/','',$enablemodules);
         $tmplistofmodules=explode(',', $enablemodules);
         foreach($tmplistofmodules as $value)
         {
@@ -4279,6 +4280,16 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
+		if ($moduletoreload == 'MAIN_MODULE_SUPPLIERPROPOSAL')		// Module after 3.5
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Supplier Proposal module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSupplierProposal.class.php';
+			if ($res) {
+				$mod=new modSupplierProposal($db);
+				$mod->remove('noboxes');  // We need to remove because id of module has changed
+				$mod->init($reloadmode);
+			}
+		}
 		if ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Opensurvey module");
@@ -4305,6 +4316,16 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
 			if ($res) {
 				$mod=new modUser($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		if ($moduletoreload == 'MAIN_MODULE_WEBSITE')    // Module added in 7.0
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Website module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modWebsite.class.php';
+			if ($res) {
+				$mod=new modWebsite($db);
 				//$mod->remove('noboxes');
 				$mod->init($reloadmode);
 			}
@@ -4340,31 +4361,10 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 
     // Define list of menu handlers to initialize
     $listofmenuhandler=array();
-
-    $versiontoarray=explode('.',$versionto);
-
-    // Migration required when target version is between
-    $afterversionarray=explode('.','2.8.9');
-    $beforeversionarray=explode('.','2.9.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+    if ($conf->global->MAIN_MENU_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENU_SMARTPHONE == 'auguria_menu'
+    	|| $conf->global->MAIN_MENUFRONT_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENUFRONT_SMARTPHONE == 'auguria_menu')
     {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
-    }
-
-    // Migration required when target version is between
-    $afterversionarray=explode('.','3.1.9');
-    $beforeversionarray=explode('.','3.2.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
-    }
-
-    // Migration required when target version is between
-    $afterversionarray=explode('.','3.7.9');
-    $beforeversionarray=explode('.','4.0.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
+    	$listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
 
     foreach ($listofmenuhandler as $key => $val)

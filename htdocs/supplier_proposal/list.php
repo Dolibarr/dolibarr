@@ -157,7 +157,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
 	foreach($extrafields->attribute_label as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
 
@@ -939,7 +939,7 @@ if ($resql)
 		$filedir=$diroutputmassaction;
 
 		$genallowed=$user->rights->supplier_proposal->lire;
-		$delallowed=$user->rights->supplier_proposal->lire;
+		$delallowed=$user->rights->supplier_proposal->creer;
 
 		print $formfile->showdocuments('massfilesarea_supplier_proposal','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,'','');
 	}

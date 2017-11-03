@@ -64,6 +64,7 @@ ProposalLine=提案ライン
 AvailabilityPeriod=可用性の遅延
 SetAvailability=可用性の遅延を設定
 AfterOrder=ご注文後
+OtherProposals=他の提案
 ##### Availability #####
 AvailabilityTypeAV_NOW=即時の
 AvailabilityTypeAV_1W=1週間

@@ -64,6 +64,7 @@ ProposalLine=Javaslat vonal
 AvailabilityPeriod=Elérhetőség késleltetés
 SetAvailability=Állítsa be a rendelkezésre álló késedelem
 AfterOrder=rendezés után
+OtherProposals=Egyéb javaslatok
 ##### Availability #####
 AvailabilityTypeAV_NOW=Azonnali
 AvailabilityTypeAV_1W=1 hét

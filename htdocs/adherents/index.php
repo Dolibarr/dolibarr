@@ -162,7 +162,8 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 
 if ($conf->use_javascript_ajax)
 {
-    print '<table class="noborder nohover" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
     print '<tr '.$bc[0].'><td align="center" colspan="2">';
 
@@ -199,6 +200,7 @@ if ($conf->use_javascript_ajax)
     print $SommeA+$SommeB+$SommeC+$SommeD;
     print '</td></tr>';
     print '</table>';
+    print '</div>';
 }
 
 print '<br>';
@@ -234,6 +236,7 @@ if ($result)
     }
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("Subscriptions").'</th>';
@@ -261,7 +264,8 @@ print "<td align=\"right\">".$numb."</td>";
 print '<td align="right">'.price($tot)."</td>";
 print "<td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td>";
 print "</tr>\n";
-print "</table><br>\n";
+print "</table></div>";
+print "<br>\n";
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -283,6 +287,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastMembersModified",$max).'</th></tr>';
@@ -319,7 +324,8 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div>";
+	print "<br>";
 }
 else
 {
@@ -344,6 +350,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</th></tr>';
@@ -379,7 +386,8 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div>";
+	print "<br>";
 }
 else
 {
@@ -388,6 +396,7 @@ else
 
 
 // Summary of members by type
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("MembersTypes").'</th>';
@@ -416,7 +425,7 @@ print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibSta
 print '</tr>';
 
 print "</table>\n";
-
+print "</div>";
 
 print '</div></div></div>';
 

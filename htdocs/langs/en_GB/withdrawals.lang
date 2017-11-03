@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Payment status must be set to 'credited' before declaring reject on specific lines.
-NbOfInvoiceToWithdraw=No. of invoices with direct debit orders
 NbOfInvoiceToWithdrawWithInfo=No. of customer invoices with direct debit payment orders having defined bank account information
 AmountToWithdraw=Amount to pay
 NoInvoiceToWithdraw=No customer invoice with open 'Direct Debit requests' is waiting. Go on tab '%s' on invoice card to make a request.
@@ -12,7 +11,6 @@ WithdrawalRefusedConfirm=Are you sure you want to enter a Payment rejection for 
 RefusedInvoicing=Invoicing the rejection
 NoInvoiceRefused=Do not charge for the rejection
 StatusMotif6=Account without a balance
-CreateAll=Pay it all
 OrderWaiting=Waiting for action
 NotifyTransmision=Payment Transmission
 NotifyCredit=Payment Credit

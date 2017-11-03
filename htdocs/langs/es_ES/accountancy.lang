@@ -28,14 +28,17 @@ OverviewOfAmountOfLinesBound=Ver la cantidad de líneas ligadas a cuentas contab
 OtherInfo=Otra información
 DeleteCptCategory=Eliminar la cuenta contable del grupo
 ConfirmDeleteCptCategory=¿Está seguro de querer eliminar esta cuenta contable del grupo de cuentas contables?
-JournalizationInLedgerStatus=Status of journalization
-AlreadyInGeneralLedger=Already journalized in ledgers
-NotYetInGeneralLedger=Not yet journalized in ledgers
+JournalizationInLedgerStatus=Estado de diario
+AlreadyInGeneralLedger=Registrado en el Libro Mayor
+NotYetInGeneralLedger=No se ha registrado en el Libro Mayor
+GroupIsEmptyCheckSetup=El grupo está vacío, compruebe la configuración de grupos contables
+DetailByAccount=Ver detalles por cuenta
+AccountWithNonZeroValues=Cuentas con valores no cero
 
-MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
-MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
-MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
+MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
+MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
+MainAccountForUsersNotDefined=Cuenta contable para usuarios no definida en la configuración
+MainAccountForVatPaymentNotDefined=Cuenta contable para IVA no definida en la configuración
 
 AccountancyArea=Área contabilidad
 AccountancyAreaDescIntro=El uso del módulo de contabilidad se realiza en varios pasos:
@@ -52,7 +55,7 @@ AccountancyAreaDescExpenseReport=PASO %s: Defina las cuentas contables para los 
 AccountancyAreaDescSal=PASO %s: Defina las cuentas contables para los pagos de salarios. Para ello puede utilizar el menú %s.
 AccountancyAreaDescContrib=PASO %s: Defina las cuentas contables de los gastos especiales (impuestos varios). Para ello puede utilizar el menú %s.
 AccountancyAreaDescDonation=PASO %s: Defina las cuentas contables para las donaciones. Para ello puede utilizar el menú %s.
-AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
+AccountancyAreaDescMisc=PASO %s: Defina las cuentas contables para registros varios. Para ello puede utilizar el menú %s.
 AccountancyAreaDescLoan=PASO %s: Defina las cuentas contables para los préstamos. Para ello puede utilizar el menú %s.\n
 AccountancyAreaDescBank=PASO %s: Defina las cuentas contables para cada banco y cuentas financieras. Puede empezar desde la página %s.
 AccountancyAreaDescProd=PASO %s: Defina las cuentas contables en sus productos. Para ello puede utilizar el menú %s.
@@ -63,6 +66,7 @@ AccountancyAreaDescAnalyze=PASO %s: Añadir o editar transacciones existentes, g
 
 AccountancyAreaDescClosePeriod=PASO %s: Cerrar periodo, por lo que no podrá hacer modificaciones en un futuro.
 
+TheJournalCodeIsNotDefinedOnSomeBankAccount=No se ha completado un paso obligatorio en la configuración (cuenta contable no definida en todas las cuentas bancarias)
 MenuAccountancy=Contabilidad
 Selectchartofaccounts=Seleccione un plan contable activo
 ChangeAndLoad=Cambiar y cargar
@@ -74,6 +78,7 @@ ShowAccountingAccount=Mostrar diario de cuentas
 ShowAccountingJournal=Mostrar diario contable
 AccountAccountingSuggest=Cuenta contable sugerida
 MenuDefaultAccounts=Cuentas contables por defecto
+MenuBankAccounts=Cuentas Bancarias
 MenuVatAccounts=Cuentas de IVA
 MenuTaxAccounts=Cuentas de impuestos
 MenuExpenseReportAccounts=Cuentas de informes de pagos
@@ -86,11 +91,11 @@ SuppliersVentilation=Contabilizar facturas de proveedores
 ExpenseReportsVentilation=Contabilizar informes de gastos
 CreateMvts=Crear nuevo movimiento
 UpdateMvts=Modificar transacción
-ValidTransaction=Validate transaction
+ValidTransaction=Transacción validada
 WriteBookKeeping=Registrar movimientos en el Libro Mayor
 Bookkeeping=Libro Mayor
 AccountBalance=Saldo de la cuenta
-ObjectsRef=Source object ref
+ObjectsRef=Referencia de objeto origen
 CAHTF=Total purchase supplier before tax
 TotalExpenseReport=Total informe de gastos
 InvoiceLines=Líneas de facturas a contabilizar
@@ -110,7 +115,7 @@ LineOfExpenseReport=Línea de informe de gastos
 NoAccountSelected=No se ha seleccionado cuenta contable
 VentilatedinAccount=Contabilizada con éxito en la cuenta contable
 NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
-XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
+XLineSuccessfullyBinded=%s productos/servicios relacionada correctamente a una cuenta contable
 XLineFailedToBeBinded=%s productos/servicios sin cuenta contable
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
@@ -143,14 +148,19 @@ Doctype=Tipo de documento
 Docdate=Fecha
 Docref=Referencia
 Code_tiers=Tercero
-Labelcompte=Descripción
+LabelAccount=Descripción
+LabelOperation=Label operation
 Sens=Sentido
 Codejournal=Diario
 NumPiece=Apunte
 TransactionNumShort=Núm. transacción
-AccountingCategory=Grupos cuentas contables
+AccountingCategory=Grupos personalizados
 GroupByAccountAccounting=Agrupar por cuenta contable
-ByAccounts=By accounts
+AccountingAccountGroupsDesc=Puede definir aquí algunos grupos de cuentas contables. Se utilizarán en el informe <b>%s</b> para mostrar sus ingresos/gastos con los datos agrupados de acuerdo con estos grupos.
+ByAccounts=Por cuentas
+ByPredefinedAccountGroups=Por grupos predefinidos
+ByPersonalizedAccountGroups=Por grupos personalizados
+ByYear=Por año
 NotMatch=No establecido
 DeleteMvt=Eliminar líneas del Libro Mayor
 DelYear=Año a eliminar
@@ -161,7 +171,7 @@ DelBookKeeping=Eliminar los registros del Libro Mayor
 FinanceJournal=Diario financiero
 ExpenseReportsJournal=Diario informe de gastos
 DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=Esta es una vista de registros que están vinculados a una cuenta contable y pueden ser registrados en el Libro Mayor.
 VATAccountNotDefined=Cuenta contable para IVA no definida
 ThirdpartyAccountNotDefined=Cuenta contable de tercero no definida
 ProductAccountNotDefined=Cuenta contable de producto no definida
@@ -177,11 +187,12 @@ AddCompteFromBK=Añadir cuentas contables al grupo
 ReportThirdParty=Listado de cuentas de terceros
 DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus códigos contables
 ListAccounts=Listado de cuentas contables
-UnknownAccountForThirdparty=Unknown third party account. We will use %s
-UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
+UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
+UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
 
-Pcgtype=Tipo del plan
-Pcgsubtype=Subcuenta
+Pcgtype=Grupo de cuenta
+Pcgsubtype=Subgrupo de cuenta
+PcgtypeDesc=Grupo y subgrupo de cuenta se utilizan como criterios predefinidos de "filtro" y "agrupación" para algunos informes de contabilidad. Por ejemplo, "INGRESOS" o "GASTOS" se usan como grupos para cuentas contables de productos para construir el informe de gastos/ingresos.
 
 TotalVente=Total facturación antes de impuestos
 TotalMarge=Total margen ventas
@@ -203,7 +214,7 @@ ValidateHistory=Vincular automáticamente
 AutomaticBindingDone=Vinculación automática finalizada
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Asiento contabilizado incorrectamente. Debe=%s. Haber=%s
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Transacciones escritas en el Libro Mayor
 GeneralLedgerSomeRecordWasNotRecorded=Algunas de las operaciones que no podrán registrarse. Si no hay un mensaje de error, es probable que ya estén contabilizadas
@@ -213,7 +224,7 @@ ChangeBinding=Cambiar la unión
 
 ## Admin
 ApplyMassCategories=Aplicar categorías en masa
-AddAccountFromBookKeepingWithNoCategories=Añadir cuenta ya utilizada sin categorías
+AddAccountFromBookKeepingWithNoCategories=Cuenta disponible sin grupo personalizado
 CategoryDeleted=La categoría para la cuenta contable ha sido eliminada
 AccountingJournals=Diarios contables
 AccountingJournal=Diario contable
@@ -224,12 +235,12 @@ AccountingJournalType1=Operaciones varias
 AccountingJournalType2=Ventas
 AccountingJournalType3=Compras
 AccountingJournalType4=Banco
-AccountingJournalType5=Expenses report
+AccountingJournalType5=Informes de gastos
 AccountingJournalType9=Haber
 ErrorAccountingJournalIsAlreadyUse=Este diario ya esta siendo usado
 
 ## Export
-ExportDraftJournal=Export draft journal
+ExportDraftJournal=Exportar libro borrador
 Modelcsv=Modelo de exportación
 OptionsDeactivatedForThisExportModel=Las opciones están desactivadas para este modelo de exportación
 Selectmodelcsv=Seleccione un modelo de exportación
@@ -255,7 +266,7 @@ OptionModeProductSellDesc=Mostrar todos los productos con cuenta contable de ven
 OptionModeProductBuyDesc=Mostrar todos los productos con cuenta contable de compras
 CleanFixHistory=Eliminar código contable de las líneas que no existen en el plan contable
 CleanHistory=Resetear todos los vínculos del año seleccionado
-
+PredefinedGroups=Grupos personalizados
 WithoutValidAccount=Sin cuenta dedicada válida
 WithValidAccount=Con cuenta dedicada válida
 ValueNotIntoChartOfAccount=Este valor de cuenta contable no existe en el plan general contable
@@ -273,5 +284,6 @@ BookeppingLineAlreayExists=Lineas ya existentes en la contabilidad
 NoJournalDefined=Sin diario definido
 Binded=Líneas contabilizadas
 ToBind=Líneas a contabilizar
+UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href="%s"> %s </a> para realizar el apunte manualmente
 
-WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor. Será reemplazado por un informe más completo en una próxima versión.
+WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.

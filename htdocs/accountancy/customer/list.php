@@ -115,6 +115,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_amount = '';
 	$search_account = '';
 	$search_vat = '';
+	$search_day = '';
 	$search_month = '';
 	$search_year = '';
 }

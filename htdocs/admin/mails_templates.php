@@ -1019,9 +1019,9 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}
 			print '</td>';
 		}
-		elseif ($context == 'add' & in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
-		elseif ($context == 'edit' & in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
-		elseif ($context == 'hide' & in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
+		elseif ($context == 'add' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
+		elseif ($context == 'edit' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
+		elseif ($context == 'hide' && in_array($fieldlist[$field], array('topic', 'joinfiles', 'content', 'content_lines'))) continue;
 		else
 		{
 			$size=''; $class=''; $classtd='';

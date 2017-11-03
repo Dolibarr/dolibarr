@@ -339,7 +339,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
-			print '<td>'.$langs->trans("ProjectContact").'</td>';
+			print '<td>'.$langs->trans("TaskContact").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
@@ -421,7 +421,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		print '<td>'.$langs->trans("ProjectContact").'</td>';
+		print '<td>'.$langs->trans("TaskContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
 		print '<td align="center">'.$langs->trans("Status").'</td>';
 		print '<td colspan="2">&nbsp;</td>';

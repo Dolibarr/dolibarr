@@ -211,15 +211,26 @@ if (file_exists($fullpathselecteddir))
     		}
 
     		// Enable jquery handlers on new generated HTML objects
-            print '<script type="text/javascript">';
-            print 'jQuery(".classfortooltip").tipTip({ maxWidth: "'.dol_size(600,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});';
-			// TODO Remove this. Is replaced with function as 3rd parameter of fileTree
-            print 'jQuery(".fmdirlia").click(function(e) {
+			print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+    		print '<script type="text/javascript">
+            	jQuery(document).ready(function () {
+            		jQuery(".classfortooltip").tooltip({
+						show: { collision: "flipfit", effect:\'toggle\', delay:50 },
+						hide: { effect:\'toggle\', delay: 50 },
+						tooltipClass: "mytooltip",
+						content: function () {
+              				return $(this).prop(\'title\');		/* To force to get title as is */
+          				}
+            		});
+
+					/* TODO Remove this. Is replaced with function as 3rd parameter of fileTree */
+            		jQuery(".fmdirlia").click(function(e) {
             			id=jQuery(this).attr(\'id\').substr(12);
             			jQuery("#formuserfile_section_dir").val(jQuery(this).attr(\'rel\'));
             			jQuery("#formuserfile_section_id").val(id);
-    				});';
-            print '</script>';
+    				});
+            	});
+            	</script>';
 
     		echo "</ul>\n";
 

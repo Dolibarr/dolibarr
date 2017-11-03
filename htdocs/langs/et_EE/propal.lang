@@ -64,6 +64,7 @@ ProposalLine=Pakkumise read
 AvailabilityPeriod=Saadavuse viivitus
 SetAvailability=Määratle saadavuse viivitus
 AfterOrder=pärast tellimist
+OtherProposals=Muud pakkumised
 ##### Availability #####
 AvailabilityTypeAV_NOW=Kohe
 AvailabilityTypeAV_1W=1 näda

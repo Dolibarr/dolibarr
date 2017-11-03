@@ -321,56 +321,27 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			}
 		}
 		// Else, retreive default values if we are not doing a sort
-		elseif (! isset($_GET['sortfield']) && ! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
+		elseif (! isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 		{
 			if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 			{
-				if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
+				// Search default value from $object->field
+				global $object;
+				if (is_object($object) && isset($object->fields[$paramname]['default']))
 				{
-					if (isset($user->default_values[$relativepathstring]['createform']))
-					{
-						foreach($user->default_values[$relativepathstring]['createform'] as $defkey => $defval)
-						{
-							$qualified = 0;
-							if ($defkey != '_noquery_')
-							{
-								$tmpqueryarraytohave=explode('&', $defkey);
-								$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-								$foundintru=0;
-								foreach($tmpqueryarraytohave as $tmpquerytohave)
-								{
-									if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
-								}
-								if (! $foundintru) $qualified=1;
-								//var_dump($defkey.'-'.$qualified);
-							}
-							else $qualified = 1;
-
-							if ($qualified)
-							{
-								//var_dump($user->default_values[$relativepathstring][$defkey]['createform']);
-								if (isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname]))
-								{
-									$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
-									break;
-								}
-							}
-						}
-					}
+					$out = $object->fields[$paramname]['default'];
 				}
 			}
-			// Management of default search_filters and sort order
-			//elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
-			elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+			if (! empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 			{
-				if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
+				if (! empty($_GET['action']) && $_GET['action'] == 'create' && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				{
-					//var_dump($user->default_values[$relativepathstring]);
-					if ($paramname == 'sortfield' || $paramname == 'sortorder')			// Sorted on which fields ? ASC or DESC ?
+					// Now search in setup to overwrite default values
+					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
 					{
-						if (isset($user->default_values[$relativepathstring]['sortorder']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
+						if (isset($user->default_values[$relativepathstring]['createform']))
 						{
-							foreach($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval)
+							foreach($user->default_values[$relativepathstring]['createform'] as $defkey => $defval)
 							{
 								$qualified = 0;
 								if ($defkey != '_noquery_')
@@ -389,67 +360,108 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 
 								if ($qualified)
 								{
-									$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-									foreach($user->default_values[$relativepathstring]['sortorder'][$defkey] as $key => $val)
+									//var_dump($user->default_values[$relativepathstring][$defkey]['createform']);
+									if (isset($user->default_values[$relativepathstring]['createform'][$defkey][$paramname]))
 									{
-										if ($out) $out.=', ';
-										if ($paramname == 'sortfield')
-										{
-											$out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
-										}
-										if ($paramname == 'sortorder')
-										{
-											$out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
-										}
+										$out = $user->default_values[$relativepathstring]['createform'][$defkey][$paramname];
+										break;
 									}
-									//break;	// No break for sortfield and sortorder so we can cumulate fields (is it realy usefull ?)
 								}
 							}
 						}
 					}
-					elseif (isset($user->default_values[$relativepathstring]['filters']))
+				}
+				// Management of default search_filters and sort order
+				//elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+				elseif (! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
+				{
+					if (! empty($user->default_values))		// $user->default_values defined from menu 'Setup - Default values'
 					{
-						foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)
+						//var_dump($user->default_values[$relativepathstring]);
+						if ($paramname == 'sortfield' || $paramname == 'sortorder')			// Sorted on which fields ? ASC or DESC ?
 						{
-							$qualified = 0;
-							if ($defkey != '_noquery_')
+							if (isset($user->default_values[$relativepathstring]['sortorder']))	// Even if paramname is sortfield, data are stored into ['sortorder...']
 							{
-								$tmpqueryarraytohave=explode('&', $defkey);
-								$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
-								$foundintru=0;
-								foreach($tmpqueryarraytohave as $tmpquerytohave)
+								foreach($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval)
 								{
-									if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
-								}
-								if (! $foundintru) $qualified=1;
-								//var_dump($defkey.'-'.$qualified);
-							}
-							else $qualified = 1;
+									$qualified = 0;
+									if ($defkey != '_noquery_')
+									{
+										$tmpqueryarraytohave=explode('&', $defkey);
+										$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+										$foundintru=0;
+										foreach($tmpqueryarraytohave as $tmpquerytohave)
+										{
+											if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+										}
+										if (! $foundintru) $qualified=1;
+										//var_dump($defkey.'-'.$qualified);
+									}
+									else $qualified = 1;
 
-							if ($qualified)
+									if ($qualified)
+									{
+										$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+										foreach($user->default_values[$relativepathstring]['sortorder'][$defkey] as $key => $val)
+										{
+											if ($out) $out.=', ';
+											if ($paramname == 'sortfield')
+											{
+												$out.=dol_string_nospecial($key, '', $forbidden_chars_to_replace);
+											}
+											if ($paramname == 'sortorder')
+											{
+												$out.=dol_string_nospecial($val, '', $forbidden_chars_to_replace);
+											}
+										}
+										//break;	// No break for sortfield and sortorder so we can cumulate fields (is it realy usefull ?)
+									}
+								}
+							}
+						}
+						elseif (isset($user->default_values[$relativepathstring]['filters']))
+						{
+							foreach($user->default_values[$relativepathstring]['filters'] as $defkey => $defval)
 							{
-								if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+								$qualified = 0;
+								if ($defkey != '_noquery_')
 								{
-									// We made a search from quick search menu, do we still use default filter ?
-									if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+									$tmpqueryarraytohave=explode('&', $defkey);
+									$tmpqueryarraywehave=explode('&', dol_string_nohtmltag($_SERVER['QUERY_STRING']));
+									$foundintru=0;
+									foreach($tmpqueryarraytohave as $tmpquerytohave)
+									{
+										if (! in_array($tmpquerytohave, $tmpqueryarraywehave)) $foundintru=1;
+									}
+									if (! $foundintru) $qualified=1;
+									//var_dump($defkey.'-'.$qualified);
+								}
+								else $qualified = 1;
+
+								if ($qualified)
+								{
+									if (isset($_POST['sall']) || isset($_POST['search_all']) || isset($_GET['sall']) || isset($_GET['search_all']))
+									{
+										// We made a search from quick search menu, do we still use default filter ?
+										if (empty($conf->global->MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH))
+										{
+											$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
+											$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
+										}
+									}
+									else
 									{
 										$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
 										$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 									}
+									break;
 								}
-								else
-								{
-									$forbidden_chars_to_replace=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",";","=");  // we accept _, -, . and ,
-									$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
-								}
-								break;
 							}
 						}
 					}
 				}
 			}
 		}
-
 	}
 
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
@@ -505,22 +517,31 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			if (preg_match('/[^0-9,]+/i',$out)) $out='';
 			break;
 		case 'alpha':
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				if (preg_match('/"/',$out)) $out='';
+				else if (preg_match('/\.\.\//',$out)) $out='';
+			}
 			break;
 		case 'san_alpha':
 			$out=filter_var($out,FILTER_SANITIZE_STRING);
 			break;
 		case 'aZ':
-			$out=trim($out);
-			if (preg_match('/[^a-z]+/i',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z]+/i',$out)) $out='';
+			}
 			break;
 		case 'aZ09':
-			$out=trim($out);
-			if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
+			}
 			break;
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
@@ -529,12 +550,15 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 			$out=dol_string_nohtmltag($out);
 			break;
 		case 'alphanohtml':	// Recommended for search params
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
-			$out=dol_string_nohtmltag($out);
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+				// '../' is dangerous because it allows dir transversals
+				if (preg_match('/"/',$out)) $out='';
+				else if (preg_match('/\.\.\//',$out)) $out='';
+				$out=dol_string_nohtmltag($out);
+			}
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
@@ -908,17 +932,17 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
- *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, remove them)
+ *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value)
  *  @return     string     				 		Escaped string
  *  @see		dol_string_nohtmltag
  */
 function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {
 	// escape quotes and backslashes, newlines, etc.
-	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html form content
+	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html tags
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
 	if (! $keepn) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
-	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html form content
+	return htmlentities($tmp, ENT_COMPAT, 'UTF-8');						// TODO Use htmlspecialchars instead, that make only required change for html tags
 }
 
 
@@ -1598,7 +1622,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
- * 										'tzuser' => output string is for user TZ (current browser TZ with current dst)
+ * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
  *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position) (TODO not implemented yet)
  *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
@@ -1629,8 +1653,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 			{
 				$to_gmt=true;
 				$offsettzstring=(empty($_SESSION['dol_tz_string'])?'UTC':$_SESSION['dol_tz_string']);	// Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
-				$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
+				$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;		// Will not be used anymore
+				$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;	// Will not be used anymore
 			}
 		}
 	}
@@ -1687,8 +1711,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$time,$reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i',$time,$reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 	{
-		// This part of code should not be used. TODO Remove this.
-		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
+		// TODO Remove this.
+		// This part of code should not be used.
+		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_ERR);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
 		$smonth	= (! empty($reg[2]) ? $reg[2] : '');
@@ -1698,22 +1723,26 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 		$ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
 		$time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
-		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);			// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);
 	}
 	else
 	{
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
 		{
-			$ret=adodb_strftime($format, $time+$offsettz+$offsetdst, $to_gmt);		// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+			$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+
+			$ret=adodb_strftime($format, $timetouse, $to_gmt);
 		}
 		else $ret='Bad value '.$time.' for date';
 	}
 
 	if (preg_match('/__b__/i',$format))
 	{
+		$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month=adodb_strftime('%m', $time+$offsettz+$offsetdst);					// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$month=adodb_strftime('%m', $timetouse);
 		$month=sprintf("%02d", $month);	// $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput)
 		{
@@ -1733,7 +1762,9 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (preg_match('/__a__/i',$format))
 	{
-		$w=adodb_strftime('%w', $time+$offsettz+$offsetdst);						// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$timetouse = $time+$offsettz+$offsetdst;	// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+
+		$w=adodb_strftime('%w', $timetouse);						// TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret=str_replace('__A__',$dayweek,$ret);
 		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);
@@ -2229,17 +2260,9 @@ function dol_print_ip($ip,$mode=0)
 
 	if (empty($mode)) $ret.=$ip;
 
-	if (! empty($conf->geoipmaxmind->enabled) && $mode != 2)
+	if ($mode != 2)
 	{
-		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
-		//$ip='24.24.24.24';
-		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
-		$geoip=new DolGeoIP('country',$datafile);
-		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
-		$countrycode=$geoip->getCountryCodeFromIP($ip);
+		$countrycode=dolGetCountryCodeFromIp($ip);
 		if ($countrycode)	// If success, countrycode is us, fr, ...
 		{
 			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png'))
@@ -2252,6 +2275,35 @@ function dol_print_ip($ip,$mode=0)
 
 	return $ret;
 }
+
+/**
+ * 	Return a country code from IP. Empty string if not found.
+ *
+ * 	@param	string	$ip			IP
+ * 	@return string 				Country code ('us', 'fr', ...)
+ */
+function dolGetCountryCodeFromIp($ip)
+{
+	global $conf;
+
+	$countrycode='';
+
+	if (! empty($conf->geoipmaxmind->enabled))
+	{
+		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+		//$ip='24.24.24.24';
+		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
+		$geoip=new DolGeoIP('country',$datafile);
+		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
+		$countrycode=$geoip->getCountryCodeFromIP($ip);
+	}
+
+	return $countrycode;
+}
+
 
 /**
  *  Return country code for current user.
@@ -2654,7 +2706,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 /**
  *	Show picto whatever it's its name (generic function)
  *
- *	@param      string		$titlealt         	Text on title and alt. If text is "TextA:TextB", use Text A on alt and Text B on title. Alt only if param notitle is set to 1.
+ *	@param      string		$titlealt         	Text on title tag for tooltip. Not used if param notitle is set to 1.
  *	@param      string		$picto       		Name of image file to show ('filenew', ...)
  *												If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
@@ -2664,12 +2716,13 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param		string		$alt				Force alt for bind peoplae
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='')
 {
-	global $conf;
+	global $conf, $langs;
 
 	// Define fullpathpicto to use into src
 	if ($pictoisfullpath)
@@ -2680,6 +2733,21 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	}
 	else
 	{
+		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
+		if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
+		{
+			$fakey = $picto; $facolor=''; $fasize='';
+			if ($picto == 'switch_off') { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
+			if ($picto == 'switch_on')  { $fakey = 'fa-toggle-on';  $facolor='#227722'; $fasize='2em'; }
+			if ($picto == 'off') { $fakey = 'fa-square-o'; $fasize='1.3em'; }
+			if ($picto == 'on')  { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
+			$enabledisablehtml='';
+			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'">';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
+			$enabledisablehtml.='</span>';
+			return $enabledisablehtml;
+		}
+
 		// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 		$url = DOL_URL_ROOT;
 		$theme = $conf->theme;
@@ -2716,11 +2784,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	if ($srconly) return $fullpathpicto;
 	else
 	{
-		$tmparray=array(0=>$titlealt);
-		if (preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
-		$title=$tmparray[0];
-		$alt=empty($tmparray[1])?'':$tmparray[1];
-		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block valigntextbottom"').'>';	// Alt is used for accessibility, title for popup
+		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
+		//$tmparray=array(0=>$titlealt);
+		//if (empty($notitle) && preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
+		//$title=$tmparray[0];
+		//$alt=empty($tmparray[1])?'':$tmparray[1];
+		$title=$titlealt;
+		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
 
@@ -4894,7 +4964,7 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8')
 {
-	// TODO Try to replace with strip_tags($stringtoclean)
+	// TODO Try to replace with  strip_tags($stringtoclean)
 	$pattern = "/<[^<>]+>/";
 	$stringtoclean = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
 	$temp = dol_html_entity_decode($stringtoclean,ENT_COMPAT,$pagecodeto);
@@ -5412,6 +5482,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		$substitutionarray['__AMOUNT__']          = is_object($object)?$object->total_ttc:'';
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object)?$object->total_ht:'';
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
+ 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2__']     = is_object($object)?($object->total_localtax1?$object->total_localtax1:$object->total_localtax1):'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3__']     = is_object($object)?($object->total_localtax2?$object->total_localtax2:$object->total_localtax2):'';
+
 		/* TODO Add key for multicurrency
     	$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
@@ -5714,26 +5787,27 @@ function setEventMessages($mesg, $mesgs, $style='mesgs')
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function, so there is
  *  no need to call it explicitely.
  *
+ *  @param	int		$disabledoutputofmessages	Clear all messages stored into session without diplaying them
  *  @return	void
- *  @see    dol_htmloutput_mesg
+ *  @see    									dol_htmloutput_mesg
  */
-function dol_htmloutput_events()
+function dol_htmloutput_events($disabledoutputofmessages=0)
 {
 	// Show mesgs
 	if (isset($_SESSION['dol_events']['mesgs'])) {
-		dol_htmloutput_mesg('', $_SESSION['dol_events']['mesgs']);
+		if (empty($disabledoutputofmessages)) dol_htmloutput_mesg('', $_SESSION['dol_events']['mesgs']);
 		unset($_SESSION['dol_events']['mesgs']);
 	}
 
 	// Show errors
 	if (isset($_SESSION['dol_events']['errors'])) {
-		dol_htmloutput_mesg('', $_SESSION['dol_events']['errors'], 'error');
+		if (empty($disabledoutputofmessages)) dol_htmloutput_mesg('', $_SESSION['dol_events']['errors'], 'error');
 		unset($_SESSION['dol_events']['errors']);
 	}
 
 	// Show warnings
 	if (isset($_SESSION['dol_events']['warnings'])) {
-		dol_htmloutput_mesg('', $_SESSION['dol_events']['warnings'], 'warning');
+		if (empty($disabledoutputofmessages)) dol_htmloutput_mesg('', $_SESSION['dol_events']['warnings'], 'warning');
 		unset($_SESSION['dol_events']['warnings']);
 	}
 }
@@ -6321,21 +6395,18 @@ function printCommonFooter($zone='private')
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 	{
-		if (($conf->dol_use_jmobile != 4))
-		{
-			print "\n";
-			print '<script type="text/javascript">'."\n";
-			print '  var _gaq = _gaq || [];'."\n";
-			print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-			print '  _gaq.push([\'_trackPageview\']);'."\n";
-			print ''."\n";
-			print '  (function() {'."\n";
-			print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-			print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-			print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-			print '  })();'."\n";
-			print '</script>'."\n";
-		}
+		print "\n";
+		print '<script type="text/javascript">'."\n";
+		print '  var _gaq = _gaq || [];'."\n";
+		print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+		print '  _gaq.push([\'_trackPageview\']);'."\n";
+		print ''."\n";
+		print '  (function() {'."\n";
+		print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+		print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+		print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+		print '  })();'."\n";
+		print '</script>'."\n";
 	}
 
 	// End of tuning
@@ -6790,4 +6861,38 @@ function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='
 		if ($id > 0) return $id;
 		return '';
 	}
+}
+
+/**
+ *	Return true if the color is light
+ *
+ *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
+ *  @return	int							-1 : Error with argument passed |0 : color is dark | 1 : color is light
+ */
+function colorIsLight($stringcolor)
+{
+	$res = -1;
+	if (!empty($stringcolor))
+	{
+		$res = 0;
+		$tmp=explode(',', $stringcolor);
+		if (count($tmp) > 1)   // This is a comma RGB ('255','255','255')
+		{
+			$r = $tmp[0];
+			$g = $tmp[1];
+			$b = $tmp[2];
+		}
+		else
+		{
+			$hexr=$stringcolor[0].$stringcolor[1];
+			$hexg=$stringcolor[2].$stringcolor[3];
+			$hexb=$stringcolor[4].$stringcolor[5];
+			$r = hexdec($hexr);
+			$g = hexdec($hexg);
+			$b = hexdec($hexb);
+		}
+		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
+		if ($bright > 0.6) $res = 1;
+	}
+	return $res;
 }

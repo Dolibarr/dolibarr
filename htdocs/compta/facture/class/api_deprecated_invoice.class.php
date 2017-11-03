@@ -23,7 +23,7 @@
  * API class for invoice object
  *
  * @smart-auto-routing false
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  * @deprecated Use Invoices instead (defined in api_invoices.class.php)
  */
@@ -31,7 +31,7 @@ class InvoiceApi extends DolibarrApi
 {
     /**
      *
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+     * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
         'socid'
@@ -46,7 +46,7 @@ class InvoiceApi extends DolibarrApi
      * Constructor <b>Warning: Deprecated</b>
      *
      * @url     GET invoice/
-     * 
+     *
      */
     function __construct()
     {
@@ -59,7 +59,7 @@ class InvoiceApi extends DolibarrApi
      * Get properties of a invoice object <b>Warning: Deprecated</b>
      *
      * Return an array with invoice informations
-     * 
+     *
      * @param 	int 	$id ID of invoice
      * @return 	array|mixed data without useless information
      *
@@ -67,16 +67,16 @@ class InvoiceApi extends DolibarrApi
      * @throws 	RestException
      */
     function get($id)
-    {		
+    {
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
-			
+
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Facture not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -86,9 +86,9 @@ class InvoiceApi extends DolibarrApi
 
     /**
      * List invoices <b>Warning: Deprecated</b>
-     * 
+     *
      * Get a list of invoices
-     * 
+     *
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -101,15 +101,15 @@ class InvoiceApi extends DolibarrApi
      * @url	GET invoice/list
      * @url	GET invoice/list/{mode}
      * @url GET thirdparty/{socid}/invoice/list
-     * @url GET thirdparty/{socid}/invoice/list/{mode} 
+     * @url GET thirdparty/{socid}/invoice/list/{mode}
      */
-    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid=0, $mode='') {
+    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $socid=0, $mode='') {
         global $db, $conf;
-        
+
         $obj_ret = array();
-        
+
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $socid;
-            
+
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
@@ -117,27 +117,27 @@ class InvoiceApi extends DolibarrApi
         $sql = "SELECT s.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as s";
-        
+
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
         $sql.= ' WHERE s.entity IN ('.getEntity('facture').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
         if ($socid) $sql.= " AND s.fk_soc = ".$socid;
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-        
-        
+
+
 		// Example of use $mode
         if ($mode == 'draft') $sql.= " AND s.fk_statut IN (0)";
         if ($mode == 'unpaid') $sql.= " AND s.fk_statut IN (1)";
         if ($mode == 'paid') $sql.= " AND s.fk_statut IN (2)";
         if ($mode == 'cancelled') $sql.= " AND s.fk_statut IN (3)";
-        
+
         // Insert sale filter
         if ($search_sale > 0)
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
-        
+
         $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
@@ -180,10 +180,10 @@ class InvoiceApi extends DolibarrApi
         }
 		return $obj_ret;
     }
-    
+
     /**
      * Create invoice object <b>Warning: Deprecated</b>
-     * 
+     *
      * @param array $request_data   Request datas
      * @return int  ID of invoice
      *
@@ -196,7 +196,7 @@ class InvoiceApi extends DolibarrApi
 		}
         // Check mandatory fields
         $result = $this->_validate($request_data);
-        
+
         foreach($request_data as $field => $value) {
             $this->invoice->$field = $value;
         }
@@ -213,9 +213,9 @@ class InvoiceApi extends DolibarrApi
      * Update invoice <b>Warning: Deprecated</b>
      *
      * @param int   $id             Id of invoice to update
-     * @param array $request_data   Datas   
-     * @return int 
-     * 
+     * @param array $request_data   Datas
+     * @return int
+     *
      * @url	PUT invoice/{id}
      */
     function put($id, $request_data = NULL)
@@ -223,12 +223,12 @@ class InvoiceApi extends DolibarrApi
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
 			throw new RestException(401);
 		}
-        
+
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Facture not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -237,20 +237,20 @@ class InvoiceApi extends DolibarrApi
             if ($field == 'id') continue;
             $this->invoice->$field = $value;
         }
-        
+
         if($this->invoice->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
-        
+
         return false;
     }
-    
+
     /**
      * Delete invoice <b>Warning: Deprecated</b>
      *
      * @param int   $id Invoice ID
      * @return type
-     * 
-     * @url	DELETE invoice/{id} 
+     *
+     * @url	DELETE invoice/{id}
      */
     function delete($id)
     {
@@ -261,31 +261,31 @@ class InvoiceApi extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'Facture not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->facture->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         if( !$this->invoice->delete(DolibarrApiAccess::$user))
         {
             throw new RestException(500);
         }
-        
+
          return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'Facture deleted'
             )
         );
-        
+
     }
-    
+
     /**
      * Validate fields before create or update object
-     * 
+     *
      * @param array $data   Datas to validate
      * @return array
-     * 
+     *
      * @throws RestException
      */
     function _validate($data)

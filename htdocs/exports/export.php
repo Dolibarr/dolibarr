@@ -99,6 +99,7 @@ $entitytolang = array(
 	'subproduct'      => 'SubProduct',
     'service'      => 'Service',
     'stock'        => 'Stock',
+	'movement'	   => 'StockMovement',
     'batch'        => 'Batch',
 	'warehouse'    => 'Warehouse',
 	'category'     => 'Category',

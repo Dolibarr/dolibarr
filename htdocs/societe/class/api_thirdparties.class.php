@@ -17,7 +17,6 @@
 
  use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for thirdparties
@@ -48,6 +47,10 @@ class Thirdparties extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
         $this->company = new Societe($this->db);
 
         if (! empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
@@ -80,6 +83,13 @@ class Thirdparties extends DolibarrApi
         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
+      $filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'))";
+      $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+      $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
+      $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+      $this->company->absolute_discount = price2num($absolute_discount, 'MT');
+      $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
 		  return $this->_cleanObjectDatas($this->company);
     }
 
@@ -95,10 +105,10 @@ class Thirdparties extends DolibarrApi
      * @param   int     $mode       Set to 1 to show only customers
      *                              Set to 2 to show only prospects
      *                              Set to 3 to show only those are not customer neither prospect
-     * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
      * @return  array               Array of thirdparty objects
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -327,6 +337,152 @@ class Thirdparties extends DolibarrApi
       $category->add_type($this->company,'customer');
       return $this->company;
     }
+
+
+     /**
+     * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
+     *
+     * @param 	int 	$id             ID of the thirdparty
+     * @param 	string 	$filter    	Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
+     * @param   string  $sortfield  	Sort field
+     * @param   string  $sortorder  	Sort order
+     *
+     * @url     GET {id}/fixedamountdiscounts
+     *
+     * @return array  List of fixed discount of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 503
+     */
+    function getFixedAmountDiscounts($id, $filter="none", $sortfield = "f.type", $sortorder = 'ASC')
+    {
+    	$obj_ret = array();
+
+      if(! DolibarrApiAccess::$user->rights->societe->lire) {
+        throw new RestException(401);
+      }
+
+      if(empty($id)) {
+        throw new RestException(400, 'Thirdparty ID is mandatory');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+
+      $result = $this->company->fetch($id);
+      if( ! $result ) {
+          throw new RestException(404, 'Thirdparty not found');
+      }
+
+
+      $sql = "SELECT f.facnumber, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
+      $sql .= " FROM llx_societe_remise_except as re, llx_facture as f";
+      $sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".$id;
+      if ($filter == "available")  $sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
+      if ($filter == "used")  $sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+
+      $sql.= $this->db->order($sortfield, $sortorder);
+
+      $result = $this->db->query($sql);
+      if( ! $result ) {
+          throw new RestException(503, $this->db->lasterror());
+      } else {
+          $num = $this->db->num_rows($result);
+          while ( $obj = $this->db->fetch_object($result) ) {
+              $obj_ret[] = $obj;
+          }
+      }
+
+      return $obj_ret;
+    }
+
+
+
+    /**
+     * Return list of invoices qualified to be replaced by another invoice.
+     *
+     * @param int   $id             Id of thirdparty
+     *
+     * @url     GET {id}/getinvoicesqualifiedforreplacement
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function getInvoicesQualifiedForReplacement($id) {
+
+    	if(! DolibarrApiAccess::$user->rights->facture->lire) {
+    		throw new RestException(401);
+    	}
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	/*$result = $this->thirdparty->fetch($id);
+    	 if( ! $result ) {
+    	 throw new RestException(404, 'Thirdparty not found');
+    	 }*/
+
+    	$invoice = new Facture($this->db);
+    	$result = $invoice->list_replacable_invoices($id);
+    	if( $result < 0) {
+    		throw new RestException(405, $this->thirdparty->error);
+    	}
+
+    	return $result;
+    }
+
+    /**
+     * Return list of invoices qualified to be corrected by a credit note.
+     * Invoices matching the following rules are returned
+     * (validated + payment on process) or classified (payed completely or payed partialy) + not already replaced + not already a credit note
+     *
+     * @param int   $id             Id of thirdparty
+     *
+     * @url     GET {id}/getinvoicesqualifiedforcreditnote
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function getInvoicesQualifiedForCreditNote($id) {
+
+        if(! DolibarrApiAccess::$user->rights->facture->lire) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Thirdparty ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        /*$result = $this->thirdparty->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Thirdparty not found');
+        }*/
+
+    	$invoice = new Facture($this->db);
+        $result = $invoice->list_qualified_avoir_invoices($id);
+        if( $result < 0) {
+                throw new RestException(405, $this->thirdparty->error);
+        }
+
+        return $result;
+    }
+
 
 	/**
 	 * Clean sensible object datas

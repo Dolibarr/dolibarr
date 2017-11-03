@@ -48,7 +48,7 @@ class EcmFiles //extends CommonObject
 	 */
 	public $ref;					// hash of file path
 	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
-	public $share;					// hash for file sharing. empty by default
+	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 	public $entity;
 	public $filename;
 	public $filepath;
@@ -112,6 +112,7 @@ class EcmFiles //extends CommonObject
 		}
 		if (isset($this->filepath)) {
 			 $this->filepath = trim($this->filepath);
+			 $this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath);		// Remove last /
 		}
 		if (isset($this->fullpath_orig)) {
 			 $this->fullpath_orig = trim($this->fullpath_orig);
@@ -141,6 +142,7 @@ class EcmFiles //extends CommonObject
 			 $this->acl = trim($this->acl);
 		}
 		if (empty($this->date_c)) $this->date_c = dol_now();
+		if (empty($this->date_m)) $this->date_m = dol_now();
 
 		// If ref not defined
 		$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
@@ -163,6 +165,11 @@ class EcmFiles //extends CommonObject
 		$maxposition=$maxposition+1;
 
 		// Check parameters
+		if (empty($this->filename) || empty($this->filepath))
+		{
+			$this->errors[] = 'Bad property filename or filepath';
+			return -1;
+		}
 		// Put here code to add control on parameters values
 
 		// Insert request
@@ -348,7 +355,7 @@ class EcmFiles //extends CommonObject
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 

@@ -60,30 +60,29 @@ if ($conf->multicompany->enabled)  {
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-if (count($extrafields->attribute_type))
+if (count($extrafields->attributes[$elementtype]['type']))
 {
-	foreach($extrafields->attribute_type as $key => $value)
+	foreach($extrafields->attributes[$elementtype]['type'] as $key => $value)
 	{
 		// Load language if required
-		if (! empty($extrafields->attribute_langfile[$key])) {
-			$langs->load($extrafields->attribute_langfile[$key]);
+		if (! empty($extrafields->attributes[$elementtype]['langfile'][$key])) {
+			$langs->load($extrafields->attributes[$elementtype]['langfile'][$key]);
 		}
 
 		print '<tr class="oddeven">';
-		print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
-		print "<td>".$extrafields->attribute_label[$key]."</td>\n";	// We don't translate here, we want admin to know what is the key not translated value
-		print "<td>".$langs->trans($extrafields->attribute_label[$key])."</td>\n";
+		print "<td>".$extrafields->attributes[$elementtype]['pos'][$key]."</td>\n";
+		print "<td>".$extrafields->attributes[$elementtype]['label'][$key]."</td>\n";	// We don't translate here, we want admin to know what is the key not translated value
+		print "<td>".$langs->trans($extrafields->attributes[$elementtype]['label'][$key])."</td>\n";
 		print "<td>".$key."</td>\n";
-		print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
-		print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-		print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
-		print '<td>'.dol_trunc($extrafields->attribute_computed[$key], 20)."</td>\n";
-		print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
-		print '<td align="center">'.yn($extrafields->attribute_alwayseditable[$key])."</td>\n";
-		print '<td align="center">'.$extrafields->attribute_list[$key]."</td>\n";
-		if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.yn($extrafields->attribute_hidden[$key])."</td>\n";	// Add hidden option on not working feature. Why hide if user can't see it.
+		print "<td>".$type2label[$extrafields->attributes[$elementtype]['type'][$key]]."</td>\n";
+		print '<td align="right">'.$extrafields->attributes[$elementtype]['size'][$key]."</td>\n";
+		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['unique'][$key])."</td>\n";
+		print '<td>'.dol_trunc($extrafields->attributes[$elementtype]['computed'][$key], 20)."</td>\n";
+		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
+		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
+		print '<td align="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
 		if (! empty($conf->multicompany->enabled))  {
-			print '<td align="center">'.($extrafields->attribute_entityid[$key]==0?$langs->trans("All"):$extrafields->attribute_entitylabel[$key]).'</td>';
+			print '<td align="center">'.($extrafields->attributes[$elementtype]['entityid'][$key]==0?$langs->trans("All"):$extrafields->attributes[$elementtype]['entitylabel'][$key]).'</td>';
 		}
 		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
 		print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";

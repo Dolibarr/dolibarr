@@ -64,6 +64,7 @@ ProposalLine=报价项目
 AvailabilityPeriod=交货延迟期
 SetAvailability=设置交货延迟期
 AfterOrder=下单后
+OtherProposals=其他报价单
 ##### Availability #####
 AvailabilityTypeAV_NOW=即时
 AvailabilityTypeAV_1W=1 周

@@ -1001,8 +1001,8 @@ class FormOther
         	{
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
-        		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-        		//$label = '<span class="fa fa-home fa-fw" aria-hidden="true"></span>'.$label;    KO with select2. No html rendering.
+        		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		if (preg_match('/graph/',$box->class)) $label=$label.' <span class="fa fa-bar-chart"></span>';
         		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
             foreach($boxidactivatedforuser as $boxid)
@@ -1014,6 +1014,7 @@ class FormOther
         	//var_dump($boxidactivatedforuser);
 
         	// Class Form must have been already loaded
+        	$selectboxlist.='<!-- Form with select box list -->'."\n";
 			$selectboxlist.='<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
@@ -1086,6 +1087,7 @@ class FormOther
 	        		var self = this;	// because JQuery can modify this
 	        		var boxid=self.id.substring(8);
 	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
+	        		console.log("We close box "+boxid);
 	        		jQuery(\'#boxto_\'+boxid).remove();
 	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
 	        		updateBoxOrder(1);  /* 1 to avoid message after a remove */
