@@ -74,24 +74,24 @@ function dol_decode($chain)
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5, 4:md5 for OpenLdap). Use 3 here, if hash is not needed for security purpose, for security need, prefer 0.
+ * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  */
-function dol_hash($chain,$type=0)
+function dol_hash($chain, $type='0')
 {
 	global $conf;
 
 	// Salt value
 	if (! empty($conf->global->MAIN_SECURITY_SALT)) $chain=$conf->global->MAIN_SECURITY_SALT.$chain;
 
-	if ($type == 1) return sha1($chain);
-	else if ($type == 2) return sha1(md5($chain));
-	else if ($type == 3) return md5($chain);
-	else if ($type == 4) return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
+	if ($type == '1' || $type == 'sha1') return sha1($chain);
+	else if ($type == '2' || $type == 'sha1md5') return sha1(md5($chain));
+	else if ($type == '3' || $type == 'md5') return md5($chain);
+	else if ($type == '4' || $type == 'md5openldap') return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 
-	// No particular enconding defined, use default
+	// No particular encoding defined, use default
 	return md5($chain);
 }
 

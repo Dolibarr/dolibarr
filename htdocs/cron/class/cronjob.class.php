@@ -1121,7 +1121,7 @@ class Cronjob extends CommonObject
 				$error++;
 			}
 		}
-		if ($execmethod == 2)	// This method may create
+		if ($execmethod == 2)	// With this method, there is no way to get the return code, only output
 		{
 			$ok=0;
 			$handle = fopen($outputfile, 'w+b');
@@ -1154,7 +1154,7 @@ class Cronjob extends CommonObject
 
 		dol_syslog(get_class($this)."::executeCLI output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 
-		return $reval;
+		return $retval;
 	}
 
 
