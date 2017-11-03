@@ -1396,7 +1396,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *      Load properties id_previous and id_next
+	 *      Load properties id_previous and id_next by comparing $fieldid with $this->ref
 	 *
 	 *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')"
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
@@ -1433,7 +1433,7 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 
-		//print $filter.' '.$sql."<br>";
+		//print 'filter = '.$filter.' -> '.$sql."<br>";
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -6044,7 +6044,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Function to load data into current object this
+	 * Function to load data from a SQL pointer into properties of current object $this
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
@@ -6082,8 +6082,10 @@ abstract class CommonObject
 			{
 				$this->{$field} = $obj->{$field};
 			}
-
 		}
+
+		// If there is no 'ref' field, we force property ->ref to ->id for a better compatibility with common functions.
+		if (! isset($this->fields['ref']) && isset($this->id)) $this->ref = $this->id;
 	}
 
 	/**

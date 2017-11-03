@@ -6158,13 +6158,13 @@ class Form
 
 	/**
 	 *    Return a HTML area with the reference of object and a navigation bar for a business object
-	 *    Note: To add a particular filter on select, you can have $object->next_prev_filter set to add SQL criterias.
+	 *    Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criterias.
 	 *
 	 *    @param	object	$object			Object to show.
 	 *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link.
 	 *    @param	string	$morehtml  		More html content to output just before the nav bar.
 	 *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1).
-	 *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field). Use 'none' to disable next/prev.
+	 *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field compared to $object->ref). Use 'none' to disable next/prev.
 	 *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
 	 *    @param	string	$morehtmlref  	More html to show after ref.
 	 *    @param	string	$moreparam  	More param to add in nav link url. Must start with '&...'.
@@ -6194,7 +6194,7 @@ class Form
 		if ($shownav)
 		{
 			//print "paramid=$paramid,morehtml=$morehtml,shownav=$shownav,$fieldid,$fieldref,$morehtmlref,$moreparam";
-			$object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''),$fieldid,$nodbprefix);
+			$object->load_previous_next_ref((isset($object->next_prev_filter)?$object->next_prev_filter:''), $fieldid, $nodbprefix);
 
 			$navurl = $_SERVER["PHP_SELF"];
 			// Special case for project/task page
