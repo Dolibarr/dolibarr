@@ -2087,7 +2087,7 @@ class Societe extends CommonObject
 		if ($this->email && $addthirdparty)
 		{
 			if (empty($this->name)) $this->name=$this->nom;
-			$contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+			$contact_emails['thirdparty']=$langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name,16)." <".$this->email.">";
 		}
 		//var_dump($contact_emails)
 		return $contact_emails;
@@ -2108,7 +2108,7 @@ class Societe extends CommonObject
 		{
 			if (empty($this->name)) $this->name=$this->nom;
 			// TODO: Tester si tel non deja present dans tableau contact
-			$contact_phone['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->phone."&gt;";
+			$contact_phone['thirdparty']=$langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name,16)." <".$this->phone.">";
 		}
 		return $contact_phone;
 	}
@@ -2118,7 +2118,7 @@ class Societe extends CommonObject
 	 *
 	 *  @param	string	$mode       		'email' or 'mobile'
 	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
-	 *  @return array       				Array of contacts emails or mobile array(id=>'Name <email>')
+	 *  @return array       				Array of contacts emails or mobile. Example: array(id=>'Name <email>')
 	 */
 	function contact_property_array($mode='email', $hidedisabled=0)
 	{
@@ -2140,7 +2140,8 @@ class Societe extends CommonObject
 				$sepa="("; $sepb=")";
 				if ($mode == 'email')
 				{
-					$sepa="&lt;"; $sepb="&gt;";
+					//$sepa="&lt;"; $sepb="&gt;";
+					$sepa="<"; $sepb=">";
 				}
 				$i = 0;
 				while ($i < $nump)
@@ -2155,8 +2156,8 @@ class Societe extends CommonObject
 					{
 						if (empty($property))
 						{
-							if ($mode == 'email') $property=$langs->trans("NoEMail");
-							else if ($mode == 'mobile') $property=$langs->trans("NoMobilePhone");
+							if ($mode == 'email') $property=$langs->transnoentitiesnoconv("NoEMail");
+							else if ($mode == 'mobile') $property=$langs->transnoentitiesnoconv("NoMobilePhone");
 						}
 
 						if (!empty($obj->poste))
