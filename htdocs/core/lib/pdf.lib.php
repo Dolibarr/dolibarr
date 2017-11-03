@@ -595,12 +595,12 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
  *	@param	Translate	$outputlangs	Output language
  *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
  *	@param	Object      $object         Object
- *	@param	int         $onlykey        1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *	@param	int         $onlykey       1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
  *	@return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null, $onlykeys=0)
+function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null, $onlykey=0)
 {
-    $substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykeys, $exclude, $object);
+    $substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object);
     $substitutionarray['__FROM_NAME__']='__FROM_NAME__';
     $substitutionarray['__FROM_EMAIL__']='__FROM_EMAIL__';
     return $substitutionarray;
