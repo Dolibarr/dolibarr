@@ -84,7 +84,7 @@ class WebsiteAccount extends CommonObject
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
-		//'note_private' => array('type'=>'text', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>46, 'notnull'=>-1,),
+		'note_private' => array('type'=>'text', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>46, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
@@ -97,6 +97,7 @@ class WebsiteAccount extends CommonObject
 	public $pass_crypted;
 	public $date_last_login;
 	public $date_previous_login;
+	public $note_private;
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;

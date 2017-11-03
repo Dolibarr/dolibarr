@@ -176,17 +176,18 @@ ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100);
 CREATE TABLE llx_websiteaccount(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	login             varchar(64) NOT NULL, 
+	pass_encoding     varchar(24) NOT NULL,
     pass_crypted      varchar(128),
     pass_temp         varchar(128),			    -- temporary password when asked for forget password
     fk_soc integer,
-	fk_website integer,
+	fk_website          integer NOT NULL,
     date_last_login     datetime,
     date_previous_login datetime,
-	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
+	date_creation       datetime NOT NULL, 
+	tms                 timestamp NOT NULL, 
+	fk_user_creat       integer NOT NULL, 
+	fk_user_modif       integer, 
+	import_key          varchar(14), 
 	status integer 
 ) ENGINE=innodb;
 
@@ -197,6 +198,10 @@ ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_import_key (import_k
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_status (status);
 ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_soc (fk_soc);
 
+ALTER TABLE llx_websiteaccount ADD UNIQUE INDEX uk_websiteaccount_login_website_soc(login, fk_website, fk_soc);
+
+ALTER TABLE llx_websiteaccount ADD CONSTRAINT llx_websiteaccount_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
+
 create table llx_websiteaccount_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -206,7 +211,7 @@ create table llx_websiteaccount_extrafields
 ) ENGINE=innodb;
 
 
-
+alter table llx_user add column pass_encoding varchar(24) NULL;
 
 
 

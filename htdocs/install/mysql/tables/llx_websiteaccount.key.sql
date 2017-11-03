@@ -24,5 +24,5 @@ ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_soc (fk_soc);
 
 ALTER TABLE llx_websiteaccount ADD UNIQUE INDEX uk_websiteaccount_login_website_soc(login, fk_website, fk_soc);
 
---ALTER TABLE llx_websiteaccount ADD CONSTRAINT llx_websiteaccount_field_id FOREIGN KEY (fk_field) REFERENCES llx_myotherobject(rowid);
+ALTER TABLE llx_websiteaccount ADD CONSTRAINT llx_websiteaccount_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
 
