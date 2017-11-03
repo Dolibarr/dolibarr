@@ -173,7 +173,18 @@ ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
 ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100); 
 
 
-CREATE TABLE llx_websiteaccount(
+CREATE TABLE llx_website_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_website_extrafields ADD INDEX idx_website_extrafields (fk_object);
+
+
+CREATE TABLE llx_website_account(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	login             varchar(64) NOT NULL, 
 	pass_encoding     varchar(24) NOT NULL,
@@ -181,6 +192,7 @@ CREATE TABLE llx_websiteaccount(
     pass_temp         varchar(128),			    -- temporary password when asked for forget password
     fk_soc integer,
 	fk_website          integer NOT NULL,
+	note_private        text,
     date_last_login     datetime,
     date_previous_login datetime,
 	date_creation       datetime NOT NULL, 
@@ -192,23 +204,28 @@ CREATE TABLE llx_websiteaccount(
 ) ENGINE=innodb;
 
 
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_rowid (rowid);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_login (login);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_import_key (import_key);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_status (status);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_soc (fk_soc);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_rowid (rowid);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_login (login);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_import_key (import_key);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_status (status);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_soc (fk_soc);
 
-ALTER TABLE llx_websiteaccount ADD UNIQUE INDEX uk_websiteaccount_login_website_soc(login, fk_website, fk_soc);
+ALTER TABLE llx_website_account ADD UNIQUE INDEX uk_website_account_login_website_soc(login, fk_website, fk_soc);
 
-ALTER TABLE llx_websiteaccount ADD CONSTRAINT llx_websiteaccount_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
+ALTER TABLE llx_website_account ADD CONSTRAINT llx_website_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
 
-create table llx_websiteaccount_extrafields
+CREATE TABLE llx_website_account_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
+
+ALTER TABLE llx_website_account_extrafields ADD INDEX idx_website_account_extrafields (fk_object);
+
+
+
 
 
 alter table llx_user add column pass_encoding varchar(24) NULL;

@@ -14,7 +14,7 @@
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_websiteaccount(
+CREATE TABLE llx_website_account(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	login             varchar(64) NOT NULL, 

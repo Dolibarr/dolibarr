@@ -15,14 +15,14 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_rowid (rowid);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_login (login);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_status (status);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_website (fk_website);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_soc (fk_soc);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_rowid (rowid);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_login (login);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_status (status);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_website (fk_website);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_soc (fk_soc);
 -- END MODULEBUILDER INDEXES
 
-ALTER TABLE llx_websiteaccount ADD UNIQUE INDEX uk_websiteaccount_login_website_soc(login, fk_website, fk_soc);
+ALTER TABLE llx_website_account ADD UNIQUE INDEX uk_website_account_login_website_soc(login, fk_website, fk_soc);
 
-ALTER TABLE llx_websiteaccount ADD CONSTRAINT llx_websiteaccount_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
+ALTER TABLE llx_website_account ADD CONSTRAINT llx_website_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
 
