@@ -701,8 +701,8 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.tdoverflowmax200 {			/* For tdoverflow, the max-midth become a minimum ! */
-    max-width: 200px;
+.tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

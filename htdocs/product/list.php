@@ -762,23 +762,23 @@ else
 				// Ref
 				if (! empty($arrayfields['p.ref']['checked']))
 				{
-					print '<td class="nowrap">';
-					print $product_static->getNomUrl(1,'',24);
+					print '<td class="tdoverflowmax150">';
+					print $product_static->getNomUrl(1);
 					print "</td>\n";
 					if (! $i) $totalarray['nbfield']++;
 				}
 	   			// Ref supplier
 				if (! empty($arrayfields['pfp.ref_fourn']['checked']))
 				{
-					print '<td class="nowrap">';
-					print $product_static->getNomUrl(1,'',24);
+					print '<td class="tdoverflowmax150">';
+					print $product_static->getNomUrl(1);
 					print "</td>\n";
 					if (! $i) $totalarray['nbfield']++;
 				}
 				// Label
 				if (! empty($arrayfields['p.label']['checked']))
 				{
-					print '<td>'.dol_trunc($obj->label,40).'</td>';
+					print '<td class="tdoverflowmax200">'.dol_trunc($obj->label,40).'</td>';
 					if (! $i) $totalarray['nbfield']++;
 				}
 
