@@ -116,12 +116,13 @@ if ($action == 'presend')
 	}
 	$formmail->withfrom = 1;
 
+	// Fill list of recipient with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport')
 	{
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
-		$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+		$liste['thirdparty'] = $fuser->getFullName($langs)." <".$fuser->email.">";
 	}
 	elseif ($object->element == 'societe')
 	{
@@ -131,7 +132,7 @@ if ($action == 'presend')
 	}
 	elseif ($object->element == 'user' || $object->element == 'member')
 	{
-		$liste['thirdparty'] = $object->getFullName($langs)." &lt;".$object->email."&gt;";
+		$liste['thirdparty'] = $object->getFullName($langs)." <".$object->email.">";
 	}
 	else
 	{

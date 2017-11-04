@@ -209,10 +209,10 @@ function societe_prepare_head(Societe $object)
     if (! empty($conf->website->enabled) && (!empty($user->rights->societe->lire) ))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("WebSites");
+    	$head[$h][1] = $langs->trans("WebSiteAccounts");
     	$nbNote = 0;
     	$sql = "SELECT COUNT(n.rowid) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as n";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."website_account as n";
     	$sql.= " WHERE fk_soc = ".$object->id;
     	$resql=$db->query($sql);
     	if ($resql)
@@ -389,7 +389,7 @@ function societe_admin_prepare_head()
  *    Return country label, code or id from an id, code or label
  *
  *    @param      int		$searchkey      Id or code of country to search
- *    @param      int		$withcode   	'0'=Return label,
+ *    @param      string	$withcode   	'0'=Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
@@ -400,7 +400,7 @@ function societe_admin_prepare_head()
  *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return     mixed       				String with country code or translated country name or Array('id','code','label')
  */
-function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1,$searchlabel='')
+function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entconv=1, $searchlabel='')
 {
     global $db,$langs;
 

@@ -219,6 +219,8 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
+	if ($object->fk_soc >0 && empty($socid)) $socid = $object->fk_soc;
+
     $res = $object->fetch_optionals($object->id, $extralabels);
 
 	$head = websiteaccountPrepareHead($object);
@@ -259,7 +261,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Object card
 	// ------------------------------------------------------------
 	$linkback='';
-	if ($socid) $linkback = '<a href="' .DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	if ($socid) $linkback = '<a href="' .DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToListOfThirdParty") . '</a>';
 	if ($fk_website) $linkback = '<a href="' .DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
@@ -306,8 +308,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	*/
 	$morehtmlref.='</div>';
 
+	if ($socid > 0) $object->next_prev_filter = 'te.fk_soc = '.$socid;
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
 
 
 	print '<div class="fichecenter">';

@@ -41,7 +41,7 @@ function websiteaccountPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
+	/*if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
 	{
 		$nbNote = 0;
 		if(!empty($object->fields['note_private'])) $nbNote++;
@@ -51,7 +51,7 @@ function websiteaccountPrepareHead($object)
 		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
-	}
+	}*/
 
 	/*
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

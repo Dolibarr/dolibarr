@@ -1396,7 +1396,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *      Load properties id_previous and id_next
+	 *      Load properties id_previous and id_next by comparing $fieldid with $this->ref
 	 *
 	 *      @param	string	$filter		Optional filter. Example: " AND (t.field1 = 'aa' OR t.field2 = 'bb')"
 	 *	 	@param  string	$fieldid   	Name of field to use for the select MAX and MIN
@@ -1433,7 +1433,7 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 
-		//print $filter.' '.$sql."<br>";
+		//print 'filter = '.$filter.' -> '.$sql."<br>";
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -5263,7 +5263,7 @@ abstract class CommonObject
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
 	 *
-	 * @param  array   $val		       Array of properties for field to show
+	 * @param  array   $val		       Array of properties of field to show
 	 * @param  string  $key            Key of attribute
 	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $moreparam      To add more parametes on html input tag
@@ -5283,7 +5283,6 @@ abstract class CommonObject
 		}
 
 		$objectid = $this->id;
-
 		$label=$val['label'];
 		$type =$val['type'];
 		$size =$val['css'];
@@ -5307,8 +5306,8 @@ abstract class CommonObject
 		}
 		$langfile=$val['langfile'];
 		$list=$val['list'];
-		$hidden=(abs($val['visible'])!=1 ? 1 : 0);
 		$help=$val['help'];
+		$hidden=(($val['visible'] == 0) ? 1 : 0);			// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) return '';
 
@@ -5320,20 +5319,36 @@ abstract class CommonObject
 			$value = dol_eval($computed, 1, 0);
 		}
 
-		$showsize=0;
-		if ($type == 'date')
+		if (empty($showsize))
 		{
-			$showsize=10;
+			if ($type == 'date')
+			{
+				$showsize=10;
+			}
+			elseif ($type == 'datetime')
+			{
+				$showsize=19;
+			}
+			elseif ($type == 'int' || $type == 'integer')
+			{
+				$showsize=10;
+			}
+			else
+			{
+				$showsize=round($size);
+				if ($showsize > 48) $showsize=48;
+			}
+		}
+
+		if ($key == 'ref') $value=$this->getNomUrl(1, '', 0, '', 1);
+		elseif ($key == 'status') $value=$this->getLibStatut(3);
+		elseif ($type == 'date')
+		{
 			$value=dol_print_date($value,'day');
 		}
 		elseif ($type == 'datetime')
 		{
-			$showsize=19;
 			$value=dol_print_date($value,'dayhour');
-		}
-		elseif ($type == 'int')
-		{
-			$showsize=10;
 		}
 		elseif ($type == 'double')
 		{
@@ -5568,11 +5583,6 @@ abstract class CommonObject
 		elseif ($type == 'password')
 		{
 			$value=preg_replace('/./i','*',$value);
-		}
-		else
-		{
-			$showsize=round($size);
-			if ($showsize > 48) $showsize=48;
 		}
 
 		//print $type.'-'.$size;
@@ -6034,7 +6044,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Function to load data into current object this
+	 * Function to load data from a SQL pointer into properties of current object $this
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
@@ -6072,8 +6082,10 @@ abstract class CommonObject
 			{
 				$this->{$field} = $obj->{$field};
 			}
-
 		}
+
+		// If there is no 'ref' field, we force property ->ref to ->id for a better compatibility with common functions.
+		if (! isset($this->fields['ref']) && isset($this->id)) $this->ref = $this->id;
 	}
 
 	/**

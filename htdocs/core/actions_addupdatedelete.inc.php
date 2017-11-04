@@ -87,6 +87,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 {
 	foreach ($object->fields as $key => $val)
 	{
+		if (! GETPOSTISSET($key)) continue;		// The field was not submited to be edited
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
 		$value = GETPOST($key,'alpha');

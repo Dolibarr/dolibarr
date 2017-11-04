@@ -428,7 +428,7 @@ class Societe extends CommonObject
 	 *    @param	User	$user       Object of user that ask creation
 	 *    @return   int         		>= 0 if OK, < 0 if KO
 	 */
-	function create($user)
+	function create(User $user)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -725,7 +725,7 @@ class Societe extends CommonObject
 	/**
 	 *      Update parameters of third party
 	 *
-	 *      @param	int		$id              			id societe
+	 *      @param	int		$id              			Id of company (deprecated, use 0 here and call update on an object loaded by a fetch)
 	 *      @param  User	$user            			Utilisateur qui demande la mise a jour
 	 *      @param  int		$call_trigger    			0=non, 1=oui
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
@@ -738,6 +738,8 @@ class Societe extends CommonObject
 	{
 		global $langs,$conf,$hookmanager;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		if (empty($id)) $id = $this->id;
 
 		$error=0;
 
@@ -766,7 +768,7 @@ class Societe extends CommonObject
 		$this->skype		= trim($this->skype);
 		$this->url		= $this->url?clean_url($this->url,0):'';
 		$this->note_private 	= trim($this->note_private);
-        	$this->note_public  	= trim($this->note_public);
+		$this->note_public  	= trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
@@ -882,7 +884,7 @@ class Societe extends CommonObject
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",note_private = ".(! empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
-            		$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+			$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 
 			$sql .= ",siren   = '". $this->db->escape($this->idprof1) ."'";
 			$sql .= ",siret   = '". $this->db->escape($this->idprof2) ."'";
@@ -1461,11 +1463,11 @@ class Societe extends CommonObject
 				// Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
 				if ($this->client || $this->prospect)
 				{
-					$toute_categs['societe'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
+					$toute_categs['customer'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
 				}
 				if ($this->fournisseur)
 				{
-					$toute_categs['fournisseur'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
+					$toute_categs['supplier'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
 				}
 
 				// Remove each "Categorie"
@@ -2085,7 +2087,7 @@ class Societe extends CommonObject
 		if ($this->email && $addthirdparty)
 		{
 			if (empty($this->name)) $this->name=$this->nom;
-			$contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+			$contact_emails['thirdparty']=$langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name,16)." <".$this->email.">";
 		}
 		//var_dump($contact_emails)
 		return $contact_emails;
@@ -2106,7 +2108,7 @@ class Societe extends CommonObject
 		{
 			if (empty($this->name)) $this->name=$this->nom;
 			// TODO: Tester si tel non deja present dans tableau contact
-			$contact_phone['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->phone."&gt;";
+			$contact_phone['thirdparty']=$langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name,16)." <".$this->phone.">";
 		}
 		return $contact_phone;
 	}
@@ -2116,7 +2118,7 @@ class Societe extends CommonObject
 	 *
 	 *  @param	string	$mode       		'email' or 'mobile'
 	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
-	 *  @return array       				Array of contacts emails or mobile array(id=>'Name <email>')
+	 *  @return array       				Array of contacts emails or mobile. Example: array(id=>'Name <email>')
 	 */
 	function contact_property_array($mode='email', $hidedisabled=0)
 	{
@@ -2138,7 +2140,8 @@ class Societe extends CommonObject
 				$sepa="("; $sepb=")";
 				if ($mode == 'email')
 				{
-					$sepa="&lt;"; $sepb="&gt;";
+					//$sepa="&lt;"; $sepb="&gt;";
+					$sepa="<"; $sepb=">";
 				}
 				$i = 0;
 				while ($i < $nump)
@@ -2153,8 +2156,8 @@ class Societe extends CommonObject
 					{
 						if (empty($property))
 						{
-							if ($mode == 'email') $property=$langs->trans("NoEMail");
-							else if ($mode == 'mobile') $property=$langs->trans("NoMobilePhone");
+							if ($mode == 'email') $property=$langs->transnoentitiesnoconv("NoEMail");
+							else if ($mode == 'mobile') $property=$langs->transnoentitiesnoconv("NoMobilePhone");
 						}
 
 						if (!empty($obj->poste))

@@ -63,6 +63,10 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+UPDATE llx_website SET entity = 1 WHERE entity IS NULL;
+-- VMYSQL4.3 ALTER TABLE llx_website MODIFY COLUMN entity integer NOT NULL DEFAULT 1;
+-- VPGSQL8.2 ALTER TABLE llx_website ALTER COLUMN entity SET NOT NULL;
+
 ALTER TABLE llx_user ADD COLUMN birth date;
 
 -- VMYSQL4.1 ALTER TABLE llx_holiday_users DROP PRIMARY KEY;
@@ -173,31 +177,7 @@ ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
 ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100); 
 
 
-CREATE TABLE llx_websiteaccount(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	login             varchar(64) NOT NULL, 
-    pass_crypted      varchar(128),
-    pass_temp         varchar(128),			    -- temporary password when asked for forget password
-    fk_soc integer,
-	fk_website integer,
-    date_last_login     datetime,
-    date_previous_login datetime,
-	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
-	status integer 
-) ENGINE=innodb;
-
-
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_rowid (rowid);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_login (login);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_import_key (import_key);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_status (status);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_soc (fk_soc);
-
-create table llx_websiteaccount_extrafields
+CREATE TABLE llx_website_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
@@ -205,8 +185,54 @@ create table llx_websiteaccount_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
+ALTER TABLE llx_website_extrafields ADD INDEX idx_website_extrafields (fk_object);
 
 
+CREATE TABLE llx_website_account(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	login             varchar(64) NOT NULL, 
+	pass_encoding     varchar(24) NOT NULL,
+    pass_crypted      varchar(128),
+    pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    fk_soc integer,
+	fk_website          integer NOT NULL,
+	note_private        text,
+    date_last_login     datetime,
+    date_previous_login datetime,
+	date_creation       datetime NOT NULL, 
+	tms                 timestamp NOT NULL, 
+	fk_user_creat       integer NOT NULL, 
+	fk_user_modif       integer, 
+	import_key          varchar(14), 
+	status integer 
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_rowid (rowid);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_login (login);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_import_key (import_key);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_status (status);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_soc (fk_soc);
+
+ALTER TABLE llx_website_account ADD UNIQUE INDEX uk_website_account_login_website_soc(login, fk_website, fk_soc);
+
+ALTER TABLE llx_website_account ADD CONSTRAINT llx_website_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
+
+CREATE TABLE llx_website_account_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_website_account_extrafields ADD INDEX idx_website_account_extrafields (fk_object);
+
+
+
+
+
+alter table llx_user add column pass_encoding varchar(24) NULL;
 
 
 
@@ -498,7 +524,7 @@ ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
 ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER accountancy_code_sell;
 ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
 
--- SPEC : use database type "double" to store monetary values
+-- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
 ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8);
