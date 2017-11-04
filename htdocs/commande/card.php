@@ -2584,6 +2584,20 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			// Show online signature link
+			$useonlinepayment = $conf->global->ORDER_SHOW_ONLINE_PAYMENT_ON_ORDER;
+			if ($object->statut != Commande::STATUS_DRAFT && $useonlinepayment)
+			{
+				print '<br><!-- Link to pay -->';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				print showOnlinePaymentUrl('order', $object->ref).'<br>';
+			}
+
+			if ($object->statut != Commande::STATUS_DRAFT && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))
+			{
+				print '<br><!-- Link to download main doc -->'."\n";
+				print showDirectDownloadLink($object).'<br>';
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

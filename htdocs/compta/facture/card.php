@@ -4382,9 +4382,15 @@ else if ($id > 0 || ! empty($ref))
 
 		if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment)
 		{
-			print '<br>';
+			print '<br><!-- Link to pay -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('invoice', $object->ref);
+			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
+		}
+
+		if ($object->statut != Facture::STATUS_DRAFT && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))
+		{
+			print '<br><!-- Link to download main doc -->'."\n";
+			print showDirectDownloadLink($object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

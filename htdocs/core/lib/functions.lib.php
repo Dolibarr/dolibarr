@@ -6650,6 +6650,28 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 }
 
 /**
+ * Return string with full Url
+ *
+ * @param   Object	$object		Object
+ * @return	string				Url string
+ */
+function showDirectDownloadLink($object)
+{
+	global $conf, $langs;
+
+	$out='';
+	$url = $object->getLastMainDocLink($object->element);
+
+	if ($url)
+	{
+		$out.= img_picto('','object_globe.png').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out.= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
+		$out.= ajax_autoselect("directdownloadlink", 0);
+	}
+	return $out;
+}
+
+/**
  * Return the filename of file to get the thumbs
  *
  * @param   string  $file           Original filename (full or relative path)
