@@ -14,13 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You can call this page with param module=medias to get a filemanager for medias.
  */
 
 /**
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';
@@ -31,14 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("users");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("contracts");
+$langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -145,7 +139,6 @@ if ($action == 'confirm_deletefile')
     {
     	// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
 		//var_dump(GETPOST('urlfile'));exit;
-    	$langs->load("other");
 
     	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
     	$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
@@ -443,7 +436,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     {
         print '<tr><td colspan="6">';
 
-    	// Show filemanager tree
+    	// Show filemanager tree (will be filled by call of ajax enablefiletreeajax.tpl.php that execute ajaxdirtree.php)
 	    print '<div id="filetree" class="ecmfiletree"></div>';
 
 	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
@@ -453,164 +446,20 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     else
     {
         print '<tr><td colspan="6" style="padding-left: 20px">';
+
+        if (empty($module)) $module='ecm';
+
+        $_POST['modulepart'] = $module;
+        $_POST['openeddir'] = GETPOST('openeddir');
+        $_POST['dir'] = empty($_POST['dir'])?'/':$_POST['dir'];
+
+        // Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
         print '<div id="filetree" class="ecmfiletree">';
-        print '<ul class="ecmjqft">';
 
-    	// Load full tree
-    	if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);    // Slow
+        $mode='noajax';
+        $url=DOL_URL_ROOT.'/ecm/index.php';
+        include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirtree.php';
 
-    	// ----- This section will show a tree from a fulltree array -----
-    	// $section must also be defined
-    	// ----------------------------------------------------------------
-
-    	// Define fullpathselected ( _x_y_z ) of $section parameter
-    	$fullpathselected='';
-    	foreach($sqltree as $key => $val)
-    	{
-    		//print $val['id']."-".$section."<br>";
-    		if ($val['id'] == $section)
-    		{
-    			$fullpathselected=$val['fullpath'];
-    			break;
-    		}
-    	}
-    	//print "fullpathselected=".$fullpathselected."<br>";
-
-    	// Update expandedsectionarray in session
-    	$expandedsectionarray=array();
-    	if (isset($_SESSION['dol_ecmexpandedsectionarray'])) $expandedsectionarray=explode(',',$_SESSION['dol_ecmexpandedsectionarray']);
-
-    	if ($section && GETPOST('sectionexpand') == 'true')
-    	{
-    		// We add all sections that are parent of opened section
-    		$pathtosection=explode('_',$fullpathselected);
-    		foreach($pathtosection as $idcursor)
-    		{
-    			if ($idcursor && ! in_array($idcursor,$expandedsectionarray))	// Not already in array
-    			{
-    				$expandedsectionarray[]=$idcursor;
-    			}
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	if ($section && GETPOST('sectionexpand') == 'false')
-    	{
-    		// We removed all expanded sections that are child of the closed section
-    		$oldexpandedsectionarray=$expandedsectionarray;
-    		$expandedsectionarray=array();	// Reset
-    		foreach($oldexpandedsectionarray as $sectioncursor)
-    		{
-    			// is_in_subtree(fulltree,sectionparent,sectionchild)
-    			if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
-
-    	$nbofentries=0;
-    	$oldvallevel=0;
-    	$var=true;
-    	foreach($sqltree as $key => $val)
-    	{
-    		$var=false;
-
-    		$ecmdirstatic->id=$val['id'];
-    		$ecmdirstatic->ref=$val['label'];
-
-    		// Refresh cache
-    		if (preg_match('/refresh/i',$action))
-    		{
-    			$result=$ecmdirstatic->fetch($val['id']);
-    			$ecmdirstatic->ref=$ecmdirstatic->label;
-
-    			$result=$ecmdirstatic->refreshcachenboffile(0);
-    			$val['cachenbofdoc']=$result;
-    		}
-
-    		//$fullpathparent=preg_replace('/(_[^_]+)$/i','',$val['fullpath']);
-
-    		// Define showline
-    		$showline=0;
-
-    		// If directory is son of expanded directory, we show line
-    		if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
-    		// If directory is brother of selected directory, we show line
-    		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
-    		// If directory is parent of selected directory or is selected directory, we show line
-    		elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
-    		// If we are level one we show line
-    		elseif ($val['level'] < 2) $showline=1;
-
-    		if ($showline)
-    		{
-    			if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
-    			else $option='indexnotexpanded';
-    			//print $option;
-
-    			print '<li class="directory collapsed">';
-
-    			// Show tree graph pictos
-                $cpt=1;
-    			while ($cpt < $sqltree[$key]['level'])
-    			{
-    			    print ' &nbsp; &nbsp;';
-    			    $cpt++;
-    			}
-    			$resarray=tree_showpad($sqltree,$key,1);
-    			$a=$resarray[0];
-    			$nbofsubdir=$resarray[1];
-    			$nboffilesinsubdir=$resarray[2];
-
-    			// Show link
-    			print $ecmdirstatic->getNomUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
-
-    			print '<div class="ecmjqft">';
-
-    			// Nb of docs
-    			print '<table class="nobordernopadding"><tr><td>';
-    			print $val['cachenbofdoc'];
-    			print '</td>';
-    			print '<td align="left">';
-    			if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
-    			print '</td>';
-
-    			// Info
-    			print '<td align="center">';
-    			$userstatic->id=$val['fk_user_c'];
-    			$userstatic->lastname=$val['login_c'];
-    			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-    			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
-    			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
-    			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
-    			print "</td>";
-
-    			print '</tr></table>';
-
-    			print '</div>';
-
-    			print "</li>\n";
-    		}
-
-    		$oldvallevel=$val['level'];
-    		$nbofentries++;
-    	}
-
-    	// If nothing to show
-    	if ($nbofentries == 0)
-    	{
-    		print '<li class="directory collapsed">';
-    		print '<div class="ecmjqft">';
-    		print $langs->trans("ECMNoDirectoryYet");
-    		print '</div>';
-   			print "</li>\n";
-    	}
-
-    	print '</ul>';
     	print '</div>';
     	print '</td></tr>';
     }
