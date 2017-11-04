@@ -299,10 +299,16 @@ if ($action == 'refreshmanual')
 //print $_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index.php file
 
+$moreheadcss='';
+$moreheadjs='';
+
 //$morejs=array();
 $morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 
+$moreheadjs.='<script type="text/javascript">'."\n";
+$moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
+$moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
