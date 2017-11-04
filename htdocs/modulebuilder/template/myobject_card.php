@@ -198,6 +198,7 @@ if (($id || $ref) && $action == 'edit')
 	print load_fiche_titre($langs->trans("MyObject"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -352,6 +353,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
     		}
+    		else
+    		{
+    			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a></div>'."\n";
+    		}
 
     		/*
     		if ($user->rights->sellyoursaas->create)
@@ -370,6 +375,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		if ($user->rights->mymodule->delete)
     		{
     			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+    		}
+    		else
+    		{
+    			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a></div>'."\n";
     		}
     	}
     	print '</div>'."\n";
