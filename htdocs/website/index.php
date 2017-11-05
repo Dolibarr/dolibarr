@@ -57,7 +57,7 @@ if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
 if (GETPOST('create')) { $action='create'; }
-if (GETPOST('editmedias')) { $action='editmedias'; }
+if (GETPOST('file_manager')) { $action='file_manager'; }
 if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
@@ -1094,7 +1094,18 @@ $arrayofjs = array(
 );
 $arrayofcss = array();
 
-llxHeader('', $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+$moreheadcss='';
+$moreheadjs='';
+
+$arrayofjs[]='includes/jquery/plugins/blockUI/jquery.blockUI.js';
+$arrayofjs[]='core/js/blockUI.js';	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $arrayofjs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+
+$moreheadjs.='<script type="text/javascript">'."\n";
+$moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
+$moreheadjs.='</script>'."\n";
+
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1199,7 +1210,7 @@ if (count($object->records) > 0)
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedias">';
+		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	}
 
 	print '</div>';
@@ -1227,10 +1238,10 @@ if (count($object->records) > 0)
 		print '</a>';
 	}
 
-	if (in_array($action, array('editcss','editmenu','editmedias')))
+	if (in_array($action, array('editcss','editmenu','file_manager')))
 	{
-		if (preg_match('/^create/',$action) && $action != 'editmedias') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if (preg_match('/^edit/',$action) && $action != 'editmedias') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^create/',$action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^edit/',$action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
 	}
 
@@ -1239,7 +1250,7 @@ if (count($object->records) > 0)
 
 	// ***** Part for pages
 
-	if ($website && ! in_array($action, array('editcss','editmenu','editmedias')))
+	if ($website && ! in_array($action, array('editcss','editmenu','file_manager')))
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
@@ -1377,7 +1388,7 @@ if (count($object->records) > 0)
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (! in_array($action, array('editcss','editmenu','editmedias','createsite','create','createpagefromclone')))
+		if (! in_array($action, array('editcss','editmenu','file_manager','createsite','create','createpagefromclone')))
 		{
 			if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -1774,10 +1785,14 @@ if ($action == 'editmeta' || $action == 'create')
 	print '<br>';
 }
 
-if ($action == 'editmedias')
+if ($action == 'file_manager')
 {
 	print '<!-- Edit Media -->'."\n";
-	print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+	print '<br><br>';
+	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+
+	$module = 'medias';
+	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 }
 
 if ($action == 'editmenu')

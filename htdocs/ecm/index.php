@@ -42,7 +42,6 @@ $result = restrictedArea($user, 'ecm', 0);
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','aZ09');
 $section=GETPOST('section','int')?GETPOST('section','int'):GETPOST('section_id','int');
-$module=GETPOST('module','alpha');
 if (! $section) $section=0;
 $section_dir=GETPOST('section_dir','alpha');
 
@@ -322,7 +321,7 @@ $moreheadjs='';
 
 //$morejs=array();
 $morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 
 $moreheadjs.='<script type="text/javascript">'."\n";
 $moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
@@ -330,24 +329,15 @@ $moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
+$head = ecm_prepare_dasboard_head('');
+dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
-// Add sections to manage
-$rowspan=0;
-$sectionauto=array();
 
-// Confirm remove file (for non javascript users)
-if ($action == 'delete' && empty($conf->use_javascript_ajax))
-{
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+// Add filemanager component
+include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 
-}
 
-if ($module != 'medias')
-{
-	$head = ecm_prepare_dasboard_head('');
-	dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
-}
-
+/*
 // Start container of all panels
 ?>
 <!-- Begin div id="containerlayout" -->
@@ -498,19 +488,15 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 </div>
 </div> <!-- End div id="containerlayout" -->
 <?php
-// End of page
 
-
-if ($module != 'medias')
-{
-	dol_fiche_end();
-}
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }
+*/
 
-
+// End of page
+dol_fiche_end();
 
 llxFooter();
 

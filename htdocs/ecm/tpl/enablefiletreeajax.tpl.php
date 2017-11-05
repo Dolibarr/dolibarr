@@ -93,4 +93,4 @@ function loadandshowpreview(filedirname,section)
 }
 
 </script>
-<!-- END PHP TEMPLATE ecm/tpl/builddatabase.tpl.php -->
+<!-- END PHP TEMPLATE ecm/tpl/enablefiletreeajax.tpl.php -->

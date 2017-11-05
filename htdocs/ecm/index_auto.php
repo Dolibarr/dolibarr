@@ -304,7 +304,7 @@ $moreheadjs='';
 
 //$morejs=array();
 $morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 
 $moreheadjs.='<script type="text/javascript">'."\n";
 $moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
@@ -334,13 +334,10 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	$rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsByUsers"));
 }
 
-//print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+$head = ecm_prepare_dasboard_head('');
+dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
-$helptext1=''; $helptext2='';
-$helptext1.=$langs->trans("ECMAreaDesc");
-$helptext1.=$langs->trans("ECMAreaDesc2");
-$helptext2.=$langs->trans("ECMAreaDesc");
-$helptext2.=$langs->trans("ECMAreaDesc2");
+
 
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
@@ -348,17 +345,6 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 
 }
-
-//if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
-//else $classviewhide='visible';
-$classviewhide='inline-block';
-
-
-
-
-$head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
-
 
 // Start container of all panels
 ?>
@@ -381,7 +367,7 @@ print '</div>';
 
 ?>
 </div>
-<div id="ecm-layout-west" class="<?php echo $classviewhide; ?>">
+<div id="ecm-layout-west" class="inline-block">
 <?php
 // Start left area
 
@@ -461,7 +447,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 // End left panel
 ?>
 </div>
-<div id="ecm-layout-center" class="<?php echo $classviewhide; ?>">
+<div id="ecm-layout-center" class="inline-block">
 <div class="pane-in ecm-in-layout-center">
 <div id="ecmfileview" class="ecmfileview">
 <?php
@@ -483,15 +469,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 <?php
 // End of page
 
-
-dol_fiche_end();
-
-
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }
 
 
+dol_fiche_end();
 
 llxFooter();
 
