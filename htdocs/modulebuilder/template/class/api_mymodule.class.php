@@ -18,8 +18,12 @@
 
 use Luracast\Restler\RestException;
 
+dol_include_once('/mymodule/class/myobject.class.php');
+
+
+
 /**
- * \file    htdocs/modulebuilder/template/class/api_myobject.class.php
+ * \file    htdocs/modulebuilder/template/class/api_mymodule.class.php
  * \ingroup mymodule
  * \brief   File for API management of myobject.
  */
@@ -31,7 +35,7 @@ use Luracast\Restler\RestException;
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class MyObjectApi extends DolibarrApi
+class MyModuleApi extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -39,6 +43,7 @@ class MyObjectApi extends DolibarrApi
     static $FIELDS = array(
         'name'
     );
+
 
     /**
      * @var MyObject $myobject {@type MyObject}
@@ -48,7 +53,7 @@ class MyObjectApi extends DolibarrApi
     /**
      * Constructor
      *
-     * @url     GET myobject/
+     * @url     GET /
      *
      */
     function __construct()
@@ -66,7 +71,7 @@ class MyObjectApi extends DolibarrApi
      * @param 	int 	$id ID of myobject
      * @return 	array|mixed data without useless information
 	 *
-     * @url	GET myobject/{id}
+     * @url	GET myobjects/{id}
      * @throws 	RestException
      */
     function get($id)
@@ -87,22 +92,24 @@ class MyObjectApi extends DolibarrApi
 		return $this->_cleanObjectDatas($this->myobject);
     }
 
+
     /**
      * List myobjects
      *
      * Get a list of myobjects
      *
-     * @param int		$mode		Use this param to filter list
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') or (t.import_key:=:'20160101')"
-     * @return array Array of myobject objects
+     * @param string	       $sortfield	        Sort field
+     * @param string	       $sortorder	        Sort order
+     * @param int		       $limit		        Limit for list
+     * @param int		       $page		        Page number
+     * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return  array                               Array of order objects
+     *
+     * @throws RestException
      *
      * @url	GET /myobjects/
      */
-    function index($mode, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -183,7 +190,7 @@ class MyObjectApi extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of myobject
      *
-     * @url	POST myobject/
+     * @url	POST myobjects/
      */
     function post($request_data = NULL)
     {
@@ -209,7 +216,7 @@ class MyObjectApi extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      *
-     * @url	PUT myobject/{id}
+     * @url	PUT myobjects/{id}
      */
     function put($id, $request_data = NULL)
     {

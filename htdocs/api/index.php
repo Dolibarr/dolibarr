@@ -182,10 +182,15 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                                     $classname = ucwords($regapi[1]);
                                     $classname = str_replace('_', '', $classname);
                                     require_once $dir_part.$file_searched;
-                                    if (class_exists($classname))
+                                    if (class_exists($classname.'Api'))
                                     {
-                                        //dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
-                                        $listofapis[] = $classname;
+                                        dol_syslog("Found API by index.php: classname=".$classname."Api for module ".$dir." into ".$dir_part.$file_searched);
+                                        $listofapis[strtolower($classname.'Api')] = $classname.'Api';
+                                    }
+                                    elseif (class_exists($classname))
+                                    {
+                                        dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
+                                        $listofapis[strtolower($classname)] = $classname;
                                     }
                                     else
                                     {
@@ -202,10 +207,10 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
 
     // Sort the classes before adding them to Restler.
     // The Restler API Explorer shows the classes in the order they are added and it's a mess if they are not sorted.
-    sort($listofapis);
-    foreach ($listofapis as $classname)
+    asort($listofapis);
+    foreach ($listofapis as $apiname => $classname)
     {
-        $api->r->addAPIClass($classname);
+        $api->r->addAPIClass($classname, $apiname);
     }
 }
 
@@ -218,25 +223,26 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
         $module = $regbis[1];
     }
 
-    // Load a dedicated API file
-    dol_syslog("Load a dedicated API file");
-
     $module=strtolower($module);
     $moduledirforclass = getModuleDirForApiClass($module);
+
+    // Load a dedicated API file
+    dol_syslog("Load a dedicated API file moduledirforclass=".$moduledirforclass);
 
     if (in_array($module, array('category','contact','customer','invoice','order','product','thirdparty','user')))  // Old Apis
     {
         $classfile = $module;
         if ($module == 'customer') { $classfile = 'thirdparty'; }
         if ($module == 'order')    { $classfile = 'commande'; }
-        $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_deprecated_'.$classfile.'.class.php');
+        $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_deprecated_'.$classfile.'.class.php', 0, 2);
         $classname=ucwords($module);
         if ($module == 'customer') { $classname='Thirdparty'; }
         if ($module == 'order')    { $classname='Commande'; }
         //var_dump($classfile);var_dump($classname);exit;
 
-        $res = include_once $dir_part_file;
-        if (! $res) 
+        $res = false;
+        if ($dir_part_file) $res = include_once $dir_part_file;
+        if (! $res)
         {
         	print 'API not found (failed to include API file)';
         	header('HTTP/1.1 501 API not found (failed to include API file)');
@@ -246,21 +252,24 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
     }
     else
     {
-        $classfile = str_replace('_', '', $module);
-        if ($module == 'contracts')        $moduledirforclass = 'contrat';
+        $classfile = str_replace('_', '', preg_replace('/api$/i','', $module));
         if ($module == 'supplierinvoices') $classfile = 'supplier_invoices';
         if ($module == 'supplierorders')   $classfile = 'supplier_orders';
-        $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php');
+        $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
+
         $classname=ucwords($module);
 
-        $res = include_once $dir_part_file;
-        if (! $res) 
+        dol_syslog('Search /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.' classname='.$classname);
+
+        $res = false;
+        if ($dir_part_file) $res = include_once $dir_part_file;
+        if (! $res)
         {
         	print 'API not found (failed to include API file)';
         	header('HTTP/1.1 501 API not found (failed to include API file)');
         	exit(0);
         }
-        	
+
         if (class_exists($classname)) $api->r->addAPIClass($classname);
     }
 }

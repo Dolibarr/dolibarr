@@ -653,7 +653,9 @@ function dol_include_once($relpath, $classname='')
  *
  * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type						0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
- *  @param	int		$returnemptyifnotfound		If path==0 and if file was not found, do not return default path but an empty string
+ *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
+ *  											1:If $type==0 and if file was not found into alternate dir, return empty string
+ *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
  *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
  */
 function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
@@ -674,9 +676,9 @@ function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
 				return $res;
 			}
 		}
-		if ($returnemptyifnotfound)										// Not found, we return empty string
+		if ($returnemptyifnotfound)								// Not found into alternate dir
 		{
-			return '';
+			if ($returnemptyifnotfound == 1 || ! file_exists($res)) return '';
 		}
 	}
 	else				// For an url path
