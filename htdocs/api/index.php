@@ -252,7 +252,9 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
     }
     else
     {
-        $classfile = str_replace('_', '', preg_replace('/api$/i','', $module));
+    	$tmpmodule = $module;
+    	if ($tmpmodule != 'api') $tmpmodule = preg_replace('/api$/i','', $tmpmodule);
+        $classfile = str_replace('_', '', $tmpmodule);
         if ($module == 'supplierinvoices') $classfile = 'supplier_invoices';
         if ($module == 'supplierorders')   $classfile = 'supplier_orders';
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);

@@ -2192,7 +2192,8 @@ function cartesianArray(array $input) {
  */
 function getModuleDirForApiClass($module)
 {
-    $moduledirforclass=preg_replace('/api$/i','',$module);
+    $moduledirforclass=$module;
+    if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i','',$moduledirforclass);
 
     if ($module == 'contracts') {
     	$moduledirforclass = 'contrat';
