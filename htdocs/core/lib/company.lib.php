@@ -48,6 +48,28 @@ function societe_prepare_head(Societe $object)
     $head[$h][2] = 'card';
     $h++;
 
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+	    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$nbContact = 0;	// TODO
+
+		$sql = "SELECT COUNT(p.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+		$sql .= " WHERE p.fk_soc = ".$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbContact = $obj->nb;
+		}
+
+	    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+	    $head[$h][1] = $langs->trans('ContactsAddresses');
+	    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+	    $head[$h][2] = 'contact';
+	    $h++;
+	}
+
     if ($object->client==1 || $object->client==2 || $object->client==3)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
@@ -123,6 +145,27 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
+	if (! empty($conf->global->ACCOUNTING_ENABLE_LETTERING))
+	{
+		// Tab to accountancy
+		if (! empty($conf->accounting->enabled) && $object->client>0)
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabAccountingCustomer");
+			$head[$h][2] = 'accounting';
+			$h++;
+		}
+
+		// Tab to accountancy
+		if (! empty($conf->accounting->enabled) && $object->fournisseur>0)
+		{
+			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettrage_supplier.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("TabAccountingSupplier");
+			$head[$h][2] = 'accounting_supplier';
+			$h++;
+		}
+	}
+
 	// Related items
     if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
     {
@@ -161,6 +204,34 @@ function societe_prepare_head(Societe $object)
 		if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
+    }
+
+    if (! empty($conf->website->enabled) && (!empty($user->rights->societe->lire) ))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("WebSiteAccounts");
+    	$nbNote = 0;
+    	$sql = "SELECT COUNT(n.rowid) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."website_account as n";
+    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$resql=$db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($resql);
+    			$nbNote=$obj->nb;
+    			$i++;
+    		}
+    	}
+    	else {
+    		dol_print_error($db);
+    	}
+    	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+    	$head[$h][2] = 'website';
+    	$h++;
     }
 
 	// Show more tabs from modules
@@ -318,7 +389,7 @@ function societe_admin_prepare_head()
  *    Return country label, code or id from an id, code or label
  *
  *    @param      int		$searchkey      Id or code of country to search
- *    @param      int		$withcode   	'0'=Return label,
+ *    @param      string	$withcode   	'0'=Return label,
  *    										'1'=Return code + label,
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
@@ -329,7 +400,7 @@ function societe_admin_prepare_head()
  *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
  *    @return     mixed       				String with country code or translated country name or Array('id','code','label')
  */
-function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1,$searchlabel='')
+function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entconv=1, $searchlabel='')
 {
     global $db,$langs;
 
@@ -618,7 +689,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
                 $projecttmp = new Project($db);
 
                 $i=0;
-                $var=true;
+
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($result);
@@ -629,7 +700,6 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
 
                     if ($user->rights->projet->lire && $userAccess > 0)
                     {
-                        $var = !$var;
                         print '<tr class="oddeven">';
 
                         // Ref
@@ -665,7 +735,6 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             }
             else
 			{
-                $var = false;
             	print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
@@ -712,6 +781,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="p.lastname";
 
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    {
+    	$search_status		 = '';
+    	$search_name         = '';
+    	$search_addressphone = '';
+    	$search_array_options=array();
+    }
+
     $i=-1;
 
     $contactstatic = new Contact($db);
@@ -741,28 +818,13 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 
+
+	print '<div class="div-table-responsive-nomin">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;
     if ($search_status != '') $param.='&amp;search_status='.$search_status;
     if ($search_name != '') $param.='&amp;search_name='.urlencode($search_name);
-
-    $colspan=9;
-    print '<tr class="liste_titre">';
-    print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre("Poste",$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre( $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
-    // Add to agenda
-    if (! empty($conf->agenda->enabled) && ! empty($user->rights->agenda->myactions->create))
-    {
-    	$colspan++;
-        print_liste_field_titre('');
-    }
-    // Edit
-    print_liste_field_titre('');
-	print "</tr>\n";
-
 
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut, p.photo,";
     $sql .= " p.civility as civility_id, p.address, p.zip, p.town";
@@ -778,43 +840,59 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $num = $db->num_rows($result);
 
-	$var=true;
+    $colspan=9;
+
+    if ($num || (GETPOST('button_search','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search_x','alpha')))
+    {
+    	print '<tr class="liste_titre">';
+
+    	// Photo - Name
+    	print '<td class="liste_titre">';
+    	print '<input type="text" class="flat minwidth75" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+    	print '</td>';
+
+    	// Position
+    	print '<td class="liste_titre">';
+    	print '</td>';
+
+    	// Address - Phone - Email
+    	print '<td class="liste_titre"></td>';
+
+    	// Status
+    	print '<td class="liste_titre maxwidthonsmartphone">';
+    	print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
+    	print '</td>';
+
+    	// Add to agenda
+    	if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+    	{
+    		$colspan++;
+    		print '<td class="liste_titre"></td>';
+    	}
+
+    	// Action
+		print '<td class="liste_titre" align="right">';
+		$searchpicto=$form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+
+    	print "</tr>";
+    }
+
+    print '<tr class="liste_titre">';
+    print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Poste",$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre( $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
+    // Add to agenda
+    if (! empty($conf->agenda->enabled) && ! empty($user->rights->agenda->myactions->create)) print_liste_field_titre('');
+    // Edit
+    print_liste_field_titre('');
+    print "</tr>\n";
+
 	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
     {
-        print '<tr class="liste_titre">';
-
-        // Photo - Name
-        print '<td class="liste_titre">';
-        print '<input type="text" class="flat" name="search_name" size="20" value="'.$search_name.'">';
-        print '</td>';
-
-        // Position
-        print '<td class="liste_titre">';
-        print '</td>';
-
-        // Address - Phone - Email
-        print '<td class="liste_titre">&nbsp;</td>';
-
-        // Status
-        print '<td class="liste_titre maxwidthonsmartphone">';
-        print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
-        print '</td>';
-
-        // Add to agenda
-        if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
-        {
-        	$colspan++;
-            print '<td class="liste_titre">&nbsp;</td>';
-        }
-
-    	// Edit
-        print '<td class="liste_titre" align="right">';
-        print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-        print '</td>';
-
-        print "</tr>";
-
-        $i=0;
+    	$i=0;
 
         while ($i < $num)
         {
@@ -890,11 +968,12 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     else
 	{
-        print "<tr ".$bc[! $var].">";
+        print '<tr class="oddeven">';
         print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
         print "</tr>\n";
     }
     print "\n</table>\n";
+	print '</div>';
 
     print '</form>'."\n";
 
@@ -943,12 +1022,8 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 
 	if ($num > 0)
 	{
-		$var=true;
-
 		foreach ($addressstatic->lines as $address)
 		{
-			$var = !$var;
-
 			print '<tr class="oddeven">';
 
 			print '<td>';
@@ -1115,7 +1190,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         {
             $i = 0 ;
             $num = $db->num_rows($resql);
-            $var=true;
+
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
@@ -1162,7 +1237,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         }
     }
 
-    // Add also event from emailings. FIXME This should be replaced by an automatic event
+    // Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
     if (! empty($conf->mailing->enabled) && ! empty($objcon->email))
     {
         $langs->load("mails");
@@ -1183,7 +1258,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         {
             $i = 0 ;
             $num = $db->num_rows($resql);
-            $var=true;
+
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
@@ -1261,11 +1336,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         }
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
-        $out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-        $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre">';
         $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
         $out.='</td>';
+        $out.='<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+        $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
         $out.='<td class="liste_titre"></td>';
@@ -1290,9 +1365,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		}
 		$out.=getTitleFieldOfList($langs->trans("Ref"), 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Owner"));
+        $out.=getTitleFieldOfList($langs->trans("Type"));
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
-        $out.=getTitleFieldOfList($langs->trans("Type"));
 		$out.=getTitleFieldOfList('');
 		$out.=getTitleFieldOfList('');
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
@@ -1304,7 +1379,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
 			$actionstatic->fetch($histo[$key]['id']);    // TODO Do we need this, we already have a lot of data of line into $histo
 
-            $out.="<tr ".$bc[$var].">";
+            $out.='<tr class="oddeven">';
 
             // Done or todo
             if ($donetodo)
@@ -1325,6 +1400,25 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$out.=$userstatic->getLoginUrl(1);
             $userstatic->fetch($histo[$key]['userid']);
             $out.=$userstatic->getNomUrl(-1);
+            $out.='</td>';
+
+            // Type
+            $out.='<td>';
+            if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+            {
+            	if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
+            	else {
+            		if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
+            		if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
+            		if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
+            	}
+            	$out.=$actionstatic->type;
+            }
+            else {
+            	$typelabel = $actionstatic->type;
+            	if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
+            	$out.=$typelabel;
+            }
             $out.='</td>';
 
             // Title
@@ -1365,25 +1459,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && ! $histo[$key]['dateend'] && $histo[$key]['datestart'] && $db->jdate($histo[$key]['datestart']) < ($now - $delay_warning)) $late=1;
             if ($late) $out.=img_warning($langs->trans("Late")).' ';
             $out.="</td>\n";
-
-            // Type
-			$out.='<td>';
-			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-			{
-    			if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
-    			else {
-    			    if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
-    			    if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
-    			    if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
-    			}
-			    $out.=$actionstatic->type;
-			}
-			else {
-			    $typelabel = $actionstatic->type;
-			    if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
-			    $out.=$typelabel;
-			}
-			$out.='</td>';
 
             // Title of event
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
@@ -1503,12 +1578,10 @@ function show_subsidiaries($conf,$langs,$db,$object)
 		print "</tr>";
 
 		$i=0;
-		$var=true;
 
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
-			$var = !$var;
 
 			print '<tr class="oddeven">';
 

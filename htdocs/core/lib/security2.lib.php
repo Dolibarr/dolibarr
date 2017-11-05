@@ -184,12 +184,12 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Set cookie for timeout management
 	$prefix=dol_getprefix();
 	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
-	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
+	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, false, true);
 
 	if (GETPOST('urlfrom','alpha')) $_SESSION["urlfrom"]=GETPOST('urlfrom','alpha');
 	else unset($_SESSION["urlfrom"]);
 
-	if (! GETPOST("username")) $focus_element='username';
+	if (! GETPOST("username",'alpha')) $focus_element='username';
 	else $focus_element='password';
 
 	$demologin='';
@@ -439,7 +439,7 @@ function encodedecode_dbpassconf($level=0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic		true=Create generic password (use md5, sha1 depending on setup), false=Use the configured password generation module
+ * @param		boolean		$generic		true=Create generic password (32 chars/numbers), false=Use the configured password generation module
  * @return		string						New value for password
  */
 function getRandomPassword($generic=false)
@@ -447,7 +447,51 @@ function getRandomPassword($generic=false)
 	global $db,$conf,$langs,$user;
 
 	$generated_password='';
-	if ($generic) $generated_password=dol_hash(mt_rand());
+	if ($generic)
+	{
+		$length = 32;
+		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
+		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
+		$numbers = "1234567890";
+		$randomCode = "";
+		$nbofchar = round($length/3);
+		$nbofcharlast = ($length - 2*$nbofchar);
+		var_dump($nbofchar.'-'.$nbofcharlast);
+		if (function_exists('random_int'))	// Cryptographic random
+		{
+			$max = strlen($lowercase) - 1;
+			for ($x = 0; $x < $nbofchar; $x++) {
+				$randomCode .= $lowercase{random_int(0, $max)};
+			}
+			$max = strlen($uppercase) - 1;
+			for ($x = 0; $x < $nbofchar; $x++) {
+				$randomCode .= $uppercase{random_int(0, $max)};
+			}
+			$max = strlen($numbers) - 1;
+			for ($x = 0; $x < $nbofcharlast; $x++) {
+				$randomCode .= $numbers{random_int(0, $max)};
+			}
+
+			$generated_password=str_shuffle($randomCode);
+		}
+		else	// Old platform, non cryptographic random
+		{
+			$max = strlen($lowercase) - 1;
+			for ($x = 0; $x < $nbofchar; $x++) {
+				$randomCode .= $lowercase{mt_rand(0, $max)};
+			}
+			$max = strlen($uppercase) - 1;
+			for ($x = 0; $x < $nbofchar; $x++) {
+				$randomCode .= $uppercase{mt_rand(0, $max)};
+			}
+			$max = strlen($numbers) - 1;
+			for ($x = 0; $x < $nbofcharlast; $x++) {
+				$randomCode .= $numbers{mt_rand(0, $max)};
+			}
+
+			$generated_password=str_shuffle($randomCode);
+		}
+	}
 	else if (! empty($conf->global->USER_PASSWORD_GENERATED))
 	{
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);

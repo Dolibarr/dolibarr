@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=ペイパルモジュールのセットアップ
 PaypalDesc=このモジュールの提供は、ページ上で支払いを可能にする<a href="http://www.paypal.com" target="_blank">PayPalの</a>顧客がいます。これは無料の支払いのために、または特定のDolibarrオブジェクトの支払いのために使用することができる（請求書、注文、...）
-PaypalOrCBDoPayment=クレジットカードまたはPayPalでの支払い
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=PayPalでの支払い
 PAYPAL_API_SANDBOX=モード試験/サンドボックス
 PAYPAL_API_USER=API名
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=オファー支払い&quot;インテグラル&quot;（クレジットカード+ペイパル）または&quot;ペイパル&quot;のみ
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=<b>%s：</b>これは、トランザクションのIDです。
 PAYPAL_ADD_PAYMENT_URL=郵送で文書を送信するときにPayPalの支払いのURLを追加します。
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=あなたは &quot;サンドボックス&quot;モードで現在
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+ONLINE_PAYMENT_SENDEMAIL=EMail to warn after a payment (success or not)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

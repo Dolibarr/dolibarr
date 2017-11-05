@@ -39,7 +39,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $search_user_id = GETPOST('search_user_id', 'int');
 
@@ -366,7 +366,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" name="label" class="flat minwidth300" value="'.$label.'">';
+	print '<input type="text" name="label" autofocus class="flat minwidth300" value="'.$label.'">';
 	print '</td></tr>';
 
 	// List of projects
@@ -393,7 +393,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(($date_end?$date_end:-1),'datee',1,1,0,'',1,1,1);
+	print $form->select_date(($date_end?$date_end:-1),'datee',-1,1,0,'',1,1,1);
 	print '</td></tr>';
 
 	// Planned workload

@@ -94,6 +94,7 @@ else
 $listofoppstatus=array(); $listofopplabel=array(); $listofoppcode=array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
+$sql.= " WHERE active=1";
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -159,6 +160,7 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre("OpenedProjectsByThirdparties",$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
@@ -213,6 +215,7 @@ else
 	dol_print_error($db);
 }
 print "</table>";
+print '</div>';
 
 if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 {

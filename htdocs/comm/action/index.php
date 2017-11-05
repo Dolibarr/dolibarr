@@ -1375,7 +1375,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '>';
                     print '<table class="centpercent cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="'.$h;
                     print 'background: #'.$color.';';
-                    print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, 0).'), to(#'.dol_color_minus($color, 1).'));';
+                    print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -4).'), to(#'.dol_color_minus($color, -3).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     //print ' -moz-border-radius:4px;"';
@@ -1583,7 +1583,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
  * Change color with a delta
  *
  * @param	string	$color		Color
- * @param 	int		$minus		Delta (1 = 16 unit)
+ * @param 	int		$minus		Delta (1 = 16 unit). Positive value = darker color, Negative value = brighter color.
  * @param   int     $minusunit  Minus unit
  * @return	string				New color
  */

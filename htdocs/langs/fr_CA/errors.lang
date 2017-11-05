@@ -132,7 +132,6 @@ ErrorPriceExpression17=Variable non définie '%s'
 ErrorPriceExpression19=Expression non trouvée
 ErrorPriceExpression21=Résultat vide '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Les entrepôts source et cible doivent être différents
-ErrorTryToMakeMoveOnProductRequiringBatchData=Erreur, essayer de faire un mouvement de stock sans lot / informations en série, sur un produit nécessitant des informations de lot / série
 ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Toutes les réceptions enregistrées doivent d'abord être vérifiées (approuvées ou refusées) avant d'être autorisées à effectuer cette action
 ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Toutes les réceptions enregistrées doivent d'abord être vérifiées (approuvées) avant d'être autorisées à effectuer cette action
 ErrorGlobalVariableUpdater0=La demande HTTP a échoué avec l'erreur '%s'

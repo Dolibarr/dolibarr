@@ -201,7 +201,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->lastresult)?'NULL':"'".$this->db->escape($this->lastresult)."'").",";
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':"'".$this->db->idate($this->datelastresult)."'").",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
-		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
+		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
 		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";
@@ -1051,61 +1051,17 @@ class Cronjob extends CommonObject
 		// Run a command line
 		if ($this->jobtype=='command')
 		{
-			$command=escapeshellcmd($this->command);
-			$command.=" 2>&1";
-			dol_mkdir($conf->cronjob->dir_temp);
-			$outputfile=$conf->cronjob->dir_temp.'/cronjob.'.$userlogin.'.out';
+			$outputdir = $conf->cron->dir_temp;
+			if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
 
-			dol_syslog(get_class($this)."::run_jobs system:".$command, LOG_DEBUG);
-			$output_arr=array();
-
-			$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
-			if ($execmethod == 1)
+			if (! empty($outputdir))
 			{
-				exec($command, $output_arr, $retval);
-				if ($retval != 0)
-				{
-				    $langs->load("errors");
-				    dol_syslog(get_class($this)."::run_jobs retval=".$retval, LOG_ERR);
-				    $this->error = 'Error '.$retval;
-				    $this->lastoutput = '';     // Will be filled later
-				    $this->lastresult = $retval;
-				    $retval = $this->lastresult;
-				    $error++;
-				}
+				dol_mkdir($outputdir);
+				$outputfile=$outputdir.'/cronjob.'.$userlogin.'.out';	// File used with popen method
+
+				// Execute a CLI
+				$retval = $this->executeCLI($this->command, $outputfile);
 			}
-			if ($execmethod == 2)
-			{
-				$ok=0;
-				$handle = fopen($outputfile, 'w');
-				if ($handle)
-				{
-					dol_syslog("Run command ".$command);
-					$handlein = popen($command, 'r');
-					while (!feof($handlein))
-					{
-						$read = fgets($handlein);
-						fwrite($handle,$read);
-						$output_arr[]=$read;
-					}
-					pclose($handlein);
-					fclose($handle);
-				}
-				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
-
-			// Update with result
-    		if (is_array($output_arr) && count($output_arr)>0)
-    		{
-    			foreach($output_arr as $val)
-    			{
-    				$this->lastoutput.=$val."\n";
-    			}
-    		}
-
-    		$this->lastresult=$retval;
-
-    		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
 
 		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
@@ -1124,6 +1080,82 @@ class Cronjob extends CommonObject
 		}
 
 	}
+
+
+	/**
+	 * Execute a CLI command.
+	 * this->error, this->lastoutput, this->lastresult are also set.
+	 *
+	 * @param 	string	$command		Command line
+	 * @param 	string	$outputfile		Output file
+	 * @param	int		$execmethod		0=Use default method, 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @return	int						Retval
+	 */
+	function executeCLI($command, $outputfile, $execmethod=0)
+	{
+		global $conf, $langs;
+
+		$retval = 0;
+
+		$command=escapeshellcmd($command);
+		$command.=" 2>&1";
+
+		if (! empty($conf->global->MAIN_EXEC_USE_POPEN)) $execmethod=$conf->global->MAIN_EXEC_USE_POPEN;
+		if (empty($execmethod)) $execmethod=1;
+		//$execmethod=1;
+
+		dol_syslog(get_class($this)."::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
+		$output_arr=array();
+
+		if ($execmethod == 1)
+		{
+			exec($command, $output_arr, $retval);
+			if ($retval != 0)
+			{
+				$langs->load("errors");
+				dol_syslog(get_class($this)."::executeCLI retval after exec=".$retval, LOG_ERR);
+				$this->error = 'Error '.$retval;
+				$this->lastoutput = '';     // Will be filled later from $output_arr
+				$this->lastresult = $retval;
+				$retval = $this->lastresult;
+			}
+		}
+		if ($execmethod == 2)	// With this method, there is no way to get the return code, only output
+		{
+			$ok=0;
+			$handle = fopen($outputfile, 'w+b');
+			if ($handle)
+			{
+				dol_syslog(get_class($this)."::executeCLI run command ".$command);
+				$handlein = popen($command, 'r');
+				while (!feof($handlein))
+				{
+					$read = fgets($handlein);
+					fwrite($handle,$read);
+					$output_arr[]=$read;
+				}
+				pclose($handlein);
+				fclose($handle);
+			}
+			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
+
+		// Update with result
+		if (is_array($output_arr) && count($output_arr)>0)
+		{
+			foreach($output_arr as $val)
+			{
+				$this->lastoutput.=$val.($execmethod == 2 ? '' : "\n");
+			}
+		}
+
+		$this->lastresult=$retval;
+
+		dol_syslog(get_class($this)."::executeCLI output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
+
+		return $retval;
+	}
+
 
 	/**
 	 * Reprogram a job

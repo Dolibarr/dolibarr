@@ -133,8 +133,8 @@ if (empty($reshook))
     			$object->dateend				= $dateend;
     			$object->nbterm					= GETPOST('nbterm');
     			$object->rate					= $rate;
-    			$object->note_private 			= GETPOST('note_private');
-    			$object->note_public 			= GETPOST('note_public');
+    			$object->note_private 			= GETPOST('note_private','none');
+    			$object->note_public 			= GETPOST('note_public','none');
     			$object->fk_project 			= GETPOST('projectid','int');
 
     			$accountancy_account_capital	= GETPOST('accountancy_account_capital');
@@ -642,6 +642,7 @@ if ($id > 0)
 		$sql.= " AND p.fk_loan = l.rowid";
 		$sql.= " AND l.entity = ".$conf->entity;
 		$sql.= " AND p.fk_typepayment = c.id";
+		$sql.= " AND c.entity = " . getEntity('c_paiement');
 		$sql.= " ORDER BY dp DESC";
 
 		//print $sql;

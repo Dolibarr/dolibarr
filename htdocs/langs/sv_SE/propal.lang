@@ -64,6 +64,7 @@ ProposalLine=Förslag linje
 AvailabilityPeriod=Tillgänglighet fördröjning
 SetAvailability=Ställa tillgänglighet fördröjning
 AfterOrder=Efter att
+OtherProposals=Andra förslag
 ##### Availability #####
 AvailabilityTypeAV_NOW=Omedelbar
 AvailabilityTypeAV_1W=1 vecka

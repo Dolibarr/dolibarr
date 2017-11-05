@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=A segunda aprovação já foi efetuada
 SupplierOrderReceivedInDolibarr=A encomenda a fornecedor, %s, foi recebida %s
 SupplierOrderSubmitedInDolibarr=A encomenda a fornecedor, %s, foi submetida
 SupplierOrderClassifiedBilled=A encomenda a fornecedor, %s, foi faturada
+OtherOrders=Outros Pedidos
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representante que está a dar seguimento à encomenda do cliente
 TypeContact_commande_internal_SHIPPING=Representante transporte seguimento

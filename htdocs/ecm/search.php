@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,8 +19,7 @@
 /**
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
- *	\brief      Main page for ECM section area
- *	\author		Laurent Destailleur
+ *	\brief      Page to make advanced search into ECM
  */
 
 require '../main.inc.php';

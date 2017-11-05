@@ -13,3 +13,5 @@ TJM=Average daily rate
 CurrentSalary=Current salary
 THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
 TJMDescription=Attualmente il valore è solo un dato informativo e non viene usato per alcun calcolo automatico
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

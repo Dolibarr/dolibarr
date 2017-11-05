@@ -912,11 +912,32 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
-print '<td align="center" width="300">';
+print '<td align="center">&nbsp;</td>';
+print '<td align="center">';
 echo ajax_constantonoff('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY');
+print '</td>';
+print '</tr>';
+
+/* Kept as hidden feature because this will be "probaly be supported by standard event feature in a future
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowCommentOnProject").'</td>';
+
+print '<td align="center" width="300">';
+echo ajax_constantonoff('PROJECT_ALLOW_COMMENT_ON_PROJECT');
 print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowCommentOnTask").'</td>';
+
+print '<td align="center" width="300">';
+echo ajax_constantonoff('PROJECT_ALLOW_COMMENT_ON_TASK');
+print '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '</tr>';
+*/
 
 print '</table></form>';
 

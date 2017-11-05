@@ -46,7 +46,7 @@ $backtopage = GETPOST('backtopage','alpha');
  * Actions
  */
 
-if (GETPOST('cancel') && ! empty($backtopage))
+if (GETPOST('cancel','alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;

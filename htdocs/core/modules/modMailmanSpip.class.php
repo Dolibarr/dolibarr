@@ -48,7 +48,8 @@ class modMailmanSpip extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Mailman or Spip interface for member module";
 
-		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
@@ -76,10 +77,10 @@ class modMailmanSpip extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'clicktodial';
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 	}
 }
