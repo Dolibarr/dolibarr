@@ -1062,7 +1062,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 // Export site
 if (GETPOST('exportsite'))
 {
-	$fileofzip = exportWebSite($object);
+	$fileofzip = $object->exportWebSite();
 
 	$file_name = basename($fileofzip);
 

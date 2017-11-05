@@ -1118,7 +1118,6 @@ class Cronjob extends CommonObject
 				$this->lastoutput = '';     // Will be filled later from $output_arr
 				$this->lastresult = $retval;
 				$retval = $this->lastresult;
-				$error++;
 			}
 		}
 		if ($execmethod == 2)	// With this method, there is no way to get the return code, only output

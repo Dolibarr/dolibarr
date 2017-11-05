@@ -5340,8 +5340,9 @@ abstract class CommonObject
 			}
 		}
 
-		if ($key == 'ref') $value=$this->getNomUrl(1, '', 0, '', 1);
-		elseif ($key == 'status') $value=$this->getLibStatut(3);
+		// Format output value differently according to properties of field
+		if ($key == 'ref' && method_exists($this, 'getNomUrl')) $value=$this->getNomUrl(1, '', 0, '', 1);
+		elseif ($key == 'status' && method_exists($this, 'getLibStatut')) $value=$this->getLibStatut(3);
 		elseif ($type == 'date')
 		{
 			$value=dol_print_date($value,'day');
@@ -5382,11 +5383,11 @@ abstract class CommonObject
 		}
 		elseif ($type == 'select')
 		{
-			$value=$params['options'][$value];
+			$value=$param['options'][$value];
 		}
 		elseif ($type == 'sellist')
 		{
-			$param_list=array_keys($params['options']);
+			$param_list=array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 
 			$selectkey="rowid";
@@ -5463,7 +5464,7 @@ abstract class CommonObject
 		}
 		elseif ($type == 'radio')
 		{
-			$value=$params['options'][$value];
+			$value=$param['options'][$value];
 		}
 		elseif ($type == 'checkbox')
 		{
@@ -5472,7 +5473,7 @@ abstract class CommonObject
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {
-					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$params['options'][$valueval].'</li>';
+					$toprint[]='<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$param['options'][$valueval].'</li>';
 				}
 			}
 			$value='<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -5481,7 +5482,7 @@ abstract class CommonObject
 		{
 			$value_arr = explode(',', $value);
 
-			$param_list = array_keys($params['options']);
+			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 
 			$selectkey = "rowid";
@@ -6262,8 +6263,11 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 
 		$keys=array();
+		$values = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
+			$value = $this->fields[$k];
+			$values[$k] = $this->quote($v, $value);
 			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
