@@ -351,10 +351,8 @@ begin
 	
     if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
     begin
-    // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept 
-    
+      // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept 
       MsgBox('The "Visual C++ Redistributable for Visual Studio 2012" component is missing. Please install the 32-bit version (vcredit_x86.exe) first from http://www.microsoft.com/en-us/download/details.aspx?id=30679 and restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
-   
     end;
 	// Pb seems similar with msvcp110.dll
 	//vcredist_x64.exe
