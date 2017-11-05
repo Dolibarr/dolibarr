@@ -48,18 +48,12 @@ if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherent
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
+$action		= GETPOST('action','aZ09');
 $mode		= GETPOST('mode','alpha');
 $confirm		= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
 $cancel		= GETPOST('cancel','alpha');
-
-// Users/Groups management only in master entity if transverse mode
-if (($action == 'create' || $action == 'adduserldap') && ! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-	accessforbidden();
-}
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -106,7 +100,8 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('usercard','globalcard'));
+$contextpage=array('usercard','globalcard');
+$hookmanager->initHooks($contextpage);
 
 
 
@@ -114,7 +109,7 @@ $hookmanager->initHooks(array('usercard','globalcard'));
  * Actions
  */
 
-$parameters=array('id'=>$socid);
+$parameters=array('id' => $id, 'socid' => $socid, 'group' => $group, 'caneditgroup' => $caneditgroup);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -279,7 +274,7 @@ if (empty($reshook)) {
 	}
 
 	// Action add usergroup
-	if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
+	if (($action == 'addgroup' || $action == 'removegroup') && $caneditgroup)
 	{
 		if ($group)
 		{
@@ -289,10 +284,10 @@ if (empty($reshook)) {
 
 			$object->fetch($id);
 			if ($action == 'addgroup') {
-				$result = $object->SetInGroup($group, (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? GETPOST('entity', 'int') : $editgroup->entity));
+				$result = $object->SetInGroup($group, $editgroup->entity);
 			}
 			if ($action == 'removegroup') {
-				$result = $object->RemoveFromGroup($group, (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? GETPOST('entity', 'int') : $editgroup->entity));
+				$result = $object->RemoveFromGroup($group, $editgroup->entity);
 			}
 
 			if ($result > 0) {
@@ -1706,7 +1701,7 @@ else
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 
-			if (GETPOST('action','aZ09') != 'presend' && GETPOST('action','aZ09') != 'send')
+			if ($action != 'presend' && $action != 'send')
 			{
 				/*
                  * List of groups of user
@@ -1724,12 +1719,9 @@ else
 
 					if (! empty($groupslist))
 					{
-						if (! (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)))
+						foreach($groupslist as $groupforuser)
 						{
-							foreach($groupslist as $groupforuser)
-							{
-								$exclude[]=$groupforuser->id;
-							}
+							$exclude[]=$groupforuser->id;
 						}
 					}
 
@@ -1741,99 +1733,61 @@ else
 					}
 
 					print '<table class="noborder" width="100%">'."\n";
-					print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
-					if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+
+					// Other form for add user to group
+					$parameters=array('caneditgroup' => $caneditgroup, 'groupslist' => $groupslist, 'exclude' => $exclude);
+					$reshook=$hookmanager->executeHooks('formAddUserToGroup',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
+
+					if (empty($reshook))
 					{
-						print '<th class="liste_titre">'.$langs->trans("Entity").'</td>';
-					}
-					print '<th class="liste_titre" align="right">';
-					if ($caneditgroup)
-					{
-						// Users/Groups management only in master entity if transverse mode
-						if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-						{
-							// nothing
-						}
-						else
+						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
+						print '<th class="liste_titre" align="right">';
+						if ($caneditgroup)
 						{
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
 							print ' &nbsp; ';
-							// Multicompany
-							if (! empty($conf->multicompany->enabled))
+							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+							print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
+						}
+						print '</th></tr>'."\n";
+
+						/*
+						 * Groups assigned to user
+						 */
+						if (! empty($groupslist))
+						{
+							foreach($groupslist as $group)
 							{
-								if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+								print '<tr class="oddeven">';
+								print '<td>';
+								if ($caneditgroup)
 								{
-									print '</td><td>'.$langs->trans("Entity").'</td>';
-									print "<td>".$mc->select_entities($conf->entity);
+									print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->name.'</a>';
 								}
 								else
 								{
-									print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+									print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
 								}
-							}
-							else
-							{
-								print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-							}
-							print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
-						}
-					}
-					print '</th></tr>'."\n";
-
-					/*
-                     * Groups assigned to user
-                     */
-					if (! empty($groupslist))
-					{
-						foreach($groupslist as $group)
-						{
-
-
-							print '<tr class="oddeven">';
-							print '<td>';
-							if ($caneditgroup)
-							{
-								print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->name.'</a>';
-							}
-							else
-							{
-								print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
-							}
-							print '</td>';
-							if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-							{
-								print '<td class="valeur">';
-								if (! empty($group->usergroup_entity))
+								print '</td>';
+								print '<td align="right">';
+								if ($caneditgroup)
 								{
-									$nb=0;
-									foreach($group->usergroup_entity as $group_entity)
-									{
-										$mc->getInfo($group_entity);
-										print ($nb > 0 ? ', ' : '').$mc->label;
-										print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group_entity.'">';
-										print img_delete($langs->trans("RemoveFromGroup"));
-										print '</a>';
-										$nb++;
-									}
+									print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
+									print img_delete($langs->trans("RemoveFromGroup"));
+									print '</a>';
 								}
+								else
+								{
+									print "&nbsp;";
+								}
+								print "</td></tr>\n";
 							}
-							print '<td align="right">';
-							if ($caneditgroup && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-							{
-								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
-								print img_delete($langs->trans("RemoveFromGroup"));
-								print '</a>';
-							}
-							else
-							{
-								print "&nbsp;";
-							}
-							print "</td></tr>\n";
 						}
-					}
-					else
-					{
-						print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+						else
+						{
+							print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+						}
 					}
 
 					print "</table>";
