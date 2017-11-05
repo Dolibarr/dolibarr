@@ -220,7 +220,7 @@ else
 {
 	$title=$langs->trans("ProductsAndServices");
 
-	if (isset($type))
+	if (isset($type) && $type != '')
 	{
 		if ($type==1)
 		{
