@@ -1468,7 +1468,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			}
 
 			$nbfile = count($TFile['name']);
-
+			$nbok = 0;
 			for ($i = 0; $i < $nbfile; $i++)
 			{
 				// Define $destfull (path to file including filename) and $destfile (only filename)
@@ -1548,8 +1548,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 						}
 					}
 
-					$res = 1;
-					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
+					$nbok++;
 				}
 				else
 				{
@@ -1568,7 +1567,11 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					}
 				}
 			}
-
+			if ($nbok > 0)
+			{
+				$res = 1;
+				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
+			}
 		}
 	} elseif ($link) {
 		require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
