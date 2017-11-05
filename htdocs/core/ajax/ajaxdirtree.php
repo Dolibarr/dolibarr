@@ -164,7 +164,7 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    		    {
 						if (empty($val['fullrelativename']))	// If we did not find entry into database, but found a directory (dol_is_dir was ok at previous test)
 						{
-	    		    		$val['fullrelativename']=$file;
+	    		    		$val['fullrelativename']=(($selecteddir && $selecteddir != '/')?$selecteddir.'/':'').$file;
 	    		    		$val['id']=0;
 	    		    		$val['label']=$file;
 	    		    		$val['description']='';
@@ -205,19 +205,22 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    				//print '<td align="right" width="14">&nbsp;</td>';
 
 	    				// Info
-	    				print '<td align="right" width="18">';
-	    				$userstatic->id=isset($val['fk_user_c'])?$val['fk_user_c']:0;
-	    				$userstatic->lastname=isset($val['login_c'])?$val['login_c']:0;
-	    				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-	    				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-	    				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
-	    				$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.(isset($val['date_c'])?dol_print_date($val['date_c'],"dayhour"):$langs->trans("NeedRefresh")).'<br>';
-	    				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
-	    				$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.((isset($val['cachenbofdoc']) && $val['cachenbofdoc'] >= 0)?$val['cachenbofdoc']:$langs->trans("NeedRefresh")).'<br>';
-	    				if ($nboffilesinsubdir > 0) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
-	    				else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.($nbofsubdir >= 0 ? $nbofsubdir : $langs->trans("NeedRefresh")).'<br>';
-	    				print $form->textwithpicto('',$htmltooltip,1,"info");
-	    				print "</td>";
+	    				if ($modulepart == 'ecm')
+	    				{
+	    					print '<td align="right" width="18">';
+		    				$userstatic->id=isset($val['fk_user_c'])?$val['fk_user_c']:0;
+		    				$userstatic->lastname=isset($val['login_c'])?$val['login_c']:0;
+		    				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
+		    				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
+		    				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
+		    				$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.(isset($val['date_c'])?dol_print_date($val['date_c'],"dayhour"):$langs->trans("NeedRefresh")).'<br>';
+		    				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
+		    				$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.((isset($val['cachenbofdoc']) && $val['cachenbofdoc'] >= 0)?$val['cachenbofdoc']:$langs->trans("NeedRefresh")).'<br>';
+		    				if ($nboffilesinsubdir > 0) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
+		    				else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.($nbofsubdir >= 0 ? $nbofsubdir : $langs->trans("NeedRefresh")).'<br>';
+		    				print $form->textwithpicto('',$htmltooltip,1,"info");
+		    				print "</td>";
+	    				}
 
 	    				print "</tr></table>\n";
 	                    print '</div>';

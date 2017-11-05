@@ -220,7 +220,8 @@ if ($type == 'directory')
     	if ($module == 'medias')
     	{
     		$relativepath=GETPOST('file','alpha');
-    		$upload_dir = $dolibarr_main_data_root.'/medias/'.$relativepath;
+    		if ($relativepath && $relativepath!= '/') $relativepath.='/';
+    		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
     	}
     	else
     	{
@@ -245,7 +246,11 @@ if ($type == 'directory')
 
             $textifempty = $langs->trans('NoFileFound');
         }
-        else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        else if ($section === '0')
+        {
+        	if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        	else $textifempty = $langs->trans('NoFileFound');
+        }
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
     	if ($module == 'medias')
