@@ -454,18 +454,21 @@ function getRandomPassword($generic=false)
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
 		$numbers = "1234567890";
 		$randomCode = "";
+		$nbofchar = round($length/3);
+		$nbofcharlast = ($length - 2*$nbofchar);
+		var_dump($nbofchar.'-'.$nbofcharlast);
 		if (function_exists('random_int'))	// Cryptographic random
 		{
 			$max = strlen($lowercase) - 1;
-			for ($x = 0; $x < abs($length/3); $x++) {
+			for ($x = 0; $x < $nbofchar; $x++) {
 				$randomCode .= $lowercase{random_int(0, $max)};
 			}
 			$max = strlen($uppercase) - 1;
-			for ($x = 0; $x < abs($length/3); $x++) {
+			for ($x = 0; $x < $nbofchar; $x++) {
 				$randomCode .= $uppercase{random_int(0, $max)};
 			}
 			$max = strlen($numbers) - 1;
-			for ($x = 0; $x < abs($length/3); $x++) {
+			for ($x = 0; $x < $nbofcharlast; $x++) {
 				$randomCode .= $numbers{random_int(0, $max)};
 			}
 
@@ -474,15 +477,15 @@ function getRandomPassword($generic=false)
 		else	// Old platform, non cryptographic random
 		{
 			$max = strlen($lowercase) - 1;
-			for ($x = 0; $x < abs($length/3); $x++) {
+			for ($x = 0; $x < $nbofchar; $x++) {
 				$randomCode .= $lowercase{mt_rand(0, $max)};
 			}
 			$max = strlen($uppercase) - 1;
-			for ($x = 0; $x < abs($length/3); $x++) {
+			for ($x = 0; $x < $nbofchar; $x++) {
 				$randomCode .= $uppercase{mt_rand(0, $max)};
 			}
 			$max = strlen($numbers) - 1;
-			for ($x = 0; $x < abs($length/3); $x++) {
+			for ($x = 0; $x < $nbofcharlast; $x++) {
 				$randomCode .= $numbers{mt_rand(0, $max)};
 			}
 
