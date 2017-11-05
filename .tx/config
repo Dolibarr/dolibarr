@@ -380,6 +380,12 @@ source_file = htdocs/langs/en_US/withdrawals.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.wkhtmltopdf]
+file_filter = htdocs/langs/<lang>/wkhtmltopdf.lang
+source_file = htdocs/langs/en_US/wkhtmltopdf.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.workflow]
 file_filter = htdocs/langs/<lang>/workflow.lang
 source_file = htdocs/langs/en_US/workflow.lang

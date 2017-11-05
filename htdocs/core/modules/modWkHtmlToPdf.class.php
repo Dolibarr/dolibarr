@@ -66,7 +66,7 @@ class modWkHtmlToPdf extends DolibarrModules
         // Module description, used if translation string 'ModulewkhtmltopdfDesc' not found (MyModue is name of module).
         $this->description = "WkHtmlToPdfDescription";
         // Used only if file README.md and README-LL.md not found.
-        $this->descriptionlong = "WkHtmlToPdfDescription (Long)";
+        $this->descriptionlong = "WkHtmlToPdfDescriptionLong";
 
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
         $this->version = 'experimental';
@@ -130,7 +130,7 @@ class modWkHtmlToPdf extends DolibarrModules
         $this->phpmin = array(5,3);
         // Minimum version of Dolibarr required by module
         $this->need_dolibarr_version = array(4,0);
-        $this->langfiles = array("wkhtmltopdf@wkhtmltopdf");
+        $this->langfiles = array("wkhtmltopdf");
         // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
         $this->warnings_activation = array();
         // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)

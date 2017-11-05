@@ -39,11 +39,7 @@ function wkhtmltopdfAdminPrepareHead()
     $head[$h][1] = $langs->trans("Settings");
     $head[$h][2] = 'settings';
     $h++;
-    $head[$h][0] = dol_buildpath("/admin/wkhtmltopdf_about.php", 1);
-    $head[$h][1] = $langs->trans("About");
-    $head[$h][2] = 'about';
-    $h++;
-    $head[$h][0] = dol_buildpath("/admin/wk_htmltopdf_edit.php", 1);
+    $head[$h][0] = dol_buildpath("/admin/wkhtmltopdf_edit.php", 1);
     $head[$h][1] = $langs->trans("TemplateEdit");
     $head[$h][2] = 'edit';
     $h++;
