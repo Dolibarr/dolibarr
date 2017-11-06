@@ -3119,7 +3119,6 @@ class Commande extends CommonOrder
             // End call triggers
         }
 
-        //TODO: Check for error after each action. If one failed we rollback, don't waste time to do action if previous fail
         if (! $error)
         {
         	// Delete order details
@@ -3129,23 +3128,24 @@ class Commande extends CommonOrder
         		$error++;
         		$this->errors[]=$this->db->lasterror();
         	}
+        }
 
-        	// Delete order
-        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-        	if (! $this->db->query($sql) )
-        	{
-        		$error++;
-        		$this->errors[]=$this->db->lasterror();
-        	}
-
+        if (! $error)
+        {
         	// Delete linked object
         	$res = $this->deleteObjectLinked();
         	if ($res < 0) $error++;
+        }
 
+        if (! $error)
+        {
         	// Delete linked contacts
         	$res = $this->delete_linked_contact();
         	if ($res < 0) $error++;
+        }
 
+        if (! $error)
+        {
         	// Remove extrafields
         	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         	{
@@ -3156,8 +3156,22 @@ class Commande extends CommonOrder
         			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         		}
         	}
+        }
 
-        	// On efface le repertoire de pdf provisoire
+        if (! $error)
+        {
+        	// Delete object
+        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
+        	if (! $this->db->query($sql) )
+        	{
+        		$error++;
+        		$this->errors[]=$this->db->lasterror();
+        	}
+        }
+
+        if (! $error)
+        {
+        	// Remove directory with files
         	$comref = dol_sanitizeFileName($this->ref);
         	if ($conf->commande->dir_output && !empty($this->ref))
         	{
@@ -3183,8 +3197,6 @@ class Commande extends CommonOrder
         			}
         		}
         	}
-
-
         }
 
         if (! $error)
