@@ -90,7 +90,7 @@ class Proposals extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposal of. Example: '1' or '1,2,3'          {@pattern /^2|3$/i}
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposals. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @return  array                       Array of order objects
 	 */
@@ -152,9 +152,9 @@ class Proposals extends DolibarrApi
 			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);
-				$propal_static = new Propal($db);
-				if($propal_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($propal_static);
+				$proposal_static = new Propal($db);
+				if($proposal_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
 			}
@@ -163,7 +163,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve propal list : '.$db->lasterror());
 		}
 		if( ! count($obj_ret)) {
-			throw new RestException(404, 'No order found');
+			throw new RestException(404, 'No proposal found');
 		}
 		return $obj_ret;
 	}
@@ -580,6 +580,7 @@ class Proposals extends DolibarrApi
 
 		$object = parent::_cleanObjectDatas($object);
 
+        unset($object->note);
 		unset($object->name);
 		unset($object->lastname);
 		unset($object->firstname);

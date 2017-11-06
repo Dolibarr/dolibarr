@@ -2237,6 +2237,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
         $moduledirforclass = 'product/stock';
     }
+    elseif ($module == 'supplierproposals' || $module == 'supplierproposal' || $module == 'supplier_proposal') {
+    	$moduledirforclass = 'supplier_proposal';
+    }
     elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
         $moduledirforclass = 'fourn';
     }

@@ -141,8 +141,9 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                     $moduledirforclass = getModuleDirForApiClass($module);
                     $modulenameforenabled = $module;
                     if ($module == 'propale') { $modulenameforenabled='propal'; }
+                    if ($module == 'supplierproposal') { $modulenameforenabled='supplier_proposal'; }
 
-                    dol_syslog("Found module file ".$file." - module=".$module." - moduledirforclass=".$moduledirforclass);
+                    dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
 
                     // Defined if module is enabled
                     $enabled=true;
@@ -255,8 +256,9 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
     	$tmpmodule = $module;
     	if ($tmpmodule != 'api') $tmpmodule = preg_replace('/api$/i','', $tmpmodule);
         $classfile = str_replace('_', '', $tmpmodule);
-        if ($module == 'supplierinvoices') $classfile = 'supplier_invoices';
-        if ($module == 'supplierorders')   $classfile = 'supplier_orders';
+        if ($module == 'supplierproposals') $classfile = 'supplier_proposals';
+        if ($module == 'supplierorders')    $classfile = 'supplier_orders';
+        if ($module == 'supplierinvoices')  $classfile = 'supplier_invoices';
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
         $classname=ucwords($module);

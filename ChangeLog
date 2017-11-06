@@ -17,17 +17,18 @@ Following changes may create regressions for some external modules, but were nec
 * The methode "cloture" on contract were renamed into "closeAll".
 * The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
   __PROPALREF__, ...)
-* The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to standardize naming conventions. 
+* The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to follow naming conventions. 
 * Substitution keys with syntax %XXX% were renamed into __XXX__ to match others.
 * Some REST API to access setup features, like dictionaries (country, town, extrafields, ...) were moved into a 
-  common API "/setup". 
+  common API "/setup".
+* The REST API /documents were renamed into /documents/download and /documents/upload. 
 * Page bank/index.php and bank/bankentries.php were renamed into bank/list.php and bank/bankentries_list.php to
   follow page naming conventions (so default filter/sort order features can also work).
-* The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED
-* The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY
-* The parameter note into method cloture() is added at end of private note (previously in v6, it replaced)
+* The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED.
+* The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY.
+* The parameter note into method cloture() is added at end of private note (previously in v6, it replaced).
 * The parameter $user is now mandatory for method createFromOrder and createFromPropal. 
-* Remove js library fileupload that was not used by core code.
+* Removed js library 'fileupload' that was not used by core code.
 
 
 ***** ChangeLog for 6.0.3 compared to 6.0.2 *****

@@ -53,8 +53,10 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Returns a document. Note that, this API is similar to using the wrapper link "documents.php" to download
-	 * a file (used for internal HTML links of documents into application), but with no need to be into a logged session (no need to post the session cookie).
+	 * Download a document.
+	 *
+	 * Note that, this API is similar to using the wrapper link "documents.php" to download a file (used for
+	 * internal HTML links of documents into application), but with no need to have a session cookie (the token is used instead).
 	 *
 	 * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
@@ -67,6 +69,8 @@ class Documents extends DolibarrApi
 	 * @throws 400
 	 * @throws 401
 	 * @throws 200
+	 *
+	 * @url GET /download
 	 */
 	public function index($module_part, $original_file='', $regeneratedoc=0)
 	{
@@ -132,7 +136,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
 	 *
-	 * @param   string 	$modulepart		Name of module or area concerned ('facture', 'project', 'member', ...)
+	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'facture', 'project',  ...)
 	 * @param	int		$id				ID of element
 	 * @param	string	$ref			Ref of element
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
@@ -141,7 +145,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @throws RestException
 	 *
-	 * @url GET list
+	 * @url GET /
 	 */
 	function getDocumentsListByElement($modulepart, $id=0, $ref='', $sortfield='', $sortorder='')
 	{
@@ -216,7 +220,8 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Push a file.
+	 * Upload a file.
+	 *
 	 * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 *
@@ -229,6 +234,8 @@ class Documents extends DolibarrApi
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
 	 * @return  bool     				    State of copy
 	 * @throws RestException
+	 *
+	 * @url GET /upload
 	 */
 	public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
 	{
