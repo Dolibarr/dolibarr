@@ -185,12 +185,12 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                                     require_once $dir_part.$file_searched;
                                     if (class_exists($classname.'Api'))
                                     {
-                                        dol_syslog("Found API by index.php: classname=".$classname."Api for module ".$dir." into ".$dir_part.$file_searched);
+                                        //dol_syslog("Found API by index.php: classname=".$classname."Api for module ".$dir." into ".$dir_part.$file_searched);
                                         $listofapis[strtolower($classname.'Api')] = $classname.'Api';
                                     }
                                     elseif (class_exists($classname))
                                     {
-                                        dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
+                                        //dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
                                         $listofapis[strtolower($classname)] = $classname;
                                     }
                                     else
