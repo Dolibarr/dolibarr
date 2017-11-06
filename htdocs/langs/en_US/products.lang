@@ -271,6 +271,7 @@ WarningSelectOneDocument=Please select at least one document
 DefaultUnitToShow=Unit
 NbOfQtyInProposals=Qty in proposals
 ClinkOnALinkOfColumn=Click on a link of column %s to get a detailed view...
+ProductsOrServicesTranslations=Products or services translation
 TranslatedLabel=Translated label
 TranslatedDescription=Translated description
 TranslatedNote=Translated notes
