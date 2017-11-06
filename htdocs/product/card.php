@@ -1168,17 +1168,23 @@ else
 			print $formaccounting->select_account(GETPOST('accountancy_code_sell'), 'accountancy_code_sell', 1, null, 1, 1, '');
 			print '</td></tr>';
 
-			// Accountancy_code_sell_intra
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-			print '<td>';
-			print $formaccounting->select_account(GETPOST('accountancy_code_sell_intra'), 'accountancy_code_sell_intra', 1, null, 1, 1, '');
-			print '</td></tr>';
+			if ($conf->global->MAIN_FEATURES_LEVEL)
+			{
+				// Accountancy_code_sell_intra
+				if ($mysoc->isInEEC())
+				{
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<td>';
+					print $formaccounting->select_account(GETPOST('accountancy_code_sell_intra'), 'accountancy_code_sell_intra', 1, null, 1, 1, '');
+					print '</td></tr>';
+				}
 
-			// Accountancy_code_sell_export
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-			print '<td>';
-			print $formaccounting->select_account(GETPOST('accountancy_code_sell_export'), 'accountancy_code_sell_export', 1, null, 1, 1, '');
-			print '</td></tr>';
+				// Accountancy_code_sell_export
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<td>';
+				print $formaccounting->select_account(GETPOST('accountancy_code_sell_export'), 'accountancy_code_sell_export', 1, null, 1, 1, '');
+				print '</td></tr>';
+			}
 
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
@@ -1193,15 +1199,21 @@ else
 			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell" value="'.$object->accountancy_code_sell.'">';
 			print '</td></tr>';
 
-			// Accountancy_code_sell_intra
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_intra" value="'.$object->accountancy_code_sell_intra.'">';
-			print '</td></tr>';
+			if ($conf->global->MAIN_FEATURES_LEVEL)
+			{
+				// Accountancy_code_sell_intra
+				if ($mysoc->isInEEC())
+				{
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_intra" value="'.$object->accountancy_code_sell_intra.'">';
+					print '</td></tr>';
+				}
 
-			// Accountancy_code_sell_export
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-			print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_export" value="'.$object->accountancy_code_sell_export.'">';
-			print '</td></tr>';
+				// Accountancy_code_sell_export
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code_sell_export" value="'.$object->accountancy_code_sell_export.'">';
+				print '</td></tr>';
+			}
 
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
@@ -1484,17 +1496,23 @@ else
 				print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 				print '</td></tr>';
 
-				// Accountancy_code_sell_intra
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-				print '<td>';
-				print $formaccounting->select_account($object->accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, '', 1, 1);
-				print '</td></tr>';
+				if ($conf->global->MAIN_FEATURES_LEVEL)
+				{
+					// Accountancy_code_sell_intra
+					if ($mysoc->isInEEC())
+					{
+						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+						print '<td>';
+						print $formaccounting->select_account($object->accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, '', 1, 1);
+						print '</td></tr>';
+					}
 
-				// Accountancy_code_sell_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-				print '<td>';
-				print $formaccounting->select_account($object->accountancy_code_sell_export, 'accountancy_code_sell_export', 1, '', 1, 1);
-				print '</td></tr>';
+					// Accountancy_code_sell_export
+					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+					print '<td>';
+					print $formaccounting->select_account($object->accountancy_code_sell_export, 'accountancy_code_sell_export', 1, '', 1, 1);
+					print '</td></tr>';
+				}
 
 				// Accountancy_code_buy
 				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
@@ -1509,15 +1527,21 @@ else
 				print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 				print '</td></tr>';
 
-				// Accountancy_code_sell_intra
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
-				print '<td><input name="accountancy_code_sell_intra" class="maxwidth200" value="'.$object->accountancy_code_sell_intra.'">';
-				print '</td></tr>';
+				if ($conf->global->MAIN_FEATURES_LEVEL)
+				{
+					// Accountancy_code_sell_intra
+					if ($mysoc->isInEEC())
+					{
+						print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+						print '<td><input name="accountancy_code_sell_intra" class="maxwidth200" value="'.$object->accountancy_code_sell_intra.'">';
+						print '</td></tr>';
+					}
 
-				// Accountancy_code_sell_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
-				print '<td><input name="accountancy_code_sell_export" class="maxwidth200" value="'.$object->accountancy_code_sell_export.'">';
-				print '</td></tr>';
+					// Accountancy_code_sell_export
+					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+					print '<td><input name="accountancy_code_sell_export" class="maxwidth200" value="'.$object->accountancy_code_sell_export.'">';
+					print '</td></tr>';
+				}
 
 				// Accountancy_code_buy
 				print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
@@ -1642,35 +1666,41 @@ else
 			}
 			print '</td></tr>';
 
-			// Accountancy sell code intra-community
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancySellIntraCode");
-			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled))
+			if ($conf->global->MAIN_FEATURES_LEVEL)
 			{
-				$accountingaccount2 = new AccountingAccount($db);
-				$accountingaccount2->fetch('',$object->accountancy_code_sell_intra,1);
+				// Accountancy sell code intra-community
+				if ($mysoc->isInEEC())
+				{
+					print '<tr><td class="nowrap">';
+					print $langs->trans("ProductAccountancySellIntraCode");
+					print '</td><td colspan="2">';
+					if (! empty($conf->accounting->enabled))
+					{
+						$accountingaccount2 = new AccountingAccount($db);
+						$accountingaccount2->fetch('',$object->accountancy_code_sell_intra,1);
 
-				print $accountingaccount2->getNomUrl(0,1,1,'',1);
-			} else {
-				print $object->accountancy_code_sell_intra;
+						print $accountingaccount2->getNomUrl(0,1,1,'',1);
+					} else {
+						print $object->accountancy_code_sell_intra;
+					}
+					print '</td></tr>';
+				}
+
+				// Accountancy sell code export
+				print '<tr><td class="nowrap">';
+				print $langs->trans("ProductAccountancySellExportCode");
+				print '</td><td colspan="2">';
+				if (! empty($conf->accounting->enabled))
+				{
+					$accountingaccount3 = new AccountingAccount($db);
+					$accountingaccount3->fetch('',$object->accountancy_code_sell_export,1);
+
+					print $accountingaccount3->getNomUrl(0,1,1,'',1);
+				} else {
+					print $object->accountancy_code_sell_export;
+				}
+				print '</td></tr>';
 			}
-			print '</td></tr>';
-
-			// Accountancy sell code export
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancySellExportCode");
-			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled))
-			{
-				$accountingaccount3 = new AccountingAccount($db);
-				$accountingaccount3->fetch('',$object->accountancy_code_sell_export,1);
-
-				print $accountingaccount3->getNomUrl(0,1,1,'',1);
-			} else {
-				print $object->accountancy_code_sell_export;
-			}
-			print '</td></tr>';
 
 			// Accountancy buy code
 			print '<tr><td class="nowrap">';
