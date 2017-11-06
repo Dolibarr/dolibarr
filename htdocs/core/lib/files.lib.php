@@ -968,7 +968,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		$file_name_osencoded=dol_osencode($file_name);
 
 		// Check if destination dir is writable
-		// TODO
+		if (! is_writable(dirname($file_name_osencoded)))
+		{
+			dol_syslog("Files.lib::dol_move_uploaded_file Dir ".dirname($file_name_osencoded)." is not writable. Return 'ErrorDirNotWritable'", LOG_WARNING);
+			return 'ErrorDirNotWritable';
+		}
 
 		// Check if destination file already exists
 		if (! $allowoverwrite)
