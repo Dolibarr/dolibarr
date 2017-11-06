@@ -251,7 +251,7 @@ else
 
 	if ($search_type != '' && $search_type != '-1')
 	{
-		if ($search_type==1)
+		if ($search_type == 1)
 		{
 			$texte = $langs->trans("Services");
 		}
