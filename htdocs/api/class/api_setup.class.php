@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
-class Dictionary extends DolibarrApi
+class Setup extends DolibarrApi
 {
     private $translations = null;
 
@@ -53,7 +53,7 @@ class Dictionary extends DolibarrApi
      * @param int       $active     Payment type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
      *
-     * @url     GET payment/types
+     * @url     GET dictionary/payment_types
      *
      * @return array [List of payment types]
      *
@@ -122,7 +122,7 @@ class Dictionary extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of countries
      *
-     * @url     GET countries
+     * @url     GET dictionary/countries
      *
      * @throws RestException
      */
@@ -188,7 +188,7 @@ class Dictionary extends DolibarrApi
      * @param string    $lang      Code of the language the name of the
      *                             country must be translated to
      *
-     * @url     GET countries/{id}
+     * @url     GET dictionary/countries/{id}
      *
      * @throws RestException
      */
@@ -212,7 +212,7 @@ class Dictionary extends DolibarrApi
      * Clean sensible object datas
      *
      * @param object    $object    Object to clean
-     * @return array Array of cleaned object properties
+     * @return array 				Array of cleaned object properties
      */
     function _cleanObjectDatas($object)
     {
@@ -263,7 +263,7 @@ class Dictionary extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of events types
      *
-     * @url     GET events
+     * @url     GET dictionary/event_types
      *
      * @throws RestException
      */
@@ -402,7 +402,7 @@ class Dictionary extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return List of towns
      *
-     * @url     GET towns
+     * @url     GET dictionary/towns
      *
      * @throws RestException
      */
@@ -463,7 +463,7 @@ class Dictionary extends DolibarrApi
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters SQL criteria to filter. Syntax example "(t.code:=:'CHQ')"
      *
-     * @url     GET payment/terms
+     * @url     GET dictionary/payment_terms
      *
      * @return array List of payment terms
      *
