@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Export label
 ACCOUNTING_EXPORT_AMOUNT=Export amount
 ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_FORMAT=Select the format for the file
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 ThisService=This service
 ThisProduct=This product
@@ -252,6 +254,7 @@ Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
 Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
