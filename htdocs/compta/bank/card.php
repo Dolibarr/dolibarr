@@ -656,7 +656,7 @@ else
 		print '<td>';
 		if (! empty($conf->accounting->enabled)) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('',$object->account_number);
+			$accountingaccount->fetch('',$object->account_number, 1);
 
 			print $accountingaccount->getNomUrl(0,1,1,'',1);
 		} else {
