@@ -1337,7 +1337,7 @@ class ExtraFields
 		$perms=$this->attribute_perms[$key];
 		$langfile=$this->attribute_langfile[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=(($list != 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
