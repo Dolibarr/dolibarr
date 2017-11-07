@@ -28,6 +28,7 @@
  * \ingroup commande
  * \brief Page to dispatch receiving
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
@@ -84,17 +85,33 @@ if ($id > 0 || ! empty($ref)) {
  * Actions
  */
 
-if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(1);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(1);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error++;
+			$action = '';
+		}
+	}
+
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -102,19 +119,42 @@ if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED
 			$action = '';
 		}
 	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
-if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(0);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(0);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error ++;
+			$action = '';
+		}
+	}
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -122,25 +162,56 @@ if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANC
 			$action = '';
 		}
 	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
-if ($action == 'denydispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'denydispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(2);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(2);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error ++;
+			$action = '';
+		}
+	}
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 			$action = '';
 		}
+	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 }
 
@@ -150,10 +221,10 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	$db->begin();
 
 	$pos = 0;
-	foreach ($_POST as $key => $value) 
+	foreach ($_POST as $key => $value)
 	{
 		// without batch module enabled
-		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) 
+		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))
 		{
 			$pos ++;
 
@@ -184,7 +255,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			}
 		}
 		// with batch module enabled
-		if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) 
+		if (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg))
 		{
 			$pos ++;
 
@@ -286,11 +357,11 @@ if ($id > 0 || ! empty($ref)) {
 	$title = $langs->trans("SupplierOrder");
 	dol_fiche_head($head, 'dispatch', $title, 0, 'order');
 
-	
+
 	// Supplier order card
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Ref supplier
 	$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
@@ -331,14 +402,14 @@ if ($id > 0 || ! empty($ref)) {
 	    }
 	}
 	$morehtmlref.='</div>';
-	
-	
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);	
-	
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border" width="100%">';
 
 	// Date
@@ -362,7 +433,7 @@ if ($id > 0 || ! empty($ref)) {
 	print "</table>";
 
 	print '</div>';
-	
+
 	// if ($mesg) print $mesg;
 	print '<br>';
 
@@ -382,7 +453,7 @@ if ($id > 0 || ! empty($ref)) {
 		print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="dispatch">';
-		
+
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 
@@ -585,10 +656,10 @@ if ($id > 0 || ! empty($ref)) {
 		print '</div>';
 		print "<br>\n";
 
-		if ($nbproduct) 
+		if ($nbproduct)
 		{
             $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($object->statuts[5]));
-            
+
 			print '<br><div class="center">';
             print $langs->trans("Comment") . ' : ';
 			print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
@@ -597,7 +668,7 @@ if ($id > 0 || ! empty($ref)) {
 			print '" class="flat"><br>';
 
 			print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
-			
+
 			print '<br><input type="submit" class="button" value="' . $langs->trans("DispatchVerb") . '"';
 			if (count($listwarehouses) <= 0)
 				print ' disabled';
@@ -609,7 +680,7 @@ if ($id > 0 || ! empty($ref)) {
 		if (! $nbproduct) {
 			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
 				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>';		// No predefined line at all
-			else 
+			else
 				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>';	// No predefined line that remain to be dispatched.
 		}
 
@@ -618,7 +689,7 @@ if ($id > 0 || ! empty($ref)) {
 
 	dol_fiche_end();
 
-	
+
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.label as entrepot,";
@@ -699,7 +770,8 @@ if ($id > 0 || ! empty($ref)) {
 
 					// Add button to check/uncheck disaptching
 					print '<td align="center">';
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))) {
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+					{
 						if (empty($objp->status)) {
 							print '<a class="button buttonRefused" href="#">' . $langs->trans("Approve") . '</a>';
 							print '<a class="button buttonRefused" href="#">' . $langs->trans("Deny") . '</a>';

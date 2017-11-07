@@ -66,7 +66,7 @@ $hookmanager->initHooks(array('suppliercard','globalcard'));
  * Action
  */
 
-$parameters=array('socid'=>$socid);
+$parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -629,19 +629,40 @@ if ($object->id > 0)
 		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
 		{
 			$langs->load("supplier_proposal");
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
+      if ($object->status == 1)
+      {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
+      }
+      else
+      {
+        print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierProposal").'</a>';
+      }
 		}
 
-	    if ($user->rights->fournisseur->commande->creer)
+    if ($user->rights->fournisseur->commande->creer)
 		{
 			$langs->load("orders");
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+      if ($object->status == 1)
+      {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+      }
+      else
+      {
+        print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
+      }
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
 		{
 			$langs->load("bills");
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+      if ($object->status == 1)
+      {
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+      }
+      else
+      {
+        print '<a class="butActionRefused" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
+      }
 		}
 
 		if ($user->rights->fournisseur->facture->creer)

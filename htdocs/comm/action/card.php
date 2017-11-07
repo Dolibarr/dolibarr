@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
+ * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ if (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')
 	$donotclearsession=1;
 	if ($action == 'add') $action = 'create';
 	if ($action == 'update') $action = 'edit';
-	
+
 	$listUserAssignedUpdated = true;
 }
 
@@ -572,6 +572,11 @@ if ($action == 'mupdate')
 
 }
 
+// Actions to delete doc
+$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$permissioncreate = ($user->rights->agenda->allactions->delete ||	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete));
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 
 /*
  * View
@@ -724,7 +729,7 @@ if ($action == 'create')
 	print '<div class="assignedtouser">';
 	print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 	print '</div>';
-	if (in_array($user->id,array_keys($listofuserid))) 
+	if (in_array($user->id,array_keys($listofuserid)))
 	{
 		print '<div class="myavailability">';
 		print $langs->trans("MyAvailability").': <input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked':'').'> '.$langs->trans("Busy");
@@ -851,11 +856,11 @@ if ($id > 0)
 	$result3=$object->fetch_contact();
 	$result4=$object->fetch_userassigned();
 	$result5=$object->fetch_optionals($id,$extralabels);
-	
-	if ($listUserAssignedUpdated || $donotclearsession) 
+
+	if ($listUserAssignedUpdated || $donotclearsession)
 	{
         $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):(in_array(GETPOST('complete'),array(-1,100))?GETPOST('complete'):GETPOST("percentage"));	// If status is -1 or 100, percentage is not defined and we must use status
-	
+
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
@@ -872,7 +877,7 @@ if ($id > 0)
 		//$object->societe->id = $_POST["socid"];			// deprecated
 		//$object->contact->id = $_POST["contactid"];		// deprecated
 		$object->fk_project  = GETPOST("projectid",'int');
-		
+
 		$object->note = GETPOST("note");
 	}
 
@@ -1064,11 +1069,11 @@ if ($id > 0)
 				$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
-		
+
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent(($action=='create'?'add':'update'), 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, 'AND u.statut != 0');
 		print '</div>';
-		if (in_array($user->id,array_keys($listofuserid))) 
+		if (in_array($user->id,array_keys($listofuserid)))
 		{
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").':  <input id="transparency" type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'>'.$langs->trans("Busy");
@@ -1086,10 +1091,10 @@ if ($id > 0)
 
 		print '</table>';
 
-		
+
 		print '<br><br>';
 
-		
+
 		print '<table class="border" width="100%">';
 
 		// Thirdparty - Contact
@@ -1200,11 +1205,11 @@ if ($id > 0)
 		$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 		$linkback.=$out;
-		
+
 		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
-		
+
 		print '<div class="underbanner clearboth"></div>';
-		
+
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
@@ -1268,7 +1273,7 @@ if ($id > 0)
 		print '<div class="assignedtouser">';
 		print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</div>';
-		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid))) 
+		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
 		{
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
@@ -1449,7 +1454,7 @@ if ($id > 0)
              */
 
             $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
-            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+            $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
             $genallowed=$user->rights->agenda->myactions->create;
 	        $delallowed=$user->rights->agenda->myactions->delete;

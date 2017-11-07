@@ -334,7 +334,7 @@ foreach my $target (sort keys %CHOOSEDTARGET) {
 }
 foreach my $target (sort keys %CHOOSEDPUBLISH) {
 	if ($CHOOSEDPUBLISH{$target} < 0) { next; }
-	if ($target eq 'ASSO') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
+	if ($target eq 'ASSO') { $nbofpublishneedchangelog++; }
 	if ($target eq 'SF') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
 	$nboftargetok++;
 }
@@ -594,7 +594,9 @@ if ($nboftargetok) {
         
         print "Remove subdir of custom dir\n";
    	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
-   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to keep dir
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to keep files only
+   	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\;\n";
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to keep files only
 	}
 
 	# Build package for each target
