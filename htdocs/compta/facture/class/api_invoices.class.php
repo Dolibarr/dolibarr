@@ -903,6 +903,7 @@ class Invoices extends DolibarrApi
 
     	$object = parent::_cleanObjectDatas($object);
 
+        unset($object->note);
     	unset($object->address);
     	unset($object->barcode_type);
     	unset($object->barcode_type_code);

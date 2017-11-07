@@ -21,7 +21,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 /**
  * API that gives the status of the Dolibarr instance.
  *
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class Status
@@ -30,10 +30,13 @@ class Status
      * Get status (Dolibarr version)
 	 */
 	function index() {
+		global $conf;
+
 		return array(
 			'success' => array(
 				'code' => 200,
-				'dolibarr_version' => DOL_VERSION
+				'dolibarr_version' => DOL_VERSION,
+				'access_locked' => (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)?'0':$conf->global->MAIN_ONLY_LOGIN_ALLOWED)
 			)
 		);
     }

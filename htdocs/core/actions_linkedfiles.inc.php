@@ -56,7 +56,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
     if ($object->id)
     {
-        $urlfile = GETPOST('urlfile', 'alpha');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+        $urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
         if (GETPOST('section', 'alpha')) $file = $upload_dir . "/" . $urlfile;	// For a delete of GED module urlfile contains full path from upload_dir
         else															// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 		{

@@ -132,7 +132,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/scripts/myobject.php');
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
-		dol_delete_file($destdir.'/class/api_myobject.class.php');
+		dol_delete_file($destdir.'/class/api_mymodule.class.php');
 	}
 
 	// Edit PHP files
@@ -226,7 +226,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-			'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
+			'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php'
 		);
 
 		foreach($filetogenerate as $srcfile => $destfile)
@@ -513,7 +513,7 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-			'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
+			'class/api_myobject.class.php'=>'class/api_'.strtolower($module).'.class.php'
 		);
 
 		$resultko = 0;
@@ -1415,7 +1415,7 @@ elseif (! empty($module))
 				{
 					try {
 						$pathtoclass    = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
-						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
+						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($module).'.class.php';
 						$pathtoagenda   = strtolower($module).'/'.strtolower($tabobj).'_agenda.php';
 						$pathtocard     = strtolower($module).'/'.strtolower($tabobj).'_card.php';
 						$pathtodocument = strtolower($module).'/'.strtolower($tabobj).'_document.php';

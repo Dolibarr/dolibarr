@@ -168,9 +168,12 @@ ALTER TABLE llx_accounting_account ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_accounting_account ADD COLUMN extraparams varchar(255);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN extraparams varchar(255);
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime DEFAULT NULL;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user integer NULL;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN date_lim_reglement datetime DEFAULT NULL;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN fk_user integer NULL;
 
 
 ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
@@ -520,6 +523,9 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_uniq
 
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
+
+ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER accountancy_code_sell;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
 
 -- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);

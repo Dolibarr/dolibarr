@@ -2414,12 +2414,11 @@ class SupplierProposal extends CommonObject
 
         $picto='supplier_proposal';
 
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->ref;
+        $result .= $linkend;
 
-        if ($withpicto)
-            $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-        if ($withpicto && $withpicto != 2)
-            $result.=' ';
-        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 

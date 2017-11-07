@@ -96,6 +96,7 @@ class DolibarrApi
 
         // Remove $db object property for object
         unset($object->db);
+		unset($object->ismultientitymanaged);
 
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
@@ -129,6 +130,8 @@ class DolibarrApi
         unset($object->statuts_short);
         unset($object->statuts_logo);
         unset($object->statuts_long);
+        unset($object->labelstatut);
+        unset($object->labelstatut_short);
 
         unset($object->element);
         unset($object->fk_element);

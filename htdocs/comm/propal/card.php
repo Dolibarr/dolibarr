@@ -2368,13 +2368,19 @@ if ($action == 'create')
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		// Show online signature link
-		$useonlinepayment = $conf->global->MAIN_FEATURES_LEVEL;
+		$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok
 
-		if ($object->statut != Propal::STATUS_DRAFT && $useonlinepayment)
+		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature)
 		{
-			print '<br>';
+			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlineSignatureUrl('proposal', $object->ref);
+			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
+		}
+
+		if ($object->statut != Propal::STATUS_DRAFT && ! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD))
+		{
+			print '<br><!-- Link to download main doc -->'."\n";
+			print showDirectDownloadLink($object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

@@ -270,10 +270,11 @@ function GETPOSTISSET($paramname)
  *                                  'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
+ *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|string[]      Value found (string or array), or '' if check fails
  */
-function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=NULL)
+function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NULL, $noreplace=0)
 {
 	global $mysoc,$user,$conf;
 
@@ -467,7 +468,7 @@ function GETPOST($paramname, $check='alpha', $method=0, $filter=NULL, $options=N
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
 	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
-	if (! is_array($out) && empty($_POST[$paramname]))
+	if (! is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
 	{
 		$maxloop=20; $loopnb=0;    // Protection against infinite loop
 		while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
@@ -653,7 +654,9 @@ function dol_include_once($relpath, $classname='')
  *
  * 	@param	string	$path						Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
  *  @param	int		$type						0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
- *  @param	int		$returnemptyifnotfound		If path==0 and if file was not found, do not return default path but an empty string
+ *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
+ *  											1:If $type==0 and if file was not found into alternate dir, return empty string
+ *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
  *  @return string								Full filesystem path (if path=0), Full url path (if mode=1)
  */
 function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
@@ -674,9 +677,9 @@ function dol_buildpath($path, $type=0, $returnemptyifnotfound=0)
 				return $res;
 			}
 		}
-		if ($returnemptyifnotfound)										// Not found, we return empty string
+		if ($returnemptyifnotfound)								// Not found into alternate dir
 		{
-			return '';
+			if ($returnemptyifnotfound == 1 || ! file_exists($res)) return '';
 		}
 	}
 	else				// For an url path
@@ -2717,10 +2720,11 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt				Force alt for bind peoplae
+ *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss')
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='')
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly=0, $notitle=0, $alt='', $morecss='')
 {
 	global $conf, $langs;
 
@@ -2742,7 +2746,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if ($picto == 'off') { $fakey = 'fa-square-o'; $fasize='1.3em'; }
 			if ($picto == 'on')  { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
 			$enabledisablehtml='';
-			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'">';
+			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
 			$enabledisablehtml.='</span>';
 			return $enabledisablehtml;
@@ -3647,7 +3651,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle" valign="middle">'.img_picto('',$picto, 'class="valignmiddle" id="pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle" id="pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -6647,6 +6651,28 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 	$res = ($nofirstand?"":" AND ")."(" . $res . ")";
 	//print 'xx'.$res.'yy';
 	return $res;
+}
+
+/**
+ * Return string with full Url
+ *
+ * @param   Object	$object		Object
+ * @return	string				Url string
+ */
+function showDirectDownloadLink($object)
+{
+	global $conf, $langs;
+
+	$out='';
+	$url = $object->getLastMainDocLink($object->element);
+
+	if ($url)
+	{
+		$out.= img_picto('','object_globe.png').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out.= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
+		$out.= ajax_autoselect("directdownloadlink", 0);
+	}
+	return $out;
 }
 
 /**

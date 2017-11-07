@@ -141,7 +141,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
 	 *  @param	int				$list				Visibilty
-	 *  @param	int				$ishidden			Deprecated. Us visibility instead.
+	 *  @param	int				$ishidden			Deprecated. Use visibility instead.
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields
 	 *  @param  string  		$langfile  		 	Language file
@@ -742,7 +742,7 @@ class ExtraFields
 					$this->attribute_param[$tab->name]=($tab->param ? unserialize($tab->param) : '');
 					$this->attribute_pos[$tab->name]=$tab->pos;
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
-					$this->attribute_perms[$tab->name]=$tab->perms;
+					$this->attribute_perms[$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attribute_langfile[$tab->name]=$tab->langs;
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
@@ -759,7 +759,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['param'][$tab->name]=($tab->param ? unserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name]=$tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name]=$tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name]=$tab->perms;
+					$this->attributes[$tab->elementtype]['perms'][$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name]=$tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
@@ -975,6 +975,7 @@ class ExtraFields
 				$param_list=array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
 				$parentName='';
+				$parentField='';
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
@@ -1106,7 +1107,7 @@ class ExtraFields
 								$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 							}
 
-							if (!empty($InfoFieldList[3]))
+							if (!empty($InfoFieldList[3]) && $parentField)
 							{
 								$parent = $parentName.':'.$obj->{$parentField};
 							}
@@ -1156,6 +1157,8 @@ class ExtraFields
 			if (is_array($param['options'])) {
 				$param_list = array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
+				$parentName='';
+				$parentField='';
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
@@ -1229,6 +1232,7 @@ class ExtraFields
 						$labeltoshow = '';
 						$obj = $this->db->fetch_object($resql);
 
+						$notrans = false;
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($fields_label)) {
@@ -1269,7 +1273,7 @@ class ExtraFields
 									$data[$obj->rowid]=$labeltoshow;
 								}
 
-								if (! empty($InfoFieldList[3])) {
+								if (! empty($InfoFieldList[3]) && $parentField) {
 									$parent = $parentName . ':' . $obj->{$parentField};
 								}
 
@@ -1286,12 +1290,11 @@ class ExtraFields
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
 			}
-			$out .= '</select>';
 		}
 		elseif ($type == 'link')
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
-			$showempty=(($val['notnull'] == 1 && $val['default'] != '')?0:1);
+			$showempty=(($required && $default != '')?0:1);
 			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
 		}
 		elseif ($type == 'password')
@@ -1334,7 +1337,7 @@ class ExtraFields
 		$perms=$this->attribute_perms[$key];
 		$langfile=$this->attribute_langfile[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=(($list != 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
@@ -1480,6 +1483,7 @@ class ExtraFields
 		{
 			$value_arr=explode(',',$value);
 			$value='';
+			$toprint=array();
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {

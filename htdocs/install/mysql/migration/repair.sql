@@ -122,6 +122,8 @@ delete from llx_adherent_extrafields where fk_object not in (select rowid from l
 delete from llx_product_extrafields where fk_object not in (select rowid from llx_product);
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
+UPDATE llx_product SET datec = tms WHERE datec IS NULL;
+
 
 -- Clean stocks
 

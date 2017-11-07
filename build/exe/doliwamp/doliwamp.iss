@@ -32,7 +32,7 @@ AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
-AppCopyright=Copyright (C) 2008-2016 Laurent Destailleur, NLTechno
+AppCopyright=Copyright (C) 2008-2017 Laurent Destailleur (NLTechno), Fabian Rodriguez (Le Goût du Libre)
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 ;LicenseFile=COPYING
@@ -351,9 +351,8 @@ begin
 	
     if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
     begin
-      // TODO Copy file or ask to install package ?
-      //CustomMessage('YouWillInstallDoliWamp')+#13#13
-      MsgBox('The package vcredist_x86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://www.microsoft.com/en-us/download/details.aspx?id=30679">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
+      // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept 
+      MsgBox('The "Visual C++ Redistributable for Visual Studio 2012" component is missing. Please install the 32-bit version (vcredit_x86.exe) first from http://www.microsoft.com/en-us/download/details.aspx?id=30679 and restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
     end;
 	// Pb seems similar with msvcp110.dll
 	//vcredist_x64.exe
