@@ -46,8 +46,8 @@ $(document).ready(function(){
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
-			console.log($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
-			var roworder = cleanSerialize($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
+			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
+			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
@@ -75,7 +75,7 @@ $(document).ready(function(){
 					});
 		},
 		onDragClass: "dragClass",
-		dragHandle: "tdlineupdown"
+		dragHandle: "td.tdlineupdown"
 	});
     $(".tdlineupdown").hover( function() { $(this).addClass('showDragHandle'); },
     	function() { $(this).removeClass('showDragHandle'); }
