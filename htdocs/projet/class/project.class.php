@@ -1745,7 +1745,7 @@ class Project extends CommonObject
 	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	    $sql.= " WHERE";
 	    $sql.= " p.entity IN (".getEntity('projet', 1).")";
-		if (! $user->rights->projet->all->lire) 
+		if (! $user->rights->projet->all->lire)
 		{
 			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);
 			$sql .= "AND p.rowid IN (".$projectsListId.")";
