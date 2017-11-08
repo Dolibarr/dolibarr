@@ -208,16 +208,15 @@ class Setup extends DolibarrApi
         return $this->_cleanObjectDatas($country);
     }
 
-
-     /**
+    /**
      * Get the list of delivery times.
      *
      * @param string    $sortfield  Sort field
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number {@min 0}
-     * @param int       $active     Payment type is active or not {@min 0} {@max 1}
-     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     * @param int       $active     Delivery times is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters SQL criteria to filter with.
      *
      * @url     GET dictionary/availability
      *
