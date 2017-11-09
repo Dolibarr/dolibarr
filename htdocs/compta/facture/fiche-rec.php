@@ -8,6 +8,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Meziane Sof		<virtualsof@yahoo.fr>
+ * Copyright (C) 2017       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -347,12 +348,12 @@ if (empty($reshook))
 	{
 		$object->setAutoValidate(GETPOST('auto_validate', 'int'));
     }
-    // Set auto validate
+    // Set generate pdf
 	elseif ($action == 'setgenerate_pdf' && $user->rights->facture->creer)
 	{
 		$object->setGeneratepdf(GETPOST('generate_pdf', 'int'));
 	}
-    // Set auto validate
+    // Set model pdf
 	elseif ($action == 'setmodelpdf' && $user->rights->facture->creer)
 	{
 		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
