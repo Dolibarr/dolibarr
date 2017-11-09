@@ -1928,101 +1928,23 @@ if (! function_exists("llxFooter"))
 
 		print '</div> <!-- End div class="fiche" -->'."\n"; // End div fiche
 
-		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'; // End div id-right
+		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'."\n"; // End div id-right
+
+		if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '</div> <!-- End div id-container -->'."\n";	// End div container
 
 		print "\n";
 		if ($comment) print '<!-- '.$comment.' -->'."\n";
 
 		printCommonFooter($zone);
 
-		if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '</div> <!-- End div id-container -->'."\n";	// End div container
-
 		if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
 
-		// TODO Move this in lib_head.js.php
-
-		// Wrapper to show tooltips (html or onclick popup)
-		if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
+		if (! empty($conf->use_javascript_ajax))
 		{
-			print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
-			print '<script type="text/javascript">
-            	jQuery(document).ready(function () {
-					jQuery(".classfortooltip").tooltip({
-						show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-						hide: { effect:\'toggle\', delay: 50 },
-						tooltipClass: "mytooltip",
-						content: function () {
-              				return $(this).prop(\'title\');		/* To force to get title as is */
-          				}
-					});
-            		jQuery(".classfortooltiponclicktext").dialog({ closeOnEscape: true, classes: { "ui-dialog": "highlight" }, maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false }).css("z-index: 5000");
-            		jQuery(".classfortooltiponclick").click(function () {
-            		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-            		    if ($(this).attr(\'dolid\'))
-            		    {
-                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-            		        obj.dialog("open");
-
-            		    }
-            		});
-                });
-            </script>' . "\n";
+			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
+			print '<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_foot.js.php?lang=fr_FR&amp;version=7.0.0-alpha" async></script>'."\n";
 		}
-
-		// Wrapper to manage document_preview
-		if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
-		{
-			print "\n<!-- JS CODE TO ENABLE document_preview -->\n";
-			print '<script type="text/javascript">
-                jQuery(document).ready(function () {
-			        jQuery(".documentpreview").click(function () {
-            		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
-                		return false;
-        			});
-        		});
-            </script>' . "\n";
-		}
-
-		// Wrapper to manage dropdown
-		if (! empty($conf->use_javascript_ajax) && ! defined('JS_JQUERY_DISABLE_DROPDOWN'))
-		{
-			print "\n<!-- JS CODE TO ENABLE dropdown -->\n";
-			print '<script type="text/javascript">
-                jQuery(document).ready(function () {
-                  $(".dropdown dt a").on(\'click\', function () {
-                      //console.log($(this).parent().parent().find(\'dd ul\'));
-                      $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
-                      // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
-                      heigthofcontent = 21 * $(this).parent().parent().find(\'dd div ul li\').length;
-                      if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
-                      posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
-                      //console.log(posbottom);
-                      var scrollBottom = $(window).scrollTop() + $(window).height();
-                      //console.log(scrollBottom);
-                      diffoutsidebottom = (posbottom - scrollBottom);
-                      console.log("heigthofcontent="+heigthofcontent+", diffoutsidebottom (posbottom="+posbottom+" - scrollBottom="+scrollBottom+") = "+diffoutsidebottom);
-                      if (diffoutsidebottom > 0)
-                      {
-                            pix = "-"+(diffoutsidebottom+8)+"px";
-                            console.log("We reposition top by "+pix);
-                            $(this).parent().parent().find(\'dd\').css("top", pix);
-                      }
-                      // $(".dropdown dd ul").slideToggle(\'fast\');
-                  });
-                  $(".dropdowncloseonclick").on(\'click\', function () {
-                     console.log("Link has class dropdowncloseonclick, so we close/hide the popup ul");
-                     $(this).parent().parent().hide();
-                  });
-
-                  $(document).bind(\'click\', function (e) {
-                      var $clicked = $(e.target);
-                      if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
-                  });
-                });
-                </script>';
-		}
-
+		
 		// Wrapper to add log when clicking on download or preview
 		if (! empty($conf->blockedlog->enabled) && is_object($object) && $object->id > 0 && $object->statut > 0)
 		{
@@ -2055,7 +1977,6 @@ if (! function_exists("llxFooter"))
 				<?php
 			}
 	   	}
-
 
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
