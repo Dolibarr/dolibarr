@@ -123,7 +123,6 @@ if ($conf->browser->layout != 'phone')
                 		return false;
         			});
         		});
-        		console.log("end of js code to manage preview");
            ' . "\n";
 }
 
