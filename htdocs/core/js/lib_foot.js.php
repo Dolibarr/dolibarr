@@ -65,7 +65,7 @@ if (empty($conf->dol_no_mouse_hover))
             		    {
                             obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
             		        obj.dialog("open");
-
+							return false;
             		    }
             		});
                 });
@@ -79,15 +79,14 @@ if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
 	print '
                 jQuery(document).ready(function () {
                   $(".dropdown dt a").on(\'click\', function () {
+                  	  console.log("We click on dropdown");
                       //console.log($(this).parent().parent().find(\'dd ul\'));
                       $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
                       // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
                       heigthofcontent = 21 * $(this).parent().parent().find(\'dd div ul li\').length;
                       if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
                       posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
-                      //console.log(posbottom);
                       var scrollBottom = $(window).scrollTop() + $(window).height();
-                      //console.log(scrollBottom);
                       diffoutsidebottom = (posbottom - scrollBottom);
                       console.log("heigthofcontent="+heigthofcontent+", diffoutsidebottom (posbottom="+posbottom+" - scrollBottom="+scrollBottom+") = "+diffoutsidebottom);
                       if (diffoutsidebottom > 0)
@@ -104,6 +103,7 @@ if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
                   });
 
                   $(document).bind(\'click\', function (e) {
+                  	  // TODO Use a bind on elements in dropdown only to avoid to bind/code all clicks
                       var $clicked = $(e.target);
                       if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
                   });
@@ -135,7 +135,7 @@ print '
 				jQuery(".reposition").click(function() {
   	           		var page_y = $(document).scrollTop();
   	           		this.href=this.href+\'&page_y=\'+page_y;
-  	           		console.log("this.ref is now "+this.href)
+  	           		console.log("We click on tag with .reposition class. this.ref is now "+this.href)
 		 		});
 			});'."\n";
 
