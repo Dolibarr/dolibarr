@@ -178,6 +178,9 @@ class PriceParser
 			$values["global_".$entry->code] = $entry->value;
 		}
 
+		//Remove internal variables
+		unset($values["supplier_id"]);
+
 		//Prepare the lib, parameters and values
 		$em = new EvalMath();
 		$em->suppress_errors = true; //Don't print errors on page
