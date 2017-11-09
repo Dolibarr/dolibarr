@@ -6289,9 +6289,10 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 /**
  * Print common footer :
  * 		conf->global->MAIN_HTML_FOOTER
- * 		conf->global->MAIN_GOOGLE_AN_ID
- * 		conf->global->MAIN_SHOW_TUNING_INFO or $_SERVER["MAIN_SHOW_TUNING_INFO"]
- * 		conf->logbuffer
+ *      js for switch of menu hider
+ * 		js for conf->global->MAIN_GOOGLE_AN_ID
+ * 		js for conf->global->MAIN_SHOW_TUNING_INFO or $_SERVER["MAIN_SHOW_TUNING_INFO"]
+ * 		js for conf->logbuffer
  *
  * @param	string	$zone	'private' (for private pages) or 'public' (for public pages)
  * @return	void
@@ -6315,7 +6316,7 @@ function printCommonFooter($zone='private')
 		{
 			print '<script type="text/javascript" language="javascript">'."\n";
 
-			if (empty($conf->dol_use_jmobile))
+			if ($zone == 'private' && empty($conf->dol_use_jmobile))
 			{
 				print "\n";
 				print '/* Set handler to switch left menu page (menuhider) */'."\n";
