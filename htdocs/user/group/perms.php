@@ -38,11 +38,6 @@ $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
 
-// Users/Groups management only in master entity if transverse mode
-if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-	accessforbidden();
-}
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -64,16 +59,10 @@ $object->fetch($id);
 $object->getrights();
 
 $entity=$conf->entity;
-if (! empty($conf->multicompany->enabled))
-{
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-		$entity=(GETPOST('entity','int') ? GETPOST('entity','int') : $conf->entity);
-	else
-		$entity=(! empty($object->entity) ? $object->entity : $conf->entity);
-}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('groupcard','globalcard'));
+$contextpage=array('groupcard','globalcard');
+$hookmanager->initHooks($contextpage);
 
 
 /**

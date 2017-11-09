@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignorați erorile de înregistrare duplicat (INSERT IGNOR
 AutoDetectLang=Autodetect (browser limbă)
 FeatureDisabledInDemo=Funcţonalitate dezactivată în demo
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=Permisiuni
 BoxesDesc=Widgeturile sunt componente care prezintă unele informații pe care le puteți adăuga pentru a personaliza unele pagini. Aveți posibilitatea să alegeți între afișarea widget-ului sau nu, selectând pagina țintă și făcând clic pe "Activare" sau făcând clic pe coșul de gunoi pentru a-l dezactiva.
 OnlyActiveElementsAreShown=Numai elementele din <a href="%s"> module activate </a> sunt afişate.
 ModulesDesc=Modulele Dolibarr definesc ce aplicație / caracteristică este activată în software. Unele aplicații / module necesită permisiuni pe care trebuie să le acordați utilizatorilor, după activarea acestora. Faceți clic pe butonul On / Off pentru a activa un modul / aplicație.
@@ -593,7 +592,7 @@ Module5000Desc=Vă permite să administraţi mai multe companii
 Module6000Name=Flux de lucru
 Module6000Desc=Managementul fluxului de lucru
 Module10000Name=Websites
-Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Managementul cererilor de concedii
 Module20000Desc=Declară şi urmăreşte cererile de concedii ale angajaţilor
 Module39000Name=Lot Produs
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Functionalitate pentru a trimite mesaje utilizân
 TranslationSetup=Configurarea traducerii
 TranslationKeySearch=Search a translation key or string
 TranslationOverwriteKey=Overwrite a translation string
-TranslationDesc=Cum se configureaza limbajul de aplicație afișat: <br> * Sistem: meniu <strong> Acasă - Configurare - Afișare </strong> <br> Per utilizator: <strong> Configurare afișare utilizator </strong> Tab-ul cardului utilizatorului (apasati pe numele de utilizator din partea de sus a ecranului).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the translation key string into "%s" and your new translation into "%s"
 TranslationOverwriteDesc2=You can use the other tab to help you know translation key to use
 TranslationString=Translation string
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Regulă pentru a genera parole sugerate sau validareal
 DisableForgetPasswordLinkOnLogonPage=Nu afişa link-ul "Uită parola" de pe pagina de login
 UsersSetup=Utilizatorii modul de configurare
 UserMailRequired=EMail necesare pentru a crea un utilizator nou
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=Configurare Modul HRM
 ##### Company setup #####

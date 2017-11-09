@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2017 Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2013-2017 Olivier Geffroy	  <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017	  Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 $langs->load("accountancy");
+$langs->load("bills");
+$langs->load("compta");
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -40,7 +42,7 @@ if ($user->societe_id > 0) {
 	accessforbidden();
 }
 $action = GETPOST('action','aZ09');
-$mode = GETPOST('mode','aZ09');         // '' or 'tmp'
+$mode = GETPOST('mode','aZ09');		 // '' or 'tmp'
 $piece_num = GETPOST("piece_num");
 
 $mesg = '';
@@ -72,16 +74,16 @@ if ($action == "confirm_update") {
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
-	    $error++;
-	    setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-        $action='update';
+		$error++;
+		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+		$action='update';
 	}
-    if (empty($account_number) || $account_number == '-1')
-    {
-        $error++;
-        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
-        $action='update';
-    }
+	if (empty($account_number) || $account_number == '-1')
+	{
+		$error++;
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+		$action='update';
+	}
 
 	if (! $error)
 	{
@@ -89,7 +91,7 @@ if ($action == "confirm_update") {
 
 		$result = $book->fetch($id, null, $mode);
 		if ($result < 0) {
-		    $error++;
+			$error++;
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
 			$book->numero_compte = $account_number;
@@ -112,13 +114,13 @@ if ($action == "confirm_update") {
 			if ($result < 0) {
 				setEventMessages($book->error, $book->errors, 'errors');
 			} else {
-			    if ($mode != '_tmp')
-			    {
-				    setEventMessages($langs->trans('Saved'), null, 'mesgs');
-			    }
+				if ($mode != '_tmp')
+				{
+					setEventMessages($langs->trans('Saved'), null, 'mesgs');
+				}
 
-			    $debit = 0;
-			    $credit = 0;
+				$debit = 0;
+				$credit = 0;
 
 				$action = '';
 			}
@@ -132,14 +134,14 @@ else if ($action == "add") {
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
 	{
 		$error++;
-	    setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-	    $action='';
+		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
+		$action='';
 	}
 	if (empty($account_number) || $account_number == '-1')
 	{
-	    $error++;
-	    setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
-	    $action='';
+		$error++;
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+		$action='';
 	}
 
 	if (! $error) {
@@ -175,7 +177,7 @@ else if ($action == "add") {
 		} else {
 			if ($mode != '_tmp')
 			{
-                setEventMessages($langs->trans('Saved'), null, 'mesgs');
+				setEventMessages($langs->trans('Saved'), null, 'mesgs');
 			}
 
 			$debit = 0;
@@ -209,9 +211,9 @@ else if ($action == "confirm_create") {
 	$book = new BookKeeping($db);
 
 	if (! GETPOST('code_journal') || GETPOST('code_journal') == '-1') {
-	    setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
-	    $action='create';
-	    $error++;
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
+		$action='create';
+		$error++;
 	}
 	if (! GETPOST('next_num_mvt'))
 	{
@@ -237,10 +239,10 @@ else if ($action == "confirm_create") {
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
 		} else {
-		    if ($mode != '_tmp')
-		    {
-                setEventMessages($langs->trans('Saved'), null, 'mesgs');
-		    }
+			if ($mode != '_tmp')
+			{
+				setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			}
 			$action = 'update';
 			$id=$book->id;
 			$piece_num = $book->piece_num;
@@ -254,10 +256,10 @@ if ($action == 'setdate') {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-	    if ($mode != '_tmp')
-	    {
-    		setEventMessages($langs->trans('Saved'), null, 'mesgs');
-	    }
+		if ($mode != '_tmp')
+		{
+			setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		}
 		$action = '';
 	}
 }
@@ -270,7 +272,7 @@ if ($action == 'setjournal') {
 	} else {
 		if ($mode != '_tmp')
 		{
-	       setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			setEventMessages($langs->trans('Saved'), null, 'mesgs');
 		}
 		$action = '';
 	}
@@ -284,7 +286,7 @@ if ($action == 'setdocref') {
 	} else {
 		if ($mode != '_tmp')
 		{
-	       setEventMessages($langs->trans('Saved'), null, 'mesgs');
+			setEventMessages($langs->trans('Saved'), null, 'mesgs');
 		}
 		$action = '';
 	}
@@ -318,7 +320,8 @@ if ($action == 'delete') {
 	print $formconfirm;
 }
 
-if ($action == 'create') {
+if ($action == 'create')
+{
 	print load_fiche_titre($langs->trans("CreateMvts"));
 
 	$book = new BookKeeping($db);
@@ -359,17 +362,21 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth200" name="doc_ref" value=""/></td>';
 	print '</tr>';
 
+	/*
 	print '<tr>';
 	print '<td>' . $langs->trans("Doctype") . '</td>';
 	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
 	print '</tr>';
+	*/
 
 	print '</table>';
 
 	dol_fiche_end();
 
-	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans("Create") . '">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="' . $langs->trans("Cancel") . '" class="button" onclick="history.go(-1)" />';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" value="' . $langs->trans("Cancel") . '" class="button" onclick="history.go(-1)" />';
 	print '</div>';
 
 	print '</form>';
@@ -380,9 +387,9 @@ if ($action == 'create') {
 		setEventMessages($book->error, $book->errors, 'errors');
 	}
 
-	if (! empty($book->piece_num)) {
-
-	    $backlink = '<a href="list.php">' . $langs->trans('BackToList') . '</a>';
+	if (! empty($book->piece_num))
+	{
+		$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans('BackToList') . '</a>';
 
 		print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
 
@@ -395,9 +402,7 @@ if ($action == 'create') {
 
 		dol_fiche_head($head, 'transaction', '', -1);
 
-
 		//dol_banner_tab($book, '', $backlink);
-
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -405,13 +410,13 @@ if ($action == 'create') {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield" width="100%">';
 
-		// account movement
+		// Account movement
 		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans("NumMvts") . '</td>';
 		print '<td>' . $book->piece_num . '</td>';
 		print '</tr>';
 
-		// date
+		// Date
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Docdate');
@@ -429,11 +434,12 @@ if ($action == 'create') {
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-		  print $book->doc_date ? dol_print_date($book->doc_date, 'daytext') : '&nbsp;';
+			print $book->doc_date ? dol_print_date($book->doc_date, 'daytext') : '&nbsp;';
 		}
 		print '</td>';
 		print '</tr>';
-		//journal
+
+		// Journal
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Codejournal');
@@ -455,7 +461,8 @@ if ($action == 'create') {
 		}
 		print '</td>';
 		print '</tr>';
-		//docref
+
+		// Ref document
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Docref');
@@ -488,9 +495,20 @@ if ($action == 'create') {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Doc type
+		if(! empty($book->doc_type))
+		{
+			print '<tr>';
+			print '<td class="titlefield">' . $langs->trans("Doctype") . '</td>';
+			print '<td>' . $book->doc_type . '</td>';
+			print '</tr>';
+		}
+
+		// Date document creation
 		print '<tr>';
-		print '<td>' . $langs->trans("Doctype") . '</td>';
-		print '<td>' . $book->doc_type . '</td>';
+		print '<td class="titlefield">' . $langs->trans("DateCreation") . '</td>';
+		print '<td>';
+		print $book->date_creation ? dol_print_date($book->date_creation, 'daytext') : '&nbsp;';
+		print '</td>';
 		print '</tr>';
 
 		// Validate
@@ -542,7 +560,6 @@ if ($action == 'create') {
 
 		print '<br>';
 
-
 		$result = $book->fetchAllPerMvt($piece_num, $mode);
 		if ($result < 0) {
 			setEventMessages($book->error, $book->errors, 'errors');
@@ -570,7 +587,7 @@ if ($action == 'create') {
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelAccount");
-				print_liste_field_titre("Label");
+				print_liste_field_titre("LabelOperation");
 				print_liste_field_titre("Debit", "", "", "", "", 'align="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'align="right"');
 				print_liste_field_titre("Action", "", "", "", "", 'width="60" align="center"');
@@ -587,16 +604,16 @@ if ($action == 'create') {
 						print $formaccounting->select_account($line->numero_compte, 'account_number', 1, array (), 1, 1, '');
 						print '</td>';
 						print '<td>';
-    					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
-    					// use setup of keypress to select thirdparty and this hang browser on large database.
-                        if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-                        {
-                            print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
-                        }
-                        else
-                        {
-                            print '<input type="text" name="subledger_account" value="'.$line->subledger_account.'">';
-                        }
+						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
+						// use setup of keypress to select thirdparty and this hang browser on large database.
+						if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+						{
+							print $formaccounting->select_auxaccount($line->subledger_account, 'subledger_account', 1);
+						}
+						else
+						{
+							print '<input type="text" name="subledger_account" value="'.$line->subledger_account.'">';
+						}
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 						print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
@@ -644,14 +661,14 @@ if ($action == 'create') {
 					print '<td>';
 					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
 					// use setup of keypress to select thirdparty and this hang browser on large database.
-                    if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-                    {
-					   print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
-                    }
-                    else
-                    {
-					   print '<input type="text" name="subledger_account" value="">';
-                    }
+					if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
+					{
+						print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1);
+					}
+					else
+					{
+						print '<input type="text" name="subledger_account" value="">';
+					}
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
 					print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
@@ -665,15 +682,15 @@ if ($action == 'create') {
 
 				if ($mode=='_tmp' && $action=='')
 				{
-				    print '<br>';
+					print '<br>';
 					print '<div class="center">';
 					if ($total_debit == $total_credit)
 					{
-					   print '<a class="button" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+						print '<a class="button" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $book->piece_num . '&action=valid">'.$langs->trans("ValidTransaction").'</a>';
 					}
 					else
 					{
-					   print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
+						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 
 					print ' &nbsp; ';

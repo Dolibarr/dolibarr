@@ -48,7 +48,7 @@ class SupplierProposal extends CommonObject
     public $table_element='supplier_proposal';
     public $table_element_line='supplier_proposaldet';
     public $fk_element='fk_supplier_proposal';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='propal';
 
     /**
@@ -2414,12 +2414,11 @@ class SupplierProposal extends CommonObject
 
         $picto='supplier_proposal';
 
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->ref;
+        $result .= $linkend;
 
-        if ($withpicto)
-            $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-        if ($withpicto && $withpicto != 2)
-            $result.=' ';
-        $result.=$linkstart.$this->ref.$linkend;
         return $result;
     }
 

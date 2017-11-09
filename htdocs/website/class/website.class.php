@@ -43,6 +43,14 @@ class Website extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website';
+	/**
+	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 */
+	public $ismultientitymanaged = 1;
+	/**
+	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'globe';
 
 	/**
 	 * @var int
@@ -135,7 +143,7 @@ class Website extends CommonObject
 		$sql.= 'date_creation,';
 		$sql.= 'tms';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
+		$sql .= ' '.((empty($this->entity) && $this->entity != '0')?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
@@ -648,21 +656,23 @@ class Website extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
+        $label = '<u>' . $langs->trans("WebSite") . '</u>';
         $label.= '<div width="100%">';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        $label.= '<b>' . $langs->trans('Nom') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $link.= '>';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
+        $linkstart.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
+        $linkstart.= '>';
 		$linkend='</a>';
+
+		$linkstart = $linkend = '';
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
+            $result.=($linkstart.img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?'':'class="classfortooltip"')).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
-		$result.= $link . $this->ref . $linkend;
+		$result.= $linkstart . $this->ref . $linkend;
 		return $result;
 	}
 
@@ -746,6 +756,132 @@ class Website extends CommonObject
 		$this->tms = dol_now();
 
 
+	}
+
+
+	/**
+	 * Generate a zip with all data of web site.
+	 *
+	 * @return  string						Path to file with zip
+	 */
+	function exportWebSite()
+	{
+		global $conf;
+
+		$website = $this;
+
+		dol_mkdir($conf->website->dir_temp);
+		$srcdir = $conf->website->dir_output.'/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref;
+
+		$arrayreplacement=array();
+
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+
+		$srcdir = DOL_DATA_ROOT.'/medias/images/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/images/'.$website->ref;
+
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+
+		// Build sql file
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/export');
+
+		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/export/pages.sql';
+		$fp = fopen($filesql,"w");
+
+		$objectpages = new WebsitePage($this->db);
+		$listofpages = $objectpages->fetchAll($website->id);
+
+		// Assign ->newid and ->newfk_page
+		$i=1;
+		foreach($listofpages as $pageid => $objectpageold)
+		{
+			$objectpageold->newid=$i;
+			$i++;
+		}
+		$i=1;
+		foreach($listofpages as $pageid => $objectpageold)
+		{
+			// Search newid
+			$newfk_page=0;
+			foreach($listofpages as $pageid2 => $objectpageold2)
+			{
+				if ($pageid2 == $objectpageold->fk_page)
+				{
+					$newfk_page = $objectpageold2->newid;
+					break;
+				}
+			}
+			$objectpageold->newfk_page=$newfk_page;
+			$i++;
+		}
+		foreach($listofpages as $pageid => $objectpageold)
+		{
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keyword, status, date_creation, tms, lang, import_key, grabbed_from, content)';
+			$line.= " VALUES(";
+			$line.= $objectpageold->newid."+__MAXROWID__, ";
+			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."+__MAXROWID__" : "null").", ";
+			$line.= "__WEBSITE_ID__, ";
+			$line.= "'".$this->db->escape($objectpageold->pageurl)."', ";
+			$line.= "'".$this->db->escape($objectpageold->title)."', ";
+			$line.= "'".$this->db->escape($objectpageold->description)."', ";
+			$line.= "'".$this->db->escape($objectpageold->keyword)."', ";
+			$line.= "'".$this->db->escape($objectpageold->status)."', ";
+			$line.= "'".$this->db->idate($objectpageold->date_creation)."', ";
+			$line.= "'".$this->db->idate($objectpageold->date_modification)."', ";
+			$line.= "'".$this->db->escape($objectpageold->lang)."', ";
+			$line.= ($objectpageold->import_key ? "'".$this->db->escape($objectpageold->import_key)."'" : "null").", ";
+			$line.= "'".$this->db->escape($objectpageold->grabbed_from)."', ";
+			$line.= "'".$this->db->escape($objectpageold->content)."'";
+			$line.= ");";
+			$line.= "\n";
+			fputs($fp, $line);
+		}
+
+		fclose($fp);
+		if (! empty($conf->global->MAIN_UMASK))
+			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
+
+		// Build zip file
+		$filedir  = $conf->website->dir_temp.'/'.$website->ref;
+		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-*.zip';
+		$filename = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
+
+		dol_delete_file($fileglob, 0);
+		dol_compress_file($filedir, $filename, 'zip');
+
+		return $filename;
+	}
+
+
+	/**
+	 * Open a zip with all data of web site and load it into database.
+	 *
+	 * @param 	string		$pathtofile		Path of zip file
+	 * @return  int							<0 if KO, Id of new website if OK
+	 */
+	function importWebSite($pathtofile)
+	{
+		global $conf;
+
+		$result = 0;
+
+		$object = new Website($this->db);
+
+		$filename = basename($pathtofile);
+		if (! preg_match('/^website_(.*)-(.*)$/', $filename, $reg))
+		{
+			$this->errors[]='Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
+			return -1;
+		}
+
+		$websitecode = $reg[1];
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."website(ref, entity, description, status) values('".$websitecode."', ".$conf->entity.", 'Portal to sell your SaaS. Do not remove this entry.', 1)";
+		$resql = $this->db->query($sql);
+
+
+		return $result;
 	}
 
 }

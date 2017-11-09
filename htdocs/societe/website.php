@@ -39,7 +39,7 @@ $langs->loadLangs(array("companies","website"));
 $search_status=GETPOST('search_status');
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
@@ -91,12 +91,13 @@ foreach($objectwebsiteaccount->fields as $key => $val)
 	// If $val['visible']==0, then we never show the field
 	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled']);
 }
+
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
 	foreach($extrafields->attribute_label as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
 
@@ -230,7 +231,7 @@ dol_fiche_end();
 $morehtmlcenter = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create' . $param . '">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
 	} else {
 		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
 	}
@@ -254,10 +255,11 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
-$sql.= " FROM ".MAIN_DB_PREFIX."websiteaccount as t";
+$sql.= " FROM ".MAIN_DB_PREFIX."website_account as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."websiteaccount_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($objectwebsiteaccount->getIsmultientitymanaged() == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
+if ($objectwebsiteaccount->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('websiteaccount').")";
 else $sql.=" WHERE 1 = 1";
+$sql.=" AND fk_soc = ".$object->id;
 foreach($search as $key => $val)
 {
 	$mode_search=(($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key]))?1:0);
@@ -378,7 +380,6 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($objectwebsiteaccount->fields as $key => $val)
 {
-	if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
 	$align='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
@@ -412,16 +413,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Rest of fields search
-foreach($objectwebsiteaccount->fields as $key => $val)
-{
-	if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
-	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
-	if ($key == 'status') $align.=($align?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
-}
 // Action column
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();
@@ -435,7 +426,6 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($objectwebsiteaccount->fields as $key => $val)
 {
-	if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
 	$align='';
 	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 	if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -460,16 +450,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Rest of fields title
-foreach($objectwebsiteaccount->fields as $key => $val)
-{
-	if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
-	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
-	if ($key == 'status') $align.=($align?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
-}
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
@@ -502,19 +482,17 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	foreach($objectwebsiteaccount->fields as $key => $val)
 	{
-		if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;	// Discard some field output at end
 		$align='';
 		if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
 		if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
 		if ($key == 'status') $align.=($align?' ':'').'center';
 		if (! empty($arrayfields['t.'.$key]['checked']))
 		{
-			print '<td'.($align?' class="'.$align.'"':'').'>';
-			if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
-			elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
-			elseif ($key == 'ref') print $objectwebsiteaccount->getNomUrl(1, '', 0, '', 1);
-			elseif ($key == 'status') print $objectwebsiteaccount->getLibStatut(3);
-			else print $obj->$key;
+			print '<td';
+			if ($align) print ' class="'.$align.'"';
+			print '>';
+			if ($key == 'login') print $objectwebsiteaccount->getNomUrl(1, '', 0, '', 1);
+			else print $objectwebsiteaccount->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! empty($val['isameasure']))
@@ -531,12 +509,12 @@ while ($i < min($num, $limit))
 		{
 			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
-				print '<td';
 				$align=$extrafields->getAlignFlag($key);
+				print '<td';
 				if ($align) print ' align="'.$align.'"';
 				print '>';
 				$tmpkey='options_'.$key;
-				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+				print $extrafields->showOutputField($key, $obj->$tmpkey, '');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 				if (! empty($val['isameasure']))
@@ -551,30 +529,6 @@ while ($i < min($num, $limit))
 	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	// Rest of fields
-	foreach($objectwebsiteaccount->fields as $key => $val)
-	{
-		if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;	// Keep only field not yet already output
-		$align='';
-		if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-		if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-		if ($key == 'status') $align.=($align?' ':'').'center';
-		if (! empty($arrayfields['t.'.$key]['checked']))
-		{
-			print '<td'.($align?' class="'.$align.'"':'').'>';
-			if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
-			elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
-			elseif ($key == 'status') print $objectwebsiteaccount->getLibStatut(3);
-			else print $obj->$key;
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! empty($val['isameasure']))
-			{
-				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
-				$totalarray['val']['t.'.$key] += $obj->$key;
-			}
-		}
-	}
 	// Action column
 	print '<td class="nowrap" align="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

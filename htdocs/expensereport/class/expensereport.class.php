@@ -1544,7 +1544,6 @@ class ExpenseReport extends CommonObject
 
         if ($short) return $url;
 
-        $picto='trip';
         $label = '<u>' . $langs->trans("ShowExpenseReport") . '</u>';
         if (! empty($this->ref))
             $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1583,8 +1582,11 @@ class ExpenseReport extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
-        $result.=$linkstart.($max?dol_trunc($ref,$max):$ref).$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.=($max?dol_trunc($ref,$max):$ref);
+        $result .= $linkend;
+
         return $result;
     }
 
@@ -1833,13 +1835,13 @@ class ExpenseReport extends CommonObject
 			return false;
 		}
 
-		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) $offset = $range->offset;
-		else $offset = $range->offset / 12; // The amount of offset is a global value for the year
+		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) $ikoffset = $range->ikoffset;
+		else $ikoffset = $range->ikoffset / 12; // The amount of offset is a global value for the year
 
-		// Test if offset has been applied for the current month
+		// Test if ikoffset has been applied for the current month
 		if (!$this->offsetAlreadyGiven())
 		{
-			$new_up = $range->coef + ($offset / $this->line->qty);
+			$new_up = $range->coef + ($ikoffset / $this->line->qty);
 			$tmp = calcul_price_total($this->line->qty, $new_up, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
@@ -1854,7 +1856,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 * If the sql find any rows then the offset is already given (offset is applied at the first expense report line)
+	 * If the sql find any rows then the ikoffset is already given (ikoffset is applied at the first expense report line)
 	 *
 	 * @return bool
 	 */

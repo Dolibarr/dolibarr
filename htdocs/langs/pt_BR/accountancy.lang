@@ -56,7 +56,6 @@ Code_tiers=Terceiro
 LabelAccount=Conta rótulo
 Sens=Significado
 TransactionNumShort=Nº da transação
-AccountingCategory=Grupos personalizados
 GroupByAccountAccounting=Agrupar pela conta da Contabilidade
 NotMatch=Não Definido
 DelYear=Ano a ser deletado

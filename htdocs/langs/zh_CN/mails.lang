@@ -99,7 +99,6 @@ NbOfCompaniesContacts=唯一联系人/地址
 MailNoChangePossible=为验证电子邮件收件人无法改变
 SearchAMailing=搜索邮件
 SendMailing=发送电子邮件
-SendMail=发送电子邮件
 SentBy=发送
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=但是您可以发送到网上，加入与最大的电子邮件数量值参数MAILING_LIMIT_SENDBYWEB你要发送的会议。

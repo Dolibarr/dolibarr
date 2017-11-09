@@ -2041,8 +2041,10 @@ if (empty($reshook))
 			// some hooks
 			if (empty($reshook)) {
 				$result = $object->insertExtraFields();
-				if ($result < 0) {
-					$error ++;
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
 				}
 			} else if ($reshook < 0)
 				$error ++;
@@ -4076,7 +4078,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#addline' : '#line_' . GETPOST('lineid')) . '" method="POST">
 	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
 	<input type="hidden" name="mode" value="">
@@ -4380,9 +4382,15 @@ else if ($id > 0 || ! empty($ref))
 
 		if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment)
 		{
-			print '<br>';
+			print '<br><!-- Link to pay -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('invoice', $object->ref);
+			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
+		}
+
+		if ($object->statut != Facture::STATUS_DRAFT && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))
+		{
+			print '<br><!-- Link to download main doc -->'."\n";
+			print showDirectDownloadLink($object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

@@ -99,7 +99,6 @@ NbOfCompaniesContacts=فريدة من شركات الاتصالات
 MailNoChangePossible=صادق المتلقين للمراسلة لا يمكن تغيير
 SearchAMailing=البحث البريدية
 SendMailing=إرسال البريد الإلكتروني
-SendMail=إرسال بريد إلكتروني
 SentBy=أرسلها
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=ولكن يمكنك إرسالها عبر الإنترنت عن طريق إضافة معلمة MAILING_LIMIT_SENDBYWEB مع قيمة الحد الأقصى لعدد من رسائل البريد الإلكتروني التي تريد إرسالها من خلال هذه الدورة.

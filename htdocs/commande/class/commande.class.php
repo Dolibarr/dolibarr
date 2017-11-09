@@ -46,7 +46,7 @@ class Commande extends CommonOrder
     public $table_element_line = 'commandedet';
     public $class_element_line = 'OrderLine';
     public $fk_element = 'fk_commande';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'order';
 
     /**
@@ -610,6 +610,7 @@ class Commande extends CommonOrder
                 return -1;
             }
         }
+        return 0;
     }
 
     /**
@@ -711,7 +712,7 @@ class Commande extends CommonOrder
 		// $date_commande is deprecated
         $date = ($this->date_commande ? $this->date_commande : $this->date);
 
-		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
@@ -1906,6 +1907,40 @@ class Commande extends CommonOrder
     }
 
     /**
+     *	Count numbe rof shipments for this order
+     *
+     * 	@return     int                			<0 if KO, Nb of shipment found if OK
+     */
+    function getNbOfShipments()
+    {
+    	$nb = 0;
+
+    	$sql = 'SELECT COUNT(DISTINCT ed.fk_expedition) as nb';
+    	$sql.= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed,';
+    	$sql.= ' '.MAIN_DB_PREFIX.'commandedet as cd';
+    	$sql.= ' WHERE';
+    	$sql.= ' ed.fk_origin_line = cd.rowid';
+    	$sql.= ' AND cd.fk_commande =' .$this->id;
+    	//print $sql;
+
+    	dol_syslog(get_class($this)."::getNbOfShipments", LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+   			$obj = $this->db->fetch_object($resql);
+   			if ($obj) $nb = $obj->nb;
+
+   			$this->db->free($resql);
+    		return $nb;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->lasterror();
+    		return -1;
+    	}
+    }
+
+    /**
      *	Load array this->expeditions of lines of shipments with nb of products sent for each order line
      *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
      *
@@ -1931,18 +1966,18 @@ class Commande extends CommonOrder
         //print $sql;
 
         dol_syslog(get_class($this)."::loadExpeditions", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result)
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-            $num = $this->db->num_rows($result);
+            $num = $this->db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object($result);
+                $obj = $this->db->fetch_object($resql);
                 $this->expeditions[$obj->rowid] = $obj->qty;
                 $i++;
             }
-            $this->db->free();
+            $this->db->free($resql);
             return $num;
         }
         else
@@ -1950,7 +1985,6 @@ class Commande extends CommonOrder
             $this->error=$this->db->lasterror();
             return -1;
         }
-
     }
 
     /**
@@ -2001,18 +2035,18 @@ class Commande extends CommonOrder
             $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
             $sql.= " WHERE ps.fk_product IN (".join(',',$array_of_product).")";
             $sql.= ' GROUP BY fk_product ';
-            $result = $this->db->query($sql);
-            if ($result)
+            $resql = $this->db->query($sql);
+            if ($resql)
             {
-                $num = $this->db->num_rows($result);
+                $num = $this->db->num_rows($resql);
                 $i = 0;
                 while ($i < $num)
                 {
-                    $obj = $this->db->fetch_object($result);
+                    $obj = $this->db->fetch_object($resql);
                     $this->stocks[$obj->fk_product] = $obj->total;
                     $i++;
                 }
-                $this->db->free();
+                $this->db->free($resql);
             }
         }
         return 0;
@@ -3085,7 +3119,6 @@ class Commande extends CommonOrder
             // End call triggers
         }
 
-        //TODO: Check for error after each action. If one failed we rollback, don't waste time to do action if previous fail
         if (! $error)
         {
         	// Delete order details
@@ -3095,23 +3128,24 @@ class Commande extends CommonOrder
         		$error++;
         		$this->errors[]=$this->db->lasterror();
         	}
+        }
 
-        	// Delete order
-        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
-        	if (! $this->db->query($sql) )
-        	{
-        		$error++;
-        		$this->errors[]=$this->db->lasterror();
-        	}
-
+        if (! $error)
+        {
         	// Delete linked object
         	$res = $this->deleteObjectLinked();
         	if ($res < 0) $error++;
+        }
 
+        if (! $error)
+        {
         	// Delete linked contacts
         	$res = $this->delete_linked_contact();
         	if ($res < 0) $error++;
+        }
 
+        if (! $error)
+        {
         	// Remove extrafields
         	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
         	{
@@ -3122,8 +3156,22 @@ class Commande extends CommonOrder
         			dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         		}
         	}
+        }
 
-        	// On efface le repertoire de pdf provisoire
+        if (! $error)
+        {
+        	// Delete object
+        	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
+        	if (! $this->db->query($sql) )
+        	{
+        		$error++;
+        		$this->errors[]=$this->db->lasterror();
+        	}
+        }
+
+        if (! $error)
+        {
+        	// Remove directory with files
         	$comref = dol_sanitizeFileName($this->ref);
         	if ($conf->commande->dir_output && !empty($this->ref))
         	{
@@ -3149,8 +3197,6 @@ class Commande extends CommonOrder
         			}
         		}
         	}
-
-
         }
 
         if (! $error)
@@ -3367,7 +3413,6 @@ class Commande extends CommonOrder
 
         if ($short) return $url;
 
-        $picto = 'order';
         $label = '';
 
 		if ($user->rights->commande->lire) {
@@ -3401,9 +3446,11 @@ class Commande extends CommonOrder
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$linkstart.$this->ref.$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->ref;
+        $result .= $linkend;
+
         return $result;
     }
 

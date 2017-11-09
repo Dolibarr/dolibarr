@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReports=Os relatórios de despesas
 ShowExpenseReport=Mostrar relatório de despesas
 Trips=Os relatórios de despesas
 TripsAndExpenses=Relatórios de despesas
@@ -24,6 +23,7 @@ TF_TRIP=Transporte
 TF_TRAIN=Trem
 TF_BUS=Ônibus
 TF_PEAGE=Pedágio
+DefaultRangeNumber=Número da faixa padrão
 ErrorDoubleDeclaration=Você declarou outro relatório de despesas em um intervalo de datas semelhante.
 AucuneLigne=Não há relatório de despesas declaradas ainda
 ModePaiement=Forma de pagamento

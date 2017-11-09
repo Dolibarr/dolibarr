@@ -114,7 +114,7 @@ $sql.= " AND s.entity = ".$conf->entity;
 
 // Search criteria
 if ($search_ref)	$sql.=" AND s.rowid=".$search_ref;
-if ($search_user)   $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email', 'u.note'), $search_user);
+if ($search_user)   $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
 if ($search_label) 	$sql.=natural_search(array('s.label'), $search_label);
 if ($search_amount) $sql.=natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;

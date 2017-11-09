@@ -89,9 +89,7 @@ else    // For no ajax call
 if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("ecm","companies","other"));
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -167,7 +165,7 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined here, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -176,8 +174,10 @@ if ($type == 'directory')
     else if ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
     // Auto area for suppliers invoices
     else if ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
-    // Auto area for customers orders
+    // Auto area for customers proposal
     else if ($module == 'propal') $upload_dir = $conf->propal->dir_output;
+    // Auto area for suppliers proposal
+    else if ($module == 'supplier_proposal') $upload_dir = $conf->supplier_proposal->dir_output;
     // Auto area for customers orders
     else if ($module == 'order') $upload_dir = $conf->commande->dir_output;
     // Auto area for suppliers orders
@@ -220,7 +220,8 @@ if ($type == 'directory')
     	if ($module == 'medias')
     	{
     		$relativepath=GETPOST('file','alpha');
-    		$upload_dir = $dolibarr_main_data_root.'/medias/'.$relativepath;
+    		if ($relativepath && $relativepath!= '/') $relativepath.='/';
+    		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
     	}
     	else
     	{
@@ -245,7 +246,11 @@ if ($type == 'directory')
 
             $textifempty = $langs->trans('NoFileFound');
         }
-        else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        else if ($section === '0')
+        {
+        	if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        	else $textifempty = $langs->trans('NoFileFound');
+        }
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
     	if ($module == 'medias')

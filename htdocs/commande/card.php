@@ -1226,7 +1226,9 @@ if (empty($reshook))
 																								  // some hooks
 			if (empty($reshook)) {
 				$result = $object->insertExtraFields();
-				if ($result < 0) {
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
 			} else if ($reshook < 0)
@@ -2386,7 +2388,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		 */
 		$result = $object->getLinesArray();
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#addline' : '#line_' . GETPOST('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
@@ -2582,6 +2584,20 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			// Show online signature link
+			$useonlinepayment = $conf->global->ORDER_SHOW_ONLINE_PAYMENT_ON_ORDER;
+			if ($object->statut != Commande::STATUS_DRAFT && $useonlinepayment)
+			{
+				print '<br><!-- Link to pay -->';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				print showOnlinePaymentUrl('order', $object->ref).'<br>';
+			}
+
+			if ($object->statut != Commande::STATUS_DRAFT && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))
+			{
+				print '<br><!-- Link to download main doc -->'."\n";
+				print showDirectDownloadLink($object).'<br>';
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

@@ -155,7 +155,7 @@ $form = new Form($db);
 
 $help_url='';
 
-llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, '', '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -177,7 +177,7 @@ if (count($object->records) > 0)
 	// ***** Part for web sites
 
 	print '<div class="websiteselection hideonsmartphoneimp">';
-	print $langs->trans("Website").': ';
+	print $langs->trans("WebSite").': ';
 	print '</div>';
 
 	// List of websites

@@ -210,7 +210,7 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 $param='&mode='.$mode;
 
 $enabledisablehtml='';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
@@ -298,9 +298,9 @@ if ($mode == 'overwrite')
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
+    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" id="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
     print '</td><td>';
-    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
+    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" id="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
     print '</td>';
     // Limit to superadmin
     /*if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -403,6 +403,9 @@ if ($mode == 'searchkey')
 
     $recordtoshow=array();
 
+    // Search modules dirs
+    $modulesdir = dolGetModulesDirs();
+
     $nbempty=0;
     /*var_dump($langcode);
      var_dump($transkey);
@@ -416,29 +419,30 @@ if ($mode == 'searchkey')
     }
     else
     {
-        // Load all translations keys
-        foreach($conf->file->dol_document_root as $keydir => $searchdir)
+        // Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
+        foreach($modulesdir as $keydir => $tmpsearchdir)
         {
-            // Directory of translation files
-            $dir_lang = $searchdir."/langs/".$langcode;
-            $dir_lang_osencoded=dol_osencode($dir_lang);
+        	$searchdir = $tmpsearchdir;		// $searchdir can be '.../htdocs/core/modules/' or '.../htdocs/custom/mymodule/core/modules/'
 
-            $filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+        	// Directory of translation files
+        	$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode;	// The 2 dirname is to go up in dir for 2 levels
+        	$dir_lang_osencoded=dol_osencode($dir_lang);
 
-            foreach($filearray as $file)
-            {
-                $tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
-                $newlang->load($tmpfile, 0, 0, '', 0);                              // Load translation files + database overwrite
-                $newlangfileonly->load($tmpfile, 0, 0, '', 1);                      // Load translation files only
-                //print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
-            }
+        	$filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+        	foreach($filearray as $file)
+        	{
+        		$tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
+        		$newlang->load($tmpfile, 0, 0, '', 0);                              // Load translation files + database overwrite
+        		$newlangfileonly->load($tmpfile, 0, 0, '', 1);                      // Load translation files only
+        		//print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
+        	}
         }
 
         // Now search into translation array
         foreach($newlang->tab_translate as $key => $val)
         {
-            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/', $key)) continue;
-            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/', $val)) continue;
+            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/i', $key)) continue;
+            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/i', $val)) continue;
             $recordtoshow[$key]=$val;
         }
     }
@@ -566,6 +570,10 @@ dol_fiche_end();
 
 print "</form>\n";
 
+if (! empty($langcode))
+{
+	dol_set_focus('#transvalue');
+}
 
 llxFooter();
 

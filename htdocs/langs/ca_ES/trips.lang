@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Informe de despeses
-ExpenseReports=Informes de despeses
 ShowExpenseReport=Mostra l'informe de despeses
 Trips=Informes de despeses
 TripsAndExpenses=Informes de despeses
@@ -12,6 +10,8 @@ ListOfFees=Llistat notes de honoraris
 TypeFees=Tipus de despeses
 ShowTrip=Mostra l'informe de despeses
 NewTrip=Nou informe de despeses
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Empresa/organització visitada
 FeesKilometersOrAmout=Import o quilòmetres
 DeleteTrip=Eliminar informe de despeses
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Has declarat un altre informe de despeses en un altre rang de dates semblant
 AucuneLigne=Encara no hi ha informe de despeses declarat

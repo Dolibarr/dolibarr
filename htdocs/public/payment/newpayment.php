@@ -296,9 +296,10 @@ if ($action == 'dopayment')
 			//if ($currency == 'USD') $PAYPAL_API_DEVISE="USD";
 			if (! empty($currency)) $PAYPAL_API_DEVISE=$currency;
 
+			// Show var initialized by include fo paypal lib at begin of this file
 			dol_syslog("Submit Paypal form", LOG_DEBUG);
 			dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
-			//dol_syslog("PAYPAL_API_PASSWORD: $PAYPAL_API_PASSWORD", LOG_DEBUG);  // No password into log files
+			dol_syslog("PAYPAL_API_PASSWORD: ".preg_replace('/./', '*', $PAYPAL_API_PASSWORD), LOG_DEBUG);  // No password into log files
 			dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
 			dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG);
 			dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG);
@@ -371,6 +372,7 @@ if ($action == 'dopayment')
 }
 
 
+// Called when choosing Stripe mode, after the 'dopayment'
 if ($action == 'charge')
 {
 	// Correct the amount according to unit of currency
@@ -383,21 +385,24 @@ if ($action == 'charge')
 
 	$stripeToken = GETPOST("stripeToken",'alpha');
 	$email = GETPOST("stripeEmail",'alpha');
+	$vatnumber = GETPOST('vatnumber','alpha');
 
 	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("stripeEmail = ".$stripeEmail, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
 	$error = 0;
 
 	try {
-		dol_syslog("Create customer", LOG_DEBUG, 0, '_stripe');
+		dol_syslog("Create customer card profile", LOG_DEBUG, 0, '_stripe');
 		$customer = \Stripe\Customer::create(array(
 		'email' => $email,
-		'description' => ($email?'Customer for '.$email:null),
+		'description' => ($email?'Customer card profile for '.$email:null),
 		'metadata' => array('ipaddress'=>$_SERVER['REMOTE_ADDR']),
+		'business_vat_id' => ($vatnumber?$vatnumber:null),
 		'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 		));
-		// TODO Add 'business_vat_id' ?
+		// Return $customer = array('id'=>'cus_XXXX', ...)
 
 		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
 		$charge = \Stripe\Charge::create(array(
@@ -408,6 +413,7 @@ if ($action == 'charge')
 		'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name),
 		'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
 		));
+		// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 	} catch(\Stripe\Error\Card $e) {
 		// Since it's a decline, \Stripe\Error\Card will be caught
 		$body = $e->getJsonBody();
@@ -515,11 +521,11 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 
 // Show sandbox warning
-if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_API_SANDBOX))
+if (! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
 }
-if (! empty($conf->stripe->enabled) && empty($conf->global->STRIPE_LIVE))
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
 }
@@ -534,6 +540,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n"
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 print "\n";
 print '<!-- Form to send a payment -->'."\n";
 print '<!-- creditor = '.$creditor.' -->'."\n";
@@ -624,14 +631,12 @@ if (! $source)
 	$fulltag=$tag;
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -651,7 +656,6 @@ if (! $source)
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -698,29 +702,32 @@ if ($source == 'order')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
 	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($order->ref).'">';
+	$directdownloadlink = $order->getLastMainDocLink('commande');
+	if ($directdownloadlink)
+	{
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($order->last_main_doc,'').' ';
+		print $langs->trans("DownloadDocument").'</a>';
+	}
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -740,7 +747,6 @@ if ($source == 'order')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -772,6 +778,7 @@ if ($source == 'order')
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$order->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Order").' '.$order->ref;
 	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
@@ -813,29 +820,32 @@ if ($source == 'invoice')
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.dol_escape_htmltag($creditor).'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
 	if (GETPOST('desc','alpha')) $text='<b>'.$langs->trans(GETPOST('desc','alpha')).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="s" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->ref).'">';
+	$directdownloadlink = $invoice->getLastMainDocLink('facture');
+	if ($directdownloadlink)
+	{
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($invoice->last_main_doc,'').' ';
+		print $langs->trans("DownloadDocument").'</a>';
+	}
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -895,6 +905,7 @@ if ($source == 'invoice')
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$invoice->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Invoice").' '.$invoice->ref;
 	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
@@ -908,6 +919,7 @@ if ($source == 'contractline')
 
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
+	$contract=new Contrat($db);
 	$contractline=new ContratLigne($db);
 
 	$result=$contractline->fetch('',$ref);
@@ -922,7 +934,6 @@ if ($source == 'contractline')
 		{
 			$object = $contractline;
 
-			$contract=new Contrat($db);
 			$result=$contract->fetch($contractline->fk_contrat);
 			if ($result > 0)
 			{
@@ -985,19 +996,16 @@ if ($source == 'contractline')
 	if (GETPOST('qty')) $qty=GETPOST('qty');
 
 	// Creditor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
 
 	// Object
-
 	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
 	if ($contractline->fk_product)
 	{
@@ -1017,10 +1025,16 @@ if ($source == 'contractline')
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
 	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($contractline->ref).'">';
+	$directdownloadlink = $contract->getLastMainDocLink('contract');
+	if ($directdownloadlink)
+	{
+		print '<br><a href="'.$directdownloadlink.'">';
+		print img_mime($invoice->last_main_doc,'').' ';
+		print $langs->trans("DownloadDocument").'</a>';
+	}
 	print '</td></tr>'."\n";
 
 	// Quantity
-
 	$label=$langs->trans("Quantity");
 	$qty=1;
 	$duration='';
@@ -1048,7 +1062,6 @@ if ($source == 'contractline')
 	print '</b></td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
@@ -1068,7 +1081,6 @@ if ($source == 'contractline')
 	print '</td></tr>'."\n";
 
 	// Tag
-
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
 	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
@@ -1100,6 +1112,7 @@ if ($source == 'contractline')
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$contract->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Contract").' '.$contract->ref;
 	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
@@ -1389,6 +1402,7 @@ if (preg_match('/^dopayment/',$action))
 		print '<input type="hidden" name="e" value="'.$entity.'" />';
 		print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
 		print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
+		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 
 		print '
 	    <table id="dolpaymenttable" summary="Payment form" class="center">

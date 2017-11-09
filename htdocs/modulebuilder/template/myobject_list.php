@@ -130,7 +130,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
 	foreach($extrafields->attribute_label as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
 
@@ -213,7 +213,7 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."myobject as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."myobject_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($object->getIsmultientitymanaged() == 1) $sql.= " WHERE t.entity IN (".getEntity('myobject').")";
+if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('myobject').")";
 else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
@@ -488,12 +488,10 @@ while ($i < min($num, $limit))
 			if ($key == 'status') $align.=($align?' ':'').'center';
 			if (! empty($arrayfields['t.'.$key]['checked']))
 			{
-				print '<td'.($align?' class="'.$align.'"':'').'>';
-				if (in_array($val['type'], array('date'))) print dol_print_date($db->jdate($obj->$key), 'day', 'tzuser');
-				elseif (in_array($val['type'], array('datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
-				elseif ($key == 'ref') print $object->getNomUrl(1, '', 0, '', 1);
-				elseif ($key == 'status') print $object->getLibStatut(3);
-				else print $obj->$key;
+				print '<td';
+				if ($align) print ' class="'.$align.'"';
+				print '>';
+				print $object->showOutputField($val, $key, $obj->$key, '');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 				if (! empty($val['isameasure']))
@@ -510,12 +508,12 @@ while ($i < min($num, $limit))
 	   {
 			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
-				print '<td';
 				$align=$extrafields->getAlignFlag($key);
+				print '<td';
 				if ($align) print ' align="'.$align.'"';
 				print '>';
 				$tmpkey='options_'.$key;
-				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+				print $extrafields->showOutputField($key, $obj->$tmpkey, '');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 				if (! empty($val['isameasure']))

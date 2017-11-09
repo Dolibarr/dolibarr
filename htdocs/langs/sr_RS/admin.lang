@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignore errors of duplicate record (INSERT IGNORE)
 AutoDetectLang=Autodetect (browser language)
 FeatureDisabledInDemo=Feature disabled in demo
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=Permissions
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
 ModulesDesc=Dolibarr modules define which application/feature is enabled in software. Some application/modules require permissions you must grant to users, after activating it. Click on button on/off to enable a module/application.
@@ -593,7 +592,7 @@ Module5000Desc=Allows you to manage multiple companies
 Module6000Name=Workflow
 Module6000Desc=Workflow management
 Module10000Name=Websites
-Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Leave Requests management
 Module20000Desc=Declare and follow employees leaves requests
 Module39000Name=Product lot
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail dire
 TranslationSetup=Setup of translation
 TranslationKeySearch=Search a translation key or string
 TranslationOverwriteKey=Overwrite a translation string
-TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: <strong>User display setup</strong> tab of user card (click on username at the top of the screen).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the translation key string into "%s" and your new translation into "%s"
 TranslationOverwriteDesc2=You can use the other tab to help you know translation key to use
 TranslationString=Translation string
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Rule to generate suggested passwords or validate passw
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 UsersSetup=Users module setup
 UserMailRequired=EMail required to create a new user
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=Podešavanja HRM modula
 ##### Company setup #####

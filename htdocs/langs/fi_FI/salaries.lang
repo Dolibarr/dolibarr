@@ -13,3 +13,5 @@ TJM=Keskimääräinen päiväpalkka
 CurrentSalary=Nykyinen palkka
 THMDescription=Jos projektimoduli on käytössä, tätä arvoa voi käyttää projektin aikakustannuksen laskemiseen käyttäjän syöttämien tuntien perusteella
 TJMDescription=Tätä arvoa ei toistaiseksi käytetä laskentaan, se on olemassa vain tiedoksi
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

@@ -1176,7 +1176,11 @@ if (empty($reshook))
 		if (! $error)
 		{
 			$result = $object->insertExtraFields();
-			if ($result < 0) $error++;
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 		if ($error) $action = 'edit_extras';
 	}
@@ -2191,7 +2195,7 @@ if ($action == 'create')
 	// Show object lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#addline' : '#line_' . GETPOST('lineid')) . '" method="POST">
 	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
 	<input type="hidden" name="mode" value="">
@@ -2364,13 +2368,19 @@ if ($action == 'create')
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		// Show online signature link
-		$useonlinepayment = $conf->global->MAIN_FEATURES_LEVEL;
+		$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok
 
-		if ($object->statut != Propal::STATUS_DRAFT && $useonlinepayment)
+		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature)
 		{
-			print '<br>';
+			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlineSignatureUrl('proposal', $object->ref);
+			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
+		}
+
+		if ($object->statut != Propal::STATUS_DRAFT && ! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD))
+		{
+			print '<br><!-- Link to download main doc -->'."\n";
+			print showDirectDownloadLink($object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

@@ -30,7 +30,7 @@ class Bookmark extends CommonObject
 {
     public $element='bookmark';
     public $table_element='bookmark';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'bookmark';
 
     var $db;

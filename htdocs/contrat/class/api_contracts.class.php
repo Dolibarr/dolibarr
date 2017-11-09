@@ -40,7 +40,7 @@ class Contracts extends DolibarrApi
     );
 
     /**
-     * @var Contract $contract {@type Contrat}
+     * @var Contrat $contract {@type Contrat}
      */
     public $contract;
 
@@ -156,6 +156,7 @@ class Contracts extends DolibarrApi
         {
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
+            $i=0;
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
@@ -207,7 +208,7 @@ class Contracts extends DolibarrApi
     }
 
     /**
-     * Get lines of an contract
+     * Get lines of a contract
      *
      * @param int   $id             Id of contract
      *
@@ -269,8 +270,8 @@ class Contracts extends DolibarrApi
                         $request_data->localtax2_tx,
                         $request_data->fk_product,
                         $request_data->remise_percent,
-                        $request_data->date_start,			// date ouverture = date_start_real
-                        $request_data->date_end,			// date_cloture = date_end_real
+                        $request_data->date_start,			// date_start = date planned start, date ouverture = date_start_real
+                        $request_data->date_end,			// date_end = date planned end, date_cloture = date_end_real
                         $request_data->HT,
       					$request_data->subprice_excl_tax,
       					$request_data->info_bits,
@@ -450,7 +451,6 @@ class Contracts extends DolibarrApi
      * Validate an contract
      *
      * @param   int $id             Contract ID
-     * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
      * @url POST    {id}/validate
@@ -460,12 +460,10 @@ class Contracts extends DolibarrApi
      * Error message: "Forbidden: Content type `text/plain` is not supported."
      * Workaround: send this in the body
      * {
-     *   "idwarehouse": 0,
      *   "notrigger": 0
      * }
      */
-    /*
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $notrigger=0)
     {
         if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 			throw new RestException(401);
@@ -479,7 +477,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->contract->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+		$result = $this->contract->validate(DolibarrApiAccess::$user, '', $notrigger);
 		if ($result == 0) {
 		    throw new RestException(500, 'Error nothing done. May be object is already validated');
 		}
@@ -494,7 +492,54 @@ class Contracts extends DolibarrApi
             )
         );
     }
-    */
+
+    /**
+     * Close all services of a contract
+     *
+     * @param   int $id             Contract ID
+     * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+     *
+     * @url POST    {id}/close
+     *
+     * @return  array
+     * FIXME An error 403 is returned if the request has an empty body.
+     * Error message: "Forbidden: Content type `text/plain` is not supported."
+     * Workaround: send this in the body
+     * {
+     *   "notrigger": 0
+     * }
+     */
+    function close($id, $notrigger=0)
+    {
+    	if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+    		throw new RestException(401);
+    	}
+    	$result = $this->contract->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Contract not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->contract->closeAll(DolibarrApiAccess::$user, $notrigger);
+    	if ($result == 0) {
+    		throw new RestException(500, 'Error nothing done. May be object is already close');
+    	}
+    	if ($result < 0) {
+    		throw new RestException(500, 'Error when closing Contract: '.$this->contract->error);
+    	}
+
+    	return array(
+	    	'success' => array(
+		    	'code' => 200,
+		    	'message' => 'Contract closed (Ref='.$this->contract->ref.'). All services were closed.'
+	    	)
+    	);
+    }
+
+
 
     /**
      * Clean sensible object datas
@@ -507,6 +552,16 @@ class Contracts extends DolibarrApi
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->address);
+
+        unset($object->date_ouverture_prevue);
+        unset($object->date_ouverture);
+        unset($object->date_fin_validite);
+        unset($object->date_cloture);
+        unset($object->date_debut_prevue);
+        unset($object->date_debut_reel);
+        unset($object->date_fin_prevue);
+        unset($object->date_fin_reel);
+        unset($object->civility_id);
 
         return $object;
     }

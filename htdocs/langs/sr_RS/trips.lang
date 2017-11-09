@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Trošak
-ExpenseReports=Troškovi
 ShowExpenseReport=Prikaži trošak
 Trips=Troškovi
 TripsAndExpenses=Troškovi
@@ -12,6 +10,8 @@ ListOfFees=Lista honorara
 TypeFees=Types of fees
 ShowTrip=Prikaži trošak
 NewTrip=Novi trošak
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Broj kilometara
 DeleteTrip=Obriši trošak
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Prijavili ste još jedan trošak u sličnom vremenskom periodu.
 AucuneLigne=Nema prijavljenih troškova.

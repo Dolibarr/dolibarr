@@ -249,16 +249,16 @@ class FormActions
 	        		print $action->type;
 	        		print '</td>';
 	        		print '<td>'.$label.'</td>';
-	        		print '<td align="center">'.dol_print_date($action->datep,'dayhour');
+	        		print '<td align="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
 	        		if ($action->datef)
 	        		{
 		        		$tmpa=dol_getdate($action->datep);
 		        		$tmpb=dol_getdate($action->datef);
 		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
 		        		{
-		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef,'hour');
+		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef, 'hour', 'tzuserrel');
 		        		}
-		        		else print '-'.dol_print_date($action->datef,'dayhour');
+		        		else print '-'.dol_print_date($action->datef, 'dayhour', 'tzuserrel');
 	        		}
 	        		print '</td>';
 	        		print '<td align="right">';

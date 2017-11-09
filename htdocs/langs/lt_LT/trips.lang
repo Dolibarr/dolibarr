@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Išlaidų ataskaita
-ExpenseReports=Išlaidų ataskaitos
 ShowExpenseReport=Rodyti išlaidų ataskaitą
 Trips=Išlaidų ataskaitos
 TripsAndExpenses=Išlaidų ataskaitos
@@ -12,6 +10,8 @@ ListOfFees=Įmokų sąrašas
 TypeFees=Types of fees
 ShowTrip=Rodyti išlaidų ataskaitą
 NewTrip=Nauja išlaidų ataskaita
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Suma arba Kilometrai
 DeleteTrip=Ištrinti išlaidų ataskaitą
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Jūs deklaravote kitą išlaidų ataskaitą panašiame laiko periode.
 AucuneLigne=Dar nėra deklaruotos išlaidų ataskaitos

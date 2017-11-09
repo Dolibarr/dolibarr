@@ -64,7 +64,7 @@ $search_sale=GETPOST('search_sale','int');
 $search_product_category=GETPOST('search_product_category','int');
 $search_dfmonth=GETPOST('search_dfmonth','int');
 $search_dfyear=GETPOST('search_dfyear','int');
-$search_op2df=GETPOST('search_op2df');
+$search_op2df=GETPOST('search_op2df','alpha');
 $day=GETPOST("day","int");
 $year=GETPOST("year","int");
 $month=GETPOST("month","int");
@@ -129,7 +129,7 @@ $arrayfields=array(
 	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
 	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'lower_planned_end_date'=>array('label'=>$langs->trans("LowerDateEndPlannedShort"), 'checked'=>1, 'position'=>900),
+	'lower_planned_end_date'=>array('label'=>$langs->trans("LowerDateEndPlannedShort"), 'checked'=>1, 'position'=>900, 'help'=>$langs->trans("LowerDateEndPlannedShort")),
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -137,7 +137,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
 	foreach($extrafields->attribute_label as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
 
@@ -285,30 +285,24 @@ foreach ($search_array_options as $key => $val)
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
-if ($search_dfyear > 0)
-{
-//	$sql.= " AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") ".$search_op2df."= '".$db->idate(($search_op2df == "<" ? dol_get_last_day($search_dfyear,$search_dfmonth,false) : dol_get_first_day($search_dfyear,$search_dfmonth,false)))."'";
-}
-
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code,";
 $sql.= " state.code_departement, state.nom";
-//$sql.= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").")";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
-if ($search_dfyear > 0)
+if ($search_dfyear > 0 && $search_op2df)
 {
-	$sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") ".$search_op2df."= '".$db->idate(($search_op2df == "<" ? dol_get_last_day($search_dfyear,$search_dfmonth,false) : dol_get_first_day($search_dfyear,$search_dfmonth,false)))."'";
+	if ($search_op2df == '<=') $sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear,$search_dfmonth,false))."'";
+	elseif ($search_op2df == '>=') $sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear,$search_dfmonth,false))."'";
+	else $sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear,$search_dfmonth,false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear,$search_dfmonth,false))."'";
 }
-
 $sql.= $db->order($sortfield,$sortorder);
+//print $sql;
 
 $totalnboflines=0;
 $result=$db->query($sql);
@@ -566,7 +560,7 @@ if ($resql)
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))
 	{
 			print '<td class="liste_titre" align="center">';
-			$arrayofoperators=array('<'=>'<','>'=>'>');
+			$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
 			print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
 			print '</br>';
 			print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);

@@ -61,7 +61,7 @@ error_reporting(0);
 @set_time_limit(300);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'alpha',3)?GETPOST("selectlang",'alpha',3):'auto';
+$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
 $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
@@ -4361,31 +4361,10 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 
     // Define list of menu handlers to initialize
     $listofmenuhandler=array();
-
-    $versiontoarray=explode('.',$versionto);
-
-    // Migration required when target version is between
-    $afterversionarray=explode('.','2.8.9');
-    $beforeversionarray=explode('.','2.9.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+    if ($conf->global->MAIN_MENU_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENU_SMARTPHONE == 'auguria_menu'
+    	|| $conf->global->MAIN_MENUFRONT_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENUFRONT_SMARTPHONE == 'auguria_menu')
     {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
-    }
-
-    // Migration required when target version is between
-    $afterversionarray=explode('.','3.1.9');
-    $beforeversionarray=explode('.','3.2.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
-    }
-
-    // Migration required when target version is between
-    $afterversionarray=explode('.','3.7.9');
-    $beforeversionarray=explode('.','4.0.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
+    	$listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
 
     foreach ($listofmenuhandler as $key => $val)

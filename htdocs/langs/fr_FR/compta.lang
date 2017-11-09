@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Règlement
+MenuFinancial=Facturation
 TaxModuleSetupToModifyRules=Aller dans la <a href="%s">configuration du module Taxes</a> pour modifier les règles de calcul
 TaxModuleSetupToModifyRulesLT=Aller dans la <a href="%s">configuration de l'institution</a> pour modifier les règles de calcul
 OptionMode=Option de tenue de comptabilité
@@ -31,10 +31,10 @@ Piece=Pièce
 AmountHTVATRealReceived=HT collectée
 AmountHTVATRealPaid=HT payé
 VATToPay=TVA ventes
-VATReceived=TVA encaissée
+VATReceived=TVA collectée
 VATToCollect=TVA payée
 VATSummary=Balance de TVA
-VATPaid=Taxe payée
+VATPaid=TVA payée
 LT1Summary=Tax 2 summary
 LT2Summary=Tax 3 summary
 LT1SummaryES=Balance RE
@@ -145,8 +145,8 @@ CalcModeLT2Rec= Mode <b>%sIRPF sur factures fournisseurs%s</b>
 AnnualSummaryDueDebtMode=Bilan des recettes et dépenses, résumé annuel
 AnnualSummaryInputOutputMode=Bilan des recettes et dépenses, résumé annuel
 AnnualByCompanies=Balance of income and expenses, by predefined groups of account
-AnnualByCompaniesDueDebtMode=Balance of income and expenses, detail by predefined groups, mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
-AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by predefined groups, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
+AnnualByCompaniesDueDebtMode=Bilan des recettes et dépenses, détaillé par regroupements prédéfinis, mode <b>%sCréances-Dettes%s</b> dit <b>comptabilité d'engagement</b>.
+AnnualByCompaniesInputOutputMode=Bilan des recettes et dépenses, détaillé par regroupements prédéfinis, mode <b>%sRecettes-Dépenses%s</b> dit <b>comptabilité de caisse</b>.
 SeeReportInInputOutputMode=Cliquer sur <b>%sRecettes-Dépenses%s</b> dit <b>comptabilité de caisse</b> pour un calcul sur les paiements effectivement réalisés
 SeeReportInDueDebtMode=Cliquer sur <b>%sCréances-Dettes%s</b> dit <b>comptabilité d'engagement</b> pour un calcul sur les factures émises
 SeeReportInBookkeepingMode=See report <b>%sBookeeping%s</b> for a calculation on <b>bookkeeping table analysis</b>

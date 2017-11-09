@@ -43,7 +43,7 @@ error_reporting(0);		// Disable all errors
 error_reporting($err);
 
 $action=GETPOST('action','aZ09');
-$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
+$setuplang=(GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");

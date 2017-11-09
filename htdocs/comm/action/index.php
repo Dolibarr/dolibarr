@@ -297,7 +297,11 @@ if ($status == 'done') $title=$langs->trans("DoneActions");
 if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $param.="&actioncode=".$actioncode;
+if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) {
+	if(is_array($actioncode)) {
+		foreach($actioncode as $str_action) $param.="&actioncode[]=".$str_action;
+	} else $param.="&actioncode=".$actioncode;
+}
 if ($resourceid > 0)  $param.="&resourceid=".$resourceid;
 if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
 if ($filter)  $param.="&filter=".$filter;
@@ -482,7 +486,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-            $sql.=" AND ca.code IN ('".implode("','", explode(',',$actioncode))."')";
+		if (is_array($actioncode))
+		{
+	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
+		}
+		else
+		{
+	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+		}
         }
     }
 }
@@ -1364,7 +1375,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '>';
                     print '<table class="centpercent cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="'.$h;
                     print 'background: #'.$color.';';
-                    print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, 0).'), to(#'.dol_color_minus($color, 1).'));';
+                    print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -4).'), to(#'.dol_color_minus($color, -3).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     //print ' -moz-border-radius:4px;"';
@@ -1572,7 +1583,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
  * Change color with a delta
  *
  * @param	string	$color		Color
- * @param 	int		$minus		Delta (1 = 16 unit)
+ * @param 	int		$minus		Delta (1 = 16 unit). Positive value = darker color, Negative value = brighter color.
  * @param   int     $minusunit  Minus unit
  * @return	string				New color
  */

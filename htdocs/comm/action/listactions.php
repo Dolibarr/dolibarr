@@ -169,7 +169,11 @@ $listofextcals=array();
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($actioncode != '') $param.="&actioncode=".$actioncode;
+if ($actioncode != '') {
+	if(is_array($actioncode)) {
+		foreach($actioncode as $str_action) $param.="&actioncode[]=".$str_action;
+	} else $param.="&actioncode=".$actioncode;
+}
 if ($resourceid > 0) $param.="&resourceid=".$resourceid;
 if ($status != '' && $status > -1) $param.="&status=".$status;
 if ($filter) $param.="&filter=".$filter;
@@ -227,7 +231,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
         else
         {
-            $sql.=" AND c.code IN ('".implode("','", explode(',',$actioncode))."')";
+		if (is_array($actioncode))
+ 		{
+ 	        	$sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
+ 		}
+ 		else
+ 		{
+ 	        	$sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
+ 		}		
         }
     }
 }

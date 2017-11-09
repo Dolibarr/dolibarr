@@ -126,13 +126,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/myobject.lib.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
-		dol_delete_file($destdir.'/sql/llx_myobject.sql');
-		dol_delete_file($destdir.'/sql/llx_myobject_extrafields.sql');
-		dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject_extrafields.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.key.sql');
 		dol_delete_file($destdir.'/scripts/myobject.php');
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
-		dol_delete_file($destdir.'/class/api_myobject.class.php');
+		dol_delete_file($destdir.'/class/api_mymodule.class.php');
 	}
 
 	// Edit PHP files
@@ -220,13 +220,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'myobject_list.php'=>strtolower($objectname).'_list.php',
 			'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
 			'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-			'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-			'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-			'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
+			'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php'
 		);
 
 		foreach($filetogenerate as $srcfile => $destfile)
@@ -375,7 +375,7 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		'arrayofkeyval'=>GETPOST('proparrayofkeyval','none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 		'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
 		'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
-		'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp'));
+		'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp','alpha'));
 
 	if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
 	{
@@ -401,14 +401,14 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 
 	if (! $error)
 	{
-		clearstatcache();
-
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
-		// Make a redirect to reload all data
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
+		clearstatcache(true);
+		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
-		clearstatcache();
+		// Make a redirect to reload all data
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname.'&nocache='.time());
+
 		exit;
 	}
 }
@@ -437,14 +437,14 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 
 	if (! $error)
 	{
-		clearstatcache();
-
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
+
+		clearstatcache(true);
+		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
 
-		clearstatcache();
 		exit;
 	}
 }
@@ -507,13 +507,13 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 			'myobject_list.php'=>strtolower($objectname).'_list.php',
 			'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
 			'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-			'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-			'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
+			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-			'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
+			'class/api_myobject.class.php'=>'class/api_'.strtolower($module).'.class.php'
 		);
 
 		$resultko = 0;
@@ -766,6 +766,7 @@ if ($action == 'reset' && $user->admin)
 	header("Location: ".$_SERVER["PHP_SELF"]."?".$param);
 	exit;
 }
+
 
 
 /*
@@ -1414,16 +1415,16 @@ elseif (! empty($module))
 				{
 					try {
 						$pathtoclass    = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
-						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
+						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($module).'.class.php';
 						$pathtoagenda   = strtolower($module).'/'.strtolower($tabobj).'_agenda.php';
 						$pathtocard     = strtolower($module).'/'.strtolower($tabobj).'_card.php';
 						$pathtodocument = strtolower($module).'/'.strtolower($tabobj).'_document.php';
 						$pathtolist     = strtolower($module).'/'.strtolower($tabobj).'_list.php';
 						$pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
 						$pathtophpunit  = strtolower($module).'/test/phpunit/'.$tabobj.'Test.php';
-						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
-						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
-						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
+						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
+						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
+						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 
@@ -1528,9 +1529,10 @@ elseif (! empty($module))
 						if (! empty($tmpobjet))
 						{
 							$reflector = new ReflectionClass($tabobj);
-							$properties = $reflector->getProperties();          // Can also use get_object_vars
-							//$propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+							$reflectorproperties = $reflector->getProperties();          // Can also use get_object_vars
+							$reflectorpropdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
 							//$propstat = $reflector->getStaticProperties();
+							//var_dump($reflectorpropdefault);
 
 							print load_fiche_titre($langs->trans("Properties"), '', '');
 
@@ -1565,7 +1567,10 @@ elseif (! empty($module))
 							print '<td></td>';
 							print '</tr>';
 
-							$properties = dol_sort_array($tmpobjet->fields, 'position');
+							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobjet->fields may have been
+							// modified during the constructor and we want value into head of class before constructor is called.
+							//$properties = dol_sort_array($tmpobjet->fields, 'position');
+							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
 
 							if (! empty($properties))
 							{

@@ -189,7 +189,6 @@ IgnoreDuplicateRecords= Игнорировать ошибки дублирующ
 AutoDetectLang=Автоопределение (язык браузера)
 FeatureDisabledInDemo=Функция отключена в демо -
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=Права
 BoxesDesc=Виджеты компонентов отображают такую же информацию которую вы можете добавить к персонализированным страницам. Вы можете выбрать между показом виджета или не выбирая целевую страницу нажать "Активировать", или выбрать корзину для отключения.
 OnlyActiveElementsAreShown=Показаны только элементы из <a href="%s">включенных модулей</a>
 ModulesDesc=Dolibarr modules define which application/feature is enabled in software. Some application/modules require permissions you must grant to users, after activating it. Click on button on/off to enable a module/application.
@@ -593,7 +592,7 @@ Module5000Desc=Управление группами компаний
 Module6000Name=Бизнес-Процесс
 Module6000Desc=Управление рабочим процессом
 Module10000Name=Websites
-Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Заявления на отпуск
 Module20000Desc=Управление заявлениями на отпуск и соблюдение графика отпусков работниками
 Module39000Name=Product lot
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail dire
 TranslationSetup=Setup of translation
 TranslationKeySearch=Search a translation key or string
 TranslationOverwriteKey=Overwrite a translation string
-TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: <strong>User display setup</strong> tab of user card (click on username at the top of the screen).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the translation key string into "%s" and your new translation into "%s"
 TranslationOverwriteDesc2=You can use the other tab to help you know translation key to use
 TranslationString=Translation string
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Правило предложили генериров
 DisableForgetPasswordLinkOnLogonPage=Не показывать ссылку "Забыли пароль" на странице входа
 UsersSetup=Пользователь модуля установки
 UserMailRequired=EMail, необходимые для создания нового пользователя
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=HRM module setup
 ##### Company setup #####

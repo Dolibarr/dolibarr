@@ -39,7 +39,8 @@ class Contact extends CommonObject
 {
 	public $element='contact';
 	public $table_element='socpeople';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $picto = 'contact';
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
@@ -1053,8 +1054,12 @@ class Contact extends CommonObject
 			$linkend='</a>';
 		}
 
-	        if ($withpicto) $result.=($linkstart.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
-			$result.=$linkstart.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
+
+		$result.=$linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
+		$result.=$linkend;
+
 		return $result;
 	}
 

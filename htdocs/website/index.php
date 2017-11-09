@@ -57,7 +57,7 @@ if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
 if (GETPOST('create')) { $action='create'; }
-if (GETPOST('editmedias')) { $action='editmedias'; }
+if (GETPOST('file_manager')) { $action='file_manager'; }
 if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
@@ -923,6 +923,10 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 				$action='createpagefromclone';
 			}
+			else
+			{
+				// TODO Switch on the new page ?
+			}
 		}
 	}
 
@@ -1058,7 +1062,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 // Export site
 if (GETPOST('exportsite'))
 {
-	$fileofzip = exportWebSite($object);
+	$fileofzip = $object->exportWebSite();
 
 	$file_name = basename($fileofzip);
 
@@ -1090,7 +1094,18 @@ $arrayofjs = array(
 );
 $arrayofcss = array();
 
-llxHeader('', $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+$moreheadcss='';
+$moreheadjs='';
+
+$arrayofjs[]='includes/jquery/plugins/blockUI/jquery.blockUI.js';
+$arrayofjs[]='core/js/blockUI.js';	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $arrayofjs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+
+$moreheadjs.='<script type="text/javascript">'."\n";
+$moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
+$moreheadjs.='</script>'."\n";
+
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1148,7 +1163,7 @@ if (count($object->records) > 0)
 	print '</div>';
 
 	print '<div class="websiteselection hideonsmartphoneimp">';
-	print $langs->trans("Website").': ';
+	print $langs->trans("WebSite").': ';
 	print '</div>';
 
 	// List of website
@@ -1195,7 +1210,7 @@ if (count($object->records) > 0)
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedias">';
+		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	}
 
 	print '</div>';
@@ -1223,10 +1238,10 @@ if (count($object->records) > 0)
 		print '</a>';
 	}
 
-	if (in_array($action, array('editcss','editmenu','editmedias')))
+	if (in_array($action, array('editcss','editmenu','file_manager')))
 	{
-		if (preg_match('/^create/',$action) && $action != 'editmedias') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if (preg_match('/^edit/',$action) && $action != 'editmedias') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^create/',$action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		if (preg_match('/^edit/',$action) && $action != 'file_manager') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
 	}
 
@@ -1235,7 +1250,7 @@ if (count($object->records) > 0)
 
 	// ***** Part for pages
 
-	if ($website && ! in_array($action, array('editcss','editmenu','editmedias')))
+	if ($website && ! in_array($action, array('editcss','editmenu','file_manager')))
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
@@ -1302,10 +1317,10 @@ if (count($object->records) > 0)
 			if ($action == 'createfromclone') {
 				// Create an array for form
 				$formquestion = array(
-				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("Website")  ,'value'=> 'copy_of_'.$object->ref),
+				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite")  ,'value'=> 'copy_of_'.$object->ref),
 				//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
 				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
-				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id='.$object->id, $langs->trans('CloneSite'), '', 'confirm_createfromclone', $formquestion, 0, 1, 200);
@@ -1321,11 +1336,11 @@ if (count($object->records) > 0)
 					$formquestion = array(
 						array('type' => 'text', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
 						array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
-						array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("Website"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
+						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, 1, 0, 0, 'minwidth200')),
+						array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
 					);
 
-				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 250);
+				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?website='.$object->ref.'&pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
 
 					print $formconfirm;
 				}
@@ -1373,7 +1388,7 @@ if (count($object->records) > 0)
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (! in_array($action, array('editcss','editmenu','editmedias','createsite','create','createpagefromclone')))
+		if (! in_array($action, array('editcss','editmenu','file_manager','createsite','create','createpagefromclone')))
 		{
 			if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -1738,7 +1753,7 @@ if ($action == 'editmeta' || $action == 'create')
 	print '<tr><td>';
 	print $langs->trans('Language');
 	print '</td><td>';
-	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG');
+	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -1770,10 +1785,14 @@ if ($action == 'editmeta' || $action == 'create')
 	print '<br>';
 }
 
-if ($action == 'editmedias')
+if ($action == 'file_manager')
 {
 	print '<!-- Edit Media -->'."\n";
-	print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+	print '<br><br>';
+	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+
+	$module = 'medias';
+	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 }
 
 if ($action == 'editmenu')
@@ -1974,6 +1993,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<body id="bodywebsite" class="bodywebsite">'."\n";
 	$tplcontent.= $objectpage->content."\n";
 	$tplcontent.= '</body>'."\n";
+	$tplcontent.= '</html>'."\n";
 
 	$tplcontent.= '<?php // BEGIN PHP'."\n";
 	$tplcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";

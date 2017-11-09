@@ -1607,7 +1607,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (is_dir($tmpdir))
                     {
 			// all type of template is allowed
-			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);  
+			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
@@ -2193,18 +2193,18 @@ function cartesianArray(array $input) {
 function getModuleDirForApiClass($module)
 {
     $moduledirforclass=$module;
+    if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i','',$moduledirforclass);
 
-    if (in_array($module, array('login', 'access', 'status', 'documents'))) {
+    if ($module == 'contracts') {
+    	$moduledirforclass = 'contrat';
+    }
+    elseif (in_array($module, array('login', 'setup', 'access', 'status', 'documents'))) {
         $moduledirforclass = 'api';
     }
-    if (preg_match('/^dictionary/', $module)) {
-        $moduledirforclass = 'api';
-    }
-
-    if ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
+    elseif ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
         $moduledirforclass = 'societe';
     }
-    if ($module == 'propale' || $module == 'proposals') {
+    elseif ($module == 'propale' || $module == 'proposals') {
         $moduledirforclass = 'comm/propal';
     }
     elseif ($module == 'agenda' || $module == 'agendaevents') {
@@ -2236,6 +2236,9 @@ function getModuleDirForApiClass($module)
     }
     elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
         $moduledirforclass = 'product/stock';
+    }
+    elseif ($module == 'supplierproposals' || $module == 'supplierproposal' || $module == 'supplier_proposal') {
+    	$moduledirforclass = 'supplier_proposal';
     }
     elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
         $moduledirforclass = 'fourn';

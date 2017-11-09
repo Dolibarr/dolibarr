@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Unikátny kontakty / adresy
 MailNoChangePossible=Príjemcovia pre validované rozosielanie nemožno zmeniť
 SearchAMailing=Hľadať mailing
 SendMailing=Poslať e-mailom
-SendMail=Odoslať e-mail
 SentBy=Odosielateľ:
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Však môžete zaslať on-line pridaním parametra MAILING_LIMIT_SENDBYWEB s hodnotou max počet e-mailov, ktoré chcete poslať zasadnutí. K tomu, prejdite na doma - Nastavenie - Ostatné.

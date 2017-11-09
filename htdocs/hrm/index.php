@@ -75,6 +75,18 @@ llxHeader('', $langs->trans('HRMArea'));
 
 print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
 
+
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
+if ( empty($setupcompanynotcomplete))
+{
+	$langs->load("errors");
+	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+
+	exit;
+}
+
+
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo

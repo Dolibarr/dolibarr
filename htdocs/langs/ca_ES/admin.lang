@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignorar errors de registres duplicats (INSERT IGNORE)
 AutoDetectLang=Autodetecta (idioma del navegador)
 FeatureDisabledInDemo=Opció deshabilitada en demo
 FeatureAvailableOnlyOnStable=Funcionalitat disponible únicament en versions estables oficials 
-Rights=Permisos
 BoxesDesc=Els panells són components que mostren alguna informació que pots afegir per personalitzar algunes pàgines. Pots triar entre mostrar el panell o no seleccionant la pàgina de destí i fent clic a 'Activa', o fent clic al cubell d'escombraries per desactivar.
 OnlyActiveElementsAreShown=Només els elements de <a href="%s"> mòduls activats</a> són mostrats
 ModulesDesc=Els mòduls Dolibarr defineixen quina aplicació/característica està habilitada al programari. Algunes aplicacions/mòduls requereixen permisos que has de concedir als usuaris, després d'activar-los. Fes clic al botó d'activació/desactivació per habilitar un mòdul/aplicació.
@@ -593,7 +592,7 @@ Module5000Desc=Permet gestionar diverses empreses
 Module6000Name=Workflow
 Module6000Desc=Gestió Workflow
 Module10000Name=Pàgines web
-Module10000Desc=Crea pàgines web públiques amb un editor WYSIWYG. Només cal configurar el teu servidor web per apuntar aun un directori dedicat per tenir-ho online a Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Dies lliures
 Module20000Desc=Gestió dels dies lliures dels empleats
 Module39000Name=Lots de productes
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=La funcionalitat d'enviar correus electrònics a 
 TranslationSetup=Configuració de traducció
 TranslationKeySearch=Cerca una clau o cadena de traducció
 TranslationOverwriteKey=Sobreescriu una cadena de traducció
-TranslationDesc=Com definir l'idioma de l'aplicació<br>* A nivell de sistema: menú <strong>Inici - Configuració - Entorn</strong><br>* Per usuari: Pestanya <strong>Configuració d'entorn d'usuari</strong> en la fitxa d'usuari (fes clic al nom d'usuari en la part superior de la pantalla).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=També pot reemplaçar cadenes omplint la taula següent. Triï el seu idioma a la llista desplegable "%s", inserta la clau de la traducció a "%s" i la seva nova traducció a "%s"
 TranslationOverwriteDesc2=Podeu utilitzar un altra pestanya per ajudar a saber quina clau de conversió utilitzar
 TranslationString=Cadena de traducció
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Norma per a la generació de les contrasenyes proposte
 DisableForgetPasswordLinkOnLogonPage=No mostrar l'enllaç "Contrasenya oblidada" a la pàgina de login
 UsersSetup=Configuració del mòdul usuaris
 UserMailRequired=E-mail necessari per crear un usuari nou
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=Configuració de mòdul de gestió de recursos humans
 ##### Company setup #####

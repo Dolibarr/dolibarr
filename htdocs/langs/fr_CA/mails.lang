@@ -74,7 +74,6 @@ NbOfCompaniesContacts=Contacts / adresses uniques
 MailNoChangePossible=Les destinataires pour les courriers électroniques validés ne peuvent pas être modifiés
 SearchAMailing=Chercher l'envoi postal
 SendMailing=Envoyer un courrier électronique
-SendMail=Envoyer un courrier électronique
 SentBy=Envoyée par
 MailingNeedCommand=L'envoi d'un courrier électronique peut être effectué à partir de la ligne de commande. Demandez à votre administrateur du serveur de lancer la commande suivante pour envoyer le courrier électronique à tous les destinataires:
 MailingNeedCommand2=Vous pouvez cependant les envoyer en ligne en ajoutant le paramètre MAILING_LIMIT_SENDBYWEB avec la valeur du nombre maximum d'emails que vous souhaitez envoyer par session. Pour cela, passez à la page d'accueil - Configuration - Autre.

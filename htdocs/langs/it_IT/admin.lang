@@ -189,7 +189,6 @@ IgnoreDuplicateRecords=Ignora errori per record duplicati (INSERT IGNORE)
 AutoDetectLang=Rileva automaticamente (lingua del browser)
 FeatureDisabledInDemo=Funzione disabilitata in modalità demo
 FeatureAvailableOnlyOnStable=Feature only available on official stable versions
-Rights=Autorizzazioni
 BoxesDesc=I Widgets sono componenti che personalizzano le pagine aggiungendo delle informazioni.\nPuoi scegliere se mostrare il widget o meno cliccando 'Attiva' sulla la pagina di destinazione, o cliccando sul cestino per disattivarlo.
 OnlyActiveElementsAreShown=Vengono mostrati solo gli elementi relativi ai <a href="%s">moduli attivi</a> .
 ModulesDesc=I moduli di Dolibarr definiscono quali funzionalità sono abilitate. Alcuni moduli, dopo la loro attivazione, richiedono dei permessi da abilitare agli utenti. Clicca su on/off per l'abilitazione del modulo.
@@ -593,7 +592,7 @@ Module5000Desc=Permette la gestione di diverse aziende
 Module6000Name=Flusso di lavoro
 Module6000Desc=Gestione flussi di lavoro
 Module10000Name=Websites
-Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the Internet with your own domain name.
 Module20000Name=Gestione delle richieste di permesso
 Module20000Desc=Declare and follow employees leaves requests
 Module39000Name=Lotto di produzione
@@ -1130,7 +1129,7 @@ SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail dire
 TranslationSetup=Configurazione della traduzione
 TranslationKeySearch=Cerca una chiave o una stringa di testo
 TranslationOverwriteKey=Sovrascrivi una stringa di testo
-TranslationDesc=La scelta della lingua visualizzata su schermo può essere modidificata:<br><br> - Globalmente dal menu <strong>Home > Impostazioni > Layout di visualizzazione</strong><br> - Per utente dalla linguetta <strong>Impostazioni interfaccia grafica</strong> della Scheda utente (cliccare l'icona di login in alto sullo schermo).
+TranslationDesc=How to set displayed application language :<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: Use the <strong>User display setup</strong> tab on user card (click on username at the top of the screen).
 TranslationOverwriteDesc=Puoi anche effettuare l'override delle stringhe di testo utilizzando la tabella seguente. Seleziona la tua lingua nel box "%s", inserisci la chiave della stringa da tradurre nel campo "%s" e la tua traduzione nel campo "%s".
 TranslationOverwriteDesc2=Puoi utilizzare il tab di ricerca per individuare la chiave della stringa di tuo interesse
 TranslationString=Stringa di testo
@@ -1171,8 +1170,6 @@ RuleForGeneratedPasswords=Regola per generare le password automaticamente
 DisableForgetPasswordLinkOnLogonPage=Non mostrare il link <b>Hai dimenticato la password?</b> nella pagina di accesso
 UsersSetup=Impostazioni modulo utenti
 UserMailRequired=È obbligatorio inserire un indirzzo email per creare un nuovo utente
-DefaultCategoryCar=Default car category
-DefaultRangeNumber=Default range number
 ##### HRM setup #####
 HRMSetup=Impostazioni modulo risorse umane
 ##### Company setup #####
