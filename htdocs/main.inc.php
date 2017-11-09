@@ -1087,6 +1087,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead))
 	{
+		$ext='version='.urlencode(DOL_VERSION);
+
 		print "<head>\n";
 		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
 		// Displays meta
@@ -1109,10 +1111,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		else if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
 		else print "<title>".dol_htmlentities($appli)."</title>";
 		print "\n";
-
-		//$ext='';
-		//if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
-		$ext='version='.urlencode(DOL_VERSION);
 
 		if (GETPOST('version','int')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
 		if (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider','int')?GETPOST('testmenuhider','int'):$conf->global->MAIN_TESTMENUHIDER);
@@ -1871,6 +1869,8 @@ if (! function_exists("llxFooter"))
 		global $conf, $langs, $user, $object;
 		global $delayedhtmlcontent;
 
+		$ext='version='.urlencode(DOL_VERSION);
+		
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
 
@@ -1930,9 +1930,9 @@ if (! function_exists("llxFooter"))
 		if (! empty($conf->use_javascript_ajax))
 		{
 			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-			print '<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_foot.js.php?lang=fr_FR&amp;version=7.0.0-alpha" async></script>'."\n";
+			print '<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'" async></script>'."\n";
 		}
-		
+
 		// Wrapper to add log when clicking on download or preview
 		if (! empty($conf->blockedlog->enabled) && is_object($object) && $object->id > 0 && $object->statut > 0)
 		{

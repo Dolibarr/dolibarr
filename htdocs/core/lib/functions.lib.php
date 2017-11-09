@@ -6377,7 +6377,7 @@ function printCommonFooter($zone='private')
 			if ($zone == 'private' && empty($conf->dol_use_jmobile))
 			{
 				print "\n";
-				print '/* Set handler to switch left menu page (menuhider) */'."\n";
+				print '/* JS CODE TO ENABLE to enable handler to switch left menu page (menuhider) */'."\n";
 				print 'jQuery(".menuhider").click(function() {';
 				print '  console.log("We click on .menuhider");'."\n";
 				//print "  $('.side-nav').animate({width:'toggle'},200);\n";     // OK with eldy theme but not with md
@@ -6392,7 +6392,7 @@ function printCommonFooter($zone='private')
 				if (($conf->dol_use_jmobile != 4))
 				{
 					print "\n";
-					print "/* Set google analtics tag */\n";
+					print "/* JS CODE TO ENABLE for google analtics tag */\n";
 					print '  var _gaq = _gaq || [];'."\n";
 					print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
 					print '  _gaq.push([\'_trackPageview\']);'."\n";
@@ -6409,7 +6409,7 @@ function printCommonFooter($zone='private')
 			if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
 			{
 				print "\n";
-				print "/* Add memory info */\n";
+				print "/* JS CODE TO ENABLE to add memory info */\n";
 				print 'window.console && console.log("';
 				if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 				print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');

@@ -44,19 +44,6 @@ else header('Cache-Control: no-cache');
 
 //var_dump($conf);
 
-print '/* Reposition management (does not work if a redirect is done after action of submission) */'."\n";
-print 'jQuery(document).ready(function() {'."\n";
-print '/* If page_y set, we set scollbar with it */'."\n";
-print "page_y=getParameterByName('page_y', 0); if (page_y > 0) $('html, body').scrollTop(page_y);\n";
-print '/* Set handler to add page_y param on some a href links */'."\n";
-print 'jQuery(".reposition").click(function() {
-  	           var page_y = $(document).scrollTop();
-  	           this.href=this.href+\'&page_y=\'+page_y;
-  	           console.log("this.ref is now "+this.href)
-		 });'."\n";
-print '});'."\n";
-	
-
 // Wrapper to show tooltips (html or onclick popup)
 if (empty($conf->dol_no_mouse_hover))
 {
@@ -139,4 +126,17 @@ if ($conf->browser->layout != 'phone')
         		console.log("end of js code to manage preview");
            ' . "\n";
 }
+
+print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
+print '
+			jQuery(document).ready(function() {
+				/* If page_y set, we set scollbar with it */
+				page_y=getParameterByName(\'page_y\', 0); if (page_y > 0) $(\'html, body\').scrollTop(page_y);
+				/* Set handler to add page_y param on some a href links */
+				jQuery(".reposition").click(function() {
+  	           		var page_y = $(document).scrollTop();
+  	           		this.href=this.href+\'&page_y=\'+page_y;
+  	           		console.log("this.ref is now "+this.href)
+		 		});
+			});'."\n";
 
