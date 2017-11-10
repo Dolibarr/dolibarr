@@ -433,6 +433,8 @@ CREATE TABLE llx_comment (
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;
 
+DELETE FROM llx_const where name = 'MAIN_SHOW_WORKBOARD';
+
 -- Accountancy - Remove old constants
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_PURCHASE_JOURNAL')__;
@@ -488,7 +490,6 @@ UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME'
 UPDATE llx_accounting_system SET fk_country =  6 WHERE pcg_version = 'PCG_SUISSE';
 UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMBURG';
 UPDATE llx_accounting_system SET fk_country = 12 WHERE pcg_version = 'PCG';
-
 
 
 CREATE TABLE llx_actioncomm_reminder(
@@ -554,3 +555,4 @@ ALTER TABLE llx_prelevement_lignes MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_societe MODIFY COLUMN capital double(24,8);
 ALTER TABLE llx_tva MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);
+

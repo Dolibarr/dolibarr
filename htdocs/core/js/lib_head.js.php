@@ -875,7 +875,7 @@ function document_preview(file, type, title)
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		var width='85%';
 		var object_width='100%';
-		var height = $( window ).height()*0.90;
+		var height = ($( window ).height() - 60) * 0.90;
 		var object_height='98%';
 
 		show_preview('notimage');
