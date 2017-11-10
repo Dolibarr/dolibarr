@@ -798,9 +798,9 @@ class FormFile
     	$out='';
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
-    	if (! empty($conf->dol_use_jmobile)) return '';
+    	$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
 
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
+    	$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
 		$out.= '<!-- html.formfile::getDocumentsLink -->'."\n";
@@ -808,7 +808,7 @@ class FormFile
     	{
     	    $out='<dl class="dropdown inline-block">
     			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
-    			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
+    			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
 
     		// Loop on each file found
@@ -835,10 +835,15 @@ class FormFile
     			else $this->infofiles['extensions'][$ext]++;
 
     			// Preview
-    			$urladvanced = getAdvancedPreviewUrl($modulepart, $relativepath);
-    		    if ($urladvanced) $tmpout.= '<li><a data-ajax="false" href="'.$urladvanced.'">'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
+    			if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
+    			{
+					$urladvanced = getAdvancedPreviewUrl($modulepart, $relativepath);
+					if ($urladvanced) $tmpout.= '<li><a data-ajax="false" href="'.$urladvanced.'">'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
+					
+				}
+
     			// Download
-    		    $tmpout.= '<li><a data-ajax="false" class="pictopreview" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+    		    $tmpout.= '<li><a class="pictopreview" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
     			$mime=dol_mimetype($relativepath,'',0);
     			if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
     			$tmpout.= '>';
