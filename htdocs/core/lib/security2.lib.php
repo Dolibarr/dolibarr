@@ -456,7 +456,7 @@ function getRandomPassword($generic=false)
 		$randomCode = "";
 		$nbofchar = round($length/3);
 		$nbofcharlast = ($length - 2*$nbofchar);
-		var_dump($nbofchar.'-'.$nbofcharlast);
+		//var_dump($nbofchar.'-'.$nbofcharlast);
 		if (function_exists('random_int'))	// Cryptographic random
 		{
 			$max = strlen($lowercase) - 1;
