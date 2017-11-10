@@ -1087,6 +1087,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead))
 	{
+		$ext='version='.urlencode(DOL_VERSION);
+
 		print "<head>\n";
 		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
 		// Displays meta
@@ -1110,10 +1112,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		else print "<title>".dol_htmlentities($appli)."</title>";
 		print "\n";
 
-		//$ext='';
-		//if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
-		$ext='version='.urlencode(DOL_VERSION);
-
 		if (GETPOST('version','int')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
 		if (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider','int')?GETPOST('testmenuhider','int'):$conf->global->MAIN_TESTMENUHIDER);
 
@@ -1134,22 +1132,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext?'?'.$ext:'').'">'."\n";  // JQuery
 			else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui.css'.($ext?'?'.$ext:'').'">'."\n";    // JQuery
 			if (! defined('DISABLE_JQUERY_JNOTIFY')) print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css'.($ext?'?'.$ext:'').'">'."\n";          // JNotify
-			/* Removed a old hidden problematic feature never used in Dolibarr. If an external module need datatable, the module must provide all lib it needs and manage version problems with other dolibarr components
-            if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES) || (defined('REQUIRE_JQUERY_DATATABLES') && constant('REQUIRE_JQUERY_DATATABLES')))     // jQuery datatables
-            {
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/media/css/jquery.dataTables.min.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'.($ext?'?'.$ext:'').'"></script>'."\n";
-            }*/
 			if (! defined('DISABLE_SELECT2') && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
 			{
 				$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/css/'.$tmpplugin.'.css'.($ext?'?'.$ext:'').'">'."\n";
-			}
-			// jQuery Timepicker
-			if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
-			{
-				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css'.($ext?'?'.$ext:'').'">'."\n";
 			}
 		}
 
@@ -1871,6 +1857,8 @@ if (! function_exists("llxFooter"))
 		global $conf, $langs, $user, $object;
 		global $delayedhtmlcontent;
 
+		$ext='version='.urlencode(DOL_VERSION);
+		
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
 
@@ -1916,99 +1904,21 @@ if (! function_exists("llxFooter"))
 
 		print '</div> <!-- End div class="fiche" -->'."\n"; // End div fiche
 
-		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'; // End div id-right
+		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'."\n"; // End div id-right
+
+		if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '</div> <!-- End div id-container -->'."\n";	// End div container
 
 		print "\n";
 		if ($comment) print '<!-- '.$comment.' -->'."\n";
 
 		printCommonFooter($zone);
 
-		if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '</div> <!-- End div id-container -->'."\n";	// End div container
-
 		if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
 
-		// TODO Move this in lib_head.js.php
-
-		// Wrapper to show tooltips (html or onclick popup)
-		if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
+		if (! empty($conf->use_javascript_ajax))
 		{
-			print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
-			print '<script type="text/javascript">
-            	jQuery(document).ready(function () {
-					jQuery(".classfortooltip").tooltip({
-						show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-						hide: { effect:\'toggle\', delay: 50 },
-						tooltipClass: "mytooltip",
-						content: function () {
-              				return $(this).prop(\'title\');		/* To force to get title as is */
-          				}
-					});
-            		jQuery(".classfortooltiponclicktext").dialog({ closeOnEscape: true, classes: { "ui-dialog": "highlight" }, maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false }).css("z-index: 5000");
-            		jQuery(".classfortooltiponclick").click(function () {
-            		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-            		    if ($(this).attr(\'dolid\'))
-            		    {
-                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-            		        obj.dialog("open");
-
-            		    }
-            		});
-                });
-            </script>' . "\n";
-		}
-
-		// Wrapper to manage document_preview
-		if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
-		{
-			print "\n<!-- JS CODE TO ENABLE document_preview -->\n";
-			print '<script type="text/javascript">
-                jQuery(document).ready(function () {
-			        jQuery(".documentpreview").click(function () {
-            		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
-                		return false;
-        			});
-        		});
-            </script>' . "\n";
-		}
-
-		// Wrapper to manage dropdown
-		if (! empty($conf->use_javascript_ajax) && ! defined('JS_JQUERY_DISABLE_DROPDOWN'))
-		{
-			print "\n<!-- JS CODE TO ENABLE dropdown -->\n";
-			print '<script type="text/javascript">
-                jQuery(document).ready(function () {
-                  $(".dropdown dt a").on(\'click\', function () {
-                      //console.log($(this).parent().parent().find(\'dd ul\'));
-                      $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
-                      // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
-                      heigthofcontent = 21 * $(this).parent().parent().find(\'dd div ul li\').length;
-                      if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
-                      posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
-                      //console.log(posbottom);
-                      var scrollBottom = $(window).scrollTop() + $(window).height();
-                      //console.log(scrollBottom);
-                      diffoutsidebottom = (posbottom - scrollBottom);
-                      console.log("heigthofcontent="+heigthofcontent+", diffoutsidebottom (posbottom="+posbottom+" - scrollBottom="+scrollBottom+") = "+diffoutsidebottom);
-                      if (diffoutsidebottom > 0)
-                      {
-                            pix = "-"+(diffoutsidebottom+8)+"px";
-                            console.log("We reposition top by "+pix);
-                            $(this).parent().parent().find(\'dd\').css("top", pix);
-                      }
-                      // $(".dropdown dd ul").slideToggle(\'fast\');
-                  });
-                  $(".dropdowncloseonclick").on(\'click\', function () {
-                     console.log("Link has class dropdowncloseonclick, so we close/hide the popup ul");
-                     $(this).parent().parent().hide();
-                  });
-
-                  $(document).bind(\'click\', function (e) {
-                      var $clicked = $(e.target);
-                      if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
-                  });
-                });
-                </script>';
+			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
+			print '<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
 		}
 
 		// Wrapper to add log when clicking on download or preview
@@ -2043,7 +1953,6 @@ if (! function_exists("llxFooter"))
 				<?php
 			}
 	   	}
-
 
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
