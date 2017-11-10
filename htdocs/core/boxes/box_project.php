@@ -163,11 +163,6 @@ class box_project extends ModeleBoxes
 
 		// Add the sum à the bottom of the boxes
         $this->info_box_contents[$i][] = array(
-            'tr' => 'class="liste_total"',
-            'td' => 'align="left" ',
-            'text' => "&nbsp;",
-       );
-        $this->info_box_contents[$i][] = array(
             'td' => '',
             'text' => $langs->trans("Total")."&nbsp;".$textHead,
              'text' => "&nbsp;",
