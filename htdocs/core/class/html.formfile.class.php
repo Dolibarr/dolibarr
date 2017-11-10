@@ -1042,10 +1042,10 @@ class FormFile
 			{
 				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
-				/*var_dump($sortfield);
-				var_dump($sortorder);*/
-				if ($sortfield && $sortorder)
+				//var_dump($sortfield.' - '.$sortorder);
+				if ($sortfield && $sortorder)	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
 				{
+					//var_dump($sortfield);
 					$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
 				}
 				//var_dump($filearray);
@@ -1139,7 +1139,7 @@ class FormFile
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
 
 							$disablecrop=1;
-							if (in_array($modulepart, array('product','produit','service','expensereport','holiday','project','user'))) $disablecrop=0;
+							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','project','user'))) $disablecrop=0;
 
 							if (! $disablecrop && image_format_supported($file['name']) > 0)
 							{
