@@ -653,7 +653,9 @@ class Invoices extends DolibarrApi
 
 
      /**
-     * Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
+     * Add a discount line into an invoice (as an invoice line) using an existing absolute discount
+     *
+     * Note that this consume the discount.
      *
      * @param int   $id             Id of invoice
      * @param int   $discountid     Id of discount
@@ -696,7 +698,9 @@ class Invoices extends DolibarrApi
     }
 
      /**
-     * Add an available credit note discount to payments of an existing invoice (Consume the credit note)
+     * Add an available credit note discount to payments of an existing invoice.
+     *
+     *  Note that this consume the credit note.
      *
      * @param int   $id            Id of invoice
      * @param int   $discountid    Id of a discount coming from a credit note

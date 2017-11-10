@@ -96,7 +96,7 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-     * @param string   	$thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return array                        Array of contact objects
      *
@@ -274,9 +274,9 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Create useraccount object from contact
+	 * Create an user account object from contact (external user)
 	 *
-	 * @param   int   $id   Id of contact
+	 * @param   int   	$id   Id of contact
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of user
 	 *
