@@ -58,7 +58,11 @@ if (empty($conf->dol_no_mouse_hover))
               				return $(this).prop(\'title\');		/* To force to get title as is */
           				}
 					});
-            		jQuery(".classfortooltiponclicktext").dialog({ closeOnEscape: true, classes: { "ui-dialog": "highlight" }, maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false }).css("z-index: 5000");
+            		jQuery(".classfortooltiponclicktext").dialog(
+            			{ closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+						maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).',
+						modal: true,
+						autoOpen: false }).css("z-index: 5000");
             		jQuery(".classfortooltiponclick").click(function () {
             		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
             		    if ($(this).attr(\'dolid\'))

@@ -42,8 +42,10 @@ $langs->load("categories");
 if (! $user->rights->ecm->setup) accessforbidden();
 
 // Get parameters
-$socid = GETPOST('socid','int');
-$action=GETPOST('action','alpha');
+$socid      = GETPOST('socid','int');
+$action     = GETPOST('action','alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
 $confirm=GETPOST('confirm','alpha');
 
 // Security check
@@ -86,11 +88,20 @@ if (! empty($section))
 // Action ajout d'un produit ou service
 if ($action == 'add' && $user->rights->ecm->setup)
 {
-	if (! empty($_POST["cancel"]))
+	if ($cancel)
 	{
-		header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
-		exit;
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		else
+		{
+			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+			exit;
+		}
 	}
+
 	$ecmdir->ref                = trim($_POST["ref"]);
 	$ecmdir->label              = trim($_POST["label"]);
 	$ecmdir->description        = trim($_POST["desc"]);
@@ -150,10 +161,11 @@ if ($action == 'create')
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	$title=$langs->trans("ECMNewSection");
 	print load_fiche_titre($title);
-	
+
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
@@ -206,7 +218,7 @@ if (empty($action) || $action == 'delete_section')
 	if ($action == 'delete_section')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-		
+
 	}
 
 	// Construit fiche  rubrique

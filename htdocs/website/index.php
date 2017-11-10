@@ -1161,6 +1161,8 @@ if ($action == 'edit')
 $style='';
 if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style=' margin-bottom: 5px;';
 
+if (! GETPOST('hide_websitemenu'))
+{
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
 
@@ -1221,6 +1223,23 @@ if (count($object->records) > 0)
 		print ' &nbsp; ';
 
 		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+		/*print '<a class="button button_file_manager"'.$disabled.'>'.dol_escape_htmltag($langs->trans("MediaFiles")).'</a>';
+		print '<script language="javascript">
+			jQuery(document).ready(function () {
+           		jQuery(".button_file_manager").click(function () {
+					var $dialog = $(\'<div></div>\').html(\'<iframe style="border: 0px;" src="'.DOL_URL_ROOT.'/website/index.php?hide_websitemenu=1&dol_hide_topmenu=1&dol_hide_leftmenu=1&file_manager=1&website='.$website.'&pageid='.$pageid.'" width="100%" height="100%"></iframe>\')
+					.dialog({
+						autoOpen: false,
+						modal: true,
+						height: 500,
+						width: \'80%\',
+						title: "'.dol_escape_js($langs->trans("FileManager")).'"
+					});
+					$dialog.dialog(\'open\');
+				});
+			});
+			</script>';
+		*/
 	}
 
 	print '</div>';
@@ -1465,8 +1484,10 @@ else
 	$action='';
 }
 
-
 print '</div>';	// end current websitebar
+}
+
+
 
 $head = array();
 

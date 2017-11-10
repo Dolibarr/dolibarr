@@ -1858,7 +1858,7 @@ if (! function_exists("llxFooter"))
 		global $delayedhtmlcontent;
 
 		$ext='version='.urlencode(DOL_VERSION);
-		
+
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
 
@@ -1918,7 +1918,7 @@ if (! function_exists("llxFooter"))
 		if (! empty($conf->use_javascript_ajax))
 		{
 			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-			print '<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
 		}
 
 		// Wrapper to add log when clicking on download or preview

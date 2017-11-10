@@ -4844,7 +4844,7 @@ div.tabsElem a.tab {
 @media only screen and (max-width: 1024px)
 {
 	div#ecm-layout-west {
-		width: 100%;
+		width: calc(100% - 4px);
 		clear: both;
 	}
 	div#ecm-layout-center {

@@ -43,25 +43,32 @@ if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->us
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-if ($user->rights->ecm->setup)
-{
-    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
-}
-else
-{
-    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
-}
-if ($module == 'ecm')
-{
-	$tmpurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-	print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
-	print '</a>';
-}
+//if (preg_match('/\/ecm/', $_SERVER['PHP_SELF'])) {
+//if ($module == 'ecm') {
+	$permtoadd = 0;
+	if ($module == 'ecm') $permtoadd = $user->rights->ecm->setup;
+	if ($module == 'medias') $permtoadd = ($user->rights->ecm->setup || $user->rights->website->setup);
+
+	if ($permtoadd)
+	{
+	    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&module='.urlencode($module).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+	    print '</a>';
+	}
+	else
+	{
+	    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
+	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+	    print '</a>';
+	}
+	if ($module == 'ecm')
+	{
+		$tmpurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
+		print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
+		print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+		print '</a>';
+	}
+//}
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';

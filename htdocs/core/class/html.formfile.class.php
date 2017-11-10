@@ -917,6 +917,7 @@ class FormFile
 	 * 	@param	 int	$useinecm			Change output for use in ecm module:
 	 * 										0: Add a previw link. Show also rename and crop file
 	 * 										1: Add link to edit ECM entry
+	 * 										2: Add rename and crop file
 	 * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
 	 *  @param   int	$maxlength          Maximum length of file name shown.
 	 *  @param	 string	$title				Title before list. Use 'none' to disable title.
@@ -1128,11 +1129,11 @@ class FormFile
 						// Delete or view link
 						// ($param must start with &)
 						print '<td class="valignmiddle right"><!-- action on files -->';
-						if ($useinecm)
+						if ($useinecm == 1)
 						{
 							print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
 						}
-						else
+						if (! $useinecm || $useinecm == 2)
 						{
 							$newmodulepart=$modulepart;
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
@@ -1151,7 +1152,7 @@ class FormFile
 
 							if ($permtoeditline)
 							{
-								print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=editfile&urlfile='.urlencode($filepath).$param).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default',0,'class="paddingrightonly"').'</a>';
+								print '<a href="'.(($useinecm == 1)?'#':($url.'?action=editfile&urlfile='.urlencode($filepath).$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default',0,'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject)

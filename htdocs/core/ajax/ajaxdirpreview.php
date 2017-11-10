@@ -268,7 +268,7 @@ if ($type == 'directory')
 
     	if ($module == 'medias')
     	{
-    		$useinecm = 0;
+    		$useinecm = 2;
     		$modulepart='medias';
         	$perm=($user->rights->website->write || $user->rights->emailing->creer);
         	$title='none';
