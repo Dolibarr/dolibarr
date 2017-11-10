@@ -119,6 +119,20 @@ class Documents extends DolibarrApi
 					throw new RestException(500, 'Error generating document');
 				}
 			}
+                        if ($module_part == 'commande' || $module_part == 'order')
+                        {
+                                require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+                                $this->order = new Commande($this->db);
+                                $result = $this->order->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+                                if( ! $result ) {
+                                        throw new RestException(404, 'Order not found');
+                                }
+                                $result = $this->order->generateDocument($this->order->modelpdf, $langs, $hidedetails, $hidedesc, $hideref);
+                                if( $result <= 0 ) {
+                                        throw new RestException(500, 'Error generating document');
+                                }
+                        }
+
 		}
 
 		$filename = basename($original_file);
