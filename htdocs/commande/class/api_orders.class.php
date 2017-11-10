@@ -492,13 +492,17 @@ class Orders extends DolibarrApi
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
 		}
+	$result = $this->commande->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Order not found');
+        }
 
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => 'Order validated (Ref='.$this->commande->ref.')'
-            )
-        );
+	if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+       }
+
+        $this->commande->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->commande);
     }
 
     /**
