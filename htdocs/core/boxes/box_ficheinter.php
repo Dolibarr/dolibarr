@@ -108,27 +108,25 @@ class box_ficheinter extends ModeleBoxes
 
 					$ficheinterstatic->statut=$objp->fk_statut;
 					$ficheinterstatic->id=$objp->rowid;
+					$ficheinterstatic->ref=$objp->ref;
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-					'logo' => $this->boximg,
-					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
+					$this->info_box_contents[$i][] = array('td' => '',
+					'text' => $ficheinterstatic->getNomUrl(1),
+					'asis' => 1
+					);
 
-					$this->info_box_contents[$i][1] = array('td' => '',
-					'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some interventions have no ref
-					'url' => DOL_URL_ROOT."/fichinter/card.php?id=".$objp->rowid);
-
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+					$this->info_box_contents[$i][] = array('td' => 'align="left" width="16"',
 					'logo' => 'company',
 					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][3] = array('td' => '',
+					$this->info_box_contents[$i][] = array('td' => '',
 					'text' => dol_trunc($objp->name,40),
 					'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][4] = array('td' => 'class="right"',
+					$this->info_box_contents[$i][] = array('td' => 'class="right"',
 					'text' => dol_print_date($datec,'day'));
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" class="nowrap"',
+					$this->info_box_contents[$i][] = array('td' => 'align="right" class="nowrap"',
 					'text' => $ficheinterstatic->getLibStatut(6),
 					'asis'=>1
 					);
@@ -136,20 +134,20 @@ class box_ficheinter extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInterventions"));
+				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInterventions"));
 
 				$db->free($resql);
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(  'td' => '',
+				$this->info_box_contents[0][] = array(  'td' => '',
 				'maxlength'=>500,
 				'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else
 		{
-			$this->info_box_contents[0][0] = array(
+			$this->info_box_contents[0][] = array(
 			    'td' => 'align="left" class="nohover opacitymedium"',
 			    'text' => $langs->trans("ReadPermissionNotAllowed")
 			);

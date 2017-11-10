@@ -4469,7 +4469,7 @@ dl.dropdown {
 	margin-left: 2px;
     margin-right: 2px;
     padding:0px;
-    vertical-align: text-bottom;
+    vertical-align: middle;
     display: inline-block;
 }
 .dropdown dd, .dropdown dt {
