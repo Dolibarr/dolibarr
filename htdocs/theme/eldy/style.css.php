@@ -398,6 +398,9 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.actionbuttons a {
+    padding-left: 6px;
+}
 select.flat, form.flat select {
 	font-weight: normal;
 }
