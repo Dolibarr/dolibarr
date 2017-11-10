@@ -413,6 +413,12 @@ class Orders extends DolibarrApi
             $this->commande->$field = $value;
         }
 
+	// Update availability
+	if( isset($this->commande->availability_id) && !empty($this->commande->availability_id) ) {
+	    if($this->commande->availability($this->commande->availability_id) < 0)
+		throw new RestException(400, 'Error while updating availability');
+	}
+
         if($this->commande->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
             return $this->get($id);
 
@@ -543,6 +549,50 @@ class Orders extends DolibarrApi
 	    	'message' => 'Order closed (Ref='.$this->commande->ref.')'
 	    	)
     	);
+    }
+
+    /**
+     * Set an order to draft
+     *
+     * @param   int     $id             Order ID
+     *
+     * @url POST    {id}/settodraft
+     *
+     * @return  array
+     */
+    function settodraft($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+                throw new RestException(401);
+        }
+        $result = $this->commande->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Order not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->commande->set_draft(DolibarrApiAccess::$user);
+        if ($result == 0) {
+                throw new RestException(304, 'Nothing done. May be object is already closed');
+        }
+        if ($result < 0) {
+                throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
+        }
+
+	$result = $this->commande->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Order not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $this->commande->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->commande);
     }
 
 
