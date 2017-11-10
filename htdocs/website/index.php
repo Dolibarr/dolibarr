@@ -52,7 +52,6 @@ $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action','alpha');
 
-
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
@@ -66,6 +65,18 @@ if (GETPOST('editsource')) { $action='editsource'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 if (GETPOST('createfromclone')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
+
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+//if (! $sortfield) $sortfield='name';
+//if (! $sortorder) $sortorder='ASC';
 
 if (empty($action)) $action='preview';
 
@@ -109,7 +120,6 @@ $fileindex=$pathofwebsite.'/index.php';
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
 
 
 /*
@@ -1792,6 +1802,7 @@ if ($action == 'file_manager')
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
+	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 }
 

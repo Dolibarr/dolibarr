@@ -914,10 +914,12 @@ class FormFile
 	 * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file.
 	 * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided), relative to module dir, not to MAIN_DATA_ROOT.
 	 * 	@param	 int	$permonobject		Permission on object (so permission to delete or crop document)
-	 * 	@param	 int	$useinecm			Change output for use in ecm module
+	 * 	@param	 int	$useinecm			Change output for use in ecm module:
+	 * 										0: Add a previw link. Show also rename and crop file
+	 * 										1: Add link to edit ECM entry
 	 * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
 	 *  @param   int	$maxlength          Maximum length of file name shown.
-	 *  @param	 string	$title				Title before list
+	 *  @param	 string	$title				Title before list. Use 'none' to disable title.
 	 *  @param	 string $url				Full url to use for click links ('' = autodetect)
 	 *  @param	 int	$showrelpart		0=Show only filename (default), 1=Show first level 1 dir
 	 *  @param   int    $permtoeditline     Permission to edit document line (You must provide a value, -1 is deprecated and must not be used any more)
@@ -977,7 +979,9 @@ class FormFile
 		}
 		else
 		{
-			$param = (isset($object->id)?'&id='.$object->id:'').$param;
+			if (! preg_match('/&id=/', $param) && isset($object->id)) $param.='&id='.$object->id;
+			$relativepathwihtoutslashend=preg_replace('/\/$/', '', $relativepath);
+			if ($relativepathwihtoutslashend) $param.= '&file='.urlencode($relativepathwihtoutslashend);
 
 			if ($permtoeditline < 0)  // Old behaviour for backward compatibility. New feature should call method with value 0 or 1
 			{
@@ -995,7 +999,7 @@ class FormFile
 			}
 
 			// Show list of existing files
-			if (empty($useinecm)) print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
+			if (empty($useinecm) && $title != 'none') print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
 
 			print '<!-- html.formfile::list_of_documents -->'."\n";
@@ -1023,6 +1027,7 @@ class FormFile
 			}
 
 			print '<tr class="liste_titre nodrag nodrop">';
+			//print $url.' sortfield='.$sortfield.' sortorder='.$sortorder;
 			print_liste_field_titre('Documents2',$url,"name","",$param,'align="left"',$sortfield,$sortorder);
 			print_liste_field_titre('Size',$url,"size","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre('Date',$url,"date","",$param,'align="center"',$sortfield,$sortorder);

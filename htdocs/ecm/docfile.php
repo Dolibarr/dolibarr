@@ -247,10 +247,9 @@ if ($action == 'edit')
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 }
 
-dol_fiche_head($head, 'card', $langs->trans("File"), 0, 'generic');
+dol_fiche_head($head, 'card', $langs->trans("File"), -1, 'generic');
 
-print '<table class="border" width="100%">';
-print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+
 $s='';
 $tmpecmdir=new EcmDirectory($db);	// Need to create a new one
 $tmpecmdir->fetch($ecmdir->id);
@@ -259,7 +258,7 @@ $i=0;
 while ($tmpecmdir && $result > 0)
 {
 	$tmpecmdir->ref=$tmpecmdir->label;
-    $s=$tmpecmdir->getNomUrl(1).$s;
+	$s=$tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
 	{
 		$s=' -> '.$s;
@@ -272,28 +271,18 @@ while ($tmpecmdir && $result > 0)
 	$i++;
 }
 
-print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
-print $s;
-print ' -> ';
-if ($action == 'edit') print '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
-else print $urlfile;
-print '</td></tr>';
-/*print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-if ($action == 'edit')
-{
-	print '<textarea class="flat" name="description" cols="80">';
-	print $ecmdir->description;
-	print '</textarea>';
-}
-else print dol_nl2br($ecmdir->description);
-print '</td></tr>';
-print '<tr><td>'.$langs->trans("ECMCreationUser").'</td><td>';
-$userecm=new User($db);
-$userecm->fetch($ecmdir->fk_user_c);
-print $userecm->getNomUrl(1);
-print '</td></tr>';
-*/
-print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
+$s = img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s.' -> ';
+if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
+else $s .= $urlfile;
+
+$object->ref='';	// Force to hide ref
+dol_banner_tab($object, '', $morehtml, 0, '', '', $s);
+
+print '<div class="fichecenter">';
+
+print '<div class="underbanner clearboth"></div>';
+print '<table class="border" width="100%">';
+print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath),'dayhour');
 print '</td></tr>';
 /*print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
@@ -385,6 +374,7 @@ else
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print ajax_autoselect('downloadinternallink');
 print ajax_autoselect('downloadlink');

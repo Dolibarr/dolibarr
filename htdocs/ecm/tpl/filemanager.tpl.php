@@ -57,8 +57,8 @@ else
 }
 if ($module == 'ecm')
 {
-	$url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-	print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
+	$tmpurl=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
+	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 	print '</a>';
 }
@@ -150,7 +150,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
         print '<div id="filetree" class="ecmfiletree">';
 
         $mode='noajax';
-        $url=DOL_URL_ROOT.'/ecm/index.php';
+        if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
         include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirtree.php';
 
     	print '</div>';
@@ -173,7 +173,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 $mode='noajax';
-$url=DOL_URL_ROOT.'/ecm/index.php';
+if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
