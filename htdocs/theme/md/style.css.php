@@ -768,7 +768,9 @@ div.myavailability {
     box-shadow: 1px 1px 25px #aaa;
     max-width: calc(100% - 56px);
 }
-
+.fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
+	color: #505;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {

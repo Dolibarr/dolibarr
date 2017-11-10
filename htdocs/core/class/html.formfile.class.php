@@ -713,14 +713,14 @@ class FormFile
 
 					// Show file name with link to download
 					$out.= '<td class="tdoverflowmax300">';
-					$tmp = $this->showPreview($file,$modulepart,$relativepath,0,$param);
-					$out.= ($tmp?$tmp.' ':'');
-					$out.= '<a class="documentdownload" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
+					$out.= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= ' target="_blank">';
-					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.$file["name"];
+					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]);
+					$out.= $file["name"];
 					$out.= '</a>'."\n";
+					$out.= $this->showPreview($file,$modulepart,$relativepath,0,$param);
 					$out.= '</td>';
 
 					// Show file size
@@ -741,12 +741,11 @@ class FormFile
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
 							$out.= '">'.img_picto($langs->trans("Delete"), 'delete.png').'</a>';
-							//$out.='</td>';
 						}
 						if ($printer)
 						{
 							//$out.= '<td align="right">';
-							$out.= '&nbsp;<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
+							$out.= '<a class="paddingleft" href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=print_file&amp;printer='.$modulepart.'&amp;file='.urlencode($relativepath);
 							$out.= ($param?'&amp;'.$param:'');
 							$out.= '">'.img_picto($langs->trans("PrintFile", $relativepath),'printer.png').'</a>';
 						}
@@ -841,21 +840,24 @@ class FormFile
 
 		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
 
+		//var_dump($file_list);
 		// For ajax treatment
 		$out.= '<!-- html.formfile::getDocumentsLink -->'."\n";
 		if (! empty($file_list))
 		{
 			$out='<dl class="dropdown inline-block">
-    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
+    			<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', 'valignbottom').'</a></dt>
     			<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields" style="display: none;">';
 			$tmpout='';
 
 			// Loop on each file found
+			$found=0;
 			foreach($file_list as $file)
 			{
 				$i++;
 				if ($filter && ! preg_match('/'.$filter.'/i', $file["name"])) continue;	// Discard this. It does not match provided filter.
 
+				$found++;
 				// Define relative path for download link (depends on module)
 				$relativepath=$file["name"];								// Cas general
 				if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
@@ -877,21 +879,29 @@ class FormFile
 				if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
 				{
 					$tmparray = getAdvancedPreviewUrl($modulepart, $relativepath, 1, '&entity='.$entity);
-					if ($tmparray && $tmparray['url']) $tmpout.= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css']?' class="'.$tmparray['css'].'"':'').($tmparray['mime']?' mime="'.$tmparray['mime'].'"':'').($tmparray['target']?' target="'.$tmparray['target'].'"':'').'>'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
+					if ($tmparray && $tmparray['url'])
+					{
+						$tmpout.= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css']?' class="'.$tmparray['css'].'"':'').($tmparray['mime']?' mime="'.$tmparray['mime'].'"':'').($tmparray['target']?' target="'.$tmparray['target'].'"':'').'>';
+						//$tmpout.= img_picto('','detail');
+						$tmpout.= '<i class="fa fa-search-plus paddingright" style="color: gray"></i>';
+						$tmpout.= $langs->trans("Preview").' '.$ext.'</a></li>';
+					}
 				}
 
 				// Download
-				$tmpout.= '<li><a class="pictopreview" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+				$tmpout.= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
 				$mime=dol_mimetype($relativepath,'',0);
 				if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
 				$tmpout.= '>';
-				$tmpout.=img_mime($relativepath, $file["name"]).' ';
+				$tmpout.= img_mime($relativepath, $file["name"]);
 				$tmpout.= $langs->trans("Download").' '.$ext;
 				$tmpout.= '</a></li>'."\n";
 			}
 			$out.=$tmpout;
 			$out.='</ul></div></dd>
     			</dl>';
+
+			if (! $found) $out='';
 		}
 		else
 		{
@@ -1062,6 +1072,7 @@ class FormFile
 						&& ! preg_match('/\.meta$/i',$file['name']))
 				{
 					if ($filearray[$key]['rowid'] > 0) $lastrowid = $filearray[$key]['rowid'];
+					$filepath=$relativepath.$file['name'];
 
 					$editline=0;
 					$nboflines++;
@@ -1071,18 +1082,14 @@ class FormFile
 					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'" '.$bcdd[$var].'>';
 					print '<td class="tdoverflowmax300">';
 
-					$filepath=$relativepath.$file['name'];
-
-					if (! $editline) print $this->showPreview($file,$modulepart,$filepath);
-
+					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
-					print '<a class="paddingleft" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					print '<a class="paddingright" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
 					if (! empty($object->entity)) print '&entity='.$object->entity;
 					print '&file='.urlencode($filepath);
 					print '">';
-
-					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+					print img_mime($file['name'], $file['name'].' ('.dol_print_size($file['size'],0,0).')', 'inline-block valignbottom paddingright');
 					if ($showrelpart == 1) print $relativepath;
 					//print dol_trunc($file['name'],$maxlength,'middle');
 					if (GETPOST('action','aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile')))
@@ -1097,6 +1104,7 @@ class FormFile
 						print $file['name'];
 						print '</a>';
 					}
+					if (! $editline) print $this->showPreview($file, $modulepart, $filepath);
 
 					print "</td>\n";
 
@@ -1448,10 +1456,10 @@ class FormFile
 				// File
 				print '<td>';
 				//print "XX".$file['name']; //$file['name'] must be utf8
-				print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				if ($forcedownload) print '&attachment=1';
 				print '&file='.urlencode($relativefile).'">';
-				print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+				print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')');
 				print dol_trunc($file['name'],$maxlength,'middle');
 				print '</a>';
 
@@ -1678,7 +1686,11 @@ class FormFile
 			{
 				$out.= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime'])?'':' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target'])?'':' target="'.$urladvancedpreview['target'].'"').'>';
 				//$out.= '<a class="pictopreview">';
-				if (empty($ruleforpicto)) $out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
+				if (empty($ruleforpicto))
+				{
+					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
+					$out.='<span class="fa fa-search-plus" style="color: gray"></span>';
+				}
 				else $out.= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
 				$out.= '</a>';
 			}
