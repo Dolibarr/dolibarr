@@ -6,6 +6,7 @@
  * Copyright (C) 2012       Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,8 @@ class FactureRec extends CommonInvoice
 		$this->nb_gen_done=0;
 		$this->nb_gen_max=empty($this->nb_gen_max)?0:$this->nb_gen_max;
 		$this->auto_validate=empty($this->auto_validate)?0:$this->auto_validate;
-
+		$this->generate_pdf = empty($this->generate_pdf)?0:$this->generate_pdf;
+        
 		$this->db->begin();
 
 		// Charge facture modele
@@ -127,6 +129,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", remise";
 			$sql.= ", note_private";
 			$sql.= ", note_public";
+			$sql.= ", modelpdf";
 			$sql.= ", fk_user_author";
 			$sql.= ", fk_projet";
 			$sql.= ", fk_account";
@@ -140,6 +143,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", nb_gen_done";
 			$sql.= ", nb_gen_max";
 			$sql.= ", auto_validate";
+			$sql.= ", generate_pdf";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->db->escape($this->titre)."'";
 			$sql.= ", ".$facsrc->socid;
@@ -149,6 +153,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".(!empty($facsrc->remise)?$this->remise:'0');
 			$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 			$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
+			$sql.= ", ".(!empty($this->modelpdf)?("'".$this->db->escape($this->modelpdf)."'"):"NULL");
 			$sql.= ", '".$this->db->escape($user->id)."'";
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
 			$sql.= ", ".(! empty($facsrc->fk_account)?"'".$facsrc->fk_account."'":"null");
@@ -162,6 +167,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".$this->nb_gen_done;
 			$sql.= ", ".$this->nb_gen_max;
 			$sql.= ", ".$this->auto_validate;
+			$sql.= ", ".$this->generate_pdf;
 			$sql.= ")";
 
 			if ($this->db->query($sql))
@@ -276,9 +282,11 @@ class FactureRec extends CommonInvoice
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
+        $sql.= ', f.modelpdf';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
 		$sql.= ', f.fk_account';
 		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
+        $sql.= ', f.generate_pdf';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		//$sql.= ', el.fk_source';
@@ -336,7 +344,7 @@ class FactureRec extends CommonInvoice
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
-				$this->modelpdf               = $obj->model_pdf;
+				$this->modelpdf               = $obj->modelpdf;
 				$this->rang					  = $obj->rang;
 				$this->special_code			  = $obj->special_code;
 				$this->frequency			  = $obj->frequency;
@@ -347,7 +355,8 @@ class FactureRec extends CommonInvoice
 				$this->nb_gen_max			  = $obj->nb_gen_max;
 				$this->usenewprice			  = $obj->usenewprice;
 				$this->auto_validate		  = $obj->auto_validate;
-
+				$this->generate_pdf           = $obj->generate_pdf;
+                
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
 				// Retreive all extrafield for thirdparty
@@ -948,8 +957,18 @@ class FactureRec extends CommonInvoice
     			        $this->errors = $facture->errors;
     			        $this->error = $facture->error;
 			            $error++;
-			        }
+                    }
 			    }
+                if (! $error && $facturerec->generate_pdf)
+                {
+                    $result = $facture->generateDocument($facturerec->modelpdf, $langs);
+                    if ($result <= 0)
+                    {
+                        $this->errors = $facture->errors;
+                        $this->error = $facture->error;
+                        $error++;
+                    }
+                }
 
 				if (! $error && $invoiceidgenerated >= 0)
 				{
@@ -1383,6 +1402,68 @@ class FactureRec extends CommonInvoice
         if ($this->db->query($sql))
         {
             $this->auto_validate = $validate;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+    /**
+     *	Update the auto generate documents
+     *
+     *	@param     	int		$validate		0 no document, 1 to generate document
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setGeneratePdf($validate)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setGeneratePdf was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET generate_pdf = '.$validate;
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setGeneratePdf", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->generate_pdf = $validate;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+
+    /**
+     *	Update the model for documents
+     *
+     *	@param     	string		$model		model of document generator
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setModelPdf($model)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setModelPdf was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET modelpdf = "' . $model . '"';
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setModelPdf", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->modelpdf = $model;
             return 1;
         }
         else

@@ -528,6 +528,9 @@ ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
 ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER accountancy_code_sell;
 ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
 
+ALTER TABLE llx_facture_rec ADD COLUMN modelpdf varchar(255) AFTER note_public;
+ALTER TABLE llx_facture_rec ADD COLUMN generate_pdf integer DEFAULT 0 AFTER auto_validate;
+
 -- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
 ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);

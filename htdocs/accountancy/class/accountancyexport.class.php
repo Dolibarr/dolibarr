@@ -547,9 +547,9 @@ class AccountancyExport
             $tab = array();
             // export configurable
             $date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
+            $tab[] = $line->piece_num;
             $tab[] = $date;
             $tab[] = $line->doc_ref;
-            $tab[] = $line->piece_num;
             $tab[] = $line->label_operation;
             $tab[] =  length_accountg($line->numero_compte);
             $tab[] =  length_accounta($line->subledger_account);
