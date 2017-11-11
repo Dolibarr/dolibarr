@@ -600,7 +600,7 @@ if (! empty($id) || ! empty($ref))
 		    'builddoc'=>$langs->trans("PDFMerge"),
 		);
 		if ($user->rights->product->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-		if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 		*/
 

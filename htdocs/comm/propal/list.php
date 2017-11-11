@@ -401,7 +401,7 @@ if ($resql)
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	if ($massaction == 'presend') $arrayofmassactions=array();
+	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lignes des champs de filtre
@@ -417,15 +417,11 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	if ($massaction == 'presend')
-	{
-		$topicmail="SendSupplierProposalRef";
-		$modelmail="supplier_proposal_send";
-		$objecttmp=new Propal($db);
-		$trackid='ord'.$object->id;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-	}
+	$topicmail="SendSupplierProposalRef";
+	$modelmail="supplier_proposal_send";
+	$objecttmp=new Propal($db);
+	$trackid='ord'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
 	{

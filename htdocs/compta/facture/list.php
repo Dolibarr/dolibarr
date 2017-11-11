@@ -595,7 +595,7 @@ if ($resql)
 		   $arrayofmassactions['delete']=$langs->trans("Delete");
 		}
 	}
-	if ($massaction == 'presend') $arrayofmassactions=array();
+	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$i = 0;
@@ -613,15 +613,11 @@ if ($resql)
 
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
-	if ($massaction == 'presend')
-	{
-		$topicmail="SendBillRef";
-		$modelmail="facture_send";
-		$objecttmp=new Facture($db);
-		$trackid='inv'.$object->id;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-	}
+	$topicmail="SendBillRef";
+	$modelmail="facture_send";
+	$objecttmp=new Facture($db);
+	$trackid='inv'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
 	{

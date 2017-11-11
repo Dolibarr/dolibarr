@@ -578,8 +578,8 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
@@ -605,15 +605,11 @@ foreach(array(1,2,3,4,5,6) as $key)
 	}
 }
 
-if ($massaction == 'presend')
-{
-	$topicmail="Information";
-	$modelmail="thirdparty";
-	$objecttmp=new Societe($db);
-	$trackid='thi'.$object->id;
-
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-}
+$topicmail="Information";
+$modelmail="thirdparty";
+$objecttmp=new Societe($db);
+$trackid='thi'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
 {
