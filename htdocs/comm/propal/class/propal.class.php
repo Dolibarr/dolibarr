@@ -443,13 +443,15 @@ class Propal extends CommonObject
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
-				$product_type=$product->type;
-
-				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL) && $product_type == 0 && $product->stock_reel < $qty) {
-					$langs->load("errors");
-					$this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if ($result > 0)
+				{
+					$product_type = $product->type;
+					if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL) && $product_type == 0 && $product->stock_reel < $qty) {
+						$langs->load("errors");
+						$this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 			}
 
@@ -649,6 +651,27 @@ class Propal extends CommonObject
 		if ($this->statut == self::STATUS_DRAFT)
 		{
 			$this->db->begin();
+   
+			//Fetch current line from the database and then clone the object and set it in $oldline property
+			$line = new PropaleLigne($this->db);
+			$line->fetch($rowid);
+			$line->fetch_optionals(); // Fetch extrafields for oldcopy
+
+			$staticline = clone $line;
+
+			$line->oldline = $staticline;
+			$this->line = $line;
+			$this->line->context = $this->context;
+
+			//Fetch product
+			if (!empty($this->line->fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($this->line->fk_product);
+				if ($result > 0)
+				{
+				}
+			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -688,17 +711,6 @@ class Propal extends CommonObject
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
-
-			//Fetch current line from the database and then clone the object and set it in $oldline property
-			$line = new PropaleLigne($this->db);
-			$line->fetch($rowid);
-			$line->fetch_optionals(); // Fetch extrafields for oldcopy
-
-			$staticline = clone $line;
-
-			$line->oldline = $staticline;
-			$this->line = $line;
-			$this->line->context = $this->context;
 
 			// Reorder if fk_parent_line change
 			if (! empty($fk_parent_line) && ! empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line)
