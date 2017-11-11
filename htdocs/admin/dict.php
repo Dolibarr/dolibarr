@@ -80,6 +80,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id','int');
+if($search_country_id == '') $search_country_id = $mysoc->country_id;
 $search_code = GETPOST('search_code','alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
