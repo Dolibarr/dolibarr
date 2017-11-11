@@ -257,12 +257,13 @@ function dol_shutdown()
  *                                  'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'.
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
+ *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|string[]      Value found (string or array), or '' if check fails
  *
  *  @TODO Set default value for check to alpha. Check all WYSIWYG edition (email and description...) is still ok with rich text.
  */
-function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
+function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL, $noreplace=0)
 {
     global $mysoc,$user,$conf;
 
@@ -366,7 +367,7 @@ function GETPOST($paramname, $check='', $method=0, $filter=NULL, $options=NULL)
 	    // Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
 	    // Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
 	    // We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
-	    if (! is_array($out) && empty($_POST[$paramname]))
+	    if (! is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
 	    {
 	        $maxloop=20; $loopnb=0;    // Protection against infinite loop
 	        while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.

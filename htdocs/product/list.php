@@ -66,7 +66,7 @@ $search_tobatch = GETPOST("search_tobatch",'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$type=(int) GETPOST("type","int");
+$type=GETPOST("type","int");
 
 //Show/hide child products. Hidden by default
 if (!$_POST) {
@@ -251,7 +251,7 @@ else
 
 	if ($search_type != '' && $search_type != '-1')
 	{
-		if ($search_type==1)
+		if ($search_type == 1)
 		{
 			$texte = $langs->trans("Services");
 		}

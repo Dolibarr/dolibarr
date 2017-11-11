@@ -83,6 +83,11 @@ if ($action == 'add_confirm')
 		$accountto=new Account($db);
 		$accountto->fetch(GETPOST('account_to','int'));
 
+		if ($accountto->currency_code != $accountfrom->currency_code) {
+			$error++;
+			setEventMessages($langs->trans("ErrorTransferBetweenDifferentCurrencyNotPossible"), null, 'errors');
+		}
+
 		if ($accountto->id != $accountfrom->id)
 		{
 			$db->begin();
