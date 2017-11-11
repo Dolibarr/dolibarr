@@ -1274,14 +1274,6 @@ class Commande extends CommonOrder
         $txtva = price2num($txtva);
         $txlocaltax1 = price2num($txlocaltax1);
         $txlocaltax2 = price2num($txlocaltax2);
-        if ($price_base_type=='HT')
-        {
-            $pu=$pu_ht;
-        }
-        else
-        {
-            $pu=$pu_ttc;
-        }
         $label=trim($label);
         $desc=trim($desc);
 
@@ -1303,6 +1295,20 @@ class Commande extends CommonOrder
                     $langs->load("errors");
 					$product_type = $product->type;
 
+					if (!empty($conf->dynamicprices->enabled))
+					{
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+						$priceparser = new PriceParser($this->db);
+						$extra_values = array();
+						$price_result = $priceparser->parseProduct($product, $extra_values);
+						if ($price_result >= 0)
+						{
+							$pu_ht = price2num($price_result);
+							//Calculate the VAT
+							$pu_ttc = price2num($pu_ht * (1 + ($txtva / 100)));
+						}
+					}
+
 					if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty) {
 					    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 						dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
@@ -1311,6 +1317,15 @@ class Commande extends CommonOrder
 					}
 				}
 			}
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
