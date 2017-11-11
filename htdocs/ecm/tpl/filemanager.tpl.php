@@ -23,7 +23,24 @@
 <!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
 
 <?php
+
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+
+if (empty($module)) $module='ecm';
+
+$permtoadd = 0;
+$permtoupload = 1;
+if ($module == 'ecm')
+{
+	$permtoadd = $user->rights->ecm->setup;
+	$permtoupload = $user->rights->ecm->upload;
+}
+if ($module == 'medias')
+{
+	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->setup);
+	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->setup);
+}
+
 
 
 // Confirm remove file (for non javascript users)
@@ -45,13 +62,10 @@ print '<div class="inline-block toolbarbutton centpercent">';
 // Toolbar
 //if (preg_match('/\/ecm/', $_SERVER['PHP_SELF'])) {
 //if ($module == 'ecm') {
-	$permtoadd = 0;
-	if ($module == 'ecm') $permtoadd = $user->rights->ecm->setup;
-	if ($module == 'medias') $permtoadd = ($user->rights->ecm->setup || $user->rights->website->setup);
 
 	if ($permtoadd)
 	{
-	    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&module='.urlencode($module).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&module='.urlencode($module).($website?'&website='.$website:'').($pageid?'&pageid='.$pageid:'').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
 	    print '</a>';
 	}
@@ -91,7 +105,7 @@ if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABL
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     $formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48, null, '', 0, '', 0, $nameforformuserfile);
+	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile);
 }
 else print '&nbsp;';
 
@@ -146,8 +160,6 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     else
     {
         print '<tr><td colspan="6" style="padding-left: 20px">';
-
-        if (empty($module)) $module='ecm';
 
         $_POST['modulepart'] = $module;
         $_POST['openeddir'] = GETPOST('openeddir');

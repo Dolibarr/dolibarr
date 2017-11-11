@@ -550,7 +550,6 @@ if ($search_idprof4 != '') $param.= '&search_idprof4='.urlencode($search_idprof4
 if ($search_idprof5 != '') $param.= '&search_idprof5='.urlencode($search_idprof5);
 if ($search_idprof6 != '') $param.= '&search_idprof6='.urlencode($search_idprof6);
 if ($search_vat != '')     $param.= '&search_vat='.urlencode($search_vat);
-if ($search_country != '') $param.='&search_country='.urlencode($search_country);
 if ($search_type_thirdparty != '') $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
 if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 if ($search_status != '') $param.='&search_status='.urlencode($search_status);
@@ -631,7 +630,7 @@ if (empty($type) || $type == 'c' || $type == 'p')
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
-		$moreforfilter.=$formother->select_categories('customer',$search_categ_cus,'search_categ_cus',1);
+		$moreforfilter.=$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
 	 	$moreforfilter.='</div>';
 	}
 }

@@ -285,7 +285,6 @@ input, input.flat, form.flat select, select, select.flat, .dataTables_length lab
 	?>
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-    font-size: <?php print $fontsize ?>px;
     font-family: <?php print $fontlist ?>;
     outline: none;
     margin: 0px 0px 0px 0px;
@@ -348,7 +347,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 290px;
+	min-width: 300px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -403,6 +402,7 @@ td.actionbuttons a {
 }
 select.flat, form.flat select {
 	font-weight: normal;
+    height: 2.1em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -672,10 +672,9 @@ div.myavailability {
 	padding-bottom: 10px;
 }
 .checkallactions {
-	/* vertical-align: text-bottom;
-    margin-top: 6px; */
     margin-left: 2px;		/* left must be same than right to keep checkbox centered */
     margin-right: 2px;		/* left must be same than right to keep checkbox centered */
+    vertical-align: middle;
 }
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;

@@ -48,6 +48,10 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm=GETPOST('confirm','alpha');
 
+$module  = GETPOST('module', 'alpha');
+$website = GETPOST('website', 'alpha');
+$pageid  = GETPOST('pageid', 'int');
+
 // Security check
 if ($user->societe_id > 0)
 {
@@ -55,9 +59,17 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-$section=$urlsection=GETPOST('section');
+$section=$urlsection=GETPOST('section','alpha');
 if (empty($urlsection)) $urlsection='misc';
-$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
+
+if ($module == 'ecm')
+{
+	$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
+}
+if ($module == 'medias')
+{
+	$upload_dir = $conf->medias->multidir_output[$conf->entity];
+}
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -162,6 +174,8 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($website) print '<input type="hidden" name="website" value="'.$website.'">';
+	if ($pageid)  print '<input type="hidden" name="pageid" value="'.$pageid.'">';
 
 	$title=$langs->trans("ECMNewSection");
 	print load_fiche_titre($title);
@@ -171,18 +185,21 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formecm->select_all_sections(! empty($_GET["catParent"])?$_GET["catParent"]:$ecmdir->fk_parent,'catParent');
+	print $formecm->select_all_sections(! empty($_GET["catParent"]) ? $_GET["catParent"] : $ecmdir->fk_parent, 'catParent', $module);
 	print '</td></tr>'."\n";
 
 	// Description
-	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-	print '<textarea name="desc" rows="4" cols="90">';
-	print $ecmdir->description;
-	print '</textarea>';
-	print '</td></tr>'."\n";
+	if ($module == 'ecm')
+	{
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+		print '<textarea name="desc" rows="4" class="quatrevingtpercent">';
+		print $ecmdir->description;
+		print '</textarea>';
+		print '</td></tr>'."\n";
+	}
 
 	print '</table>';
 

@@ -46,3 +46,4 @@ ReSyncListOfDir=Resync list of directories
 HashOfFileContent=Hash of file content
 FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
 FileSharedViaALink=File shared via a link
+NoDirectoriesFound=No directories found
