@@ -2160,6 +2160,13 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+    $MAXEVENT = 10;
+
+    // List of actions on element
+    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+    $formactions = new FormActions($db);
+    $somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT);
+
     print '</div></div></div>';
 }
 

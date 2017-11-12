@@ -443,13 +443,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 			});
 
 			function runJsCodeForEvent'.$htmlname.'(obj) {
-			    console.log("Run runJsCodeForEvent'.$htmlname.'");
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-	    		$.getJSON(url,
+			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				$.getJSON(url,
 						{
 							action: method,
 							id: id,
