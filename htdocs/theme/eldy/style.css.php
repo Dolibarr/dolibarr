@@ -1083,7 +1083,14 @@ div.vmenu, td.vmenu {
 	padding-right: 10px !important;
 }
 
-
+/* Try responsive even not on smartphone
+#id-container {
+	width: 100%;
+}
+#id-right {
+	width: calc(100% - 200px) !important;
+}
+*/
 
 /* For smartphone (testmenuhider is on) */
 <?php if ($conf->browser->layout == 'phone' && ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>

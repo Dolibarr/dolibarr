@@ -3504,9 +3504,9 @@ abstract class CommonObject
 			// Description
 			print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
-			if ($this->element == 'supplier_proposal')
+			if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier')
 			{
-				print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
+				print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
 			}
 
 			// VAT

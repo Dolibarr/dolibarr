@@ -3463,6 +3463,7 @@ class Product extends CommonObject
     		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
             if (! empty($conf->productbatch->enabled))
             {
+            	$langs->load("productbatch");
                 $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
             }
         }
