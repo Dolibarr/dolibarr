@@ -228,8 +228,12 @@ if (empty($reshook))
     		$db->begin();
 
     		$id = $object->create($user);
+    		if ($id <= 0)
+    		{
+    			$error++;
+    		}
 
-    		if ($id > 0)
+    		if (! $error)
     		{
     			$db->commit();
     			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
