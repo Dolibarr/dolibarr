@@ -89,7 +89,7 @@ $sql = "SELECT d.rowid, d.datedon, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('don').")";
+$sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
 if ($statut != '' && $statut != '-1')
 {
 	$sql .= " AND d.fk_statut IN (".$db->escape($statut).")";
