@@ -426,8 +426,8 @@ if ($id > 0 || ! empty($ref)) {
 		}
 	}
 
-	// Auteur
-	print '<tr><td>' . $langs->trans("AuthorRequest") . '</td>';
+	// Author
+	print '<tr><td class="titlefield">' . $langs->trans("AuthorRequest") . '</td>';
 	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
 
@@ -443,11 +443,13 @@ if ($id > 0 || ! empty($ref)) {
 		$disabled = 0;
 
 	// Line of orders
-	if ($object->statut <= 2 || $object->statut >= 6) {
-		print $langs->trans("OrderStatusNotReadyToDispatch");
+	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {
+		print '<span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
 
-	if ($object->statut == 3 || $object->statut == 4 || $object->statut == 5) {
+	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
 
