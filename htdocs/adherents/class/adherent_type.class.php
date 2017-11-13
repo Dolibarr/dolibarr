@@ -391,7 +391,7 @@ class AdherentType extends CommonObject
      *  	@param		int  	$notooltip		1=Disable tooltip
      *		@return		string					String with URL
      */
-    function getNomUrl($withpicto=0, $maxlen=0)
+    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0)
     {
         global $langs;
 
