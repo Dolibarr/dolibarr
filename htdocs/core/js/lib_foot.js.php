@@ -52,7 +52,7 @@ if (empty($conf->dol_no_mouse_hover))
             	jQuery(document).ready(function () {
 					jQuery(".classfortooltip").tooltip({
 						show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-						hide: { effect:\'toggle\', delay: 50 },
+						hide: { delay: 50 },
 						tooltipClass: "mytooltip",
 						content: function () {
               				return $(this).prop(\'title\');		/* To force to get title as is */
