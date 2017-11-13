@@ -985,7 +985,7 @@ if ($id > 0)
 		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
-		$userepeatevent=0;	// Dev in progress
+		$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);	// Dev in progress
 		if ($userepeatevent)
 		{
 			// Repeat
