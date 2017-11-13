@@ -679,16 +679,6 @@ class Propal extends CommonObject
 			$this->line = $line;
 			$this->line->context = $this->context;
 
-			//Fetch product
-			if (!empty($this->line->fk_product))
-			{
-				$product=new Product($this->db);
-				$result=$product->fetch($this->line->fk_product);
-				if ($result > 0)
-				{
-				}
-			}
-
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -804,7 +794,7 @@ class Propal extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::updateline Erreur -2 Propal en mode incompatible pour cette action");
+			dol_syslog(get_class($this)."::updateline Error -2 Proposal has a status not compatible with this action");
 			return -2;
 		}
 	}
