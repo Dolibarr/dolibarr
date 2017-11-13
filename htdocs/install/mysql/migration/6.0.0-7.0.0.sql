@@ -394,6 +394,12 @@ ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN label varchar(255) NOT NULL;
 
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_user_action (fk_user_action);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_project (fk_project);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep (datep);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep2 (datep2);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_recurid (recurid);
+
 ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
 UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
