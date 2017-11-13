@@ -1265,46 +1265,44 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		}
 	}
 
-	// If line linked to a product
-	if ($idprod)
+	// We add ref of product (and supplier ref if defined)
+	$prefix_prodserv = "";
+	$ref_prodserv = "";
+	if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
 	{
-		// We add ref
-		if ($prodser->ref)
+		if ($prodser->isService())
 		{
-			$prefix_prodserv = "";
-			$ref_prodserv = "";
-			if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
-			{
-				if ($prodser->isService())
-				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
-				}
-				else
-				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
-				}
-			}
-
-			if (empty($hideref))
-			{
-				if ($issupplierline)
-				{
-					if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
-						$ref_prodserv = $ref_supplier;
-					elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
-						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
-					else
-						$ref_prodserv = $prodser->ref.($ref_supplier ? ' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')' : '');
-				}
-				else
-					$ref_prodserv = $prodser->ref; // Show local ref only
-
-				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
-			}
-
-			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
+		}
+		else
+		{
+			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 		}
 	}
+
+	if (empty($hideref))
+	{
+		if ($issupplierline)
+		{
+			if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
+				$ref_prodserv = $ref_supplier;
+			elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
+				$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
+			else	// Common case
+			{
+				$ref_prodserv = $prodser->ref; // Show local ref
+				if ($ref_supplier) $ref_prodserv.= ($prodser->ref?' (':'').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref?')':'');
+			}
+		}
+		else
+		{
+			$ref_prodserv = $prodser->ref; // Show local ref only
+		}
+
+		if (! empty($libelleproduitservice) && ! empty($ref_prodserv)) $ref_prodserv .= " - ";
+	}
+
+	$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
 	if (! empty($conf->global->CATEGORY_ADD_DESC_INTO_DOC) && $idprod && ! empty($conf->categorie->enabled))
