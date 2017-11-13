@@ -392,6 +392,13 @@ ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
+ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_socpeople MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_actioncomm MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_expedition MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_livraison MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(255);
+
 ALTER TABLE llx_actioncomm MODIFY COLUMN label varchar(255) NOT NULL;
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_user_action (fk_user_action);
@@ -399,6 +406,8 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_project (fk_project);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep (datep);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep2 (datep2);
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_recurid (recurid);
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref_ext (ref_ext);
 
 ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
