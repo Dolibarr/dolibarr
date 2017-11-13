@@ -472,12 +472,12 @@ foreach ($search_array_options as $key => $val)
 	$crit=$val;
 	$tmpkey=preg_replace('/search_options_/','',$key);
 	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
+	$mode_search=0;
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
+	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
 	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
 	}
 }
 
@@ -550,7 +550,6 @@ if ($search_idprof4 != '') $param.= '&search_idprof4='.urlencode($search_idprof4
 if ($search_idprof5 != '') $param.= '&search_idprof5='.urlencode($search_idprof5);
 if ($search_idprof6 != '') $param.= '&search_idprof6='.urlencode($search_idprof6);
 if ($search_vat != '')     $param.= '&search_vat='.urlencode($search_vat);
-if ($search_country != '') $param.='&search_country='.urlencode($search_country);
 if ($search_type_thirdparty != '') $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
 if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 if ($search_status != '') $param.='&search_status='.urlencode($search_status);
@@ -579,8 +578,8 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
@@ -606,15 +605,11 @@ foreach(array(1,2,3,4,5,6) as $key)
 	}
 }
 
-if ($massaction == 'presend')
-{
-	$topicmail="Information";
-	$modelmail="thirdparty";
-	$objecttmp=new Societe($db);
-	$trackid='thi'.$object->id;
-
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-}
+$topicmail="Information";
+$modelmail="thirdparty";
+$objecttmp=new Societe($db);
+$trackid='thi'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
 {
@@ -631,7 +626,7 @@ if (empty($type) || $type == 'c' || $type == 'p')
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$moreforfilter.='<div class="divsearchfield">';
 	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
-		$moreforfilter.=$formother->select_categories('customer',$search_categ_cus,'search_categ_cus',1);
+		$moreforfilter.=$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
 	 	$moreforfilter.='</div>';
 	}
 }

@@ -390,8 +390,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id); //TODO deprecated
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state))       $sourcecompany->state=getState($sourcecompany->state_id);
+	if (! empty($sourcecompany->state_id) && !isset($sourcecompany->departement_id))   $sourcecompany->departement_id=getState($sourcecompany->state_id,'2');
 	if (! empty($targetcompany->state_id) && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id); //TODO deprecated
 	if (! empty($targetcompany->state_id) && empty($targetcompany->state))       $targetcompany->state=getState($targetcompany->state_id);
+	if (! empty($targetcompany->state_id) && !isset($targetcompany->departement_id))   $targetcompany->departement_id=getState($targetcompany->state_id,'2');
 
 	$reshook=0;
 	$stringaddress = '';
@@ -1263,46 +1265,44 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		}
 	}
 
-	// If line linked to a product
-	if ($idprod)
+	// We add ref of product (and supplier ref if defined)
+	$prefix_prodserv = "";
+	$ref_prodserv = "";
+	if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
 	{
-		// We add ref
-		if ($prodser->ref)
+		if ($prodser->isService())
 		{
-			$prefix_prodserv = "";
-			$ref_prodserv = "";
-			if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
-			{
-				if ($prodser->isService())
-				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
-				}
-				else
-				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
-				}
-			}
-
-			if (empty($hideref))
-			{
-				if ($issupplierline)
-				{
-					if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
-						$ref_prodserv = $ref_supplier;
-					elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
-						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
-					else
-						$ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';
-				}
-				else
-					$ref_prodserv = $prodser->ref; // Show local ref only
-
-				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
-			}
-
-			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
+		}
+		else
+		{
+			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 		}
 	}
+
+	if (empty($hideref))
+	{
+		if ($issupplierline)
+		{
+			if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
+				$ref_prodserv = $ref_supplier;
+			elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
+				$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
+			else	// Common case
+			{
+				$ref_prodserv = $prodser->ref; // Show local ref
+				if ($ref_supplier) $ref_prodserv.= ($prodser->ref?' (':'').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref?')':'');
+			}
+		}
+		else
+		{
+			$ref_prodserv = $prodser->ref; // Show local ref only
+		}
+
+		if (! empty($libelleproduitservice) && ! empty($ref_prodserv)) $ref_prodserv .= " - ";
+	}
+
+	$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
 	if (! empty($conf->global->CATEGORY_ADD_DESC_INTO_DOC) && $idprod && ! empty($conf->categorie->enabled))
@@ -1842,10 +1842,14 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
         	if ($object->lines[$i]->special_code == 3) return '';
 		if (empty($hidedetails) || $hidedetails > 1)
 		{
-			if($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
+			if ($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)
 			{
-			 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-			 	$result = ( $object->lines[$i]->situation_percent - $prev_progress) . '%';
+				$prev_progress = 0;
+				if (method_exists($object, 'get_prev_progress'))
+				{
+			 		$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+				}
+			 	$result = ($object->lines[$i]->situation_percent - $prev_progress) . '%';
 			}
 			else
 				$result = $object->lines[$i]->situation_percent . '%';
@@ -1892,12 +1896,17 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         if (empty($hidedetails) || $hidedetails > 1)
         {
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
-        	if ($object->lines[$i]->situation_percent > 0 )
+        	if ($object->lines[$i]->situation_percent > 0)
         	{
-		 	$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-		 	$progress = ( $object->lines[$i]->situation_percent - $prev_progress) /100;
-		 	$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
-		}
+        		$prev_progress = 0;
+        		$progress = 1;
+        		if (method_exists($object, 'get_prev_progress'))
+        		{
+					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
+        		}
+				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
+			}
         	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
 	}

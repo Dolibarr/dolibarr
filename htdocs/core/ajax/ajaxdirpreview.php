@@ -86,7 +86,12 @@ else    // For no ajax call
     $relativepath=$ecmdir->getRelativePath();
     $upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
-if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
+
+if (empty($url))
+{
+	if (GETPOSTISSET('website')) $url=DOL_URL_ROOT.'/website/index.php';
+	else $url=DOL_URL_ROOT.'/ecm/index.php';
+}
 
 // Load traductions files
 $langs->loadLangs(array("ecm","companies","other"));
@@ -153,6 +158,8 @@ print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
+if (! empty($website)) $param.='&website='.$website;
+if (! empty($pageid))  $param.='&pageid='.$pageid;
 
 
 // Dir scan
@@ -222,6 +229,12 @@ if ($type == 'directory')
     		$relativepath=GETPOST('file','alpha');
     		if ($relativepath && $relativepath!= '/') $relativepath.='/';
     		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
+   	    	if (GETPOSTISSET('website'))
+	    	{
+	    		$param.='&file_manager=1';
+	    		if (!preg_match('/website=/',$param)) $param.='&website='.urlencode(GETPOST('website','alpha'));
+	    		if (!preg_match('/pageid=/',$param)) $param.='&pageid='.urlencode(GETPOST('pageid','int'));
+	    	}
     	}
     	else
     	{
@@ -255,28 +268,35 @@ if ($type == 'directory')
 
     	if ($module == 'medias')
     	{
+    		$useinecm = 2;
     		$modulepart='medias';
-        	$perm=($user->rights->websites->creer || $user->rights->emailing->creer);
+        	$perm=($user->rights->website->write || $user->rights->emailing->creer);
+        	$title='none';
     	}
     	else
     	{
+    		$useinecm = 1;
     		$modulepart='ecm';
         	$perm=$user->rights->ecm->upload;
+        	$title='';	// Use default
     	}
 
-		$formfile->list_of_documents($filearray,'',$modulepart,$param,1,$relativepath,$perm,1,$textifempty,$maxlengthname,'',$url);
+    	// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
+    	// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
+    	//var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
+		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
     }
 }
 
 
-if ($section)
-{
+//if ($section)
+//{
 	$useajax=1;
 	if (! empty($conf->dol_use_jmobile)) $useajax=0;
 	if (empty($conf->use_javascript_ajax)) $useajax=0;
 	if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
 
-	$param.=($param?'?':'').(preg_replace('/^&/','',$param));
+	//$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
 	if ($useajax || $action == 'delete')
 	{
@@ -295,14 +315,14 @@ if ($section)
 
 	if ($useajax)
 	{
-		// Enable jquery handlers on new generated HTML objects
+		// Enable jquery handlers button to delete files
 		print '<script type="text/javascript">'."\n";
 		print 'jQuery(document).ready(function() {'."\n";
-		print 'jQuery(".deletefilelink").click(function(e) { jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
+		print 'jQuery(".deletefilelink").click(function(e) { console.log("We click on button with class deletefilelink"); jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
 		print '});'."\n";
 		print '</script>'."\n";
 	}
-}
+//}
 
 // Close db if mode is not noajax
 if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();

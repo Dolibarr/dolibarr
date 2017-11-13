@@ -689,18 +689,19 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
+						$out.= '<option a value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
 					}
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
 					{
 						$foundselected=true;
-						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
+						$out.= '<option b value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
 					}
 					else
 					{
-						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
+						$out.= '<option c value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
 					}
-					$out.= dol_trunc($row['label'],$maxlength,'middle');
+					if ($row['label']) $out.= dol_trunc($row['label'],$maxlength,'middle');
+					else $out.= '&nbsp;';
 					if ($row['code_iso']) $out.= ' ('.$row['code_iso'] . ')';
 					$out.= '</option>';
 				}
@@ -1330,7 +1331,7 @@ class Form
 			}
 
 			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-			if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected':'').'></option>';
+			if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>&nbsp;</option>';
 			if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans("Internal").'</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -3551,9 +3552,10 @@ class Form
 	 * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int			$height          	Force height of box
 	 *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
+	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=200, $width=500)
+	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice='', $useajax=0, $height=200, $width=500, $disableformtag=0)
 	{
 		global $langs,$conf;
 		global $useglobalvars;
@@ -3782,9 +3784,10 @@ class Form
 		{
 			$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
-			$formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
+			if (empty($disableformtag)) $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
+
 			$formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
-			$formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+			if (empty($disableformtag)) $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
 			$formconfirm.= '<table width="100%" class="valid">'."\n";
 
@@ -3810,7 +3813,7 @@ class Form
 
 			$formconfirm.= '</table>'."\n";
 
-			$formconfirm.= "</form>\n";
+			if (empty($disableformtag)) $formconfirm.= "</form>\n";
 			$formconfirm.= '<br>';
 
 			$formconfirm.= "<!-- end form_confirm -->\n";
@@ -5508,7 +5511,7 @@ class Form
 			    		cache: true
 			    	},
 	 				language: select2arrayoflanguage,
-					containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
+					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',

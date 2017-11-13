@@ -1957,7 +1957,7 @@ if (($action == 'delete' && (empty($conf->use_javascript_ajax) || ! empty($conf-
 if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',260,600);
 }
 
 
@@ -2159,6 +2159,13 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $somethingshown=$formfile->numoffiles;
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+    $MAXEVENT = 10;
+
+    // List of actions on element
+    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+    $formactions = new FormActions($db);
+    $somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT);
 
     print '</div></div></div>';
 }

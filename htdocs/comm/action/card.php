@@ -771,9 +771,9 @@ if ($action == 'create')
 		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
 		if (!empty($user->societe_id)) {
-			print $form->select_company($user->societe_id, 'socid', '', 1, 1, 0, $events);
+			print $form->select_company($user->societe_id, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300');
 		} else {
-			print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events);
+			print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth300');
 		}
 
 	}
@@ -781,7 +781,7 @@ if ($action == 'create')
 
 	// Related contact
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-	$form->selectcontacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth200');
+	print $form->selectcontacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth300');
 	print '</td></tr>';
 
 
@@ -985,7 +985,7 @@ if ($id > 0)
 		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
-		$userepeatevent=0;	// Dev in progress
+		$userepeatevent=($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);	// Dev in progress
 		if ($userepeatevent)
 		{
 			// Repeat

@@ -362,7 +362,7 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->ref_fourn, $lines[$i]->fk_unit);
+									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->ref_supplier, $lines[$i]->fk_unit);
 
 									if ($result > 0) {
 										$lineid = $result;
@@ -523,10 +523,10 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$predef='';
-		$ref_fourn = GETPOST('fourn_ref');
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$ref_supplier = GETPOST('fourn_ref','alpha');
 
 		if (GETPOST('prod_entry_mode') == 'free')
 		{
@@ -614,6 +614,7 @@ if (empty($reshook))
 					$label = $productsupplier->label;
 					$desc = $productsupplier->description;
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
+					$ref_supplier = $productsupplier->ref_supplier;
 
 					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
@@ -641,7 +642,7 @@ if (empty($reshook))
 						$buyingprice,
 						$label,
 						$array_options,
-						$ref_fourn,
+						$ref_supplier,
 						$fk_unit
 						);
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
@@ -692,7 +693,7 @@ if (empty($reshook))
 					$price_base_type = 'HT';
 				}
 
-				$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_fourn, $fk_unit);
+				$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $ttc, $info_bits, $type, - 1, 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $ref_supplier, $fk_unit);
 				//$result = $object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit);
 			}
 
@@ -829,9 +830,9 @@ if (empty($reshook))
 
 		if (! $error) {
 			$db->begin();
-			$ref_fourn = GETPOST('fourn_ref');
+			$ref_supplier = GETPOST('fourn_ref','alpha');
 			$fk_unit = GETPOST('units');
-			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $array_options, $ref_fourn, $fk_unit);
+			$result = $object->updateline(GETPOST('lineid'), $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $array_options, $ref_supplier, $fk_unit);
 
 			if ($result >= 0) {
 				$db->commit();

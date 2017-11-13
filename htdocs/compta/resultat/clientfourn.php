@@ -907,7 +907,7 @@ else
 			    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity = " . getEntity('c_paiement');
-			    $sql.= " WHERE p.entity = ".getEntity('donation');
+			    $sql.= " WHERE p.entity IN (".getEntity('donation').")";
 			    $sql.= " AND fk_statut >= 2";
 			}
 			if (! empty($date_start) && ! empty($date_end))

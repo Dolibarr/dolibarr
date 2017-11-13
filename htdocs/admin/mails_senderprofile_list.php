@@ -221,8 +221,8 @@ foreach ($search_array_options as $key => $val)
 	$tmpkey=preg_replace('/search_options_/','',$key);
 	$typ=$extrafields->attribute_type[$tmpkey];
 	$mode_search=0;
-	if (in_array($typ, array('int','double','real'))) $mode_search=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode_search=2;    		// Search on a foreign key int
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
+	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
 	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
 	{
 		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
@@ -318,7 +318,7 @@ $arrayofmassactions =  array(
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
 if ($user->rights->monmodule->delete) $arrayofmassactions['delete']=$langs->trans("Delete");
-if ($massaction == 'presend') $arrayofmassactions=array();
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

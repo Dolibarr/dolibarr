@@ -345,7 +345,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 290px;
+	min-width: 300px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -405,9 +405,12 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
-
+td.actionbuttons a {
+    padding-left: 6px;
+}
 select.flat, form.flat select {
 	font-weight: normal;
+	height: 2.1em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -676,10 +679,9 @@ div.myavailability {
 	padding-bottom: 10px;
 }
 .checkallactions {
-	/*vertical-align: text-bottom;
-    margin-top: 6px;*/
     margin-left: 2px;		/* left must be same than right to keep checkbox centered */
     margin-right: 2px;		/* left must be same than right to keep checkbox centered */
+    vertical-align: middle;
 }
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;
@@ -766,7 +768,9 @@ div.myavailability {
     box-shadow: 1px 1px 25px #aaa;
     max-width: calc(100% - 56px);
 }
-
+.fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
+	color: #505;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {

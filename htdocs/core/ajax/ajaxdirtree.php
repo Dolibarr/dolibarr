@@ -231,24 +231,18 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    		}
 
 	    		// Enable jquery handlers on new generated HTML objects
-				print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+	    		// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
+				print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip (reload into ajaxdirtree) -->\n";
 	    		print '<script type="text/javascript">
 	            	jQuery(document).ready(function () {
 	            		jQuery(".classfortooltip").tooltip({
 							show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-							hide: { effect:\'toggle\', delay: 50 },
+							hide: { delay: 50 }, 	/* If I enable effect:\'toggle\' here, a bug appears: the tooltip is shown when collpasing a new dir if it was shown before */
 							tooltipClass: "mytooltip",
 							content: function () {
 	              				return $(this).prop(\'title\');		/* To force to get title as is */
 	          				}
 	            		});
-
-						/* TODO Remove this. Is replaced with function as 3rd parameter of fileTree */
-	            		jQuery(".fmdirlia").click(function(e) {
-	            			id=jQuery(this).attr(\'id\').substr(12);
-	            			jQuery("#formuserfile_section_dir").val(jQuery(this).attr(\'rel\'));
-	            			jQuery("#formuserfile_section_id").val(id);
-	    				});
 	            	});
 	            	</script>';
 

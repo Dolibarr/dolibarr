@@ -215,7 +215,8 @@ class ExpenseReport extends CommonObject
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
-            if (is_array($this->lines) && count($this->lines)>0) {
+            if (is_array($this->lines) && count($this->lines)>0)
+            {
 	            foreach ($this->lines as $i => $val)
 	            {
 	                $newndfline=new ExpenseReportLine($this->db);
@@ -231,6 +232,12 @@ class ExpenseReport extends CommonObject
 	                    break;
 	                }
 	            }
+            }
+
+            if (! $error)
+            {
+            	$result=$this->insertExtraFields();
+           		if ($result < 0) $error++;
             }
 
             if (! $error)

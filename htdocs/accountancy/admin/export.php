@@ -77,11 +77,6 @@ $model_option = array (
         'label' => 'ACCOUNTING_EXPORT_DATE',
         'param' => '',
     ),
-    //'ACCOUNTING_EXPORT_PIECE',
-    //'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
-    //'ACCOUNTING_EXPORT_LABEL',
-    //'ACCOUNTING_EXPORT_AMOUNT',
-    //'ACCOUNTING_EXPORT_DEVISE',
 );
 
 /*
@@ -143,7 +138,6 @@ $form = new Form($db);
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
 
-$head = admin_accounting_prepare_head();
 
 print "\n".'<script type="text/javascript" language="javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
@@ -193,7 +187,6 @@ print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'export', $langs->trans("Configuration"), -1, 'technic');
 
 /*
  * Main Options

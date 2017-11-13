@@ -52,7 +52,6 @@ $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action','alpha');
 
-
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
@@ -66,6 +65,18 @@ if (GETPOST('editsource')) { $action='editsource'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 if (GETPOST('createfromclone')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
+
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+//if (! $sortfield) $sortfield='name';
+//if (! $sortorder) $sortorder='ASC';
 
 if (empty($action)) $action='preview';
 
@@ -109,7 +120,6 @@ $fileindex=$pathofwebsite.'/index.php';
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
 
 
 /*
@@ -1151,6 +1161,8 @@ if ($action == 'edit')
 $style='';
 if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style=' margin-bottom: 5px;';
 
+if (! GETPOST('hide_websitemenu'))
+{
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
 
@@ -1211,6 +1223,23 @@ if (count($object->records) > 0)
 		print ' &nbsp; ';
 
 		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+		/*print '<a class="button button_file_manager"'.$disabled.'>'.dol_escape_htmltag($langs->trans("MediaFiles")).'</a>';
+		print '<script language="javascript">
+			jQuery(document).ready(function () {
+           		jQuery(".button_file_manager").click(function () {
+					var $dialog = $(\'<div></div>\').html(\'<iframe style="border: 0px;" src="'.DOL_URL_ROOT.'/website/index.php?hide_websitemenu=1&dol_hide_topmenu=1&dol_hide_leftmenu=1&file_manager=1&website='.$website.'&pageid='.$pageid.'" width="100%" height="100%"></iframe>\')
+					.dialog({
+						autoOpen: false,
+						modal: true,
+						height: 500,
+						width: \'80%\',
+						title: "'.dol_escape_js($langs->trans("FileManager")).'"
+					});
+					$dialog.dialog(\'open\');
+				});
+			});
+			</script>';
+		*/
 	}
 
 	print '</div>';
@@ -1455,8 +1484,10 @@ else
 	$action='';
 }
 
-
 print '</div>';	// end current websitebar
+}
+
+
 
 $head = array();
 
@@ -1792,6 +1823,7 @@ if ($action == 'file_manager')
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
+	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 }
 

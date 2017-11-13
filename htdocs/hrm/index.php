@@ -77,7 +77,7 @@ print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
 
 
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
-if ( empty($setupcompanynotcomplete))
+if (! empty($setupcompanynotcomplete))
 {
 	$langs->load("errors");
 	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
@@ -165,7 +165,7 @@ $langs->load("boxes");
 // Latest leave requests
 if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 {
-    $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.photo, u.statut, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
+    $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut, x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
     $sql.= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE u.rowid = x.fk_user";
     $sql.= " AND x.entity = ".$conf->entity;
@@ -203,14 +203,18 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
             while ($i < $num && $i < $max)
             {
                 $obj = $db->fetch_object($result);
+
                 $holidaystatic->id=$obj->rowid;
                 $holidaystatic->ref=$obj->ref;
+
                 $userstatic->id=$obj->uid;
                 $userstatic->lastname=$obj->lastname;
                 $userstatic->firstname=$obj->firstname;
                 $userstatic->login=$obj->login;
                 $userstatic->photo=$obj->photo;
+                $userstatic->email=$obj->email;
                 $userstatic->statut=$obj->statut;
+
                 print '<tr class="oddeven">';
                 print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
@@ -242,7 +246,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 // Last expense report (old module)
 if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = d.fk_user";
@@ -277,14 +281,18 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 			while ($i < $num && $i < $max)
 			{
 				$obj = $db->fetch_object($result);
+
 				$deplacementstatic->ref=$obj->rowid;
 				$deplacementstatic->id=$obj->rowid;
+
 				$userstatic->id=$obj->uid;
 				$userstatic->lastname=$obj->lastname;
 				$userstatic->firstname=$obj->firstname;
 				$userstatic->login=$obj->login;
+                $userstatic->email=$obj->email;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
+
 				print '<tr class="oddeven">';
 				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
@@ -309,7 +317,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 // Last expense report (new module)
 if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 {
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = x.fk_user_author";
@@ -344,14 +352,18 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 			while ($i < $num && $i < $max)
 			{
 				$obj = $db->fetch_object($result);
+
 				$expensereportstatic->id=$obj->rowid;
 				$expensereportstatic->ref=$obj->ref;
+
 				$userstatic->id=$obj->uid;
 				$userstatic->lastname=$obj->lastname;
 				$userstatic->firstname=$obj->firstname;
+                $userstatic->email=$obj->email;
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
+
 				print '<tr class="oddeven">';
 				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';

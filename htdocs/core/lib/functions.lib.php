@@ -109,7 +109,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
- *									'email_template', 'event',
+ *									'email_template', 'event', 'donation'
  *									'c_paiement', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
@@ -1478,7 +1478,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (! empty($object->label)) $morehtmlref.='<div class="refidno">'.$object->label.'</div>';
 	}
 
-	if ($object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories')
+	if (method_exists($object, 'getBannerAddress') && $object->element != 'product' && $object->element != 'bookmark' && $object->element != 'ecm_directories' && $object->element != 'ecm_files')
 	{
 		$morehtmlref.='<div class="refidno">';
 		$morehtmlref.=$object->getBannerAddress('refaddress',$object);
@@ -1578,6 +1578,12 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 		{
 			$ret.="\n".$object->state;
 		}
+	}
+	else if (in_array($object->country_code,array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
+	{
+                $ret .= ($ret ? $sep : '' ).$object->zip;
+                $ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
+                $ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
@@ -3216,18 +3222,21 @@ function img_allow($allow, $titlealt = 'default')
  *
  *	@param	string	$file		Filename
  * 	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *  @param	string	$morecss	More css
  *	@return string     			Return img tag
  */
-function img_mime($file, $titlealt = '')
+function img_mime($file, $titlealt = '', $morecss='')
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$mimetype = dol_mimetype($file, '', 1);
 	$mimeimg = dol_mimetype($file, '', 2);
+	$mimefa = dol_mimetype($file, '', 4);
 
 	if (empty($titlealt)) $titlealt = 'Mime type: '.$mimetype;
 
-	return img_picto_common($titlealt, 'mime/'.$mimeimg);
+	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
+	return '<i class="fa fa-'.$mimefa.' paddingright"></i>';
 }
 
 
@@ -6368,7 +6377,7 @@ function printCommonFooter($zone='private')
 	if (empty($reshook))
 	{
 		if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
-	
+
 		print "\n";
 		if (! empty($conf->use_javascript_ajax))
 		{
@@ -6385,7 +6394,7 @@ function printCommonFooter($zone='private')
 				print "  $('.login_block').toggle()\n";
 				print '});'."\n";
 			}
-	
+
 			// Google Analytics (need Google module)
 			if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 			{
@@ -6404,7 +6413,7 @@ function printCommonFooter($zone='private')
 					print '  })();'."\n";
 				}
 			}
-		
+
 			// End of tuning
 			if (! empty($_SERVER['MAIN_SHOW_TUNING_INFO']) || ! empty($conf->global->MAIN_SHOW_TUNING_INFO))
 			{
@@ -6434,7 +6443,7 @@ function printCommonFooter($zone='private')
 				}
 				print '");'."\n";
 			}
-		
+
 			print "\n".'</script>'."\n";
 		}
 
@@ -6443,7 +6452,7 @@ function printCommonFooter($zone='private')
 		{
 			print_r(xdebug_get_code_coverage());
 		}
-			
+
 		// If there is some logs in buffer to show
 		if (count($conf->logbuffer))
 		{
@@ -6736,92 +6745,93 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
  *
  *	@param	string	$file		Filename we looking for MIME type
  *  @param  string	$default    Default mime type if extension not found in known list
- * 	@param	int		$mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language
+ * 	@param	int		$mode    	0=Return full mime, 1=otherwise short mime string, 2=image for mime type, 3=source language, 4=css of font fa
  *	@return string 		    	Return a mime type family (text/xxx, application/xxx, image/xxx, audio, video, archive)
  *  @see    image_format_supported (images.lib.php)
  */
-function dol_mimetype($file,$default='application/octet-stream',$mode=0)
+function dol_mimetype($file, $default='application/octet-stream', $mode=0)
 {
 	$mime=$default;
 	$imgmime='other.png';
+	$famime='file-o';
 	$srclang='';
 
 	$tmpfile=preg_replace('/\.noexe$/','',$file);
 
 	// Text files
-	if (preg_match('/\.txt$/i',$tmpfile))         			   { $mime='text/plain'; $imgmime='text.png'; }
-	if (preg_match('/\.rtx$/i',$tmpfile))                      { $mime='text/richtext'; $imgmime='text.png'; }
-	if (preg_match('/\.csv$/i',$tmpfile))					   { $mime='text/csv'; $imgmime='text.png'; }
-	if (preg_match('/\.tsv$/i',$tmpfile))					   { $mime='text/tab-separated-values'; $imgmime='text.png'; }
-	if (preg_match('/\.(cf|conf|log)$/i',$tmpfile))            { $mime='text/plain'; $imgmime='text.png'; }
-	if (preg_match('/\.ini$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='ini'; }
-	if (preg_match('/\.css$/i',$tmpfile))                      { $mime='text/css'; $imgmime='css.png'; $srclang='css'; }
+	if (preg_match('/\.txt$/i',$tmpfile))         			   { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.rtx$/i',$tmpfile))                      { $mime='text/richtext'; $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.csv$/i',$tmpfile))					   { $mime='text/csv';      $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.tsv$/i',$tmpfile))					   { $mime='text/tab-separated-values'; $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.(cf|conf|log)$/i',$tmpfile))            { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
+	if (preg_match('/\.ini$/i',$tmpfile))                      { $mime='text/plain';    $imgmime='text.png'; $srclang='ini'; $famime='file-text-o'; }
+	if (preg_match('/\.css$/i',$tmpfile))                      { $mime='text/css';      $imgmime='css.png'; $srclang='css'; $famime='file-text-o'; }
 	// Certificate files
-	if (preg_match('/\.(crt|cer|key|pub)$/i',$tmpfile))        { $mime='text/plain'; $imgmime='text.png'; }
+	if (preg_match('/\.(crt|cer|key|pub)$/i',$tmpfile))        { $mime='text/plain';    $imgmime='text.png'; $famime='file-text-o'; }
 	// HTML/XML
-	if (preg_match('/\.(html|htm|shtml)$/i',$tmpfile))         { $mime='text/html'; $imgmime='html.png'; $srclang='html'; }
-	if (preg_match('/\.(xml|xhtml)$/i',$tmpfile))              { $mime='text/xml'; $imgmime='other.png'; $srclang='xml'; }
+	if (preg_match('/\.(html|htm|shtml)$/i',$tmpfile))         { $mime='text/html';     $imgmime='html.png'; $srclang='html'; $famime='file-text-o'; }
+	if (preg_match('/\.(xml|xhtml)$/i',$tmpfile))              { $mime='text/xml';      $imgmime='other.png'; $srclang='xml'; $famime='file-text-o'; }
 	// Languages
-	if (preg_match('/\.bas$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='bas'; }
-	if (preg_match('/\.(c)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='c'; }
-	if (preg_match('/\.(cpp)$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='text.png'; $srclang='cpp'; }
-	if (preg_match('/\.(h)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='h'; }
-	if (preg_match('/\.(java|jsp)$/i',$tmpfile))               { $mime='text/plain'; $imgmime='text.png'; $srclang='java'; }
-	if (preg_match('/\.php([0-9]{1})?$/i',$tmpfile))           { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
-	if (preg_match('/\.phtml$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='php.png'; $srclang='php'; }
-	if (preg_match('/\.(pl|pm)$/i',$tmpfile))                  { $mime='text/plain'; $imgmime='pl.png'; $srclang='perl'; }
-	if (preg_match('/\.sql$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql'; }
-	if (preg_match('/\.js$/i',$tmpfile))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js'; }
+	if (preg_match('/\.bas$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='bas';  $famime='file-code-o'; }
+	if (preg_match('/\.(c)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='c';  $famime='file-code-o'; }
+	if (preg_match('/\.(cpp)$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='text.png'; $srclang='cpp';  $famime='file-code-o'; }
+	if (preg_match('/\.(h)$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='h';  $famime='file-code-o'; }
+	if (preg_match('/\.(java|jsp)$/i',$tmpfile))               { $mime='text/plain'; $imgmime='text.png'; $srclang='java';  $famime='file-code-o'; }
+	if (preg_match('/\.php([0-9]{1})?$/i',$tmpfile))           { $mime='text/plain'; $imgmime='php.png'; $srclang='php';  $famime='file-code-o'; }
+	if (preg_match('/\.phtml$/i',$tmpfile))                    { $mime='text/plain'; $imgmime='php.png'; $srclang='php';  $famime='file-code-o'; }
+	if (preg_match('/\.(pl|pm)$/i',$tmpfile))                  { $mime='text/plain'; $imgmime='pl.png'; $srclang='perl';  $famime='file-code-o'; }
+	if (preg_match('/\.sql$/i',$tmpfile))                      { $mime='text/plain'; $imgmime='text.png'; $srclang='sql';  $famime='file-code-o'; }
+	if (preg_match('/\.js$/i',$tmpfile))                       { $mime='text/x-javascript'; $imgmime='jscript.png'; $srclang='js';  $famime='file-code-o'; }
 	// Open office
-	if (preg_match('/\.odp$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.presentation'; $imgmime='ooffice.png'; }
-	if (preg_match('/\.ods$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.spreadsheet'; $imgmime='ooffice.png'; }
-	if (preg_match('/\.odt$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.text'; $imgmime='ooffice.png'; }
+	if (preg_match('/\.odp$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.presentation'; $imgmime='ooffice.png'; $famime='file-powerpoint-o'; }
+	if (preg_match('/\.ods$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.spreadsheet';  $imgmime='ooffice.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.odt$/i',$tmpfile))                      { $mime='application/vnd.oasis.opendocument.text';         $imgmime='ooffice.png'; $famime='file-word-o'; }
 	// MS Office
-	if (preg_match('/\.mdb$/i',$tmpfile))					   { $mime='application/msaccess'; $imgmime='mdb.png'; }
-	if (preg_match('/\.doc(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
-	if (preg_match('/\.dot(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; }
-	if (preg_match('/\.xlt(x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xla(m)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xls$/i',$tmpfile))			           { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; }
-	if (preg_match('/\.xls(b|m|x)$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; }
-	if (preg_match('/\.pps(m|x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; }
-	if (preg_match('/\.ppt(m|x)?$/i',$tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; }
+	if (preg_match('/\.mdb$/i',$tmpfile))					   { $mime='application/msaccess'; $imgmime='mdb.png'; $famime='file-o'; }
+	if (preg_match('/\.doc(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; $famime='file-word-o'; }
+	if (preg_match('/\.dot(x|m)?$/i',$tmpfile))				   { $mime='application/msword'; $imgmime='doc.png'; $famime='file-word-o'; }
+	if (preg_match('/\.xlt(x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.xla(m)?$/i',$tmpfile))				   { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.xls$/i',$tmpfile))			           { $mime='application/vnd.ms-excel'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.xls(b|m|x)$/i',$tmpfile))			   { $mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime='xls.png'; $famime='file-excel-o'; }
+	if (preg_match('/\.pps(m|x)?$/i',$tmpfile))				   { $mime='application/vnd.ms-powerpoint'; $imgmime='ppt.png'; $famime='file-powerpoint-o'; }
+	if (preg_match('/\.ppt(m|x)?$/i',$tmpfile))				   { $mime='application/x-mspowerpoint'; $imgmime='ppt.png'; $famime='file-powerpoint-o'; }
 	// Other
-	if (preg_match('/\.pdf$/i',$tmpfile))                      { $mime='application/pdf'; $imgmime='pdf.png'; }
+	if (preg_match('/\.pdf$/i',$tmpfile))                      { $mime='application/pdf'; $imgmime='pdf.png'; $famime='file-pdf-o'; }
 	// Scripts
-	if (preg_match('/\.bat$/i',$tmpfile))                      { $mime='text/x-bat'; $imgmime='script.png'; $srclang='dos'; }
-	if (preg_match('/\.sh$/i',$tmpfile))                       { $mime='text/x-sh'; $imgmime='script.png'; $srclang='bash'; }
-	if (preg_match('/\.ksh$/i',$tmpfile))                      { $mime='text/x-ksh'; $imgmime='script.png'; $srclang='bash'; }
-	if (preg_match('/\.bash$/i',$tmpfile))                     { $mime='text/x-bash'; $imgmime='script.png'; $srclang='bash'; }
+	if (preg_match('/\.bat$/i',$tmpfile))                      { $mime='text/x-bat';  $imgmime='script.png'; $srclang='dos'; $famime='file-code-o'; }
+	if (preg_match('/\.sh$/i',$tmpfile))                       { $mime='text/x-sh';   $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
+	if (preg_match('/\.ksh$/i',$tmpfile))                      { $mime='text/x-ksh';  $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
+	if (preg_match('/\.bash$/i',$tmpfile))                     { $mime='text/x-bash'; $imgmime='script.png'; $srclang='bash'; $famime='file-code-o'; }
 	// Images
-	if (preg_match('/\.ico$/i',$tmpfile))                      { $mime='image/x-icon'; $imgmime='image.png'; }
-	if (preg_match('/\.(jpg|jpeg)$/i',$tmpfile))			   { $mime='image/jpeg'; $imgmime='image.png'; }
-	if (preg_match('/\.png$/i',$tmpfile))					   { $mime='image/png'; $imgmime='image.png'; }
-	if (preg_match('/\.gif$/i',$tmpfile))					   { $mime='image/gif'; $imgmime='image.png'; }
-	if (preg_match('/\.bmp$/i',$tmpfile))					   { $mime='image/bmp'; $imgmime='image.png'; }
-	if (preg_match('/\.(tif|tiff)$/i',$tmpfile))			   { $mime='image/tiff'; $imgmime='image.png'; }
+	if (preg_match('/\.ico$/i',$tmpfile))                      { $mime='image/x-icon'; $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.(jpg|jpeg)$/i',$tmpfile))			   { $mime='image/jpeg';   $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.png$/i',$tmpfile))					   { $mime='image/png';    $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.gif$/i',$tmpfile))					   { $mime='image/gif';    $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.bmp$/i',$tmpfile))					   { $mime='image/bmp';    $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.(tif|tiff)$/i',$tmpfile))			   { $mime='image/tiff';   $imgmime='image.png'; $famime='file-image-o'; }
 	// Calendar
-	if (preg_match('/\.vcs$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; }
-	if (preg_match('/\.ics$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; }
+	if (preg_match('/\.vcs$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
+	if (preg_match('/\.ics$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
 	// Other
-	if (preg_match('/\.torrent$/i',$tmpfile))				   { $mime='application/x-bittorrent'; $imgmime='other.png'; }
+	if (preg_match('/\.torrent$/i',$tmpfile))				   { $mime='application/x-bittorrent'; $imgmime='other.png'; $famime='file-o'; }
 	// Audio
-	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$tmpfile)) { $mime='audio'; $imgmime='audio.png'; }
+	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i',$tmpfile)) { $mime='audio'; $imgmime='audio.png'; $famime='file-audio-o'; }
 	// Video
-	if (preg_match('/\.ogv$/i',$tmpfile))                      { $mime='video/ogg'; $imgmime='video.png'; }
-	if (preg_match('/\.webm$/i',$tmpfile))                     { $mime='video/webm'; $imgmime='video.png'; }
-	if (preg_match('/\.avi$/i',$tmpfile))                      { $mime='video/x-msvideo'; $imgmime='video.png'; }
-	if (preg_match('/\.divx$/i',$tmpfile))                     { $mime='video/divx'; $imgmime='video.png'; }
-	if (preg_match('/\.xvid$/i',$tmpfile))                     { $mime='video/xvid'; $imgmime='video.png'; }
-	if (preg_match('/\.(wmv|mpg|mpeg)$/i',$tmpfile))           { $mime='video'; $imgmime='video.png'; }
+	if (preg_match('/\.ogv$/i',$tmpfile))                      { $mime='video/ogg';       $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.webm$/i',$tmpfile))                     { $mime='video/webm';      $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.avi$/i',$tmpfile))                      { $mime='video/x-msvideo'; $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.divx$/i',$tmpfile))                     { $mime='video/divx';      $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.xvid$/i',$tmpfile))                     { $mime='video/xvid';      $imgmime='video.png'; $famime='file-video-o'; }
+	if (preg_match('/\.(wmv|mpg|mpeg)$/i',$tmpfile))           { $mime='video';           $imgmime='video.png'; $famime='file-video-o'; }
 	// Archive
-	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$tmpfile))   { $mime='archive'; $imgmime='archive.png'; }    // application/xxx where zzz is zip, ...
+	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i',$tmpfile))   { $mime='archive'; $imgmime='archive.png'; $famime='file-archive-o'; }    // application/xxx where zzz is zip, ...
 	// Exe
-	if (preg_match('/\.(exe|com)$/i',$tmpfile))                { $mime='application/octet-stream'; $imgmime='other.png'; }
+	if (preg_match('/\.(exe|com)$/i',$tmpfile))                { $mime='application/octet-stream'; $imgmime='other.png'; $famime='file-o'; }
 	// Lib
-	if (preg_match('/\.(dll|lib|o|so|a)$/i',$tmpfile))         { $mime='library'; $imgmime='library.png'; }
+	if (preg_match('/\.(dll|lib|o|so|a)$/i',$tmpfile))         { $mime='library'; $imgmime='library.png'; $famime='file-o'; }
 	// Err
-	if (preg_match('/\.err$/i',$tmpfile))                      { $mime='error'; $imgmime='error.png'; }
+	if (preg_match('/\.err$/i',$tmpfile))                      { $mime='error'; $imgmime='error.png'; $famime='file-text-o'; }
 
 	// Return string
 	if ($mode == 1)
@@ -6837,7 +6847,10 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	{
 		return $srclang;
 	}
-
+	if ($mode == 4)
+	{
+		return $famime;
+	}
 	return $mime;
 }
 

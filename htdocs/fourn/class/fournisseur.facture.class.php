@@ -1372,11 +1372,12 @@ class FactureFournisseur extends CommonInvoice
      * 	@param 		string	$fk_unit 			Code of the unit to use. Null to use the default one
      *  @param      int     $origin_id          id origin document
 	 *  @param		double	$pu_ht_devise		Amount in currency
+	 *  @param		string	$ref_supplier		Supplier ref
      *	@return    	int             			>0 if OK, <0 if KO
      *
      *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
      */
-    public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0, $fk_unit=null, $origin_id=0, $pu_ht_devise=0)
+    public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0, $fk_unit=null, $origin_id=0, $pu_ht_devise=0, $ref_supplier='')
     {
         dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -1435,6 +1436,7 @@ class FactureFournisseur extends CommonInvoice
         //$this->line->label=$label;	// deprecated
         $this->line->desc=$desc;
         $this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
+		$this->line->ref_supplier=$ref_supplier;
 
         $this->line->vat_src_code=$vat_src_code;
         $this->line->tva_tx=$txtva;
@@ -2615,7 +2617,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
-		$sql.= " description ='".$this->db->escape($this->description)."'";
+		$sql.= "  description ='".$this->db->escape($this->description)."'";
+		$sql.= ", ref ='".$this->db->escape($this->ref)."'";
 		$sql.= ", pu_ht = ".price2num($this->pu_ht);
 		$sql.= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql.= ", qty = ".price2num($this->qty);
@@ -2743,7 +2746,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
         // Insertion dans base de la ligne
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' (fk_facture_fourn, fk_parent_line, label, description, qty,';
+        $sql.= ' (fk_facture_fourn, fk_parent_line, label, description, ref, qty,';
         $sql.= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' fk_product, product_type, remise_percent, pu_ht, pu_ttc,';
         $sql.= ' date_start, date_end, fk_code_ventilation, rang, special_code,';
@@ -2754,6 +2757,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         $sql.= " ".($this->fk_parent_line>0?"'".$this->db->escape($this->fk_parent_line)."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
+        $sql.= " '".$this->db->escape($this->ref_supplier)."',";
         $sql.= " ".price2num($this->qty).",";
 
         $sql.= " ".(empty($this->vat_src_code)?"''":"'".$this->db->escape($this->vat_src_code)."'").",";

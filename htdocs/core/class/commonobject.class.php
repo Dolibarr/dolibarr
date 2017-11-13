@@ -3504,9 +3504,9 @@ abstract class CommonObject
 			// Description
 			print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
-			if ($this->element == 'supplier_proposal')
+			if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier')
 			{
-				print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
+				print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
 			}
 
 			// VAT
@@ -5620,7 +5620,7 @@ abstract class CommonObject
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				if (empty($extrafields->attribute_list[$key])) continue;												// 0 = Never visible field
-				if (($mode == 'create' || $mode == 'edit') && abs($extrafields->attribute_list[$key]) != 1) continue;	// <> -1 and <> 1 = not visible on forms, only on list
+				if (($mode == 'create' || $mode == 'edit') && abs($extrafields->attribute_list[$key]) != 1 && abs($extrafields->attribute_list[$key]) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 
 				// Load language if required
 				if (! empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
@@ -6173,15 +6173,23 @@ abstract class CommonObject
 			}
 		}
 
-		if (! $error && ! $notrigger) {
+		if (! $error)
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+		}
 
-			if (!$notrigger) {
-				// Call triggers
-				$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
-				if ($result < 0) { $error++; }
-				// End call triggers
-			}
+		if (! $error)
+		{
+			$result=$this->insertExtraFields();
+			if ($result < 0) $error++;
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Commit or rollback
