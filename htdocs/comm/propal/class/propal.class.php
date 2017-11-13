@@ -371,12 +371,12 @@ class Propal extends CommonObject
      *      by whose calling the method get_default_tva (societe_vendeuse, societe_acheteuse, '' product)
      *      and desc must already have the right value (it's up to the caller to manage multilanguage)
      *
-     * 		@param    	string		$desc				Description de la ligne
-     * 		@param    	float		$pu_ht				Prix unitaire
-     * 		@param    	float		$qty             	Quantite
-     * 		@param    	float		$txtva           	Taux de tva
-     * 		@param		float		$txlocaltax1		Local tax 1 rate
-     *  	@param		float		$txlocaltax2		Local tax 2 rate
+     * 		@param    	string		$desc				Description of line
+     * 		@param    	float		$pu_ht				Unit price
+     * 		@param    	float		$qty             	Quantity
+     * 		@param    	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+     * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
+     *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
      *		@param    	int			$fk_product      	Id du produit/service predefini
      * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
@@ -1018,11 +1018,15 @@ class Propal extends CommonObject
                             $fk_parent_line = 0;
                         }
 
+                        // Complete vat rate with code
+						$vatrate = $this->lines[$i]->tva_tx;
+						if ($this->lines[$i]->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$this->lines[$i]->vat_src_code.')';
+
 						$result = $this->addline(
 							$this->lines[$i]->desc,
 							$this->lines[$i]->subprice,
 							$this->lines[$i]->qty,
-							$this->lines[$i]->tva_tx,
+							$vatrate,
 							$this->lines[$i]->localtax1_tx,
 							$this->lines[$i]->localtax2_tx,
 							$this->lines[$i]->fk_product,
@@ -1227,7 +1231,6 @@ class Propal extends CommonObject
         if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $clonedObj->ref_client	= '';
 
         // Create clone
-
         $result=$clonedObj->create($user);
         if ($result < 0) $error++;
         else
