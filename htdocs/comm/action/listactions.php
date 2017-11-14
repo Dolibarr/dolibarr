@@ -120,6 +120,7 @@ $hookmanager->initHooks(array('agendalist'));
 
 $arrayfields=array(
 	'a.id'=>array('label'=>"Ref", 'checked'=>1),
+	'owner'=>array('label'=>"Owner", 'checked'=>1),
 	'a.label'=>array('label'=>"Title", 'checked'=>1),
 	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
 	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
@@ -128,7 +129,7 @@ $arrayfields=array(
 	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>1),
 	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
 	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	
+
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -278,7 +279,7 @@ if (! empty($actioncode))
  		else
  		{
  	        	$sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
- 		}		
+ 		}
         }
     }
 }
@@ -315,12 +316,12 @@ foreach ($search_array_options as $key => $val)
 	$crit=$val;
 	$tmpkey=preg_replace('/search_options_/','',$key);
 	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
+	$mode_search=0;
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
+	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
 	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
 	}
 }
 $sql.= $db->order($sortfield,$sortorder);
@@ -438,23 +439,23 @@ if ($resql)
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-	if (! empty($arrayfields['a.id']['checked']))	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-    	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
 		print '<td class="liste_titre" align="center">';
 		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
-	if (! empty($arrayfields['a.datep2']['checked']))	{	
+	if (! empty($arrayfields['a.datep2']['checked']))	{
 		print '<td class="liste_titre" align="center">';
 		print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
-	if (! empty($arrayfields['s.nom']['checked']))	print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['s.nom']['checked']))			print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.fk_contact']['checked']))	print '<td class="liste_titre"></td>';
-	if (! empty($arrayfields['a.fk_element']['checked']) && ! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.fk_element']['checked']))	print '<td class="liste_titre"></td>';
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -502,17 +503,17 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['a.id']['checked']))	 print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("ActionsOwnedByShort",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
-	if (! empty($arrayfields['c.libelle']['checked']))	 print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
-	if (! empty($arrayfields['a.label']['checked']))	 print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.id']['checked']))	      print_liste_field_titre($arrayfields['a.id']['label']        , $_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['owner']['checked']))        print_liste_field_titre($arrayfields['owner']['label']       , $_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['c.libelle']['checked']))	  print_liste_field_titre($arrayfields['c.libelle']['label']   , $_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label']     , $_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (! empty($arrayfields['a.datep']['checked']))	 print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['a.datep2']['checked']))	 print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.nom']['checked']))	 print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
-	if (! empty($arrayfields['a.fk_contact']['checked']))	 print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-    if (! empty($arrayfields['a.fk_element']['checked']) && ! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print_liste_field_titre("LinkedObject",$_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
-	
+	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label']     , $_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label']    , $_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label']       , $_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
+    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
+
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -572,14 +573,17 @@ if ($resql)
 		}
 
 		// User owner
-		print '<td class="tdoverflowmax100">';
-		if ($obj->fk_user_action > 0)
+		if (! empty($arrayfields['owner']['checked']))
 		{
-			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getNomUrl(-1);
+			print '<td class="tdoverflowmax100">';
+			if ($obj->fk_user_action > 0)
+			{
+				$userstatic->fetch($obj->fk_user_action);
+				print $userstatic->getNomUrl(-1);
+			}
+			else print '&nbsp;';
+			print '</td>';
 		}
-		else print '&nbsp;';
-		print '</td>';
 		if (! empty($arrayfields['c.libelle']['checked'])) {
 			// Type
 			print '<td>';
@@ -605,7 +609,7 @@ if ($resql)
 			print $actionstatic->label;
 			print '</td>';
 		}
-		
+
 		if (! empty($arrayfields['a.datep']['checked'])) {
 			// Start date
 			print '<td align="center" class="nowrap">';
@@ -653,7 +657,7 @@ if ($resql)
 			}
 			print '</td>';
 		}
-		if (! empty($arrayfields['a.fk_element']['checked']) && ! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) {
+		if (! empty($arrayfields['a.fk_element']['checked'])) {
 		        // Linked object
 		        print '<td>';
 		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
@@ -663,7 +667,7 @@ if ($resql)
               		print "&nbsp;";
 		        }
 		        print '</td>';
-	        
+
 		}
 		// Extra fields
 		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
