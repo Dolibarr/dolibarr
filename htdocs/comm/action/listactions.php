@@ -240,17 +240,17 @@ $sql.= " sp.lastname, sp.firstname";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON (c.id = a.fk_action)";
 $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object) ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+$sql.=" ,".MAIN_DB_PREFIX."c_actioncomm as c";
 // We must filter on resource table
 if ($resourceid > 0) $sql.=", ".MAIN_DB_PREFIX."element_resources as r";
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
-$sql.= " WHERE 1";
+$sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (! empty($actioncode))
