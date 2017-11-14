@@ -615,7 +615,10 @@ class FormFile
 					$modelselected=$arraykeys[0];
 				}
 				$out.= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
-				$out.= ajax_combobox('model');
+				if ($conf->use_javascript_ajax)
+				{
+					$out.= ajax_combobox('model');
+				}
 			}
 			else
 			{
