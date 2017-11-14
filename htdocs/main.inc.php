@@ -1622,10 +1622,10 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		else $searchform=$hookmanager->resPrint;
 
 		// Force special value for $searchform
-		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) || empty($conf->use_javascript_ajax))
 		{
 			$urltosearch=DOL_URL_ROOT.'/core/search_page.php?showtitlebefore=1';
-			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="'.$urltosearch.'" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div>';
+			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="'.$urltosearch.'" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div></div>';
 		}
 		elseif ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
