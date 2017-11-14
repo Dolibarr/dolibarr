@@ -217,6 +217,48 @@ class Invoices extends DolibarrApi
         return $this->invoice->id;
     }
 
+     /**
+     * Create an invoice using an existing order.
+     *
+     *
+     * @param int   $orderid       Id of the order
+     *
+     * @url     POST /createfromorder/{orderid}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function createInvoiceFromOrder($orderid) {
+
+        require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+
+        if(! DolibarrApiAccess::$user->rights->commande->lire) {
+                throw new RestException(401);
+        }
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }        
+        if(empty($orderid)) {
+                throw new RestException(400, 'Order ID is mandatory');
+        }
+
+        $order = new Commande($this->db);
+        $result = $order->fetch($orderid);
+        if( ! $result ) {
+                throw new RestException(404, 'Order not found');
+        }
+
+        $result = $this->invoice->createFromOrder($order, DolibarrApiAccess::$user);
+        if( $result < 0) {
+                throw new RestException(405, $this->invoice->error);
+        }
+        $this->invoice->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->invoice);
+    }
+
     /**
      * Get lines of an invoice
      *
