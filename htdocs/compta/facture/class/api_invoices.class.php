@@ -452,6 +452,9 @@ class Invoices extends DolibarrApi
               $request_data->fk_parent_line = 0;
       }
 
+      // calculate pa_ht
+      $marginInfos = getMarginInfos($request_data->subprice, $request_data->remise_percent, $request_data->tva_tx, $request_data->localtax1_tx, $request_data->localtax2_tx, $request_data->fk_fournprice, $request_data->pa_ht);
+
       $updateRes = $this->invoice->addline(
                               $request_data->desc,
                               $request_data->subprice,
@@ -475,7 +478,7 @@ class Invoices extends DolibarrApi
                               $id,
                               $request_data->fk_parent_line,
                               $request_data->fk_fournprice,
-                              $request_data->pa_ht,
+                              $marginInfos[0],
                               $request_data->label,
                               $request_data->array_options,
                               $request_data->situation_percent,
