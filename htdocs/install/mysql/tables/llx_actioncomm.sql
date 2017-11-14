@@ -64,7 +64,7 @@ create table llx_actioncomm
   email_tobcc		varchar(255),					-- when event was an email, we store here the email_tobcc
   errors_to			varchar(255),					-- when event was an email, we store here the erros_to
   
-  recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the "iCalUID" as in RFC5545 (an id similar for all the same serie)
+  recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the 'iCalUID' as in RFC5545 (an id similar for all the same serie)
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
      
