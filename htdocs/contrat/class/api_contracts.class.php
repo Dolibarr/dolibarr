@@ -479,7 +479,7 @@ class Contracts extends DolibarrApi
 
 		$result = $this->contract->validate(DolibarrApiAccess::$user, '', $notrigger);
 		if ($result == 0) {
-		    throw new RestException(500, 'Error nothing done. May be object is already validated');
+		    throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Contract: '.$this->contract->error);
@@ -525,7 +525,7 @@ class Contracts extends DolibarrApi
 
     	$result = $this->contract->closeAll(DolibarrApiAccess::$user, $notrigger);
     	if ($result == 0) {
-    		throw new RestException(500, 'Error nothing done. May be object is already close');
+    		throw new RestException(304, 'Error nothing done. May be object is already close');
     	}
     	if ($result < 0) {
     		throw new RestException(500, 'Error when closing Contract: '.$this->contract->error);

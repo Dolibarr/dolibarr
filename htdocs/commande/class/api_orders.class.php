@@ -537,7 +537,7 @@ class Orders extends DolibarrApi
 
     	$result = $this->commande->cloture(DolibarrApiAccess::$user, $notrigger);
     	if ($result == 0) {
-    		throw new RestException(500, 'Error nothing done. May be object is already closed');
+    		throw new RestException(304, 'Error nothing done. May be object is already closed');
     	}
     	if ($result < 0) {
     		throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
