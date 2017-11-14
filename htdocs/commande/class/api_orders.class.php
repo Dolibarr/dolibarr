@@ -493,10 +493,10 @@ class Orders extends DolibarrApi
 
 		$result = $this->commande->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
 		if ($result == 0) {
-		    throw new RestException(500, 'Error nothing done. May be object is already validated');
+		    throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-		    throw new RestException(304, 'Error when validating Order: '.$this->commande->error);
+		    throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
 		}
 	$result = $this->commande->fetch($id);
         if( ! $result ) {
