@@ -416,7 +416,7 @@ class Commande extends CommonOrder
      *	Set draft status
      *
      *	@param	User	$user			Object user that modify
-     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
      *	@return	int						<0 if KO, >0 if OK
      */
     function set_draft($user, $idwarehouse=-1)

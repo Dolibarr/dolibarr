@@ -26,7 +26,7 @@ create table llx_commande_fournisseur
   ref						varchar(255) NOT NULL,         -- order number
   entity					integer DEFAULT 1 NOT NULL,    -- multi company id
 
-  ref_ext					varchar(64),                   -- reference into an external system (not used by dolibarr)
+  ref_ext					varchar(255),                   -- reference into an external system (not used by dolibarr)
   ref_supplier				varchar(255),
 
   fk_soc					integer NOT NULL,

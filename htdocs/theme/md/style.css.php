@@ -3103,6 +3103,9 @@ span.dashboardlineko {
 .boxtablenobottom {
     border-bottom-width: 0 !important;
 }
+.boxtable .fichehalfright, .boxtable .fichehalfleft {
+    min-width: 300px;
+}
 .tdboxstats {
 	text-align: center;
 }
