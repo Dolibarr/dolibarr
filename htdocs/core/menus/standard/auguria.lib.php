@@ -298,7 +298,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		print '</div>'."\n";
 	}
 
-	if (is_array($moredata) && ! empty($moredata['searchform']))
+	if (is_array($moredata) && ! empty($moredata['searchform']))	// searchform can contains select2 code or link to show old search form or link to switch on search page
 	{
         print "\n";
         print "<!-- Begin SearchForm -->\n";
