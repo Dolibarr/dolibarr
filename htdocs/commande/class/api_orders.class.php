@@ -555,12 +555,13 @@ class Orders extends DolibarrApi
      * Set an order to draft
      *
      * @param   int     $id             Order ID
+     * @param   int 	$idwarehouse    Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
      *
      * @url POST    {id}/settodraft
      *
      * @return  array
      */
-    function settodraft($id)
+    function settodraft($id, $idwarehouse=-1)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
                 throw new RestException(401);
@@ -574,7 +575,7 @@ class Orders extends DolibarrApi
                 throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->commande->set_draft(DolibarrApiAccess::$user);
+        $result = $this->commande->set_draft(DolibarrApiAccess::$user, $idwarehouse);
         if ($result == 0) {
                 throw new RestException(304, 'Nothing done. May be object is already closed');
         }
@@ -582,7 +583,7 @@ class Orders extends DolibarrApi
                 throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
         }
 
-	$result = $this->commande->fetch($id);
+		$result = $this->commande->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }
