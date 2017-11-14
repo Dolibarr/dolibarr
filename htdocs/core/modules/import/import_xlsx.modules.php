@@ -20,9 +20,9 @@
  */
 
 /**
- *		\file       htdocs/core/modules/import/import_csv.modules.php
+ *		\file       htdocs/core/modules/import/import_xlsx.modules.php
  *		\ingroup    import
- *		\brief      File to load import files with CSV format
+ *		\brief      File to load import files with Excel format
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/import/modules_import.php';
