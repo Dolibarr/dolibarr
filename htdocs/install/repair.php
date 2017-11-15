@@ -918,9 +918,9 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8 (for mysql/mariadb only)</td></tr>';
+    print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
 
-    if ($db->type == "mysql")
+    if ($db->type == "mysql" || $db->type == "mysqli")
     {
         $listoftables = $db->DDLListTables($db->database_name);
 

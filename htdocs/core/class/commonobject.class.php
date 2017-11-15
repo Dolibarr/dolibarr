@@ -3878,9 +3878,10 @@ abstract class CommonObject
 			$this->tpl['description'] = '&nbsp;';
 		}
 
-		// VAT Rate
-		$this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
-		if (! empty($line->vat_src_code) && ! preg_match('/\(/', $this->tpl['vat_rate'])) $this->tpl['vat_rate'].=' ('.$line->vat_src_code.')';
+        // VAT Rate
+        $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
+        $this->tpl['vat_rate'] .= (($line->info_bits & 1) == 1) ? '*' : '';
+        if (! empty($line->vat_src_code) && ! preg_match('/\(/', $this->tpl['vat_rate'])) $this->tpl['vat_rate'].=' ('.$line->vat_src_code.')';
 
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);

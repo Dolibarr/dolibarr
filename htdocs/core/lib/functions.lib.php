@@ -5850,7 +5850,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 	// If inline message with no format, we add it.
 	if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))
 	{
-		$divstart='<div class="'.$style.'">';
+		$divstart='<div class="'.$style.' clearboth">';
 		$divend='</div>';
 	}
 
