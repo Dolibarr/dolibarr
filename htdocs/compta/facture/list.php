@@ -592,7 +592,7 @@ if ($resql)
 		}
 		else
 		{
-		   $arrayofmassactions['delete']=$langs->trans("Delete");
+		   $arrayofmassactions['predelete']=$langs->trans("Delete");
 		}
 	}
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();

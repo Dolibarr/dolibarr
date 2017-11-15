@@ -699,7 +699,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    //'presend'=>$langs->trans("SendByMail"),
 		    //'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		//if ($user->rights->projet->creer) $arrayofmassactions['delete']=$langs->trans("Delete");
+		//if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 

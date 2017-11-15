@@ -22,6 +22,8 @@
  *		\brief		File of class to manage subscriptions of foundation members
  */
 
+//namespace DolibarrMember;
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
@@ -265,14 +267,16 @@ class Subscription extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
