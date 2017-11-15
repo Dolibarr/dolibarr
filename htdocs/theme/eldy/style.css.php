@@ -3445,10 +3445,18 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.nobordertransp {
+    border: 0px;
+    background-color: transparent;
+    background-image: none;
+}
 .websitebar {
-	border-bottom: 1px solid #888;
+	border-bottom: 1px solid #ccc;
 	background: #eee;
 	display: inline-block;
+}
+.websitebar .buttonDelete, .websitebar .button {
+	text-shadow: none;
 }
 .websitebar .button, .websitebar .buttonDelete
 {
@@ -3460,13 +3468,12 @@ tr.visible {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle;
-	/* line-height: 29px; */
 }
 .websitetools {
 	float: right;
-	/* height: 28px; */
 }
 .websiteselection, .websitetools {
+	margin-top: 3px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
@@ -3816,12 +3823,13 @@ a.cke_dialog_ui_button_ok span {
 .aceeditorstatusbar {
         margin: 0;
         padding: 0;
+        padding-<?php echo $left; ?>: 10px;
         left: 0;
         right: 0;
         bottom: 0;
-        height: 20px;
         background-color: #ebebeb;
-        color: #666;
+        height: 28px;
+        line-height: 2.2em;
 }
 .ace_status-indicator {
         color: gray;
