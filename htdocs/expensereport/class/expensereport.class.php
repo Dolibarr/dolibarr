@@ -1525,8 +1525,8 @@ class ExpenseReport extends CommonObject
         }
         else
         {
-            print $langs->trans("Error")." ".$langs->trans("Error_EXPENSEREPORT_ADDON_NotDefined");
-            return "";
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Error_EXPENSEREPORT_ADDON_NotDefined")), null, 'errors');
+            $errors++;
         }
     }
 
