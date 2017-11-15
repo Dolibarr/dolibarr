@@ -2556,7 +2556,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 										var number=series.data[0][1];
 										return \'';
 										print '<div style="font-size:8pt;text-align:center;padding:2px;color:black;">';
-										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
+										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'">';
 										print '\'+'.($showlegend?'number':'label+\' \'+number');
 										if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
 										print '+\'';
