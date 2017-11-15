@@ -2868,6 +2868,12 @@ span.boxstatstext {
 	opacity: 0.8;
     line-height: 18px;
 }
+span.boxstatstext img, a.dashboardlineindicatorlate img {
+	border: 0;
+}
+a img {
+	border: 0;
+}
 span.boxstatsindicator {
 	font-size: 130%;
 	font-weight: normal;
