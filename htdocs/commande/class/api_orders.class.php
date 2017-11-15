@@ -536,7 +536,7 @@ class Orders extends DolibarrApi
         if(empty($id)) {
                 throw new RestException(400, 'Order ID is mandatory');
         }
-        $result = $this->commande->fetch($orderid);
+        $result = $this->commande->fetch($id);
         if( ! $result ) {
                 throw new RestException(404, 'Order not found');
         }
@@ -546,6 +546,42 @@ class Orders extends DolibarrApi
                 throw new RestException(405, $this->commande->error);
         }else if( $result == 0) {
                 throw new RestException(304);
+        }
+        return $result;
+    }
+
+
+    /**
+     *  Classify the order as invoiced
+     *
+     * @param int   $id           Id of the order
+     * @param int   $notrigger    {@from body}  1=Does not execute triggers, 0= execute triggers        {@choice 0,1}
+     *
+     * @url     POST {id}/setinvoiced
+     *
+     * @return int
+     * 
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function setinvoiced($id,$notrigger=0) {
+
+        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+                throw new RestException(401);
+        }     
+        if(empty($id)) {
+                throw new RestException(400, 'Order ID is mandatory');
+        }
+        $result = $this->commande->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Order not found');
+        }
+
+        $result = $this->commande->classifyBilled(DolibarrApiAccess::$user,$notrigger);
+        if( $result < 0) {
+                throw new RestException(400, $this->commande->error);
         }
         return $result;
     }
