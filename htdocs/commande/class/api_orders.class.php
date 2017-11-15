@@ -511,6 +511,45 @@ class Orders extends DolibarrApi
         return $this->_cleanObjectDatas($this->commande);
     }
 
+     /**
+     *  Tag the order as validated (opened)
+     *
+     *  Function used when order is reopend after being closed.
+     *
+     * @param int   $id       Id of the order
+     *
+     * @url     POST {id}/reopen
+     *
+     * @return int
+     * 
+     * @throws 304
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function reopen($id) {
+
+        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+                throw new RestException(401);
+        }     
+        if(empty($id)) {
+                throw new RestException(400, 'Order ID is mandatory');
+        }
+        $result = $this->commande->fetch($orderid);
+        if( ! $result ) {
+                throw new RestException(404, 'Order not found');
+        }
+
+        $result = $this->commande->set_reopen(DolibarrApiAccess::$user);
+        if( $result < 0) {
+                throw new RestException(405, $this->commande->error);
+        }else if( $result == 0) {
+                throw new RestException(304);
+        }
+        return $result;
+    }
+
     /**
      * Close an order (Classify it as "Delivered")
      *
