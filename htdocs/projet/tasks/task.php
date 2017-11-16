@@ -474,6 +474,16 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
 
+			// Task parent
+			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			if ($object->fk_task_parent > 0)
+			{
+				$tasktmp=new Task($db);
+				$tasktmp->fetch($object->fk_task_parent);
+				print $tasktmp->getNomUrl(1);
+			}
+			print '</td></tr>';
+
 			// Date start - Date end
 			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
 			$start = dol_print_date($object->date_start,'dayhour');

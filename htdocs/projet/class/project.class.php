@@ -1659,7 +1659,7 @@ class Project extends CommonObject
 	 * @param 	int		$userid			Time spent by a particular user
 	 * @return 	int						<0 if OK, >0 if KO
 	 */
-	public function loadTimeSpent($datestart,$taskid=0,$userid=0)
+	public function loadTimeSpent($datestart, $taskid=0, $userid=0)
     {
         $error=0;
 
@@ -1670,7 +1670,7 @@ class Project extends CommonObject
         $sql.= " WHERE ptt.fk_task = pt.rowid";
         $sql.= " AND pt.fk_projet = ".$this->id;
         $sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-        $sql.= " AND ptt.task_date <= '".$this->db->idate($datestart + (7 * 24 * 3600) - 1)."')";
+        $sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
         if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
         if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
 
@@ -1678,16 +1678,28 @@ class Project extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+        		//unset($this->weekWorkLoad[$day]);
+        		//unset($this->weekWorkLoadPerTask[$day]);
+				$daylareadyfound=array();
 
                 $num = $this->db->num_rows($resql);
                 $i = 0;
                 // Loop on each record found, so each couple (project id, task id)
-                 while ($i < $num)
+                while ($i < $num)
                 {
                         $obj=$this->db->fetch_object($resql);
                         $day=$this->db->jdate($obj->task_date);
-                        $this->weekWorkLoad[$day] +=  $obj->task_duration;
-                        $this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+                        if (empty($daylareadyfound[$day]))
+                        {
+                        	$this->weekWorkLoad[$day] = $obj->task_duration;
+                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
+                        }
+                        else
+                        {
+                        	$this->weekWorkLoad[$day] += $obj->task_duration;
+                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+                        }
+                        $daylareadyfound[$day]=1;
                         $i++;
                 }
                 $this->db->free($resql);
