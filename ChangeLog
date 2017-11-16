@@ -29,7 +29,7 @@ Following changes may create regressions for some external modules, but were nec
 * The parameter note into method cloture() is added at end of private note (previously in v6, it replaced).
 * The parameter $user is now mandatory for method createFromOrder and createFromPropal. 
 * Removed js library 'fileupload' that was not used by core code.
-
+* IE8 and earlier and Firefox 12 and earlier (2012) are no more supported. 
 
 ***** ChangeLog for 6.0.3 compared to 6.0.2 *****
 FIX: #7211 Update qty dispatched on qty change
