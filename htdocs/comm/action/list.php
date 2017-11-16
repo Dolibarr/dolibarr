@@ -575,7 +575,7 @@ if ($resql)
 		// User owner
 		if (! empty($arrayfields['owner']['checked']))
 		{
-			print '<td class="tdoverflowmax100">';
+			print '<td class="'.($conf->browser->name != 'chrome'?'':'tdoverflowmax100').'">';	// With edge and chrom the td overflow is not supported correctly when content is not full text.
 			if ($obj->fk_user_action > 0)
 			{
 				$userstatic->fetch($obj->fk_user_action);

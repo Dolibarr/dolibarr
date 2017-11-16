@@ -199,6 +199,7 @@ function getBrowserInfo($user_agent)
 
 	// Name
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))      { $name='firefox';   $version=$reg[2]; }
+	elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg))     { $name='edge';      $version=$reg[2]; }
 	elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg))   { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
 	elseif (preg_match('/chrome/i', $user_agent, $reg))                   { $name='chrome'; }
 	elseif (preg_match('/iceweasel/i', $user_agent))                      { $name='iceweasel'; }
