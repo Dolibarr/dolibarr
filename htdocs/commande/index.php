@@ -58,8 +58,7 @@ llxHeader("",$langs->trans("Orders"),$help_url);
 
 print load_fiche_titre($langs->trans("OrdersArea"));
 
-//print '<table width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
@@ -141,7 +140,7 @@ if ($resql)
     {
         if (! $conf->use_javascript_ajax)
         {
-            
+
             print '<tr class="oddeven">';
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
@@ -154,7 +153,6 @@ if ($resql)
         }
     }
     //if ($totalinprocess != $total)
-    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
     print "</table><br>";
 }
@@ -196,7 +194,7 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 
                 $commandestatic->id=$obj->rowid;
@@ -220,7 +218,7 @@ if (! empty($conf->commande->enabled))
 		}
 		else
 		{
-			
+
 			print '<tr class="oddeven"><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
@@ -228,7 +226,6 @@ if (! empty($conf->commande->enabled))
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -268,7 +265,7 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-			
+
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -349,7 +346,7 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
@@ -431,7 +428,7 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';
@@ -479,7 +476,6 @@ if (! empty($conf->commande->enabled))
 }
 
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 

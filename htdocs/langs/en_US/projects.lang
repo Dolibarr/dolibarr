@@ -209,6 +209,8 @@ OppStatusPENDING=Pending
 OppStatusWON=Won
 OppStatusLOST=Lost
 Budget=Budget
+LatestProjects=Latest %s projects
+LatestModifiedProjects=Latest %s modified projects
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects

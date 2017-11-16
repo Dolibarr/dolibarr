@@ -1117,6 +1117,8 @@ div.login_block {
 
 div.backgroundsemitransparent {
 	background:rgba(255,255,255,0.6);
+	padding-left: 10px;
+	padding-right: 10px;
 }
 div.login_block {
 	/* position: initial !important;*/
