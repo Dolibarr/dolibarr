@@ -1652,7 +1652,8 @@ class Project extends CommonObject
 
 
 	/**
-	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
+	 * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
 	 *
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
@@ -1663,9 +1664,12 @@ class Project extends CommonObject
     {
         $error=0;
 
+        $this->weekWorkLoad=array();
+        $this->weekWorkLoadPerTask=array();
+
         if (empty($datestart)) dol_print_error('','Error datestart parameter is empty');
 
-        $sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.fk_task";
+        $sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
         $sql.= " WHERE ptt.fk_task = pt.rowid";
         $sql.= " AND pt.fk_projet = ".$this->id;
@@ -1678,8 +1682,6 @@ class Project extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-        		//unset($this->weekWorkLoad[$day]);
-        		//unset($this->weekWorkLoadPerTask[$day]);
 				$daylareadyfound=array();
 
                 $num = $this->db->num_rows($resql);
@@ -1688,7 +1690,7 @@ class Project extends CommonObject
                 while ($i < $num)
                 {
                         $obj=$this->db->fetch_object($resql);
-                        $day=$this->db->jdate($obj->task_date);
+                        $day=$this->db->jdate($obj->task_date);		// task_date is date without hours
                         if (empty($daylareadyfound[$day]))
                         {
                         	$this->weekWorkLoad[$day] = $obj->task_duration;
