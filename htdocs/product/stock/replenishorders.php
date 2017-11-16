@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2013	Cédric Salvador	<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014	Regis Houssin	<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017	Ferran Marcet 	<fmarcet@2byte.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +131,7 @@ if ($sdate)
     {
         $date = dol_stringtotime($sdate);
     }
-    $sql .= " AND cf.date_creation = '" . $db->idate($date) . "'";
+    $sql .= " AND DATE(cf.date_creation) = '" . $db->idate($date) . "'";
 }
 if ($sall) {
     $sql .= ' AND (cf.ref LIKE "%' . $db->escape($sall) . '%" ';
