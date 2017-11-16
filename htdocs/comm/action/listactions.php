@@ -503,16 +503,16 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['a.id']['checked']))	      print_liste_field_titre($arrayfields['a.id']['label']        , $_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
-	if (! empty($arrayfields['owner']['checked']))        print_liste_field_titre($arrayfields['owner']['label']       , $_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
-	if (! empty($arrayfields['c.libelle']['checked']))	  print_liste_field_titre($arrayfields['c.libelle']['label']   , $_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
-	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label']     , $_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.id']['checked']))	      print_liste_field_titre($arrayfields['a.id']['label'],			$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['owner']['checked']))        print_liste_field_titre($arrayfields['owner']['label'],			$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['c.libelle']['checked']))	  print_liste_field_titre($arrayfields['c.libelle']['label'],		$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label'],			$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label']     , $_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label']    , $_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label']       , $_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
-	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'],			$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label'],		$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label'],			$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'],	$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
+    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'],	$_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
 
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))

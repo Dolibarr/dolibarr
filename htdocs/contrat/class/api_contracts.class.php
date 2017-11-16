@@ -352,7 +352,7 @@ class Contracts extends DolibarrApi
      * @param int   	$id             Id of contract to activate
      * @param int   	$lineid         Id of line to activate
      * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
-     * @param string    $datend			{@from body}  Date end          {@type timestamp}
+     * @param string    $dateend		{@from body}  Date end          {@type timestamp}
      * @param string    $comment  		{@from body}  Comment
      *
      * @url	PUT {id}/lines/{lineid}/activate
