@@ -138,7 +138,7 @@ if (GETPOST("viewlist") || $action == 'show_list')
         }
     }
     //print $param;
-    header("Location: ".DOL_URL_ROOT.'/comm/action/listactions.php?'.$param);
+    header("Location: ".DOL_URL_ROOT.'/comm/action/list.php?'.$param);
     exit;
 }
 

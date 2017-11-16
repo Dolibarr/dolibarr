@@ -124,7 +124,7 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
 	$linkback = img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
-	$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
+	$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
 
 	// Link to other agenda views
 	$out='';
