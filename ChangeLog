@@ -22,8 +22,9 @@ Following changes may create regressions for some external modules, but were nec
 * Some REST API to access setup features, like dictionaries (country, town, extrafields, ...) were moved into a 
   common API "/setup".
 * The REST API /documents were renamed into /documents/download and /documents/upload. 
-* Page bank/index.php and bank/bankentries.php were renamed into bank/list.php and bank/bankentries_list.php to
-  follow page naming conventions (so default filter/sort order features can also work).
+* Page bank/index.php, bank/bankentries.php and comm/actions/listactions.php were renamed into 
+  bank/list.php, bank/bankentries_list.php and comm/actions/list.php to follow page naming
+  conventions (so default filter/sort order features can also work).
 * The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED.
 * The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY.
 * The parameter note into method cloture() is added at end of private note (previously in v6, it replaced).
