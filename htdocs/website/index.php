@@ -1117,7 +1117,8 @@ $moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
-print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 if ($action == 'createsite')
 {
@@ -1156,6 +1157,7 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 }
 
+print '<div>';
 
 // Add a margin under toolbar ?
 $style='';
@@ -1170,12 +1172,12 @@ if (count($object->records) > 0)
 {
 	// ***** Part for web sites
 
-	print '<div class="websiteselection hideonsmartphoneimp minwwidth100">';
-	print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddWebsite")).'" name="createsite">';
+	print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+	print $langs->trans("Website").' : ';
 	print '</div>';
 
 	print '<div class="websiteselection hideonsmartphoneimp">';
-	print $langs->trans("WebSite").': ';
+	print ' <input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createsite">';
 	print '</div>';
 
 	// List of website
@@ -1199,7 +1201,9 @@ if (count($object->records) > 0)
 	$out.='</select>';
 	$out.=ajax_combobox('website');
 	print $out;
-	print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
+	//print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
+	print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'">';
+
 
 	if ($website)
 	{
@@ -1215,14 +1219,14 @@ if (count($object->records) > 0)
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
 		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 		/*print '<a class="button button_file_manager"'.$disabled.'>'.dol_escape_htmltag($langs->trans("MediaFiles")).'</a>';
 		print '<script language="javascript">
 			jQuery(document).ready(function () {
@@ -1289,13 +1293,14 @@ if (count($object->records) > 0)
 
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-		print '<div class="websiteselection hideonsmartphoneimp minwidth100">';
-		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+		print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+		print $langs->trans("PageContainer").': ';
 		print '</div>';
 
 		print '<div class="websiteselection hideonsmartphoneimp">';
-		print $langs->trans("Page").': ';
+		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="create">';
 		print '</div>';
+
 		print '<div class="websiteselection">';
 
 		if ($action != 'add')
@@ -1335,7 +1340,8 @@ if (count($object->records) > 0)
 			print $langs->trans("New");
 		}
 
-		print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+		//print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+		print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 		{
@@ -1376,12 +1382,12 @@ if (count($object->records) > 0)
 
 				print ' &nbsp; ';
 
-				print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
-				print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-				print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
-				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-				else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-				print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+				else print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 				print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 			}
 		}
@@ -1429,7 +1435,7 @@ if (count($object->records) > 0)
 		print '<div class="websitehelp">';
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
-			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
+			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
 			print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
 		}
 		print '</div>';	// end websitehelp
@@ -1885,6 +1891,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out = '<!-- Page content '.$filetpl.' : Div with (CSS Of website from file + Style/htmlheader of page from database + Page content from database) -->'."\n";
 
 		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
+		// TODO Use contenteditable="true" / document.getElementById("myP").contentEditable="true" for part coming from CKEditor
 
 
 		// REPLACEMENT OF LINKS When page called by website editor

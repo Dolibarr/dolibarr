@@ -238,7 +238,7 @@ $arrayofmassactions =  array(
 //    'presend'=>$langs->trans("SendByMail"),
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->banque->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+if ($user->rights->banque->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -262,6 +262,11 @@ print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_bank.png',0,$newcardbutton,'',$limit, 1);
 
+$topicmail="Information";
+//$modelmail="subscription";
+$objecttmp=new Account($db);
+//$trackid='sub'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
 {
@@ -414,7 +419,7 @@ if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titr
 if (! empty($arrayfields['b.number']['checked']))         print_liste_field_titre($arrayfields['b.number']['label'],$_SERVER["PHP_SELF"],'b.number','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['b.account_number']['checked'])) print_liste_field_titre($arrayfields['b.account_number']['label'],$_SERVER["PHP_SELF"],'b.account_number','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['b.fk_accountancy_journal']['checked'])) print_liste_field_titre($arrayfields['b.fk_accountancy_journal']['label'],$_SERVER["PHP_SELF"],'b.fk_accountancy_journal','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['b.currency_code']['checked']))  print_liste_field_titre($arrayfields['b.currency_code']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['b.currency_code']['checked']))  print_liste_field_titre($arrayfields['b.currency_code']['label'],$_SERVER["PHP_SELF"],'b.currency_code','',$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))

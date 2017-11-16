@@ -138,7 +138,7 @@ if (GETPOST("viewlist") || $action == 'show_list')
         }
     }
     //print $param;
-    header("Location: ".DOL_URL_ROOT.'/comm/action/listactions.php?'.$param);
+    header("Location: ".DOL_URL_ROOT.'/comm/action/list.php?'.$param);
     exit;
 }
 
@@ -392,7 +392,7 @@ if (! empty($conf->use_javascript_ajax))	// If javascript on
 	$s.='</script>' . "\n";
 
 	// Local calendar
-	$s.='<div class="nowrap clear float minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	$s.='<div class="nowrap clear inline-block minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 
 	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0)
@@ -409,12 +409,12 @@ if (! empty($conf->use_javascript_ajax))	// If javascript on
 		foreach ($showextcals as $val)
 		{
 			$htmlname = md5($val['name']);
-			$s.='<div class="nowrap float"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val['name'] . ' &nbsp; </div>';
+			$s.='<div class="nowrap inline-block"><input type="checkbox" id="check_ext' . $htmlname . '" name="check_ext' . $htmlname . '" checked> ' . $val['name'] . ' &nbsp; </div>';
 		}
 	}
 
 	// Birthdays
-	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+	$s.='<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
 
 	// Calendars from hooks
     $parameters=array(); $object=null;
@@ -1375,7 +1375,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     print '>';
                     print '<table class="centpercent cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="'.$h;
                     print 'background: #'.$color.';';
-                    print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -4).'), to(#'.dol_color_minus($color, -3).'));';
+                    print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     //print ' -moz-border-radius:4px;"';

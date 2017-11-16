@@ -355,8 +355,8 @@ $arrayofmassactions =  array(
 //    'presend'=>$langs->trans("SendByMail"),
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->adherent->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -370,6 +370,12 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+
+$topicmail="Information";
+$modelmail="member";
+$objecttmp=new Adherent($db);
+$trackid='mem'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
 {

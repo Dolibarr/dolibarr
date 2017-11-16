@@ -386,7 +386,9 @@ if ($action == 'confirm_send')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
@@ -472,12 +474,14 @@ if ($action == 'confirm_valid')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
 
-            if(!$result) {
+            if (!$result) {
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=mail&error_content='.$mail->error);
                 exit;
             }
@@ -547,7 +551,9 @@ if ($action == 'confirm_refuse')
 	            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
                 $message.= "\n";
 
-                $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+	            $trackid='leav'.$object->id;
+
+	            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
                 // Envoi du mail
                 $result=$mail->sendfile();
@@ -684,7 +690,9 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();

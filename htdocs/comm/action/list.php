@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/comm/action/listactions.php
+ *	    \file       htdocs/comm/action/list.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
  */
@@ -336,7 +336,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
-dol_syslog("comm/action/listactions.php", LOG_DEBUG);
+dol_syslog("comm/action/list.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

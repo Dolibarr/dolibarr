@@ -347,6 +347,83 @@ class Contracts extends DolibarrApi
     }
 
     /**
+     * Activate a service line of a given contract
+     *
+     * @param int   	$id             Id of contract to activate
+     * @param int   	$lineid         Id of line to activate
+     * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
+     * @param string    $dateend		{@from body}  Date end          {@type timestamp}
+     * @param string    $comment  		{@from body}  Comment
+     *
+     * @url	PUT {id}/lines/{lineid}/activate
+     *
+     * @return object
+     */
+    function activateLine($id, $lineid, $datestart, $dateend = NULL, $comment = NULL) {
+    	if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->contract->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Contrat not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$updateRes = $this->contract->active_line(DolibarrApiAccess::$user, $lineid, $datestart, $dateend, $comment);
+
+    	if ($updateRes > 0) {
+    		$result = $this->get($id);
+    		unset($result->line);
+    		return $this->_cleanObjectDatas($result);
+    	}
+
+    	return false;
+    }
+
+    /**
+     * Unactivate a service line of a given contract
+     *
+     * @param int   	$id             Id of contract to activate
+     * @param int   	$lineid         Id of line to activate
+     * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
+     * @param string    $comment  		{@from body}  Comment
+     *
+     * @url	PUT {id}/lines/{lineid}/unactivate
+     *
+     * @return object
+     */
+    function unactivateLine($id, $lineid, $datestart, $comment = NULL) {
+    	if(! DolibarrApiAccess::$user->rights->contrat->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->contract->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Contrat not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('contrat',$this->contract->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$request_data = (object) $request_data;
+
+    	$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, $datestart, $comment);
+
+    	if ($updateRes > 0) {
+    		$result = $this->get($id);
+    		unset($result->line);
+    		return $this->_cleanObjectDatas($result);
+    	}
+
+    	return false;
+    }
+
+    /**
      * Delete a line to given contract
      *
      *

@@ -400,7 +400,7 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	if ($user->rights->propal->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -417,10 +417,10 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	$topicmail="SendSupplierProposalRef";
-	$modelmail="supplier_proposal_send";
+	$topicmail="SendProposalRef";
+	$modelmail="proposal_send";
 	$objecttmp=new Propal($db);
-	$trackid='ord'.$object->id;
+	$trackid='pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)

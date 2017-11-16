@@ -320,7 +320,7 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 {
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))	{ $langs->load("products"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts")); }
 	if (! empty($conf->societe->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-	if (! empty($conf->propal->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Prop"), 'desc'=>$langs->trans("ECMDocsByProposals")); }
+	if (! empty($conf->propal->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsByProposals")); }
 	if (! empty($conf->contrat->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsByContracts")); }
 	if (! empty($conf->commande->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled, 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsByOrders")); }
 	if (! empty($conf->facture->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsByInvoices")); }

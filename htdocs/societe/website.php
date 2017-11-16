@@ -327,7 +327,7 @@ $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->delete) $arrayofmassactions['delete']=$langs->trans("Delete");
+if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -343,6 +343,12 @@ print '<input type="hidden" name="id" value="'.$id.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton.' '.$morehtmlcenter, $num, $nbtotalofrecords, 'unlock', 0, '', '', $limit);
+
+$topicmail="Information";
+//$modelmail="websiteaccount";
+$objecttmp=new Product($db);
+//$trackid='websiteaccount'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
 {

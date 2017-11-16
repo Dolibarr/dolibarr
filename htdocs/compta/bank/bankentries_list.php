@@ -573,7 +573,7 @@ if ($resql)
         //'presend'=>$langs->trans("SendByMail"),
         //'builddoc'=>$langs->trans("PDFMerge"),
     );
-    //if ($user->rights->bank->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+    //if ($user->rights->bank->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
     if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 

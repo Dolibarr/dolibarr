@@ -379,7 +379,7 @@ if ($resql)
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	if ($user->rights->expensereport->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	if ($user->rights->expensereport->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -489,7 +489,7 @@ if ($resql)
 	$topicmail="SendExpenseReport";
 	$modelmail="expensereport";
 	$objecttmp=new ExpenseReport($db);
-	$trackid='int'.$object->id;
+	$trackid='exp'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)

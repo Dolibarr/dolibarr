@@ -425,7 +425,7 @@ else
 			//'presend'=>$langs->trans("SendByMail"),
 			//'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		if ($user->rights->produit->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+		if ($user->rights->produit->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -441,6 +441,12 @@ else
 		if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
 		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, '', '', $limit);
+
+		$topicmail="Information";
+		$modelmail="product";
+		$objecttmp=new Product($db);
+		$trackid='prod'.$object->id;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 		if (! empty($catid))
 		{

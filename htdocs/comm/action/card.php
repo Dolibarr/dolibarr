@@ -1198,7 +1198,7 @@ if ($id > 0)
 		}
 
 		$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
-		$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
+		$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
 
 		// Link to other agenda views
 		$out='';
@@ -1324,6 +1324,8 @@ if ($id > 0)
 		print '</div>';
 		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
 		{
+			//var_dump($object->userassigned);
+			//var_dump($listofuserid);
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 			print '</div>';

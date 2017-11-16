@@ -599,7 +599,7 @@ if (! empty($id) || ! empty($ref))
 		    'presend'=>$langs->trans("SendByMail"),
 		    'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		if ($user->rights->product->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 		*/

@@ -1589,9 +1589,9 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 		print "\n".'<!-- Begin side-nav id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
 
-		print "\n";
+		if ($conf->browser->layout == 'phone') $conf->global->MAIN_USE_OLD_SEARCH_FORM=1;	// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
 
-		if ($conf->browser->layout == 'phone') $conf->global->MAIN_USE_OLD_SEARCH_FORM=1;	// Select into select2 is awfull on smartphone
+		print "\n";
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			if (! is_object($form)) $form=new Form($db);
@@ -1621,7 +1621,13 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		}
 		else $searchform=$hookmanager->resPrint;
 
-		if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
+		// Force special value for $searchform
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) || empty($conf->use_javascript_ajax))
+		{
+			$urltosearch=DOL_URL_ROOT.'/core/search_page.php?showtitlebefore=1';
+			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="'.$urltosearch.'" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div></div>';
+		}
+		elseif ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div><div id="divsearchforms2" style="display: none">'.$searchform.'</div>';
 			$searchform.='<script type="text/javascript">
@@ -1814,9 +1820,10 @@ function getHelpParamFor($helppagename,$langs)
  *  @param	string	$accesskey			Accesskey
  *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
  *  @param	string	$img				Image to use
+ *  @param	string	$showtitlebefore	Show title before input text instead of into placeholder. This can be set when output is dedicated for text browsers.
  *  @return	string
  */
-function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='')
+function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='', $showtitlebefore=0)
 {
 	global $conf,$langs,$user;
 
@@ -1829,6 +1836,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
+	if ($showtitlebefore) $ret.=$title.' ';
 	$ret.='<input type="text" class="flat '.$htmlmorecss.'"';
 	$ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
