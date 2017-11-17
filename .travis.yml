@@ -127,7 +127,10 @@ install:
   if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
     composer -n require phpunit/phpunit ^4
   fi
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
+    composer -n require phpunit/phpunit ^5
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
     composer -n require phpunit/phpunit ^5
   fi
   echo
@@ -336,6 +339,7 @@ script:
   
 - |
   echo "Unit testing"
+  phpunit --version
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
