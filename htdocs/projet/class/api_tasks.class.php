@@ -529,7 +529,7 @@ class Tasks extends DolibarrApi
 
         $result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);
         if ($result == 0) {
-            throw new RestException(500, 'Error nothing done. May be object is already validated');
+            throw new RestException(304, 'Error nothing done. May be object is already validated');
         }
         if ($result < 0) {
             throw new RestException(500, 'Error when adding time: '.$this->task->error);

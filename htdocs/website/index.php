@@ -52,7 +52,6 @@ $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action','alpha');
 
-
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
@@ -66,6 +65,18 @@ if (GETPOST('editsource')) { $action='editsource'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 if (GETPOST('createfromclone')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
+
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+//if (! $sortfield) $sortfield='name';
+//if (! $sortorder) $sortorder='ASC';
 
 if (empty($action)) $action='preview';
 
@@ -109,7 +120,6 @@ $fileindex=$pathofwebsite.'/index.php';
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
 
 
 /*
@@ -1107,7 +1117,8 @@ $moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
-print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 if ($action == 'createsite')
 {
@@ -1146,11 +1157,14 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 }
 
+print '<div>';
 
 // Add a margin under toolbar ?
 $style='';
 if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style=' margin-bottom: 5px;';
 
+if (! GETPOST('hide_websitemenu'))
+{
 //var_dump($objectpage);exit;
 print '<div class="centpercent websitebar">';
 
@@ -1158,12 +1172,12 @@ if (count($object->records) > 0)
 {
 	// ***** Part for web sites
 
-	print '<div class="websiteselection hideonsmartphoneimp minwwidth100">';
-	print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddWebsite")).'" name="createsite">';
+	print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+	print $langs->trans("Website").' : ';
 	print '</div>';
 
 	print '<div class="websiteselection hideonsmartphoneimp">';
-	print $langs->trans("WebSite").': ';
+	print ' <input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createsite">';
 	print '</div>';
 
 	// List of website
@@ -1187,7 +1201,9 @@ if (count($object->records) > 0)
 	$out.='</select>';
 	$out.=ajax_combobox('website');
 	print $out;
-	print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
+	//print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
+	print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'">';
+
 
 	if ($website)
 	{
@@ -1203,14 +1219,31 @@ if (count($object->records) > 0)
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
 		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
 
 		print ' &nbsp; ';
 
-		print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
+		/*print '<a class="button button_file_manager"'.$disabled.'>'.dol_escape_htmltag($langs->trans("MediaFiles")).'</a>';
+		print '<script language="javascript">
+			jQuery(document).ready(function () {
+           		jQuery(".button_file_manager").click(function () {
+					var $dialog = $(\'<div></div>\').html(\'<iframe style="border: 0px;" src="'.DOL_URL_ROOT.'/website/index.php?hide_websitemenu=1&dol_hide_topmenu=1&dol_hide_leftmenu=1&file_manager=1&website='.$website.'&pageid='.$pageid.'" width="100%" height="100%"></iframe>\')
+					.dialog({
+						autoOpen: false,
+						modal: true,
+						height: 500,
+						width: \'80%\',
+						title: "'.dol_escape_js($langs->trans("FileManager")).'"
+					});
+					$dialog.dialog(\'open\');
+				});
+			});
+			</script>';
+		*/
 	}
 
 	print '</div>';
@@ -1260,13 +1293,14 @@ if (count($object->records) > 0)
 
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-		print '<div class="websiteselection hideonsmartphoneimp minwidth100">';
-		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+		print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+		print $langs->trans("PageContainer").': ';
 		print '</div>';
 
 		print '<div class="websiteselection hideonsmartphoneimp">';
-		print $langs->trans("Page").': ';
+		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="create">';
 		print '</div>';
+
 		print '<div class="websiteselection">';
 
 		if ($action != 'add')
@@ -1306,7 +1340,8 @@ if (count($object->records) > 0)
 			print $langs->trans("New");
 		}
 
-		print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+		//print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+		print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 		{
@@ -1347,12 +1382,12 @@ if (count($object->records) > 0)
 
 				print ' &nbsp; ';
 
-				print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
-				print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-				print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
-				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-				else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-				print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+				else print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 				print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 			}
 		}
@@ -1400,7 +1435,7 @@ if (count($object->records) > 0)
 		print '<div class="websitehelp">';
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
-			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource");
+			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
 			print $form->textwithpicto($langs->trans("SyntaxHelp"), $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
 		}
 		print '</div>';	// end websitehelp
@@ -1455,8 +1490,10 @@ else
 	$action='';
 }
 
-
 print '</div>';	// end current websitebar
+}
+
+
 
 $head = array();
 
@@ -1792,6 +1829,7 @@ if ($action == 'file_manager')
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
+	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 }
 
@@ -1853,6 +1891,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out = '<!-- Page content '.$filetpl.' : Div with (CSS Of website from file + Style/htmlheader of page from database + Page content from database) -->'."\n";
 
 		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
+		// TODO Use contenteditable="true" / document.getElementById("myP").contentEditable="true" for part coming from CKEditor
 
 
 		// REPLACEMENT OF LINKS When page called by website editor

@@ -59,9 +59,9 @@ $nowday=$nowtmp['mday'];
 $nowmonth=$nowtmp['mon'];
 $nowyear=$nowtmp['year'];
 
-$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year","int")?GETPOST("year","int"):date("Y"));
-$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month","int")?GETPOST("month","int"):date("m"));
-$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"):date("d"));
+$year=GETPOST('reyear')?GETPOST('reyear'):(GETPOST("year","int")?GETPOST("year","int"):(GETPOST("addtimeyear","int")?GETPOST("addtimeyear","int"):date("Y")));
+$month=GETPOST('remonth')?GETPOST('remonth'):(GETPOST("month","int")?GETPOST("month","int"):(GETPOST("addtimemonth","int")?GETPOST("addtimemonth","int"):date("m")));
+$day=GETPOST('reday')?GETPOST('reday'):(GETPOST("day","int")?GETPOST("day","int"):(GETPOST("addtimeday","int")?GETPOST("addtimeday","int"):date("d")));
 $day = (int) $day;
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
 
@@ -79,6 +79,7 @@ $yearofday=GETPOST('addtimeyear');
 $daytoparse = $now;
 if ($yearofday && $monthofday && $dayofday) $daytoparse=dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday);	// xxxofday is value of day after submit action 'addtime'
 else if ($year && $month && $day) $daytoparse=dol_mktime(0, 0, 0, $month, $day, $year);							// this are value submited after submit of action 'submitdateselect'
+
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
@@ -121,7 +122,10 @@ if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || 
 
 if (GETPOST('submitdateselect'))
 {
-	$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	if (GETPOST('remonth','int') && GETPOST('reday','int') && GETPOST('reyear','int'))
+	{
+		$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+	}
 
 	$action = '';
 }
@@ -238,7 +242,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 			$object->fetch($key);
 			$object->progress = GETPOST($key.'progress', 'int');
 			$object->timespent_duration = $val;
-			$object->timespent_fk_user = $user->id;
+			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
 			if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 			{
@@ -329,6 +333,10 @@ if ($search_task_label) $morewherefilter.=natural_search(array("t.ref", "t.label
 if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
 
 $tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+if ($morewherefilter)	// Get all task with no filter so we can show total of time spent for not visible tasks
+{
+	$tasksarraywithoutfilter=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+}
 $projectsrole=$taskstatic->getUserRolesForProjectsOrTasks($usertoprocess, 0, ($project->id?$project->id:0), 0, $onlyopenedproject);
 $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($project->id?$project->id:0), 0, $onlyopenedproject);
 //var_dump($tasksarray);
@@ -342,7 +350,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorde
 $param='';
 $param.=($mode?'&mode='.$mode:'');
 $param.=($search_project_ref?'&search_project_ref='.$search_project_ref:'');
-$param.=($search_userassignedid > 0?'&search_userassignedid='.$search_usertoprocessid:'');
+$param.=($search_usertoprocessid?'&search_usertoprocessid='.$search_usertoprocessid:'');
 $param.=($search_thirdparty?'&search_thirdparty='.$search_thirdparty:'');
 $param.=($search_task_ref?'&search_task_ref='.$search_task_ref:'');
 $param.=($search_task_label?'&search_task_label='.$search_task_label:'');
@@ -473,7 +481,7 @@ print '<td align="right" class="maxwidth100">'.$langs->trans("ProgressDeclared")
 if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'</td>';
+print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
 print '<td align="center">'.$langs->trans("HourStart").'</td>';
 print '<td align="center">'.$langs->trans("Duration").'</td>';
 print '<td align="center">'.$langs->trans("Note").'</td>';
@@ -494,11 +502,62 @@ $isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable);
+	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0);
+	//var_dump($totalforvisibletasks);
+
+	// Show total for all other tasks
+
+	// Calculate total for all tasks
+	$listofdistinctprojectid=array();	// List of all distinct projects
+	if (is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter))
+	{
+		foreach($tasksarraywithoutfilter as $tmptask)
+		{
+			$listofdistinctprojectid[$tmptask->fk_project]=$tmptask->fk_project;
+		}
+	}
+	//var_dump($listofdistinctprojectid);
+	$totalforeachday=array();
+	foreach($listofdistinctprojectid as $tmpprojectid)
+	{
+		$lineother='';
+		$projectstatic->id=$tmpprojectid;
+		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+		for ($idw = 0; $idw < 7; $idw++)
+		{
+			$tmpday=dol_time_plus_duree($daytoparse, $idw, 'd');
+			$totalforeachday[$tmpday]+=$projectstatic->weekWorkLoad[$tmpday];
+		}
+	}
+	$lineother='';
+	//var_dump($totalforeachday);
 
 	$colspan = 8;
 
-	print '<tr class="liste_total">
+	// There is a diff between total shown on screen and total spent by user, so we add a line with all other cumulated time of user
+	if (count($totalforeachday))
+	{
+		print '<tr class="oddeven">';
+        print '<td colspan="'.$colspan.'">';
+		print $langs->trans("OtherFilteredTasks");
+		print '</td>';
+		print '<td align="center">';
+		$timeonothertasks=($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
+		//if ($timeonothertasks)
+		//{
+			print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
+			if ($timeonothertasks) print convertSecondToTime($timeonothertasks,'allhourmin');
+			print '"></span>';
+		//}
+		print '</td>';
+		print ' <td class="liste_total"></td>';
+		print ' <td class="liste_total"></td>';
+		print '</tr>';
+	}
+
+	if ($conf->use_javascript_ajax)
+	{
+		print '<tr class="liste_total">
                 <td class="liste_total" colspan="'.$colspan.'">';
 				print $langs->trans("Total");
 				//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
@@ -507,6 +566,7 @@ if (count($tasksarray) > 0)
                 <td class="liste_total"></td>
                 <td class="liste_total"></td>
                 </tr>';
+	}
 }
 else
 {
@@ -525,22 +585,24 @@ print '</form>';
 
 $modeinput='hours';
 
-print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
-print '<script type="text/javascript">'."\n";
-print "jQuery(document).ready(function () {\n";
-print '		jQuery(".timesheetalreadyrecorded").tooltip({
-				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-				hide: { effect:\'toggle\', delay: 50 },
-				tooltipClass: "mytooltip",
-				content: function () {
-					return \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\';
-				}
-			});'."\n";
+if ($conf->use_javascript_ajax)
+{
+	print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+	print '<script type="text/javascript">'."\n";
+	print "jQuery(document).ready(function () {\n";
+	print '		jQuery(".timesheetalreadyrecorded").tooltip({
+					show: { collision: "flipfit", effect:\'toggle\', delay:50 },
+					hide: { effect:\'toggle\', delay: 50 },
+					tooltipClass: "mytooltip",
+					content: function () {
+						return \''.dol_escape_js($langs->trans("TimeAlreadyRecorded", $usertoprocess->getFullName($langs))).'\';
+					}
+				});'."\n";
 
-print '    updateTotal(0,\''.$modeinput.'\');';
-print "\n});\n";
-print '</script>';
-
+	print '    updateTotal(0,\''.$modeinput.'\');';
+	print "\n});\n";
+	print '</script>';
+}
 
 llxFooter();
 

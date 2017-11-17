@@ -80,6 +80,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id','int');
+if ($search_country_id == '' && ($id == 2 || $id == 3 || $id == 10))	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
+{
+	$search_country_id = $mysoc->country_id;
+}
 $search_code = GETPOST('search_code','alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -89,7 +93,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,35,36,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,26,0,);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,24,28,17,35,36,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,26,0,);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -281,6 +285,8 @@ $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
 //$tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
+$tabfield[33]= "code,label";
+$tabfield[34]= "code,label";
 $tabfield[35]= "label";
 $tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 
@@ -1009,6 +1015,11 @@ if ($id)
     $sql.=$db->plimit($listlimit+1,$offset);
     //print $sql;
 
+    if (empty($tabfield[$id]))
+    {
+    	dol_print_error($db, 'The table with id '.$id.' has no array tabfield defined');
+    	exit;
+    }
     $fieldlist=explode(',',$tabfield[$id]);
 
     print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
@@ -1392,6 +1403,7 @@ if ($id)
 
                         foreach ($fieldlist as $field => $value)
                         {
+                        	//var_dump($fieldlist);
                         	$showfield=1;
                         	$align="left";
                         	$valuetoshow=$obj->{$fieldlist[$field]};
@@ -1749,7 +1761,7 @@ $db->close();
  * 	@param		Object		$obj			If we show a particular record, obj is filled with record fields
  *  @param		string		$tabname		Name of SQL table
  *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
- *	@return		string						'' or value of entity into table	
+ *	@return		string						'' or value of entity into table
  */
 function fieldList($fieldlist, $obj='', $tabname='', $context='')
 {

@@ -2436,7 +2436,7 @@ class SupplierProposal extends CommonObject
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
         $sql.= ' pt.product_type, pt.rang, pt.fk_parent_line,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
-        $sql.= ' p.description as product_desc, pt.ref_fourn as ref_produit_fourn,';
+        $sql.= ' p.description as product_desc, pt.ref_fourn as ref_supplier,';
 		$sql.= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pt';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
@@ -2483,7 +2483,8 @@ class SupplierProposal extends CommonObject
                 $this->lines[$i]->special_code		= $obj->special_code;
                 $this->lines[$i]->rang				= $obj->rang;
 
-                $this->lines[$i]->ref_fourn				= $obj->ref_produit_fourn;
+                $this->lines[$i]->ref_fourn				= $obj->ref_supplier;	// deprecated
+                $this->lines[$i]->ref_supplier			= $obj->ref_supplier;
 
 				// Multicurrency
 				$this->lines[$i]->fk_multicurrency 			= $obj->fk_multicurrency;

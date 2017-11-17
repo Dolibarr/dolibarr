@@ -582,7 +582,6 @@ class FormCompany
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
-					    console.log("Call runJsCodeForEvent'.$htmlname.'");
 						var obj = '.json_encode($events).';
 						$.each(obj, function(key,values) {
 							if (values.method.length) {
@@ -599,6 +598,7 @@ class FormCompany
 						var method = obj.method;
 						var url = obj.url;
 						var htmlname = obj.htmlname;
+			    		console.log("Run runJsCodeForEvent-'.$htmlname.' from selectCompaniesForNewContact id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 						$.getJSON(url,
 							{
 								action: method,
@@ -608,6 +608,7 @@ class FormCompany
 							function(response) {
 								if (response != null)
 								{
+									console.log("Change select#"+htmlname+" with content "+response.value)
 									$.each(obj.params, function(key,action) {
 										if (key.length) {
 											var num = response.num;
@@ -618,7 +619,6 @@ class FormCompany
 											}
 										}
 									});
-						            /* console.log("Change select#"+htmlname+" with content "+response.value) */
 									$("select#" + htmlname).html(response.value);
 								}
 							}

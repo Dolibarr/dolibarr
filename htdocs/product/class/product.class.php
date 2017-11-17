@@ -1520,6 +1520,7 @@ class Product extends CommonObject
 		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
+		$sql.= " ,pfp.default_vat_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
@@ -1555,6 +1556,7 @@ class Product extends CommonObject
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
+				$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
 				$result=$obj->fk_product;
 				return $result;
 			}
@@ -1563,6 +1565,7 @@ class Product extends CommonObject
 				// We do a second search by doing a select again but searching with less reliable criteria: couple qty/id product, and if set fourn_ref or fk_soc.
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
 				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
+				$sql.= " ,pfp.default_vat_code";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.fk_product = ".$product_id;
 				if ($fourn_ref != 'none') $sql.= " AND pfp.ref_fourn = '".$fourn_ref."'";
@@ -1602,6 +1605,7 @@ class Product extends CommonObject
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
+						$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
 						$result=$obj->fk_product;
 						return $result;
 					}
@@ -3463,6 +3467,7 @@ class Product extends CommonObject
     		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
             if (! empty($conf->productbatch->enabled))
             {
+            	$langs->load("productbatch");
                 $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
             }
         }

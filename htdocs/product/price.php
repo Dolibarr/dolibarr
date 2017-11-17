@@ -1801,8 +1801,15 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
 			print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
 			print '<td align="right">' . $langs->trans("HT") . '</td>';
-			print '<td align="right">' . $langs->trans("TTC") . '</td>';
-			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . $langs->trans("INCT") . '</td>';
+			if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1")
+			{
+				//print '<td align="right">' . $langs->trans("INCVATONLY") . '</td>';
+				print '<td align="right">' . $langs->trans("INCT") . '</td>';
+			}
+			else
+			{
+				print '<td align="right">' . $langs->trans("TTC") . '</td>';
+			}
 			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
 			print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
 			print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
@@ -1844,20 +1851,28 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print "<td>" . dol_print_date($line->datec, "dayhour") . "</td>";
     		    print '<td align="center">' . $langs->trans($line->price_base_type) . "</td>";
 				print '<td align="right">';
-var_dump($prodcustprice);exit;
+
 				$positiverates='';
-				if (price2num($objp->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($objp->tva_tx);
-				if (price2num($objp->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($objp->localtax1_tx);
-				if (price2num($objp->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($objp->localtax2_tx);
+				if (price2num($line->tva_tx))         $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
+				if (price2num($line->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
+				if (price2num($line->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
 				if (empty($positiverates)) $positiverates='0';
-				echo vatrate($positiverates.($objp->default_vat_code?' ('.$objp->default_vat_code.')':''), '%', $objp->tva_npr);
+
+				echo vatrate($positiverates.($line->default_vat_code?' ('.$line->default_vat_code.')':''), '%', ($line->tva_npr?$line->tva_npr:$line->recuperableonly));
 
 				//. vatrate($tva_tx, true, $line->recuperableonly) .
 				print "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
-				print '<td align="right">' . price($line->price_ttc) . "</td>";
 
-				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . price($resultarray[2]) . '</td>';
+				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1")
+				{
+					//print '<td align="right">' . price($line->price_ttc) . "</td>";
+					print '<td align="right">' . price($resultarray[2]) . '</td>';
+				}
+				else
+				{
+					print '<td align="right">' . price($line->price_ttc) . "</td>";
+				}
 
 				print '<td align="right">' . price($line->price_min) . '</td>';
 				print '<td align="right">' . price($line->price_min_ttc) . '</td>';
@@ -1903,7 +1918,7 @@ var_dump($prodcustprice);exit;
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
 		    $colspan=8;
-		    if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") $colspan++;
+		    //if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") $colspan++;
 
     		print '<tr class="liste_titre">';
     		print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="' . $search_soc . '" size="20"></td>';
@@ -1922,8 +1937,16 @@ var_dump($prodcustprice);exit;
 		print '<td align="center">' . $langs->trans("PriceBase") . '</td>';
 		print '<td align="right">' . $langs->trans("DefaultTaxRate") . '</td>';
 		print '<td align="right">' . $langs->trans("HT") . '</td>';
-		print '<td align="right">' . $langs->trans("TTC") . '</td>';
-		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . $langs->trans("INCT") . '</td>';
+		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1")
+		{
+			//print '<td align="right">' . $langs->trans("INCVATONLY") . '</td>';
+			print '<td align="right">' . $langs->trans("INCT") . '</td>';
+		}
+		else
+		{
+			print '<td align="right">' . $langs->trans("TTC") . '</td>';
+		}
+
 		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("HT") . '</td>';
 		print '<td align="right">' . $langs->trans("MinPrice") . ' ' . $langs->trans("TTC") . '</td>';
 		print '<td align="right">' . $langs->trans("ChangedBy") . '</td>';
@@ -1970,9 +1993,17 @@ var_dump($prodcustprice);exit;
 		print "</td>";
 
 		print '<td align="right">' . price($object->price) . "</td>";
-		print '<td align="right">' . price($object->price_ttc) . "</td>";
 
-		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . price($resultarray[2]) . '</td>';
+		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1")
+		{
+			//print '<td align="right">' . price($object->price_ttc) . "</td>";
+			print '<td align="right">' . price($resultarray[2]) . '</td>';
+		}
+		else
+		{
+			print '<td align="right">' . price($object->price_ttc) . "</td>";
+		}
+
 
 		print '<td align="right">' . price($object->price_min) . '</td>';
 		print '<td align="right">' . price($object->price_min_ttc) . '</td>';
@@ -1992,7 +2023,6 @@ var_dump($prodcustprice);exit;
 		    print '</td>';
 		}
 		print "</tr>\n";
-
 
 		if (count($prodcustprice->lines) > 0)
 		{
@@ -2038,13 +2068,20 @@ var_dump($prodcustprice);exit;
 				if (price2num($line->localtax1_type)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
 				if (price2num($line->localtax2_type)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
 				if (empty($positiverates)) $positiverates='0';
-				echo vatrate($positiverates.($line->default_vat_code?' ('.$line->default_vat_code.')':''), '%', $line->tva_npr);
+				echo vatrate($positiverates.($line->default_vat_code?' ('.$line->default_vat_code.')':''), '%', ($line->tva_npr?$line->tva_npr:$line->recuperableonly));
 
 				print "</td>";
 				print '<td align="right">' . price($line->price) . "</td>";
-				print '<td align="right">' . price($line->price_ttc) . "</td>";
 
-				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") print '<td align="right">' . price($resultarray[2]) . '</td>';
+				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1")
+				{
+					//print '<td align="right">' . price($line->price_ttc) . "</td>";
+					print '<td align="right">' . price($resultarray[2]) . '</td>';
+				}
+				else
+				{
+					print '<td align="right">' . price($line->price_ttc) . "</td>";
+				}
 
 				print '<td align="right">' . price($line->price_min) . '</td>';
 				print '<td align="right">' . price($line->price_min_ttc) . '</td>';

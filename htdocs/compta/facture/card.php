@@ -677,7 +677,7 @@ if (empty($reshook))
 		$result=$discountcheck->fetch(0,$object->id);
 
 		$canconvert=0;
-		if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
+		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
 		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		if ($canconvert)
 		{
@@ -763,16 +763,20 @@ if (empty($reshook))
 
 			if (empty($error))
 			{
-				// Classe facture
-				$result = $object->set_paid($user);
-				if ($result >= 0)
-				{
+				if($object->type != Facture::TYPE_DEPOSIT) {
+					// Classe facture
+					$result = $object->set_paid($user);
+					if ($result >= 0)
+					{
+						$db->commit();
+					}
+					else
+					{
+						setEventMessages($object->error, $object->errors, 'errors');
+						$db->rollback();
+					}
+				} else {
 					$db->commit();
-				}
-				else
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$db->rollback();
 				}
 			}
 			else
@@ -1132,6 +1136,7 @@ if (empty($reshook))
 								$TTotalByTva = array();
 								foreach ($srcobject->lines as &$line)
 								{
+									if(! empty($line->special_code)) continue;
 									$TTotalByTva[$line->tva_tx] += $line->total_ttc ;
 								}
 
@@ -1654,6 +1659,9 @@ if (empty($reshook))
 							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 							$price_base_type = $prodcustprice->lines[0]->price_base_type;
 							$tva_tx = $prodcustprice->lines[0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 				}
@@ -4258,7 +4266,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id))
+				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}

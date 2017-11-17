@@ -298,8 +298,8 @@ if ($result) {
 	    //'presend'=>$langs->trans("SendByMail"),
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	//if ($massaction == 'presend') $arrayofmassactions=array();
+	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
@@ -314,6 +314,12 @@ if ($result) {
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
 	print $langs->trans("DescVentilTodoCustomer") . '</br><br>';
+
+	/*$topicmail="Information";
+	 $modelmail="project";
+	 $objecttmp=new Project($db);
+	 $trackid='prj'.$object->id;
+	 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';*/
 
 	if ($msg) print $msg.'<br>';
 

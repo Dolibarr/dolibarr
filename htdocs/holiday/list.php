@@ -298,8 +298,8 @@ $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->holiday->delete) $arrayofmassactions['delete']=$langs->trans("Delete");
-//if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->holiday->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -352,14 +352,11 @@ else
     //print count($holiday->holiday);
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, '', '', $limit);
 
-	/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
-	{
-		dol_fiche_head('', '', '', -1);
-
-		showMyBalance($holiday, $user_id);
-
-		dol_fiche_end();
-	}*/
+	$topicmail="Information";
+	$modelmail="leaverequest";
+	$objecttmp=new Holiday($db);
+	$trackid='leav'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 }
 
 if ($sall)

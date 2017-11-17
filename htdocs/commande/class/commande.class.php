@@ -416,7 +416,7 @@ class Commande extends CommonOrder
      *	Set draft status
      *
      *	@param	User	$user			Object user that modify
-     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
+     *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
      *	@return	int						<0 if KO, >0 if OK
      */
     function set_draft($user, $idwarehouse=-1)
@@ -824,11 +824,15 @@ class Commande extends CommonOrder
                         $fk_parent_line = 0;
                     }
 
+					// Complete vat rate with code
+					$vatrate = $line->tva_tx;
+					if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
+
                     $result = $this->addline(
                         $line->desc,
                         $line->subprice,
                         $line->qty,
-                        $line->tva_tx,
+                        $vatrate,
                         $line->localtax1_tx,
                         $line->localtax2_tx,
                         $line->fk_product,
@@ -1215,9 +1219,9 @@ class Commande extends CommonOrder
      *	@param      string			$desc            	Description of line
      *	@param      float			$pu_ht    	        Unit price (without tax)
      *	@param      float			$qty             	Quantite
-     *	@param      float			$txtva           	Taux de tva force, sinon -1
-     *	@param      float			$txlocaltax1		Local tax 1 rate
-     *	@param      float			$txlocaltax2		Local tax 2 rate
+     * 	@param    	float			$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+     * 	@param		float			$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
+     * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
      *	@param      int				$fk_product      	Id of product
      *	@param      float			$remise_percent  	Pourcentage de remise de la ligne
      *	@param      int				$info_bits			Bits de type de lignes

@@ -590,7 +590,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	int			$preselectedday			Preselected day
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
- * @return  $inc
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
 function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
 {
@@ -598,6 +598,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
 
 	$lastprojectid=0;
+	$totalforeachday=array();
 	$workloadforid=array();
 	$lineswithoutlevel0=array();
 
@@ -774,6 +775,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print '<td align="center" class="duration'.($cssonholiday?' '.$cssonholiday:'').'">';
 
 				$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
+				$totalforeachday[$preselectedday]+=$dayWorkLoad;
+
 				$alreadyspent='';
 				if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
 
@@ -822,8 +825,17 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 			$level++;
 			if ($lines[$i]->id > 0)
 			{
-				if ($parent == 0) projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak);
-				else projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak);
+				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level);
+				//var_dump($totalforeachday);
+				$ret = projectLinesPerDay($inc, $lines[$i]->id, $fuser, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak);
+				//var_dump('ret with parent='.$lines[$i]->id.' level='.$level);
+				//var_dump($ret);
+				foreach($ret as $key => $val)
+				{
+					$totalforeachday[$key]+=$val;
+				}
+				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level.' + subtasks');
+				//var_dump($totalforeachday);
 			}
 			$level--;
 		}
@@ -833,7 +845,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 		}
 	}
 
-	return $inc;
+	return $totalforeachday;
 }
 
 
@@ -852,7 +864,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
- * @return  $inc
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
 function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak=0)
 {
@@ -863,6 +875,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	$lastprojectid=0;
 	$workloadforid=array();
+	$totalforeachday=array();
 	$lineswithoutlevel0=array();
 
 	// Create a smaller array with sublevels only to be used later. This increase dramatically performances.
@@ -899,11 +912,15 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					$projectstatic->id = $lines[$i]->fk_project;
 				}
 
+				//var_dump('--- '.$level.' '.$firstdaytoshow.' '.$fuser->id.' '.$projectstatic->id.' '.$workloadforid[$projectstatic->id]);
+				//var_dump($projectstatic->weekWorkLoadPerTask);
 				if (empty($workloadforid[$projectstatic->id]))
 				{
 					$projectstatic->loadTimeSpent($firstdaytoshow, 0, $fuser->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 					$workloadforid[$projectstatic->id]=1;
 				}
+				//var_dump($projectstatic->weekWorkLoadPerTask);
+				//var_dump('--- '.$projectstatic->id.' '.$workloadforid[$projectstatic->id]);
 
 				$projectstatic->id=$lines[$i]->fk_project;
 				$projectstatic->ref=$lines[$i]->projectref;
@@ -1033,6 +1050,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 					$tmparray=dol_getdate($tmpday);
 					$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
+					$totalforeachday[$tmpday]+=$dayWorkLoad;
+
 					$alreadyspent='';
 					if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
 					$alttitle=$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']);
@@ -1073,8 +1092,17 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			$level++;
 			if ($lines[$i]->id > 0)
 			{
-				if ($parent == 0) projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak);
-				else projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak);
+				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level);
+				//var_dump($totalforeachday);
+				$ret = projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak);
+				//var_dump('ret with parent='.$lines[$i]->id.' level='.$level);
+				//var_dump($ret);
+				foreach($ret as $key => $val)
+				{
+					$totalforeachday[$key]+=$val;
+				}
+				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level.' + subtasks');
+				//var_dump($totalforeachday);
 			}
 			$level--;
 		}
@@ -1084,7 +1112,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 		}
 	}
 
-	return $inc;
+	return $totalforeachday;
 }
 
 

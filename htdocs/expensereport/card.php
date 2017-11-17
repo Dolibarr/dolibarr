@@ -234,8 +234,12 @@ if (empty($reshook))
     		$db->begin();
 
     		$id = $object->create($user);
+    		if ($id <= 0)
+    		{
+    			$error++;
+    		}
 
-    		if ($id > 0)
+    		if (! $error)
     		{
     			$db->commit();
     			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
@@ -2387,47 +2391,39 @@ if (GETPOST('modelselected')) {
 
 if ($action != 'presend')
 {
-	print '<div class="fichehalfleft">';
 
 	/*
 	 * Generate documents
 	 */
 
-	if($user->rights->expensereport->export && $action != 'create' && $action != 'edit')
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	print '<a name="builddoc"></a>'; // ancre
+
+	if($user->rights->expensereport->creer && $action != 'create' && $action != 'edit')
 	{
 		$filename	=	dol_sanitizeFileName($object->ref);
 		$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
-		$genallowed	=	$user->rights->expensereport->export;
-		$delallowed	=	$user->rights->expensereport->export;
+		$genallowed	=	$user->rights->expensereport->creer;
+		$delallowed	=	$user->rights->expensereport->creer;
 		$var 		= 	true;
-		print $formfile->showdocuments('expensereport',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
 		$somethingshown = $formfile->numoffiles;
 	}
 
-	print '</div>';
-
 	if ($action != 'create' && $action != 'edit' && ($id || $ref))
 	{
-	    $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
-		include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
-
-	    // Link invoice to intervention
-	    if (GETPOST('LinkedFichinter')) {
-	        $object->fetch($id);
-	        $object->fetch_thirdparty();
-	        $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
-	    }
-
-	    // Show links to link elements
-	    $linktoelements=array();
-	    if (! empty($conf->global->EXPENSES_LINK_TO_INTERVENTION))
-	    {
-	        $linktoelements[]='fichinter';
-	        $linktoelem = $form->showLinkToObjectBlock($object, $linktoelements, array('expensereport'));
-	        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-	    }
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 	}
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	// List of actions on element
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions = new FormActions($db);
+	$somethingshown = $formactions->showactions($object, 'expensereport', null);
+
+	print '</div></div></div>';
+
 }
 
 // Presend form

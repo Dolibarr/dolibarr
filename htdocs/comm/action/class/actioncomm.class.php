@@ -225,11 +225,11 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
-        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility
+        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility when userassigned was an int instead fo array
         {
         	$tmpid=$this->userassigned;
         	$this->userassigned=array();
-        	$this->userassigned[$tmpid]=array('id'=>$tmpid);
+        	$this->userassigned[$tmpid]=array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
 
         if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
@@ -240,7 +240,7 @@ class ActionComm extends CommonObject
 
         // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
         if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned))
-        	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
+        	$this->userassigned = array($userownerid=>array('id'=>$userownerid, 'transparency'=>$this->transparency));
 
         if (! $this->type_id || ! $this->type_code)
         {
@@ -943,7 +943,7 @@ class ActionComm extends CommonObject
 	    		$response = new WorkboardResponse();
 	    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	    		$response->label = $langs->trans("ActionsToDo");
-	    		$response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?status=todo&amp;mainmenu=agenda';
 	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	    		$response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
     		}

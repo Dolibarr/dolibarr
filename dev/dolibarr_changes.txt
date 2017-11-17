@@ -105,7 +105,7 @@ JQUERYFILETREE:
 RESTLER:
 --------
 
-* Add 2 lines into function     
+* Add 2 lines into file AutoLoader.php to complete function     
 	private function alias($className, $currentClass)
     {
 		...
@@ -116,4 +116,15 @@ to get
         if ($className == 'Luracast\Restler\string') return;
         if ($className == 'Luracast\Restler\mixed') return;
 		...
-        
+
+Change also file Luracast/Restler/explorer/index.html
+
++With swagger 2:
+
+* Add line into Util.php to complete function
+
+    public static function getShortName($className)
+    {
+    	// @CHANGE LDR
+    	if (! is_string($className)) return;
+    	//var_dump($className);

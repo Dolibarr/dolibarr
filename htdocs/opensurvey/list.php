@@ -171,12 +171,19 @@ while ($i < min($num,$limit))
 	else dol_print_error($db);
 
 	$opensurvey_static->id=$obj->id_sondage;
+	$opensurvey_static->ref=$obj->id_sondage;
+	$opensurvey_static->title=$obj->titre;
 	$opensurvey_static->status=$obj->status;
 
 	print '<tr>';
+
+	// Ref
 	print '<td>';
-	print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?id='.$obj->id_sondage.'">'.img_picto('','object_opensurvey').' '.$obj->id_sondage.'</a>';
-	print '</td><td>'.dol_htmlentities($obj->titre).'</td><td>';
+	print $opensurvey_static->getNomUrl(1);
+	print '</td>';
+
+	// Title
+	print '<td>'.dol_htmlentities($obj->titre).'</td><td>';
 	$type=($obj->format=='A')?'classic':'date';
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
@@ -200,7 +207,7 @@ while ($i < min($num,$limit))
 	print'<td align="right">'.$nbuser.'</td>'."\n";
 
 	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin),'day');
-	if ($db->jdate($obj->date_fin) < time()) { print ' ('.$langs->trans("Expired").')'; }
+	if ($db->jdate($obj->date_fin) < time()) { print img_warning($langs->trans("Expired")); }
 	print '</td>';
 
 	print'<td align="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";

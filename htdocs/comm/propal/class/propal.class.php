@@ -364,42 +364,42 @@ class Propal extends CommonObject
 		}
 	}
 
-	/**
-	 *    	Add a proposal line into database (linked to product/service or not)
-	 *      The parameters are already supposed to be appropriate and with final values to the call
-	 *      of this method. Also, for the VAT rate, it must have already been defined
-	 *      by whose calling the method get_default_tva (societe_vendeuse, societe_acheteuse, '' product)
-	 *      and desc must already have the right value (it's up to the caller to manage multilanguage)
-	 *
-	 * 		@param    	string		$desc				Description de la ligne
-	 * 		@param    	float		$pu_ht				Prix unitaire
-	 * 		@param    	float		$qty             	Quantite
-	 * 		@param    	float		$txtva           	Taux de tva
-	 * 		@param		float		$txlocaltax1		Local tax 1 rate
-	 *  	@param		float		$txlocaltax2		Local tax 2 rate
-	 *		@param    	int			$fk_product      	Id du produit/service predefini
-	 * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
-	 * 		@param    	string		$price_base_type	HT or TTC
-	 * 		@param    	float		$pu_ttc             Prix unitaire TTC
-	 * 		@param    	int			$info_bits			Bits de type de lignes
-	 *      @param      int			$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
-	 *      @param      int			$rang               Position of line
-	 *      @param		int			$special_code		Special code (also used by externals modules!)
-	 *      @param		int			$fk_parent_line		Id of parent line
-	 *      @param		int			$fk_fournprice		Id supplier price
-	 *      @param		int			$pa_ht				Buying price without tax
-	 *      @param		string		$label				???
-	 *		@param      int			$date_start       	Start date of the line
-	 *		@param      int			$date_end         	End date of the line
-	 *      @param		array		$array_options		extrafields array
-	 * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 *      @param		string		$origin				'order', ...
-	 *      @param		int			$origin_id			Id of origin object
-	 * 		@param		double		$pu_ht_devise		Unit price in currency
-	 * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
-	 *    	@return    	int         	    			>0 if OK, <0 if KO
-	 *    	@see       	add_product
-	 */
+    /**
+     *    	Add a proposal line into database (linked to product/service or not)
+     *      The parameters are already supposed to be appropriate and with final values to the call
+     *      of this method. Also, for the VAT rate, it must have already been defined
+     *      by whose calling the method get_default_tva (societe_vendeuse, societe_acheteuse, '' product)
+     *      and desc must already have the right value (it's up to the caller to manage multilanguage)
+     *
+     * 		@param    	string		$desc				Description of line
+     * 		@param    	float		$pu_ht				Unit price
+     * 		@param    	float		$qty             	Quantity
+     * 		@param    	float		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+     * 		@param		float		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
+     *  	@param		float		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
+     *		@param    	int			$fk_product      	Id du produit/service predefini
+     * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
+     * 		@param    	string		$price_base_type	HT or TTC
+     * 		@param    	float		$pu_ttc             Prix unitaire TTC
+     * 		@param    	int			$info_bits			Bits de type de lignes
+     *      @param      int			$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
+     *      @param      int			$rang               Position of line
+     *      @param		int			$special_code		Special code (also used by externals modules!)
+     *      @param		int			$fk_parent_line		Id of parent line
+     *      @param		int			$fk_fournprice		Id supplier price
+     *      @param		int			$pa_ht				Buying price without tax
+     *      @param		string		$label				???
+     *		@param      int			$date_start       	Start date of the line
+     *		@param      int			$date_end         	End date of the line
+     *      @param		array		$array_options		extrafields array
+     * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+     *      @param		string		$origin				'order', ...
+     *      @param		int			$origin_id			Id of origin object
+     * 		@param		double		$pu_ht_devise		Unit price in currency
+     * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
+     *    	@return    	int         	    			>0 if OK, <0 if KO
+     *    	@see       	add_product
+     */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0, $pu_ht_devise=0, $fk_remise_except=0)
 	{
 		global $mysoc, $conf, $langs;
@@ -1018,11 +1018,15 @@ class Propal extends CommonObject
 							$fk_parent_line = 0;
 						}
 
+                        // Complete vat rate with code
+						$vatrate = $this->lines[$i]->tva_tx;
+						if ($this->lines[$i]->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$this->lines[$i]->vat_src_code.')';
+
 						$result = $this->addline(
 							$this->lines[$i]->desc,
 							$this->lines[$i]->subprice,
 							$this->lines[$i]->qty,
-							$this->lines[$i]->tva_tx,
+							$vatrate,
 							$this->lines[$i]->localtax1_tx,
 							$this->lines[$i]->localtax2_tx,
 							$this->lines[$i]->fk_product,
@@ -1234,7 +1238,6 @@ class Propal extends CommonObject
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $clonedObj->ref_client	= '';
 
 		// Create clone
-
 		$result=$clonedObj->create($user);
 		if ($result < 0) $error++;
 		else

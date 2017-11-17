@@ -194,7 +194,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 
 /*
  * View
-*/
+ */
 
 
 llxHeader('', $langs->trans("Task"));
@@ -376,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Task parent
-			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			print '<tr><td>'.$langs->trans("ChildOfProjectTask").'</td><td>';
 			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
 			print '</td></tr>';
 
@@ -473,6 +473,16 @@ if ($id > 0 || ! empty($ref))
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
+
+			// Task parent
+			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			if ($object->fk_task_parent > 0)
+			{
+				$tasktmp=new Task($db);
+				$tasktmp->fetch($object->fk_task_parent);
+				print $tasktmp->getNomUrl(1);
+			}
+			print '</td></tr>';
 
 			// Date start - Date end
 			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';

@@ -117,6 +117,7 @@ class box_factures_fourn extends ModeleBoxes
 					$datelimite=$db->jdate($objp->datelimite);
 					$date=$db->jdate($objp->df);
 					$datem=$db->jdate($objp->tms);
+
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->ref;
                     $facturestatic->total_ht = $objp->total_ht;
@@ -124,6 +125,8 @@ class box_factures_fourn extends ModeleBoxes
                     $facturestatic->total_ttc = $objp->total_ttc;
                     $facturestatic->date_echeance = $datelimite;
                     $facturestatic->statut = $objp->fk_statut;
+                    $facturestatic->ref_supplier = $objp->ref_supplier;
+
                     $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;

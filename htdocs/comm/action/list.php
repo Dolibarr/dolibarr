@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/comm/action/listactions.php
+ *	    \file       htdocs/comm/action/list.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
  */
@@ -70,6 +70,12 @@ $filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
+$contextpage='actioncommlist';
+
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('actioncomm');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 // If not choice done on calendar owner, we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 {
@@ -112,6 +118,27 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendalist'));
 
+$arrayfields=array(
+	'a.id'=>array('label'=>"Ref", 'checked'=>1),
+	'owner'=>array('label'=>"Owner", 'checked'=>1),
+	'a.label'=>array('label'=>"Title", 'checked'=>1),
+	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
+	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
+	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>1),
+	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
+	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+
+);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+   foreach($extrafields->attribute_label as $key => $val)
+   {
+		 $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+   }
+}
 
 /*
  *	Actions
@@ -136,6 +163,8 @@ $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+// Selection of new fields
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
@@ -143,6 +172,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
     $search_title='';
     $datestart='';
     $dateend='';
+    $search_array_options=array();
 }
 
 
@@ -191,6 +221,13 @@ if (GETPOST('datestartyear','int')) $param.='&datestartyear='.GETPOST('datestart
 if (GETPOST('dateendday','int')) $param.='&dateendday='.GETPOST('dateendday','int');
 if (GETPOST('dateendmonth','int')) $param.='&dateendmonth='.GETPOST('dateendmonth','int');
 if (GETPOST('dateendyear','int')) $param.='&dateendyear='.GETPOST('dateendyear','int');
+// Add $param from extra fields
+foreach ($search_array_options as $key => $val)
+{
+	$crit=$val;
+	$tmpkey=preg_replace('/search_options_/','',$key);
+	if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+}
 
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
@@ -201,10 +238,14 @@ $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype,";
 $sql.= " c.code as type_code, c.libelle as type_label,";
 $sql.= " sp.lastname, sp.firstname";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a";
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object) ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+$sql.=" ,".MAIN_DB_PREFIX."c_actioncomm as c";
 // We must filter on resource table
 if ($resourceid > 0) $sql.=", ".MAIN_DB_PREFIX."element_resources as r";
 // We must filter on assignement table
@@ -238,7 +279,7 @@ if (! empty($actioncode))
  		else
  		{
  	        	$sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
- 		}		
+ 		}
         }
     }
 }
@@ -269,6 +310,20 @@ if ($filtert > 0 || $usergroup > 0)
 if ($dateselect > 0) $sql.= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AND a.datep <= '".$db->idate($dateselect+3600*24-1)."') OR (a.datep2 IS NULL AND a.datep > '".$db->idate($dateselect-3600)."' AND a.datep <= '".$db->idate($dateselect+3600*24-1)."'))";
 if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart+3600*24-1)."'";
 if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+	$crit=$val;
+	$tmpkey=preg_replace('/search_options_/','',$key);
+	$typ=$extrafields->attribute_type[$tmpkey];
+	$mode_search=0;
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
+	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
+	{
+		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
+	}
+}
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
@@ -281,7 +336,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
-dol_syslog("comm/action/listactions.php", LOG_DEBUG);
+dol_syslog("comm/action/list.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -376,27 +431,70 @@ if ($resql)
 
     $moreforfilter='';
 
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
     $i = 0;
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
-    print '<td class="liste_titre" align="center">';
-	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
-	print '</td>';
-	print '<td class="liste_titre" align="center">';
-	print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
-	print '</td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-    if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre center">';
-    print $formactions->form_select_status_action('formaction',$status,1,'status',1,2);
-    print '</td>';
+	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
+	if (! empty($arrayfields['a.datep']['checked']))	{
+		print '<td class="liste_titre" align="center">';
+		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
+		print '</td>';
+	}
+	if (! empty($arrayfields['a.datep2']['checked']))	{
+		print '<td class="liste_titre" align="center">';
+		print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
+		print '</td>';
+	}
+	if (! empty($arrayfields['s.nom']['checked']))			print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.fk_contact']['checked']))	print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.fk_element']['checked']))	print '<td class="liste_titre"></td>';
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val)
+	   {
+			if (! empty($arrayfields["ef.".$key]['checked']))
+			{
+				$align=$extrafields->getAlignFlag($key);
+				$typeofextrafield=$extrafields->attribute_type[$key];
+				print '<td class="liste_titre'.($align?' '.$align:'').'">';
+				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
+				{
+					$crit=$val;
+					$tmpkey=preg_replace('/search_options_/','',$key);
+					$searchclass='';
+					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
+				else
+				{
+					// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+					echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
+				}
+				print '</td>';
+			}
+	   }
+	}
+	// Fields from hook
+	$parameters=array('arrayfields'=>$arrayfields);
+	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+
+    if (! empty($arrayfields['a.percent']['checked']))	{
+		print '<td class="liste_titre center">';
+    	print $formactions->form_select_status_action('formaction',$status,1,'status',1,2);
+    	print '</td>';
+    }
 	// Action column
 	print '<td class="liste_titre" align="middle">';
 	$searchpicto=$form->showFilterButtons();
@@ -405,18 +503,37 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre("ActionsOwnedByShort",$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.id']['checked']))	      print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"],"a.id",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['owner']['checked']))        print_liste_field_titre($arrayfields['owner']['label'], $_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['c.libelle']['checked']))	  print_liste_field_titre($arrayfields['c.libelle']['label'], $_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.label']['checked']))	  print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Contact",$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-    if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) print_liste_field_titre("LinkedObject",$_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("");
+	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
+	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
+    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
+
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+		foreach($extrafields->attribute_label as $key => $val)
+		{
+			if (! empty($arrayfields["ef.".$key]['checked']))
+			{
+				$align=$extrafields->getAlignFlag($key);
+				$sortonfield = "ef.".$key;
+				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
+				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+			}
+		}
+	}
+	// Hook fields
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (! empty($arrayfields['a.percent']['checked']))print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	$contactstatic = new Contact($db);
@@ -448,103 +565,138 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		// Ref
-		print '<td>';
-		print $actionstatic->getNomUrl(1,-1);
-		print '</td>';
+		if (! empty($arrayfields['a.id']['checked'])) {
+			// Ref
+			print '<td>';
+			print $actionstatic->getNomUrl(1,-1);
+			print '</td>';
+		}
 
 		// User owner
-		print '<td class="tdoverflowmax100">';
-		if ($obj->fk_user_action > 0)
+		if (! empty($arrayfields['owner']['checked']))
 		{
-			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getNomUrl(-1);
+			print '<td class="'.($conf->browser->name != 'chrome'?'':'tdoverflowmax100').'">';	// With edge and chrom the td overflow is not supported correctly when content is not full text.
+			if ($obj->fk_user_action > 0)
+			{
+				$userstatic->fetch($obj->fk_user_action);
+				print $userstatic->getNomUrl(-1);
+			}
+			else print '&nbsp;';
+			print '</td>';
 		}
-		else print '&nbsp;';
-		print '</td>';
+		if (! empty($arrayfields['c.libelle']['checked'])) {
+			// Type
+			print '<td>';
+			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+			{
+	    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
+    			else {
+    			    if ($actionstatic->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
+    			    if ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
+    			    if ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
+    			    if ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+    			}
+			}
+			$labeltype=$obj->type_code;
+			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
+			if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
+			print dol_trunc($labeltype,28);
+			print '</td>';
+		}
+		if (! empty($arrayfields['a.label']['checked'])) {
+			// Label
+			print '<td class="tdoverflowmax300">';
+			print $actionstatic->label;
+			print '</td>';
+		}
 
-		// Type
-		print '<td>';
-		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		if (! empty($arrayfields['a.datep']['checked'])) {
+			// Start date
+			print '<td align="center" class="nowrap">';
+			print dol_print_date($db->jdate($obj->dp),"dayhour");
+			$late=0;
+			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
+			if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
+			if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) $late=1;
+			if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
+			if ($late) print img_warning($langs->trans("Late")).' ';
+			print '</td>';
+		}
+		if (! empty($arrayfields['a.datep2']['checked'])) {
+			// End date
+			print '<td align="center" class="nowrap">';
+			print dol_print_date($db->jdate($obj->dp2),"dayhour");
+			print '</td>';
+		}
+		if (! empty($arrayfields['s.nom']['checked'])) {
+			// Third party
+			print '<td class="tdoverflowmax100">';
+			if ($obj->socid)
+			{
+				$societestatic->id=$obj->socid;
+				$societestatic->client=$obj->client;
+				$societestatic->name=$obj->societe;
+				print $societestatic->getNomUrl(1,'',28);
+			}
+			else print '&nbsp;';
+			print '</td>';
+		}
+		if (! empty($arrayfields['a.fk_contact']['checked'])) {
+			// Contact
+			print '<td>';
+			if ($obj->fk_contact > 0)
+			{
+				$contactstatic->lastname=$obj->lastname;
+				$contactstatic->firstname=$obj->firstname;
+				$contactstatic->id=$obj->fk_contact;
+				print $contactstatic->getNomUrl(1,'',28);
+			}
+			else
+			{
+				print "&nbsp;";
+			}
+			print '</td>';
+		}
+		if (! empty($arrayfields['a.fk_element']['checked'])) {
+		        // Linked object
+		        print '<td>';
+		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
+              		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		            print dolGetElementUrl($obj->fk_element,$obj->elementtype,1);
+		        } else {
+              		print "&nbsp;";
+		        }
+		        print '</td>';
+
+		}
+		// Extra fields
+		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 		{
-    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
-    		else {
-    		    if ($actionstatic->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
-    		    if ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
-    		    if ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
-    		    if ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
-    		}
+		   foreach($extrafields->attribute_label as $key => $val)
+		   {
+				if (! empty($arrayfields["ef.".$key]['checked']))
+				{
+					print '<td';
+					$align=$extrafields->getAlignFlag($key);
+					if ($align) print ' align="'.$align.'"';
+					print '>';
+					$tmpkey='options_'.$key;
+					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+					print '</td>';
+					if (! $i) $totalarray['nbfield']++;
+				}
+		   }
 		}
-		$labeltype=$obj->type_code;
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
-		if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
-		print dol_trunc($labeltype,28);
-		print '</td>';
+		// Fields from hook
+		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
-		// Label
-		print '<td class="tdoverflowmax300">';
-		print $actionstatic->label;
-		print '</td>';
-
-		// Start date
-		print '<td align="center" class="nowrap">';
-		print dol_print_date($db->jdate($obj->dp),"dayhour");
-		$late=0;
-		if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
-		if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
-		if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) $late=1;
-		if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
-		if ($late) print img_warning($langs->trans("Late")).' ';
-		print '</td>';
-
-		// End date
-		print '<td align="center" class="nowrap">';
-		print dol_print_date($db->jdate($obj->dp2),"dayhour");
-		print '</td>';
-
-		// Third party
-		print '<td class="tdoverflowmax100">';
-		if ($obj->socid)
-		{
-			$societestatic->id=$obj->socid;
-			$societestatic->client=$obj->client;
-			$societestatic->name=$obj->societe;
-			print $societestatic->getNomUrl(1,'',28);
+		if (! empty($arrayfields['a.percent']['checked'])) {
+			// Status/Percent
+			$datep=$db->jdate($obj->datep);
+			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,3,0,$datep).'</td>';
 		}
-		else print '&nbsp;';
-		print '</td>';
-
-		// Contact
-		print '<td>';
-		if ($obj->fk_contact > 0)
-		{
-			$contactstatic->lastname=$obj->lastname;
-			$contactstatic->firstname=$obj->firstname;
-			$contactstatic->id=$obj->fk_contact;
-			print $contactstatic->getNomUrl(1,'',28);
-		}
-		else
-		{
-			print "&nbsp;";
-		}
-		print '</td>';
-
-        // Linked object
-        if (! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT)) {
-            print '<td>';
-            if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
-                include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-                print dolGetElementUrl($obj->fk_element,$obj->elementtype,1);
-            } else {
-                print "&nbsp;";
-            }
-            print '</td>';
-        }
-
-		// Status/Percent
-		$datep=$db->jdate($obj->datep);
-		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,3,0,$datep).'</td>';
-
 		print '<td></td>';
 
 		print "</tr>\n";

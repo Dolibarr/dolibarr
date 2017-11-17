@@ -243,9 +243,9 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
             migrate_restore_missing_links($db,$langs,$conf);
 
-            migrate_directories($db,$langs,$conf,'/compta','/banque');
+            migrate_rename_directories($db,$langs,$conf,'/compta','/banque');
 
-            migrate_directories($db,$langs,$conf,'/societe','/mycompany');
+            migrate_rename_directories($db,$langs,$conf,'/societe','/mycompany');
         }
 
         // Script for VX (X<2.8) -> V2.8
@@ -302,7 +302,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','3.1.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            migrate_directories($db,$langs,$conf,'/rss','/externalrss');
+            migrate_rename_directories($db,$langs,$conf,'/rss','/externalrss');
 
             migrate_actioncomm_element($db,$langs,$conf);
         }
@@ -351,7 +351,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            migrate_directories($db,$langs,$conf,'/fckeditor','/medias');
+            migrate_rename_directories($db,$langs,$conf,'/fckeditor','/medias');
         }
 
         // Scripts for last version
@@ -470,13 +470,20 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     $db->commit();
     $db->close();
 
+
+    // Copy directory medias
+    $srcroot=DOL_DOCUMENT_ROOT.'/install/medias';
+    $destroot=DOL_DATA_ROOT.'/medias';
+    dolCopyDir($srcroot, $destroot, 0, 0);
+
+
     // Actions for all versions (no database change, delete files and directories)
     migrate_delete_old_files($db, $langs, $conf);
     migrate_delete_old_dir($db, $langs, $conf);
     // Actions for all versions (no database change, create directories)
     dol_mkdir(DOL_DATA_ROOT.'/bank');
     // Actions for all versions (no database change, rename directories)
-    migrate_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
+    migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
 
     print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
 }
@@ -3979,13 +3986,13 @@ function migrate_remise_except_entity($db,$langs,$conf)
  * @param	string		$newname	New name (relative to DOL_DATA_ROOT)
  * @return	void
  */
-function migrate_directories($db,$langs,$conf,$oldname,$newname)
+function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
 {
-    dolibarr_install_syslog("upgrade2::migrate_directories");
+    dolibarr_install_syslog("upgrade2::migrate_rename_directories");
 
     if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
     {
-        dolibarr_install_syslog("upgrade2::migrate_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
+        dolibarr_install_syslog("upgrade2::migrate_rename_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
         @rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
     }
 }

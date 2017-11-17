@@ -845,7 +845,8 @@ if (empty($reshook))
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
-				unset($_POST['date_starthour']);
+	            unset($_POST['fourn_ref']);
+	            unset($_POST['date_starthour']);
 				unset($_POST['date_startmin']);
 				unset($_POST['date_startsec']);
 				unset($_POST['date_startday']);
@@ -998,7 +999,6 @@ if (empty($reshook))
 				$type = $productsupplier->type;
 				$price_base_type = 'HT';
 
-				// TODO Save the product supplier ref into database (like done for supplier propal and order) into field ref_supplier (must rename field ref into ref_supplier first)
 				$result=$object->addline(
 					$desc,
 					$productsupplier->fourn_pu,
@@ -1017,7 +1017,8 @@ if (empty($reshook))
 					-1,
 					0,
 					$array_options,
-					$productsupplier->fk_unit
+					$productsupplier->fk_unit,
+					$productsupplier->fourn_ref
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -1042,6 +1043,7 @@ if (empty($reshook))
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 			$desc = $product_desc;
 			$type = GETPOST('type');
+			$ref_supplier = GETPOST('fourn_ref','alpha');
 
 			$fk_unit= GETPOST('units', 'alpha');
 
@@ -1063,7 +1065,7 @@ if (empty($reshook))
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-			$result=$object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_ht_devise);
+			$result=$object->addline($product_desc, $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, $pu_ht_devise, $ref_supplier);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -1098,6 +1100,7 @@ if (empty($reshook))
 			unset($_POST['price_ht']);
 			unset($_POST['multicurrency_price_ht']);
 			unset($_POST['price_ttc']);
+			unset($_POST['fourn_ref']);
 			unset($_POST['tva_tx']);
 			unset($_POST['label']);
 			unset($localtax1_tx);
