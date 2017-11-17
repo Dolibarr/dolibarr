@@ -1520,13 +1520,13 @@ class ExpenseReport extends CommonObject
 				$this->error=$obj->error;
 				$this->errors=$obj->errors;
             	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-            	return "";
+            	return -1;
             }
         }
         else
         {
-            print $langs->trans("Error")." ".$langs->trans("Error_EXPENSEREPORT_ADDON_NotDefined");
-            return "";
+            $this->error = "Error_EXPENSEREPORT_ADDON_NotDefined";
+            return -2;
         }
     }
 
