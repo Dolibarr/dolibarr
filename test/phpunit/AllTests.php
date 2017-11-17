@@ -201,18 +201,22 @@ class AllTests
         require_once dirname(__FILE__).'/RestAPIUserTest.php';
         $suite->addTestSuite('RestAPIUserTest');
 
-        require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-        $suite->addTestSuite('WebservicesProductsTest');
-        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-        $suite->addTestSuite('WebservicesInvoicesTest');
-        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-        $suite->addTestSuite('WebservicesOrdersTest');
-        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-        $suite->addTestSuite('WebservicesOtherTest');
-        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-        $suite->addTestSuite('WebservicesThirdpartyTest');
-        require_once dirname(__FILE__).'/WebservicesUserTest.php';
-        $suite->addTestSuite('WebservicesUserTest');
+        // Test only with php7.2
+        if ((float) phpversion() < 7.2)
+        {
+        	require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+	        $suite->addTestSuite('WebservicesProductsTest');
+	        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+	        $suite->addTestSuite('WebservicesInvoicesTest');
+	        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+	        $suite->addTestSuite('WebservicesOrdersTest');
+	        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+	        $suite->addTestSuite('WebservicesOtherTest');
+	        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+	        $suite->addTestSuite('WebservicesThirdpartyTest');
+	        require_once dirname(__FILE__).'/WebservicesUserTest.php';
+	        $suite->addTestSuite('WebservicesUserTest');
+        }
 
         require_once dirname(__FILE__).'/ExportTest.php';
         $suite->addTestSuite('ExportTest');
