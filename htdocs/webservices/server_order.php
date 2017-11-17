@@ -116,7 +116,8 @@ $line_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('commandedet',true);
-if (count($extrafields)>0) {
+$extrafield_line_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
