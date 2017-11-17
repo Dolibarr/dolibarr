@@ -1,7 +1,7 @@
 <?php
 namespace Luracast\Restler\Format;
 
-use Luracast\Restler\Data\Object;
+use Luracast\Restler\Data\Obj;
 use Luracast\Restler\RestException;
 use SimpleXMLElement;
 use XMLWriter;
@@ -89,7 +89,7 @@ class XmlFormat extends Format
 
     public function encode($data, $humanReadable = false)
     {
-        $data = Object::toArray($data);
+        $data = Obj::toArray($data);
         $xml = new XMLWriter();
         $xml->openMemory();
         $xml->startDocument('1.0', $this->charset);
