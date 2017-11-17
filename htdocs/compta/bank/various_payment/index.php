@@ -138,7 +138,8 @@ if ($result)
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -168,11 +169,11 @@ if ($result)
 
 	// Ref
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
+	print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 
 	// Label
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 
 	// Date
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -286,11 +287,11 @@ if ($result)
 
 	$colspan=5;
 	if (! empty($conf->banque->enabled)) $colspan++;
+
 	print '<tr class="liste_total">';
 	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
 	print '<td class="liste_total" align="right">'.price($totalarray['totaldeb'])."</td>";
 	print '<td class="liste_total" align="right">'.price($totalarray['totalcred'])."</td>";
-	print '<td></td>';
 	print '<td></td>';
 	print '</tr>';
 

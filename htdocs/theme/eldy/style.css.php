@@ -403,7 +403,7 @@ td.actionbuttons a {
 }
 select.flat, form.flat select {
 	font-weight: normal;
-    height: 2.1em;
+    height: 2em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -449,7 +449,7 @@ input:-webkit-autofill {
 }
 ::-webkit-input-placeholder { color:#ccc; }
 input:-moz-placeholder { color:#ccc; }
-input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
+input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
 input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
@@ -4175,6 +4175,11 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.blockvmenusearch .select2-container--default .select2-selection--single,
+.blockvmenubookmarks .select2-container--default .select2-selection--single
+{
+    background-color: unset;
+}
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: unset;
 }
