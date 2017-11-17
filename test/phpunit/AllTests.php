@@ -202,8 +202,8 @@ class AllTests
         $suite->addTestSuite('RestAPIUserTest');
 
         // Test only with php7.2 or less
-        if ((float) phpversion() < 7.3)
-        {
+        //if ((float) phpversion() < 7.3)
+        //{
         	require_once dirname(__FILE__).'/WebservicesProductsTest.php';
 	        $suite->addTestSuite('WebservicesProductsTest');
 	        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
@@ -216,7 +216,7 @@ class AllTests
 	        $suite->addTestSuite('WebservicesThirdpartyTest');
 	        require_once dirname(__FILE__).'/WebservicesUserTest.php';
 	        $suite->addTestSuite('WebservicesUserTest');
-        }
+        //}
 
         require_once dirname(__FILE__).'/ExportTest.php';
         $suite->addTestSuite('ExportTest');
