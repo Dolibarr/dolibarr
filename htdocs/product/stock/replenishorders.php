@@ -51,7 +51,6 @@ $search_dateyear = GETPOST('search_dateyear', 'int');
 $search_datemonth = GETPOST('search_datemonth', 'int');
 $search_dateday = GETPOST('search_dateday', 'int');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
-if (GETPOST('search_date', 'alpha')) $search_date = dol_stringtotime(GETPOST('search_date', 'alpha'));	// For backward compatibility
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
@@ -61,7 +60,6 @@ if (!$sortfield) $sortfield = 'cf.date_creation';
 $page = GETPOST("page");
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
-
 
 
 /*
@@ -244,6 +242,7 @@ if ($resql)
     		$sortfield,
     		$sortorder
     );
+
     print '</tr>'.
 
          '<tr class="liste_titre">'.
