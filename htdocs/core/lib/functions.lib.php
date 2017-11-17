@@ -4514,6 +4514,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			{
 				$product->get_buyprice($idprodfournprice,0,0,0);
 				$ret=$product->vatrate_supplier;
+				if ($product->default_vat_code) $ret.=' ('.$product->default_vat_code.')';
 			}
 			else
 			{
