@@ -138,7 +138,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
-$thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
+if (is_array($extrafield_array)) $thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(

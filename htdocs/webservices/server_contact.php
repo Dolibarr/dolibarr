@@ -133,7 +133,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
-$contact_fields=array_merge($contact_fields,$extrafield_array);
+if (is_array($extrafield_array)) $contact_fields=array_merge($contact_fields,$extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(

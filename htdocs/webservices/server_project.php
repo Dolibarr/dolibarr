@@ -175,7 +175,7 @@ foreach($extrafields->attribute_label as $key=>$label)
     else {$type='xsd:string';}
     $extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-$project_fields=array_merge($project_fields,$extrafield_array);
+if (is_array($extrafield_array)) $project_fields=array_merge($project_fields,$extrafield_array);
 
 $server->wsdl->addComplexType(
     'project',

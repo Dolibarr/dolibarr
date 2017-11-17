@@ -200,7 +200,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['contact_options_'.$key]=array('name'=>'contact_options_'.$key,'type'=>$type);
 }
 
-$thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields,$extrafield_array);
+if (is_array($extrafield_array)) $thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields,$extrafield_array);
 
 
 $server->wsdl->addComplexType(
