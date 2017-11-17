@@ -109,7 +109,7 @@ class FactureRec extends CommonInvoice
 		$this->nb_gen_max=empty($this->nb_gen_max)?0:$this->nb_gen_max;
 		$this->auto_validate=empty($this->auto_validate)?0:$this->auto_validate;
 		$this->generate_pdf = empty($this->generate_pdf)?0:$this->generate_pdf;
-        
+
 		$this->db->begin();
 
 		// Charge facture modele
@@ -356,7 +356,7 @@ class FactureRec extends CommonInvoice
 				$this->usenewprice			  = $obj->usenewprice;
 				$this->auto_validate		  = $obj->auto_validate;
 				$this->generate_pdf           = $obj->generate_pdf;
-                
+
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
 				// Retreive all extrafield for thirdparty
@@ -902,6 +902,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ' WHERE frequency > 0';      // A recurring invoice is an invoice with a frequency
 		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
 		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
+		$sql.= ' AND suspended = 0';
 		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
 
@@ -940,7 +941,6 @@ class FactureRec extends CommonInvoice
 			    $facture->brouillon = 1;
 			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
-			    $facture->suspended = 0;
 
 			    $invoiceidgenerated = $facture->create($user);
 			    if ($invoiceidgenerated <= 0)
@@ -1035,9 +1035,9 @@ class FactureRec extends CommonInvoice
 	 *  @param      integer	$alreadypaid    Not used
 	 *  @return     string			        Label
 	 */
-	function getLibStatut($mode=0,$alreadypaid=-1)
+	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->frequency?1:0, $this->suspended, $mode, $alreadypaid, $this->type);
+		return $this->LibStatut($this->frequency?1:0, $this->suspended, $mode, empty($this->type)?0:$this->type);
 	}
 
 	/**
@@ -1046,22 +1046,21 @@ class FactureRec extends CommonInvoice
 	 *	@param    	int  	$recur         	Is it a recurring invoice ?
 	 *	@param      int		$status        	Id status (suspended or not)
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		int		$alreadypaid	Not used
 	 *	@param		int		$type			Type invoice
 	 *	@return     string        			Libelle du statut
 	 */
-	function LibStatut($recur,$status,$mode=0,$alreadypaid=-1,$type=0)
+	function LibStatut($recur, $status, $mode=0, $type=0)
 	{
 		global $langs;
 		$langs->load('bills');
 
-		//print "$recur,$status,$mode,$alreadypaid,$type";
+		//print "$recur,$status,$mode,$type";
 		if ($mode == 0)
 		{
 			$prefix='';
 			if ($recur)
 			{
-				if ($status == 1) return $langs->trans('Suspended');       // credit note
+				if ($status == 1) return $langs->trans('Disabled');       // credit note
 				else return $langs->trans('Active');
 			}
 			else return $langs->trans("Draft");
@@ -1071,7 +1070,7 @@ class FactureRec extends CommonInvoice
 			$prefix='Short';
 			if ($recur)
 			{
-				if ($status == 1) return $langs->trans('Suspended');
+				if ($status == 1) return $langs->trans('Disabled');
 				else return $langs->trans('Active');
 			}
 			else return $langs->trans("Draft");
@@ -1080,7 +1079,7 @@ class FactureRec extends CommonInvoice
 		{
 			if ($recur)
 			{
-				if ($status == 1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
+				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
 				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
 			}
 			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
@@ -1090,7 +1089,7 @@ class FactureRec extends CommonInvoice
 			if ($recur)
 			{
 				$prefix='Short';
-				if ($status == 1) return img_picto($langs->trans('Suspended'),'statut6');
+				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6');
 				else return img_picto($langs->trans('Active'),'statut4');
 			}
 			else return img_picto($langs->trans('Draft'),'statut0');
@@ -1100,7 +1099,7 @@ class FactureRec extends CommonInvoice
 			$prefix='';
 			if ($recur)
 			{
-				if ($type == 1) return img_picto($langs->trans('Suspended'),'statut6').' '.$langs->trans('Suspended');
+				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
 				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
 			}
 			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
@@ -1111,7 +1110,7 @@ class FactureRec extends CommonInvoice
 			if ($mode == 5) $prefix='Short';
 			if ($recur)
 			{
-				if ($status == 1) return '<span class="xhideonsmartphone">'.$langs->trans('Suspended').' </span>'.img_picto($langs->trans('Suspended'),'statut6');
+				if ($status == 1) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
 				else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'),'statut4');
 			}
 			else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'),'statut0');

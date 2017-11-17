@@ -359,6 +359,54 @@ if (empty($reshook))
 		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
 	}
 
+	// Set status disabled
+	elseif ($action == 'disable' && $user->rights->facture->creer)
+	{
+		$db->begin();
+
+		$object->fetch($id);
+
+		$res = $object->setValueFrom('suspended', 1);
+		if ($res <= 0)
+		{
+			$error++;
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// Set status enabled
+	elseif ($action == 'enable' && $user->rights->facture->creer)
+	{
+		$db->begin();
+
+		$object->fetch($id);
+
+		$res = $object->setValueFrom('suspended', 0);
+		if ($res <= 0)
+		{
+			$error++;
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	// Delete line
 	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->facture->creer)
 	{
@@ -831,30 +879,30 @@ if (empty($reshook))
 
 			// Update line
 			if (! $error)
-		{
-			$result = $object->updateline(
-				GETPOST('lineid'),
-				$description,
-				$pu_ht,
-				$qty,
-				$vat_rate,
-				$localtax1_rate,
-				$localtax1_rate,
-				GETPOST('productid'),
-				GETPOST('remise_percent'),
-				'HT',
-				$info_bits,
-				0,
-				0,
-				$type,
-				0,
-				$special_code,
-				$label,
-				GETPOST('units')
-			);
-
-			if ($result >= 0)
 			{
+				$result = $object->updateline(
+					GETPOST('lineid'),
+					$description,
+					$pu_ht,
+					$qty,
+					$vat_rate,
+					$localtax1_rate,
+					$localtax1_rate,
+					GETPOST('productid'),
+					GETPOST('remise_percent'),
+					'HT',
+					$info_bits,
+					0,
+					0,
+					$type,
+					0,
+					$special_code,
+					$label,
+					GETPOST('units')
+				);
+
+				if ($result >= 0)
+				{
 					/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
                         // Define output language
                         $outputlangs = $langs;
@@ -1632,10 +1680,10 @@ else
 		 */
 		print '<div class="tabsAction">';
 
-		//if ($object->statut == Facture::STATUS_DRAFT)   // there is no draft status on templates.
-		//{
-		if ($user->rights->facture->creer)
+		if (empty($object->suspended))
 		{
+			if ($user->rights->facture->creer)
+			{
 				if (! empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max))
 				{
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
@@ -1644,19 +1692,31 @@ else
 				{
 					if (empty($object->frequency) || $object->date_when <= $today)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->thirdparty->id.'&fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
 					else
 					{
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
-							}
 					}
+				}
 			}
 			else
 			{
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateBill").'</a></div>';
-				}
-		//}
+			}
+		}
+
+		if ($user->rights->facture->creer)
+		{
+			if (empty($object->suspended))
+			{
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?action=disable&id='.$object->id.'">'.$langs->trans("Disable").'</a></div>';
+			}
+			else
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?action=enable&id='.$object->id.'">'.$langs->trans("Enable").'</a></div>';
+			}
+		}
 
 		//if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
 		if ($user->rights->facture->supprimer)
