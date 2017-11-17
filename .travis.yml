@@ -61,7 +61,7 @@ matrix:
   fast_finish: true
   allow_failures:
   - php: hhvm
-  - php: 7.2
+  - php: '7.2'
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
