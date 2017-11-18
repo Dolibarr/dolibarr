@@ -17,7 +17,6 @@ BillShortStatusClosedUnpaid=Afgesloten
 AmountOfBillsByMonthHT=Factuurbedrag per maand (ex BTW)
 ShowInvoiceSituation=Toon situatie factuur
 RemainderToBill=Nog te factureren
-DateMaxPayment=Te betalen vóór
 GlobalDiscount=Globale korting
 PaymentRef=Betalingsref.
 CloneInvoice=Kopieer factuur

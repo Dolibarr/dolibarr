@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Deuxième niveau d'approbation déjà réalisé
 SupplierOrderReceivedInDolibarr=Commande fournisseur %s reçue %s
 SupplierOrderSubmitedInDolibarr=Commande fournisseur %s soumise
 SupplierOrderClassifiedBilled=Commande fournisseur %s classée facturée
+OtherOrders=Autres commandes
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable suivi commande client
 TypeContact_commande_internal_SHIPPING=Responsable envoi commande client

@@ -64,6 +64,7 @@ ProposalLine=Предложение линия
 AvailabilityPeriod=Наличие задержки
 SetAvailability=Задержка устанавливается доступность
 AfterOrder=после заказа
+OtherProposals=Другие предложения
 ##### Availability #####
 AvailabilityTypeAV_NOW=Немедленный
 AvailabilityTypeAV_1W=1 неделя

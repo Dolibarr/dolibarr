@@ -32,7 +32,6 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-
 if (! isset($mode) || $mode != 'noajax')    // For ajax call
 {
     require_once '../../main.inc.php';
@@ -40,11 +39,12 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
-	$action=GETPOST('action','aZ09');
-    $file=urldecode(GETPOST('file'));
-    $section=GETPOST("section");
-    $module=GETPOST("module");
-    $urlsource=GETPOST("urlsource");
+    $action=GETPOST('action','aZ09');
+    $file=urldecode(GETPOST('file','alpha'));
+    $section=GETPOST("section",'alpha');
+    $module=GETPOST("module",'alpha');
+    $urlsource=GETPOST("urlsource",'alpha');
+    $search_doc_ref=GETPOST('search_doc_ref','alpha');
 
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
@@ -56,7 +56,9 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="name";
 
-    $upload_dir = dirname(str_replace("../","/", $conf->ecm->dir_output.'/'.$file));
+	$rootdirfordoc = $conf->ecm->dir_output;
+
+	$upload_dir = dirname(str_replace("../", "/", $rootdirfordoc.'/'.$file));
 
     $ecmdir = new EcmDirectory($db);
     $result=$ecmdir->fetch($section);
@@ -68,7 +70,9 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
 }
 else    // For no ajax call
 {
-    $ecmdir = new EcmDirectory($db);
+	$rootdirfordoc = $conf->ecm->dir_output;
+
+	$ecmdir = new EcmDirectory($db);
     $relativepath='';
     if ($section > 0)
     {
@@ -80,14 +84,17 @@ else    // For no ajax call
         }
     }
     $relativepath=$ecmdir->getRelativePath();
-    $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    $upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
-if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
+
+if (empty($url))
+{
+	if (GETPOSTISSET('website')) $url=DOL_URL_ROOT.'/website/index.php';
+	else $url=DOL_URL_ROOT.'/ecm/index.php';
+}
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("ecm","companies","other"));
 
 // Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -95,14 +102,23 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 //print 'xxx'.$upload_dir;
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans
-// les noms de fichiers.
+// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
 if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir))
 {
     dol_syslog("Refused to deliver file ".$upload_dir);
     // Do no show plain path in shown error message
     dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$upload_dir));
     exit;
+}
+
+// Check permissions
+if ($modulepart == 'ecm')
+{
+	if (! $user->rights->ecm->read) accessforbidden();
+}
+if ($modulepart == 'medias')
+{
+	// Always allowed
 }
 
 
@@ -142,6 +158,8 @@ print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
+if (! empty($website)) $param.='&website='.$website;
+if (! empty($pageid))  $param.='&pageid='.$pageid;
 
 
 // Dir scan
@@ -153,8 +171,8 @@ if ($type == 'directory')
     $excludefiles = array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$');
     $sorting = (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC);
 
-    // Right area. If module is defined, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
+    // Right area. If module is defined here, we are in automatic ecm.
+    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport');
 
     // TODO change for multicompany sharing
     // Auto area for suppliers invoices
@@ -163,8 +181,10 @@ if ($type == 'directory')
     else if ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
     // Auto area for suppliers invoices
     else if ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
-    // Auto area for customers orders
+    // Auto area for customers proposal
     else if ($module == 'propal') $upload_dir = $conf->propal->dir_output;
+    // Auto area for suppliers proposal
+    else if ($module == 'supplier_proposal') $upload_dir = $conf->supplier_proposal->dir_output;
     // Auto area for customers orders
     else if ($module == 'order') $upload_dir = $conf->commande->dir_output;
     // Auto area for suppliers orders
@@ -188,47 +208,95 @@ if ($type == 'directory')
     if (in_array($module, $automodules))
     {
         $param.='&module='.$module;
+        if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("NoFileFound")));
 
         if ($module == 'company') $excludefiles[]='^contact$';   // The subdir 'contact' contains files of contacts with no id of thirdparty.
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'', $excludefiles, $sortfield, $sorting,1);
-        $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$user->rights->ecm->upload,1,$textifempty,$maxlengthname,$url);
+        $filter=preg_quote($search_doc_ref, '/');
+        $filearray=dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting,1);
+
+        $perm=$user->rights->ecm->upload;
+
+        $formfile->list_of_autoecmfiles($upload_dir,$filearray,$module,$param,1,'',$perm,1,$textifempty,$maxlengthname,$url,1);
     }
     // Manual list
     else
     {
-        $relativepath=$ecmdir->getRelativePath();
-        $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    	if ($module == 'medias')
+    	{
+    		$relativepath=GETPOST('file','alpha');
+    		if ($relativepath && $relativepath!= '/') $relativepath.='/';
+    		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
+   	    	if (GETPOSTISSET('website'))
+	    	{
+	    		$param.='&file_manager=1';
+	    		if (!preg_match('/website=/',$param)) $param.='&website='.urlencode(GETPOST('website','alpha'));
+	    		if (!preg_match('/pageid=/',$param)) $param.='&pageid='.urlencode(GETPOST('pageid','int'));
+	    	}
+    	}
+    	else
+    	{
+        	$relativepath=$ecmdir->getRelativePath();
+        	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    	}
 
         // If $section defined with value 0
-		if ($section === '0' || empty($section))
+		if (($section === '0' || empty($section)) && ($module != 'medias'))
         {
             $filearray=array();
         }
-        else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        else
+        {
+        	$filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview.*\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
+        }
 
         if ($section)
         {
             $param.='&section='.$section;
+        	if (isset($search_doc_ref) && $search_doc_ref != '') $param.='&search_doc_ref='.$search_doc_ref;
+
             $textifempty = $langs->trans('NoFileFound');
         }
-        else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        else if ($section === '0')
+        {
+        	if ($module == 'ecm') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+        	else $textifempty = $langs->trans('NoFileFound');
+        }
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
-		$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
+    	if ($module == 'medias')
+    	{
+    		$useinecm = 2;
+    		$modulepart='medias';
+        	$perm=($user->rights->website->write || $user->rights->emailing->creer);
+        	$title='none';
+    	}
+    	else
+    	{
+    		$useinecm = 1;
+    		$modulepart='ecm';
+        	$perm=$user->rights->ecm->upload;
+        	$title='';	// Use default
+    	}
+
+    	// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
+    	// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
+    	//var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
+		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
     }
 }
 
 
-if ($section)
-{
+//if ($section)
+//{
 	$useajax=1;
 	if (! empty($conf->dol_use_jmobile)) $useajax=0;
 	if (empty($conf->use_javascript_ajax)) $useajax=0;
 	if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
 
-	$param.=($param?'?':'').(preg_replace('/^&/','',$param));
+	//$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
 	if ($useajax || $action == 'delete')
 	{
@@ -247,14 +315,14 @@ if ($section)
 
 	if ($useajax)
 	{
-		// Enable jquery handlers on new generated HTML objects
+		// Enable jquery handlers button to delete files
 		print '<script type="text/javascript">'."\n";
 		print 'jQuery(document).ready(function() {'."\n";
-		print 'jQuery(".deletefilelink").click(function(e) { jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
+		print 'jQuery(".deletefilelink").click(function(e) { console.log("We click on button with class deletefilelink"); jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
 		print '});'."\n";
 		print '</script>'."\n";
 	}
-}
+//}
 
 // Close db if mode is not noajax
 if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();

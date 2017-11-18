@@ -46,7 +46,7 @@ $langs->load("bills");
 
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $amount=GETPOST('amount');
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
@@ -638,6 +638,7 @@ if (! empty($id) && $action != 'edit')
 	$sql.= " AND p.fk_donation = d.rowid";
 	$sql.= " AND d.entity = ".$conf->entity;
 	$sql.= " AND p.fk_typepayment = c.id";
+	$sql.= " AND c.entity = " . getEntity('c_paiement');
 	$sql.= " ORDER BY dp";
 
 	//print $sql;
@@ -764,6 +765,10 @@ if (! empty($id) && $action != 'edit')
 	$delallowed	=	$user->rights->don->creer;
 
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+
+	// Show links to link elements
+	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

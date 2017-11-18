@@ -64,6 +64,7 @@ ProposalLine=Offerteregel
 AvailabilityPeriod=Leveringstermijn
 SetAvailability=Bepaal leveringstermijn
 AfterOrder=na bestelling
+OtherProposals=Andere offertes
 ##### Availability #####
 AvailabilityTypeAV_NOW=Onmiddellijk
 AvailabilityTypeAV_1W=1 week

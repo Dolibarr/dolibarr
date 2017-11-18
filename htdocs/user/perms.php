@@ -71,16 +71,10 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 $entity=$conf->entity;
-if (! empty($conf->multicompany->enabled))
-{
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-		$entity=(GETPOST('entity','int') ? GETPOST('entity','int') : $conf->entity);
-	else
-		$entity=(! empty($object->entity) ? $object->entity : $conf->entity);
-}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','globalcard'));
+$contextpage=array('usercard','userperms','globalcard');
+$hookmanager->initHooks($contextpage);
 
 
 /**

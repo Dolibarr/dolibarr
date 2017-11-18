@@ -75,6 +75,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 */
 	function assign_values(&$action, $id)
 	{
+		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
 
@@ -113,14 +114,14 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 
 	}
 
 
 	/**
-	 * 	Fetch datas list
+	 * 	Fetch datas list and save into ->list_datas
 	 *
 	 *  @param	int		$limit		Limit number of responses
 	 *  @param	int		$offset		Offset for first response

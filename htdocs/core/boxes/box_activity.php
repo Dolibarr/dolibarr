@@ -188,6 +188,8 @@ class box_activity extends ModeleBoxes
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $commandestatic=new Commande($db);
 
+            $langs->load("orders");
+
             $cachedir = DOL_DATA_ROOT.'/commande/temp';
             $filename = '/boxactivity-order'.$fileid;
             $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
@@ -435,7 +437,7 @@ class box_activity extends ModeleBoxes
         }
 
 		// Add the sum in the bottom of the boxes
-		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total"');
+		$this->info_box_contents[$line][0] = array('tr' => 'class="liste_total_wrap"');
 		$this->info_box_contents[$line][1] = array('td' => 'align="left" class="liste_total" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$line][2] = array('td' => 'align="right" class="liste_total" ', 'text' => $totalnb);
 		$this->info_box_contents[$line][3] = array('td' => 'align="right" class="liste_total" ', 'text' => '');

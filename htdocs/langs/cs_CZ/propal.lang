@@ -64,6 +64,7 @@ ProposalLine=Řádky nabídky
 AvailabilityPeriod=Dostupné zpoždění
 SetAvailability=Nastavte si dostupné zpoždění
 AfterOrder=po objednání
+OtherProposals=Další nabídky
 ##### Availability #####
 AvailabilityTypeAV_NOW=Bezprostřední
 AvailabilityTypeAV_1W=1 týden

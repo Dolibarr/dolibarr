@@ -4,7 +4,7 @@ WorkflowDesc=This module is designed to modify the behaviour of automatic action
 ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
 # Autocreate
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Opret automatisk en kundefaktura, når et tilbud er blevet underskrevet (den nye faktura vil få overført beløb fra tilbuddet)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
 # Autoclassify

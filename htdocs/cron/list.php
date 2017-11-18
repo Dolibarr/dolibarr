@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/cron/cron/list.php
+ *  \file       htdocs/cron/list.php
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */
@@ -210,13 +210,13 @@ foreach ($search_array_options as $key => $val)
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
-    $mode=0;
-    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-    {
-        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-    }
+	$mode_search=0;
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
+	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
+	{
+		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
+	}
 }
 // Add where from hooks
 $parameters=array();
@@ -357,11 +357,7 @@ if ($num > 0)
 		if (empty($obj)) break;
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
 
-		// title profil
-		if ($style=='pair') {$style='impair';}
-		else {$style='pair';}
-
-		print '<tr class="'.$style.'">';
+		print '<tr class="oddeven">';
 
 		print '<td class="nowrap">';
 		print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$obj->rowid.'">';

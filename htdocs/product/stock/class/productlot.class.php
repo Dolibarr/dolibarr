@@ -46,7 +46,6 @@ class Productlot extends CommonObject
 
 	public $picto='barcode';
 
-	public $isnolinkedbythird = 1;
     public $ismultientitymanaged = 1;
 
 	/**

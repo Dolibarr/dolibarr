@@ -449,4 +449,78 @@ class Utils
 
 		return 0;
 	}
+
+
+
+	/**
+	 * Execute a CLI command.
+	 *
+	 * @param 	string	$command		Command line to execute.
+	 * @param 	string	$outputfile		Output file (used only when method is 2). For exemple $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 */
+	function executeCLI($command, $outputfile, $execmethod=0)
+	{
+		global $conf, $langs;
+
+		$result = 0;
+		$output = '';
+		$error = '';
+
+		$command=escapeshellcmd($command);
+		$command.=" 2>&1";
+
+		if (! empty($conf->global->MAIN_EXEC_USE_POPEN)) $execmethod=$conf->global->MAIN_EXEC_USE_POPEN;
+		if (empty($execmethod)) $execmethod=1;
+		//$execmethod=1;
+
+		dol_syslog("Utils::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
+		$output_arr=array();
+
+		if ($execmethod == 1)
+		{
+			exec($command, $output_arr, $retval);
+			$result = $retval;
+			if ($retval != 0)
+			{
+				$langs->load("errors");
+				dol_syslog("Utils::executeCLI retval after exec=".$retval, LOG_ERR);
+				$error = 'Error '.$retval;
+			}
+		}
+		if ($execmethod == 2)	// With this method, there is no way to get the return code, only output
+		{
+			$ok=0;
+			$handle = fopen($outputfile, 'w+b');
+			if ($handle)
+			{
+				dol_syslog("Utils::executeCLI run command ".$command);
+				$handlein = popen($command, 'r');
+				while (!feof($handlein))
+				{
+					$read = fgets($handlein);
+					fwrite($handle,$read);
+					$output_arr[]=$read;
+				}
+				pclose($handlein);
+				fclose($handle);
+			}
+			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
+
+		// Update with result
+		if (is_array($output_arr) && count($output_arr)>0)
+		{
+			foreach($output_arr as $val)
+			{
+				$output.=$val.($execmethod == 2 ? '' : "\n");
+			}
+		}
+
+		dol_syslog("Utils::executeCLI result=".$result." output=".$output." error=".$error, LOG_DEBUG);
+
+		return array('result'=>$result, 'output'=>$output, 'error'=>$error);
+	}
+
 }

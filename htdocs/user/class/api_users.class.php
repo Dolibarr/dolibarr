@@ -22,14 +22,14 @@ use Luracast\Restler\RestException;
 /**
  * API class for users
  *
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class Users extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
 		'login'
@@ -49,7 +49,7 @@ class Users extends DolibarrApi
 		$this->useraccount = new User($this->db);
 	}
 
-	
+
 	/**
 	 * List Users
 	 *
@@ -63,24 +63,24 @@ class Users extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of User objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '') {
 	    global $db, $conf;
-	
+
 	    $obj_ret = array();
-	
+
 		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
 	       throw new RestException(401, "You are not allowed to read list of users");
 	    }
-	     
+
 	    // case of external user, $societe param is ignored and replaced by user's socid
 	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-	
+
 	    $sql = "SELECT t.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
 	    $sql.= ' WHERE t.entity IN ('.getEntity('user').')';
 	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
 	    // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -89,7 +89,7 @@ class Users extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-	    
+
 	    $sql.= $db->order($sortfield, $sortorder);
 	    if ($limit)	{
 	        if ($page < 0)
@@ -97,12 +97,12 @@ class Users extends DolibarrApi
 	            $page = 0;
 	        }
 	        $offset = $limit * $page;
-	
+
 	        $sql.= $db->plimit($limit + 1, $offset);
 	    }
-	
+
 	    $result = $db->query($sql);
-	
+
 	    if ($result)
 	    {
 	        $num = $db->num_rows($result);
@@ -125,7 +125,7 @@ class Users extends DolibarrApi
 	    }
 	    return $obj_ret;
 	}
-	
+
 	/**
 	 * Get properties of an user object
 	 *
@@ -133,7 +133,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param 	int 	$id ID of user
 	 * @return 	array|mixed data without useless information
-	 * 
+	 *
 	 * @throws 	RestException
 	 */
 	function get($id) {
@@ -154,8 +154,8 @@ class Users extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
-	
-	
+
+
 	/**
 	 * Create user account
 	 *
@@ -185,14 +185,14 @@ class Users extends DolibarrApi
 	    }
 	    return $this->useraccount->id;
     }
-	
-    
+
+
 	/**
 	 * Update account
 	 *
 	 * @param int   $id             Id of account to update
-	 * @param array $request_data   Datas   
-	 * @return int 
+	 * @param array $request_data   Datas
+	 * @return int
 	 */
 	function put($id, $request_data = NULL) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
@@ -228,7 +228,7 @@ class Users extends DolibarrApi
 	 * @param   int     $id        User ID
 	 * @param   int     $group     Group ID
 	 * @return  int                1 if success
-     * 
+     *
 	 * @url	GET {id}/setGroup/{group}
 	 */
 	function setGroup($id, $group) {
@@ -240,18 +240,18 @@ class Users extends DolibarrApi
         {
           throw new RestException(404, 'User not found');
         }
-    
+
         if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
         {
           throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
         }
-    
+
         $result = $this->useraccount->SetInGroup($group,1);
         if (! ($result > 0))
         {
             throw new RestException(500, $this->useraccount->error);
         }
-                
+
         return 1;
     }
 
@@ -286,25 +286,25 @@ class Users extends DolibarrApi
 	 * @return    array    Array of cleaned object properties
 	 */
 	function _cleanObjectDatas($object) {
-	
+
 	    $object = parent::_cleanObjectDatas($object);
-	
+
 	    unset($object->default_values);
 	    unset($object->lastsearch_values);
 	    unset($object->lastsearch_values_tmp);
-	     
+
 	    unset($object->total_ht);
 	    unset($object->total_tva);
 	    unset($object->total_localtax1);
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
-	    
+
 	    return $object;
-	}	
-	
+	}
+
 	/**
 	 * Validate fields before create or update object
-     * 
+     *
 	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException

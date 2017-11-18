@@ -13,3 +13,5 @@ TJM=Average daily rate
 CurrentSalary=Сегашна заплата
 THMDescription=Тази стойност може да използва за изчисляване на отнето време по проект отделено от потребителите ако модул проект се използва
 TJMDescription=Тази стойност е само сега като информация и не се използва за никакво изчисление
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

@@ -41,7 +41,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
@@ -599,8 +599,8 @@ if (! empty($id) || ! empty($ref))
 		    'presend'=>$langs->trans("SendByMail"),
 		    'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		if ($user->rights->product->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-		if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 		*/
 

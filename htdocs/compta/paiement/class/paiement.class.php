@@ -93,6 +93,7 @@ class Paiement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
@@ -337,6 +338,24 @@ class Paiement extends CommonObject
                                         $error++;
                                     }
                                 }
+                            }
+
+                            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+                            {
+                            	$outputlangs = $langs;
+                            	if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                            	if (! empty($newlang)) {
+                            		$outputlangs = new Translate("", $conf);
+                            		$outputlangs->setDefaultLang($newlang);
+                            	}
+                            	$ret = $invoice->fetch($id); // Reload to get new records
+
+                            	$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+                            	if ($result < 0) {
+                            		setEventMessages($invoice->error, $invoice->errors, 'errors');
+                            		$error++;
+                            	}
+
                             }
 					    }
 					}

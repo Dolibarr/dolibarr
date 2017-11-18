@@ -37,9 +37,9 @@ class Don extends CommonObject
     public $element='don'; 					// Id that identify managed objects
     public $table_element='don';			// Name of table without prefix where object is stored
 	public $fk_element = 'fk_donation';
-	protected $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     var $picto = 'generic';
-    
+
     var $date;
     var $amount;
     var $societe;
@@ -163,7 +163,7 @@ class Don extends CommonObject
         global $conf, $user,$langs;
 
         $now = dol_now();
-        
+
         // Charge tableau des id de societe socids
         $socids = array();
 
@@ -611,7 +611,7 @@ class Don extends CommonObject
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment AND cp.entity = " . getEntity('c_paiement');
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
 		if (! empty($id))
         {
@@ -818,7 +818,7 @@ class Don extends CommonObject
         $sql = "SELECT count(d.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " WHERE d.fk_statut > 0";
-        $sql.= " AND d.entity IN (".getEntity('don').")";
+        $sql.= " AND d.entity IN (".getEntity('donation').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -851,15 +851,14 @@ class Don extends CommonObject
         $result='';
         $label=$langs->trans("ShowDonation").': '.$this->id;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        $picto='generic';
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->ref;
+        $result .= $linkend;
 
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->id.$linkend;
         return $result;
     }
 

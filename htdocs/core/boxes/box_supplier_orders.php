@@ -109,28 +109,20 @@ class box_supplier_orders extends ModeleBoxes
                     $objp = $db->fetch_object($result);
                     $date=$db->jdate($objp->date_commande);
 					$datem=$db->jdate($objp->tms);
-                    $thirdpartytmp->id = $objp->socid;
+
+					$supplierorderstatic->id = $objp->id;
+					$supplierorderstatic->ref = $objp->ref;
+
+					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
 
-                    $urlo = DOL_URL_ROOT."/fourn/commande/card.php?id=".$objp->rowid;
-                    $urls = DOL_URL_ROOT."/fourn/card.php?socid=".$objp->socid;
-
-                    $tooltip = $langs->trans('SupplierOrder') . ': ' . $objp->ref;
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $tooltip,
-                        'url' => $urlo,
-                    );
-
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
-                        'text' => $objp->ref,
-                        'tooltip' => $tooltip,
-                        'url' => $urlo,
+                        'text' => $supplierorderstatic->getNomUrl(1),
+                    	'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
@@ -158,14 +150,14 @@ class box_supplier_orders extends ModeleBoxes
                 }
 
                 if ($num == 0)
-                    $this->info_box_contents[$line][0] = array(
+                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="center"',
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
                 $db->free($result);
             } else {
-                $this->info_box_contents[0][0] = array(
+                $this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
@@ -174,7 +166,7 @@ class box_supplier_orders extends ModeleBoxes
         }
         else
         {
-            $this->info_box_contents[0][0] = array(
+            $this->info_box_contents[0][] = array(
                 'td' => 'align="left" class="nohover opacitymedium"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );

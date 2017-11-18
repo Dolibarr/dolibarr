@@ -64,6 +64,7 @@ ProposalLine=Priekšlikums līnija
 AvailabilityPeriod=Pieejamība kavēšanās
 SetAvailability=Uzstādīt pieejamību kavēšanos
 AfterOrder=pēc pasūtījuma
+OtherProposals=Citi priekšlikumi
 ##### Availability #####
 AvailabilityTypeAV_NOW=Nekavējoties
 AvailabilityTypeAV_1W=1 nedēļa

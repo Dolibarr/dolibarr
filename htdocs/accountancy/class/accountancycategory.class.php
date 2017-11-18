@@ -286,7 +286,7 @@ class AccountancyCategory
 		}
 
 		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT t.rowid, t.account_number, t.label as name_cpt, cat.code, cat.position, cat.label as name_cat, cat.sens ";
+			$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
 			$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
@@ -316,7 +316,7 @@ class AccountancyCategory
 							'code' => $obj->code,
 							'position' => $obj->position,
 							'account_number' => $obj->account_number,
-							'name_cpt' => $obj->name_cpt,
+							'account_label' => $obj->account_label,
 							'sens' => $obj->sens
 					);
 					$i ++;
@@ -334,21 +334,27 @@ class AccountancyCategory
 	/**
 	 * Function to show result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int $cpt Id accounting account
-	 * @param string $month Specifig month - Can be empty
-	 * @param string $year Specific year
-	 * @param int $sens Sens of the account 0: credit - debit 1: debit - credit
-	 *
-	 * @return integer Result in table
+	 * @param int 		$cpt 				Id accounting account
+	 * @param string 	$month 				Specifig month - Can be empty
+	 * @param string 	$date_start			Date start
+	 * @param string 	$date_end			Date end
+	 * @param int 		$sens 				Sens of the account:  0: credit - debit, 1: debit - credit
+	 * @param string	$thirdparty_code	Thirdparty code
+	 * @return integer 						Result in table
 	 */
-	public function getResult($cpt, $month, $year, $sens) {
+	public function getResult($cpt, $month, $date_start, $date_end, $sens, $thirdparty_code='nofilter')
+	{
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		$sql .= " WHERE t.numero_compte = '" . $cpt."'";
-		$sql .= " AND YEAR(t.doc_date) = " . $year;
-
+		if (! empty($date_start) && ! empty($date_end))
+			$sql.= " AND t.doc_date >= '".$this->db->idate($date_start)."' AND t.doc_date <= '".$this->db->idate($date_end)."'";
 		if (! empty($month)) {
 			$sql .= " AND MONTH(t.doc_date) = " . $month;
+		}
+		if ($thirdparty_code != 'nofilter')
+		{
+			$sql .= " AND thirdparty_code = '".$this->db->escape($thirdparty_code)."'";
 		}
 
 		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
@@ -375,62 +381,13 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Function to call category from a specific country
+	 * Return list of personalized groups
 	 *
-	 * @return array Result in table
+	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
+	 * @return	array							Array of groups
 	 */
-	public function getCatsCal() {
-		global $db, $langs, $user, $mysoc;
-
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
-			exit();
-		}
-
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1 AND c.category_type = 1 ";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id;
-			$sql .= " ORDER BY c.position ASC";
-		} else {
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.category_type = 1 AND c.fk_country = co.rowid";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
-
-		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$obj = '';
-			$num = $this->db->num_rows($resql);
-			$data = array ();
-			if ($num) {
-				while ( $i < $num ) {
-					$obj = $this->db->fetch_object($resql);
-					$position = $obj->position;
-					$data[$position] = array (
-							'code' => $obj->code,
-							'label' => $obj->label,
-							'formula' => $obj->formula
-					);
-					$i ++;
-				}
-			}
-			return $data;
-		} else {
-			$this->error = "Error " . $this->db->lasterror();
-			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__ . " " . implode(',', $this->errors), LOG_ERR);
-
-			return - 1;
-		}
-	}
-
-	public function getCats() {
+	public function getCats($categorytype=-1)
+	{
 		global $db, $langs, $user, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
@@ -442,17 +399,18 @@ class AccountancyCategory
 			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
 			$sql .= " WHERE c.active = 1 ";
+			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
 			$sql .= " AND c.fk_country = " . $mysoc->country_id;
 			$sql .= " ORDER BY c.position ASC";
-		} else {
+		} else {	// Note: this should not happen
 			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
 			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
+			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
 			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
 			$sql .= " ORDER BY c.position ASC";
 		}
 
-		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -466,12 +424,12 @@ class AccountancyCategory
 					$data[] = array (
 							'rowid' => $obj->rowid,
 							'code' => $obj->code,
-							'position' => $obj->position,
 							'label' => $obj->label,
 							'formula' => $obj->formula,
+							'position' => $obj->position,
 							'category_type' => $obj->category_type
 					);
-					$i ++;
+					$i++;
 				}
 			}
 			return $data;
@@ -487,13 +445,19 @@ class AccountancyCategory
 
 	// calcule
 
+	/* I try to replace this with dol_eval()
+
 	const PATTERN = '/(?:\-?\d+(?:\.?\d+)?[\+\-\*\/])+\-?\d+(?:\.?\d+)?/';
 
 	const PARENTHESIS_DEPTH = 10;
 
-	public function calculate($input){
+	public function calculate($input)
+	{
+		global $langs;
+
 		if(strpos($input, '+') != null || strpos($input, '-') != null || strpos($input, '/') != null || strpos($input, '*') != null){
 			//  Remove white spaces and invalid math chars
+			$input = str_replace($langs->trans("ThousandSeparator"), '', $input);
 			$input = str_replace(',', '.', $input);
 			$input = preg_replace('[^0-9\.\+\-\*\/\(\)]', '', $input);
 
@@ -535,28 +499,41 @@ class AccountancyCategory
 
 		return 0;
 	}
+	*/
+
 
 	/**
-	 * get cpts of category
+	 * Get all accounting account of a group.
+	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
-	 * @param int $cat_id Id accounting account category
-	 *
-	 * @return array       Result in table
+	 * @param 	int 	$cat_id 				Id if personalized accounting group/category
+	 * @param 	string 	$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
+	 * @return 	array       					Array of accounting accounts
 	 */
-	public function getCptsCat($cat_id) {
+	public function getCptsCat($cat_id, $predefinedgroupwhere='')
+	{
 		global $mysoc;
-		$sql = "";
+		$sql = '';
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		$sql = "SELECT t.rowid, t.account_number, t.label as name_cpt";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
-		$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
-		$sql .= " ORDER BY t.account_number ";
-
+		if (! empty($cat_id))
+		{
+			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
+			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
+			$sql .= " ORDER BY t.account_number ";
+		}
+		else
+		{
+			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
+			$sql .= " WHERE ".$predefinedgroupwhere;
+			$sql .= " ORDER BY t.account_number ";
+		}
 		//echo $sql;
 
 		$resql = $this->db->query($sql);
@@ -564,14 +541,15 @@ class AccountancyCategory
 			$i = 0;
 			$obj = '';
 			$num = $this->db->num_rows($resql);
-			$data = array ();
+			$data = array();
 			if ($num) {
-				while ( $obj = $this->db->fetch_object($resql) ) {
+				while ($obj = $this->db->fetch_object($resql))
+				{
 					$name_cat = $obj->name_cat;
 					$data[] = array (
 							'id' => $obj->rowid,
 							'account_number' => $obj->account_number,
-							'name_cpt' => $obj->name_cpt,
+							'account_label' => $obj->account_label,
 					);
 					$i ++;
 				}

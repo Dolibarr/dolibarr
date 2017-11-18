@@ -56,6 +56,7 @@ $action=GETPOST('action','aZ09');
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
 $search_email=GETPOST("search_email");
+$search_other=GETPOST("search_other");
 $search_dest_status=GETPOST('search_dest_status');
 
 // Search modules dirs
@@ -90,8 +91,7 @@ if ($action == 'add')
 		{
 			require_once $file;
 
-			// We fill $filtersarray. Using this variable is now deprecated.
-			// Kept for backward compatibility.
+			// We fill $filtersarray. Using this variable is now deprecated. Kept for backward compatibility.
 			$filtersarray=array();
 			if (isset($_POST["filter"])) $filtersarray[0]=$_POST["filter"];
 
@@ -156,11 +156,13 @@ if ($action == 'delete')
 	}
 }
 
-if ($_POST["button_removefilter"])
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_lastname='';
 	$search_firstname='';
 	$search_email='';
+	$search_other='';
 	$search_dest_status='';
 }
 
@@ -221,6 +223,8 @@ if ($object->fetch($id) >= 0)
 	print "</div>";
 
 	dol_fiche_end();
+
+	print '<br>';
 
 
 	$allowaddtarget=($object->statut == 0);
@@ -303,12 +307,10 @@ if ($object->fetch($id) >= 0)
 				if ($qualified)
 				{
 					$var = !$var;
-					//print '<tr class="oddeven">';
-//					print '<div '.$bctag[$var].'>';
 
 					if ($allowaddtarget)
 					{
-						print '<form aa '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 					else
@@ -316,13 +318,11 @@ if ($object->fetch($id) >= 0)
 					    print '<div '.$bctag[$var].'>';
 					}
 
-					//print '<td>';
 					print '<div class="tagtd">';
 					if (empty($obj->picto)) $obj->picto='generic';
-					print img_object($langs->trans("Module").': '.get_class($obj),$obj->picto);
+					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj),$obj->picto);
 					print ' ';
 					print $obj->getDesc();
-					//print '</td>';
 					print '</div>';
 
 					try {
@@ -333,7 +333,6 @@ if ($object->fetch($id) >= 0)
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
 
-					//print '<td align="center">';
 					print '<div class="tagtd center">';
 					if ($nbofrecipient >= 0)
 					{
@@ -343,10 +342,8 @@ if ($object->fetch($id) >= 0)
 					{
 						print $langs->trans("Error").' '.img_error($obj->error);
 					}
-					//print '</td>';
 					print '</div>';
 
-					//print '<td align="left">';
 					print '<div class="tagtd" align="left">';
 					if ($allowaddtarget)
 					{
@@ -360,10 +357,8 @@ if ($object->fetch($id) >= 0)
     					if ($filter) print $filter;
     					else print $langs->trans("None");
 					}
-					//print '</td>';
 					print '</div>';
 
-					//print '<td align="right">';
 					print '<div class="tagtd" align="right">';
 					if ($allowaddtarget)
 					{
@@ -375,19 +370,14 @@ if ($object->fetch($id) >= 0)
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
-					//print '</td>';
 					print '</div>';
 
 					if ($allowaddtarget) print '</form>';
 					else print '</div>';
-
-					//print "</tr>\n";
-//					print '</div>'."\n";
 				}
 			}
 		}	// End foreach dir
 
-		//print '</table>';
 		print '</div>';
 
 		print '<br><br>';
@@ -397,9 +387,10 @@ if ($object->fetch($id) >= 0)
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
-	if ($search_lastname)    $sql.= " AND mc.lastname    LIKE '%".$db->escape($search_lastname)."%'";
-	if ($search_firstname) $sql.= " AND mc.firstname LIKE '%".$db->escape($search_firstname)."%'";
-	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
+	if ($search_lastname)  $sql.= natural_search("mc.lastname", $search_lastname);
+	if ($search_firstname) $sql.= natural_search("mc.firstname", $search_firstname);
+	if ($search_email)     $sql.= natural_search("mc.email", $search_email);
+	if ($search_other)     $sql.= natural_search("mc.other", $search_other);
 	if ($search_dest_status != '' && $search_dest_status >= -1) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
 	$sql .= $db->order($sortfield,$sortorder);
 
@@ -423,6 +414,7 @@ if ($object->fetch($id) >= 0)
 		if ($search_lastname)  $param.= "&amp;search_lastname=".urlencode($search_lastname);
 		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
+		if ($search_other)     $param.= "&amp;search_other=".urlencode($search_other);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -435,7 +427,7 @@ if ($object->fetch($id) >= 0)
 		if ($allowaddtarget) {
 		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
-		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','',$limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','', $limit);
 
 		print '</form>';
 
@@ -469,7 +461,7 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		// Other
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '<input class="flat maxwidth100" type="text" name="search_other" value="'.dol_escape_htmltag($search_other).'">';
 		print '</td>';
 		// Source
 		print '<td class="liste_titre">';

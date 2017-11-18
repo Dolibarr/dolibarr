@@ -13,3 +13,5 @@ TJM=Average daily rate
 CurrentSalary=Trenutna plača
 THMDescription=Ta kalkulacija se lahko uporabi za izračun stroškov porabljenega časa na projektu, ki ga vnese uporabnik, če je uporabljen projektni modul
 TJMDescription=Ta vrednost je trenutno samo informativna in se ne uporablja v nobeni kalkulaciji
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

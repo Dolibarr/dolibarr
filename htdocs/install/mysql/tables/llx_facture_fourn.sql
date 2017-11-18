@@ -33,6 +33,8 @@ create table llx_facture_fourn
   
   datec					datetime,                      -- date de creation de la facture
   datef					date,                          -- date de la facture
+  date_pointoftax		date DEFAULT NULL,			   -- date point of tax (for GB)
+  date_valid			date,						   -- date validation
   tms					timestamp,                     -- date creation/modification
   libelle				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,
@@ -69,6 +71,8 @@ create table llx_facture_fourn
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
   model_pdf				varchar(255),
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
+
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
   

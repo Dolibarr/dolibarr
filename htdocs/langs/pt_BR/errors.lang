@@ -138,7 +138,6 @@ ErrorPriceExpression22=Resultado negativo '%s'
 ErrorPriceExpressionInternal=Erro interno '%s'
 ErrorPriceExpressionUnknown=Erro desconhecido '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Origem e de destino de armazéns devem ser diferentes
-ErrorTryToMakeMoveOnProductRequiringBatchData=Erro, tentando fazer um movimento de estoque sem informação do lote / serial, em um produto que requer lote / serial
 ErrorCantSetReceptionToTotalDoneWithReceptionToApprove=Todas as recepções gravados primeiro deve ser verificada (aprovada ou negada) antes de serem autorizados a fazer esta ação
 ErrorCantSetReceptionToTotalDoneWithReceptionDenied=Todas as recepções gravadas primeiro devem ser verificada (aprovado) antes de serem autorizados a fazer esta ação
 ErrorGlobalVariableUpdater0=Pedido HTTP falhou com o erro '%s'
