@@ -2,8 +2,8 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class ActionComm extends CommonObject
     public $element='action';
     public $table_element = 'actioncomm';
     public $table_rowid = 'id';
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='action';
 
     /**
@@ -227,11 +227,11 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
-        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility
+        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility when userassigned was an int instead fo array
         {
         	$tmpid=$this->userassigned;
         	$this->userassigned=array();
-        	$this->userassigned[$tmpid]=array('id'=>$tmpid);
+        	$this->userassigned[$tmpid]=array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
 
         if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
@@ -242,7 +242,7 @@ class ActionComm extends CommonObject
 
         // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
         if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned))
-        	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
+        	$this->userassigned = array($userownerid=>array('id'=>$userownerid, 'transparency'=>$this->transparency));
 
         if (! $this->type_id || ! $this->type_code)
         {
@@ -1001,7 +1001,7 @@ class ActionComm extends CommonObject
             return $db->lasterror();
         }
     }
-    
+
     /**
      * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
@@ -1012,7 +1012,7 @@ class ActionComm extends CommonObject
     function load_board($user, $load_state_board=0)
     {
     	global $conf, $langs;
-    	
+
     	if(empty($load_state_board)) $sql = "SELECT a.id, a.datep as dp";
     	else {
     		$this->nb=array();
@@ -1022,13 +1022,13 @@ class ActionComm extends CommonObject
     	$sql.= ")";
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-    	$sql.= " WHERE 1";
+    	$sql.= " WHERE 1 = 1";
     	if(empty($load_state_board)) $sql.= " AND a.percent >= 0 AND a.percent < 100";
     	$sql.= " AND a.entity IN (".getEntity('agenda').")";
     	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
     	if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
     	if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
-    	
+
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -1037,7 +1037,7 @@ class ActionComm extends CommonObject
 	    		$response = new WorkboardResponse();
 	    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	    		$response->label = $langs->trans("ActionsToDo");
-	    		$response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?status=todo&amp;mainmenu=agenda';
 	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	    		$response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
     		}
@@ -1050,7 +1050,7 @@ class ActionComm extends CommonObject
 	    			if ($agenda_static->hasDelay()) $response->nbtodolate++;
     			} else $this->nb["actionscomm"]=$obj->nb;
     		}
-    		
+
     		$this->db->free($resql);
     		if(empty($load_state_board)) return $response;
     		else return 1;
@@ -1229,7 +1229,6 @@ class ActionComm extends CommonObject
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
 		}
 
-
 		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1298,10 +1297,13 @@ class ActionComm extends CommonObject
             {
                 $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
             }
-            $result.=$linkstart.img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="valigntextbottom"':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend;
         }
-        if ($withpicto==1) $result.=' ';
-        $result.=$linkstart.$libelleshort.$linkend;
+
+        $result.=$linkstart;
+        if ($withpicto)	$result.=img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"':'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+        $result.=$libelleshort;
+        $result.=$linkend;
+
         return $result;
     }
 
@@ -1435,6 +1437,7 @@ class ActionComm extends CommonObject
             {
                 // Note: Output of sql request is encoded in $conf->file->character_set_client
                 // This assignment in condition is not a bug. It allows walking the results.
+				$diff = 0;
                 while ($obj=$this->db->fetch_object($resql))
                 {
                     $qualified=true;
@@ -1469,8 +1472,9 @@ class ActionComm extends CommonObject
 
                     if ($qualified && $datestart)
                     {
-                        $eventarray[$datestart]=$event;
+                        $eventarray[]=$event;
                     }
+                    $diff++;
                 }
             }
             else
@@ -1622,9 +1626,17 @@ class ActionComm extends CommonObject
     		return 0;
     	}
 
+    	$now = dol_now();
+
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
+		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
+
+
+    	// Delete also very old past events (we do not keep more than 1 month record in past)
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
+		$this->db->query($sql);
 
     	return 0;
     }

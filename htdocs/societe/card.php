@@ -175,9 +175,14 @@ if (empty($reshook))
 					}
 				}
 
-				// TODO Merge categories
+				// Merge categories
+				$static_cat = new Categorie($db);
+				$custcats = $static_cat->containing($soc_origin->id, 'customer', 'id');
+				$object->setCategories($custcats, 'customer');
+				$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+				$object->setCategories($suppcats, 'supplier');
 
-
+				// Update
 				$object->update($object->id, $user);
 
 				// Move links
@@ -290,11 +295,17 @@ if (empty($reshook))
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
         if ($ret < 0) $error++;
+
         if (! $error)
         {
             $result = $object->insertExtraFields();
-            if ($result < 0) $error++;
+   			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
+
         if ($error) $action = 'edit_extras';
     }
 
@@ -1988,10 +1999,13 @@ else
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
 
-    	// Prospect/Customer
-    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-    	print yn($object->fournisseur);
-    	print '</td></tr>';
+    	// Supplier
+    	if (! empty($conf->fournisseur->enabled))
+    	{
+    		print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+    		print yn($object->fournisseur);
+    		print '</td></tr>';
+    	}
 
     	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -2516,8 +2530,8 @@ else
 	             */
 	            $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
 	            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-	            $genallowed=$user->rights->societe->creer;
-	            $delallowed=$user->rights->societe->supprimer;
+	            $genallowed=$user->rights->societe->lire;
+	            $delallowed=$user->rights->societe->creer;
 
 	            $var=true;
 

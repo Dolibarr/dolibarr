@@ -60,18 +60,18 @@ function user_prepare_head($object)
 		$h++;
 	}
 
+	if ($canreadperms)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Rights"). ' <span class="badge">'.($object->nb_rights).'</span>';
+		$head[$h][2] = 'rights';
+		$h++;
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("UserGUISetup");
 	$head[$h][2] = 'guisetup';
 	$h++;
-
-	if ($canreadperms)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("UserRights"). ' <span class="badge">'.($object->nb_rights).'</span>';
-		$head[$h][2] = 'rights';
-		$h++;
-	}
 
 	if (! empty($conf->agenda->enabled))
 	{
@@ -700,7 +700,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		{
 			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
 		}
-		print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #3c3c14">3c3c14</span></strong>) ';
+		print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #643c14">643c14</span></strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 
 		print '</td>';

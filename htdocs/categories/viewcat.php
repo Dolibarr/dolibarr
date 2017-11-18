@@ -88,13 +88,13 @@ if ($id > 0 && $removeelem > 0)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
-		$elementtype = 'fournisseur';
+		$elementtype = 'supplier';
 	}
 	else if ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
-		$elementtype = 'societe';
+		$elementtype = 'customer';
 	}
 	else if ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
 	{

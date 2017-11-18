@@ -27,9 +27,9 @@
 /**
  *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
  *  The HTML field must be an input text with id=search_$htmlname.
- *  This use the jQuery "autocomplete" function.
+ *  This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
  *
- *  @param	string	$selected           Preselecte value
+ *  @param	string	$selected           Preselected value
  *	@param	string	$htmlname           HTML name of input field
  *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
@@ -387,13 +387,16 @@ function ajax_autoselect($htmlname, $addlink='')
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
+ * @see selectArrayAjax of html.form.class
  */
 function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
 {
 	global $conf;
 
-	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
-	//if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
+	// select2 disabled for smartphones with standard browser.
+	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
+	if (! empty($conf->browser->phone)) return '';
+
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
 	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
@@ -407,7 +410,22 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.'
+					minimumInputLength: '.$minLengthToAutocomplete.',
+					language: select2arrayoflanguage,
+    				containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					templateResult: function (data, container) {	/* Format visible output into combo list */
+	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
+						if (data.element) { $(container).addClass($(data.element).attr("class")); }
+					    //console.log(data.html);
+						if ($(data.element).attr("html") != undefined) return htmlEntityDecodeJs($(data.element).attr("html"));		// If property html set, we decode html entities and use this
+					    return data.text;
+					},
+					templateSelection: function (selection) {		/* Format visible output of selected value */
+						return selection.text;
+					},
+					escapeMarkup: function(markup) {
+						return markup;
+					}
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";
@@ -425,13 +443,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 			});
 
 			function runJsCodeForEvent'.$htmlname.'(obj) {
-			    console.log("Run runJsCodeForEvent'.$htmlname.'");
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-	    		$.getJSON(url,
+			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				$.getJSON(url,
 						{
 							action: method,
 							id: id,

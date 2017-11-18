@@ -79,6 +79,8 @@ HolidaysCancelation=Kansellering av feriesøknader
 EmployeeLastname=Ansattes etternavn
 EmployeeFirstname=Ansattes fornavn
 TypeWasDisabledOrRemoved=Ferietype (id %s) ble deaktivert eller slettet
+LastHolidays=Siste %s ferieforespørsler
+AllHolidays=Alle ferieforespørsler
 
 ## Configuration du Module ##
 LastUpdateCP=Siste automatiske oppdatering av ferietildeling

@@ -1163,7 +1163,7 @@ function get_string_between($string, $start, $end){
  *
  * @param 	string	$mask		Mask to use
  * @param 	string	$value		Value
- * @return	int     		    <0 if KO, 0 if OK
+ * @return	int|string		    <0 or error string if KO, 0 if OK
  */
 function check_value($mask,$value)
 {
@@ -1249,6 +1249,7 @@ function check_value($mask,$value)
     if (dol_strlen($value) != $len) $result=-1;
 
     // Define $maskLike
+    /* seems not used
     $maskLike = dol_string_nospecial($mask);
     $maskLike = str_replace("%","_",$maskLike);
     // Replace protected special codes with matching number of _ as wild card caracter
@@ -1259,7 +1260,7 @@ function check_value($mask,$value)
     $maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
     $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
-
+	*/
 
     dol_syslog("functions2::check_value result=".$result,LOG_DEBUG);
     return $result;
@@ -1606,7 +1607,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
+			// all type of template is allowed
+			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
@@ -2154,40 +2156,6 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 }
 
 /**
- *	Return true if the color is light
- *
- *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
- *  @return	int							-1 : Error with argument passed |0 : color is dark | 1 : color is light
- */
-function colorIsLight($stringcolor)
-{
-	$res = -1;
-	if (!empty($stringcolor))
-	{
-		$res = 0;
-		$tmp=explode(',', $stringcolor);
-		if (count($tmp) > 1)   // This is a comma RGB ('255','255','255')
-		{
-			$r = $tmp[0];
-			$g = $tmp[1];
-			$b = $tmp[2];
-		}
-		else
-		{
-			$hexr=$stringcolor[0].$stringcolor[1];
-			$hexg=$stringcolor[2].$stringcolor[3];
-			$hexb=$stringcolor[4].$stringcolor[5];
-			$r = hexdec($hexr);
-			$g = hexdec($hexg);
-			$b = hexdec($hexb);
-		}
-		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-		if ($bright > 0.6) $res = 1;
-	}
-	return $res;
-}
-
-/**
  * Applies the Cartesian product algorithm to an array
  * Source: http://stackoverflow.com/a/15973172
  *
@@ -2226,18 +2194,18 @@ function cartesianArray(array $input) {
 function getModuleDirForApiClass($module)
 {
     $moduledirforclass=$module;
+    if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i','',$moduledirforclass);
 
-    if (in_array($module, array('login', 'access', 'status', 'documents'))) {
+    if ($module == 'contracts') {
+    	$moduledirforclass = 'contrat';
+    }
+    elseif (in_array($module, array('login', 'setup', 'access', 'status', 'documents'))) {
         $moduledirforclass = 'api';
     }
-    if (preg_match('/^dictionary/', $module)) {
-        $moduledirforclass = 'api';
-    }
-
-    if ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
+    elseif ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
         $moduledirforclass = 'societe';
     }
-    if ($module == 'propale' || $module == 'proposals') {
+    elseif ($module == 'propale' || $module == 'proposals') {
         $moduledirforclass = 'comm/propal';
     }
     elseif ($module == 'agenda' || $module == 'agendaevents') {
@@ -2269,6 +2237,9 @@ function getModuleDirForApiClass($module)
     }
     elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
         $moduledirforclass = 'product/stock';
+    }
+    elseif ($module == 'supplierproposals' || $module == 'supplierproposal' || $module == 'supplier_proposal') {
+    	$moduledirforclass = 'supplier_proposal';
     }
     elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
         $moduledirforclass = 'fourn';

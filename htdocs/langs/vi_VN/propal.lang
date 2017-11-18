@@ -64,6 +64,7 @@ ProposalLine=Chi tiết đơn hàng đề xuất
 AvailabilityPeriod=Độ chậm trễ có thể
 SetAvailability=Chỉnh thời gian trì hoãn sẵn có
 AfterOrder=sau đơn hàng
+OtherProposals=Các đơn hàng đề xuất khác
 ##### Availability #####
 AvailabilityTypeAV_NOW=Ngay lập tức
 AvailabilityTypeAV_1W=1 tuần

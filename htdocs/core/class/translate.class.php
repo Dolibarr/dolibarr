@@ -624,7 +624,7 @@ class Translate
             $str=str_replace(array('<','>','"',),array('__lt__','__gt__','__quot__'),$str);
 
 			// Crypt string into HTML
-			$str=htmlentities($str,ENT_QUOTES,$this->charset_output);
+			$str=htmlentities($str, ENT_COMPAT, $this->charset_output);	// Do not convert simple quotes in translation (strings in html are enmbraced by "). Use dol_escape_htmltag around text in HTML content
 
 			// Restore HTML tags
             $str=str_replace(array('__lt__','__gt__','__quot__'),array('<','>','"',),$str);

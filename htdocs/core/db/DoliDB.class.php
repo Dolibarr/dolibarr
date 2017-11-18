@@ -59,7 +59,7 @@ abstract class DoliDB implements Database
 	public $lastqueryerror;
 	/** @var string Last error message */
 	public $lasterror;
-	/** @var int Last error number */
+	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
 	/** @var bool Status */
@@ -84,12 +84,12 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *   @param	    int		$param      	Date TMS to convert
+	 *   @return	string      			Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
-		return dol_print_date($param,"%Y%m%d%H%M%S");
+		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
@@ -238,16 +238,16 @@ abstract class DoliDB implements Database
 				else $return.=', ';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				
+
 				$tmpsortorder = trim($orders[$i]);
-				
+
 				// Only ASC and DESC values are valid SQL
 				if (strtoupper($tmpsortorder) === 'ASC') {
 					$return .= ' ASC';
 				} elseif (strtoupper($tmpsortorder) === 'DESC') {
 					$return .= ' DESC';
 				}
-				
+
 				$i++;
 			}
 			return $return;

@@ -99,18 +99,39 @@ if (g.getDivId() != null)
 	g.setShowComp(1); 		// Show/Hide % Complete(0/1)
 	g.setShowStartDate(1); 	// Show/Hide % Complete(0/1)
 	g.setShowEndDate(1); 	// Show/Hide % Complete(0/1)
-	g.setFormatArr("day","week","month","quarter") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
+	g.setShowTaskInfoLink(1);
+	g.setFormatArr("day","week","month") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
 	g.setCaptionType('Caption');  // Set to Show Caption (None,Caption,Resource,Duration,Complete)
+	g.setUseFade(0);
+	g.setDayColWidth(20);
 	/* g.setShowTaskInfoLink(1) */
+	g.addLang('<?php print $langs->getDefaultLang(1);?>', vLangs['<?php print $langs->getDefaultLang(1);?>']);
+	g.setLang('<?php print $langs->getDefaultLang(1);?>');
 
 	<?php
 	$level=0;
 	$tnums = count($tasks);
-	for ($tcursor=0; $tcursor < $tnums; $tcursor++) {
+	$old_project_id = 0;
+	for ($tcursor=0; $tcursor < $tnums; $tcursor++)
+	{
 		$t = $tasks[$tcursor];
-		if ($t["task_parent"] == 0) {
-			constructGanttLine($tasks,$t,$project_dependencies,$level,$project_id);
-			findChildGanttLine($tasks,$t["task_id"],$project_dependencies,$level+1);
+
+		if (empty($old_project_id) || $old_project_id != $t['task_project_id'])
+		{
+			// Break on project, create a fictive task for project id $t['task_project_id']
+			$projecttmp=new Project($db);
+			$projecttmp->fetch($t['task_project_id']);
+			$tmpt = array(
+				'task_id'=> '-'.$t['task_project_id'], 'task_name'=>$projecttmp->ref.' '.$projecttmp->title, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
+				'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_notes'=>'');
+			constructGanttLine($tasks, $tmpt, array(), 0, $t['task_project_id']);
+			$old_project_id = $t['task_project_id'];
+		}
+
+		if ($t["task_parent"] <= 0)
+		{
+			constructGanttLine($tasks, $t, $task_dependencies, $level, $t['task_project_id']);
+			findChildGanttLine($tasks, $t["task_id"], $task_dependencies, $level+1);
 		}
 	}
 	?>
@@ -131,14 +152,14 @@ else
 /**
  * Add a gant chart line
  *
- * @param 	string	$tarr					tarr
+ * @param 	array	$tarr					Array of all tasks
  * @param	array	$task					Array with properties of one task
- * @param 	Project	$project_dependencies	Project object
+ * @param 	array	$task_dependencies		Task dependencies (array(array(0=>idtask,1=>idtasktofinishfisrt))
  * @param 	int		$level					Level
  * @param 	int		$project_id				Id of project
  * @return	void
  */
-function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_id=null)
+function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project_id=null)
 {
     global $dateformatinput2;
 
@@ -152,26 +173,40 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     // Define depend (ex: "", "4,13", ...)
     $depend = '';
     $count = 0;
-    foreach ($project_dependencies as $value) {
+    foreach ($task_dependencies as $value) {
         // Not yet used project_dependencies = array(array(0=>idtask,1=>idtasktofinishfisrt))
         if ($value[0] == $task['task_id']) {
             $depend.=($count>0?",":"").$value[1];
             $count ++;
         }
     }
-   // $depend .= "\"";
+    // $depend .= "\"";
     // Define parent
     if ($project_id && $level < 0)
-    $parent = 'p'.$project_id;
+    {
+    	$parent = '-'.$project_id;
+    }
     else
-    $parent = $task["task_parent"];
+    {
+    	$parent = $task["task_parent"];
+    }
     // Define percent
     $percent = $task['task_percent_complete']?$task['task_percent_complete']:0;
     // Link (more information)
-    $link=DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
+    if ($task["task_id"] < 0)
+    {
+    	//$link=DOL_URL_ROOT.'/projet/tasks.php?withproject=1&id='.abs($task["task_id"]);
+    	$link='';
+    }
+    else
+    {
+    	$link=DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
+    }
 
     // Name
+    //$name='<a href="'.DOL_URL_ROOT.'/projet/task/tasks.php?id='.$task['task_id'].'">'.$task['task_name'].'</a>';
     $name=$task['task_name'];
+
     /*for($i=0; $i < $level; $i++) {
         $name=' - '.$name;
     }*/
@@ -204,9 +239,19 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     //$note="";
 
     $s = "\n// Add taks id=".$task["task_id"]." level = ".$level."\n";
-   // $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
+
+    //$task["task_is_group"]=1;		// When task_is_group is 1, content will be autocalculated from sum of all low tasks
+
     // For JSGanttImproved
-    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js(trim($name))."','".$start_date."', '".$end_date."', '".$task['task_css']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]).", '".$parent."', 1, '".($depend?$depend:$parent."SS")."', '".($percent >= 0 ? $percent.'%' : '0%')."','".dol_escape_js($task['note'])."'));";
+    $css = $task['task_css'];
+    $line_is_auto_group = $task["task_is_group"];
+    //$line_is_auto_group=0;
+    //if ($line_is_auto_group) $css = 'ggroupblack';
+    //$dependency = ($depend?$depend:$parent."SS");
+    $dependency = '';
+    //$name = str_repeat("..", $level).$name;
+
+    $s.= "g.AddTaskItem(new JSGantt.TaskItem('".$task['task_id']."', '".dol_escape_js(trim($name))."', '".$start_date."', '".$end_date."', '".$css."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".$line_is_auto_group.", '".$parent."', 1, '".$dependency."', '".(empty($task["task_is_group"]) ? (($percent >= 0 && $percent != '') ? $percent.'%' : '') : '')."', '".dol_escape_js($task['note'])."', g));";
     echo $s;
 
 
@@ -215,21 +260,36 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
 /**
  * Find child Gantt line
  *
- * @param 	string	$tarr					tarr
+ * @param 	array	$tarr					tarr
  * @param	int		$parent					Parent
- * @param 	Project	$project_dependencies	Project object
+ * @param 	array	$task_dependencies		Task dependencies
  * @param 	int		$level					Level
  * @return	void
  */
-function findChildGanttLine($tarr,$parent,$project_dependencies,$level)
+function findChildGanttLine($tarr, $parent, $task_dependencies, $level)
 {
     $n=count($tarr);
+
+    echo "\n";
+    echo "/* g.AddTaskItem(new JSGantt.TaskItem(task_id, 'label', 'start_date', 'end_date', 'css', 'link', milestone, 'Resources', Compl%, Group, Parent, 1, 'Dependency', 'label','note', g)); */\n";
+
+    $old_parent_id = 0;
     for ($x=0; $x < $n; $x++)
     {
         if($tarr[$x]["task_parent"] == $parent && $tarr[$x]["task_parent"] != $tarr[$x]["task_id"])
         {
-            constructGanttLine($tarr,$tarr[$x],$project_dependencies,$level,null);
-            findChildGanttLine($tarr,$tarr[$x]["task_id"],$project_dependencies,$level+1);
+        	// Create a grouping parent task for the new level
+        	/*if (empty($old_parent_id) || $old_parent_id != $tarr[$x]['task_project_id'])
+			{
+				$tmpt = array(
+	        	'task_id'=> -98, 'task_name'=>'Level '.$level, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
+    	    	'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>$tarr[$x]["task_parent"], 'task_notes'=>'');
+        		constructGanttLine($tasks, $tmpt, array(), 0, $tarr[$x]['task_project_id']);
+        		$old_parent_id = $tarr[$x]['task_project_id'];
+			}*/
+
+            constructGanttLine($tarr, $tarr[$x], $task_dependencies, $level, null);
+            findChildGanttLine($tarr, $tarr[$x]["task_id"], $task_dependencies, $level+1);
         }
     }
 }

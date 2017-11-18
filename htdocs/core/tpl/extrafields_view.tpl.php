@@ -42,6 +42,10 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
+		// Discard if extrafield is a hidden field on form
+		if (empty($extrafields->attributes[$object->table_element]['list'][$key])) continue;	// 0 = Never visible field
+		if (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 1 && abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+
 		// Load language if required
 		if (! empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
 
@@ -59,8 +63,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 		}
 		else
 		{
-			if (! empty($extrafields->attributes[$object->table_element]['ishidden'][$key])) print '<tr class="hideobject"><td>';
-			else print '<tr><td>';
+			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
 			print '<td';
@@ -112,7 +115,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
 
-				print $extrafields->showInputField($key, $value,'','','',0,$object->id);
+				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
 
 				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 

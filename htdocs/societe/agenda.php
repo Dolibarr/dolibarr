@@ -186,7 +186,7 @@ if ($socid > 0)
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
-        // TODO Replace this with same code than into listactions.php
+        // TODO Replace this with same code than into list.php
         show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }

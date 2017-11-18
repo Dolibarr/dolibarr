@@ -28,4 +28,3 @@ ECMDirectoryForFiles=Relação de pasta para arquivos
 CannotRemoveDirectoryContainsFiles=Não foi possível apagar, porque contém alguns arquivos
 ECMFileManager=Gerenciador de arquivos
 ECMSelectASection=Selecione uma pasta na árvore a esquerda...
-DirNotSynchronizedSyncFirst=Esta pasta parece que foi criada ou modificada fora do módulo GED. Você deve clicar no botão "Atualizar" para sincronizar as informações com o banco de dados e poder ver o conteúdo da pasta.

@@ -79,6 +79,8 @@ HolidaysCancelation=Cancelamento do pedido de licença
 EmployeeLastname=Último nome do funcionário
 EmployeeFirstname=Primeiro do nome do funcionário
 TypeWasDisabledOrRemoved=O tipo de licença (ID %s) foi desativado ou removido
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=As últimas atualizações automáticas de alocação de licenças

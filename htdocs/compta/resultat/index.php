@@ -762,7 +762,7 @@ if (! empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity = " . getEntity('c_paiement');
-		$sql.= " WHERE p.entity = ".getEntity('donation');
+		$sql.= " WHERE p.entity IN (".getEntity('donation').")";
    	    $sql.= " AND fk_statut >= 2";
 		if (! empty($date_start) && ! empty($date_end))
 			$sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";
@@ -893,10 +893,19 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
+// Loop on each year to ouput
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td class="liste_titre" align="center">'.$langs->trans("Outcome").'</td>';
-	print '<td class="liste_titre" align="center" class="borderrightlight">'.$langs->trans("Income").'</td>';
+	print '<td class="liste_titre" align="center">';
+	$htmlhelp='';
+	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("PurchasesPlusVATEarnedAndDue");
+	print $form->textwithpicto($langs->trans("Outcome"), $htmlhelp);
+	print '</td>';
+	print '<td class="liste_titre" align="center" class="borderrightlight">';
+	$htmlhelp='';
+	// if ($modecompta == 'RECETTES-DEPENSES') $htmlhelp=$langs->trans("SalesPlusVATToRetreive");
+	print $form->textwithpicto($langs->trans("Income"), $htmlhelp);
+	print '</td>';
 }
 print '</tr>';
 
@@ -967,7 +976,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$in=(isset($totentrees[$annee])?price2num($totentrees[$annee], 'MT'):0);
 		$out=(isset($totsorties[$annee])?price2num($totsorties[$annee],'MT'):0);
-		print price($in-$out).'</td>';
+		print price(price2num($in-$out, 'MT')).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}
 }

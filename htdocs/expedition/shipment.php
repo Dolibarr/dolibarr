@@ -39,13 +39,7 @@ if (! empty($conf->stock->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/st
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load('orders');
-$langs->load("companies");
-$langs->load("bills");
-$langs->load('propal');
-$langs->load('deliveries');
-$langs->load('stocks');
-$langs->load("productbatch");
+$langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm'));
 
 $id=GETPOST('id','int');			// id of order
 $ref= GETPOST('ref','alpha');
@@ -157,6 +151,15 @@ if (empty($reshook))
     		setEventMessages($object->error, $object->errors, 'errors');
     }
 
+    // Set incoterm
+    elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+    {
+    	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+    	if ($result < 0) {
+    		setEventMessages($object->error, $object->errors, 'errors');
+    	}
+    }
+
     // shipping method
     if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
         $object = new Commande($db);
@@ -191,9 +194,11 @@ if (empty($reshook))
             // some hooks
             if (empty($reshook)) {
                 $result = $object->insertExtraFields();
-                if ($result < 0) {
-                    $error++;
-                }
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
             } else if ($reshook < 0)
                 $error++;
         }
@@ -526,7 +531,7 @@ if ($id > 0 || ! empty($ref))
 		    print '<table width="100%" class="nobordernopadding"><tr><td>';
 		    print $langs->trans('IncotermLabel');
 		    print '<td><td align="right">';
-		    if ($user->rights->commande->creer) print '<a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		    if ($user->rights->commande->creer) print '<a href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		    else print '&nbsp;';
 		    print '</td></tr></table>';
 		    print '</td>';

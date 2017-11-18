@@ -26,54 +26,59 @@ InvoiceLabel=Etiqueta de factura
 OverviewOfAmountOfLinesNotBound=Visió general de quantitat de línies no comptabilitzades al compte comptable
 OverviewOfAmountOfLinesBound=Visió general de quantitat de línies ja comptabilitzades al compte comptable
 OtherInfo=Altra informació
-DeleteCptCategory=Remove accounting account from group
+DeleteCptCategory=Eliminar el compte comptable del grup
 ConfirmDeleteCptCategory=Estàs segur que vols eliminar aquest compte comptable del grup de comptabilitat?
-JournalizationInLedgerStatus=Status of journalization
-AlreadyInGeneralLedger=Already journalized in ledgers
-NotYetInGeneralLedger=Not yet journalized in ledgers
+JournalizationInLedgerStatus=Estat del diari
+AlreadyInGeneralLedger=Registrat en el Llibre Major
+NotYetInGeneralLedger=No s'ha registrat en el Llibre Major
+GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
+DetailByAccount=Show detail by account
+AccountWithNonZeroValues=Accounts with non zero values
 
-MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
-MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
-MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
+MainAccountForCustomersNotDefined=Compte comptable per a clients no definida en la configuració
+MainAccountForSuppliersNotDefined=Compte comptable per a proveïdors no definit en la configuració
+MainAccountForUsersNotDefined=Compte comptable per a usuaris no de definit en la configuració
+MainAccountForVatPaymentNotDefined=Compte comptable per a IVA no definida en la configuració
 
 AccountancyArea=Àrea de comptabilitat
 AccountancyAreaDescIntro=L'ús del mòdul de comptabilitat es realitza en diverses etapes:
 AccountancyAreaDescActionOnce=Les següents accions s'executen normalment per una sola vegada, o un cop l'any ...
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
+AccountancyAreaDescActionOnceBis=Els passos següents s'han de fer per estalviar-vos temps en el futur suggerint-vos el compte comptable per defecte correcte al fer els diaris (escriptura dels registres en els diaris i el Llibre Major)
 AccountancyAreaDescActionFreq=Les següents accions s'executen normalment cada mes, setmana o dia per empreses molt grans ...
 
-AccountancyAreaDescJournalSetup=STEP %s: Create or check content of your journal list from menu %s
+AccountancyAreaDescJournalSetup=PAS %s: Crea o consulta el contingut dels teus diaris des del menú %s
 AccountancyAreaDescChartModel=PAS %s: Crear un model de pla de comptes des del menú %s
 AccountancyAreaDescChart=PAS %s: Crear o comprovar el contingut del seu pla de comptes des del menú %s
 
-AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
-AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
-AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.
-AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.
-AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
-AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
-AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s.
-AccountancyAreaDescBank=PAS %s: Definir els comptes comptables per a cada banc i compte financer. Per a això, aneu a la fitxa de cada compte financer. Vostè pot comnçar a la pàgina %s.
-AccountancyAreaDescProd=STEP %s: Define accounting accounts on your products/services. For this, use the menu entry %s.
+AccountancyAreaDescVat=PAS %s: Defineix comptes comptables per cada tipus d'IVA. Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescExpenseReport=PAS %s: Defineix els comptes comptables per defecte per a cada tipus d'informe de despeses. Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescSal=PAS %s: Defineix comptes comptables per defecte per al pagament de salaris. Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescContrib=PAS %s: Defineix comptes comptables per defecte per despeses especials (impostos diversos). Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescDonation=PAS %s: Defineix comptes comptables per defecte per a les donacions. Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescMisc=PAS %s: Defineix el compte comptable obligatori per defecte i els comptes comptables per defecte per a transaccions diverses. Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescLoan=PAS %s: Defineix comptes comptables per defecte per als préstecs. Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
+AccountancyAreaDescProd=PAS %s: Defineix comptes comptables als vostres productes/serveis. Per això, utilitzeu l'entrada del menú %s.
 
-AccountancyAreaDescBind=STEP %s: Check the binding between existing %s lines and accounting account is done, so application will be able to journalize transactions in Ledger in one click. Complete missing bindings. For this, use the menu entry %s.
-AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
+AccountancyAreaDescBind=PAS %s: Comproveu que els enllaços entre les línies %s existents i els comptes comptables és correcta, de manera que l'aplicació podrà registrar les transaccions al Llibre Major amb un sol clic. Completa les unions que falten. Per això, utilitzeu l'entrada del menú %s.
+AccountancyAreaDescWriteRecords=PAS %s: Escriu les transaccions al Llibre Major. Per això, aneu al menú <strong>%s</strong>, i feu clic al botó <strong>%s</strong>.
 AccountancyAreaDescAnalyze=PAS %s: Afegir o editar transaccions existents i generar informes i exportacions.
 
 AccountancyAreaDescClosePeriod=PAS %s: Tancar el període de forma que no pot fer modificacions en un futur.
 
+TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
 MenuAccountancy=Comptabilitat
 Selectchartofaccounts=Seleccionar el pla de comptes actiu
 ChangeAndLoad=Canviar i carregar
 Addanaccount=Afegir un compte comptable
 AccountAccounting=Compte comptable
 AccountAccountingShort=Compte
-SubledgerAccount=Subledger Account
-ShowAccountingAccount=Show accounting account
-ShowAccountingJournal=Show accounting journal
+SubledgerAccount=Subcompte comptable
+ShowAccountingAccount=Mostrar diari de comptes
+ShowAccountingJournal=Mostrar diari comptable
 AccountAccountingSuggest=Compte comptable suggerit
 MenuDefaultAccounts=Comptes per defecte
+MenuBankAccounts=Comptes bancaris
 MenuVatAccounts=Comptes d'IVA
 MenuTaxAccounts=Comptes relacionats amb impostos
 MenuExpenseReportAccounts=Comptes d'informes de despeses
@@ -87,10 +92,10 @@ ExpenseReportsVentilation=Comptabilització d'informes de despeses
 CreateMvts=Crea una nova transacció
 UpdateMvts=Modificació d'una transacció
 ValidTransaction=Valida la transacció
-WriteBookKeeping=Journalize transactions in Ledger
+WriteBookKeeping=Registrar moviments al Llibre Major
 Bookkeeping=Llibre major
 AccountBalance=Compte saldo
-ObjectsRef=Source object ref
+ObjectsRef=Referència de l'objecte origen
 CAHTF=Total purchase supplier before tax
 TotalExpenseReport=Informe de despeses totals
 InvoiceLines=Línies de factura a comptabilitzar
@@ -110,7 +115,7 @@ LineOfExpenseReport=Línia d'informe de despeses
 NoAccountSelected=Compte comptable no seleccionat
 VentilatedinAccount=Vinculat amb èxit al compte comptable
 NotVentilatedinAccount=No vinculat al compte comptable
-XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
+XLineSuccessfullyBinded=%s productes/serveis vinculats amb èxit a un compte comptable
 XLineFailedToBeBinded=%s de productes/serveis no comptabilitzats en cap compte comptable
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'elements a vincular mostrats per pàgina (màxim recomanat: 50)
@@ -143,25 +148,30 @@ Doctype=Tipus de document
 Docdate=Data
 Docref=Referència
 Code_tiers=Tercer
-Labelcompte=Etiqueta de compte
+LabelAccount=Etiqueta de compte
+LabelOperation=Label operation
 Sens=Significat
 Codejournal=Diari
 NumPiece=Número de peça
 TransactionNumShort=Número de transacció
-AccountingCategory=Grups comptes contables
+AccountingCategory=Personalized groups
 GroupByAccountAccounting=Agrupar per compte comptable
-ByAccounts=By accounts
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
+ByAccounts=Per comptes
+ByPredefinedAccountGroups=By predefined groups
+ByPersonalizedAccountGroups=By personalized groups
+ByYear=Per any
 NotMatch=No definit
 DeleteMvt=Elimina línies del llibre major
 DelYear=Any a eliminar
 DelJournal=Diari per esborrar
-ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criteria is required.
+ConfirmDeleteMvt=Això eliminarà totes les línies del Llibre Major de l'any i/o d'un diari específic. Es requereix com a mínim un criteri.
 ConfirmDeleteMvtPartial=Això eliminarà la línia o línies seleccionades del llibre major 
 DelBookKeeping=Elimina el registre del libre major
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Informe-diari de despeses
 DescFinanceJournal=Finance journal including all the types of payments by bank account
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accountancy account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Comptes comptables de IVA sense definir
 ThirdpartyAccountNotDefined=Comptes comptables de tercers (clients o proveïdors) sense definir
 ProductAccountNotDefined=Comptes comptables per al producte sense definir
@@ -177,11 +187,12 @@ AddCompteFromBK=Afegeix comptes comptables al grup
 ReportThirdParty=Llista el compte del tercer
 DescThirdPartyReport=Consulti aquí la llista de tercers (cliente i proveïdors) i els seus corresponents comptes  comptables
 ListAccounts=Llistat dels comptes comptables
-UnknownAccountForThirdparty=Unknown third party account. We will use %s
-UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
+UnknownAccountForThirdparty=Compte comptable de tercer desconeguda, utilitzarem %s
+UnknownAccountForThirdpartyBlocking=Compte comptable de tercer desconegut. Error de bloqueig
 
-Pcgtype=Classe de compte
-Pcgsubtype=Subclasse de compte
+Pcgtype=Group of account
+Pcgsubtype=Subgroup of account
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Marge total de vendes
@@ -203,33 +214,33 @@ ValidateHistory=Comptabilitza automàticament
 AutomaticBindingDone=Comptabilització automàtica realitzada
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no pots eliminar aquest compte comptable perquè està en ús
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Registre comptabilitzat incorrectament. Deure=%s. Haver=%s
 FicheVentilation=Fitxa de comptabilització
 GeneralLedgerIsWritten=Les transaccions s'han escrit al llibre major
-GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
+GeneralLedgerSomeRecordWasNotRecorded=Algunes de les transaccions no s'han registrat. Si no hi ha cap altre missatge d'error, probablement és perquè ja s'han registrat.
 NoNewRecordSaved=No s'ha enviat cap nou registre
 ListOfProductsWithoutAccountingAccount=Llista de productes no comptabilitzats en cap compte comptable
 ChangeBinding=Canvia la comptabilització
 
 ## Admin
 ApplyMassCategories=Aplica categories massives
-AddAccountFromBookKeepingWithNoCategories=Afegir compte ja utilitzada sense categories
+AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
 CategoryDeleted=La categoria per al compte contable ha sigut eliminada
 AccountingJournals=Diari de comptabilitat
-AccountingJournal=Accounting journal
-NewAccountingJournal=New accounting journal
-ShowAccoutingJournal=Show accounting journal
+AccountingJournal=Diari comptable
+NewAccountingJournal=Nou diari comptable
+ShowAccoutingJournal=Mostrar diari comptable
 Nature=Caràcter
-AccountingJournalType1=Various operation
+AccountingJournalType1=Miscellaneous operation
 AccountingJournalType2=Vendes
 AccountingJournalType3=Compres
 AccountingJournalType4=Banc
-AccountingJournalType5=Expenses report
-AccountingJournalType9=Has-new
-ErrorAccountingJournalIsAlreadyUse=This journal is already use
+AccountingJournalType5=Informe de despeses
+AccountingJournalType9=Haver
+ErrorAccountingJournalIsAlreadyUse=Aquest diari ja està en ús
 
 ## Export
-ExportDraftJournal=Export draft journal
+ExportDraftJournal=Exportar esborranys del llibre 
 Modelcsv=Model d'exportació
 OptionsDeactivatedForThisExportModel=Per aquest model d'exportació les opcions estan desactivades
 Selectmodelcsv=Selecciona un model d'exportació
@@ -241,21 +252,21 @@ Modelcsv_ciel=Exporta cap a Sage Ciel Compta o Compta Evolution
 Modelcsv_quadratus=Exporta cap a Quadratus QuadraCompta
 Modelcsv_ebp=Exporta cap a EBP
 Modelcsv_cogilog=Exporta cap a Cogilog
-Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_agiris=Exportar a Agiris (Test)
 ChartofaccountsId=Id pla comptable
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Inicialitza la comptabilitat
-InitAccountancyDesc=Aquesta pàgina pot ser utilitzada per a inicialitzar comptes comptables sobre productes o serveis que no ho han estat ni per Vendes ni per Compres
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=Aquesta pàgina pot ser utilitzat per establir un compte per defecte que s'utilitzarà per enllaçar registre de transaccions sobre els pagament de salaris, donació, impostos i IVA quan no hi ha encara compte comptable específic definit.
 Options=Opcions
 OptionModeProductSell=En mode vendes
 OptionModeProductBuy=En mode compres
 OptionModeProductSellDesc=Mostra tots els productes amb compte comptable per a les vendes.
 OptionModeProductBuyDesc=Mostra tots els productes amb compte comptable per a les compres.
-CleanFixHistory=Elimina el codi comptable de les línies que no existeixen en Plans comptables
+CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Reinicia tota la comptabilització per l'any seleccionat
-
+PredefinedGroups=Predefined groups
 WithoutValidAccount=Sense compte dedicada vàlida
 WithValidAccount=Amb compte dedicada vàlida
 ValueNotIntoChartOfAccount=Aquest compte comptable no existeix al pla comptable
@@ -266,12 +277,13 @@ Calculated=Calculat
 Formula=Fórmula
 
 ## Error
-SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
+SomeMandatoryStepsOfSetupWereNotDone=No s'han fet alguns passos obligatoris de configuració, si us plau, completeu-los
 ErrorNoAccountingCategoryForThisCountry=No hi ha cap grup comptable disponible per al país %s (Veure Inici - Configuració - Diccionaris)
 ExportNotSupported=El format d'exportació configurat no està suportat en aquesta pàgina
 BookeppingLineAlreayExists=Les línies ja existeixen en la comptabilitat
-NoJournalDefined=No journal defined
+NoJournalDefined=Cap diari definit
 Binded=Línies comptabilitzades
 ToBind=Línies a comptabilitzar
+UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. It will be replaced by a more complete report in a next version.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.

@@ -99,7 +99,7 @@ if ($action == 'add')
 	$object->owner_address   = trim($_POST["owner_address"]);
 
 	$account_number 		 = GETPOST('account_number','alpha');
-	if ($account_number <= 0) { $object->account_number = ''; } else { $object->account_number = $account_number; }
+	if (empty($account_number) || $account_number == '-1') { $object->account_number = ''; } else { $object->account_number = $account_number; }
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal','int');
 	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
@@ -197,8 +197,15 @@ if ($action == 'update')
 	$object->proprio 	     = trim($_POST["proprio"]);
 	$object->owner_address   = trim($_POST["owner_address"]);
 
-	$account_number 		 = GETPOST('account_number', 'int');
-	if ($account_number <= 0) { $object->account_number = ''; } else { $object->account_number = $account_number; }
+	$account_number 		 = GETPOST('account_number', 'alpha');
+	if (empty($account_number) || $account_number == '-1')
+	{
+		$object->account_number = '';
+	}
+	else
+	{
+		$object->account_number = $account_number;
+	}
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal','int');
 	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
@@ -213,7 +220,7 @@ if ($action == 'update')
 
 	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
 	{
-		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), null, 'error');
+		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
 		$action='edit';       // Force chargement page en mode creation
 		$error++;
 	}
@@ -620,7 +627,7 @@ else
 		print '<td>';
 		if (! empty($conf->accounting->enabled)) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('',$object->account_number);
+			$accountingaccount->fetch('',$object->account_number, 1);
 
 			print $accountingaccount->getNomUrl(0,1,1,'',1);
 		} else {
@@ -669,7 +676,6 @@ else
 
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT)
 		{
-			print '<br>';
 
 			print '<div class="underbanner clearboth"></div>';
 

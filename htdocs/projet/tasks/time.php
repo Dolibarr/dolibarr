@@ -622,7 +622,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    {
 	        foreach($extrafields->attribute_label as $key => $val)
 	        {
-        		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+				if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	        }
 	    }
 
@@ -699,10 +699,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    //'presend'=>$langs->trans("SendByMail"),
 		    //'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		//if ($user->rights->projet->creer) $arrayofmassactions['delete']=$langs->trans("Delete");
-		if ($massaction == 'presend') $arrayofmassactions=array();
+		//if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-
 
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';

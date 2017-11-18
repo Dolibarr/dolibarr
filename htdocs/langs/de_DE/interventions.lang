@@ -48,9 +48,12 @@ TypeContact_fichinter_external_CUSTOMER=Kundenkontakt-Nachbetreuung
 PrintProductsOnFichinter=Auch Produktzeilen (Nicht nur Leistungen) auf der Serviceauftragskarte drucken
 PrintProductsOnFichinterDetails=Serviceaufträge durch Bestellungen generiert
 UseServicesDurationOnFichinter=Standard-Wert der Dauer für diesen Service aus dem Auftrag übernehmen
+UseDurationOnFichinter=Hides the duration field for intervention records
+UseDateWithoutHourOnFichinter=Hides hours and minutes off the date field for intervention records
 InterventionStatistics=Statistik Serviceaufträge
 NbOfinterventions=Anzahl Karten für Serviceaufträge
 NumberOfInterventionsByMonth=Anzahl Karten für Serviceaufträge pro Monat (Freigabedatum)
+AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
 ##### Exports #####
 InterId=Serviceauftrag ID
 InterRef=Serviceauftrag Ref.

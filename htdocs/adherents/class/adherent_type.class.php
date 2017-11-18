@@ -167,7 +167,7 @@ class AdherentType extends CommonObject
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
 		$sql.= "note = '".$this->db->escape($this->note)."',";
-		$sql.= "vote = '".$this->db->escape($this->vote)."',";
+		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 		$sql.= " WHERE rowid =".$this->id;
 
@@ -229,6 +229,8 @@ class AdherentType extends CommonObject
 	function delete()
 	{
 		global $user;
+
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql.= " WHERE rowid = ".$this->id;
@@ -386,23 +388,24 @@ class AdherentType extends CommonObject
      *
      *		@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
      *		@param		int		$maxlen			length max label
+     *  	@param		int  	$notooltip		1=Disable tooltip
      *		@return		string					String with URL
      */
-    function getNomUrl($withpicto=0,$maxlen=0)
+    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0)
     {
         global $langs;
 
         $result='';
         $label=$langs->trans("ShowTypeCard",$this->label);
 
-        $link = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        $picto='group';
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->label,$maxlen):$this->label);
+        $result .= $linkend;
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$linkend;
         return $result;
     }
 

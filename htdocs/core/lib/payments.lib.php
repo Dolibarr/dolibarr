@@ -99,7 +99,7 @@ function showOnlinePaymentUrl($type,$ref)
 {
 	global $conf, $langs;
 
-	$langs->load("PAYMENT");
+	$langs->load("payment");
 	$langs->load("paybox");
 	$servicename='Online';
 
@@ -109,7 +109,6 @@ function showOnlinePaymentUrl($type,$ref)
 	$out.= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
-
 
 /**
  * Return string with full Url

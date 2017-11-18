@@ -41,14 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("main");
-$langs->load("companies");
-$langs->load("resource");
-$langs->load("holiday");
-$langs->load("accountancy");
-$langs->load("hrm");
+$langs->loadLangs(array("errors","admin","companies","resource","holiday","compta","accountancy","hrm"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -68,7 +61,7 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1 || $page == null) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -100,7 +93,7 @@ $tablib[32]= "DictionaryAccountancyCategory";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
+$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.fk_country as country_id, c.code as country_code, c.label as country, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_country=c.rowid and c.active=1";
 $tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.sens, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
 
 // Criteria to sort dictionaries
@@ -110,17 +103,17 @@ $tabsqlsort[32]="position ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[31]= "pcg_version,label";
+$tabfield[31]= "pcg_version,label,country_id,country";
 $tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[31]= "pcg_version,label";
+$tabfieldvalue[31]= "pcg_version,label,country";
 $tabfieldvalue[32]= "code,label,range_account,sens,category_type,formula,position,country";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[31]= "pcg_version,label";
+$tabfieldinsert[31]= "pcg_version,label,fk_country";
 $tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
@@ -173,7 +166,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	$ok=1;
 	foreach ($listfield as $f => $value)
 	{
-		if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes','DictionaryRevenueStamp','DictionaryAccountancysystem','DictionaryAccountancyCategory'))) continue;		// For some pages, country is not mandatory
+		if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes','DictionaryRevenueStamp','DictionaryAccountancyCategory','Pcg_version'))) continue;		// For some pages, country is not mandatory
 		if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType','DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
 		if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
 		if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
@@ -188,6 +181,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$ok=0;
 			$fieldnamekey=$listfield[$f];
 			// We take translate key of field
+
+			if ($fieldnamekey == 'pcg_version')  $fieldnamekey='Pcg_version';
 			if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
 			if ($fieldnamekey == 'libelle_facture') $fieldnamekey = 'LabelOnDocuments';
 			if ($fieldnamekey == 'nbjour')   $fieldnamekey='NbOfDays';

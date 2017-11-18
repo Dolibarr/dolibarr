@@ -654,7 +654,9 @@ if ($id > 0)
 			else
 			{
 
-				print '<tr class="oddeven"><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td><td></td></tr>';
+				print '<tr class="oddeven"><td class="opacitymedium">'.$langs->trans("None").'</td>';
+				print '<td></td><td></td><td></td><td></td>';
+				print '</tr>';
 			}
 
 			print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("AlreadyPaid")." :</td><td align=\"right\">".price($totalpaye)."</td></tr>\n";

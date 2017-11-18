@@ -231,6 +231,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             $nblines=count($contents);
 
             $out.= "\n<!-- Box ".get_class($this)." start -->\n";
+            //$out.= '<div class="div-table-responsive-no-min">';		// Does not work on home page. TODO Try to fix this.
             $out.= '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
 
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
@@ -269,7 +270,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
                     $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
-                    if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    if (! empty($head['graph'])) $label.=' <span class="fa fa-bar-chart"></span>';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
@@ -359,6 +361,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && ! $nblines) $out.= "<br>\n";
 
             $out.= "</div>\n";
+            //$out.= "</div>\n";
             $out.= "<!-- Box ".get_class($this)." end -->\n\n";
             if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
                 dol_filecache($cachedir, $filename, $out);

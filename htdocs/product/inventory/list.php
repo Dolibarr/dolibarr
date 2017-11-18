@@ -100,7 +100,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
     foreach($extrafields->attribute_label as $key => $val)
     {
-        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
     }
 }
 
@@ -195,13 +195,13 @@ foreach ($search_array_options as $key => $val)
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
-    $mode=0;
-    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-    {
-        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-    }
+	$mode_search=0;
+	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
+	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
+	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
+	{
+		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
+	}
 }
 // Add where from hooks
 $parameters=array();
@@ -234,7 +234,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 {
     $obj = $db->fetch_object($resql);
     $id = $obj->rowid;
-    header("Location: ".DOL_URL_ROOT.'/inventory/inventory_card.php?id='.$id);
+    header("Location: ".DOL_URL_ROOT.'/inventory/card.php?id='.$id);
     exit;
 }
 
@@ -281,8 +281,8 @@ $arrayofmassactions =  array(
     'presend'=>$langs->trans("SendByMail"),
     'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->inventory->delete) $arrayofmassactions['delete']=$langs->trans("Delete");
-if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->inventory->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -296,6 +296,12 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+
+$topicmail="Information";
+$modelmail="inventory";
+$objecttmp=new Inventory($db);
+$trackid='inve'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
 {
@@ -333,7 +339,6 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
@@ -366,15 +371,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Rest of fields search
-foreach($object->fields as $key => $val)
-{
-    if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
-    $align='';
-    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-    if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
-    if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
-}
 // Action column
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();
@@ -388,7 +384,6 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
     $align='';
     if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
     if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -412,15 +407,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Rest of fields title
-foreach($object->fields as $key => $val)
-{
-    if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
-    $align='';
-    if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-    if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
-    if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
-}
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
@@ -453,7 +439,6 @@ while ($i < min($num, $limit))
         print '<tr class="oddeven">';
         foreach($object->fields as $key => $val)
         {
-            if (in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
             $align='';
             if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
             if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
@@ -501,29 +486,6 @@ while ($i < min($num, $limit))
 	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        // Rest of fields
-        foreach($object->fields as $key => $val)
-        {
-            if (! in_array($key, array('date_creation', 'tms', 'import_key', 'status'))) continue;
-            $align='';
-            if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-            if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-            if ($key == 'status') $align.=($align?' ':'').'center';
-            if (! empty($arrayfields['t.'.$key]['checked']))
-            {
-                print '<td'.($align?' class="'.$align.'"':'').'>';
-                if (in_array($val['type'], array('date','datetime','timestamp'))) print dol_print_date($db->jdate($obj->$key), 'dayhour');
-                elseif ($key == 'status') print $object->getLibStatut(3);
-                else print $obj->$key;
-                print '</td>';
-                if (! $i) $totalarray['nbfield']++;
-                if (! empty($val['isameasure']))
-                {
-	                if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
-	               	$totalarray['val']['t.'.$key] += $obj->$key;
-                }
-            }
-        }
         // Action column
         print '<td class="nowrap" align="center">';
 	    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -595,7 +557,7 @@ if ($nbtotalofrecords === '' || $nbtotalofrecords)
 
         $filedir=$diroutputmassaction;
         $genallowed=$user->rights->inventory->read;
-        $delallowed=$user->rights->inventory->read;
+        $delallowed=$user->rights->inventory->create;
 
         print $formfile->showdocuments('massfilesarea_inventory','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }

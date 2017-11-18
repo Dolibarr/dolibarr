@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -815,7 +815,6 @@ if ($rowid > 0)
         if ($result)
         {
             $subscriptionstatic=new Subscription($db);
-            $accountstatic=new Account($db);
 
             $num = $db->num_rows($result);
             $i = 0;
@@ -834,31 +833,38 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
+            $accountstatic=new Account($db);
+
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                print '<tr class="oddeven">';
+
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
+
+                print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->subscription).'</td>';
-                if (! empty($conf->banque->enabled))
-                {
-                    print '<td align="right">';
-                    if ($objp->bid)
-                    {
-                        $accountstatic->label=$objp->label;
-                        $accountstatic->id=$objp->baid;
-                        $accountstatic->number=$objp->number;
-                        $accountstatic->account_number=$objp->account_number;
+				if (! empty($conf->banque->enabled))
+				{
+					print '<td align="right">';
+					if ($objp->bid)
+					{
+						$accountstatic->label=$objp->label;
+						$accountstatic->id=$objp->baid;
+						$accountstatic->number=$objp->number;
+						$accountstatic->account_number=$objp->account_number;
 
-                        $accountingjournal = new AccountingJournal($db);
-                        $accountingjournal->fetch($objp->fk_accountancy_journal);
+						if (! empty($conf->accounting->enabled))
+						{
+							$accountingjournal = new AccountingJournal($db);
+							$accountingjournal->fetch($objp->fk_accountancy_journal);
 
-                        $accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+							$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+						}
 
                         $accountstatic->ref=$objp->ref;
                         print $accountstatic->getNomUrl(1);
@@ -881,17 +887,20 @@ if ($rowid > 0)
     }
 
 
-    // Shon online payment link
-    $useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
-
-    if ($useonlinepayment)
+    if (($action != 'addsubscription' && $action != 'create_thirdparty'))
     {
-    	print '<br>';
+	    // Shon online payment link
+	    $useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
 
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-    	print showOnlinePaymentUrl('membersubscription', $object->ref);
+	    if ($useonlinepayment)
+	    {
+	    	print '<br>';
+
+	    	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	    	print showOnlinePaymentUrl('membersubscription', $object->ref);
+	    	print '<br>';
+	    }
     }
-
 
     /*
      * Add new subscription form
@@ -1092,12 +1101,12 @@ if ($rowid > 0)
                     	print '</a>)';
                     }
                     if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
-                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-                    {
-                    	$prodtmp=new Product($db);
-                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
-                    }
+					if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+					{
+						$prodtmp=new Product($db);
+						$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
+					}
                     print '<br>';
                 }
                 // Add invoice with payments
@@ -1117,12 +1126,12 @@ if ($rowid > 0)
                     	print '</a>)';
                     }
                     if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
-                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-                    {
-                    	$prodtmp=new Product($db);
-                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
-                    }
+					if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+					{
+						$prodtmp=new Product($db);
+						$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
+					}
                     print '<br>';
                 }
                 print '</td></tr>';

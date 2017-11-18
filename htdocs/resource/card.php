@@ -43,7 +43,7 @@ $langs->load("main");
 // Get parameters
 $id						= GETPOST('id','int');
 $action					= GETPOST('action','alpha');
-$ref					= GETPOST('ref');
+$ref					= GETPOST('ref','alpha');
 $description			= GETPOST('description');
 $confirm				= GETPOST('confirm');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource','alpha');
@@ -58,8 +58,8 @@ if (! $user->rights->resource->read)
 	accessforbidden();
 
 $object = new Dolresource($db);
-$objectFetchRes = $object->fetch($id);
-if (! ($objectFetchRes > 0)) dol_print_error($db, $object->error);
+$result = $object->fetch($id, $ref);
+if (! ($result > 0)) dol_print_error($db, $object->error);
 
 
 $extrafields = new ExtraFields($db);
@@ -68,7 +68,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 $hookmanager->initHooks(array('resource_card','globalcard'));
-$parameters=array('resource_id'=>$id);
+$parameters=array('resource_id'=>$object->id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -159,16 +159,16 @@ if (empty($reshook))
 *
 * Put here all code to build page
 ****************************************************/
+
 $pagetitle = $langs->trans('ResourceCard');
 llxHeader('',$pagetitle,'');
 
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-if ( $objectFetchRes > 0 )
+if ($object->id > 0)
 {
 	$head=resource_prepare_head($object);
-
 
 	if ($action == 'edit' )
 	{
@@ -189,7 +189,7 @@ if ( $objectFetchRes > 0 )
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input size="12" name="ref" value="'.(GETPOST('ref') ? GETPOST('ref') : $object->ref).'"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.(GETPOST('ref') ? GETPOST('ref') : $object->ref).'"></td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
@@ -200,7 +200,7 @@ if ( $objectFetchRes > 0 )
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.($_POST['description'] ? GETPOST('description','alpha') : $object->description).'</textarea>';
+		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_3.'">'.($_POST['description'] ? GETPOST('description','alpha') : $object->description).'</textarea>';
 		print '</td></tr>';
 
 		// Other attributes
@@ -232,7 +232,7 @@ if ( $objectFetchRes > 0 )
 		// Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
-	        $formconfirm = $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
+	        $formconfirm = $form->formconfirm("card.php?&id=".$object->id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
 	    }
 
 	    // Print form confirm
@@ -246,7 +246,7 @@ if ( $objectFetchRes > 0 )
 	    $morehtmlref.='</div>';
 
 
-	    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
 	    print '<div class="fichecenter">';
@@ -302,7 +302,7 @@ if ( $objectFetchRes > 0 )
 			if($user->rights->resource->write)
 			{
 				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';
 			}
 		}
@@ -312,7 +312,7 @@ if ( $objectFetchRes > 0 )
 		    if($user->rights->resource->delete)
 		    {
 		        print '<div class="inline-block divButAction">';
-		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
+		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
 		        print '</div>';
 		    }
 		}
