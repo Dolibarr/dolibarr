@@ -1032,7 +1032,6 @@ class FactureRec extends CommonInvoice
 	 *  Return label of object status
 	 *
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param      integer	$alreadypaid    Not used
 	 *  @return     string			        Label
 	 */
 	function getLibStatut($mode=0)
