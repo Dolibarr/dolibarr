@@ -1434,7 +1434,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		   	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		}
 		else {
-			$morehtmlstatus.=$object->getLibStatut(5);
+			$morehtmlstatus.=$object->getLibStatut(6);
 		}
 	}
 	elseif ($object->element == 'product')
