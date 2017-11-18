@@ -1280,6 +1280,8 @@ div.statusref {
 }
 div.statusref img {
     padding-left: 8px;
+   	padding-right: 9px;
+   	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;

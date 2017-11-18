@@ -1433,6 +1433,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		{
 		   	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		}
+		else {
+			$morehtmlstatus.=$object->getLibStatut(5);
+		}
 	}
 	elseif ($object->element == 'product')
 	{
@@ -1458,13 +1461,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	elseif ($object->element == 'contrat' || $object->element == 'contract')
 	{
-		if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
+		if ($object->statut == 0) $morehtmlstatus.=$object->getLibStatut(5);
 		else $morehtmlstatus.=$object->getLibStatut(4);
 	}
 	elseif ($object->element == 'facturerec')
 	{
-		if ($object->frequency==0) $morehtmlstatus.=$object->getLibStatut(2);
-		else $morehtmlstatus.=$object->getLibStatut(4);
+		if ($object->frequency == 0) $morehtmlstatus.=$object->getLibStatut(2);
+		else $morehtmlstatus.=$object->getLibStatut(5);
 	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);

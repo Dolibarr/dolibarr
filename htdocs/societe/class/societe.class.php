@@ -2021,7 +2021,7 @@ class Societe extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    @return   string        		Libelle
 	 */
 	function getLibStatut($mode=0)
