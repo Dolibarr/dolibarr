@@ -114,7 +114,6 @@ class ActionComm extends CommonObject
     var $userdoneid;	// Id of user done (deprecated)
 
 	var $socpeopleassigned = array(); // Array of user ids
-	var $TContactId = array(); // Array of user ids
     /**
      * Object user of owner
      * @var User
@@ -349,9 +348,9 @@ class ActionComm extends CommonObject
 
 			if (!$error)
 			{
-				if (!empty($this->TContactId))
+				if (!empty($this->socpeopleassigned))
 				{
-					foreach ($this->TContactId as $id)
+					foreach ($this->socpeopleassigned as $id => $Tab)
 					{
 						$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql.=" VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
@@ -641,7 +640,6 @@ class ActionComm extends CommonObject
 		{
 			$this->userassigned=array();
 			$this->socpeopleassigned=array();
-			$this->TContactId=array();
 
 			// If owner is known, we must but id first into list
 			if ($this->userownerid > 0) $this->userassigned[$this->userownerid]=array('id'=>$this->userownerid);	// Set first so will be first into list.
@@ -656,7 +654,6 @@ class ActionComm extends CommonObject
 							if (empty($this->userownerid)) $this->userownerid=$obj->fk_element;	// If not defined (should not happened, we fix this)
 							break;
 						case 'socpeople':
-							$this->TContactId[] = $obj->fk_element;
 							$this->socpeopleassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
 							break;
 					}
@@ -898,9 +895,9 @@ class ActionComm extends CommonObject
 				$sql ="DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'socpeople'";
 				$resql = $this->db->query($sql);
 				
-				if (!empty($this->TContactId))
+				if (!empty($this->socpeopleassigned))
 				{
-					foreach ($this->TContactId as $id)
+					foreach (array_keys($this->socpeopleassigned) as $id)
 					{
 						$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql.=" VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";

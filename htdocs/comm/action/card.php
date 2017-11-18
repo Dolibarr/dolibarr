@@ -52,7 +52,7 @@ $langs->load("agenda");
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $backtopage=GETPOST('backtopage','alpha');
-$TContactId=GETPOST('TContactId','array');
+$socpeopleassigned=GETPOST('socpeopleassigned','array');
 $origin=GETPOST('origin','alpha');
 $originid=GETPOST('originid','int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -185,9 +185,9 @@ if ($action == 'add')
         else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
     }
 
-    if (!empty($TContactId[0]))
+    if (!empty($socpeopleassigned[0]))
 	{
-		$result=$contact->fetch($TContactId[0]);
+		$result=$contact->fetch($socpeopleassigned[0]);
 	}
 
 	if ($cancel)
@@ -316,8 +316,15 @@ if ($action == 'add')
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
 
-	$object->TContactId = $TContactId;
-	if (!empty($object->TContactId[0])) $object->contactid = $object->TContactId[0];
+	foreach ($socpeopleassigned as $cid)
+	{
+		$object->socpeopleassigned[$cid] = array('id' => $cid);
+	}
+	if (!empty($object->socpeopleassigned))
+	{
+		reset($object->socpeopleassigned);
+		$object->contactid = key($object->socpeopleassigned);
+	}
 	
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -409,7 +416,8 @@ if ($action == 'update')
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
-		$object->TContactId   = GETPOST("TContactId",'array');
+		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
+		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
 		$object->note        = GETPOST("note");
@@ -598,10 +606,10 @@ if ($action == 'create')
 {
 	$contact = new Contact($db);
 
-	$TContactId = GETPOST("TContactId", 'array');
-	if (!empty($TContactId[0]))
+	$socpeopleassigned = GETPOST("socpeopleassigned", 'array');
+	if (!empty($socpeopleassigned[0]))
 	{
-		$result=$contact->fetch($TContactId[0]);
+		$result=$contact->fetch($socpeopleassigned[0]);
 		if ($result < 0) dol_print_error($db,$contact->error);
 	}
 
@@ -786,7 +794,7 @@ if ($action == 'create')
 
 	// Related contact
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-	echo $form->selectcontacts(GETPOST('socid','int'), GETPOST('TContactId', 'array'), 'TContactId[]', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
+	echo $form->selectcontacts(GETPOST('socid','int'), GETPOST('socpeopleassigned', 'array'), 'socpeopleassigned[]', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
 	print '</td></tr>';
 
 
@@ -881,7 +889,8 @@ if ($id > 0)
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
-		$object->TContactId = GETPOST("TContactId",'array');
+		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
+		foreach ($socpeopleassigned as $id) $object->socpeopleassigned[$id] = array('id' => $id);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
 
@@ -1128,7 +1137,7 @@ if ($id > 0)
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			$form->select_contacts($object->socid, $object->TContactId, 'TContactId[]', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
+			$form->select_contacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -1375,9 +1384,9 @@ if ($id > 0)
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td>';
 			print '<td colspan="3">';
 			
-			if (!empty($object->TContactId))
+			if (!empty($object->socpeopleassigned))
 			{
-				foreach ($object->TContactId as $cid)
+				foreach ($object->socpeopleassigned as $cid => $Tab)
 				{
 					$contact = new Contact($db);
 					$result = $contact->fetch($cid);
