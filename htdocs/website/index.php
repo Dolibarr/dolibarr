@@ -52,6 +52,8 @@ $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action','alpha');
 
+$section_dir = GETPOST('section_dir', 'alpha');
+
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
@@ -122,9 +124,77 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
+$permtouploadfile = $user->rights->website->write;
+$diroutput = $conf->medias->multidir_output[$conf->entity];
+
+$relativepath=$section_dir;
+$upload_dir = $diroutput.'/'.$relativepath;
+
+
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
+// Add directory
+if ($action == 'add' && $permtouploadfile)
+{
+	$ecmdir->ref                = 'NOTUSEDYET';
+	$ecmdir->label              = GETPOST("label");
+	$ecmdir->description        = GETPOST("desc");
+
+	//$id = $ecmdir->create($user);
+	if ($id > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
+		$action = "create";
+	}
+
+	clearstatcache();
+}
+
+// Remove file
+if ($action == 'confirm_deletefile')
+{
+	if (GETPOST('confirm') == 'yes')
+	{
+		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
+		//var_dump(GETPOST('urlfile'));exit;
+
+		$upload_dir = $diroutput.($relativepath?'/'.$relativepath:'');
+		$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
+		//var_dump($file);exit;
+
+		$ret=dol_delete_file($file);	// This include also the delete from file index in database.
+		if ($ret)
+		{
+			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile','alpha')), null, 'mesgs');
+		}
+		else
+		{
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile','alpha')), null, 'errors');
+		}
+
+		clearstatcache();
+	}
+	$action='file_manager';
+}
+
+// Remove directory
+if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
+{
+	//$result=$ecmdir->delete($user);
+	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+
+	clearstatcache();
+}
+
 
 if (GETPOST('refreshsite'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
@@ -1117,7 +1187,7 @@ $moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
-print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 if ($action == 'createsite')
@@ -1155,6 +1225,10 @@ if ($action == 'editcontent')
 if ($action == 'edit')
 {
 	print '<input type="hidden" name="action" value="update">';
+}
+if ($action == 'file_manager')
+{
+	print '<input type="hidden" name="action" value="file_manager">';
 }
 
 print '<div>';
@@ -1829,6 +1903,7 @@ if ($action == 'file_manager')
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
+	//if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php?file_manager=1&website='.$website.'&pageid='.$pageid;
 	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 

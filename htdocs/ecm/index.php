@@ -77,8 +77,8 @@ $error=0;
  *	Actions
  */
 
-// Upload file
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
+// Upload file (code similar but different than actions_linkedfiles.inc.php)
+if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Define relativepath and upload_dir
     $relativepath='';
@@ -86,14 +86,20 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	else $relativepath=$section_dir;
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (empty($_FILES['userfile']['tmp_name']))
+	if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
+	else $userfiles=array($_FILES['userfile']['tmp_name']);
+
+	foreach($userfiles as $key => $userfile)
 	{
-		$error++;
-		if($_FILES['userfile']['error'] == 1 || $_FILES['userfile']['error'] == 2){
-			setEventMessages($langs->trans('ErrorFileSizeTooLarge'),null, 'errors');
-		}
-		else {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		if (empty($_FILES['userfile']['tmp_name'][$key]))
+		{
+			$error++;
+			if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
+				setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+			}
+			else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+			}
 		}
 	}
 
@@ -106,8 +112,6 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	    }
 	}
 }
-
-
 
 // Add directory
 if ($action == 'add' && $user->rights->ecm->setup)

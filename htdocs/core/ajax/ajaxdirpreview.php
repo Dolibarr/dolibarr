@@ -229,7 +229,7 @@ if ($type == 'directory')
     		$relativepath=GETPOST('file','alpha');
     		if ($relativepath && $relativepath!= '/') $relativepath.='/';
     		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
-   	    	if (GETPOSTISSET('website'))
+    		if (GETPOSTISSET('website') || GETPOSTISSET('file_manager'))
 	    	{
 	    		$param.='&file_manager=1';
 	    		if (!preg_match('/website=/',$param)) $param.='&website='.urlencode(GETPOST('website','alpha'));
@@ -310,6 +310,7 @@ if ($type == 'directory')
 			'urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'),
 			'section'=>array('type'=>'hidden','value'=>$section,'name'=>'section')
 		);
+
 		print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
 	}
 

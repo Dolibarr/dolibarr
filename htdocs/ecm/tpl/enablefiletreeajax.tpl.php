@@ -44,6 +44,7 @@ $(document).ready(function() {
 		},
 		// Called if we click on a dir (not a file)
 		function(elem) {
+			console.log("We click on a dir, we save dir name or id into <?php echo $nameforformuserfile ?>_section_... with name section_...");
 			id=elem.attr('id').substr(12);	// We get id that is 'fmdirlia_id_xxx' (id we want is xxx)
 			jQuery("#<?php echo $nameforformuserfile ?>_section_dir").val(elem.attr('rel'));
 			jQuery("#<?php echo $nameforformuserfile ?>_section_id").val(id);

@@ -55,7 +55,7 @@ class FormFile
 
 
 	/**
-	 *  Show form to upload a new file
+	 *  Show form to upload a new file.
 	 *
 	 *  @param  string		$url			Url
 	 *  @param  string		$title			Title zone (Title or '' or 'none')
