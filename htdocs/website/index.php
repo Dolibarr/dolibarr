@@ -51,12 +51,16 @@ $page=GETPOST('page', 'alpha');
 $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$cancel=GETPOST('cancel','alpha');
+
+$section_dir = GETPOST('section_dir', 'alpha');
+$file_manager = GETPOST('file_manager', 'alpha');
 
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
 if (GETPOST('create')) { $action='create'; }
-if (GETPOST('file_manager')) { $action='file_manager'; }
 if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
@@ -65,6 +69,7 @@ if (GETPOST('editsource')) { $action='editsource'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 if (GETPOST('createfromclone')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
+if (empty($action) && $file_manager) $action='file_manager';
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -122,9 +127,55 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
+$permtouploadfile = $user->rights->website->write;
+$diroutput = $conf->medias->multidir_output[$conf->entity];
+
+$relativepath=$section_dir;
+$upload_dir = $diroutput.'/'.$relativepath;
+
+
 /*
  * Actions
  */
+
+
+$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
+if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
+
+// Add directory
+if ($action == 'add' && $permtouploadfile)
+{
+	$ecmdir->ref                = 'NOTUSEDYET';
+	$ecmdir->label              = GETPOST("label");
+	$ecmdir->description        = GETPOST("desc");
+
+	//$id = $ecmdir->create($user);
+	if ($id > 0)
+	{
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
+		$action = "create";
+	}
+
+	clearstatcache();
+}
+
+
+// Remove directory
+if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
+{
+	//$result=$ecmdir->delete($user);
+	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+
+	clearstatcache();
+}
+
 
 if (GETPOST('refreshsite'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
@@ -1117,7 +1168,7 @@ $moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("websiteetup"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
-print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 if ($action == 'createsite')
@@ -1155,6 +1206,10 @@ if ($action == 'editcontent')
 if ($action == 'edit')
 {
 	print '<input type="hidden" name="action" value="update">';
+}
+if ($action == 'file_manager')
+{
+	print '<input type="hidden" name="action" value="file_manager">';
 }
 
 print '<div>';
@@ -1822,7 +1877,7 @@ if ($action == 'editmeta' || $action == 'create')
 	print '<br>';
 }
 
-if ($action == 'file_manager')
+if ($action == 'editfile' || $action == 'file_manager')
 {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br><br>';

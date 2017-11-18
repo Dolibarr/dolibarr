@@ -46,6 +46,7 @@ if ($module == 'medias')
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax))
 {
+	// TODO Add website, pageid, filemanager if defined
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 }
 
@@ -103,9 +104,11 @@ if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABL
 		<?php
 	}
 
+	$sectiondir=GETPOST('file','alpha');
+	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     $formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile);
+    $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir);
 }
 else print '&nbsp;';
 
@@ -131,7 +134,7 @@ if ($action == 'delete_section')
 // End confirm
 
 
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
+if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
 	print '<table width="100%" class="liste noborderbottom">'."\n";
 

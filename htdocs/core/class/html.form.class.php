@@ -3542,7 +3542,7 @@ class Form
 	 *       print '});'."\n";
 	 *       print '</script>'."\n";
 	 *
-	 *     @param  	string		$page        	   	Url of page to call if confirmation is OK
+	 *     @param  	string		$page        	   	Url of page to call if confirmation is OK. Can contains paramaters (param 'action' and 'confirm' will be reformated)
 	 *     @param	string		$title       	   	Title
 	 *     @param	string		$question    	   	Question
 	 *     @param 	string		$action      	   	Action

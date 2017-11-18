@@ -230,7 +230,7 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    			}
 	    		}
 
-	    		// Enable jquery handlers on new generated HTML objects
+	    		// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
 	    		// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
 				print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip (reload into ajaxdirtree) -->\n";
 	    		print '<script type="text/javascript">
