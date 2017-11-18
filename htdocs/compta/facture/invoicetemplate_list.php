@@ -215,7 +215,7 @@ $today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year'
  *  List mode
  */
 $sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
-$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when,";
+$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql.= " f.datec, f.tms,";
 $sql.= " f.fk_cond_reglement, f.fk_mode_reglement";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
@@ -518,7 +518,7 @@ if ($resql)
 
 			$invoicerectmp->id=$objp->id;
 			$invoicerectmp->frequency=$objp->frequency;
-			$invoicerectmp->suspend=$objp->suspend;
+			$invoicerectmp->suspended=$objp->suspended;
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
 			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
