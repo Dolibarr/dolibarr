@@ -138,7 +138,6 @@ $upload_dir = $diroutput.'/'.$relativepath;
  * Actions
  */
 
-
 $backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
@@ -1884,7 +1883,7 @@ if ($action == 'editfile' || $action == 'file_manager')
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
-	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';
+	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';	// Must be an url without param
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
 
 	print '</div>';
