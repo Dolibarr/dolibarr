@@ -983,6 +983,9 @@ select.selectarrowonleft option {
 	div.statusref {
     	padding-right: 10px;
    	}
+	div.statusref img {
+    	padding-right: 3px !important;
+   	}
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
