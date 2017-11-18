@@ -500,7 +500,7 @@ if ($resql)
 	if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.datec","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.tms","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"f.frequency,f.suspended","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"f.suspended,f.frequency","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'nomaxwidthsearch ')."\n";
 	print "</tr>\n";
 
