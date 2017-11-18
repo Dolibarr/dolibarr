@@ -1283,7 +1283,7 @@ if (count($object->records) > 0)
 
 	// ***** Part for pages
 
-	if ($website && ! in_array($action, array('editcss','editmenu','file_manager')))
+	if ($website && ! in_array($action, array('editcss','editmenu')))
 	{
 		print '</div>';	// Close current websitebar to open a new one
 

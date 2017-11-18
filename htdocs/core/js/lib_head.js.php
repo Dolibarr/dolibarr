@@ -919,8 +919,8 @@ function document_preview(file, type, title)
 		if (mode == 'image' && showOriginalSizeButton)
 		{
 			optionsbuttons = {
-			    "<?php echo dol_escape_js($langs->trans("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->trans("Close")); ?>": function() { $( this ).dialog( "close" ); }
+			    "<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("Close")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
 
