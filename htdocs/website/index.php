@@ -1825,12 +1825,14 @@ if ($action == 'editmeta' || $action == 'create')
 if ($action == 'file_manager')
 {
 	print '<!-- Edit Media -->'."\n";
-	print '<br><br>';
+	print '<div class="fiche"><br><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
 	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
+
+	print '</div>';
 }
 
 if ($action == 'editmenu')
