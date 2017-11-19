@@ -854,6 +854,7 @@ select.selectarrowonleft option {
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
+.imgmaxheight50 { max-height: 50px; }
 
 .width20p { width:20%; }
 .width25p { width:25%; }

@@ -34,8 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
+$langs->loadLangs(array("errors","admin","modulebuilder"));
 
 $mode=GETPOST('mode', 'alpha');
 if (empty($mode)) $mode='common';
@@ -1009,9 +1008,21 @@ if ($mode == 'develop')
 	print '<td>'.$langs->trans("URL").'</td>';
 	print '</tr>';
 
-	print "<tr class=\"oddeven\">\n";
+	print '<tr class="oddeven" height="80">'."\n";
+	print '<td align="left">';
+	//span class="fa fa-bug"></span>
+	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
+	print '<div class="imgmaxheight50 logo_setup"></div>';
+	print '</td>';
+	print '<td>'.$langs->trans("TryToUseTheModuleBuilder").'</td>';
+	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
+	print '</tr>';
+
+	print '<tr class="oddeven" height="80">'."\n";
 	$url='https://partners.dolibarr.org';
-	print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
+	print '<td align="left">';
+	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a>';
+	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 	print '</tr>';
