@@ -52,7 +52,7 @@ class FormEcm
 	 *  @param	string	$module				Module ('ecm', 'medias', ...)
 	 *  @return	string						String with HTML select
 	 */
-	function select_all_sections($selected=0, $select_name='', $module='ecm')
+	function selectAllSections($selected=0, $select_name='', $module='ecm')
 	{
 		global $conf, $langs;
 		$langs->load("ecm");
@@ -80,7 +80,7 @@ class FormEcm
 				$output.= '<option value="-1">&nbsp;</option>';
 				foreach($cate_arbo as $key => $value)
 				{
-					if ($cate_arbo[$key]['id'] == $selected)
+					if ($selected && $cate_arbo[$key]['id'] == $selected)
 					{
 						$add = 'selected ';
 					}

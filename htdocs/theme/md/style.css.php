@@ -3268,10 +3268,21 @@ div.titre {
 #divsubscribe { max-width: 900px; }
 #tablesubscribe { width: 100%; }
 
+div#card-element {
+    border: 1px solid #ccc;
+}
+div#card-errors {
+	color: #fa755a;
+    text-align: center;
+    padding-top: 3px;
+}
+
+
 
 /*
  * Effect Postit
  */
+
 .effectpostit
 {
   position: relative;

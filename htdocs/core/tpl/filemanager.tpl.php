@@ -19,7 +19,7 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE ecm/tpl/filemanager.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/filemanager.tpl.php -->
 <!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
 
 <?php
@@ -214,4 +214,4 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 }
 
 ?>
-<!-- END PHP TEMPLATE ecm/tpl/filemanager.tpl.php -->
+<!-- END PHP TEMPLATE core/tpl/filemanager.tpl.php -->

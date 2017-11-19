@@ -44,6 +44,7 @@ else header('Cache-Control: no-cache');
 
 //var_dump($conf);
 
+
 // Wrapper to show tooltips (html or onclick popup)
 if (empty($conf->dol_no_mouse_hover))
 {

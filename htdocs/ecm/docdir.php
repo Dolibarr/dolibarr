@@ -29,15 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("users");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("contracts");
-$langs->load("categories");
+$langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts","categories"));
 
 if (! $user->rights->ecm->setup) accessforbidden();
 
@@ -46,7 +38,7 @@ $socid      = GETPOST('socid','int');
 $action     = GETPOST('action','alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$confirm=GETPOST('confirm','alpha');
+$confirm    = GETPOST('confirm','alpha');
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
@@ -66,7 +58,7 @@ if ($module == 'ecm')
 {
 	$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
 }
-if ($module == 'medias')
+else	// For example $module == 'medias'
 {
 	$upload_dir = $conf->medias->multidir_output[$conf->entity];
 }
@@ -114,34 +106,79 @@ if ($action == 'add' && $user->rights->ecm->setup)
 		}
 	}
 
-	$ecmdir->ref                = trim($_POST["ref"]);
-	$ecmdir->label              = trim($_POST["label"]);
-	$ecmdir->description        = trim($_POST["desc"]);
-	$ecmdir->fk_parent          = $_POST["catParent"];
+	$ref = trim(GETPOST("ref", 'alpha'));
+	$label = trim(GETPOST("label", 'alpha'));
+	$desc = trim(GETPOST("desc", 'alpha'));
+	$catParent = GETPOST("catParent", 'alpha');	// Can be an int (with ECM) or a string (with generic filemanager)
 
-	$ok=true;
+	$error=0;
 
-	if (! $ecmdir->label)
+	if (empty($label))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 		$action = 'create';
-		$ok=false;
+		$error++;
 	}
 
-	if ($ok)
+	if (! $error)
 	{
-		$id = $ecmdir->create($user);
-
-		if ($id > 0)
+		if ($module == 'ecm')
 		{
-			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+			$ecmdir->ref                = $ref;
+			$ecmdir->label              = $label;
+			$ecmdir->description        = $desc;
+			$ecmdir->fk_parent          = (int) $catParent;
+
+			$id = $ecmdir->create($user);
+			if ($id <= 0)
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+				$action = 'create';
+			}
+		}
+		else	// For example $module == 'medias'
+		{
+			$dirfornewdir = '';
+			if ($module == 'medias')
+			{
+				$dirfornewdir = $conf->medias->multidir_output[$conf->entity];
+			}
+			if (empty($dirfornewdir))
+			{
+				$error++;
+				dol_print_error('', 'Bad value for module. Not supported.');
+			}
+
+			if (! $error)
+			{
+				$fullpathofdir = $dirfornewdir.'/'.($catParent? $catParent.'/' : '').$label;
+				$result = dol_mkdir($fullpathofdir, DOL_DATA_ROOT);
+				if ($result < 0)
+				{
+					setEventMessages($langs->trans('ErrorFailToCreateDir', $label), null, 'errors');
+					$error++;
+				}
+				else
+				{
+					setEventMessages($langs->trans("ECMSectionWasCreated", $label), null, 'mesgs');
+				}
+			}
+		}
+	}
+
+	if (! $error)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
 			exit;
 		}
 		else
 		{
-			$langs->load("errors");
-			setEventMessages($langs->trans($ecmdir->error), $ecmdir->errors, 'errors');
-			$action = 'create';
+			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+			exit;
 		}
 	}
 }
@@ -160,7 +197,7 @@ else if ($action == 'confirm_deletesection' && $confirm == 'yes')
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("ECMNewSection"));
 
 $form=new Form($db);
 $formecm=new FormEcm($db);
@@ -170,12 +207,13 @@ if ($action == 'create')
 	//***********************
 	// Create
 	//***********************
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($website) print '<input type="hidden" name="website" value="'.$website.'">';
-	if ($pageid)  print '<input type="hidden" name="pageid" value="'.$pageid.'">';
+	print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
+	if ($website) print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
+	if ($pageid)  print '<input type="hidden" name="pageid" value="'.dol_escape_htmltag($pageid).'">';
 
 	$title=$langs->trans("ECMNewSection");
 	print load_fiche_titre($title);
@@ -188,7 +226,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formecm->select_all_sections(! empty($_GET["catParent"]) ? $_GET["catParent"] : $ecmdir->fk_parent, 'catParent', $module);
+	print $formecm->selectAllSections(! empty($_GET["catParent"]) ? $_GET["catParent"] : $ecmdir->fk_parent, 'catParent', $module);
 	print '</td></tr>'."\n";
 
 	// Description
@@ -207,7 +245,7 @@ if ($action == 'create')
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</form>';

@@ -338,7 +338,7 @@ dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECM
 
 // Add filemanager component
 $module='ecm';
-include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 // End of page
 dol_fiche_end();

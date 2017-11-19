@@ -1884,7 +1884,7 @@ if ($action == 'editfile' || $action == 'file_manager')
 
 	$module = 'medias';
 	if (empty($url)) $url=DOL_URL_ROOT.'/website/index.php';	// Must be an url without param
-	include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 	print '</div>';
 }

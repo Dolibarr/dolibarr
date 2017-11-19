@@ -39,19 +39,20 @@ class EcmDirectory // extends CommonObject
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	var $date_c;
 	var $date_m;
-    public $fk_user_m;
-    public $fk_user_c;
-    public $ref;
+	public $fk_user_m;
+	public $fk_user_c;
+	public $ref;
 
 	var $cats=array();
 	var $motherof=array();
 
-    var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+	var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+	var $forbiddencharsdir = array('<','>',':','?','*','|','"');
 
-    public $full_arbo_loaded;
+	public $full_arbo_loaded;
 
-    public $error;
-    public $errors;
+	public $error;
+	public $errors;
 
 
 	/**
@@ -104,8 +105,8 @@ class EcmDirectory // extends CommonObject
 		$pathfound=0;
 		foreach ($cate_arbo as $key => $categ)
 		{
-			$path=str_replace($this->forbiddenchars,'_',$categ['fulllabel']);
-			//print $path.'<br>';
+			$path=str_replace($this->forbiddencharsdir, '_', $categ['fullrelativename']);
+			//print $relativepath.' - '.$path.'<br>';
 			if ($path == $relativepath)
 			{
 				$pathfound=1;
