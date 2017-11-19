@@ -73,7 +73,7 @@ $urlsource=GETPOST('urlsource','alpha');
 $entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
-if (empty($modulepart)) accessforbidden('Bad link. Bad value for parameter modulepart',0,0,1);
+if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart',0,0,1);
 if (empty($original_file) && empty($hashp)) accessforbidden('Bad link. Missing identification to find file (original_file or hashp)',0,0,1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
@@ -119,15 +119,23 @@ if (! empty($hashp))
 	{
 		$tmp = explode('/', $ecmfile->filepath, 2);		// $ecmfile->filepath is relative to document directory
 		$moduleparttocheck = $tmp[0];
-		if ($moduleparttocheck == $modulepart)
+		if ($modulepart)	// Not required for link using public hashp
 		{
-			// We remove first level of directory
-			$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
-			//var_dump($original_file); exit;
+			if ($moduleparttocheck == $modulepart)
+			{
+				// We remove first level of directory
+				$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
+				//var_dump($original_file); exit;
+			}
+			else
+			{
+				accessforbidden('Bad link. File is from another module part.',0,0,1);
+			}
 		}
 		else
 		{
-			accessforbidden('Bad link. File is from another module part.',0,0,1);
+			$modulepart = $moduleparttocheck;
+			$original_file = (($tmp[1]?$tmp[1].'/':'').$ecmfile->filename);		// this is relative to module dir
 		}
 	}
 	else
@@ -154,7 +162,8 @@ $fullpath_original_file     = $check_access['original_file'];               // $
 
 if (! empty($hashp))
 {
-	$accessallowed = 1;			// When using hashp, link is public so we force $accessallowed
+	$accessallowed = 1;					// When using hashp, link is public so we force $accessallowed
+	$sqlprotectagainstexternals = '';
 }
 else
 {
@@ -220,7 +229,7 @@ if (! file_exists($fullpath_original_file_osencoded))
 top_httphead($type);
 header('Content-Description: File Transfer');
 if ($encoding)   header('Content-Encoding: '.$encoding);
-// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, atachment=need user action to open)
+// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
 if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 else header('Content-Disposition: inline; filename="'.$filename.'"');
 header('Content-Length: ' . dol_filesize($fullpath_original_file));

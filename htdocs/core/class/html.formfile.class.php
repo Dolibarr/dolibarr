@@ -1068,7 +1068,7 @@ class FormFile
 			$nboffiles=count($filearray);
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-			$var=true; $i=0; $nboflines = 0; $lastrowid=0;
+			$i=0; $nboflines = 0; $lastrowid=0;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
 				if ($file['name'] != '.'
@@ -1083,7 +1083,7 @@ class FormFile
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
 					print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'" '.$bcdd[$var].'>';
+					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'">';
 
 					// File name
 					print '<td class="tdoverflowmax300">';
@@ -1114,6 +1114,8 @@ class FormFile
 					}
 					// Preview link
 					if (! $editline) print $this->showPreview($file, $modulepart, $filepath);
+					// Public share link
+					if (! $editline && ! empty($filearray[$key]['hashp'])) print 'ee';
 
 					print "</td>\n";
 
@@ -1268,7 +1270,7 @@ class FormFile
 	 *  @param	int		$addfilterfields	Add line with filters
 	 *  @return int                 		<0 if KO, nb of files shown if OK
 	 */
-	function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='',$addfilterfields=0)
+	function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload=0, $relativepath='', $permtodelete=1, $useinecm=0, $textifempty='', $maxlength=0, $url='', $addfilterfields=0)
 	{
 		global $user, $conf, $langs, $form;
 		global $bc;
@@ -1387,7 +1389,6 @@ class FormFile
 			$object_instance=new ExpenseReport($this->db);
 		}
 
-		$var=true;
 		foreach($filearray as $key => $file)
 		{
 			if (!is_dir($file['name'])
@@ -1615,11 +1616,9 @@ class FormFile
 		$nboflinks = count($links);
 		if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-		$var = true;
 		foreach ($links as $link)
 		{
-			$var =! $var;
-			print '<tr ' . $bc[$var] . '>';
+			print '<tr class="oddeven">';
 			//edit mode
 			if ($action == 'update' && $selected === $link->id)
 			{
