@@ -59,6 +59,7 @@ class FormEcm
 
 		if ($select_name=='') $select_name="catParent";
 
+		$cate_arbo=null;
 		if ($module == 'ecm')
 		{
 			$cat = new EcmDirectory($this->db);

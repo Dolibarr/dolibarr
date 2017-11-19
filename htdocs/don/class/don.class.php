@@ -842,9 +842,10 @@ class Don extends CommonObject
      *	Return clicable name (with picto eventually)
      *
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param	int  	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0)
+    function getNomUrl($withpicto=0, $notooltip=0)
     {
         global $langs;
 

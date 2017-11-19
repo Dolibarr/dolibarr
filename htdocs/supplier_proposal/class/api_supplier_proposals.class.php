@@ -38,7 +38,7 @@ class Supplierproposals extends DolibarrApi
 	);
 
 	/**
-	 * @var supplier_proposal $supplier_proposal {@type supplier_proposal}
+	 * @var SupplierProposal $supplier_proposal {@type SupplierProposal}
 	 */
 	public $supplier_proposal;
 
@@ -149,6 +149,7 @@ class Supplierproposals extends DolibarrApi
 		{
 			$num = $db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i=0;
 			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);

@@ -450,7 +450,6 @@ class Contracts extends DolibarrApi
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
-      $request_data = (object) $request_data;
       $updateRes = $this->contract->deleteline($lineid, DolibarrApiAccess::$user);
       if ($updateRes > 0) {
         return $this->get($id);
