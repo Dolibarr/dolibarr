@@ -1085,3 +1085,5 @@ $(document).ready(function() {
 	});
 });
 <?php } ?>
+
+// End of lib_head.js.php
