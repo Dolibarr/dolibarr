@@ -132,7 +132,7 @@ MaxNbOfLinesForBoxes=Număr maxim de linii pentru widgeturi
 PositionByDefault=Poziţia implicită
 Position=Poziţie
 MenusDesc=Managerii de meniuri au stabilit conținutul celor două bare de meniu (orizontală și verticală).
-MenusEditorDesc=The menu editor allows you to define custom menu entries. Use it carefully to avoid instability and permanently unreachable menu entries.<br>Some modules add menu entries (in menu <b>All</b> mostly). If you remove some of these entries by mistake, you can restore them disabling and reenabling the module.
+MenusEditorDesc=Editorul de meniuri vă permite să definiți intrări personalizate din meniu. Folosiți-l cu grijă pentru a evita instabilitatea și intrările de meniuri care nu pot fi accesate permanent. <br> Unele module adaugă meniuri (mai ales în meniul <b> Toate </b>). Dacă eliminați din greșeală unele dintre aceste intrări, le puteți restabili dezactivând și reînființând modulul.
 MenuForUsers=Meniu pentru utilizatori
 LangFile=Fişiere. Lang
 System=Sistem
@@ -194,7 +194,7 @@ OnlyActiveElementsAreShown=Numai elementele din <a href="%s"> module activate </
 ModulesDesc=Modulele Dolibarr definesc ce aplicație / caracteristică este activată în software. Unele aplicații / module necesită permisiuni pe care trebuie să le acordați utilizatorilor, după activarea acestora. Faceți clic pe butonul On / Off pentru a activa un modul / aplicație.
 ModulesMarketPlaceDesc=Puteți descărca mai multe module de pe site-uri externe de pe Internet ...
 ModulesDeployDesc=If permissions on your file system allows it, you can use this tool to deploy an external module. The module wil then be visible on the tab <strong>%s</strong>.
-ModulesMarketPlaces=Find external app/modules
+ModulesMarketPlaces=Găsiți aplicația / modulele externe
 ModulesDevelopYourModule=Develop your own app/modules
 ModulesDevelopDesc=You can develop or find a partner to develop for you, your personalised module
 DOLISTOREdescriptionLong=Instead of switching on <a href="https://www.dolistore.com">www.dolistore.com</a> web site to find an external module, you can use this embedded tool that will make the seach on the external market place for you (may be slow, need an internet access)...
@@ -258,7 +258,7 @@ FontSize=Font size
 Content=Content
 NoticePeriod=Perioadă notita
 NewByMonth=New by month
-Emails=Emails
+Emails=E-mailuri
 EMailsSetup=Emails setup
 EMailsDesc=This page allows you to overwrite your PHP parameters for emails sending. In most cases on Unix/Linux OS, your PHP setup is correct and these parameters are useless.
 EmailSenderProfiles=Emails sender profiles

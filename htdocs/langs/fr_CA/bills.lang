@@ -99,7 +99,6 @@ ChequeMaker=Émetteur du chèque/transfert
 PaymentByChequeOrderedTo=Règlement (tx incl.) par chèque à l'ordre de %s envoyé à
 PaymentByChequeOrderedToShort=Règlement (tx incl.) par chèque à l'ordre de
 DepositId=Identifiant de dépot
-ValidateInvoices=Valider les factures
 CantRemoveConciliatedPayment=Impossible de supprimer le paiement par voie de conciliation
 ClosePaidInvoicesAutomatically=Classifiez «Payé» toutes les factures standard, d'acompte ou de remplacement entièrement payées.
 ClosePaidContributionsAutomatically=Classer "Payé" toutes les contributions sociales ou fiscales entièrement payées.

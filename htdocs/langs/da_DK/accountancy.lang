@@ -31,8 +31,8 @@ ConfirmDeleteCptCategory=Er du sikker på, du vil fjerne denne regnskabskonto fr
 JournalizationInLedgerStatus=Status for bogføring
 AlreadyInGeneralLedger=Allerede bogført
 NotYetInGeneralLedger=Kladder der ikke er bogført endnu
-GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
-DetailByAccount=Show detail by account
+GroupIsEmptyCheckSetup=Gruppen er tom, kontroller opsætningen af ​​den brugerdefinerede regnskabsgruppe
+DetailByAccount=Vis detaljer efter konto
 AccountWithNonZeroValues=Accounts with non zero values
 
 MainAccountForCustomersNotDefined=Standardkonto for kunder, der ikke er defineret i opsætningen
@@ -57,7 +57,7 @@ AccountancyAreaDescContrib=Trin %s: Definer standardkonto for særlige udgifter 
 AccountancyAreaDescDonation=Trin %s: Definer standkonto for donationer. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescMisc=Trin %s: Definer obligatorisk standardkonto og standardkonti for diverse transaktioner. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescLoan=Trin %s: Definer standardkonti for lån. Til dette skal du bruge menupunktet %s.
-AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
+AccountancyAreaDescBank=Trin %s: Definer regnskabskonto og regnskabskode for hver bank og finanskonto. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescProd=Trin %s: Definer regnskabskonto for dine varer/ydelser. Til dette skal du bruge menupunktet %s.
 
 AccountancyAreaDescBind=Trin %s: Tjek bindingen mellem eksisterende linjer for %s og regnskabskonto er udført, så systemet kan bogføre transaktionerne med et enkelt klik. Færdiggør manglende bindinger. Dette gøres via menuen %s.
@@ -66,7 +66,7 @@ AccountancyAreaDescAnalyze=Trin %s: Tilføj eller rediger eksisterende transakti
 
 AccountancyAreaDescClosePeriod=Trin %s: Luk periode, så vi kan ikke foretage ændringer i fremtiden.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Et obligatorisk trin i opsætningen er ikke gennemført (regnskabskode ikke defineret for alle bankkonti)
 MenuAccountancy=Regnskab
 Selectchartofaccounts=Vælg aktiv kontoplan
 ChangeAndLoad=Ret og indlæs
@@ -154,12 +154,12 @@ Sens=Sens
 Codejournal=Kladde
 NumPiece=Partsnummer
 TransactionNumShort=Transaktionsnr.
-AccountingCategory=Personalized groups
+AccountingCategory=Regnskabskontogrupper
 GroupByAccountAccounting=Gruppér efter regnskabskonto
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
 ByAccounts=Konti
-ByPredefinedAccountGroups=By predefined groups
-ByPersonalizedAccountGroups=By personalized groups
+ByPredefinedAccountGroups=Efter foruddefinerede grupper
+ByPersonalizedAccountGroups=Efter brugerdefinerede grupper
 ByYear=År
 NotMatch=Ikke angivet
 DeleteMvt=Slet posteringer i hovedbogen
@@ -171,7 +171,7 @@ DelBookKeeping=Slet indhold i hovedbogen
 FinanceJournal=Finanskladde
 ExpenseReportsJournal=Udgiftskladder
 DescFinanceJournal=Regnskabskladde inkl. alle betalingstyper med bankkonto
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=Det er en oversigt over poster, der er bundet til regnskabskontoen og som kan bogføres
 VATAccountNotDefined=Momskonto ikke defineret
 ThirdpartyAccountNotDefined=Tredjepartskonto ikke defineret
 ProductAccountNotDefined=Varekonto ikke defineret
@@ -190,8 +190,8 @@ ListAccounts=Liste over regnskabskonti
 UnknownAccountForThirdparty=Ukendt tredjepartskonto. Vi vil bruge %s
 UnknownAccountForThirdpartyBlocking=Ukendt tredjepartskonto. Blokerende fejl
 
-Pcgtype=Group of account
-Pcgsubtype=Subgroup of account
+Pcgtype=Kontoens gruppe
+Pcgsubtype=Kontoens undergruppe
 PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Samlet omsætning ekskl. moms
@@ -224,7 +224,7 @@ ChangeBinding=Ret binding
 
 ## Admin
 ApplyMassCategories=Anvend massekategorier
-AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Tilføj konto, der allerede er i brug, uden kategorier
 CategoryDeleted=Kategori for regnskabskonto er blevet slettet
 AccountingJournals=Kontokladder
 AccountingJournal=Kontokladde
@@ -257,16 +257,16 @@ ChartofaccountsId=ID for kontoplan
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Start regnskab
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
+InitAccountancyDesc=Denne side kan bruges til at initialisere en regnskabskonto for varer og ydelser, der ikke har en regnskabskonto defineret til salg og køb.
 DefaultBindingDesc=Denne side kan bruges til at angive en standardkonto, der skal bruges til at forbinde transaktionsoversigt over betaling af lønninger, donationer, afgifter og moms, når der ikke allerede er tilknyttet regnskabskonto.
 Options=Indstillinger
 OptionModeProductSell=Salg
 OptionModeProductBuy=Køb
 OptionModeProductSellDesc=Vis alle varer med salgskonto.
 OptionModeProductBuyDesc=Vis alle varer med købskonto.
-CleanFixHistory=Remove accounting code from lines that not exists into charts of account
+CleanFixHistory=Fjern regnskabskode fra linjer, der ikke eksisterer som posteringer på konto
 CleanHistory=Nulstil alle bindinger for det valgte år
-PredefinedGroups=Predefined groups
+PredefinedGroups=Foruddefinerede grupper
 WithoutValidAccount=Uden gyldig tildelt konto
 WithValidAccount=Med gyldig tildelt konto
 ValueNotIntoChartOfAccount=Den angivne regnskabskonto eksisterer ikke i kontoplanen
@@ -286,4 +286,4 @@ Binded=Bundne linjer
 ToBind=Ubundne linjer
 UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Advarsel, denne rapport er ikke baseret på hovedbogen, så den indeholder ikke transaktioner der er ændret manuelt i hovedbogen. Hvis din kladde er opdateret, bliver bogføringsoversigten mere retvisende.
