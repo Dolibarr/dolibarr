@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=سير العمل وحدة الإعداد
-WorkflowDesc=تم تصميم هذه الوحدة لتعديل السلوك من الإجراءات الآلية إلى التطبيق. افتراضيا، سير العمل مفتوح (يمكنك أن تفعل أشياء في النظام الذي تريد). يمكنك تفعيل الإجراءات الآلية كنت مهتما في.
-ThereIsNoWorkflowToModify=لا يوجد أي تعديلات سير العمل المتاحة مع وحدات تفعيلها.
+WorkflowSetup=Workflow module setup
+WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
+ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
 # Autocreate
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد التحقق من صحة العقد
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
 # Autoclassify
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
