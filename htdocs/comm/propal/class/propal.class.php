@@ -1009,19 +1009,19 @@ class Propal extends CommonObject
                  */
                 if (! $error)
                 {
-                    if (! is_object($this->lines[$i]))	// If this->lines is not array of objects, coming from REST API
-                    {   // Convert into object this->lines[$i].
-                        $line = (object) $this->lines[$i];                            
-                    }
-                    else
-                    {
-                            $line = $this->lines[$i];
-                    }
                     $fk_parent_line=0;
                     $num=count($this->lines);
 
 					for ($i=0;$i<$num;$i++)
 					{
+                        if (! is_object($this->lines[$i]))	// If this->lines is not array of objects, coming from REST API
+                            {   // Convert into object this->lines[$i].
+                                $line = (object) $this->lines[$i];                            
+                            }
+                            else
+                            {
+                                    $line = $this->lines[$i];
+                            }
 						// Reset fk_parent_line for line that are not child lines or special product
 						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
