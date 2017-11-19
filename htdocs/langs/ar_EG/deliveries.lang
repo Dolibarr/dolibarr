@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=تسليم
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=من أجل تقديم
+DeliveryDate=تاريخ التسليم
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=الدولة تسليم أنقذت
+SetDeliveryDate=حدد تاريخ الشحن
+ValidateDeliveryReceipt=تحقق من إنجاز ورود
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=حذف إيصال
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=طريقة التسليم
+TrackingNumber=تتبع عدد
+DeliveryNotValidated=التسليم يتم التحقق من صحة
+StatusDeliveryCanceled=ألغيت
+StatusDeliveryDraft=مسودة
+StatusDeliveryValidated=تم الاستلام
+# merou PDF model
+NameAndSignature=الاسم والتوقيع :
+ToAndDate=To___________________________________ على ____ / _____ / __________
+GoodStatusDeclaration=وتلقى البضائع الواردة أعلاه في حالة جيدة ،
+Deliverer=المنفذ :
+Sender=مرسل
+Recipient=المتلقي
+ErrorStockIsNotEnough=ليس هناك مخزون كاف
+Shippable=قابل للشحن
+NonShippable=لا قابل للشحن
+ShowReceiving=Show delivery receipt
