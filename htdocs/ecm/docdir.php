@@ -43,6 +43,7 @@ $confirm    = GETPOST('confirm','alpha');
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
 $pageid  = GETPOST('pageid', 'int');
+if (empty($module)) $module='ecm';
 
 // Security check
 if ($user->societe_id > 0)
