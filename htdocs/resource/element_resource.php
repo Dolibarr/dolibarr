@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013		Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
+ * Copyright (C) 2017		Ion Agorria		<ion@agorria.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- *      \file       resource/element_resource.php
+ *      \file       resource/linked.php
  *      \ingroup    resource
  *      \brief      Page to show and manage linked resources to an element
  */
@@ -30,6 +31,7 @@ if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -50,21 +52,21 @@ $page                           = GETPOST('page','int');
 if( ! $user->rights->resource->read)
         accessforbidden();
 
-$object=new Dolresource($db);
+$object = new ResourceLink($db);
 
-$hookmanager->initHooks(array('element_resource'));
+$hookmanager->initHooks(array('resource', 'element_resource'));
 $object->available_resources = array('dolresource');
 
 // Get parameters
 $id                     = GETPOST('id','int');                          // resource id
 $element_id             = GETPOST('element_id','int');                  // element_id
 $element_ref            = GETPOST('ref','alpha');                       // element ref
-$element                = GETPOST('element','alpha');                   // element_type
+$element_type           = GETPOST('element_type','alpha');              // element_type
 $action                 = GETPOST('action','alpha');
 $mode                   = GETPOST('mode','alpha');
 $lineid                 = GETPOST('lineid','int');
-$resource_id            = GETPOST('fk_resource','int');
 $resource_type          = GETPOST('resource_type','alpha');
+$resource_id            = GETPOST($resource_type.'resource_id','int');
 $busy                   = GETPOST('busy','int');
 $mandatory              = GETPOST('mandatory','int');
 $cancel                 = GETPOST('cancel','alpha');
@@ -74,7 +76,7 @@ $socid                  = GETPOST('socid','int');
 if ($socid > 0) // Special for thirdparty
 {
     $element_id = $socid;
-    $element = 'societe';
+    $element_type = 'societe';
 }
 
 
@@ -85,67 +87,123 @@ if ($socid > 0) // Special for thirdparty
 
 if ($action == 'add_element_resource' && ! $cancel)
 {
-	$error++;
+	$error = 0;
 	$res = 0;
-	if (! ($resource_id > 0))
+	$objelement = null;
+	$objresource = null;
+
+	//Checks
+	if ($resource_id <= 0)
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
-		$action='';
+	}
+	if (!$element_id || !$element_type)
+	{
+		$error++;
+		setEventMessages($langs->trans('ErrorElementUnknown', $element_id, $element_type), null, 'errors');
+	}
+
+	//Check if resource and element is correct
+	if (!$error)
+	{
+		$objresource = fetchObjectByElement($resource_id, $resource_type);
+		if (!is_object($objresource) || $objresource->id != $resource_id)
+		{
+			setEventMessages($langs->trans('ErrorResourceUnknown', $resource_id, $resource_type), null, 'errors');
+			$error++;
+		}
+
+
+		if (!$error)
+		{
+			$objelement = fetchObjectByElement($element_id, $element_type);
+			if (!is_object($objelement) || $objelement->id != $element_id)
+			{
+				setEventMessages($langs->trans('ErrorElementUnknown', $element_id, $element_type), null, 'errors');
+				$error++;
+			}
+		}
+	}
+
+	//Link
+	if (!$error)
+	{
+		$object->resource_id = $resource_id;
+		$object->resource_type = $resource_type;
+		$object->element_id = $element_id;
+		$object->element_type = $element_type;
+		$object->busy = $busy;
+		$object->mandatory = $mandatory;
+		$res = $object->create($user);
+		if ($res < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if (! $error)
+	{
+		setEventMessages($langs->trans('ResourceLinkedWithSuccess'),null,'mesgs');
+		header("Location: ".$_SERVER['PHP_SELF'].'?element_type='.$element_type.'&element_id='.$element_id);
+		exit;
 	}
 	else
 	{
-		$objstat = fetchObjectByElement($element_id, $element);
-
-		$res = $objstat->add_element_resource($resource_id, $resource_type, $busy, $mandatory);
-	}
-	if (! $error && $res > 0)
-	{
-		setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
-		header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
-		exit;
+		$action='';
 	}
 }
 
 // Update ressource
-if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel','alpha') )
+if ($action == 'update_linked_resource' && $user->rights->resource->write && ! $cancel)
 {
-	$res = $object->fetch_element_resource($lineid);
+	$res = $object->fetch($lineid);
 	if($res)
 	{
 		$object->busy = $busy;
 		$object->mandatory = $mandatory;
+		$res = $object->update($user);
+	}
 
-		$result = $object->update_element_resource($user);
-
-		if ($result >= 0)
-		{
-			setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
+	if ($res)
+	{
+		setEventMessages($langs->trans('RessourceLineSuccessfullyUpdated'), null, 'mesgs');
+		header("Location: ".$_SERVER['PHP_SELF']."?element_type=".$element_type."&element_id=".$element_id);
+		exit;
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
 // Delete a resource linked to an element
 if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes')
 {
-    $result = $object->delete_resource($lineid,$element);
+	$error = 0;
+	$res = $object->fetch($lineid);
+	if(!$res > 0)
+	{
+		setEventMessages($object->error, $object->errors,'errors');
+		$error++;
+	}
 
-    if ($result >= 0)
-    {
-        setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-        header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-        exit;
-    }
-    else
-    {
-        setEventMessages($object->error, $object->errors, 'errors');
-    }
+	if (!$error)
+	{
+		$res = $object->delete();
+		if($res < 0)
+		{
+			setEventMessages($object->error, $object->errors,'errors');
+			$error++;
+		}
+	}
+
+	if (!$error)
+	{
+		setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'),null,'mesgs');
+		header("Location: ".$_SERVER['PHP_SELF']."?element_type=".$element_type."&element_id=".$element_id);
+		exit;
+	}
 }
 
 $parameters=array('resource_id'=>$resource_id);
@@ -166,7 +224,10 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 $form=new Form($db);
 
 $pagetitle=$langs->trans('ResourceElementPage');
-llxHeader('',$pagetitle,'');
+$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+
+llxHeader('',$pagetitle,'','',0,0,$arrayofjs,$arrayofcss);
 
 
 // Load available resource, declared by modules
@@ -178,21 +239,89 @@ if($ret == -1) {
 if (!$ret) {
     print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
 }
-else
+
+if ($id) //Show resource referrers
+{
+
+	$resource = new Dolresource($db);
+	$res = $resource->fetch($id);
+	if ($res < 0)
+	{
+		dol_print_error($db, $resource->error, $resource->errors);
+	}
+	else
+	{
+		$head = resource_prepare_head($resource);
+		dol_fiche_head($head, 'linked', $langs->trans("ResourceSingular"),0,'resource@resource');
+
+		/*
+		 * View object
+		 */
+		print '<table width="100%" class="border">';
+		print '<tr><td style="width:35%">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
+		$linkback = '<a href="list.php">'.$langs->trans("BackToList").'</a>';
+		print $form->showrefnav($resource, 'id', $linkback,1,"rowid");
+		print '</td></tr>';
+		print '</table>';
+		print '</div>';
+
+		//List
+		print '<table class="noborder" width="100%">'."\n";
+		print '<tr class="liste_titre">';
+		print_liste_field_titre($langs->trans('Ref'));
+		print_liste_field_titre($langs->trans('Resources'),"","","","",'width="60" align="center"',"","");
+		print "</tr>\n";
+
+		$var=true;
+		$elements = $object->getElementLinked($resource->id, $resource->element);
+		if (is_array($elements))
+		{
+			foreach ($elements as $e_id => $e_type)
+			{
+				$element = fetchObjectByElement($e_id, $e_type);
+				if (!is_object($element) || $element->id != $e_id) continue;
+
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+
+				//Ref
+				print '<td>';
+				print $element->getNomUrl(1);
+				print '</td>';
+
+				//Buttons
+				print '<td align="center">';
+				print '<a href="./linked.php?element_type='.$e_type.'&element_id='.$e_id.'">';
+				print img_object('', 'resource', 'class="classfortooltip"');
+				print '</a>';
+				print '</td>';
+
+				print '</tr>';
+			}
+		}
+		else
+		{
+			dol_print_error($db, $object->error." -> ".$elements, $object->errors);
+		}
+
+		print '</table>';
+	}
+}
+else if ($ret && $element_id && $element_type) //Show linked resources to this element
 {
 	// Confirmation suppression resource line
 	if ($action == 'delete_resource')
 	{
-		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
+		print $form->formconfirm("linked.php?element_type=".$element_type."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
 	}
 
 
 	// Specific to agenda module
-	if (($element_id || $element_ref) && $element == 'action')
+	if (($element_id || $element_ref) && $element_type == 'action')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		$act = fetchObjectByElement($element_id,$element, $element_ref);
+		$act = fetchObjectByElement($element_id,$element_type, $element_ref);
 		if (is_object($act))
 		{
 
@@ -238,7 +367,7 @@ else
 			}
 			$morehtmlref.='</div>';
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
+			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element_type='.$element_type, 0, '', '');
 
 			print '<div class="fichecenter">';
 
@@ -322,9 +451,9 @@ else
 	}
 
     // Specific to thirdparty module
-	if (($element_id || $element_ref) && $element == 'societe')
+	if (($element_id || $element_ref) && $element_type == 'societe')
 	{
-		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
+		$socstatic = fetchObjectByElement($element_id, $element_type, $element_ref);
 		if (is_object($socstatic)) {
 
 			$savobject = $object;
@@ -335,7 +464,7 @@ else
 
 			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
-			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
+			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element_type='.$element_type);
 
 			print '<div class="fichecenter">';
 
@@ -358,7 +487,7 @@ else
 	}
 
 	// Specific to fichinter module
-	if (($element_id || $element_ref) && $element == 'fichinter')
+	if (($element_id || $element_ref) && $element_type == 'fichinter')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
@@ -416,7 +545,7 @@ else
 			}
 			$morehtmlref.='</div>';
 
-			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
+			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element_type='.$element_type, 0, '', '', 1);
 
 			dol_fiche_end();
 		}
@@ -424,15 +553,9 @@ else
 
 
 	// hook for other elements linked
-	$parameters=array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
+	$parameters=array('element_type'=>$element_type, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
 	$reshook=$hookmanager->executeHooks('printElementTab',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-
-	//print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
-	print '<br>';
-
-	// Show list of resource links
 
 	foreach ($object->available_resources as $modresources => $resources)
 	{
@@ -441,39 +564,33 @@ else
 		{
 			$element_prop = getElementProperties($resource_obj);
 
-			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br>';
-
 			$path = '';
 			if(strpos($resource_obj,'@'))
 				$path .= '/'.$element_prop['module'];
 
-			$linked_resources = $object->getElementResources($element,$element_id,$resource_obj);
+			$linked_resources = $object->getResourcesLinked($element_id,$element_type,$resource_obj);
 
-
-			// If we have a specific template we use it
-			if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))
-			{
-				$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
-			}
-			else
-			{
-				$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
+			//Show title if more type of resources
+			if (count($object->available_resources) > 1 && empty($mode)) {
+				print '<br>'.load_fiche_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
 			}
 
-			if ($mode != 'add' || $resource_obj != $resource_type)
+			if ($resource_type == "resource") $resource_type = "dolresource";
+
+			if (empty($mode) || ($mode != 'edit' && $resource_obj == $resource_type))
 			{
-				//print load_fiche_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
+				// If we have a specific template we use it, else use the default one
+				$template = dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
+				$template = file_exists($template)?$template:DOL_DOCUMENT_ROOT.'/core/tpl/resource_add.tpl.php';
+				include $template;
+			}
 
-				// If we have a specific template we use it
-				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
-				{
-					$res=@include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
-
-				}
-				else
-				{
-					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_view.tpl.php';
-				}
+			if (empty($mode) || ($resource_obj == $resource_type))
+			{
+				// If we have a specific template we use it, else use the default one
+				$template = dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
+				$template = file_exists($template)?$template:DOL_DOCUMENT_ROOT.'/core/tpl/resource_view.tpl.php';
+				include $template;
 			}
 		}
 	}
