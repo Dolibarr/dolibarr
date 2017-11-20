@@ -7,6 +7,7 @@
  * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -674,7 +675,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) {
-			print '"' . $journal . '"' . $sep;
+			print '"' . $key . '"' . $sep;
 			print '"' . $date . '"' . $sep;
 			print '"' . $val["type_payment"] . '"' . $sep;
 			print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -686,7 +687,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '"' . $val['bank_account_ref'] . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
 			}
 			print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-			print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+			print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+			print '"' . $journal . '"' . $sep;
 			print "\n";
 		}
 
@@ -694,7 +696,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		if (is_array($tabtp[$key])) {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($mt) {
-					print '"' . $journal . '"' . $sep;
+					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["type_payment"] . '"' . $sep;
 					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
@@ -712,13 +714,14 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 						print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($companystatic->name) . '"' . $sep;
 					}
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+					print '"' . $journal . '"' . $sep;
 					print "\n";
 				}
 			}
 		} else {
 			foreach ( $tabbq[$key] as $k => $mt ) {
-				print '"' . $journal . '"' . $sep;
+				print '"' . $key . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["type_payment"] . '"' . $sep;
 				print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
@@ -730,7 +733,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"' . $val['bank_account_ref'] . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
 				}
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-				print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+				print '"' . $journal . '"' . $sep;
 				print "\n";
 			}
 		}
@@ -769,11 +773,11 @@ if (empty($action) || $action == 'view') {
 
 
 	// Test that setup is complete
-	$sql='SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE fk_accountancy_journal IS NULL';
-	$resql=$db->query($sql);
+	$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE fk_accountancy_journal IS NULL';
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$obj=$db->fetch_object($resql);
+		$obj = $db->fetch_object($resql);
 		if ($obj->nb > 0)
 		{
 			print '<br>'.img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
@@ -1004,141 +1008,86 @@ function getSourceDocRef($val, $typerecord)
 
 	// Defined the docref into $ref (We start with $val['ref'] by default and we complete according to other data)
 	// WE MUST HAVE SAME REF FOR ALL LINES WE WILL RECORD INTO THE BOOKKEEPING
-	$reflabel = $val['ref'];
-	if ($reflabel == '(SupplierInvoicePayment)' || $reflabel == '(SupplierInvoicePaymentBack)') {
-		$reflabel = $langs->trans('Supplier');
+	$ref = $val['ref'];
+	if ($ref == '(SupplierInvoicePayment)' || $ref == '(SupplierInvoicePaymentBack)') {
+		$ref = $langs->trans('Supplier');
 	}
-	if ($reflabel == '(CustomerInvoicePayment)' || $reflabel == '(CustomerInvoicePaymentBack)') {
-		$reflabel = $langs->trans('Customer');
+	if ($ref == '(CustomerInvoicePayment)' || $ref == '(CustomerInvoicePaymentBack)') {
+		$ref = $langs->trans('Customer');
 	}
-	if ($reflabel == '(SocialContributionPayment)') {
-		$reflabel = $langs->trans('SocialContribution');
+	if ($ref == '(SocialContributionPayment)') {
+		$ref = $langs->trans('SocialContribution');
 	}
-	if ($reflabel == '(DonationPayment)') {
-		$reflabel = $langs->trans('Donation');
+	if ($ref == '(DonationPayment)') {
+		$ref = $langs->trans('Donation');
 	}
-	if ($reflabel == '(SubscriptionPayment)') {
-		$reflabel = $langs->trans('Subscription');
+	if ($refl == '(SubscriptionPayment)') {
+		$ref = $langs->trans('Subscription');
 	}
-	if ($reflabel == '(ExpenseReportPayment)') {
-		$reflabel = $langs->trans('Employee');
+	if ($ref == '(ExpenseReportPayment)') {
+		$ref = $langs->trans('Employee');
 	}
-	if ($reflabel == '(payment_salary)') {
-		$reflabel = $langs->trans('Employee');
+	if ($ref == '(payment_salary)') {
+		$ref = $langs->trans('Employee');
 	}
-	$ref=$reflabel;
 	if ($typerecord == 'payment')
 	{
 		$sqlmid = 'SELECT payfac.fk_facture as id, f.facnumber as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
 		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=" . $val["paymentid"];
-		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
-			$ref=$langs->trans("Invoice");
-			while ($objmid = $db->fetch_object($resultmid))
-			{
-				$ref.=' '.$objmid->ref;
-			}
-		}
-		else dol_print_error($db);
+        $ref = $langs->trans("Invoice");
 	}
 	elseif ($typerecord == 'payment_supplier')
 	{
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfac, ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=" . $val["paymentsupplierid"];
-		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
-			$ref=$langs->trans("SupplierInvoice");
-			while($objmid = $db->fetch_object($resultmid))
-			{
-				$ref.=' '.$objmid->ref;
-			}
-		}
-		else dol_print_error($db);
+        $ref = $langs->trans("SupplierInvoice");
 	}
 	elseif ($typerecord == 'payment_expensereport')
 	{
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_expensereport as pe, " . MAIN_DB_PREFIX . "expensereport as e";
 		$sqlmid .= " WHERE pe.rowid=" . $val["paymentexpensereport"]." AND pe.fk_expensereport = e.rowid";
-		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
-			$ref=$langs->trans("ExpenseReport");
-			while($objmid = $db->fetch_object($resultmid))
-			{
-				$ref.=' '.$objmid->ref;
-			}
-		}
-		else dol_print_error($db);
+        $ref = $langs->trans("ExpenseReport");
 	}
 	elseif ($typerecord == 'payment_salary')
 	{
 		$sqlmid = 'SELECT s.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_salary as s";
 		$sqlmid .= " WHERE s.rowid=" . $val["paymentsalid"];
-		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
-			$ref=$langs->trans("SalaryPayment");
-			while ($objmid = $db->fetch_object($resultmid))
-			{
-				$ref.=' '.$objmid->ref;
-			}
-		}
-		else dol_print_error($db);
+        $ref = $langs->trans("SalaryPayment");
 	}
 	elseif ($typerecord == 'payment_vat')
 	{
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "tva as v";
 		$sqlmid .= " WHERE v.rowid=" . $val["paymentvatid"];
-		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
-			$ref=$langs->trans("PaymentVat");
-			while ($objmid = $db->fetch_object($resultmid))
-			{
-				$ref.=' '.$objmid->ref;
-			}
-		}
-		else dol_print_error($db);
+        $ref = $langs->trans("PaymentVat");
 	}
 	elseif ($typerecord == 'payment_donation')
 	{
 		$sqlmid = 'SELECT payd.fk_donation as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_donation as payd";
 		$sqlmid .= " WHERE payd.fk_donation=" . $val["paymentdonationid"];
-		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
-			$ref=$langs->trans("Donation").' ';
-			while ($objmid = $db->fetch_object($resultmid))
-			{
-				$ref.=' '.$objmid->ref;
-			}
-		}
-		else dol_print_error($db);
+        $ref = $langs->trans("Donation").' ';
 	}
 	elseif ($typerecord == 'payment_various')
 	{
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_various as v";
 		$sqlmid .= " WHERE v.rowid=" . $val["paymentvariousid"];
-		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-		$resultmid = $db->query($sqlmid);
-		if ($resultmid) {
-			$ref=$langs->trans("VariousPayment");
-			while ($objmid = $db->fetch_object($resultmid))
-			{
-				$ref.=' '.$objmid->ref;
-			}
-		}
-		else dol_print_error($db);
+        $ref = $langs->trans("VariousPayment");
 	}
+    dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+    $resultmid = $db->query($sqlmid);
+    if ($resultmid) {
+        while ($objmid = $db->fetch_object($resultmid))
+        {
+            $ref.=' '.$objmid->ref;
+        }
+    }
+    else dol_print_error($db);
 
 	return $ref;
 }
