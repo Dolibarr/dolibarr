@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,13 @@
 
 /**
  * 	\file       	htdocs/ecm/class/htmlecm.form.class.php
- * 	\brief      	Fichier de la classe des fonctions predefinie de composants html
+ * 	\brief      	File of class to manage HTML component for ECM and generic filemanager
  */
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 
 /**
- * \class      	FormEcm
- * \brief      	Classe permettant la generation de composants html
- * \remarks		Only common components must be here.
+ * Class to manage HTML component for ECM and generic filemanager
  */
 class FormEcm
 {
@@ -81,7 +79,8 @@ class FormEcm
 				$output.= '<option value="-1">&nbsp;</option>';
 				foreach($cate_arbo as $key => $value)
 				{
-					if ($selected && $cate_arbo[$key]['id'] == $selected)
+					$valueforoption = empty($cate_arbo[$key]['id']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['id'];
+					if ($selected && $valueforoption == $selected)
 					{
 						$add = 'selected ';
 					}
@@ -89,7 +88,7 @@ class FormEcm
 					{
 						$add = '';
 					}
-					$output.= '<option '.$add.'value="'.dol_escape_htmltag(empty($cate_arbo[$key]['id']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['id']).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';
+					$output.= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';
 				}
 			}
 		}

@@ -226,7 +226,7 @@ foreach($filearray as $key => $file)
 }
 
 
-$head = ecm_prepare_head($ecmdir);
+$head = ecm_prepare_head($ecmdir, $module, $section);
 dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), -1, 'dir');
 
 
@@ -235,37 +235,46 @@ if ($action == 'edit')
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="section" value="'.$section.'">';
+	print '<input type="hidden" name="module" value="'.$module.'">';
 	print '<input type="hidden" name="action" value="update">';
 }
 
-$s='';
-$result = 1;
-$i=0;
-$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
-$tmpecmdir->fetch($ecmdir->id);
-while ($tmpecmdir && $result > 0)
-{
-	$tmpecmdir->ref=$tmpecmdir->label;
-	if ($i == 0 && $action == 'edit')
-	{
-		$s='<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
-	}
-	else $s=$tmpecmdir->getNomUrl(1).$s;
-	if ($tmpecmdir->fk_parent)
-	{
-		$s=' -> '.$s;
-		$result=$tmpecmdir->fetch($tmpecmdir->fk_parent);
-	}
-	else
-	{
-		$tmpecmdir=0;
-	}
-	$i++;
-}
 
 $morehtml='';
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
+$morehtmlref = '/'.$module.'/'.$relativepath;
+
+if ($module == 'ecm')
+{
+	$s='';
+	$result = 1;
+	$i=0;
+	$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
+	$tmpecmdir->fetch($ecmdir->id);
+	while ($tmpecmdir && $result > 0)
+	{
+		$tmpecmdir->ref=$tmpecmdir->label;
+		if ($i == 0 && $action == 'edit')
+		{
+			$s='<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
+		}
+		else $s=$tmpecmdir->getNomUrl(1).$s;
+		if ($tmpecmdir->fk_parent)
+		{
+			$s=' -> '.$s;
+			$result=$tmpecmdir->fetch($tmpecmdir->fk_parent);
+		}
+		else
+		{
+			$tmpecmdir=0;
+		}
+		$i++;
+	}
+
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
+}
+
+
 
 dol_banner_tab($object, '', $morehtml, 0, '', '', $morehtmlref);
 
@@ -307,15 +316,25 @@ else
 }
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
-print '/ecm/'.$relativepath;
+if ($module == 'ecm')
+{
+	print '/ecm/'.$relativepath;
+}
+else
+{
+	print '/'.$module.'/'.$relativepath;
+}
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
 $nbofiles=count($filearray);
 print $nbofiles;
-// Test if nb is same than in cache
-if ($nbofiles != $ecmdir->cachenbofdoc)
+if ($ecmdir->id > 0)
 {
-    $ecmdir->changeNbOfFiles((string) $nbofiles);
+	// Test if nb is same than in cache
+	if ($nbofiles != $ecmdir->cachenbofdoc)
+	{
+	    $ecmdir->changeNbOfFiles((string) $nbofiles);
+	}
 }
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';

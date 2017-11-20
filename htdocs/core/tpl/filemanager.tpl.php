@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 if (empty($module)) $module='ecm';
 
 $permtoadd = 0;
-$permtoupload = 1;
+$permtoupload = 0;
 if ($module == 'ecm')
 {
 	$permtoadd = $user->rights->ecm->setup;

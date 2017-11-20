@@ -234,6 +234,7 @@ if ($type == 'directory')
 	    		$param.='&file_manager=1';
 	    		if (!preg_match('/website=/',$param)) $param.='&website='.urlencode(GETPOST('website','alpha'));
 	    		if (!preg_match('/pageid=/',$param)) $param.='&pageid='.urlencode(GETPOST('pageid','int'));
+	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid);
 	    	}
     	}
     	else
