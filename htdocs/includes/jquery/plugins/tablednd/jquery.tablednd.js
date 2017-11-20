@@ -7,6 +7,8 @@
  */
 
 /*jshint -W054 */
+/*jshint laxbreak: true */
+/*jshint expr: true */
 
 !function ($, window, document, undefined) {
 // Determine if this is a touch device
@@ -25,7 +27,7 @@ $(document).ready(function () {
         return objMap;
     }
     $('table').each(function () {
-        if ($(this).data('table') == 'dnd') {
+        if ($(this).data('table') === 'dnd') {
 
             $(this).tableDnD({
                 onDragStyle: $(this).data('ondragstyle') && parseStyle($(this).data('ondragstyle')) || null,
@@ -168,7 +170,7 @@ jQuery.tableDnD = {
                 // Iterate through each row, the row is bound to "this"
                 if (! $(this).hasClass("nodrag")) {
                     $(this).bind(startEvent, function(e) {
-                        if (e.target.tagName == "TD") {
+                        if (e.target.tagName === "TD") {
                             $.tableDnD.initialiseDrag(this, table, this, e, config);
                             return false;
                         }
@@ -283,10 +285,10 @@ jQuery.tableDnD = {
         // Windows version
         // yOffset=document.body.scrollTop;
         if (document.all)
-            if (typeof document.compatMode != 'undefined'
-                && document.compatMode != 'BackCompat')
+            if (typeof document.compatMode !== 'undefined'
+                && document.compatMode !== 'BackCompat')
                 yOffset = document.documentElement.scrollTop;
-            else if (typeof document.body != 'undefined')
+            else if (typeof document.body !== 'undefined')
                 yOffset = document.body.scrollTop;
 
         mousePos.y - yOffset < config.scrollAmount
