@@ -265,7 +265,7 @@ if (empty($action) || $action == 'delete_section')
 	$ecmdir->ref=$ecmdir->label;
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';
-	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php">'.$langs->trans("ECMRoot").'</a>';
+	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php">'.$langs->trans("ECMRoot").'</a>';
 	//print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
 	print "<br><br>";
 */

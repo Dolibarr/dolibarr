@@ -1152,7 +1152,7 @@ class FormFile
 						print '<td class="valignmiddle right actionbuttons"><!-- action on files -->';
 						if ($useinecm == 1)
 						{
-							print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
+							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 						if (! $useinecm || $useinecm == 2)
 						{

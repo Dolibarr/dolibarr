@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file      	htdocs/ecm/docfile.php
+ *	\file      	htdocs/ecm/file_card.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
  */
@@ -123,7 +123,7 @@ if ($cancel)
     }
     else
     {
-    	header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module?'&module='.urlencode($module):''));
+    	header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module?'&module='.urlencode($module):''));
         exit;
     }
 }
@@ -216,7 +216,7 @@ if ($action == 'update')
         $db->commit();
 
         $urlfile=$newlabel;
-        header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+        header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
         exit;
     }
     else

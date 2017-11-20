@@ -425,7 +425,7 @@ class EcmDirectory // extends CommonObject
         $label=$langs->trans("ShowECMSection").': '.$newref;
         $linkclose='"'.($more?' '.$more:'').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.$linkclose;
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/dir_card.php?section='.$this->id.$linkclose;
         if ($option == 'index') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
         if ($option == 'indexexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false'.$linkclose;
         if ($option == 'indexnotexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;

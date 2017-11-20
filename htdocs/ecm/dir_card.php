@@ -17,7 +17,7 @@
 
 
 /**
- *  \file       htdocs/ecm/docmine.php
+ *  \file       htdocs/ecm/dir_card.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
  *	\author		Laurent Destailleur
@@ -373,7 +373,7 @@ if ($action != 'edit' && $action != 'delete')
 
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create'.($module?'&module='.$module:'').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create'.($module?'&module='.$module:'').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 	else
 	{
@@ -418,7 +418,7 @@ $formfile=new FormFile($db);
 // Display upload form
 if ($user->rights->ecm->upload)
 {
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php','',0,$section);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/dir_card.php','',0,$section);
 }
 
 // List of document
