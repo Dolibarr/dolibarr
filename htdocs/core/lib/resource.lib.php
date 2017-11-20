@@ -1,7 +1,7 @@
 <?php
-/* Module to manage locations, buildings, floors and rooms into Dolibarr ERP/CRM
- * Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016	Gilles Poirier		<glgpoirier@gmail.com>
+ * Copyright (C) 2017   Ion Agorria         <ion@agorria.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,18 +26,18 @@
 /**
  * Prepare head for tabs
  *
- * @param	Object	$object		Object
- * @return	array				Array of head entries
+ * @param   Dolresource $object    Resource object
+ * @return  array                  Array of head entries
  */
 function resource_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = dol_buildpath('/resource/card.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("ResourceCard");
-    	$head[$h][2] = 'resource';
+	$head[$h][2] = 'resource';
 	$h++;
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
@@ -49,6 +49,11 @@ function resource_prepare_head($object)
 		$head[$h][2] = 'contact';
 		$h++;
 	}
+
+    $head[$h][0] = dol_buildpath('/resource/linked.php',1).'?id='.$object->id;
+    $head[$h][1] = $langs->trans("Referers");
+    $head[$h][2] = 'linked';
+    $h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
