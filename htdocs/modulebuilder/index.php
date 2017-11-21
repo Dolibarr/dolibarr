@@ -371,6 +371,51 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	}
 }
 
+if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && !empty($module) && ! empty($tabobj))
+{
+	$objectname = $tabobj;
+
+	$arrayoftables=array();
+	if ($action == 'droptable') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj);
+	if ($action == 'droptableextrafields') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj).'_extrafields';
+
+	foreach($arrayoftables as $tabletodrop)
+	{
+		$nb = -1;
+		$sql="SELECT COUNT(*) as nb FROM ".$tabletodrop;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$nb = $obj->nb;
+			}
+		}
+		else
+		{
+			if ($db->lasterrno() == 'DB_ERROR_NOSUCHTABLE')
+			{
+				setEventMessages($langs->trans("TableDoesNotExists", $tabletodrop), null, 'warnings');
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+		}
+		if ($nb == 0)
+		{
+			$resql=$db->DDLDropTable($tabletodrop);
+			//var_dump($resql);
+			setEventMessages($langs->trans("TableDropped", $tabletodrop), null, 'mesgs');
+		}
+		elseif ($nb > 0)
+		{
+			setEventMessages($langs->trans("TableNotEmptyDropCanceled", $tabletodrop), null, 'warnings');
+		}
+	}
+}
+
 if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 {
 	$objectname = $tabobj;
@@ -1515,6 +1560,7 @@ elseif (! empty($module))
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.($realpathtosqlextra?'':'<strike>').$pathtosqlextra.($realpathtosqlextra?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptableextrafields">'.$langs->trans("DropTableIfEmpty").'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
