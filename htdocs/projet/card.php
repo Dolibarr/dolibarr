@@ -1196,7 +1196,7 @@ elseif ($object->id > 0)
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-		$MAX = 10;
+		$MAXEVENT = 10;
 
 		$morehtmlright = '<a href="'.DOL_URL_ROOT.'/projet/info.php?id='.$object->id.'">';
 		$morehtmlright.= $langs->trans("SeeAll");
@@ -1205,7 +1205,7 @@ elseif ($object->id > 0)
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', $MAX, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
 
 		print '</div></div></div>';
 	}
