@@ -186,6 +186,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+		$tabobj='newobject';
 	}
 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -1422,7 +1423,7 @@ elseif (! empty($module))
 
 				print $langs->trans("EnterNameOfObjectDesc").'<br><br>';
 
-				print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
+				print '<input type="text" name="objectname" value="'.dol_escape_htmltag(GETPOST('objectname','alpha')?GETPOST('objectname','alpha'):$modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
 				print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
 				print '</form>';
 			}
