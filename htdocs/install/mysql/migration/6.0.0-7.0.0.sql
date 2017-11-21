@@ -574,3 +574,7 @@ ALTER TABLE llx_societe MODIFY COLUMN capital double(24,8);
 ALTER TABLE llx_tva MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);
 
+ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
+ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
+
