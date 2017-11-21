@@ -1283,6 +1283,7 @@ class SMTPs
 		{
 			$_header .= 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
 		}
+		if (! empty($_SERVER['REMOTE_ADDR'])) $_header .= "X-RemoteAddr: " . $_SERVER['REMOTE_ADDR']. "\r\n";
 		if ( $this->getMoreInHeader() )
 		    $_header .= $this->getMoreInHeader();     // Value must include the "\r\n";
 
