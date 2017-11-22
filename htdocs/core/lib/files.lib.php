@@ -1857,7 +1857,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
 	{
 	    $accessallowed=1;
-	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	    $original_file=$conf->medias->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping for backups
