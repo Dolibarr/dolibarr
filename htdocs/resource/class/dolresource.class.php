@@ -927,9 +927,10 @@ class Dolresource extends CommonObject
      *	@param      int		$withpicto		Add picto into link
      *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
      *	@param      string	$get_params    	Parametres added to url
+     *	@param		int  	$notooltip		1=Disable tooltip
      *	@return     string          		String with URL
      */
-    function getNomUrl($withpicto=0,$option='', $get_params='')
+    function getNomUrl($withpicto=0,$option='', $get_params='', $notooltip=0)
     {
         global $langs;
 

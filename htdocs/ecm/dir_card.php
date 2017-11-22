@@ -17,7 +17,7 @@
 
 
 /**
- *  \file       htdocs/ecm/docmine.php
+ *  \file       htdocs/ecm/dir_card.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
  *	\author		Laurent Destailleur
@@ -34,8 +34,15 @@ $langs->load("ecm");
 $langs->load("companies");
 $langs->load("other");
 
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$action     = GETPOST('action','alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$confirm    = GETPOST('confirm','alpha');
+
+$module  = GETPOST('module', 'alpha');
+$website = GETPOST('website', 'alpha');
+$pageid  = GETPOST('pageid', 'int');
+if (empty($module)) $module='ecm';
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -48,24 +55,33 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-$section=GETPOST("section");
+$section=GETPOST("section", 'alpha')?GETPOST("section", 'alpha'):GETPOST("relativedir", 'alpha');
 if (! $section)
 {
 	dol_print_error('',"ErrorSectionParamNotDefined");
 	exit;
 }
 
-
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result=$ecmdir->fetch(GETPOST("section"));
-if (! $result > 0)
+
+if ($module == 'ecm')
 {
-	dol_print_error($db,$ecmdir->error);
-	exit;
+	$result=$ecmdir->fetch($section);
+	if (! $result > 0)
+	{
+		dol_print_error($db, $ecmdir->error);
+		exit;
+	}
+	$relativepath=$ecmdir->getRelativePath();
+
+	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 }
-$relativepath=$ecmdir->getRelativePath();
-$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+else	// For example $module == 'medias'
+{
+	$relativepath = $section;
+	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
+}
 
 
 
@@ -210,7 +226,7 @@ foreach($filearray as $key => $file)
 }
 
 
-$head = ecm_prepare_head($ecmdir);
+$head = ecm_prepare_head($ecmdir, $module, $section);
 dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), -1, 'dir');
 
 
@@ -219,75 +235,106 @@ if ($action == 'edit')
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="section" value="'.$section.'">';
+	print '<input type="hidden" name="module" value="'.$module.'">';
 	print '<input type="hidden" name="action" value="update">';
 }
 
-$s='';
-$result = 1;
-$i=0;
-$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
-$tmpecmdir->fetch($ecmdir->id);
-while ($tmpecmdir && $result > 0)
-{
-	$tmpecmdir->ref=$tmpecmdir->label;
-	if ($i == 0 && $action == 'edit')
-	{
-		$s='<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
-	}
-	else $s=$tmpecmdir->getNomUrl(1).$s;
-	if ($tmpecmdir->fk_parent)
-	{
-		$s=' -> '.$s;
-		$result=$tmpecmdir->fetch($tmpecmdir->fk_parent);
-	}
-	else
-	{
-		$tmpecmdir=0;
-	}
-	$i++;
-}
 
 $morehtml='';
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
+$morehtmlref = '/'.$module.'/'.$relativepath;
+
+if ($module == 'ecm')
+{
+	$s='';
+	$result = 1;
+	$i=0;
+	$tmpecmdir=new EcmDirectory($db);	// Need to create a new one
+	$tmpecmdir->fetch($ecmdir->id);
+	while ($tmpecmdir && $result > 0)
+	{
+		$tmpecmdir->ref=$tmpecmdir->label;
+		if ($i == 0 && $action == 'edit')
+		{
+			$s='<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
+		}
+		else $s=$tmpecmdir->getNomUrl(1).$s;
+		if ($tmpecmdir->fk_parent)
+		{
+			$s=' -> '.$s;
+			$result=$tmpecmdir->fetch($tmpecmdir->fk_parent);
+		}
+		else
+		{
+			$tmpecmdir=0;
+		}
+		$i++;
+	}
+
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
+}
+
+
 
 dol_banner_tab($object, '', $morehtml, 0, '', '', $morehtmlref);
 
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 /*print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print '</td></tr>';*/
-print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-if ($action == 'edit')
+if ($module == 'ecm')
 {
-	print '<textarea class="flat" name="description" cols="80">';
-	print $ecmdir->description;
-	print '</textarea>';
+	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	if ($action == 'edit')
+	{
+		print '<textarea class="flat quatrevingtpercent" name="description">';
+		print $ecmdir->description;
+		print '</textarea>';
+	}
+	else print dol_nl2br($ecmdir->description);
+	print '</td></tr>';
+
+	print '<tr><td class="titlefield">'.$langs->trans("ECMCreationUser").'</td><td>';
+	$userecm=new User($db);
+	$userecm->fetch($ecmdir->fk_user_c);
+	print $userecm->getNomUrl(1);
+	print '</td></tr>';
 }
-else print dol_nl2br($ecmdir->description);
-print '</td></tr>';
-print '<tr><td>'.$langs->trans("ECMCreationUser").'</td><td>';
-$userecm=new User($db);
-$userecm->fetch($ecmdir->fk_user_c);
-print $userecm->getNomUrl(1);
-print '</td></tr>';
-print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
-print dol_print_date($ecmdir->date_c,'dayhour');
+print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
+if ($module == 'ecm')
+{
+	print dol_print_date($ecmdir->date_c,'dayhour');
+}
+else
+{
+	//var_dump($upload_dir);
+	print dol_print_date(dol_filemtime($upload_dir), 'dayhour');
+}
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
-print '/ecm/'.$relativepath;
+if ($module == 'ecm')
+{
+	print '/ecm/'.$relativepath;
+}
+else
+{
+	print '/'.$module.'/'.$relativepath;
+}
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
 $nbofiles=count($filearray);
 print $nbofiles;
-// Test if nb is same than in cache
-if ($nbofiles != $ecmdir->cachenbofdoc)
+if ($ecmdir->id > 0)
 {
-    $ecmdir->changeNbOfFiles((string) $nbofiles);
+	// Test if nb is same than in cache
+	if ($nbofiles != $ecmdir->cachenbofdoc)
+	{
+	    $ecmdir->changeNbOfFiles((string) $nbofiles);
+	}
 }
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
@@ -321,12 +368,12 @@ if ($action != 'edit' && $action != 'delete')
 
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'">'.$langs->trans('Edit').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit'.($module?'&module='.$module:'').'&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
 
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create'.($module?'&module='.$module:'').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 	else
 	{
@@ -337,7 +384,7 @@ if ($action != 'edit' && $action != 'delete')
 	{
 		if ($user->rights->ecm->setup)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir&section='.$section.'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir'.($module?'&module='.$module:'').'&section='.$section.'">'.$langs->trans('Delete').'</a>';
 		}
 		else
 		{
@@ -354,25 +401,24 @@ if ($action != 'edit' && $action != 'delete')
 // Confirm remove file
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST("section",'alpha').'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 }
 
 // Confirm remove file
 if ($action == 'delete_dir')
 {
 	$relativepathwithoutslash=preg_replace('/[\/]$/','',$relativepath);
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', '', 1, 1);
-
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST('section','alpha').($module?'&module='.$module:''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', '', 1, 1);
 }
 
-$formfile=new FormFile($db);
 
 /*
+$formfile=new FormFile($db);
+
 // Display upload form
 if ($user->rights->ecm->upload)
 {
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php','',0,$section);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/dir_card.php','',0,$section);
 }
 
 // List of document

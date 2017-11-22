@@ -229,11 +229,12 @@ if ($type == 'directory')
     		$relativepath=GETPOST('file','alpha');
     		if ($relativepath && $relativepath!= '/') $relativepath.='/';
     		$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
-   	    	if (GETPOSTISSET('website'))
+    		if (GETPOSTISSET('website') || GETPOSTISSET('file_manager'))
 	    	{
 	    		$param.='&file_manager=1';
 	    		if (!preg_match('/website=/',$param)) $param.='&website='.urlencode(GETPOST('website','alpha'));
 	    		if (!preg_match('/pageid=/',$param)) $param.='&pageid='.urlencode(GETPOST('pageid','int'));
+	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid);
 	    	}
     	}
     	else
@@ -289,40 +290,70 @@ if ($type == 'directory')
 }
 
 
-//if ($section)
-//{
-	$useajax=1;
-	if (! empty($conf->dol_use_jmobile)) $useajax=0;
-	if (empty($conf->use_javascript_ajax)) $useajax=0;
-	if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
 
-	//$param.=($param?'?':'').(preg_replace('/^&/','',$param));
+// Bottom of page
+$useajax=1;
+if (! empty($conf->dol_use_jmobile)) $useajax=0;
+if (empty($conf->use_javascript_ajax)) $useajax=0;
+if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
 
-	if ($useajax || $action == 'delete')
+//$param.=($param?'?':'').(preg_replace('/^&/','',$param));
+
+if ($useajax || $action == 'delete')
+{
+	$urlfile='';
+	if ($action == 'delete') $urlfile=GETPOST('urlfile','alpha');
+
+	if (empty($section_dir)) $section_dir=GETPOST("file","alpha");
+	$section_id=$section;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+	$useglobalvars=1;
+	$form = new Form($db);
+	$formquestion['urlfile']=array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile');				// We must always put field, even if empty because it is fille by javascript later
+	$formquestion['section']=array('type'=>'hidden','value'=>$section,'name'=>'section');				// We must always put field, even if empty because it is fille by javascript later
+	$formquestion['section_id']=array('type'=>'hidden','value'=>$section_id,'name'=>'section_id');		// We must always put field, even if empty because it is fille by javascript later
+	$formquestion['section_dir']=array('type'=>'hidden','value'=>$section_dir,'name'=>'section_dir');	// We must always put field, even if empty because it is fille by javascript later
+	if (! empty($action) && $action == 'file_manager')	$formquestion['file_manager']=array('type'=>'hidden','value'=>1,'name'=>'file_manager');
+	if (! empty($website))								$formquestion['website']=array('type'=>'hidden','value'=>$website,'name'=>'website');
+	if (! empty($pageid) && $pageid > 0)				$formquestion['pageid']=array('type'=>'hidden','value'=>$pageid,'name'=>'pageid');
+
+	print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
+}
+
+if ($useajax)
+{
+	print '<script type="text/javascript">';
+
+	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
+	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
+	// Wrapper to manage document_preview
+	if ($conf->browser->layout != 'phone')
 	{
-		$urlfile='';
-		if ($action == 'delete') $urlfile=GETPOST('urlfile');
-
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-		$useglobalvars=1;
-		$form = new Form($db);
-		$formquestion=array(
-			'urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'),
-			'section'=>array('type'=>'hidden','value'=>$section,'name'=>'section')
-		);
-		print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
+		print "\n/* JS CODE TO ENABLE document_preview */\n";
+		print '
+                jQuery(document).ready(function () {
+			        jQuery(".documentpreview").click(function () {
+            		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+                		return false;
+        			});
+        		});
+           ' . "\n";
 	}
 
-	if ($useajax)
-	{
-		// Enable jquery handlers button to delete files
-		print '<script type="text/javascript">'."\n";
-		print 'jQuery(document).ready(function() {'."\n";
-		print 'jQuery(".deletefilelink").click(function(e) { console.log("We click on button with class deletefilelink"); jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
-		print '});'."\n";
-		print '</script>'."\n";
-	}
-//}
+	// Enable jquery handlers button to delete files
+	print 'jQuery(document).ready(function() {'."\n";
+	print '  jQuery(".deletefilelink").click(function(e) { '."\n";
+	print '    console.log("We click on button with class deletefilelink, param='.$param.', we set urlfile to "+jQuery(this).attr("rel"));'."\n";
+	print '    jQuery("#urlfile").val(jQuery(this).attr("rel"));'."\n";
+	//print '    jQuery("#section_dir").val(\'aaa\');'."\n";
+	print '    jQuery("#dialog-confirm-deletefile").dialog("open");'."\n";
+	print '    return false;'."\n";
+	print '  });'."\n";
+	print '});'."\n";
+	print '</script>'."\n";
+}
 
 // Close db if mode is not noajax
 if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();

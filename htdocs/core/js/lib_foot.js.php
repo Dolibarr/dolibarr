@@ -44,6 +44,7 @@ else header('Cache-Control: no-cache');
 
 //var_dump($conf);
 
+
 // Wrapper to show tooltips (html or onclick popup)
 if (empty($conf->dol_no_mouse_hover))
 {
@@ -107,7 +108,7 @@ if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
                   });
 
                   $(document).bind(\'click\', function (e) {
-                  	  // TODO Use a bind on elements in dropdown only to avoid to bind/code all clicks
+                      //console.log("We click outside of dropdown, so we close it.");
                       var $clicked = $(e.target);
                       if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
                   });

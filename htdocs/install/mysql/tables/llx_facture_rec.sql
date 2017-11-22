@@ -72,5 +72,5 @@ create table llx_facture_rec
   nb_gen_done        integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
   nb_gen_max         integer DEFAULT NULL,		    -- maximum number of generation
   auto_validate      integer DEFAULT 0,		-- 0 to create in draft, 1 to create and validate the new invoice
-  generate_pdf       integer DEFAULT 0      -- 0 disable pdf, 1 to generate pdf
+  generate_pdf       integer DEFAULT 1      -- 0 disable pdf, 1 to generate pdf
 )ENGINE=innodb;

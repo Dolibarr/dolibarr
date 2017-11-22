@@ -215,7 +215,7 @@ $today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year'
  *  List mode
  */
 $sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
-$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when,";
+$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql.= " f.datec, f.tms,";
 $sql.= " f.fk_cond_reglement, f.fk_mode_reglement";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
@@ -500,7 +500,7 @@ if ($resql)
 	if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.datec","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.tms","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"f.suspended,f.frequency","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'nomaxwidthsearch ')."\n";
 	print "</tr>\n";
 
@@ -518,7 +518,7 @@ if ($resql)
 
 			$invoicerectmp->id=$objp->id;
 			$invoicerectmp->frequency=$objp->frequency;
-			$invoicerectmp->suspend=$objp->suspend;
+			$invoicerectmp->suspended=$objp->suspended;
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
 			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
@@ -632,7 +632,7 @@ if ($resql)
 			}
 			// Action column
 			print '<td align="center">';
-			if ($user->rights->facture->creer)
+			if ($user->rights->facture->creer && empty($invoicerectmp->suspended))
 			{
 				if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				{

@@ -612,15 +612,16 @@ abstract class CommonObject
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-		$forcedownload=1;
-		$rellink='/document.php?modulepart='.$modulepart;
-		if ($forcedownload) $rellink.='&attachment=1';
-		if (! empty($ecmfile->entity)) $rellink.='&entity='.$ecmfile->entity;
-		//$rellink.='&file='.urlencode($filepath);		// No need of name of file for public link, we will use the hash
-		$fulllink=$urlwithroot.$rellink;
-		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;			// Hash of file path
-		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
-		if (! empty($ecmfile->share))  $fulllink.='&hashp='.$ecmfile->share;			// Hash for public share
+		$forcedownload=0;
+
+		$paramlink='';
+		//if (! empty($modulepart)) $paramlink.=($paramlink?'&':'').'modulepart='.$modulepart;		// For sharing with hash (so public files), modulepart is not required.
+		//if (! empty($ecmfile->entity)) $paramlink.='&entity='.$ecmfile->entity; 					// For sharing with hash (so public files), entity is not required.
+		//$paramlink.=($paramlink?'&':'').'file='.urlencode($filepath);								// No need of name of file for public link, we will use the hash
+		if (! empty($ecmfile->share)) $paramlink.=($paramlink?'&':'').'hashp='.$ecmfile->share;			// Hash for public share
+		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
+
+		$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
 
 		// Here $ecmfile->share is defined
 		return $fulllink;
@@ -4212,8 +4213,9 @@ abstract class CommonObject
 						/*$this->result['fullname']=$destfull;
 						$this->result['filepath']=$ecmfile->filepath;
 						$this->result['filename']=$ecmfile->filename;*/
+						//var_dump($obj->update_main_doc_field);exit;
 
-						// Update the last_main_doc field into main object
+						// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
 						$update_main_doc_field=0;
 						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
 						if ($update_main_doc_field && ! empty($this->table_element))

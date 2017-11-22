@@ -675,7 +675,7 @@ Page=Page
 Notes=Notes
 AddNewLine=Ajout nouvelle ligne
 AddFile=Ajouter fichier
-FreeZone=Not a predefined product/service
+FreeZone=N'est pas un produit/service prédéfini
 FreeLineOfType=Not a predefined entry of type
 CloneMainAttributes=Cloner l'objet avec ces attributs principaux
 PDFMerge=Fusion PDF
@@ -801,7 +801,7 @@ Calendar=Calendrier
 GroupBy=Grouper par...
 ViewFlatList=Voir vue liste
 RemoveString=Supprimer la chaine '%s'
-SomeTranslationAreUncomplete=Certains languages pourraient n'être que partiellement traduis, ou contenir des erreurs. Si vous en détectez, vous pouvez les corriger en vous enregistrant sur <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>
+SomeTranslationAreUncomplete=Certains languages pourraient n'être que partiellement traduites, ou contenir des erreurs. Si vous en détectez, vous pouvez les corriger en vous enregistrant sur <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a>
 DirectDownloadLink=Lien de téléchargement direct (public/externe)
 DirectDownloadInternalLink=Lien de téléchargement direct (requiert d'être logué et autorisé)
 Download=Téléchargement

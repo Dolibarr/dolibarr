@@ -411,12 +411,12 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref_ext (ref_ext);
 
 ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
-UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_KO'  where name = 'PAYPAL_MESSAGE_KO';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_CREDITOR'    where name = 'PAYPAL_CREDITOR';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_CSS_URL'     where name = 'PAYPAL_CSS_URL';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_NEWFORMTEXT' where name = 'PAYPAL_NEWFORMTEXT';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_LOGO'        where name = 'PAYPAL_LOGO';
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_MESSAGE_OK')__  where name = __ENCRYPT('PAYPAL_MESSAGE_OK')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_MESSAGE_KO')__  where name = __ENCRYPT('PAYPAL_MESSAGE_KO')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_CREDITOR')__    where name = __ENCRYPT('PAYPAL_CREDITOR')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_CSS_URL')__     where name = __ENCRYPT('PAYPAL_CSS_URL')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_NEWFORMTEXT')__ where name = __ENCRYPT('PAYPAL_NEWFORMTEXT')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_LOGO')__        where name = __ENCRYPT('PAYPAL_LOGO')__;
 
 ALTER TABLE llx_accounting_system ADD COLUMN fk_country integer;
 
@@ -448,7 +448,7 @@ CREATE TABLE llx_comment (
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;
 
-DELETE FROM llx_const where name = 'MAIN_SHOW_WORKBOARD';
+DELETE FROM llx_const where name = __ENCRYPT('MAIN_SHOW_WORKBOARD')__;
 
 -- Accountancy - Remove old constants
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
@@ -544,7 +544,7 @@ ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER
 ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
 
 ALTER TABLE llx_facture_rec ADD COLUMN modelpdf varchar(255) AFTER note_public;
-ALTER TABLE llx_facture_rec ADD COLUMN generate_pdf integer DEFAULT 0 AFTER auto_validate;
+ALTER TABLE llx_facture_rec ADD COLUMN generate_pdf integer DEFAULT 1 AFTER auto_validate;
 
 -- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);

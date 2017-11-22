@@ -817,6 +817,8 @@ class ExtraFields
 			$form=new Form($this->db);
 		}
 
+		$out='';
+
 		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
 
 		$label=$this->attribute_label[$key];

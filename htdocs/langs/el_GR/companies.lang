@@ -2,9 +2,9 @@
 ErrorCompanyNameAlreadyExists=Το όνομα τις εταιρίας %s υπάρχει ήδη. Επιλέξτε κάποιο άλλο.
 ErrorSetACountryFirst=Πρώτα πρέπει να οριστεί η χώρα
 SelectThirdParty=Επιλέξτε ένα Πελ./Προμ.
-ConfirmDeleteCompany=Are you sure you want to delete this company and all inherited information?
+ConfirmDeleteCompany=Είστε σίγουροι ότι θέλετε να διαγράψετε την εταιρία και όλες τις σχετικές πληροφορίες;
 DeleteContact=Διαγραφή προσώπου επικοινωνίας
-ConfirmDeleteContact=Are you sure you want to delete this contact and all inherited information?
+ConfirmDeleteContact=Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτήν την επαφή και όλες τις πληροφορίες της;
 MenuNewThirdParty=Νέα εγγραφή
 MenuNewCustomer=Νέος Πελάτης
 MenuNewProspect=Νέα Προοπτική

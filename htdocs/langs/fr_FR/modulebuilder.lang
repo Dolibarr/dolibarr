@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Cet outil est réservé aux utilisateurs avancés ou développeurs. Il donne accès aux outil de création ou d'édition de modules additionnels (Cliquez <a href="%s" target="_blank">ici</a> pour plus d'information).
-EnterNameOfModuleDesc=saisissez le nom du module (sans espace) pour le créer. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
+EnterNameOfModuleDesc=Saisissez le nom du module (sans espace) pour le créer. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
 EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espaces. Utilisez les majuscules pour séparer des mots (par exemple: MyObject, Student, Teacher ...). Le fichier de classe CRUD, mais aussi le fichier API, les pages à afficher / ajouter / éditer / supprimer des objets et des fichiers SQL seront générés.
 ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés ( premier répertoire alternatif défini dans %s):<strong>%s</strong>
 ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
@@ -21,7 +21,7 @@ ModuleBuilderDesctriggers=Vue des triggers ajoutés par votre module. Pour inclu
 ModuleBuilderDeschooks=Cet onglet est dédié aux points d'accroche.
 ModuleBuilderDescwidgets=Cet onglet est dédié à la gestion/construction de widgets.
 ModuleBuilderDescbuildpackage=Vous pouvez générer ici un fichier de package "prêt à distribuer" (un fichier .zip normalisé) de votre module et un fichier de documentation "prêt à distribuer". Cliquez simplement sur le bouton pour créer le paquet ou le fichier de documentation.
-EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION : tous les fichiers et les données seront définitivement perdus !
+EnterNameOfModuleToDeleteDesc=Vous pouvez supprimer votre module. ATTENTION : tous les fichiers et les données propres au module seront définitivement perdus !
 EnterNameOfObjectToDeleteDesc=Vous pouvez effacer un objet. ATTENTION : Tous les fichiers reliés à cet objet seront définitivement perdus !
 DangerZone=Zone de danger
 BuildPackage=Générer package/documentation
@@ -49,7 +49,7 @@ ConfirmDeleteProperty=Êtes-vous sûr de vouloir supprimer la propriété<strong
 NotNull=Non NULL
 NotNullDesc=1=Set database to NOT NULL. -1=Allow null values and force value to NULL if empty ('' or 0).
 SearchAll=Utilisé par la "recherche globale"
-DatabaseIndex=Indexation base
+DatabaseIndex=Index en base
 FileAlreadyExists=Le fichier %s existe déjà
 TriggersFile=Fichier de code des triggers
 HooksFile=Fichier du code des hooks

@@ -96,7 +96,7 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $_SERVER["PHP_SELF"], $reg);
 
 // Set the flag to say to refresh (when we reload the explorer, production must be for API call only)
 $refreshcache=false;
-if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
+if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
 {
     $refreshcache=true;
 }
@@ -109,7 +109,7 @@ $api = new DolibarrApi($db, '', $refreshcache);
 // See https://github.com/Luracast/Restler-API-Explorer for more info.
 $api->r->addAPIClass('Luracast\\Restler\\Explorer');
 
-$api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');
+$api->r->setSupportedFormats('JsonFormat', 'XmlFormat', 'UploadFormat');	// 'YamlFormat'
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
 // Define accepted mime types
@@ -118,7 +118,7 @@ UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain',
 
 
 // Call Explorer file for all APIs definitions
-if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
+if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
 {
     // Scan all API files to load them
 
@@ -164,7 +164,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                                 if ($file_searched == 'api_access.class.php') continue;
 
                                 // Support of the deprecated API.
-                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$regapi))
+                                /*if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$regapi))
                                 {
                                     $classname = ucwords($regapi[1]).'Api';
                                     require_once $dir_part.$file_searched;
@@ -178,7 +178,8 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                                         dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
                                     }
                                 }
-                                elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$regapi))
+                                else*/
+                                if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$regapi))
                                 {
                                     $classname = ucwords($regapi[1]);
                                     $classname = str_replace('_', '', $classname);
@@ -213,15 +214,16 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
     {
         $api->r->addAPIClass($classname, $apiname);
     }
+    //var_dump($api->r);
 }
 
 // Call one APIs or one definition of an API
-if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' && preg_match('/^\/resources.json\/(.+)$/', $reg[2], $regbis) && $regbis[1] != 'root')))
+if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root')))
 {
     $module = $reg[1];
     if ($module == 'explorer')  // If we call page to explore details of a service
     {
-        $module = $regbis[1];
+        $module = $regbis[2];
     }
 
     $module=strtolower($module);

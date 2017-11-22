@@ -230,7 +230,6 @@ class modMyModule extends DolibarrModules
 
 		// Add here entries to declare new menus
 
-		// Example to declare a new Top Menu entry and its Left menu entry:
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++]=array('fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top',			                // This is a Top menu entry
@@ -247,7 +246,6 @@ class modMyModule extends DolibarrModules
 
 		/* END MODULEBUILDER TOPMENU */
 
-		// Example to declare a Left Menu entry into an existing Top menu entry:
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT
 		$this->menu[$r++]=array(	'fk_menu'=>'fk_mainmenu=mymodule',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',			                // This is a Left menu entry

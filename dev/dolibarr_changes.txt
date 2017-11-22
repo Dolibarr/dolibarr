@@ -116,4 +116,15 @@ to get
         if ($className == 'Luracast\Restler\string') return;
         if ($className == 'Luracast\Restler\mixed') return;
 		...
-        
+
+Change also file Luracast/Restler/explorer/index.html
+
++With swagger 2:
+
+* Add line into Util.php to complete function
+
+    public static function getShortName($className)
+    {
+    	// @CHANGE LDR
+    	if (! is_string($className)) return;
+    	//var_dump($className);

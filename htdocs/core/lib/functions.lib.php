@@ -1433,6 +1433,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		{
 		   	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		}
+		else {
+			$morehtmlstatus.=$object->getLibStatut(6);
+		}
 	}
 	elseif ($object->element == 'product')
 	{
@@ -1458,13 +1461,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	elseif ($object->element == 'contrat' || $object->element == 'contract')
 	{
-		if ($object->statut==0) $morehtmlstatus.=$object->getLibStatut(2);
+		if ($object->statut == 0) $morehtmlstatus.=$object->getLibStatut(5);
 		else $morehtmlstatus.=$object->getLibStatut(4);
 	}
 	elseif ($object->element == 'facturerec')
 	{
-		if ($object->frequency==0) $morehtmlstatus.=$object->getLibStatut(2);
-		else $morehtmlstatus.=$object->getLibStatut(4);
+		if ($object->frequency == 0) $morehtmlstatus.=$object->getLibStatut(2);
+		else $morehtmlstatus.=$object->getLibStatut(5);
 	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);
@@ -2560,7 +2563,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 										var number=series.data[0][1];
 										return \'';
 										print '<div style="font-size:8pt;text-align:center;padding:2px;color:black;">';
-										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'=">';
+										if ($url) print '<a style="color: #FFFFFF;" border="0" href="'.$url.'">';
 										print '\'+'.($showlegend?'number':'label+\' \'+number');
 										if (! empty($showpercent)) print '+\'<br/>\'+percent+\'%\'';
 										print '+\'';
@@ -4517,6 +4520,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			{
 				$product->get_buyprice($idprodfournprice,0,0,0);
 				$ret=$product->vatrate_supplier;
+				if ($product->default_vat_code) $ret.=' ('.$product->default_vat_code.')';
 			}
 			else
 			{

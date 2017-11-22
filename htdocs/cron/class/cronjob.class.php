@@ -1061,7 +1061,7 @@ class Cronjob extends CommonObject
 
 				// Execute a CLI
 				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
-				$utils = new Utils($db);
+				$utils = new Utils($this->db);
 				$arrayresult = $utils->executeCLI($this->command, $outputfile);
 
 				$retval = $arrayresult['result'];

@@ -19,7 +19,7 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE ecm/tpl/filemanager.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/filemanager.tpl.php -->
 <!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
 
 <?php
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 if (empty($module)) $module='ecm';
 
 $permtoadd = 0;
-$permtoupload = 1;
+$permtoupload = 0;
 if ($module == 'ecm')
 {
 	$permtoadd = $user->rights->ecm->setup;
@@ -46,6 +46,7 @@ if ($module == 'medias')
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax))
 {
+	// TODO Add website, pageid, filemanager if defined
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 }
 
@@ -65,7 +66,7 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 	if ($permtoadd)
 	{
-	    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&module='.urlencode($module).($website?'&website='.$website:'').($pageid?'&pageid='.$pageid:'').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	    print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($website?'&website='.$website:'').($pageid?'&pageid='.$pageid:'').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
 	    print '</a>';
 	}
@@ -103,9 +104,11 @@ if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABL
 		<?php
 	}
 
+	$sectiondir=GETPOST('file','alpha');
+	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
     $formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile);
+    $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir);
 }
 else print '&nbsp;';
 
@@ -131,7 +134,7 @@ if ($action == 'delete_section')
 // End confirm
 
 
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
+if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
 {
 	print '<table width="100%" class="liste noborderbottom">'."\n";
 
@@ -211,4 +214,4 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 }
 
 ?>
-<!-- END PHP TEMPLATE ecm/tpl/filemanager.tpl.php -->
+<!-- END PHP TEMPLATE core/tpl/filemanager.tpl.php -->

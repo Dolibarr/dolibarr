@@ -629,7 +629,7 @@ class DoliDBMysqli extends DoliDB
     /**
 	 *	Create a table into database
 	 *
-	 *	@param	    string	$table 			Nom de la table
+	 *	@param	    string	$table 			Name of table
 	 *	@param	    array	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
@@ -702,11 +702,26 @@ class DoliDBMysqli extends DoliDB
         $sql .= ",".implode(',',$sqlk);
         $sql .=") engine=".$type;
 
-        dol_syslog($sql,LOG_DEBUG);
-        if(! $this -> query($sql))
+        if(! $this->query($sql))
         return -1;
         else
         return 1;
+    }
+
+    /**
+     *	Drop a table into database
+     *
+     *	@param	    string	$table 			Name of table
+     *	@return	    int						<0 if KO, >=0 if OK
+     */
+    function DDLDropTable($table)
+    {
+    	$sql = "DROP TABLE ".$table;
+
+		if (! $this->query($sql))
+ 			return -1;
+    	else
+    		return 1;
     }
 
     /**

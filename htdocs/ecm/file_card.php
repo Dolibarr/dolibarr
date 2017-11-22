@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file      	htdocs/ecm/docfile.php
+ *	\file      	htdocs/ecm/file_card.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
  */
@@ -123,7 +123,7 @@ if ($cancel)
     }
     else
     {
-        header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+    	header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module?'&module='.urlencode($module):''));
         exit;
     }
 }
@@ -216,7 +216,7 @@ if ($action == 'update')
         $db->commit();
 
         $urlfile=$newlabel;
-        header("Location: ".DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
+        header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
         exit;
     }
     else
@@ -242,7 +242,8 @@ if ($action == 'edit')
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="section" value="'.$section.'">';
-    print '<input type="hidden" name="urlfile" value="'.$urlfile.'">';
+	print '<input type="hidden" name="urlfile" value="'.$urlfile.'">';
+	print '<input type="hidden" name="module" value="'.$module.'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 }
@@ -341,15 +342,19 @@ if (! empty($object->share))
 	if ($action != 'edit')
 	{
 		$modulepart='ecm';
-		$forcedownload=1;
-		$rellink='/document.php?modulepart='.$modulepart;
-		if ($forcedownload) $rellink.='&attachment=1';
-		if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
-		//$rellink.='&file='.urlencode($filepath);		// No need of name of file for public link, we will use the hash
-		$fulllink=$urlwithroot.$rellink;
-		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;			// Hash of file path
+		$forcedownload=0;
+
+		$paramlink='';
+		//if (! empty($modulepart)) $paramlink.=($paramlink?'&':'').'modulepart='.$modulepart;		// For sharing with hash (so public files), modulepart is not required.
+		//if (! empty($object->entity)) $paramlink.='&entity='.$object->entity; 					// For sharing with hash (so public files), entity is not required.
+		//$paramlink.=($paramlink?'&':'').'file='.urlencode($filepath);								// No need of name of file for public link, we will use the hash
+		if (! empty($object->share)) $paramlink.=($paramlink?'&':'').'hashp='.$object->share;			// Hash for public share
+		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
+
+		$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
+		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
-		if (! empty($object->share))  $fulllink.='&hashp='.$object->share;			// Hash for public share
+
 		print img_picto('','object_globe.png').' ';
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;

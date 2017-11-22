@@ -55,7 +55,7 @@ AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables 
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDonation=Étape %s : Définissez le compte comptable par défaut des dons. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescMisc=ÉTAPE 1%s : définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu 1%s.
+AccountancyAreaDescMisc=Étape %s : Définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu suivant %s.
 AccountancyAreaDescLoan=Étape %s : Définissez les comptes comptables par défaut des emprunts. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, suivez le menu suivant %s.
@@ -66,7 +66,7 @@ AccountancyAreaDescAnalyze=Étape %s : Ajouter ou modifier les opérations exist
 
 AccountancyAreaDescClosePeriod=Étape %s : Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Une étape obligatoire dans la configuration n'était pas terminée (journal de code de comptabilité non défini pour tous les comptes bancaires)
 MenuAccountancy=Comptabilité
 Selectchartofaccounts=Sélectionnez le plan de compte actif
 ChangeAndLoad=Changer et charger
@@ -158,7 +158,7 @@ AccountingCategory=Groupes personnalisés
 GroupByAccountAccounting=Grouper par compte comptable
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
 ByAccounts=Par compte comptable
-ByPredefinedAccountGroups=Par groupes personnalisés
+ByPredefinedAccountGroups=Par groupes prédéfinis
 ByPersonalizedAccountGroups=Par groupes personnalisés
 ByYear=Par année
 NotMatch=Non défini
@@ -224,7 +224,7 @@ ChangeBinding=Changer les liens
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
-AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Le compte disponible n'est pas encore dans un groupe personnalisé
 CategoryDeleted=Le groupe de comptes comptables a été supprimé
 AccountingJournals=Journaux comptables
 AccountingJournal=Journal comptable
@@ -266,7 +266,7 @@ OptionModeProductSellDesc=Afficher tous les produits/services avec le compte com
 OptionModeProductBuyDesc=Afficher tous les produits/services avec le compte comptable pour les achats.
 CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Réinitialiser tous les liens pour l'année sélectionnée
-PredefinedGroups=Groupes personnalisés
+PredefinedGroups=Groupes prédéfinis
 WithoutValidAccount=Sans compte dédié valide
 WithValidAccount=Avec un compte dédié valide
 ValueNotIntoChartOfAccount=Cette valeur de compte comptable n'existe pas dans le plan comptable
@@ -284,6 +284,6 @@ BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre
 NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
-UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
+UseMenuToSetBindindManualy=L'autodection n'est pas possible, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement
 
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.

@@ -287,7 +287,7 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-.liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
+.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_create] {
 	margin-right: 4px;
@@ -411,7 +411,7 @@ td.actionbuttons a {
 }
 select.flat, form.flat select {
 	font-weight: normal;
-	height: 2.1em;
+	height: 2em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -983,6 +983,9 @@ select.selectarrowonleft option {
 	div.statusref {
     	padding-right: 10px;
    	}
+	div.statusref img {
+    	padding-right: 3px !important;
+   	}
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -1144,8 +1147,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'12')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
@@ -1306,6 +1309,8 @@ div.statusref {
 }
 div.statusref img {
     padding-left: 8px;
+    padding-right: 9px;
+    vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
@@ -3217,8 +3222,8 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 }
 .photointoolitp {
 	margin-top: 8px;
-	float: left;
-	/*text-align: center; */
+	margin-bottom: 6px;
+	text-align: center;
 }
 .photodelete {
 	margin-top: 6px !important;
@@ -3263,10 +3268,21 @@ div.titre {
 #divsubscribe { max-width: 900px; }
 #tablesubscribe { width: 100%; }
 
+div#card-element {
+    border: 1px solid #ccc;
+}
+div#card-errors {
+	color: #fa755a;
+    text-align: center;
+    padding-top: 3px;
+}
+
+
 
 /*
  * Effect Postit
  */
+
 .effectpostit
 {
   position: relative;
@@ -4173,6 +4189,11 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.blockvmenusearch .select2-container--default .select2-selection--single,
+.blockvmenubookmarks .select2-container--default .select2-selection--single
+{
+    background-color: unset;
+}
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: unset;
 }

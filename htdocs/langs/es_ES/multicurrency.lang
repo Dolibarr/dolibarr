@@ -17,4 +17,4 @@ rate=tasa
 MulticurrencyReceived=Recibido, divisa origen
 MulticurrencyRemainderToTake=Cantidad restante, moneda original
 MulticurrencyPaymentAmount=Importe total, divisa original
-AmountToOthercurrency=Amount To (in currency of receiving account)
+AmountToOthercurrency=Cantidad a (en moneda de la cuenta receptora)
