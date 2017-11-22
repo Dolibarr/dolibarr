@@ -50,7 +50,6 @@ abstract class CommonObject
 	public $id;
 	/**
 	 * @var string 		Error string
-	 * @deprecated		Use instead the array of error strings
 	 * @see             errors
 	 */
 	public $error;

@@ -67,6 +67,12 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+
+
+/*******************************************************************
+ * ACTIONS
+ ********************************************************************/
+
 $hookmanager->initHooks(array('resource', 'resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -74,9 +80,21 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	/*******************************************************************
-	* ACTIONS
-	********************************************************************/
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		if ($action == 'add')
+		{
+			header("Location: ".DOL_URL_ROOT.'/resource/list.php');
+			exit;
+		}
+		$action='';
+	}
+
 	if ($action == 'add' && $user->rights->resource->write)
 	{
 		if (! $cancel)
@@ -203,7 +221,7 @@ if (empty($reshook))
 *
 * Put here all code to build page
 ****************************************************/
-$title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceCard');
+$title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
 llxHeader('',$title,'');
 
 $form = new Form($db);
@@ -227,9 +245,8 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		if ( ! $user->rights->resource->write )
 			accessforbidden('',0);
 
-		/*---------------------------------------
-		 * Create/Edit object
-		 */
+		// Create/Edit object
+
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="'.($action == "create"?"add":"update").'">';
@@ -268,9 +285,9 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		dol_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="' . $langs->trans($action == "create"?"Create":"Modify") . '">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" value="' . $langs->trans("Cancel") . '">';
+		print '<input type="submit" class="button" name="save" value="' . $langs->trans($action == "create"?"Create":"Modify") . '">';
+		print ' &nbsp; &nbsp; ';
+		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
 		print '</div>';
 		print '</div>';
 
