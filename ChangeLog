@@ -29,8 +29,10 @@ Following changes may create regressions for some external modules, but were nec
 * The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED.
 * The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY.
 * The parameter note into method cloture() is added at end of private note (previously in v6, it replaced).
-* The parameter $user is now mandatory for method createFromOrder and createFromPropal. 
+* The parameter $user is now mandatory for method createFromOrder and createFromPropal.
 * Removed js library 'fileupload' that was not used by core code.
+* Jquery plugin tableDnd updated. You now need to use decodeURI on the return value of tableDnDSerialize() 
+  and add 'td.' to the beginning of the dragHandle match string. 
 * IE8 and earlier and Firefox 12 and earlier (< 2012) are no more supported. 
 
 

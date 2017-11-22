@@ -81,7 +81,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 				onDrop: function(table, row) {
 					console.log('drop');
 					var reloadpage = "<?php echo $forcereloadpage; ?>";
-					var roworder = cleanSerialize($("#tablelines").tableDnDSerialize());
+					var roworder = cleanSerialize(decodeURI($("#tablelines").tableDnDSerialize()));
 					$.post("<?php echo DOL_URL_ROOT; ?>/variants/ajax/orderAttribute.php",
 						{
 							roworder: roworder
@@ -100,7 +100,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 						});
 				},
 				onDragClass: "dragClass",
-				dragHandle: "tdlineupdown"
+				dragHandle: "td.tdlineupdown"
 			});
 		});
 	</script>
