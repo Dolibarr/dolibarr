@@ -300,15 +300,17 @@ else
 					$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 				}
 			}
+			$listofcontactid=array();	// not used yet
+			$listofotherid=array();	// not used yet
 			print '<div class="assignedtouser">';
-			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($act->datep != $act->datef)?1:0, $listofuserid, $listofcontactid, $listofotherid);
 			print '</div>';
-			if (in_array($user->id,array_keys($listofuserid)))
+			/*if (in_array($user->id,array_keys($listofuserid)))
 			{
 				print '<div class="myavailability">';
 				print $langs->trans("MyAvailability").': '.(($act->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 				print '</div>';
-			}
+			}*/
 			print '	</td></tr>';
 
 			print '</table>';

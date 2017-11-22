@@ -113,8 +113,12 @@ class ActionComm extends CommonObject
     var $userownerid;	// Id of user owner = fk_user_action into table
     var $userdoneid;	// Id of user done (deprecated)
 
-	var $socpeopleassigned = array(); // Array of user ids
-    /**
+    var $socpeopleassigned = array(); // Array of contact ids
+
+    var $otherassigned = array(); // Array of other contact emails (not user, not contact)
+
+
+	/**
      * Object user of owner
      * @var User
      * @deprecated
@@ -354,18 +358,18 @@ class ActionComm extends CommonObject
 					{
 						$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql.=" VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
-						
+
 						$resql = $this->db->query($sql);
 						if (! $resql)
 						{
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-						
+
 					}
 				}
 			}
-			
+
             if (! $error)
             {
             	$action='create';
@@ -609,7 +613,7 @@ class ActionComm extends CommonObject
 
                 $this->fk_element			= $obj->fk_element;
                 $this->elementtype			= $obj->elementtype;
-				
+
                 $this->fetchResources();
             }
             $this->db->free($resql);
@@ -889,26 +893,26 @@ class ActionComm extends CommonObject
 					//var_dump($sql);exit;
 				}
 			}
-			
+
 			if (!$error)
 			{
 				$sql ="DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'socpeople'";
 				$resql = $this->db->query($sql);
-				
+
 				if (!empty($this->socpeopleassigned))
 				{
 					foreach (array_keys($this->socpeopleassigned) as $id)
 					{
 						$sql ="INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql.=" VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
-						
+
 						$resql = $this->db->query($sql);
 						if (! $resql)
 						{
 							$error++;
 							$this->errors[]=$this->db->lasterror();
 						}
-						
+
 					}
 				}
 			}

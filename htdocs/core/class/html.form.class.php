@@ -1274,7 +1274,7 @@ class Form
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	bool	$options_only	Return options only (for ajax treatment)
-	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container	      
+	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *  @param	string	$htmlid			Html id to use instead of htmlname
 	 *	@return	int						<0 if KO, Nb of contact in list if OK
 	 *  @deprected						You can use selectcontacts directly (warning order of param was changed)
@@ -1301,7 +1301,7 @@ class Form
 	 *	@param	integer	$showsoc	    Add company into label
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container	      
+	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *  @param	string	$htmlid			Html id to use instead of htmlname
 	 *	@return	 int					<0 if KO, Nb of contact in list if OK
 	 */
@@ -1639,7 +1639,7 @@ class Form
 	 *
 	 *  @param  string	$action         Value for $action
 	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  int		$show_empty     0=list without the empty value, 1=add empty value
 	 *  @param  array	$exclude        Array list of users id to exclude
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
@@ -1648,12 +1648,16 @@ class Form
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 *  @param	string	$morefilter		Add more filters into sql request
+	 *  @param	int		$showproperties		Show properties of each attendees
+	 *  @param	array	$listofuserid		Array with properties of each user
+	 *  @param	array	$listofcontactid	Array with properties of each contact
+	 *  @param	array	$listofother		Array with properties of each other contact
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
+	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $showproperties=0, $listofuserid=array(), $listofcontactid=array(), $listofotherid=array())
 	{
-		global $conf,$user,$langs;
+		global $conf, $user, $langs;
 
 		$userstatic=new User($this->db);
 		$out='';
@@ -1670,6 +1674,7 @@ class Form
 			$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
 			$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out.=' <input type="submit" class="button valignmiddle" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out.='<br>';
 		}
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser']))
@@ -1679,21 +1684,34 @@ class Form
 		$nbassignetouser=count($assignedtouser);
 
 		if ($nbassignetouser && $action != 'view') $out.='<br>';
-		if ($nbassignetouser) $out.='<div class="myavailability">';
+		if ($nbassignetouser) $out.='<ul class="attendees">';
 		$i=0; $ownerid=0;
 		foreach($assignedtouser as $key => $value)
 		{
 			if ($value['id'] == $ownerid) continue;
+
+			$out.='<li>';
 			$userstatic->fetch($value['id']);
-			$out.=$userstatic->getNomUrl(-1);
+			$out.= $userstatic->getNomUrl(-1);
 			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
 			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			// Show my availability
+			if ($showproperties)
+			{
+				if ($user->id == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($user->id, array_keys($listofuserid)))
+				{
+					$out.='<div class="myavailability inline-block">';
+					$out.='&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("MyAvailability").':</span>  <input id="transparency" class="marginleftonly marginrightonly" '.($action == 'view'?'disabled':'').' type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'>'.$langs->trans("Busy");
+					$out.='</div>';
+				}
+			}
 			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
 			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
-			$out.='<br>';
+
+			$out.='</li>';
 			$i++;
 		}
-		if ($nbassignetouser) $out.='</div>';
+		if ($nbassignetouser) $out.='</ul>';
 
 		//$out.='</form>';
 		return $out;
