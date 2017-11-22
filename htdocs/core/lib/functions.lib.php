@@ -1543,11 +1543,11 @@ function dol_bc($var,$moreclass='')
  * 	    @param	int			$withcountry		1=Add country into address string
  *      @param	string		$sep				Separator to use to build string
  *      @param	Translate	$outputlangs		Object lang that contains language for text translation.
- *      @param	boolean		$withoutaddress	Possibility to remove address
+ *      @param	int		$mode		0=Standard output, 1=Remove address
  *      @return string						Formated string
  *      @see dol_print_address
  */
-function dol_format_address($object, $withcountry=0, $sep="\n", $outputlangs='', $withoutaddress=false)
+function dol_format_address($object, $withcountry=0, $sep="\n", $outputlangs='', $mode=0)
 {
 	global $conf,$langs;
 
@@ -1555,7 +1555,7 @@ function dol_format_address($object, $withcountry=0, $sep="\n", $outputlangs='',
 	$countriesusingstate=array('AU','CA','US','IN','GB','ES','UK','TR');    // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// Address
-	if (empty($withoutaddress)) {
+	if (empty($mode)) {
 		$ret .= $object->address;
 	}
 	// Zip/Town/State
