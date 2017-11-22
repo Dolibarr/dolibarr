@@ -1651,7 +1651,7 @@ class Form
 	 *  @param	int		$showproperties		Show properties of each attendees
 	 *  @param	array	$listofuserid		Array with properties of each user
 	 *  @param	array	$listofcontactid	Array with properties of each contact
-	 *  @param	array	$listofother		Array with properties of each other contact
+	 *  @param	array	$listofotherid		Array with properties of each other contact
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
