@@ -43,32 +43,32 @@ $langs->load("main");
 // Get parameters
 $id						= GETPOST('id','int');
 $action					= GETPOST('action','alpha');
+$cancel					= GETPOST('cancel','alpha');
 $ref					= GETPOST('ref','alpha');
 $description			= GETPOST('description');
 $confirm				= GETPOST('confirm');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource','alpha');
 
 // Protection if external user
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	accessforbidden();
 }
 
-if (! $user->rights->resource->read)
+if( ! $user->rights->resource->read)
+{
 	accessforbidden();
+}
 
 $object = new Dolresource($db);
-$result = $object->fetch($id, $ref);
-if (! ($result > 0)) dol_print_error($db, $object->error);
-
 
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-$hookmanager->initHooks(array('resource_card','globalcard'));
-$parameters=array('resource_id'=>$object->id);
+$hookmanager->initHooks(array('resource', 'resource_card','globalcard'));
+$parameters=array('resource_id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -77,15 +77,58 @@ if (empty($reshook))
 	/*******************************************************************
 	* ACTIONS
 	********************************************************************/
+	if ($action == 'add' && $user->rights->resource->write)
+	{
+		if (! $cancel)
+		{
+			$error='';
 
-	if ($action == 'update' && ! $_POST["cancel"] && $user->rights->resource->write)
+			if (empty($ref))
+			{
+				setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), null, 'errors');
+				$action = 'create';
+			}
+			else
+			{
+				$object->ref                    = $ref;
+				$object->description            = $description;
+				$object->fk_code_type_resource  = $fk_code_type_resource;
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+				if ($ret < 0) $error++;
+
+				$result=$object->create($user);
+				if ($result > 0)
+				{
+					// Creation OK
+					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
+					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					exit;
+				}
+				else
+				{
+					// Creation KO
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'create';
+				}
+			}
+		}
+		else
+		{
+			Header("Location: list.php");
+			exit;
+		}
+	}
+
+	if ($action == 'update' && ! $cancel && $user->rights->resource->write)
 	{
 		$error=0;
 
 		if (empty($ref))
 		{
-			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
+			$error++;
 		}
 
 		if (! $error)
@@ -112,17 +155,18 @@ if (empty($reshook))
 				else
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
-					$action='edit';
+					$error++;
 				}
 
 			}
 			else
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action='edit';
+				$error++;
 			}
 		}
-		else
+
+		if ($error)
 		{
 			$action='edit';
 		}
@@ -159,37 +203,42 @@ if (empty($reshook))
 *
 * Put here all code to build page
 ****************************************************/
-
-$pagetitle = $langs->trans('ResourceCard');
-llxHeader('',$pagetitle,'');
+$title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceCard');
+llxHeader('',$title,'');
 
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-if ($object->id > 0)
+if ($action == 'create' || $object->fetch($id) > 0)
 {
-	$head=resource_prepare_head($object);
+	if ($action == 'create')
+	{
+		print load_fiche_titre($title,'','title_generic');
+		dol_fiche_head('');
+	}
+	else
+	{
+		$head = resource_prepare_head($object);
+		dol_fiche_head($head, 'resource', $title, -1, 'resource');
+	}
 
-	if ($action == 'edit' )
+	if ($action == 'create' || $action == 'edit')
 	{
 		if ( ! $user->rights->resource->write )
 			accessforbidden('',0);
 
 		/*---------------------------------------
-		 * Edit object
+		 * Create/Edit object
 		 */
-		print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource');
+		print '<input type="hidden" name="action" value="'.($action == "create"?"add":"update").'">';
 
 		print '<table class="border" width="100%">';
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.(GETPOST('ref') ? GETPOST('ref') : $object->ref).'"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'"></td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
@@ -200,7 +249,9 @@ if ($object->id > 0)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_3.'">'.($_POST['description'] ? GETPOST('description','alpha') : $object->description).'</textarea>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('description', ($description ? $description : $object->description), '', '200', 'dolibarr_notes', false);
+		$doleditor->Create();
 		print '</td></tr>';
 
 		// Other attributes
@@ -217,16 +268,16 @@ if ($object->id > 0)
 		dol_fiche_end();
 
 		print '<div class="center">';
-		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
+		print '<input type="submit" class="button" value="' . $langs->trans($action == "create"?"Create":"Modify") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 		print '</div>';
 
 		print '</form>';
 	}
 	else
 	{
-		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"), -1, 'resource');
-
 		$formconfirm = '';
 
 		// Confirm deleting resource line
@@ -296,23 +347,23 @@ if ($object->id > 0)
 	// modified by hook
 	if (empty($reshook))
 	{
-		if ($action != "edit" )
+		if ($action != "create" && $action != "edit" )
 		{
 			// Edit resource
 			if($user->rights->resource->write)
 			{
 				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';
 			}
 		}
-		if ($action != "delete" && $action != "edit")
+		if ($action != "delete" && $action != "create" && $action != "edit")
 		{
 		    // Delete resource
 		    if($user->rights->resource->delete)
 		    {
 		        print '<div class="inline-block divButAction">';
-		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
+		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
 		        print '</div>';
 		    }
 		}
