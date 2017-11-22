@@ -52,7 +52,7 @@ $langs->load("agenda");
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $backtopage=GETPOST('backtopage','alpha');
-$contactid=GETPOST('contactid','int');
+$socpeopleassigned=GETPOST('socpeopleassigned','array');
 $origin=GETPOST('origin','alpha');
 $originid=GETPOST('originid','int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -185,9 +185,9 @@ if ($action == 'add')
         else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
     }
 
-    if ($contactid)
+    if (!empty($socpeopleassigned[0]))
 	{
-		$result=$contact->fetch($contactid);
+		$result=$contact->fetch($socpeopleassigned[0]);
 	}
 
 	if ($cancel)
@@ -316,6 +316,16 @@ if ($action == 'add')
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 	}
 
+	foreach ($socpeopleassigned as $cid)
+	{
+		$object->socpeopleassigned[$cid] = array('id' => $cid);
+	}
+	if (!empty($object->socpeopleassigned))
+	{
+		reset($object->socpeopleassigned);
+		$object->contactid = key($object->socpeopleassigned);
+	}
+	
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 	if ($ret < 0) $error++;
@@ -406,6 +416,8 @@ if ($action == 'update')
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
+		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
+		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
 		$object->note        = GETPOST("note");
@@ -594,9 +606,10 @@ if ($action == 'create')
 {
 	$contact = new Contact($db);
 
-	if (GETPOST("contactid"))
+	$socpeopleassigned = GETPOST("socpeopleassigned", 'array');
+	if (!empty($socpeopleassigned[0]))
 	{
-		$result=$contact->fetch(GETPOST("contactid"));
+		$result=$contact->fetch($socpeopleassigned[0]);
 		if ($result < 0) dol_print_error($db,$contact->error);
 	}
 
@@ -781,7 +794,7 @@ if ($action == 'create')
 
 	// Related contact
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-	print $form->selectcontacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth300');
+	echo $form->selectcontacts(GETPOST('socid','int'), GETPOST('socpeopleassigned', 'array'), 'socpeopleassigned[]', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
 	print '</td></tr>';
 
 
@@ -876,6 +889,8 @@ if ($id > 0)
         $object->fulldayevent= GETPOST("fullday")?1:0;
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
+		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
+		foreach ($socpeopleassigned as $id) $object->socpeopleassigned[$id] = array('id' => $id);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
 
@@ -1122,7 +1137,7 @@ if ($id > 0)
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			$form->select_contacts($object->socid, $object->contactid, 'contactid', 1, '', '', 0, 'minwidth200');
+			$form->select_contacts($object->socid, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 0, 'minwidth200',0, 0, array(), false, 'multiple', 'contactid');
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -1368,14 +1383,24 @@ if ($id > 0)
 			// Related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td>';
 			print '<td colspan="3">';
-			if ($object->contactid > 0)
+			
+			if (!empty($object->socpeopleassigned))
 			{
-				print $object->contact->getNomUrl(1);
-				if ($object->contactid && $object->type_code == 'AC_TEL')
+				foreach ($object->socpeopleassigned as $cid => $Tab)
 				{
-					if ($object->contact->fetch($object->contactid))
+					$contact = new Contact($db);
+					$result = $contact->fetch($cid);
+					
+					if ($result < 0) dol_print_error($db,$contact->error);
+					
+					if ($result > 0)
 					{
-						print "<br>".dol_print_phone($object->contact->phone_pro);
+						print $contact->getNomUrl(1).'&nbsp;';
+						if ($object->type_code == 'AC_TEL')
+						{
+							if (!empty($contact->phone_pro)) print '('.dol_print_phone($contact->phone_pro).')';
+							print '<br />';
+						}
 					}
 				}
 			}

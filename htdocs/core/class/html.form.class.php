@@ -1274,12 +1274,14 @@ class Form
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	bool	$options_only	Return options only (for ajax treatment)
+	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container	      
+	 *  @param	string	$htmlid			Html id to use instead of htmlname
 	 *	@return	int						<0 if KO, Nb of contact in list if OK
 	 *  @deprected						You can use selectcontacts directly (warning order of param was changed)
 	 */
-	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false)
+	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false, $moreparam='', $htmlid='')
 	{
-		print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events);
+		print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
 		return $this->num;
 	}
 
@@ -1299,15 +1301,18 @@ class Form
 	 *	@param	integer	$showsoc	    Add company into label
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container	      
+	 *  @param	string	$htmlid			Html id to use instead of htmlname
 	 *	@return	 int					<0 if KO, Nb of contact in list if OK
 	 */
-	function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $events=array())
+	function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $events=array(), $moreparam='', $htmlid='')
 	{
 		global $conf,$langs;
 
 		$langs->load('companies');
 
-		$out='';
+		if (empty($htmlid)) $htmlid = $htmlname;
+        $out='';
 
 		// On recherche les societes
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
@@ -1328,11 +1333,11 @@ class Form
 			if ($conf->use_javascript_ajax && ! $forcecombo && ! $options_only)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+				$comboenhancement = ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 				$out.= $comboenhancement;
 			}
 
-			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlid.'" name="'.$htmlname.'" '.(!empty($moreparam) ? $moreparam : '').'>';
 			if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>&nbsp;</option>';
 			if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans("Internal").'</option>';
 			$num = $this->db->num_rows($resql);
@@ -1342,6 +1347,7 @@ class Form
 				include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactstatic=new Contact($this->db);
 
+				if (!is_array($selected)) $selected = array($selected);
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -1355,7 +1361,7 @@ class Form
 						$disabled=0;
 						if (is_array($exclude) && count($exclude) && in_array($obj->rowid,$exclude)) $disabled=1;
 						if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
-						if ($selected && $selected == $obj->rowid)
+						if (!empty($selected) && in_array($obj->rowid, $selected))
 						{
 							$out.= '<option value="'.$obj->rowid.'"';
 							if ($disabled) $out.= ' disabled';
@@ -1378,7 +1384,7 @@ class Form
 					}
 					else
 					{
-						if ($selected == $obj->rowid)
+						if (in_array($obj->rowid, $selected))
 						{
 							$out.= $contactstatic->getFullName($langs);
 							if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
