@@ -1005,6 +1005,7 @@ class Propal extends CommonObject
 
                 /*
                  *  Insertion du detail des produits dans la base
+                 *  Insert products detail in database
                  */
                 if (! $error)
                 {
@@ -1013,40 +1014,47 @@ class Propal extends CommonObject
 
 					for ($i=0;$i<$num;$i++)
 					{
+                        if (! is_object($this->lines[$i]))	// If this->lines is not array of objects, coming from REST API
+                            {   // Convert into object this->lines[$i].
+                                $line = (object) $this->lines[$i];                            
+                            }
+                            else
+                            {
+                                    $line = $this->lines[$i];
+                            }
 						// Reset fk_parent_line for line that are not child lines or special product
-						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
 						}
-
                         // Complete vat rate with code
-						$vatrate = $this->lines[$i]->tva_tx;
-						if ($this->lines[$i]->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$this->lines[$i]->vat_src_code.')';
+						$vatrate = $line->tva_tx;
+						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
 						$result = $this->addline(
-							$this->lines[$i]->desc,
-							$this->lines[$i]->subprice,
-							$this->lines[$i]->qty,
+							$line->desc,
+							$line->subprice,
+							$line->qty,
 							$vatrate,
-							$this->lines[$i]->localtax1_tx,
-							$this->lines[$i]->localtax2_tx,
-							$this->lines[$i]->fk_product,
-							$this->lines[$i]->remise_percent,
+							$line->localtax1_tx,
+							$line->localtax2_tx,
+							$line->fk_product,
+							$line->remise_percent,
 							'HT',
 							0,
-							$this->lines[$i]->info_bits,
-							$this->lines[$i]->product_type,
-							$this->lines[$i]->rang,
-							$this->lines[$i]->special_code,
+							$line->info_bits,
+							$line->product_type,
+							$line->rang,
+							$line->special_code,
 							$fk_parent_line,
-							$this->lines[$i]->fk_fournprice,
-							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label,
-							$this->lines[$i]->date_start,
-							$this->lines[$i]->date_end,
-							$this->lines[$i]->array_options,
-							$this->lines[$i]->fk_unit,
+							$line->fk_fournprice,
+							$line->pa_ht,
+							$line->label,
+							$line->date_start,
+							$line->date_end,
+							$line->array_options,
+							$line->fk_unit,
 							$this->element,
-							$this->lines[$i]->id
+							$line->id
 						);
 
 						if ($result < 0)
@@ -1057,7 +1065,7 @@ class Propal extends CommonObject
 							break;
 						}
 						// Defined the new fk_parent_line
-						if ($result > 0 && $this->lines[$i]->product_type == 9) {
+						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
 						}
 					}
