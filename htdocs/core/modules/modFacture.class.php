@@ -128,14 +128,14 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 11;
-		$this->rights[$r][1] = 'Lire les factures';
+		$this->rights[$r][1] = 'Read invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 12;
-		$this->rights[$r][1] = 'Créer/modifier les factures';
+		$this->rights[$r][1] = 'Create and update invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
@@ -143,7 +143,7 @@ class modFacture extends DolibarrModules
 		// There is a particular permission for unvalidate because this may be not forbidden by some laws
 		$r++;
 		$this->rights[$r][0] = 13;
-		$this->rights[$r][1] = 'Dévalider les factures';
+		$this->rights[$r][1] = 'Devalidate invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'invoice_advance';
@@ -151,7 +151,7 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 14;
-		$this->rights[$r][1] = 'Valider les factures';
+		$this->rights[$r][1] = 'Validate invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
@@ -159,7 +159,7 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 15;
-		$this->rights[$r][1] = 'Envoyer les factures par email';
+		$this->rights[$r][1] = 'Send invoices by email';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
@@ -167,21 +167,21 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 16;
-		$this->rights[$r][1] = 'Émettre des paiements sur les factures';
+		$this->rights[$r][1] = 'Issue payments on invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'paiement';
 
 		$r++;
 		$this->rights[$r][0] = 19;
-		$this->rights[$r][1] = 'Supprimer les factures';
+		$this->rights[$r][1] = 'Delete invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 1321;
-		$this->rights[$r][1] = 'Exporter les factures clients, attributs et règlements';
+		$this->rights[$r][1] = 'Export customer invoices, attributes and payments';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'facture';
@@ -189,7 +189,7 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1322;
-		$this->rights[$r][1] = 'Rouvrir une facture totalement réglée';
+		$this->rights[$r][1] = 'Re-open a fully paid invoice';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
