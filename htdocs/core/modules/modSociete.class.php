@@ -92,7 +92,7 @@ class modSociete extends DolibarrModules
 		$this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "0";
-		$this->const[$r][3] = "Mettre le numéro du mois du début d\'année fiscale, ex: 9 pour septembre";
+		$this->const[$r][3] = "Enter the month number of the first month of the fiscal year, e. g. 9 for September";
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -141,7 +141,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 121; // id de la permission
-		$this->rights[$r][1] = 'Lire les sociétés'; // libelle de la permission
+		$this->rights[$r][1] = 'Read third parties'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
@@ -165,7 +165,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
-		$this->rights[$r][1] = 'Créer modifier les sociétés'; // libelle de la permission
+		$this->rights[$r][1] = 'Create and update third parties'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
@@ -189,14 +189,14 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les sociétés'; // libelle de la permission
+		$this->rights[$r][1] = 'Delete third parties'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 126; // id de la permission
-		$this->rights[$r][1] = 'Exporter les sociétés'; // libelle de la permission
+		$this->rights[$r][1] = 'Export third parties'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
@@ -204,7 +204,7 @@ class modSociete extends DolibarrModules
 		// 262 : Resteindre l'acces des commerciaux
 		$r++;
 		$this->rights[$r][0] = 262;
-		$this->rights[$r][1] = 'Consulter tous les tiers par utilisateurs internes (sinon uniquement si contact commercial). Non effectif pour utilisateurs externes (tjs limités à eux-même).';
+		$this->rights[$r][1] = 'Read all third parties by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'client';
@@ -212,7 +212,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
-		$this->rights[$r][1] = 'Lire les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Read contacts'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
@@ -220,7 +220,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 282; // id de la permission
-		$this->rights[$r][1] = 'Créer modifier les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Create and update contact'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
@@ -228,7 +228,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 283; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Delete contacts'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
@@ -236,7 +236,7 @@ class modSociete extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 286; // id de la permission
-		$this->rights[$r][1] = 'Exporter les contacts'; // libelle de la permission
+		$this->rights[$r][1] = 'Export contacts'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
