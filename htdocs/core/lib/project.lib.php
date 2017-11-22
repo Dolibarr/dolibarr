@@ -262,7 +262,7 @@ function project_timesheet_prepare_head($mode, $fuser=null)
 		$h++;
 	}
 
-	if (empty($conf->global->MAIN_FEATURE_LEVEL >= 2))
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perline.php".($param?'?'.$param:'');
 		$head[$h][1] = $langs->trans("InputDetail");
