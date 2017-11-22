@@ -6,6 +6,8 @@
  * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Pierre-Henry Favre	<phf@atm-consulting.fr>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017  Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2017       Elarifr. Ari Elbaz	<github@accedinfo.com>  MAJ QUADRATUS EXPORT 2015
  * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,7 +53,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_COGILOG = 8;
 	public static $EXPORT_TYPE_AGIRIS = 9;
 	public static $EXPORT_TYPE_CONFIGURABLE = 10;
-    
+
 	/**
 	 *
 	 * @var string[] Error codes (or messages)
@@ -398,11 +400,11 @@ class AccountancyExport
 			$Tab['date_ope'] = dol_print_date($data->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
 			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 12), 12);
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
-			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref . $data->label_operation, 25), 25);
+			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref) . dol_string_unaccent($data->label_operation), 25), 25);
 			$Tab['montant'] = str_pad(abs($data->montant), 13, ' ', STR_PAD_LEFT);
 			$Tab['type_montant'] = str_pad($data->sens, 1);
 			$Tab['vide'] = str_repeat(' ', 18);
-			$Tab['intitule_compte'] = str_pad(self::trunc($data->label_operation, 34), 34);
+			$Tab['intitule_compte'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 34), 34);
 			$Tab['end'] = 'O2003';
 
 			$Tab['end_line'] = $end_line;
@@ -424,7 +426,9 @@ class AccountancyExport
 
 		$end_line ="\r\n";
 
-		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
+        //elarifr we should use dol_now function not time however this is wrong date to transfert in accounting
+		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
+		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ( $TData as $data ) {
 			$code_compta = $data->numero_compte;
 			if (! empty($data->subledger_account))
@@ -435,26 +439,55 @@ class AccountancyExport
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
 			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
 			$Tab['folio'] = '000';
-			$Tab['date_ecriture'] = $date_ecriture;
+
+            //elarifr we use invoice date $data->doc_date not $date_ecriture which is the transfert date
+            //maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
+			//$Tab['date_ecriture'] = $date_ecriture;
+			$Tab['date_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
 			$Tab['filler'] = ' ';
-			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 20), 20);
+			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref) . ' ' . dol_string_unaccent($data->label_operation), 20), 20);
 			$Tab['sens'] = $data->sens; // C or D
 			$Tab['signe_montant'] = '+';
-			$Tab['montant'] = str_pad(abs($data->montant), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
+
+            //elarifr le montant doit etre en centimes sans point decimal !
+			$Tab['montant'] = str_pad(abs($data->montant*100), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
+		    // $Tab['montant'] = str_pad(abs($data->montant), 12, '0', STR_PAD_LEFT); // TODO manage negative amount
 			$Tab['contrepartie'] = str_repeat(' ', 8);
+
+            // elarifr:  date format must be fixed format : 6 char ddmmyy = %d%m%yand not defined by user / dolibarr setting
 			if (! empty($data->date_echeance))
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
+				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$Tab['date_echeance'] = dol_print_date($data->date_echeance,  '%d%m%y' );     // elarifr:  format must be ddmmyy
 			else
 				$Tab['date_echeance'] = '000000';
-			$Tab['lettrage'] = str_repeat(' ', 5);
+
+            //elarifr please keep quadra named field lettrage(2) + codestat(3) instead of fake lettrage(5)
+			//$Tab['lettrage'] = str_repeat(' ', 5);
+			$Tab['lettrage'] = str_repeat(' ', 2);
+			$Tab['codestat'] = str_repeat(' ', 3);
 			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 5), 5);
-			$Tab['filler2'] = str_repeat(' ', 20);
+
+            //elarifr keep correct quadra named field instead of anon filler
+			//$Tab['filler2'] = str_repeat(' ', 20);
+			$Tab['affaire'] = str_repeat(' ', 10);
+			$Tab['quantity1'] = str_repeat(' ', 10);
 			$Tab['num_piece2'] = str_pad(self::trunc($data->piece_num, 8), 8);
 			$Tab['devis'] = str_pad($conf->currency, 3);
 			$Tab['code_journal2'] = str_pad(self::trunc($data->code_journal, 3), 3);
 			$Tab['filler3'] = str_repeat(' ', 3);
-			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 32), 32);
-			$Tab['num_piece3'] = str_pad(self::trunc($data->piece_num, 10), 10);
+
+            //elarifr keep correct quadra named field instead of anon filler libelle_ecriture2 is 30 char not 32 !!!!
+            //as we use utf8, we must remove accent to have only one ascii char instead of utf8 2 chars for specials that report wrong line size that will exceed import format spec
+            //todo we should filter more than only accent to avoid wrong line size
+            //TODO: remove invoice number doc_ref in libelle,
+            //TODO: we should offer an option for customer to build the libelle using invoice number / name / date in accounting software
+			//$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref) . ' ' . dol_string_unaccent($data->label_operation), 30), 30);
+			$Tab['libelle_ecriture2'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 30), 30);
+			$Tab['codetva'] = str_repeat(' ', 2);
+
+            //elarifr we need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
+			//$Tab['num_piece3'] = str_pad(self::trunc($data->piece_num, 10), 10);
+			$Tab['num_piece3'] = substr(self::trunc($data->doc_ref, 20), -10);
 			$Tab['filler4'] = str_repeat(' ', 73);
 
 			$Tab['end_line'] = $end_line;
