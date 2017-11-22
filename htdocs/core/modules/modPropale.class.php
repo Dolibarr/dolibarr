@@ -77,14 +77,14 @@ class modPropale extends DolibarrModules
 		$this->const[$r][0] = "PROPALE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "azur";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des propales en PDF';
+		$this->const[$r][3] = 'Nom du gestionnaire de génération des propales en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "PROPALE_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_propale_marbre";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des propales';
+		$this->const[$r][3] = 'Nom du gestionnaire de numérotation des propales';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -128,7 +128,7 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 22; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Créer/modifier les propositions commerciales'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
@@ -151,7 +151,7 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 26; // id de la permission
-		$this->rights[$r][1] = 'Cloturer les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Clôturer les propositions commerciales'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'cloturer';
