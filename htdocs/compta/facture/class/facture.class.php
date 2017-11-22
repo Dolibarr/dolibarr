@@ -962,7 +962,6 @@ class Facture extends CommonInvoice
 	 *  @param		User			$user				Object user
 	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
 	 */
-
 	function createFromOrder($object, User $user)
 	{
 		global $hookmanager;
