@@ -1858,7 +1858,7 @@ class Product extends CommonObject
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
 		{
-			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+			$sql.= " WHERE entity IN (".getEntity($this->element).")";
 			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 		}

@@ -631,14 +631,12 @@ if (! empty($id) && $action != 'edit')
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
 	$sql.= "c.code as type_code,c.libelle as paiement_type";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
-	$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c AND c.entity IN (".getEntity('c_paiement').")";
 	$sql.= ", ".MAIN_DB_PREFIX."don as d";
 	$sql.= " WHERE d.rowid = '".$id."'";
 	$sql.= " AND p.fk_donation = d.rowid";
-	$sql.= " AND d.entity = ".$conf->entity;
+	$sql.= " AND d.entity IN (".getEntity('donation').")";
 	$sql.= " AND p.fk_typepayment = c.id";
-	$sql.= " AND c.entity = " . getEntity('c_paiement');
 	$sql.= " ORDER BY dp";
 
 	//print $sql;

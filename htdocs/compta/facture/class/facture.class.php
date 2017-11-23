@@ -1225,9 +1225,9 @@ class Facture extends CommonInvoice
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid AND c.entity IN (' . getEntity('c_payment_term').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity IN (' . getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
-		$sql.= ' WHERE f.entity = '.$conf->entity;
+		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
 		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
 		if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
@@ -3191,12 +3191,14 @@ class Facture extends CommonInvoice
 		$table2='paiement';
 		$field='fk_facture';
 		$field2='fk_paiement';
+		$sharedentity='facture';
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 		{
 			$table='paiementfourn_facturefourn';
 			$table2='paiementfourn';
 			$field='fk_facturefourn';
 			$field2='fk_paiementfourn';
+			$sharedentity='facture_fourn';
 		}
 
 		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
@@ -3205,7 +3207,7 @@ class Facture extends CommonInvoice
 		//$sql.= ' WHERE pf.'.$field.' = 1';
 		$sql.= ' AND pf.'.$field2.' = p.rowid';
 		$sql.= ' AND p.fk_paiement = t.id';
-		$sql.= ' AND t.entity IN (' . getEntity('c_paiement').')';
+		$sql.= ' AND p.entity IN (' . getEntity($sharedentity).')';
 		if ($filtertype) $sql.=" AND t.code='PRE'";
 
 		dol_syslog(get_class($this)."::getListOfPayments", LOG_DEBUG);

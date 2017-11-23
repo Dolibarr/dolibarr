@@ -414,7 +414,7 @@ class Account extends CommonObject
 		{
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
 			$sql.= " WHERE id=".$oper;
-			$sql.= " AND entity IN (" . getEntity('c_paiement') . ")";
+			$sql.= " AND entity IN (".getEntity('c_paiement').")";
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -857,7 +857,7 @@ class Account extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON ba.fk_pays = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.state_id = d.rowid';
-		$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+		$sql.= " WHERE entity IN (".getEntity($this->element).")";
 		if ($id)  $sql.= " AND ba.rowid  = ".$id;
 		if ($ref) $sql.= " AND ba.ref = '".$this->db->escape($ref)."'";
 

@@ -2996,7 +2996,7 @@ class Form
 
 		$sql = "SELECT id, code, libelle as label, type, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-		$sql.= " WHERE entity = " . getEntity('c_paiement');
+		$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
@@ -4423,7 +4423,7 @@ class Form
 		$TCurrency = array();
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
-		$sql.= " WHERE entity IN ('".getEntity('mutlicurrency', 0)."')";
+		$sql.= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
 		$resql = $db->query($sql);
 		if ($resql)
 		{

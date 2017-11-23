@@ -96,10 +96,10 @@ $sql = "SELECT v.rowid, v.amount, v.label, v.datep as datep, v.datev as datev, v
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id AND pst.entity = " . getEntity('c_paiement');
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id AND pst.entity IN (" . getEntity('c_paiement').")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-$sql.= " WHERE v.entity = ".$conf->entity;
+$sql.= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
 if ($search_ref)	$sql.=" AND v.rowid=".$search_ref;

@@ -636,13 +636,11 @@ if ($id > 0)
 		$sql.= " p.amount_capital, p.amount_insurance, p.amount_interest,";
 		$sql.= " c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
-		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
 		$sql.= ", ".MAIN_DB_PREFIX."loan as l";
 		$sql.= " WHERE p.fk_loan = ".$id;
 		$sql.= " AND p.fk_loan = l.rowid";
-		$sql.= " AND l.entity = ".$conf->entity;
-		$sql.= " AND p.fk_typepayment = c.id";
-		$sql.= " AND c.entity = " . getEntity('c_paiement');
+		$sql.= " AND l.entity IN ( ".getEntity('loan').")";
 		$sql.= " ORDER BY dp DESC";
 
 		//print $sql;
