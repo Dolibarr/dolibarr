@@ -68,6 +68,9 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+UPDATE llx_paiementfourn SET ref = rowid WHERE ref IS NULL;
+UPDATE llx_paiementfourn SET entity = 1 WHERE entity IS NULL;
+
 UPDATE llx_website SET entity = 1 WHERE entity IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_website MODIFY COLUMN entity integer NOT NULL DEFAULT 1;
 -- VPGSQL8.2 ALTER TABLE llx_website ALTER COLUMN entity SET NOT NULL;

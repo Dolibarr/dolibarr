@@ -2139,11 +2139,13 @@ class AccountLine extends CommonObject
 
 		$result='';
 		$label=$langs->trans("ShowTransaction").': '.$this->rowid;
-		$link = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->rowid.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'account'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.=($this->ref?$this->ref:$this->rowid);
+		$result .= $linkend;
 
 		if ($option == 'showall' || $option == 'showconciliated') $result.=' (';
 		if ($option == 'showall')

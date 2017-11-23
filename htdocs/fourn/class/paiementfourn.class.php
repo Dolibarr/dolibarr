@@ -89,6 +89,7 @@ class PaiementFourn extends Paiement
 			$sql.= ' AND p.rowid = '.$ref;
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
+		//print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -548,13 +549,14 @@ class PaiementFourn extends Paiement
 		}
 		$label = $langs->trans("ShowPayment").': '.$text;
 
-		$link = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend = '</a>';
 
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
 
-		if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$text.$linkend;
 		return $result;
 	}
 
