@@ -221,25 +221,38 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			{
 				$obj = $db->fetch_object($result);
 				if ($i < $nbmax)
-					$dataseries[]=array('label'=>$obj->label,'data'=>round($obj->nb));
+				{
+					$dataseries[]=array($obj->label, round($obj->nb));
+				}
 				else
+				{
 					$rest+=$obj->nb;
+				}
 				$total+=$obj->nb;
 				$i++;
 			}
 			if ($i > $nbmax)
-				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
-			$data=array('series'=>$dataseries);
-			dol_print_graph('statscategproduct',300,180,$data,1,'pie',0);
+			{
+				$dataseries[]=array($langs->trans("Other"), round($rest));
+			}
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			$dolgraph = new DolGraph();
+			$dolgraph->SetData($dataseries);
+			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowPercent(1);
+			$dolgraph->SetType(array('pie'));
+			$dolgraph->setWidth('100%');
+			$dolgraph->draw('idstatscategproduct');
+			print $dolgraph->show($total?0:1);
 		}
 		else
 		{
-			$var=true;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
 
-				print '<tr $bc[$var]><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				print '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total+=$obj->nb;
 				$i++;
 			}
