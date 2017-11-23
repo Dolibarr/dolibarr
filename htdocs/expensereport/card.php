@@ -1880,19 +1880,21 @@ else
 				    {
 				        $objp = $db->fetch_object($resql);
 
+				        $paymentexpensereportstatic->id = $objp->rowid;
+				        $paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
+				        $paymentexpensereportstatic->ref = $objp->rowid;
+				        $paymentexpensereportstatic->num_paiement = $objp->num_paiement;
+				        $paymentexpensereportstatic->payment_code = $objp->payment_code;
+
 				        print '<tr class="oddseven">';
 				        print '<td>';
-						$paymentexpensereportstatic->id = $objp->rowid;
-						$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
-						$paymentexpensereportstatic->ref = $objp->rowid;
-						$paymentexpensereportstatic->num_paiement = $objp->num_paiement;
-						$paymentexpensereportstatic->payment_code = $objp->payment_code;
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->fk_typepayment;
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-						if (! empty($conf->banque->enabled)) {
+						if (! empty($conf->banque->enabled))
+						{
 							$bankaccountstatic->id = $objp->baid;
 							$bankaccountstatic->ref = $objp->baref;
 							$bankaccountstatic->label = $objp->baref;
