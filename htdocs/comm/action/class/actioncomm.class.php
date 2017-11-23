@@ -2,8 +2,8 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,11 +225,11 @@ class ActionComm extends CommonObject
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
 
-        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility
+        if (! is_array($this->userassigned) && ! empty($this->userassigned))	// For backward compatibility when userassigned was an int instead fo array
         {
         	$tmpid=$this->userassigned;
         	$this->userassigned=array();
-        	$this->userassigned[$tmpid]=array('id'=>$tmpid);
+        	$this->userassigned[$tmpid]=array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
 
         if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
@@ -240,7 +240,7 @@ class ActionComm extends CommonObject
 
         // Be sure assigned user is defined as an array of array('id'=>,'mandatory'=>,...).
         if (empty($this->userassigned) || count($this->userassigned) == 0 || ! is_array($this->userassigned))
-        	$this->userassigned = array($userownerid=>array('id'=>$userownerid));
+        	$this->userassigned = array($userownerid=>array('id'=>$userownerid, 'transparency'=>$this->transparency));
 
         if (! $this->type_id || ! $this->type_code)
         {
@@ -1333,6 +1333,7 @@ class ActionComm extends CommonObject
             {
                 // Note: Output of sql request is encoded in $conf->file->character_set_client
                 // This assignment in condition is not a bug. It allows walking the results.
+				$diff = 0;
                 while ($obj=$this->db->fetch_object($resql))
                 {
                     $qualified=true;
@@ -1367,8 +1368,9 @@ class ActionComm extends CommonObject
 
                     if ($qualified && $datestart)
                     {
-                        $eventarray[$datestart]=$event;
+                        $eventarray[$datestart+$diff]=$event;
                     }
+                    $diff++;
                 }
             }
             else

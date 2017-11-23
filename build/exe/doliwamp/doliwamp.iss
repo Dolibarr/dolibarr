@@ -353,7 +353,7 @@ begin
     begin
       // TODO Copy file or ask to install package ?
       //CustomMessage('YouWillInstallDoliWamp')+#13#13
-      MsgBox('The package vcredist_x86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://www.microsoft.com/en-us/download/details.aspx?id=30679">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
+      MsgBox('The Visual C++ Redistributable package should be installed, it seems it is not. Please install the 32-bit version from http://www.microsoft.com/en-us/download/details.aspx?id=30679, then restart the DoliWAMP installation/upgrade.',mbInformation,MB_OK);
     end;
 	// Pb seems similar with msvcp110.dll
 	//vcredist_x64.exe

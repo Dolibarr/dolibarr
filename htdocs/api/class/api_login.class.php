@@ -36,7 +36,7 @@ class Login
 	 *
 	 * Request the API token for a couple username / password.
 	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
-	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "api_key" into field at the top right of page (Note: "api_key" can be found/set on the user page).
+	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: Tha API key (DOLAPIKEY) can be found/set on the user page.
 	 *
 	 * @param   string  $login			User login
 	 * @param   string  $password		User password

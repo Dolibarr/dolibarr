@@ -66,7 +66,7 @@ $search_tobatch = GETPOST("search_tobatch",'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$type=(int) GETPOST("type","int");
+$type=GETPOST("type","int");
 
 //Show/hide child products. Hidden by default
 if (!$_POST) {
@@ -251,7 +251,7 @@ else
 
 	if ($search_type != '' && $search_type != '-1')
 	{
-		if ($search_type==1)
+		if ($search_type == 1)
 		{
 			$texte = $langs->trans("Services");
 		}
@@ -495,13 +495,15 @@ else
 				$moreforfilter.='</div>';
 			}
 
+    		$parameters=array();
+    		$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    		if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
+    		else $moreforfilter=$hookmanager->resPrint;
+
     	 	if ($moreforfilter)
-    		{
+			{
         		print '<div class="liste_titre liste_titre_bydiv centpercent">';
     		    print $moreforfilter;
-            	$parameters=array();
-            	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-        	    print $hookmanager->resPrint;
     		    print '</div>';
     		}
 

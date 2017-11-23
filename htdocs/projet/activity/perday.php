@@ -237,7 +237,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	        $object->fetch($key);
 		    $object->progress = GETPOST($key.'progress', 'int');
 	        $object->timespent_duration = $val;
-	        $object->timespent_fk_user = $user->id;
+	        $object->timespent_fk_user = $usertoprocess->id;
 	        $object->timespent_note = GETPOST($key.'note');
 	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 	        {

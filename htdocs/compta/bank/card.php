@@ -99,7 +99,7 @@ if ($action == 'add')
     $object->owner_address   = trim($_POST["owner_address"]);
 
 	$account_number 		 = GETPOST('account_number','alpha');
-	if ($account_number <= 0) { $object->account_number = ''; } else { $object->account_number = $account_number; }
+	if (empty($account_number) || $account_number == '-1') { $object->account_number = ''; } else { $object->account_number = $account_number; }
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal','int');
 	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
@@ -656,7 +656,7 @@ else
 		print '<td>';
 		if (! empty($conf->accounting->enabled)) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('',$object->account_number);
+			$accountingaccount->fetch('',$object->account_number, 1);
 
 			print $accountingaccount->getNomUrl(0,1,1,'',1);
 		} else {

@@ -338,6 +338,9 @@ if ($mode == 'searchkey')
 
     $recordtoshow=array();
 
+    // Search modules dirs
+    $modulesdir = dolGetModulesDirs();
+
     $nbempty=0;
     /*var_dump($langcode);
      var_dump($transkey);
@@ -351,29 +354,30 @@ if ($mode == 'searchkey')
     }
     else
     {
-        // Load all translations keys
-        foreach($conf->file->dol_document_root as $keydir => $searchdir)
+        // Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
+        foreach($modulesdir as $keydir => $tmpsearchdir)
         {
-            // Directory of translation files
-            $dir_lang = $searchdir."/langs/".$langcode;
-            $dir_lang_osencoded=dol_osencode($dir_lang);
+        	$searchdir = $tmpsearchdir;		// $searchdir can be '.../htdocs/core/modules/' or '.../htdocs/custom/mymodule/core/modules/'
 
-            $filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+        	// Directory of translation files
+        	$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode;	// The 2 dirname is to go up in dir for 2 levels
+        	$dir_lang_osencoded=dol_osencode($dir_lang);
 
-            foreach($filearray as $file)
-            {
-                $tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
-                $newlang->load($tmpfile, 0, 0, '', 0);                              // Load translation files + database overwrite
-                $newlangfileonly->load($tmpfile, 0, 0, '', 1);                      // Load translation files only
-                //print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
-            }
+        	$filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+        	foreach($filearray as $file)
+        	{
+        		$tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
+        		$newlang->load($tmpfile, 0, 0, '', 0);                              // Load translation files + database overwrite
+        		$newlangfileonly->load($tmpfile, 0, 0, '', 1);                      // Load translation files only
+        		//print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
+        	}
         }
 
         // Now search into translation array
         foreach($newlang->tab_translate as $key => $val)
         {
-            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/', $key)) continue;
-            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/', $val)) continue;
+            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/i', $key)) continue;
+            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/i', $val)) continue;
             $recordtoshow[$key]=$val;
         }
     }
