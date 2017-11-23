@@ -856,7 +856,9 @@ if ($action == 'create')
 
 		// Related contact
 		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-		print $form->selectcontacts(GETPOST('socid','int'), GETPOST('socpeopleassigned', 'array'), 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
+		$preselectedids=GETPOST('socpeopleassigned', 'array');
+		if (GETPOST('contactid','int')) $preselectedids[GETPOST('contactid','int')]=GETPOST('contactid','int');
+		print $form->selectcontacts(GETPOST('socid','int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 
