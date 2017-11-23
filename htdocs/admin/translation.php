@@ -263,6 +263,11 @@ if ($mode == 'overwrite')
 {
     //print load_fiche_titre($langs->trans("TranslationOverwriteKey"), '', '')."\n";
 
+	$disabled='';
+	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
+	$disablededit='';
+	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disablededit=' disabled';
+
 	print '<div class="justify"><span class="opacitymedium">';
     print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
     $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
@@ -291,9 +296,6 @@ if ($mode == 'overwrite')
     // Line to add new record
     print "\n";
 
-    $disablededit='';
-    if ($action == 'edit') $disablededit=' disabled';
-
     print '<tr class="oddeven"><td>';
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
@@ -315,9 +317,7 @@ if ($mode == 'overwrite')
     	print '<td align="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
-    $disabled='';
-    if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
-    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
+    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
     print "</td>\n";
     print '</tr>';
 
