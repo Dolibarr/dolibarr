@@ -211,7 +211,7 @@ while ($i < min($num,$limit))
 	print'<td align="right">'.$nbuser.'</td>'."\n";
 
 	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin),'day');
-	if ($db->jdate($obj->date_fin) < time()) { print img_warning($langs->trans("Expired")); }
+	if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) { print img_warning($langs->trans("Expired")); }
 	print '</td>';
 
 	print'<td align="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";

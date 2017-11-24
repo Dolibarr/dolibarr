@@ -310,7 +310,7 @@ if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object-
 else
 {
     print dol_print_date($object->date_fin,'day');
-    if ($object->date_fin && $object->date_fin < dol_now()) print img_warning($langs->trans("Expired"));
+    if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) print img_warning($langs->trans("Expired"));
 }
 print '</td></tr>';
 
