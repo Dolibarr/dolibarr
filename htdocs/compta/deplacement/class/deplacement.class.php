@@ -35,7 +35,7 @@ class Deplacement extends CommonObject
 	public $table_element='deplacement';
 	public $table_element_line = '';
 	public $fk_element = '';
-	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $datec;         // Creation date
 	var $dated;
@@ -107,7 +107,7 @@ class Deplacement extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$this->fk_user;
-		$sql.= ", '".$this->type."'";
+		$sql.= ", '".$this->db->escape($this->type)."'";
 		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
@@ -187,8 +187,8 @@ class Deplacement extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
 		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
-		$sql .= " , type = '".$this->type."'";
-		$sql .= " , fk_statut = '".$this->statut."'";
+		$sql .= " , type = '".$this->db->escape($this->type)."'";
+		$sql .= " , fk_statut = '".$this->db->escape($this->statut)."'";
 		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_user_modif = ".$user->id;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');

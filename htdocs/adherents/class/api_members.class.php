@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
+/* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
+ * Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for members
@@ -84,13 +86,12 @@ class Members extends DolibarrApi
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
      * @param string    $typeid     ID of the type of member
-     * @param string    $login      To filter the members by login
-     * @param string    $name       To filter the members by name (firstname, lastname or company name matching the filter)
-     * @return array Array of member objects
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @return array                Array of member objects
      *
      * @throws RestException
      */
-    function index($sortfield = "a.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $typeid = '', $login = '', $name = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -99,25 +100,22 @@ class Members extends DolibarrApi
             throw new RestException(401);
         }
 
-        $sql = "SELECT a.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql.= ' WHERE a.entity IN ('.getEntity('adherent', 1).')';
+        $sql = "SELECT t.rowid";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as t";
+        $sql.= ' WHERE t.entity IN ('.getEntity('adherent').')';
         if (!empty($typeid))
         {
-            $sql.= ' AND a.fk_adherent_type='.$typeid;
+            $sql.= ' AND t.fk_adherent_type='.$typeid;
         }
-        if (!empty($login)) {
-            $sql .= " AND a.login LIKE '%".$login."%'";
-        }
-        if (!empty($name)) {
-            $sql .= " AND (a.firstname LIKE '%".$name."%' OR a.lastname LIKE '%".$name."%' OR a.societe LIKE '%".$name."%')";
-        }
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        // Add sql filters
+        if ($sqlfilters)
         {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
         $sql.= $db->order($sortfield, $sortorder);
@@ -136,9 +134,10 @@ class Members extends DolibarrApi
         {
             $i=0;
             $num = $db->num_rows($result);
-            while ($i < min($limit, $num))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
-                $obj = $db->fetch_object($result);
+            	$obj = $db->fetch_object($result);
                 $member = new Adherent($this->db);
                 if($member->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($member);
@@ -147,7 +146,7 @@ class Members extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve member list : '.$member->error);
+            throw new RestException(503, 'Error when retrieve member list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No member found');
@@ -174,8 +173,8 @@ class Members extends DolibarrApi
         foreach($request_data as $field => $value) {
             $member->$field = $value;
         }
-        if($member->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(503, 'Error when create member : '.$member->error);
+        if ($member->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, 'Error creating member', array_merge(array($member->error), $member->errors));
         }
         return $member->id;
     }
@@ -204,6 +203,7 @@ class Members extends DolibarrApi
         }
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             // Process the status separately because it must be updated using
             // the validate() and resiliate() methods of the class Adherent.
             if ($field == 'statut') {
@@ -252,11 +252,7 @@ class Members extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        // The Adherent::delete() method uses the global variable $user.
-        global $user;
-        $user = DolibarrApiAccess::$user;
-
-        if (! $member->delete($member->id)) {
+        if (! $member->delete($member->id, DolibarrApiAccess::$user)) {
             throw new RestException(401,'error when deleting member');
         }
 
@@ -271,7 +267,7 @@ class Members extends DolibarrApi
     /**
      * Validate fields before creating an object
      *
-     * @param array $data   Data to validate
+     * @param array|null    $data   Data to validate
      * @return array
      *
      * @throws RestException
@@ -292,9 +288,6 @@ class Members extends DolibarrApi
      *
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
 
@@ -365,5 +358,39 @@ class Members extends DolibarrApi
 
         return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
     }
+
+    /**
+     * Get categories for a member
+     *
+     * @param int		$id         ID of member
+     * @param string		$sortfield	Sort field
+     * @param string		$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
+	}
 
 }

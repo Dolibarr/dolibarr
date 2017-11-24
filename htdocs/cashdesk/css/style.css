@@ -19,7 +19,6 @@ body {
 	color: #333;
 	margin: 0;
 	padding: 0;
-	text-align: center;
 }
 
 p {
@@ -107,6 +106,14 @@ p {
 	padding-right: 5px;
 }
 
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	.menu_choix0 {
+		max-width: 180px;
+	}
+}
+
 .menu_choix0 a {
 	font-weight: normal;
 	text-decoration: none;
@@ -115,7 +122,7 @@ li.menu_choix0 {
 		float: right;
 }
 
-/* ------------------- R�capitulatif des articles ------------------- */
+/* ------------------- Remind of products ------------------- */
 .liste_articles {
 	min-width: 215px;
 	float: right;
@@ -212,6 +219,10 @@ p.titre {
 	max-width: 900px;
 }
 
+.blocksellfinished {
+	min-width: 215px;
+	margin-top: 8px;
+}
 .titre1 {
 	font-weight: bold;
 	color: #ff9900;
@@ -249,14 +260,9 @@ p.titre {
 	padding: 0;
 }
 
-.resultats_dhtml {
-	width: 400px;
-	position: absolute;
-}
 
 /* --------------------- Combo lists ------------------- */
 .select_design {
-	width: 370px;
 	overflow: auto;
 }
 

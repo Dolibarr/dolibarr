@@ -48,11 +48,13 @@ $result=restrictedArea($user,'produit|service');
 $action = GETPOST('action','alpha');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
-$sall = GETPOST('sall', 'alpha');
+$sall = GETPOST('sall', 'alphanohtml');
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
 $mode = GETPOST('mode','alpha');
+$draftorder = GETPOST('draftorder','alpha');
+
 
 $fourn_id = GETPOST('fourn_id','int');
 $fk_supplier = GETPOST('fk_supplier','int');
@@ -62,7 +64,7 @@ $texte = '';
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
@@ -90,13 +92,15 @@ if ($mode == 'virtual') $usevirtualstock=1;
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter") || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
     $sref = '';
     $snom = '';
     $sal = '';
     $salert = '';
+	$draftorder='';
 }
+if($draftorder == 'on') $draftchecked = "checked";
 
 // Create orders
 if ($action == 'order' && isset($_POST['valid']))
@@ -111,7 +115,7 @@ if ($action == 'order' && isset($_POST['valid']))
         $suppliers = array();
         for ($i = 0; $i < $linecount; $i++)
         {
-            if (GETPOST($i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
+            if (GETPOST('choose' . $i, 'alpha') === 'on' && GETPOST('fourn' . $i, 'int') > 0)
             {
             	//one line
                 $box = $i;
@@ -120,7 +124,7 @@ if ($action == 'order' && isset($_POST['valid']))
                 $qty = GETPOST('tobuy'.$i, 'int');
                 //$desc = GETPOST('desc'.$i, 'alpha');
                 $sql = 'SELECT fk_product, fk_soc, ref_fourn';
-                $sql .= ', tva_tx, unitprice FROM ';
+                $sql .= ', tva_tx, unitprice, remise_percent FROM ';
                 $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
                 $sql .= ' WHERE rowid = ' . $supplierpriceid;
                 $resql = $db->query($sql);
@@ -152,6 +156,7 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $tva = $line->tva_tx / 100;
 	                    $line->total_tva = $line->total_ht * $tva;
 	                    $line->total_ttc = $line->total_ht + $line->total_tva;
+						$line->remise_percent = $obj->remise_percent;
 	                    $line->ref_fourn = $obj->ref_fourn;
 	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
                 	}
@@ -258,7 +263,7 @@ $formproduct = new FormProduct($db);
 
 $title = $langs->trans('Status');
 
-if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sqldesiredtock=$db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
 	$sqlalertstock=$db->ifsql("pse.seuil_stock_alerte IS NULL", "p.seuil_stock_alerte", "pse.seuil_stock_alerte");
 } else {
@@ -287,13 +292,8 @@ if($fk_supplier > 0) {
 if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = '.$fk_entrepot.')';
 }
-$sql.= ' WHERE p.entity IN (' . getEntity("product", 1) . ')';
-if ($sall) {
-    $sql .= ' AND (p.ref LIKE "%'.$db->escape($sall).'%" ';
-    $sql .= 'OR p.label LIKE "%'.$db->escape($sall).'%" ';
-    $sql .= 'OR p.description LIKE "%'.$db->escape($sall).'%" ';
-    $sql .= 'OR p.note LIKE "%'.$db->escape($sall).'%")';
-}
+$sql.= ' WHERE p.entity IN (' . getEntity('product') . ')';
+if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
 if (dol_strlen($type)) {
     if ($type == 1) {
@@ -302,20 +302,8 @@ if (dol_strlen($type)) {
         $sql .= ' AND p.fk_product_type <> 1';
     }
 }
-if ($sref) {
-    //natural search
-    $scrit = explode(' ', $sref);
-    foreach ($scrit as $crit) {
-        $sql .= ' AND p.ref LIKE "%' . $crit . '%"';
-    }
-}
-if ($snom) {
-    //natural search
-    $scrit = explode(' ', $snom);
-    foreach ($scrit as $crit) {
-        $sql .= ' AND p.label LIKE "%' . $db->escape($crit) . '%"';
-    }
-}
+if ($sref) $sql.=natural_search('p.ref', $sref);
+if ($snom) $sql.=natural_search('p.label', $snom);
 $sql.= ' AND p.tobuy = 1';
 if (!empty($canvas)) $sql .= ' AND p.canvas = "' . $db->escape($canvas) . '"';
 $sql.= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price';
@@ -334,7 +322,7 @@ if ($usevirtualstock)
 	$sqlCommandesCli = "(SELECT ".$db->ifsql("SUM(cd.qty) IS NULL", "0", "SUM(cd.qty)")." as qty";
 	$sqlCommandesCli.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 	$sqlCommandesCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
-	$sqlCommandesCli.= " WHERE c.entity IN (".getEntity('order', 1).")";
+	$sqlCommandesCli.= " WHERE c.entity IN (".getEntity('commande').")";
 	$sqlCommandesCli.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesCli.= " AND c.fk_statut IN (1,2))";
 
@@ -343,7 +331,7 @@ if ($usevirtualstock)
 	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON (ed.fk_expedition = e.rowid)";
 	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON (cd.rowid = ed.fk_origin_line)";
 	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
-	$sqlExpeditionsCli.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
+	$sqlExpeditionsCli.= " WHERE e.entity IN (".getEntity('expedition').")";
 	$sqlExpeditionsCli.= " AND cd.fk_product = p.rowid";
 	$sqlExpeditionsCli.= " AND c.fk_statut IN (1,2))";
 
@@ -351,14 +339,14 @@ if ($usevirtualstock)
 	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
 	$sqlCommandesFourn.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sqlCommandesFourn.= " WHERE c.rowid = cd.fk_commande";
-	$sqlCommandesFourn.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
+	$sqlCommandesFourn.= " AND c.entity IN (".getEntity('supplier_order').")";
 	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesFourn.= " AND c.fk_statut IN (3,4))";
 
 	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd.qty) IS NULL", "0", "SUM(fd.qty)")." as qty";
 	$sqlReceptionFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sqlReceptionFourn.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd ON (fd.fk_commande = cf.rowid)";
-	$sqlReceptionFourn.= " WHERE cf.entity IN (".getEntity('commande_fournisseur', 1).")";
+	$sqlReceptionFourn.= " WHERE cf.entity IN (".getEntity('supplier_order').")";
 	$sqlReceptionFourn.= " AND fd.fk_product = p.rowid";
 	$sqlReceptionFourn.= " AND cf.fk_statut IN (3,4))";
 
@@ -369,17 +357,17 @@ if ($usevirtualstock)
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		$sql.= ' AND ('.$sqlalertstock.' > 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+		$sql.= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 		$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
 		$alertchecked = 'checked';
 	}
 } else {
-	$sql.= ' HAVING (('.$sqldesiredtock.' > 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
-	$sql.= ' OR ('.$sqlalertstock.' > 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
+	$sql.= ' HAVING (('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+	$sql.= ' OR ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		$sql.= ' AND ('.$sqlalertstock.' > 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+		$sql.= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
 		$alertchecked = 'checked';
 	}
 }
@@ -415,7 +403,7 @@ $head[1][2] = 'replenishorders';
 
 print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
 
-dol_fiche_head($head, 'replenish', '', 0, '');
+dol_fiche_head($head, 'replenish', '', -1, '');
 
 print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
 if ($usevirtualstock == 1)
@@ -437,18 +425,27 @@ print '<input type="hidden" name="action" value="filter">';
 print '<input type="hidden" name="sref" value="'.$sref.'">';
 print '<input type="hidden" name="snom" value="'.$snom.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
+print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-print $langs->trans('Warehouse').' : '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
-print '<br />';
-print $langs->trans('Supplier').' : '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
-print '<br />';
-print ' <input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
+{
+	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
+	print $langs->trans('Warehouse').' '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
+	print '</div>';
+}
+print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
+print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
+print '</div>';
+print '<div class="inline-block valignmiddle">';
+print '<input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '</div>';
 print '</form>';
 
-if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
+if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha')) {
 	$filters = '&sref=' . $sref . '&snom=' . $snom;
 	$filters .= '&sall=' . $sall;
 	$filters .= '&salert=' . $salert;
+	$filters .= '&draftorder=' . $draftorder;
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
@@ -467,6 +464,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters .= '&fourn_id=' . $fourn_id;
 	$filters .= (isset($type)?'&type=' . $type:'');
 	$filters .=  '&=' . $salert;
+	$filters .= '&draftorder=' . $draftorder;
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
@@ -485,15 +483,15 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 print '<table class="liste" width="100%">';
 
 $param = (isset($type)? '&type=' . $type : '');
-$param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
+$param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert . '&draftorder='.$draftorder;
 $param .= '&sref=' . $sref;
 $param .= '&mode=' . $mode;
 $param .= '&fk_supplier=' . $fk_supplier;
 $param .= '&fk_entrepot=' . $fk_entrepot;
 
 $stocklabel = $langs->trans('Stock');
-if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
-if ($usevirtualstock == 0) $stocklabel = $langs->trans('PhysicalStock');
+if ($usevirtualstock == 1) $stocklabel = 'VirtualStock';
+if ($usevirtualstock == 0) $stocklabel = 'PhysicalStock';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
 	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
@@ -506,22 +504,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 	'<input type="hidden" name="action" value="order">'.
 	'<input type="hidden" name="mode" value="' . $mode . '">';
 
-// Lines of title
-print '<tr class="liste_titre">';
-print_liste_field_titre('<input type="checkbox" onClick="toggle(this)" />', $_SERVER["PHP_SELF"], '');
-print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
-if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans('Duration'), $_SERVER["PHP_SELF"], 'p.duration', $param, '', 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('DesiredStock'), $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('StockLimitShort'), $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Ordered'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('StockToBuy'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Supplier'), $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
-print "</tr>\n";
-
 // Lignes des champs de filtre
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
@@ -529,13 +513,27 @@ if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right">&nbsp;</td>';
 print '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>';
-print '<td class="liste_titre" align="right">&nbsp;</td>';
+print '<td class="liste_titre" align="right">' . $langs->trans('Draft') . '&nbsp;<input type="checkbox" id="draftorder" name="draftorder" ' . (!empty($draftchecked)?$draftchecked:'') . '></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print '</tr>';
+
+// Lines of title
+print '<tr class="liste_titre">';
+print_liste_field_titre('<input type="checkbox" onClick="toggle(this)" />', $_SERVER["PHP_SELF"], '');
+print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
+print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
+if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre('Duration', $_SERVER["PHP_SELF"], 'p.duration', $param, '', 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre('DesiredStock', $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('StockLimitShort', $_SERVER["PHP_SELF"], 'p.seuil_stock_alerte', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('Ordered', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
+print "</tr>\n";
 
 $prod = new Product($db);
 
@@ -547,7 +545,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (! empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock();
+		$prod->load_stock('warehouseopen, warehouseinternal');
 
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))
@@ -579,7 +577,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		}
 
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
-		$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+		if(isset($draftchecked)){
+			$result=$prod->load_stats_commande_fournisseur(0,'0,1,2,3,4');
+		}else {
+			$result=$prod->load_stats_commande_fournisseur(0,'1,2,3,4');
+		}
+
 		$result=$prod->load_stats_reception(0,'4');
 
 		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
@@ -612,11 +615,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), './img/no', '', 1);
 		}
 
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Select field
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
-		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
+		print '<td><input type="checkbox" class="check" name="choose'.$i.'"></td>';
 
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
@@ -666,11 +669,12 @@ print '</table>';
 
 if ($num > $conf->liste_limit)
 {
-	if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha'))
+	if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha'))
 	{
 		$filters = '&sref=' . $sref . '&snom=' . $snom;
 		$filters .= '&sall=' . $sall;
 		$filters .= '&salert=' . $salert;
+		$filters .= '&draftorder=' . $draftorder;
 		$filters .= '&mode=' . $mode;
 		$filters .= '&fk_supplier=' . $fk_supplier;
 		$filters .= '&fk_entrepot=' . $fk_entrepot;
@@ -682,6 +686,7 @@ if ($num > $conf->liste_limit)
 		$filters .= '&fourn_id=' . $fourn_id;
 		$filters .= (isset($type)? '&type=' . $type : '');
 		$filters .= '&salert=' . $salert;
+		$filters .= '&draftorder=' . $draftorder;
 		$filters .= '&mode=' . $mode;
 		$filters .= '&fk_supplier=' . $fk_supplier;
 		$filters .= '&fk_entrepot=' . $fk_entrepot;

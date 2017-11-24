@@ -16,12 +16,43 @@
  * or see http://www.gnu.org/
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 /**
- *  \class      ModeleNumRefPayments
+ *	Parent class for supplier invoices models
+ */
+abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
+{
+	var $error='';
+
+
+	/**
+	 *  Return list of active generation models
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of numbers
+	 */
+	static function liste_modeles($db,$maxfilenamelength=0)
+	{
+		global $conf;
+
+		$type='supplier_payment';
+		$liste=array();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
+
+		return $liste;
+	}
+
+}
+
+/**
+ *  \class      ModeleNumRefSupplierPayments
  *  \brief      Payment numbering references mother class
  */
 
-abstract class ModeleNumRefPayments
+abstract class ModeleNumRefSupplierPayments
 {
 	var $error='';
 

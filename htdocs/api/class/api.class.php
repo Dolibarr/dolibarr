@@ -19,12 +19,12 @@
 use Luracast\Restler\Restler;
 use Luracast\Restler\RestException;
 use Luracast\Restler\Defaults;
+use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 /**
- * Class for API
- *
+ * Class for API REST v1
  */
 class DolibarrApi
 {
@@ -42,19 +42,29 @@ class DolibarrApi
     /**
      * Constructor
      *
-     * @param	DoliDb	$db		      Database handler
-     * @param   string  $cachedir     Cache dir
+     * @param	DoliDb	$db		        Database handler
+     * @param   string  $cachedir       Cache dir
+     * @param   boolean $refreshCache   Update cache
      */
-    function __construct($db, $cachedir='')
+    function __construct($db, $cachedir='', $refreshCache=false)
     {
-        global $conf;
-        
+        global $conf, $dolibarr_main_url_root;
+
         if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
         Defaults::$cacheDirectory = $cachedir;
-        
+
         $this->db = $db;
         $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
-        $this->r = new Restler($production_mode);
+        $this->r = new Restler($production_mode, $refreshCache);
+
+        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+
+        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim(DOL_MAIN_URL_ROOT));
+        $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
+
+        $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
+        $this->r->setAPIVersion(1);
     }
 
     /**
@@ -64,6 +74,7 @@ class DolibarrApi
      *
      * @return array
      */
+    /* Disabled, most APIs does not share same signature for method index
     function index()
     {
         return array(
@@ -72,7 +83,7 @@ class DolibarrApi
                 'message' => __class__.' is up and running!'
             )
         );
-    }
+    }*/
 
 
     /**
@@ -80,24 +91,60 @@ class DolibarrApi
      *
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
-     *
-     * @todo use an array for properties to clean
-     *
      */
     function _cleanObjectDatas($object) {
 
         // Remove $db object property for object
         unset($object->db);
-        
+		unset($object->ismultientitymanaged);
+
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
-        
-        unset($object->lignes); // should be lines
-        
+
+        unset($object->lines); // should be ->lines
+
+        unset($object->fields);
+
+        unset($object->oldline);
+
+        unset($object->error);
+        unset($object->errors);
+
+        unset($object->ref_previous);
+        unset($object->ref_next);
+        unset($object->ref_int);
+
+        unset($object->projet);     // Should be fk_project
+        unset($object->project);    // Should be fk_project
+        unset($object->author);     // Should be fk_user_author
+        unset($object->timespent_old_duration);
+        unset($object->timespent_id);
+        unset($object->timespent_duration);
+        unset($object->timespent_date);
+        unset($object->timespent_datehour);
+        unset($object->timespent_withhour);
+        unset($object->timespent_fk_user);
+        unset($object->timespent_note);
+
         unset($object->statuts);
         unset($object->statuts_short);
         unset($object->statuts_logo);
-        
+        unset($object->statuts_long);
+        unset($object->labelstatut);
+        unset($object->labelstatut_short);
+
+        unset($object->element);
+        unset($object->fk_element);
+        unset($object->table_element);
+        unset($object->table_element_line);
+        unset($object->class_element_line);
+        unset($object->picto);
+
+        unset($object->facturee);		// Replace with billed
+
+        unset($object->skip_update_total);
+        unset($object->context);
+
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
         // it: "Error encoding/decoding JSON: Type is not supported"
@@ -127,7 +174,7 @@ class DolibarrApi
                 }
             }
         }*/
-        
+
 		return $object;
     }
 
@@ -160,6 +207,62 @@ class DolibarrApi
 			$feature2 = explode("|", $feature2);
 		}
 
-		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray,$resource_id,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
+		return checkUserAccessToObject(DolibarrApiAccess::$user, $featuresarray, $resource_id, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+	}
+
+	/**
+	 * Return if a $sqlfilters parameter is valid
+	 *
+	 * @param  string   $sqlfilters     sqlfilter string
+	 * @return boolean                  True if valid, False if not valid
+	 */
+	function _checkFilters($sqlfilters)
+	{
+	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+	    $tmp=$sqlfilters;
+	    $ok=0;
+	    $i=0; $nb=count($tmp);
+	    $counter=0;
+	    while ($i < $nb)
+	    {
+	        if ($tmp[$i]=='(') $counter++;
+	        if ($tmp[$i]==')') $counter--;
+            if ($counter < 0)
+            {
+	           $error="Bad sqlfilters=".$sqlfilters;
+	           dol_syslog($error, LOG_WARNING);
+	           return false;
+            }
+            $i++;
+	    }
+	    return true;
+	}
+
+	/**
+	 * Function to forge a SQL criteria
+	 *
+	 * @param  array    $matches       Array of found string by regex search
+	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+	 */
+	static function _forge_criteria_callback($matches)
+	{
+	    global $db;
+
+	    //dol_syslog("Convert matches ".$matches[1]);
+	    if (empty($matches[1])) return '';
+	    $tmp=explode(':',$matches[1]);
+        if (count($tmp) < 3) return '';
+
+	    $tmpescaped=$tmp[2];
+	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
+	    {
+	        $tmpescaped = "'".$db->escape($regbis[1])."'";
+	    }
+	    else
+	    {
+	        $tmpescaped = $db->escape($tmpescaped);
+	    }
+	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
 	}
 }

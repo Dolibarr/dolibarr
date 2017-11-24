@@ -102,6 +102,8 @@ foreach($modulesdir as $dir)
     	closedir($handle);
     }
 }
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
@@ -116,9 +118,8 @@ $rights_ids = array();
 foreach($sortorder as $numero=>$name)
 {
 	$idperms="";
-	$var=!$var;
 	// Module
-	print "<tr ".$bc[$var].'><td width="300" class="nowrap">';
+	print '<tr class="oddeven"><td width="300" class="nowrap">';
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {
@@ -148,6 +149,7 @@ foreach($sortorder as $numero=>$name)
 	print "</tr>\n";
 }
 print '</table>';
+print '</div>';
 print '<br>';
 sort($rights_ids);
 $old='';

@@ -18,6 +18,7 @@
 
 $langs->load("main");
 $langs->load("bills");
+$langs->load("banks");
 
 // Object $form must de defined
 

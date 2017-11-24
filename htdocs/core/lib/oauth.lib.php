@@ -26,9 +26,13 @@
 // Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array=array(
     'OAUTH_GOOGLE_NAME'=>'google',
-    'OAUTH_GITHUB_NAME'=>'github'
 );
 
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+    $supportedoauth2array['OAUTH_GITHUB_NAME']='github';
+}
+$supportedoauth2array['OAUTH_GITHUB_NAME']='github';
 // API access parameters OAUTH
 $list = array (
     array(
@@ -264,7 +268,7 @@ function oauthadmin_prepare_head()
     $h++;
     
     $head[$h][0] = dol_buildpath('/admin/oauthlogintokens.php', 1);
-    $head[$h][1] = $langs->trans("ManualTokenGeneration");
+    $head[$h][1] = $langs->trans("TokenManager");
     $head[$h][2] = 'tokengeneration';
     $h++;
     

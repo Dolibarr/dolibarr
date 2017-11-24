@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dobava
 DeliveryRef=Ref Delivery
-DeliveryCard=Kartica dobav
+DeliveryCard=Receipt card
 DeliveryOrder=Dobavnica
 DeliveryDate=Datum dobave
-CreateDeliveryOrder=Kreiranje dobavnice
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Shranjen status dobave
 SetDeliveryDate=Nastavitev datuma dobave
 ValidateDeliveryReceipt=Potrditev prejemnice
-ValidateDeliveryReceiptConfirm=Ali zares želite potrditi prejemnico?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Zbriši prejemnico
-DeleteDeliveryReceiptConfirm=Ali zares želite zbrisati prejemnico <b>%s</b> ?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Način dobave
 TrackingNumber=Številka za sledenje
 DeliveryNotValidated=Dobava ni potrjena
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=Preklicano
+StatusDeliveryDraft=Osnutek
+StatusDeliveryValidated=Prejet
 # merou PDF model
 NameAndSignature=Ime in podpis :
 ToAndDate=Za___________________________________ dne ____/_____/__________

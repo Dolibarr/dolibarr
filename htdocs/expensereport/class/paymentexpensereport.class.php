@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ class PaymentExpenseReport extends CommonObject
 {
 	public $element='payment_expensereport';			//!< Id that identify managed objects
 	public $table_element='payment_expensereport';	//!< Name of table without prefix where object is stored
+    public $picto = 'payment';
 
 	var $rowid;
 
@@ -164,9 +165,10 @@ class PaymentExpenseReport extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_expensereport as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id AND pt.entity IN (".getEntity('c_paiement').")";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
+		$sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -426,6 +428,32 @@ class PaymentExpenseReport extends CommonObject
 
 
 	/**
+	 * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @return string        		Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return '';
+	}
+
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Libelle du statut
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+
+	    return '';
+	}
+
+
+	/**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
@@ -479,7 +507,7 @@ class PaymentExpenseReport extends CommonObject
 
             $total=$this->total;
             if ($mode == 'payment_expensereport') $amount=$total;
-            
+
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
@@ -516,24 +544,25 @@ class PaymentExpenseReport extends CommonObject
                         dol_print_error($this->db);
                     }
                 }
-                
+
                 // Add link 'user' in bank_url between user and bank transaction
                 if (! $error)
                 {
-                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    foreach ($this->amounts as $key => $value)  // We should have always same user but we loop in case of.
                     {
                     	if ($mode == 'payment_expensereport')
                         {
-                            $euser = new User($this->db);
-                            $euser->fetch($key);
+                        	$fuser = new User($this->db);
+                            $fuser->fetch($key);
+
                             $result=$acc->add_url_line(
                                 $bank_line_id,
-                                $euser->id,
+                                $fuser->id,
                                 DOL_URL_ROOT.'/user/card.php?id=',
-                                $euser->getFullName($langs),
+                                $fuser->getFullName($langs),
                                 'user'
                             );
-                            if ($result <= 0) 
+                            if ($result <= 0)
                             {
                             	$this->error=$this->db->lasterror();
                             	dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);
@@ -611,5 +640,49 @@ class PaymentExpenseReport extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *    Tab information on object
+	 *
+	 *    @param   int     $id      Payment id
+	 *    @return  void
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT e.rowid, e.datec, e.fk_user_creat, e.fk_user_modif, e.tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as e';
+		$sql.= ' WHERE e.rowid = '.$id;
+
+		dol_syslog(get_class($this).'::info', LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_creat)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_creat);
+					$this->user_creation     = $cuser;
+				}
+				if ($obj->fk_user_modif)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
 	}
 }

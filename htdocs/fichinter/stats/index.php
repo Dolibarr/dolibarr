@@ -47,6 +47,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
+$object_status=GETPOST('object_status');
+
 $langs->load('interventions');
 $langs->load('companies');
 $langs->load('other');
@@ -58,6 +60,7 @@ $langs->load('suppliers');
  */
 
 $form=new Form($db);
+$objectstatic=new FichInter($db);
 
 if ($mode == 'customer')
 {
@@ -72,6 +75,7 @@ print load_fiche_titre($title,'','title_commercial.png');
 dol_mkdir($dir);
 
 $stats = new FichinterStats($db, $socid, $mode, ($userid>0?$userid:0));
+if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -227,7 +231,7 @@ if ($mode == 'supplier') $type='supplier_order_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -249,6 +253,12 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	// Status
+	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	$liststatus=$objectstatic->statuts_short;
+	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) unset($liststatus[2]);   // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+	print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
+	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
@@ -281,7 +291,7 @@ foreach ($data as $val)
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		$var=!$var;
+
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 
@@ -294,7 +304,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	$var=!$var;
+
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';

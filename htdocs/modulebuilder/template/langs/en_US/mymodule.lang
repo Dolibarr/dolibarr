@@ -1,0 +1,53 @@
+# Copyright (C) ---Put here your own copyright and developer email---
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleMyModuleName'
+ModuleMyModuleName = MyModule
+# Module description 'ModuleMyModuleDesc'
+ModuleMyModuleDesc = MyModule description
+
+#
+# Admin page
+#
+MyModuleSetup = MyModule setup
+Settings = Settings
+MyModuleSetupPage = MyModule setup page
+MYMODULE_MYPARAM1 = My param 1
+MYMODULE_MYPARAM1Tooltip = My param 1 tooltip
+MYMODULE_MYPARAM2=My param 2
+MYMODULE_MYPARAM2Tooltip=My param 2 tooltip
+
+
+#
+# About page
+#
+About = About
+MyModuleAbout = About MyModule
+MyModuleAboutPage = MyModule about page
+
+#
+# Sample page
+#
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description

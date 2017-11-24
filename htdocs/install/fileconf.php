@@ -45,13 +45,13 @@ dolibarr_install_syslog("--- fileconf: entering fileconf.php page");
 // install.forced.php into directory htdocs/install (This is the case with some wizard
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
-if (! isset($force_install_noedit))			$force_install_noedit='';	// 1=To block var specific to distrib, 2 to block all technical parameters
+if (! isset($force_install_noedit))			    $force_install_noedit='';	// 1=To block vars specific to distrib, 2 to block all technical parameters
 if (! isset($force_install_type))				$force_install_type='';
 if (! isset($force_install_dbserver))			$force_install_dbserver='';
 if (! isset($force_install_port))				$force_install_port='';
 if (! isset($force_install_database))			$force_install_database='';
-if (! isset($force_install_prefix))			$force_install_prefix='';
-if (! isset($force_install_createdatabase))	$force_install_createdatabase='';
+if (! isset($force_install_prefix))			    $force_install_prefix='';
+if (! isset($force_install_createdatabase))	    $force_install_createdatabase='';
 if (! isset($force_install_databaselogin))		$force_install_databaselogin='';
 if (! isset($force_install_databasepass))		$force_install_databasepass='';
 if (! isset($force_install_databaserootlogin))	$force_install_databaserootlogin='';
@@ -66,13 +66,14 @@ if (@file_exists($forcedfile)) {
 }
 
 
+
 /*
  *	View
  */
 
 session_start();	// To be able to keep info into session (used for not loosing pass during navigation. pass must not transit throug parmaeters)
 
-pHeader($langs->trans("ConfigurationFile"),"step1","set","",(empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'));
+pHeader($langs->trans("ConfigurationFile"), "step1", "set", "", (empty($force_dolibarr_js_JQUERY)?'':$force_dolibarr_js_JQUERY.'/'), 'main-inside-bis');
 
 // Test if we can run a first install process
 if (! is_writable($conffile))
@@ -86,7 +87,7 @@ if (! is_writable($conffile))
 
 if (! empty($force_install_message))
 {
-    print '<div><table><tr><td valign="middle"><img src="../theme/common/information.png" style="height:40px;"></td><td valign="middle">'.$langs->trans($force_install_message).'</td></tr></table>';
+    print '<div><br>'.$langs->trans($force_install_message).'</div>';
 
     /*print '<script type="text/javascript">';
     print '	jQuery(document).ready(function() {
@@ -109,15 +110,15 @@ if (! empty($force_install_message))
 <table class="nobordernopadding<?php if ($force_install_noedit) print ' hidewhennoedit'; ?>">
 
 	<tr>
-		<td colspan="3" class="label" align="center">
-		<h3><?php echo $langs->trans("WebServer"); ?></h3>
+		<td colspan="3" class="label">
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
 	<!-- Documents root $dolibarr_main_document_root -->
 	<tr>
 	<?php
-	print '<td valign="top" class="label"><b>';
+	print '<td class="tdtop label"><b>';
 	print $langs->trans("WebPagesDirectory");
 	print "</b></td>";
 
@@ -125,9 +126,9 @@ if (! empty($force_install_message))
 		$dolibarr_main_document_root = detect_dolibarr_main_document_root();
 	}
 	?>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_document_root ?>"
 			       name="main_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -148,7 +149,7 @@ if (! empty($force_install_message))
 
 	<!-- Documents URL $dolibarr_main_data_root -->
 	<tr>
-		<td valign="top" class="label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
+		<td class="tdtop label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
 		</td>
 		<?php
 		$dolibarr_main_data_root = @$force_install_main_data_root;
@@ -156,9 +157,9 @@ if (! empty($force_install_message))
 			$dolibarr_main_data_root = detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
 		?>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       value="<?php print $dolibarr_main_data_root ?>"
 			       name="main_data_dir"
 				<?php if (!empty($force_install_noedit)) {
@@ -185,11 +186,11 @@ if (! empty($force_install_message))
 	}
 	?>
 	<tr>
-		<td valign="top" class="label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
+		<td class="tdtop label"><b> <?php echo $langs->trans("URLRoot"); ?></b>
 		</td>
-		<td valign="top" class="label">
+		<td class="tdtop label">
 			<input type="text"
-			       size="60"
+			       class="minwidth300"
 			       name="main_url"
 			       value="<?php print $dolibarr_main_url_root; ?> "
 				<?php if (!empty($force_install_noedit)) {
@@ -209,8 +210,8 @@ if (! empty($force_install_message))
 	if (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') {   // Enabled if the installation process is "https://"
 	    ?>
 	<tr>
-		<td valign="top" class="label"><?php echo $langs->trans("ForceHttps"); ?></td>
-		<td class="label" valign="top">
+		<td class="tdtop label"><?php echo $langs->trans("ForceHttps"); ?></td>
+		<td class="label tdtop">
 			<input type="checkbox"
 			       name="main_force_https"
 				<?php if (!empty($force_install_mainforcehttps)) {
@@ -232,15 +233,15 @@ if (! empty($force_install_message))
 	<!-- Dolibarr database -->
 
 	<tr>
-		<td colspan="3" class="label" align="center"><br>
-		<h3><?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<td colspan="3" class="label"><br>
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
 	<tr>
-		<td class="label" valign="top"><b> <?php echo $langs->trans("DatabaseName"); ?>
+		<td class="label tdtop"><b> <?php echo $langs->trans("DatabaseName"); ?>
 		</b></td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text" id="db_name"
 			       name="db_name"
 			       value="<?php echo (!empty($dolibarr_main_db_name)) ? $dolibarr_main_db_name : ($force_install_database ? $force_install_database : 'dolibarr'); ?>"
@@ -261,7 +262,7 @@ if (! empty($force_install_message))
 	?>
 	<tr>
 		<!-- Driver type -->
-		<td valign="top" class="label"><b> <?php echo $langs->trans("DriverType"); ?>
+		<td class="tdtop label"><b> <?php echo $langs->trans("DriverType"); ?>
 		</b></td>
 
 		<td class="label">
@@ -324,7 +325,7 @@ if (! empty($force_install_message))
 		?>
 			<select id="db_type"
 			        name="db_type"
-				<?php if ($force_install_noedit && $force_install_type !== null) {
+				<?php if ($force_install_noedit == 2 && $force_install_type !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -337,9 +338,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><b> <?php echo $langs->trans("Server"); ?>
+		<td class="tdtop label"><b> <?php echo $langs->trans("DatabaseServer"); ?>
 		</b></td>
-		<td valign="top" class="label">
+		<td class="tdtop label">
 			<input type="text"
 			       name="db_host"
 			       value="<?php print (!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
@@ -354,8 +355,8 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
-		<td valign="top" class="label">
+		<td class="tdtop label"><?php echo $langs->trans("Port"); ?></td>
+		<td class="tdtop label">
 			<input type="text"
 			       name="db_port"
 			       id="db_port"
@@ -371,9 +372,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><?php echo $langs->trans("DatabasePrefix"); ?>
+		<td class="label tdtop"><?php echo $langs->trans("DatabasePrefix"); ?>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text" id="db_prefix"
 			       name="db_prefix"
 			       value="<?php echo(!empty($force_install_prefix) ? $force_install_prefix : (!empty($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : 'llx_')); ?>"
@@ -386,9 +387,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><?php echo $langs->trans("CreateDatabase"); ?>
+		<td class="label tdtop"><?php echo $langs->trans("CreateDatabase"); ?>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="checkbox"
 			       id="db_create_database"
 			       name="db_create_database"
@@ -405,9 +406,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Login"); ?></b>
+		<td class="label tdtop"><b><?php echo $langs->trans("Login"); ?></b>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="text" id="db_user"
 			       name="db_user"
 			       value="<?php print (!empty($force_install_databaselogin)) ? $force_install_databaselogin : $dolibarr_main_db_user; ?>"
@@ -420,14 +421,14 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
+		<td class="label tdtop"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="password" id="db_pass" autocomplete="off"
 			       name="db_pass"
 			       value="<?php
-			       // We don't want to set password. It will be extracted from the forced install file at step1.
-			       $autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : '');
+			       // If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
+			       $autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
 			       if (!empty($dolibarr_main_prod)) {
 				       $autofill = '';
 			       }
@@ -442,9 +443,9 @@ if (! empty($force_install_message))
 	</tr>
 
 	<tr class="hidesqlite">
-		<td class="label" valign="top"><?php echo $langs->trans("CreateUser"); ?>
+		<td class="label tdtop"><?php echo $langs->trans("CreateUser"); ?>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="checkbox"
 			       id="db_create_user" name="db_create_user"
 				<?php if (!empty($force_install_createuser)) {
@@ -466,20 +467,20 @@ if (! empty($force_install_message))
 	$force_install_databaserootpass = parse_database_pass($force_install_databaserootpass);
 	?>
 	<tr class="hidesqlite hideroot">
-		<td colspan="3" class="label" align="center"><br>
-		<h3><?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<td colspan="3" class="label"><br>
+		<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 
 	<tr class="hidesqlite hideroot">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Login"); ?></b></td>
-		<td class="label" valign="top">
+		<td class="label tdtop"><b><?php echo $langs->trans("Login"); ?></b></td>
+		<td class="label tdtop">
 			<input type="text"
 			       id="db_user_root"
 			       name="db_user_root"
 			       class="needroot"
 			       value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : @$db_user_root; ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_databaserootlogin !== null) {
+				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootlogin)) {
 					print ' disabled';
 				} ?>
 			>
@@ -496,29 +497,30 @@ if (! empty($force_install_message))
 
 	</tr>
 	<tr class="hidesqlite hideroot">
-		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
+		<td class="label tdtop"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top">
+		<td class="label tdtop">
 			<input type="password"
 			       autocomplete="off"
 			       id="db_pass_root"
 			       name="db_pass_root"
 			       class="needroot"
 			       value="<?php
-			       // We don't want to set password. It will be extracted from the forced install file at step1.
-			       $autofill = ((!empty($force_install_database_rootpass)) ? '' : @$db_pass_root);
+			       // If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
+			       $autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : @$db_pass_root);
 			       if (!empty($dolibarr_main_prod)) {
 				       $autofill = '';
-			       }    // Do not autofill password if instance is a production instance
+			       }
+				   // Do not autofill password if instance is a production instance
 			       if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
-					       array('127.0.0.1', 'localhost'))
+					       array('127.0.0.1', 'localhost', 'localhostgit'))
 			       ) {
 				       $autofill = '';
 			       }    // Do not autofill password for remote access
 			       print dol_escape_htmltag($autofill);
 			       ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_databaserootpass !== null) {
-					print ' disabled';
+				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootpass)) {
+					print ' disabled';     // May be removed by javascript
 				} ?>
 			>
 		</td>
@@ -561,7 +563,10 @@ jQuery(document).ready(function() {
 		if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
 		{
 			jQuery(".hideroot").show();
-			jQuery(".needroot").removeAttr('disabled');
+			<?php
+			if ($force_install_noedit == 0) { ?>
+                jQuery(".needroot").removeAttr('disabled');
+			<?php } ?>
 		}
 		else
 		{

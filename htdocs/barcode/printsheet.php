@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2006-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ $numberofsticker=GETPOST('numberofsticker','int');
 
 $mesg='';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);
@@ -145,7 +145,7 @@ if ($action == 'builddoc')
 		// Load barcode class for generating barcode image
 		$classname = "mod".ucfirst($generator);
 		$module = new $classname($db);
-		if ($generator != 'tcpdfbarcode') 
+		if ($generator != 'tcpdfbarcode')
 		{
 		    // May be phpbarcode
 			$template = 'standardlabel';
@@ -236,7 +236,10 @@ if ($action == 'builddoc')
 			{
 				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
-			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, 'tmp_barcode_sheet.pdf');
+
+			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(),'dayhourlog').'.pdf';
+
+			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
 		}
 
 		if ($result <= 0)
@@ -292,9 +295,9 @@ foreach(array_keys($_Avery_Labels) as $codecards)
     $labeltoshow=$_Avery_Labels[$codecards]['name'];
     //$labeltoshow.=' ('.$_Avery_Labels[$row['code']]['paper-size'].')';
 	$arrayoflabels[$codecards]=$labeltoshow;
-	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
-print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
+asort($arrayoflabels);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print
@@ -374,19 +377,25 @@ jQuery(document).ready(function() {
 print '<input id="fillmanually" type="radio" '.((! GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode")=='fillmanually')?'checked ':'').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
 print '<br>';
 
-print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
-print '<br>';
-print '<div class="showforproductselector">';
-$form->select_produits(GETPOST('productid'), 'productid', '');
-print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
-print '</div>';
+if (! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire))
+{
+    print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromproduct')?'checked ':'').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
+    print '<br>';
+    print '<div class="showforproductselector">';
+    $form->select_produits(GETPOST('productid'), 'productid', '');
+    print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+    print '</div>';
+}
 
-print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
-print '<br>';
-print '<div class="showforthirdpartyselector">';
-print $form->select_company(GETPOST('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
-print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
-print '</div>';
+if (! empty($user->rights->societe->lire))
+{
+    print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
+    print '<br>';
+    print '<div class="showforthirdpartyselector">';
+    print $form->select_company(GETPOST('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+    print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+    print '</div>';
+}
 
 print '<br>';
 

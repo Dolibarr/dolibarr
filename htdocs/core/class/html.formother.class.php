@@ -37,8 +37,8 @@
  */
 class FormOther
 {
-    var $db;
-    var $error;
+    private $db;
+    public $error;
 
 
     /**
@@ -72,7 +72,7 @@ class FormOther
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';
@@ -121,7 +121,7 @@ class FormOther
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat minwidth200" name="'.$htmlname.'">';
             if ($useempty)
             {
                 print '<option value="-1">&nbsp;</option>';
@@ -274,15 +274,17 @@ class FormOther
      *    @param    int		$increment     	increment value
      *    @param    int		$start         	start value
      *    @param    int		$end           	end value
+     *    @param    int     $showempty      Add also an empty line
      *    @return   string					HTML select string
      */
-    function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100)
+    function select_percent($selected=0,$htmlname='percent',$disabled=0,$increment=5,$start=0,$end=100,$showempty=0)
     {
         $return = '<select class="flat" name="'.$htmlname.'" '.($disabled?'disabled':'').'>';
+        if ($showempty) $return.='<option value="-1"'.(($selected == -1 || $selected == '')?' selected':'').'>&nbsp;</option>';
 
         for ($i = $start ; $i <= $end ; $i += $increment)
         {
-            if ($selected == $i)
+            if ($selected != '' && (int) $selected == $i)
             {
                 $return.= '<option value="'.$i.'" selected>';
             }
@@ -307,10 +309,11 @@ class FormOther
      * @param   string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @param   int     $showempty      Add also an empty line
-     * @return string		        	Html combo list code
+     * @param   string  $morecss        More CSS
+     * @return  string		        	Html combo list code
      * @see	select_all_categories
      */
-    function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0,$showempty=1)
+    function select_categories($type, $selected=0, $htmlname='search_categ', $nocateg=0, $showempty=1, $morecss='')
     {
         global $conf, $langs;
         require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -320,24 +323,22 @@ class FormOther
         {
             dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
         }
-        
+
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
         $tab_categs = $static_categs->get_full_arbo($type);
 
         $moreforfilter = '';
-        $nodatarole = '';
         // Enhance with select2
         if ($conf->use_javascript_ajax)
         {
             include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             $comboenhancement = ajax_combobox('select_categ_'.$htmlname);
             $moreforfilter.=$comboenhancement;
-            $nodatarole=($comboenhancement?' data-role="none"':'');
         }
 
         // Print a select with each of them
-        $moreforfilter.='<select class="flat minwidth100" id="select_categ_'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        $moreforfilter.='<select class="flat minwidth100'.($morecss?' '.$morecss:'').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
         if ($showempty) $moreforfilter.='<option value="0">&nbsp;</option>';	// Should use -1 to say nothing
 
         if (is_array($tab_categs))
@@ -377,7 +378,6 @@ class FormOther
         $langs->load('users');
 
         $out = '';
-        $nodatarole = '';
         // Enhance with select2
         if ($conf->use_javascript_ajax)
         {
@@ -387,11 +387,10 @@ class FormOther
             if ($comboenhancement)
             {
             	$out.=$comboenhancement;
-            	$nodatarole=($comboenhancement?' data-role="none"':'');
             }
         }
         // Select each sales and print them in a select input
-        $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$nodatarole.'>';
+        $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
         if ($showempty) $out.='<option value="0">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
@@ -409,7 +408,7 @@ class FormOther
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
-	$sql_usr.= " ORDER BY u.statut DESC, lastname ASC";
+	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -602,19 +601,11 @@ class FormOther
     static function showColor($color, $textifnotdefined='')
     {
     	$textcolor='FFF';
-    	if ($color)
-    	{
-        	$hex=$color;
-        	$r = hexdec($hex[0].$hex[1]);
-        	$g = hexdec($hex[2].$hex[3]);
-        	$b = hexdec($hex[4].$hex[5]);
-        	$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-            if ($bright > 0.6) $textcolor='000';     	   
-    	}
-    	
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+    	if(colorIsLight($color)) $textcolor='000';
+
     	$color = colorArrayToHex(colorStringToArray($color,array()),'');
-    	
+
 		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
 		else print $textifnotdefined;
     }
@@ -977,8 +968,8 @@ class FormOther
      *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
-     * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
-     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlist'=>)
+     * 	@param	   String       $areacode    Code of area for pages ('0'=value for Home page)
+     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     static function getBoxesArea($user,$areacode)
     {
@@ -990,16 +981,16 @@ class FormOther
 
         // $boxactivated will be array of boxes enabled into global setup
         // $boxidactivatedforuser will be array of boxes choosed by user
-        
+
         $selectboxlist='';
-        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,(empty($user->conf->$confuserzone)?null:$user));	// Search boxes of common+user (or common only if user has no specific setup)
-        
+        $boxactivated=InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone)?null:$user), array(), 0);	// Search boxes of common+user (or common only if user has no specific setup)
+
         $boxidactivatedforuser=array();
         foreach($boxactivated as $box)
         {
         	if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id]=$box->id;	// We keep only boxes to show for user
         }
-        
+
         // Define selectboxlist
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
@@ -1010,7 +1001,8 @@ class FormOther
         	{
         		if (! empty($boxidactivatedforuser[$box->id])) continue;	// Already visible for user
         		$label=$langs->transnoentitiesnoconv($box->boxlabel);
-        		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
+        		if (preg_match('/graph/',$box->class)) $label=$label.' <span class="fa fa-bar-chart"></span>';
         		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
             foreach($boxidactivatedforuser as $boxid)
@@ -1022,15 +1014,20 @@ class FormOther
         	//var_dump($boxidactivatedforuser);
 
         	// Class Form must have been already loaded
+        	$selectboxlist.='<!-- Form with select box list -->'."\n";
 			$selectboxlist.='<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, '', $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, ' disabled hidden selected');
+			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
-            //$selectboxlist.=ajax_combobox("boxcombo");
+            if (! empty($conf->use_javascript_ajax))
+            {
+            	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            	$selectboxlist.=ajax_combobox("boxcombo");
+            }
         }
 
         // Javascript code for dynamic actions
@@ -1046,16 +1043,16 @@ class FormOther
 	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=0&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
-	        		window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=delbox\';
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=delbox\';
 	        	}
 	        	else
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=\'+closing+\'&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: true
 	        		});
 	        	}
@@ -1072,7 +1069,7 @@ class FormOther
 	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
 	    			        async: false
 	    		        });
-	        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
+	        			window.location.search=\'mainmenu='.GETPOST("mainmenu","aZ09").'&leftmenu='.GETPOST('leftmenu',"aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
 	        	if (! count($arrayboxtoactivatelabel)) $selectboxlist.='jQuery("#boxcombo").hide();';
@@ -1086,7 +1083,7 @@ class FormOther
 	        		containment: \'.fiche\',
 	        		connectWith: \'.connectedSortable\',
 	        		stop: function(event, ui) {
-	        			updateBoxOrder(0);
+	        			updateBoxOrder(1);  /* 1 to avoid message after a move */
 	        		}
 	    		});
 
@@ -1094,9 +1091,10 @@ class FormOther
 	        		var self = this;	// because JQuery can modify this
 	        		var boxid=self.id.substring(8);
 	        		var label=jQuery(\'#boxlabelentry\'+boxid).val();
+	        		console.log("We close box "+boxid);
 	        		jQuery(\'#boxto_\'+boxid).remove();
 	        		if (boxid > 0) jQuery(\'#boxcombo\').append(new Option(label, boxid));
-	        		updateBoxOrder(1);
+	        		updateBoxOrder(1);  /* 1 to avoid message after a remove */
 	        	});
 
         	});'."\n";
@@ -1113,11 +1111,6 @@ class FormOther
 			$langs->load("projects");
 
         	$emptybox=new ModeleBoxes($db);
-
-            //$boxlist.='<table width="100%" class="notopnoleftnoright">';
-            //$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
-
-            //$boxlist.='<div class="fichehalfleft">';
 
             $boxlista.="\n<!-- Box left container -->\n";
             $boxlista.='<div id="left" class="connectedSortable">'."\n";
@@ -1152,8 +1145,6 @@ class FormOther
             $boxlista.= "</div>\n";
             $boxlista.= "<!-- End box left container -->\n";
 
-            //$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
             $boxlistb.= "\n<!-- Box right container -->\n";
             $boxlistb.= '<div id="right" class="connectedSortable">'."\n";
 
@@ -1183,11 +1174,6 @@ class FormOther
             $boxlistb.= "</div>\n";
             $boxlistb.= "<!-- End box right container -->\n";
 
-            //$boxlist.= '</div></div>';
-            //$boxlist.= "\n";
-
-            //$boxlist.= "</td></tr>";
-            //$boxlist.= "</table>";
         }
 
         return array('selectboxlist'=>count($boxactivated)?$selectboxlist:'', 'boxactivated'=>$boxactivated, 'boxlista'=>$boxlista, 'boxlistb'=>$boxlistb);

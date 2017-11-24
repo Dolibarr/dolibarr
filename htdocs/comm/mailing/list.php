@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,18 +34,18 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="m.date_creat";
 
-$sall=GETPOST("sall","alpha");
-$sref=GETPOST("sref","alpha");
+$sall=GETPOST('sall', 'alphanohtml');
+$sref=GETPOST("sref", "alpha");
 $filteremail=GETPOST('filteremail','alpha');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('mailinglist'));
 $extrafields = new ExtraFields($db);
 
@@ -109,49 +109,59 @@ if ($result)
 
 	$param = "&amp;sall=".urlencode($sall);
 	if ($filteremail) $param.='&amp;filteremail='.urlencode($filteremail);
-	
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<table class="liste">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"m.rowid",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"m.titre",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"m.date_creat",$param,"",'align="center"',$sortfield,$sortorder);
-	if (! $filteremail) print_liste_field_titre($langs->trans("NbOfEMails"),$_SERVER["PHP_SELF"],"m.nbemail",$param,"",'align="center"',$sortfield,$sortorder);
-	if (! $filteremail) print_liste_field_titre($langs->trans("DateLastSend"),$_SERVER["PHP_SELF"],"m.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
-	else print_liste_field_titre($langs->trans("DateSending"),$_SERVER["PHP_SELF"],"mc.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],($filteremail?"mc.statut":"m.statut"),$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
 
-	print '<tr class="liste_titre">';
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+
+    $moreforfilter = '';
+
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sref" value="'.dol_escape_htmltag($sref).'" size="6">';
+	print '<input type="text" class="flat maxwidth50" name="sref" value="'.dol_escape_htmltag($sref).'">';
 	print '</td>';
 	// Title
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="sall" value="'.dol_escape_htmltag($sall).'" size="40">';
+	print '<input type="text" class="flat maxwidth100 maxwidth50onsmartphone" name="sall" value="'.dol_escape_htmltag($sall).'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
 	print "</tr>\n";
 
-	$var=True;
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"m.rowid",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"m.titre",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"m.date_creat",$param,"",'align="center"',$sortfield,$sortorder);
+	if (! $filteremail) print_liste_field_titre("NbOfEMails",$_SERVER["PHP_SELF"],"m.nbemail",$param,"",'align="center"',$sortfield,$sortorder);
+	if (! $filteremail) print_liste_field_titre("DateLastSend",$_SERVER["PHP_SELF"],"m.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
+	else print_liste_field_titre("DateSending",$_SERVER["PHP_SELF"],"mc.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],($filteremail?"mc.statut":"m.statut"),$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
+
 
 	$email=new Mailing($db);
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
 
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+
+		print "<tr>";
 		print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$obj->rowid.'">';
 		print img_object($langs->trans("ShowEMail"),"email").' '.stripslashes($obj->rowid).'</a></td>';
 		print '<td>'.$obj->titre.'</td>';
@@ -164,7 +174,7 @@ if ($result)
 		{
 			print '<td align="center">';
 			$nbemail = $obj->nbemail;
-			if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			/*if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 				print $form->textwithpicto($nbemail,$text,1,'warning');
@@ -172,7 +182,8 @@ if ($result)
 			else
 			{
 				print $nbemail;
-			}
+			}*/
+			print $nbemail;
 			print '</td>';
 		}
 		// Last send
@@ -193,7 +204,9 @@ if ($result)
 		print "</tr>\n";
 		$i++;
 	}
-	print '</table></form>';
+	print '</table>';
+	print '</div>';
+	print '</form>';
 	$db->free($result);
 }
 else

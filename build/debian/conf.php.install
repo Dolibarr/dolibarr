@@ -221,7 +221,13 @@ $dolibarr_main_prod='0';
 # $dolibarr_main_limit_users='0';
 
 # dolibarr_mailing_limit_sendbyweb
-# Can set a limit for mailing send by web, can be used for a restricted mode.
+# Can set a limit for mailing send by web. This overwrite database value. Can be used to restrict on OS level.
 # Default value: 0 (use database value if exist)
 # Examples:
 # $dolibarr_mailing_limit_sendbyweb='0';
+
+# dolibarr_mailing_limit_sendbycli
+# Can set a limit for mailing send by cli. This overwrite database value. Can be used to restrict on OS level.
+# Default value: 0 (use database value if exist)
+# Examples:
+# $dolibarr_mailing_limit_sendbycli='0';

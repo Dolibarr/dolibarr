@@ -47,7 +47,7 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
+foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
@@ -78,7 +78,7 @@ print "<br>\n";
 
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_shipment', $langs->trans("Sendings"), 0, 'sending');
+dol_fiche_head($head, 'attributes_shipment', $langs->trans("Sendings"), -1, 'sending');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

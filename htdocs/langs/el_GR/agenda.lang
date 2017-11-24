@@ -2,8 +2,8 @@
 IdAgenda=Αναγνωριστικού συμβάντος
 Actions=Ενέργειες
 Agenda=Ημερολόγιο
+TMenuAgenda=Ημερολόγιο
 Agendas=Ημερολόγια
-Calendar=Ημερολόγιο
 LocalAgenda=Εσωτερικό ημερολόγιο
 ActionsOwnedBy=Το γεγονός ανήκει
 ActionsOwnedByShort=Ιδιοκτήτης
@@ -12,6 +12,7 @@ Event=Εκδήλωση
 Events=Ενέργειες
 EventsNb=Αριθμός γεγονότων
 ListOfActions=Λίστα γεγονότων
+EventReports=Event reports
 Location=Τοποθεσία
 ToUserOfGroup=Σε κάθε χρήστη της ομάδας
 EventOnFullDay=Ολοήμερο Γεγονός
@@ -34,11 +35,30 @@ AgendaAutoActionDesc= Ορίστε εδώ τα γεγονότα για τα οπ
 AgendaSetupOtherDesc= Αυτή η σελίδα παρέχει επιλογές για να καταστεί δυνατή η εξαγωγή των δικών σας εκδηλώσεων Dolibarr σε ένα εξωτερικό ημερολόγιο (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
 ActionsEvents=Γεγονότα για τα οποία θα δημιουργήσουν εγγραφή στο ημερολόγιο, αυτόματα
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+##### Agenda event labels #####
+NewCompanyToDolibarr=Third party %s created
+ContractValidatedInDolibarr=Συμβόλαιο %s επικυρώθηκε
+PropalClosedSignedInDolibarr=Πρόσφορα %s υπεγράφη
+PropalClosedRefusedInDolibarr=Πρόσφορα %s απορρίφθηκε
 PropalValidatedInDolibarr=Η πρόταση %s επικυρώθηκε
+PropalClassifiedBilledInDolibarr=Πρόταση %s ταξινομούνται χρεωθεί
 InvoiceValidatedInDolibarr=Το τιμολόγιο %s επικυρώθηκε
 InvoiceValidatedInDolibarrFromPos=Το τιμολόγιο επικυρώθηκε από το  POS
 InvoiceBackToDraftInDolibarr=Τιμολόγιο %s θα επιστρέψει στην κατάσταση του σχεδίου
 InvoiceDeleteDolibarr=Τιμολόγιο %s διαγράφεται
+InvoicePaidInDolibarr=Τιμολόγιο %s άλλαξε σε καταβληθεί
+InvoiceCanceledInDolibarr=Τιμολόγιο %s ακυρώθηκε
+MemberValidatedInDolibarr=Μέλος %s επικυρωθεί
+MemberModifiedInDolibarr=Member %s modified
+MemberResiliatedInDolibarr=Member %s terminated
+MemberDeletedInDolibarr=Μέλος %s διαγράφηκε
+MemberSubscriptionAddedInDolibarr=Συνδρομή για το μέλος %s προστέθηκε
+ShipmentValidatedInDolibarr=Η αποστολή %s επικυρώθηκε
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentDeletedInDolibarr=Η αποστολή %s διαγράφηκε
+OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Η παραγγελία %s επικυρώθηκε
 OrderDeliveredInDolibarr=Παραγγελία %s κατατάσσεται παραδοτέα
 OrderCanceledInDolibarr=Παραγγελία %s ακυρώθηκε
@@ -47,6 +67,7 @@ OrderApprovedInDolibarr=Παραγγελία %s εγκρίθηκε
 OrderRefusedInDolibarr=Παραγγελία %s απορριφθεί
 OrderBackToDraftInDolibarr=Παραγγελία %s θα επιστρέψει στην κατάσταση σχέδιο
 ProposalSentByEMail=Η εμπορική πρόταση %s στάλθηκε με e-mail
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=Η παραγγελία του πελάτη %s εστάλη με EMail
 InvoiceSentByEMail=Το τιμολόγιο του πελάτη %s εστάλη με EMail
 SupplierOrderSentByEMail=Η παραγγελία προμηθευτή %s στάλθηκε με e-mail
@@ -57,13 +78,25 @@ InterventionSentByEMail=Η παρέμβαση %s αποστέλλεται μέσ
 ProposalDeleted=Η προσφορά διαγράφηκε
 OrderDeleted=Η παραγγελία διαγράφηκε
 InvoiceDeleted=Το τιμολόγιο διαγράφηκε
-NewCompanyToDolibarr= Το στοιχείο δημιουργήθηκε
-DateActionStart= Ημερομηνία έναρξης
-DateActionEnd= Ημερομηνία λήξης
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Έργο %s δημιουργήθηκε
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
+##### End agenda events #####
+AgendaModelModule=Document templates for event
+DateActionStart=Ημερομηνία έναρξης
+DateActionEnd=Ημερομηνία λήξης
 AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε τα αποτέλεσμα:
-AgendaUrlOptions2=<b>login=%s</b> για να περιορίσουν την είσοδο σε ενέργειες που δημιουργούνται ή έχουν εκχωρηθεί στο χρήστη <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> να περιορίσει την παραγωγή ενεργειών που ανήκουν στον χρήστη <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που αφορούν τον χρήστη<b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> να περιορίσει την παραγωγή της σε ενέργειες που σχετίζονται με το έργο <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των επαφών
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των επαφών
@@ -86,7 +119,7 @@ MyAvailability=Η διαθεσιμότητα μου
 ActionType=Τύπος συμβάντος
 DateActionBegin=Έναρξη ημερομηνίας του συμβάντος
 CloneAction=Κλωνοποίηση συμβάντος
-ConfirmCloneEvent=Θέλετε σίγουρα να κλωνοποιήσετε το συμβάν<b>%s</b>;
+ConfirmCloneEvent=Είστε σίγουροι πως θέλετε να κλωνοποιήσετε την εκδήλωση <b>%s</b>;
 RepeatEvent=Επανάληψη συμβάντος
 EveryWeek=Εβδομαδιαίο
 EveryMonth=Μηνιαίο

@@ -36,7 +36,7 @@ abstract class DoliDB implements Database
 	/** @var string Charset used to force charset when creating database */
 	public $forcecharset='utf8';
 	/** @var string Collate used to force collate when creating database */
-	public $forcecollate='utf8_general_ci';
+	public $forcecollate='utf8_unicode_ci';
 	/** @var resource Resultset of last query */
 	private $_results;
 	/** @var bool true if connected, else false */
@@ -59,7 +59,7 @@ abstract class DoliDB implements Database
 	public $lastqueryerror;
 	/** @var string Last error message */
 	public $lasterror;
-	/** @var int Last error number */
+	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
 	/** @var bool Status */
@@ -84,12 +84,12 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *   @param	    int		$param      	Date TMS to convert
+	 *   @return	string      			Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
-		return dol_print_date($param,"%Y%m%d%H%M%S");
+		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
@@ -220,9 +220,9 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string	$sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
+	 * @param	string	        $sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
 	 * @param	'ASC'|'DESC'	$sortorder  Sort order
-	 * @return	string      		String to provide syntax of a sort sql string
+	 * @return	string      		        String to provide syntax of a sort sql string
 	 */
 	function order($sortfield=null,$sortorder=null)
 	{
@@ -230,18 +230,25 @@ abstract class DoliDB implements Database
 		{
 			$return='';
 			$fields=explode(',',$sortfield);
+			$orders=explode(',',$sortorder);
+			$i=0;
 			foreach($fields as $val)
 			{
 				if (! $return) $return.=' ORDER BY ';
-				else $return.=',';
+				else $return.=', ';
 
 				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
+
+				$tmpsortorder = trim($orders[$i]);
+
 				// Only ASC and DESC values are valid SQL
-				if (strtoupper($sortorder) === 'ASC') {
+				if (strtoupper($tmpsortorder) === 'ASC') {
 					$return .= ' ASC';
-				} elseif (strtoupper($sortorder) === 'DESC') {
+				} elseif (strtoupper($tmpsortorder) === 'DESC') {
 					$return .= ' DESC';
 				}
+
+				$i++;
 			}
 			return $return;
 		}

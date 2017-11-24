@@ -39,7 +39,7 @@ $result = restrictedArea($user, 'deplacement','','');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -106,14 +106,23 @@ print "</tr>\n";
 $listoftype=$tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
-    $dataseries[]=array('label'=>$label,'data'=>(isset($nb[$code])?(int) $nb[$code]:0));
+    $dataseries[]=array($label, (isset($nb[$code])?(int) $nb[$code]:0));
 }
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr '.$bc[false].'><td align="center" colspan="4">';
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+    print '<tr><td align="center" colspan="4">';
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($totalnb?0:1);
+
     print '</td></tr>';
 }
 
@@ -173,21 +182,21 @@ if ($result)
             $userstatic->id=$obj->uid;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
             print '<td align="right">'.$obj->km.'</td>';
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
             print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
             print '</tr>';
-            $var=!$var;
+
             $i++;
         }
 
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

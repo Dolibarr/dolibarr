@@ -53,7 +53,7 @@ $object=$GLOBALS['object'];
 </tr>
 
 <tr>
-<td valign="top"><?php echo $langs->trans("Description"); ?></td>
+<td class="tdtop"><?php echo $langs->trans("Description"); ?></td>
 <td colspan="2"><?php echo $object->description; ?></td>
 </tr>
 
@@ -63,7 +63,7 @@ $object=$GLOBALS['object'];
 </td></tr>
 
 <tr>
-<td valign="top"><?php echo $langs->trans("Note"); ?></td>
+<td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
 <td colspan="2"><?php echo $object->note; ?></td>
 </tr>
 

@@ -87,9 +87,9 @@ class PaymentLoan extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_loan)) 			$this->fk_loan = trim($this->fk_loan);
-		if (isset($this->amount_capital))	$this->amount_capital = trim($this->amount_capital?$this->amount_capital:0);
-		if (isset($this->amount_insurance))	$this->amount_insurance = trim($this->amount_insurance?$this->amount_insurance:0);
-		if (isset($this->amount_interest))	$this->amount_interest = trim($this->amount_interest?$this->amount_interest:0);
+		if (isset($this->amount_capital))	$this->amount_capital = price2num($this->amount_capital?$this->amount_capital:0);
+		if (isset($this->amount_insurance))	$this->amount_insurance = price2num($this->amount_insurance?$this->amount_insurance:0);
+		if (isset($this->amount_interest))	$this->amount_interest = price2num($this->amount_interest?$this->amount_interest:0);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
 		if (isset($this->note_private))     $this->note_private = trim($this->note_private);
@@ -175,9 +175,10 @@ class PaymentLoan extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_loan as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id AND pt.entity IN (".getEntity('c_paiement').")";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
+		$sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);

@@ -85,10 +85,10 @@ if (! isset($conf->global->ASTERISK_PRIORITY))  $conf->global->ASTERISK_PRIORITY
 if (! isset($conf->global->ASTERISK_MAX_RETRY)) $conf->global->ASTERISK_MAX_RETRY="2";
 
 
-$login = $_GET['login'];
-$password = $_GET['password'];
-$caller = $_GET['caller'];
-$called = $_GET['called'];
+$login = GETPOST('login');
+$password = GETPOST('password');
+$caller = GETPOST('caller');
+$called = GETPOST('called');
 
 // IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;
@@ -117,7 +117,7 @@ llxHeader();
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
-$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 $sql.= " AND (s.phone='".$db->escape($called)."'";
 $sql.= " OR sp.phone='".$db->escape($called)."'";
 $sql.= " OR sp.phone_perso='".$db->escape($called)."'";

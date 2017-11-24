@@ -33,20 +33,21 @@ class PaymentSalary extends CommonObject
 {
 	//public $element='payment_salary';			//!< Id that identify managed objects
 	//public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
+    public $picto='payment';
 
-	var $tms;
-	var $fk_user;
-	var $datep;
-	var $datev;
-	var $amount;
-	var $type_payment;
-	var $num_payment;
-	var $label;
-	var $datesp;
-	var $dateep;
-	var $fk_bank;
-	var $fk_user_author;
-	var $fk_user_modif;
+	public $tms;
+	public $fk_user;
+	public $datep;
+	public $datev;
+	public $amount;
+	public $type_payment;
+	public $num_payment;
+	public $label;
+	public $datesp;
+	public $dateep;
+	public $fk_bank;
+	public $fk_user_author;
+	public $fk_user_modif;
 
 
 	/**
@@ -96,20 +97,20 @@ class PaymentSalary extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
 
-		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " fk_user='".$this->fk_user."',";
-		$sql.= " datep=".$this->db->idate($this->datep).",";
-		$sql.= " datev=".$this->db->idate($this->datev).",";
-		$sql.= " amount='".$this->amount."',";
+		$sql.= " tms='".$this->db->idate($this->tms)."',";
+		$sql.= " fk_user=".$this->fk_user.",";
+		$sql.= " datep='".$this->db->idate($this->datep)."',";
+		$sql.= " datev='".$this->db->idate($this->datev)."',";
+		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " fk_typepayment=".$this->fk_typepayment."',";
-		$sql.= " num_payment='".$this->num_payment."',";
+		$sql.= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
-		$sql.= " datesp=".$this->db->idate($this->datesp).",";
-		$sql.= " dateep=".$this->db->idate($this->dateep).",";
+		$sql.= " datesp='".$this->db->idate($this->datesp)."',";
+		$sql.= " dateep='".$this->db->idate($this->dateep)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
-		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->fk_bank."'":"null").",";
-		$sql.= " fk_user_author='".$this->fk_user_author."',";
-		$sql.= " fk_user_modif='".$this->fk_user_modif."'";
+		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->db->escape($this->fk_bank)."'":"null").",";
+		$sql.= " fk_user_author=".$this->fk_user_author.",";
+		$sql.= " fk_user_modif=".$this->fk_user_modif;
 
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -343,18 +344,18 @@ class PaymentSalary extends CommonObject
 		$sql.= ", entity";
 		$sql.= ") ";
 		$sql.= " VALUES (";
-		$sql.= "'".$this->fk_user."'";
+		$sql.= "'".$this->db->escape($this->fk_user)."'";
 		$sql.= ", '".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
 		$sql.= ", ".($this->salary > 0 ? $this->salary : "null");
-		$sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+		$sql.= ", ".$this->db->escape($this->type_payment);
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->idate($this->datesp)."'";
 		$sql.= ", '".$this->db->idate($this->dateep)."'";
-		$sql.= ", '".$user->id."'";
+		$sql.= ", '".$this->db->escape($user->id)."'";
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
@@ -499,14 +500,16 @@ class PaymentSalary extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -545,6 +548,68 @@ class PaymentSalary extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
+	}
+
+
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	function LibStatut($status,$mode=0)
+	{
+	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+	    $langs->load('compta');
+	    /*if ($mode == 0)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate');
+	        if ($status == 1) return $langs->trans('Validated');
+	    }
+	    if ($mode == 1)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate');
+	        if ($status == 1) return $langs->trans('Validated');
+	    }
+	    if ($mode == 2)
+	    {
+	        if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+	        if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+	    }
+	    if ($mode == 3)
+	    {
+	        if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+	    }
+	    if ($mode == 4)
+	    {
+	        if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+	        if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+	    }
+	    if ($mode == 5)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }
+		if ($mode == 6)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }*/
+	    return '';
 	}
 
 }

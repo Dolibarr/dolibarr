@@ -155,7 +155,6 @@ $genPriceOptions = function($level) use ($price_options) {
 
 	return $return;
 };
-
 ?>
 
 	<table class="noborder">
@@ -173,7 +172,8 @@ $genPriceOptions = function($level) use ($price_options) {
 				<td class="fieldrequired" style="text-align: center"><?php
 					echo $langs->trans('SellingPrice').' '.$i;
 					// Label of price
-					if (! empty($conf->global->{"PRODUIT_MULTIPRICES_LABEL$i"})) {
+					$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
+					if (! empty($conf->global->$keyforlabel)) {
 						print ' - '.$langs->trans($conf->global->$keyforlabel);
 					}
 					?>

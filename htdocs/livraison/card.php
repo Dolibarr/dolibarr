@@ -32,13 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->expedition_bon->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 
 $langs->load("sendings");
@@ -49,7 +54,7 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage');
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -69,7 +74,7 @@ $extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_el
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard','globalcard'));
 
 /*
@@ -137,7 +142,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' &&
 	{
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 		if (! empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
@@ -202,7 +207,9 @@ if ($action == 'update_extras')
 		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
 			$result = $object->insertExtraFields();
-			if ($result < 0) {
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		} else if ($reshook < 0)
@@ -218,7 +225,7 @@ if ($action == 'update_extras_line')
 {
 	$array_options=array();
 	$num=count($object->lines);
-	
+
 	for ($i = 0; $i < $num; $i++)
 	{
 		// Extrafields
@@ -231,7 +238,7 @@ if ($action == 'update_extras_line')
 				unset($_POST["options_" . $key]);
 			}
 		}
-		
+
 		$ret = $object->update_line($object->lines[$i]->id,$array_options[$i]);	// extrafields update
 		if ($ret < 0)
 		{
@@ -254,7 +261,7 @@ if ($action == 'builddoc')	// En get ou en post
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	if (! empty($newlang))
 	{
@@ -300,7 +307,7 @@ $formfile = new FormFile($db);
 if ($action == 'create')    // Seems to no be used
 {
 
-	
+
 }
 else
 /* *************************************************************************** */
@@ -311,13 +318,8 @@ else
 {
 	if ($object->id > 0)
 	{
-		// Origin of a 'livraison' (delivery) is ALWAYS 'expedition' (shipment).
+		// Origin of a 'livraison' (delivery receipt) is ALWAYS 'expedition' (shipment).
 		// However, origin of shipment in future may differs (commande, proposal, ...)
-		// TODO REGIS:
-		// Je ne suis pas d'accord, beaucoup entreprises n'utilisent pas les bons d'expéditions car ces derniers sont gérés par le transporteur,
-		// donc les bons de livraisons peuvent avoir une origine différente de 'expedition'
-		// les bons de livraisons et d'expéditions devraient être considérés comme des objets à part entière, voir des modules différents comme une propal ou autres.
-
 		$expedition=new Expedition($db);
 		$result = $expedition->fetch($object->origin_id);
 		$typeobject = $expedition->origin;	// example: commande
@@ -333,16 +335,16 @@ else
 
 			$head=delivery_prepare_head($object);
 
-			
+
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="update_extras_line">';
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
-				
+
 			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
-				
+
 			/*
 			 * Confirmation de la suppression
 			 *
@@ -367,10 +369,74 @@ else
 			/*
 			 *   Livraison
 			 */
-			
-			print '<table class="border" width="100%">';
+
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && ! empty($conf->commande->enabled))
+			{
+			    $objectsrc=new Commande($db);
+			    $objectsrc->fetch($expedition->origin_id);
+			}
+			if ($typeobject == 'propal' && $expedition->origin_id > 0 && ! empty($conf->propal->enabled))
+			{
+			    $objectsrc=new Propal($db);
+			    $objectsrc->fetch($expedition->origin_id);
+			}
+
+			// Shipment card
+			$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
+
+			$morehtmlref='<div class="refidno">';
+			// Ref customer shipment
+			$morehtmlref.=$form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', 0, 1);
+			$morehtmlref.=$form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+			$morehtmlref.='<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
+			// Thirdparty
+			$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $expedition->thirdparty->getNomUrl(1);
+			// Project
+			if (! empty($conf->projet->enabled)) {
+			    $langs->load("projects");
+			    $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
+			    if (0) {    // Do not change on shipment
+			        if ($action != 'classify') {
+			            $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $expedition->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			        }
+			        if ($action == 'classify') {
+			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
+			            $morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $expedition->id . '">';
+			            $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+			            $morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+			            $morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+			            $morehtmlref .= '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+			            $morehtmlref .= '</form>';
+			        } else {
+			            $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
+			        }
+			    } else {
+			        $morehtmlref .= ' : ';
+			        if (! empty($objectsrc->fk_project)) {
+			            $proj = new Project($db);
+			            $proj->fetch($objectsrc->fk_project);
+			            $morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $objectsrc->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+			            $morehtmlref .= $proj->ref;
+			            $morehtmlref .= '</a>';
+			        } else {
+			            $morehtmlref .= '';
+			        }
+			    }
+			}
+			$morehtmlref.='</div>';
+
+			$morehtmlright = $langs->trans("StatusReceipt").' : '.$object->getLibStatut(6).'<br>';
+
+			dol_banner_tab($expedition, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+
+
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
+
+		    print '<table class="border" width="100%">';
 
 			// Shipment
+			/*
 			if (($object->origin == 'shipment' || $object->origin == 'expedition') && $object->origin_id > 0)
 			{
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
@@ -394,11 +460,12 @@ else
 			print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
 			print '<td align="3">'.$soc->getNomUrl(1).'</td>';
 			print "</tr>";
+            */
 
 			// Document origine
 			if ($typeobject == 'commande' && $expedition->origin_id && ! empty($conf->commande->enabled))
 			{
-				print '<tr><td>'.$langs->trans("RefOrder").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order=new Commande($db);
 				$order->fetch($expedition->origin_id);
 				print '<td colspan="3">';
@@ -410,21 +477,16 @@ else
 			{
 				$propal=new Propal($db);
 				$propal->fetch($expedition->origin_id);
-				print '<tr><td>'.$langs->trans("RefProposal").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("RefProposal").'</td>';
 				print '<td colspan="3">';
 				print $propal->getNomUrl(1,'expedition');
 				print "</td>\n";
 				print '</tr>';
 			}
 
-			// Ref client
-			print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-			print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
-			print '</tr>';
-
 			// Date
-			print '<tr><td>'.$langs->trans("DateCreation").'</td>';
-			print '<td colspan="3">'.dol_print_date($object->date_creation,'daytext')."</td>\n";
+			print '<tr><td class="titlefield">'.$langs->trans("DateCreation").'</td>';
+			print '<td colspan="3">'.dol_print_date($object->date_creation,'dayhour')."</td>\n";
 			print '</tr>';
 
 			// Date delivery real / Received
@@ -441,13 +503,13 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+				$form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
 			else
 			{
-				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
+				print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhour') : '&nbsp;';
 			}
 			print '</td>';
 			print '</tr>';
@@ -475,27 +537,24 @@ else
 		        print '</td></tr>';
 			}
 
+			/* A delivery note should be just more properties of a shipment, so notes are on shipment
 			// Note Public
             print '<tr><td>'.$langs->trans("NotePublic").'</td>';
             print '<td colspan="3">';
             print nl2br($object->note_public);
-            /*$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);*/
             print "</td></tr>";
 
 			// Note Private
             print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
             print '<td colspan="3">';
             print nl2br($object->note_private);
-            /*$doleditor = new DolEditor('note_pprivate', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
-            print $doleditor->Create(1);*/
             print "</td></tr>";
-
+            */
 
 			// Statut
-			print '<tr><td>'.$langs->trans("Status").'</td>';
+			/*print '<tr><td>'.$langs->trans("Status").'</td>';
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
-			print '</tr>';
+			print '</tr>';*/
 
 			if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 			{
@@ -506,12 +565,22 @@ else
 				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
 				print '</tr>';
 			}
-			
+
 			// Other attributes
+			if ($action = 'create_delivery') {
+				// copy from expedition
+				$expeditionExtrafields = new Extrafields($db);
+				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
+				if ($expedition->fetch_optionals($object->origin_id, $expeditionExtrafieldLabels) > 0) {
+					$object->array_options = array_merge($object->array_options, $expedition->array_options);
+				}
+			}
 			$cols = 2;
 			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 			print "</table><br>\n";
+
+			print '</div>';
 
 			/*
 			 * Lignes produits
@@ -535,9 +604,9 @@ else
 			$var=true;
 			while ($i < $num_prod)
 			{
-				$var=!$var;
 
-				print "<tr ".$bc[$var].">";
+
+				print '<tr class="oddeven">';
 				if ($object->lines[$i]->fk_product > 0)
 				{
 					$product = new Product($db);
@@ -599,14 +668,21 @@ else
 				print '<td align="center">'.$object->lines[$i]->qty_shipped.'</td>';
 
 				print "</tr>";
-				
+
 				//Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines)>0) {
 					$colspan=2;
 					$mode = ($object->statut == 0) ? 'edit' : 'view';
 					$line = new LivraisonLigne($db);
 					$line->fetch_optionals($object->lines[$i]->id,$extralabelslines);
-					print '<tr '.$bc[$var].'>';
+					if ($action = 'create_delivery') {
+						$srcLine = new ExpeditionLigne($db);
+						$expeditionLineExtrafields = new Extrafields($db);
+						$expeditionLineExtrafieldLabels = $expeditionLineExtrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine->fetch_optionals($expedition->lines[$i]->id,$expeditionLineExtrafieldLabels);
+						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
+					}
+					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var], 'colspan'=>$colspan),$i);
 					print '</tr>';
 				}
@@ -615,14 +691,14 @@ else
 			}
 
 			print "</table>\n";
-			
+
             dol_fiche_end();
 
 			//if ($object->statut == 0)	// only if draft
 			//	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
-            
+
 			print '</form>';
-            
+
 
 			/*
 			 *    Boutons actions
@@ -632,7 +708,7 @@ else
 			{
 				print '<div class="tabsAction">';
 
-				if ($object->statut == 0 && $num_prod > 0) 
+				if ($object->statut == 0 && $num_prod > 0)
 				{
 					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison->creer))
 						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->livraison_advance->validate)))
@@ -667,10 +743,10 @@ else
 			$filedir = $conf->expedition->dir_output . "/receipt/" . $objectref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$genallowed=$user->rights->expedition->livraison->creer;
-			$delallowed=$user->rights->expedition->livraison->supprimer;
+			$genallowed=$user->rights->expedition->livraison->lire;
+			$delallowed=$user->rights->expedition->livraison->creer;
 
-			$somethingshown=$formfile->show_documents('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+			print $formfile->showdocuments('livraison',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 		 	 * Linked object block (of linked shipment)
@@ -691,14 +767,6 @@ else
 			// Rien a droite
 
 			print '</td></tr></table>';
-
-			// List of existing shipment and delivery receipts
-			if ($expedition->origin_id)
-			{
-				print '<br>';
-				//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
-				show_list_sending_receive($expedition->origin,$expedition->origin_id);
-			}
 		}
 		else
 		{

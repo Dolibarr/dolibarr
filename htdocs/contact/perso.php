@@ -60,7 +60,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact
 		$object->old_firstname='';
 		// Logo/Photo save
 		$dir= $conf->societe->dir_output.'/contact/' . get_exdir($object->id,0,0,1,$object,'contact').'/photos';
-		
+
 		$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 		if ($file_OK)
 		{
@@ -88,7 +88,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact
 					else
 					{
 					    // Create thumbs
-					    $object->addThumbs($newfile);					    
+					    $object->addThumbs($newfile);
 					}
 				}
 			}
@@ -147,26 +147,26 @@ if ($action == 'edit')
     print '<input type="hidden" name="id" value="'.$object->id.'">';
 
     dol_fiche_head($head, 'perso', $title, 0, 'contact');
-    
+
     print '<table class="border" width="100%">';
 
     // Ref
     print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">';
     print $object->id;
     print '</td>';
-    
+
     // Photo
     print '<td align="center" class="hideonsmartphone" valign="middle" rowspan="6">';
     print $form->showphoto('contact',$object)."\n";
     if ($object->photo) print "<br>\n";
-    
+
     print '<table class="nobordernopadding">';
-    
+
     if ($object->photo) print '<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
     print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
     print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
     print '</table>';
-    
+
     print '</td></tr>';
 
     // Name
@@ -216,7 +216,7 @@ if ($action == 'edit')
     print "</table>";
 
     dol_fiche_end();
-    
+
     print '<div class="center">';
     print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -228,20 +228,34 @@ if ($action == 'edit')
 else
 {
     // View mode
-    
-    dol_fiche_head($head, 'perso', $title, 0, 'contact');
-    
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-    
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-    
-    
+
+    dol_fiche_head($head, 'perso', $title, -1, 'contact');
+
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+    $morehtmlref='<div class="refidno">';
+    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+    {
+        $objsoc=new Societe($db);
+        $objsoc->fetch($object->socid);
+        // Thirdparty
+        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
+        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+    }
+    $morehtmlref.='</div>';
+
+
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
     // Company
+    /*
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
         if ($object->socid > 0)
@@ -258,7 +272,7 @@ else
             print $langs->trans("ContactNotLinkedToCompany");
             print '</td></tr>';
         }
-    }
+    }*/
 
     // Civility
     print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td colspan="3">';

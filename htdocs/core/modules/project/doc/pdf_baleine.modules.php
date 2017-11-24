@@ -154,11 +154,11 @@ class pdf_baleine extends ModelePDFProjects
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
-                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines 
+                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
                 {
                     $tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
                 }
-                
+
 				$object->lines=$tasksarray;
 				$nblignes=count($object->lines);
 
@@ -223,7 +223,7 @@ class pdf_baleine extends ModelePDFProjects
 					$progress=$object->lines[$i]->progress.'%';
 					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
-					$planned_workload=convertSecondToTime($object->lines[$i]->planned_workload,'allhourmin');
+					$planned_workload=convertSecondToTime((int) $object->lines[$i]->planned_workload,'allhourmin');
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
@@ -328,6 +328,8 @@ class pdf_baleine extends ModelePDFProjects
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+				$this->result = array('fullpath'=>$file);
 
 				return 1;   // Pas d'erreur
 			}

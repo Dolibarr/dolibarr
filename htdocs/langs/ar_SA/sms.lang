@@ -38,7 +38,7 @@ SmsStatusNotSent=لم يرسل
 SmsSuccessfulySent=الرسائل القصيرة المرسلة بشكل صحيح (من %s إلى %s)
 ErrorSmsRecipientIsEmpty=عدد من الهدف فارغة
 WarningNoSmsAdded=لا رقم هاتف جديدا يضاف إلى قائمة المستهدفين
-ConfirmValidSms=هل لك أن تتأكد من التحقق من صحة هذه campain؟
+ConfirmValidSms=Do you confirm validation of this campain?
 NbOfUniqueSms=ملحوظة: أرقام شعبة الشؤون المالية هاتف فريد من نوعه
 NbOfSms=Nbre من أرقام فون
 ThisIsATestMessage=هذه هي رسالة اختبار
@@ -48,4 +48,4 @@ SmsInfoNumero= (تنسيق دولي أي: +33899701761)
 DelayBeforeSending=تأخير قبل إرسال (دقائق)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=لا هدف متاح. تحقق الإعداد من مزود خدمات الرسائل القصيرة.
-
+DisableStopIfSupported=Disable STOP message (if supported)

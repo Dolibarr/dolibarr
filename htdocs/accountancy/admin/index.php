@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2017      Laurent Destailleur  <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -32,16 +32,14 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
-$langs->load("salaries");
 
-// Security check
-if (empty($user->admin))
+// Security access
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -50,12 +48,10 @@ $action = GETPOST('action', 'alpha');
 
 // Parameters ACCOUNTING_* and others
 $list = array (
-    //'ACCOUNTING_LIMIT_LIST_VENTILATION',  Useless, we can change value dynamically, so we use default global setup
-    'ACCOUNTING_MANAGE_ZERO',
     'ACCOUNTING_LENGTH_GACCOUNT',
     'ACCOUNTING_LENGTH_AACCOUNT' ,
-    'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
-    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
+//    'ACCOUNTING_LENGTH_DESCRIPTION',         // adjust size displayed for lines description for dol_trunc
+//    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
 
 
@@ -64,34 +60,33 @@ $list = array (
  * Actions
  */
 
-$accounting_mode = defined('ACCOUNTING_MODE') ? ACCOUNTING_MODE : 'RECETTES-DEPENSES';
+$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 if ($action == 'update') {
 	$error = 0;
-	
+
 	$accounting_modes = array (
 			'RECETTES-DEPENSES',
-			'CREANCES-DETTES' 
+			'CREANCES-DETTES'
 	);
-	
+
 	$accounting_mode = GETPOST('accounting_mode', 'alpha');
-	
+
 	if (in_array($accounting_mode, $accounting_modes)) {
-		
+
 		if (! dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	} else {
 		$error ++;
 	}
-	
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
+
+	if ($error) {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 
-    foreach ( $list as $constname ) {
+    foreach ($list as $constname)
+    {
         $constvalue = GETPOST($constname, 'alpha');
 
         if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -145,17 +140,16 @@ if ($action == 'setmanagezero') {
 }
 
 if ($action == 'setdisabledirectinput') {
-    $setdisabledirectinput = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
-    if (! $res > 0)
-        $error ++;
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+	$setdisabledirectinput = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+		if (! $error) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'mesgs');
+		}
 }
-
 
 /*
  * View
@@ -164,22 +158,16 @@ if ($action == 'setdisabledirectinput') {
 llxHeader();
 
 $form = new Form($db);
-$formaccountancy = new FormVentilation($db);
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+//$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
-
-$head = admin_accounting_prepare_head($accounting);
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'general', $langs->trans("Configuration"), 0, 'cron');
-
-
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)
-
+/*
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
@@ -206,7 +194,7 @@ print "</table>\n";
 
 
 print '<br>';
-
+*/
 
 // Others params
 
@@ -218,8 +206,7 @@ print "</tr>\n";
 if (! empty($user->admin))
 {
     // TO DO Mutualize code for yes/no constants
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
+    print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
@@ -232,8 +219,7 @@ if (! empty($user->admin))
     }
     print '</tr>';
 
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
+    print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
         print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
@@ -246,15 +232,27 @@ if (! empty($user->admin))
     }
     print '</tr>';
 
-    $var = ! $var;
-    print "<tr " . $bc[$var] . ">";
-    print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
-    if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
+	if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+
+    print '<tr class="oddeven">';
+    print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+        print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -262,58 +260,31 @@ if (! empty($user->admin))
 }
 
 
-// Param a user $user->rights->accountancy->chartofaccount can access
-foreach ( $list as $key ) {
-    $var = ! $var;
+// Param a user $user->rights->accounting->chartofaccount can access
+foreach ($list as $key)
+{
+    print '<tr class="oddeven value">';
 
-    if ($key != 'ACCOUNTING_MANAGE_ZERO')
-    {
-        print '<tr ' . $bc[$var] . ' class="value">';
-        // Param
-        $label = $langs->trans($key);
-        print '<td>'.$label.'</td>';
-        // Value
-        print '<td align="right">';
-        print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
-        print '</td>';
-        print '</tr>';
-    }
-    if ($key == 'ACCOUNTING_MANAGE_ZERO')
-    {
-        $var = ! $var;
-        print "<tr " . $bc[$var] . ">";
-        print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
-        if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-            print '<td align="right""><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
-            print img_picto($langs->trans("Activated"), 'switch_on');
-            print '</a></td>';
-        } else {
-            print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
-            print img_picto($langs->trans("Disabled"), 'switch_off');
-            print '</a></td>';
-        }
-        print '</tr>';
-    }
+    if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
+
+    // Param
+    $label = $langs->trans($key);
+    print '<td>'.$label.'</td>';
+    // Value
+    print '<td align="right">';
+    print '<input type="text" class="maxwidth100" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';
+    print '</td>';
+
+    print '</tr>';
 }
 
 
 print '</table>';
 
-
-
-
-
-
-
-
-dol_fiche_end();
-
 print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="button"></div>';
 
 print '<br>';
 print '<br>';
-
-print $langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Financial").'-'.$langs->transnoentitiesnoconv("Accountancy"));
 
 print '<br>';
 print '</form>';

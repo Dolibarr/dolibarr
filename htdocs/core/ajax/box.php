@@ -26,7 +26,7 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOREQUIREHOOK'))  define('NOREQUIREHOOK','1');
 
 require '../../main.inc.php';
@@ -50,7 +50,7 @@ $userid=GETPOST('userid','int');
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Add a box
 if ($boxid > 0 && $zone !='' && $userid > 0)
@@ -70,5 +70,13 @@ if ($boxorder && $zone != '' &&  $userid > 0)
 	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+	if ($result > 0) 
+	{
+	    $langs->load("boxes");
+	    if (! GETPOST('closing'))
+	    {
+	       setEventMessages($langs->trans("BoxAdded"), null);
+	    }
+	}
 }
 

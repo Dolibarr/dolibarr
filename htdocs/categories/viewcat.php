@@ -34,15 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("categories");
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref');
-$type=GETPOST('type');
-$action=GETPOST('action');
-$confirm=GETPOST('confirm');
+$id   = GETPOST('id','int');
+$label= GETPOST('label','alpha');
+$type = GETPOST('type','az09');
+$action=GETPOST('action','aZ09');
+$confirm    = GETPOST('confirm','alpha');
 $removeelem = GETPOST('removeelem','int');
-$elemid=GETPOST('elemid');
+$elemid     = GETPOST('elemid','alpha');
 
-if ($id == "")
+if ($id == "" && $label == "")
 {
 	dol_print_error('','Missing parameter id');
 	exit();
@@ -52,7 +52,7 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result=$object->fetch($id);
+$result=$object->fetch($id, $label);
 $object->fetch_optionals($id,$extralabels);
 if ($result <= 0)
 {
@@ -61,12 +61,14 @@ if ($result <= 0)
 }
 
 $type=$object->type;
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
+
 
 /*
  *	Actions
@@ -86,13 +88,13 @@ if ($id > 0 && $removeelem > 0)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
-		$elementtype = 'fournisseur';
+		$elementtype = 'supplier';
 	}
 	else if ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
-		$elementtype = 'societe';
+		$elementtype = 'customer';
 	}
 	else if ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
 	{
@@ -186,11 +188,26 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategor
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("ProjectsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
 
-dol_fiche_head($head, 'card', $title, 0, 'category');
+
+dol_fiche_head($head, 'card', $title, -1, 'category');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
+$object->next_prev_filter=" type = ".$object->type;
+$object->ref = $object->label;
+$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
+foreach ($ways as $way)
+{
+    $morehtmlref.=$way."<br>\n";
+}
+$morehtmlref.='</div>';
+
+dol_banner_tab($object, 'label', $linkback, ($user->societe_id?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
 
 
 /*
@@ -199,24 +216,17 @@ dol_fiche_head($head, 'card', $title, 0, 'category');
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type, $langs->trans('DeleteCategory'), $langs->trans('ConfirmDeleteCategory'), 'confirm_delete', '', '', 1);
 }
 
+print '<br>';
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 print '<table width="100%" class="border">';
 
-// Path of category
-print '<tr><td class="titlefield notopnoleft">';
-$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
-print $langs->trans("Ref").'</td><td>';
-print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
-foreach ($ways as $way)
-{
-	print $way."<br>\n";
-}
-print '</td></tr>';
-
 // Description
-print '<tr><td class="notopnoleft">';
+print '<tr><td class="titlefield notopnoleft tdtop">';
 print $langs->trans("Description").'</td><td>';
 print dol_htmlentitiesbr($object->description);
 print '</td></tr>';
@@ -227,13 +237,11 @@ print $langs->trans("Color").'</td><td>';
 print $formother->showColor($object->color);
 print '</td></tr>';
 
-$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-if (empty($reshook) && ! empty($extrafields->attribute_label))
-{
-	print $object->showOptionals($extrafields);
-}
+// Other attributes
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 
@@ -280,11 +288,9 @@ else
 	print "</tr>\n";
 	if (count($cats) > 0)
 	{
-		$var=true;
 		foreach ($cats as $cat)
 		{
-			$var=!$var;
-			print "\t<tr ".$bc[$var].">\n";
+			print "\t".'<tr class="oddeven">'."\n";
 			print "\t\t".'<td class="nowrap">';
 			print "<a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a>";
 			print "</td>\n";
@@ -313,7 +319,7 @@ else
 
 
 // List of products or services (type is type of category)
-if ($object->type == Categorie::TYPE_PRODUCT)
+if ($type == Categorie::TYPE_PRODUCT)
 {
 	$prods = $object->getObjectsInCateg("product");
 	if ($prods < 0)
@@ -351,15 +357,13 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 
 		if (count($prods) > 0)
 		{
-			$var=true;
 			foreach ($prods as $prod)
 			{
-				$var=!$var;
-				print "\t<tr ".$bc[$var].">\n";
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $prod->getNomUrl(1);
 				print "</td>\n";
-				print '<td valign="top">'.$prod->label."</td>\n";
+				print '<td class="tdtop">'.$prod->label."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
 				$typeid=$object->type;
@@ -387,7 +391,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 	}
 }
 
-if ($object->type == Categorie::TYPE_SUPPLIER)
+if ($type == Categorie::TYPE_SUPPLIER)
 {
 	$socs = $object->getObjectsInCateg("supplier");
 	if ($socs < 0)
@@ -402,12 +406,9 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 
 		if (count($socs) > 0)
 		{
-			$var=true;
 			foreach ($socs as $soc)
 			{
-				$var=!$var;
-				print "\t<tr ".$bc[$var].">\n";
-
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
 				print "</td>\n";
@@ -439,7 +440,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 	}
 }
 
-if($object->type == Categorie::TYPE_CUSTOMER)
+if($type == Categorie::TYPE_CUSTOMER)
 {
 	$socs = $object->getObjectsInCateg("customer");
 	if ($socs < 0)
@@ -455,14 +456,13 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 		if (count($socs) > 0)
 		{
 			$i = 0;
-			$var=true;
 			foreach ($socs as $key => $soc)
 			{
 				if ($user->societe_id > 0 && $soc->id != $user->societe_id)	continue; 	// External user always see only themself
 
 				$i++;
-				$var=!$var;
-				print "\t<tr ".$bc[$var].">\n";
+
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $soc->getNomUrl(1);
 				print "</td>\n";
@@ -494,7 +494,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 }
 
 // List of members
-if ($object->type == Categorie::TYPE_MEMBER)
+if ($type == Categorie::TYPE_MEMBER)
 {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -511,17 +511,15 @@ if ($object->type == Categorie::TYPE_MEMBER)
 
 		if (count($prods) > 0)
 		{
-			$var=true;
 			foreach ($prods as $key => $member)
 			{
-				$var=!$var;
-				print "\t<tr ".$bc[$var].">\n";
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				$member->ref=$member->login;
 				print $member->getNomUrl(1,0);
 				print "</td>\n";
-				print '<td valign="top">'.$member->lastname."</td>\n";
-				print '<td valign="top">'.$member->firstname."</td>\n";
+				print '<td class="tdtop">'.$member->lastname."</td>\n";
+				print '<td class="tdtop">'.$member->firstname."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
 				$typeid=$object->type;
@@ -549,7 +547,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 }
 
 // Categorie contact
-if($object->type == Categorie::TYPE_CONTACT)
+if ($type == Categorie::TYPE_CONTACT)
 {
 	$contacts = $object->getObjectsInCateg("contact");
 	if ($contacts < 0)
@@ -565,12 +563,11 @@ if($object->type == Categorie::TYPE_CONTACT)
 		if (count($contacts) > 0)
 		{
 			$i = 0;
-			$var=true;
 			foreach ($contacts as $key => $contact)
 			{
 				$i++;
-				$var=!$var;
-				print "\t<tr ".$bc[$var].">\n";
+
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1,'category');
 				print "</td>\n";
@@ -603,7 +600,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 }
 
 // List of accounts
-if ($object->type == Categorie::TYPE_ACCOUNT)
+if ($type == Categorie::TYPE_ACCOUNT)
 {
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -620,16 +617,14 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
 
         if (count($accounts) > 0)
         {
-            $var=true;
             foreach ($accounts as $key => $account)
             {
-                $var=!$var;
-                print "\t<tr ".$bc[$var].">\n";
+                print "\t".'<tr class="oddeven">'."\n";
                 print '<td class="nowrap" valign="top">';
                 print $account->getNomUrl(1,0);
                 print "</td>\n";
-                print '<td valign="top">'.$account->bank."</td>\n";
-                print '<td valign="top">'.$account->number."</td>\n";
+                print '<td class="tdtop">'.$account->bank."</td>\n";
+                print '<td class="tdtop">'.$account->number."</td>\n";
                 // Link to delete from category
                 print '<td align="right">';
                 $typeid=$object->type;
@@ -658,7 +653,7 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
 }
 
 // List of Project
-if ($object->type == Categorie::TYPE_PROJECT)
+if ($type == Categorie::TYPE_PROJECT)
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -675,16 +670,14 @@ if ($object->type == Categorie::TYPE_PROJECT)
 
 		if (count($projects) > 0)
 		{
-			$var=true;
 			foreach ($projects as $key => $project)
 			{
-				$var=!$var;
-				print "\t<tr ".$bc[$var].">\n";
+				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $project->getNomUrl(1,0);
 				print "</td>\n";
-				print '<td valign="top">'.$project->ref."</td>\n";
-				print '<td valign="top">'.$project->title."</td>\n";
+				print '<td class="tdtop">'.$project->ref."</td>\n";
+				print '<td class="tdtop">'.$project->title."</td>\n";
 				// Link to delete from category
 				print '<td align="right">';
 				$typeid=$object->type;

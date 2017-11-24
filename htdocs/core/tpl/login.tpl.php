@@ -16,6 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Need global variable $title to be defined by caller (like dol_loginfunction)
+// Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
+
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -28,6 +31,10 @@ if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 // If we force to use jmobile, then we reenable javascript
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
+$php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
+$php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
+if (! preg_match('/mainmenu=/',$php_self)) $php_self.=(preg_match('/\?/',$php_self)?'&':'?').'mainmenu=home';
+
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs=array(
 	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)),
@@ -35,11 +42,14 @@ $arrayofjs=array(
 );
 $titleofloginpage=$langs->trans('Login').' @ '.$titletruedolibarrversion;	// $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
-print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
+$disablenofollow=1;
+if (! preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow=0;
+
+print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
-<body class="body bodylogin">
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -50,7 +60,7 @@ $(document).ready(function () {
 </script>
 <?php } ?>
 
-<div class="center">
+<div class="login_center center">
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
@@ -70,26 +80,31 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td class="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
-</table>
-<br>
+
+
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<?php
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+echo dol_escape_htmltag($title);
+if ($disablenofollow) echo '</a>';
+?>
+</div>
+
+
 
 <div class="login_table">
 
 <div id="login_line1">
 
 <div id="login_left">
-
 <img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
-
 </div>
-
 
 
 <div id="login_right">
 
-<table class="left centpercent" title="Login pass">
+<table class="left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 <!-- Login -->
 <tr>
 <td class="nowrap center valignmiddle">
@@ -102,29 +117,34 @@ $(document).ready(function () {
 <!-- Password -->
 <tr>
 <td class="nowrap center valignmiddle">
-<?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" hidden><?php echo $langs->trans("Password"); ?></label><?php } ?>
+<?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <span class="span-icon-password">
-<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="off" />
+<input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
 </span>
 </td></tr>
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
 	}
+	else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
+	}
 }
-?>
-<?php
-	if ($captcha) {
-		// Add a variable param to force not using cache (jmobile)
-		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
-		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
-		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
-		// TODO: provide accessible captcha variants
+
+if ($captcha) {
+	// Add a variable param to force not using cache (jmobile)
+	$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
+	if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
+	else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+	// TODO: provide accessible captcha variants
 ?>
 	<!-- Captcha -->
 	<tr>
@@ -144,13 +164,10 @@ if (! empty($hookmanager->resArray['options'])) {
 <?php } ?>
 </table>
 
-</div> <!-- end div left -->
+</div> <!-- end div login-right -->
 
+</div> <!-- end div login-line1 -->
 
-
-
-
-</div>
 
 <div id="login_line2" style="clear: both">
 
@@ -210,9 +227,10 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 ?>
 
-</div>
+</div> <!-- end login line 2 -->
 
-</div>
+</div> <!-- end login table -->
+
 
 </form>
 
@@ -227,12 +245,29 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 	</div></div>
 <?php
 }
+
+// Add commit strip
+if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	if (substr($langs->defaultlang,0,2)=='fr') {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/fr/feed/");
+	} else {
+		$resgetcommitstrip = getURLContent("http://www.commitstrip.com/en/feed/");
+	}
+    if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200')
+    {
+        $xml = simplexml_load_string($resgetcommitstrip['content']);
+        $little = $xml->channel->item[0]->children('content',true);
+        print $little->encoded;
+    }
+}
+
 ?>
 
 <?php if ($main_home)
 {
 ?>
-	<div class="center login_main_home" style="max-width: 80%">
+	<div class="center login_main_home paddingtopbottom <?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
 	<?php echo $main_home; ?>
 	</div><br>
 <?php
@@ -245,11 +280,11 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
-<?php if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER; ?>
-
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
+if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
+
+if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'js') {
 			echo "\n".'<!-- Javascript by hook -->';
@@ -257,9 +292,11 @@ if (! empty($hookmanager->resArray['options'])) {
 		}
 	}
 }
-?>
+else if (! empty($moreloginextracontent)) {
+	echo '<!-- Javascript by hook -->';
+	echo $moreloginextracontent;
+}
 
-<?php
 // Google Analytics (need Google module)
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
@@ -279,9 +316,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID)
 		print '</script>'."\n";
 	}
 }
-?>
 
-<?php
 // Google Adsense
 if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {

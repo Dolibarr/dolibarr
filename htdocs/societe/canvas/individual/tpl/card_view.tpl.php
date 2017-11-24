@@ -76,7 +76,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <?php } ?>
 
 <tr>
-	<td valign="top"><?php echo $langs->trans('Address'); ?></td>
+	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['address']; ?></td>
 </tr>
 
@@ -201,10 +201,10 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
  */
 $filedir=$conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed=$user->rights->societe->creer;
-$delallowed=$user->rights->societe->supprimer;
+$genallowed=$user->rights->societe->lire;
+$delallowed=$user->rights->societe->creer;
 
-$somethingshown=$formfile->show_documents('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
+print $formfile->showdocuments('company',$socid,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$objcanvas->control->object->default_lang);
 ?>
 
 </td>

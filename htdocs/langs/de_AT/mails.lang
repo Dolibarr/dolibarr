@@ -1,16 +1,13 @@
 # Dolibarr language file - Source file is en_US - mails
+MailTitle=Beschreibung
 ResetMailing=E-Mail-Kampagne erneut senden
-ConfirmResetMailing=Achtung: Die neuerliche Ausführung der E-Mail-Kampagne <b>%s</b> erlaubt Ihnen den Massenversand von E-Mails zu einem anderen Zeitpunkt. Möchten Sie wirklich fortfahren?
+MailingStatusValidated=Bestätigt
 CloneEMailing=E-Mail-Kampagne duplizieren
-ConfirmCloneEMailing=Möchten Sie diese Mailkampagne wirklich duplizieren?
 CloneContent=Nachricht duplizieren
 MailingArea=E-Mail-Kampagnenübersicht
-LastMailings=%s neueste E-Mail-Kampagnen
 MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr geändert werden
 SearchAMailing=Suche E-Mail-Kampagne
 SendMailing=E-Mail-Kampagne versenden
-MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mail-Kampagnen von der Kommandozeile aus versandt werden. Bitten Sie Ihren Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
-ConfirmSendingEmailing=Möchten Sie diese E-Mail-Kampagne wirklich versenden?<br>Aus Sicherheitsgründen ist der gleichzeitige Versand auf <b>%s</b> Empfänger pro Sitzung beschränkt.
 LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 IdRecord=Eintrags ID
 ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt

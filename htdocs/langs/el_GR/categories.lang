@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Ετικέτα/Κατηγορία
 Rubriques=Ετικέτες/Κατηγορίες
+RubriquesTransactions=Tags/Categories of transactions
 categories=Ετικέτες/Κατηγορίες
 NoCategoryYet=Δεν έχει δημιουργηθεί τέτοια ετικέτα/κατηγορία
 In=Μέσα

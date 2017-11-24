@@ -38,7 +38,7 @@ SmsStatusNotSent=Ni poslan
 SmsSuccessfulySent=SMS uspešno poslan (od %s do %s)
 ErrorSmsRecipientIsEmpty=Številka prekjemnika ne obstaja
 WarningNoSmsAdded=Ni nove številke za dodajanje med prejemnike
-ConfirmValidSms=Ali potrjujete veljavnost te kampanje ?
+ConfirmValidSms=Do you confirm validation of this campain?
 NbOfUniqueSms=Število enoličnih telefonskih številk
 NbOfSms=Število telefonskih številk
 ThisIsATestMessage=To je tekstovno sporočilo
@@ -48,4 +48,4 @@ SmsInfoNumero= (mednarodni format npr : +33899701761)
 DelayBeforeSending=Zakasnitev začetka pošiljanja (minut)
 SmsNoPossibleSenderFound=Posrednik ni nastavljen. Preverite nastavitve vašega SMS posrednika.
 SmsNoPossibleRecipientFound=Ni prejemnika. Preverite nastavitve vašega SMS providerja.
-
+DisableStopIfSupported=Disable STOP message (if supported)

@@ -9,6 +9,7 @@
 	<exclude-pattern type="relative">htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
+	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 
 		<!-- List of all tests -->
 
@@ -125,7 +126,7 @@
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="complexity" value="120" />
-            <property name="absoluteComplexity" value="250" />
+            <property name="absoluteComplexity" value="300" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">

@@ -474,6 +474,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

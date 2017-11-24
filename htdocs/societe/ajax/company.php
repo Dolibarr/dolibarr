@@ -18,8 +18,8 @@
  */
 
 /**
- *       \file       htdocs/product/ajax/company.php
- *       \brief      File to return Ajax response on product list request
+ *       \file       htdocs/societe/ajax/company.php
+ *       \brief      File to return Ajax response on thirdparty list request
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
@@ -28,33 +28,29 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
 require '../../main.inc.php';
 
 $htmlname=GETPOST('htmlname','alpha');
-$socid=GETPOST('socid','int');
-$type=GETPOST('type','int');
-$mode=GETPOST('mode','int');
-$status=((GETPOST('status','int') >= 0) ? GETPOST('status','int') : -1);
+$filter=GETPOST('filter','alpha');
 $outjson=(GETPOST('outjson','int') ? GETPOST('outjson','int') : 0);
-$price_level=GETPOST('price_level','int');
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
-$price_by_qty_rowid=GETPOST('pbq', 'int');
+$showtype=GETPOST('showtype','int');
+
 
 /*
  * View
  */
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog(join(',',$_GET));
+dol_syslog(join(',', $_GET));
 //print_r($_GET);
 
 if (! empty($action) && $action == 'fetch' && ! empty($id))
 {
-	require DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 	$outjson=array();
 
@@ -63,8 +59,11 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	if ($ret > 0)
 	{
 		$outname=$object->name;
+		$outlabel = '';
+		$outdesc = '';
+		$outtype = $object->type;
 
-		$outjson = array('name'=>$outname);
+		$outjson = array('ref' => $outref,'name' => $outname,'desc' => $outdesc,'type' => $outtype);
 	}
 
 	echo json_encode($outjson);
@@ -73,8 +72,7 @@ else
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
-	$langs->load("products");
-	$langs->load("main");
+	$langs->load("companies");
 
 	top_httphead();
 
@@ -84,20 +82,13 @@ else
 	sort($match);
 	$id = (! empty($match[0]) ? $match[0] : '');
 
-	if (! GETPOST($htmlname) && ! GETPOST($id)) return;
-
 	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey=(GETPOST($id)?GETPOST($id):(GETPOST($htmlname)?GETPOST($htmlname):''));
+	$searchkey=(($id && GETPOST($id, 'alpha'))?GETPOST($id, 'alpha'):(($htmlname && GETPOST($htmlname, 'alpha'))?GETPOST($htmlname, 'alpha'):''));
+
+	if (! $searchkey) return;
 
 	$form = new Form($db);
-	if (empty($mode) || $mode == 'customer')
-	{
-		$arrayresult=$form->select_company_html($socid,$htmlname,"client IN (1,3)",0,0,0,null,$searchkey,$outjson);
-	}
-	elseif ($mode == 'supplier')
-	{
-		$arrayresult=$form->select_company_html($socid,$htmlname,"fournisseur=1",0,0,0,null,$searchkey,$outjson);
-	}
+	$arrayresult=$form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson);
 
 	$db->close();
 

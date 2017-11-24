@@ -16,7 +16,7 @@ CancelCP=Annullerad
 RefuseCP=Refused
 ValidatorCP=Approbator
 ListeCP=Lista över blad
-ReviewedByCP=Kommer att granskas av
+ReviewedByCP=Will be approved by
 DescCP=Beskrivning
 SendRequestCP=Skapa permission begäran
 DelayToRequestCP=Lämna begäran måste göras <b>minst %s dag (ar) </b> före dem.
@@ -76,8 +76,11 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Månads uppdatering
 ManualUpdate=Manuell uppdatering
 HolidaysCancelation=Lämna begäran Spärr
-EmployeeLastname=Employee lastname
-EmployeeFirstname=Employee firstname
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

@@ -155,14 +155,14 @@ fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 #echo "drop old table"
-echo "drop table llx_accounting_account;" | mysql -P$port -u$admin $passwd $base
+echo "drop table if exists llx_accounting_account;" | mysql -P$port -u$admin $passwd $base
 echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
 mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 export res=$?
 
 
 # ---------------------------- copy demo files
-export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" `
+export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
 if [ "x$documentdir" != "x" ]
 then
 	echo cp -pr $mydir/documents_demo/* "$documentdir/"
@@ -174,7 +174,7 @@ then
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 else
-	echo Detection of documents directory failed so demo files were not copied. 
+	echo Detection of documents directory from $mydir failed so demo files were not copied. 
 fi
 
 

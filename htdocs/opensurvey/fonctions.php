@@ -108,7 +108,7 @@ function showlogo()
 	// Print logo
 	if ($mysoc->logo) {
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=thumbs/'.urlencode($mysoc->logo_small);
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=thumbs/'.urlencode($mysoc->logo_small);
 		}
 	}
 

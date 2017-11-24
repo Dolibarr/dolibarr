@@ -91,7 +91,7 @@ if ($_socid > 0)
 	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
 	print '<table width="100%" border="0">';
-	print '<tr><td valign="top">';
+	print '<tr><td class="tdtop">';
 	print '<table class="border" width="100%">';
 
 	print '<tr><td colspan="2" width="25%">';

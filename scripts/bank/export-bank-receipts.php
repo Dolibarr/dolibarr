@@ -262,7 +262,7 @@ if ($resql)
 		$totalbefore = $total;
 		$total = $total + $objp->amount;
 
-		$var=!$var;
+		
 
 		// Date operation
 		$dateop=$db->jdate($objp->do);

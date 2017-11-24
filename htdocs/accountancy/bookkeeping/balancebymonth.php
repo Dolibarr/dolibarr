@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ $langs->load("other");
 $langs->load("accountancy");
 
 // Filter
-$year = $_GET["year"];
+$year = GETPOST("year",'int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -47,9 +47,11 @@ if ($year == 0) {
 	$year_start = $year;
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("Bookkeeping"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';

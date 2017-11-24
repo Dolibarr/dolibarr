@@ -44,7 +44,7 @@ $socid='';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatsorder'));
 
 $mesg = '';
@@ -52,7 +52,7 @@ $mesg = '';
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -61,7 +61,7 @@ if (! $sortfield) $sortfield="c.date_commande";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
 	$search_month='';
 	$search_year='';
 }
@@ -82,7 +82,7 @@ if ($id > 0 || ! empty($ref))
 	$result = $product->fetch($id, $ref);
 
 	$object = $product;
-	
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -94,17 +94,21 @@ if ($id > 0 || ! empty($ref))
 		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
+		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-		
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -114,9 +118,9 @@ if ($id > 0 || ! empty($ref))
 
         print '</div>';
         print '<div style="clear:both"></div>';
-		
+
 		dol_fiche_end();
-		
+
 
 		if ($user->rights->commande->lire)
 		{
@@ -129,7 +133,7 @@ if ($id > 0 || ! empty($ref))
 			$sql.= ", ".MAIN_DB_PREFIX."commandedet as d";
 			if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE c.fk_soc = s.rowid";
-			$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
+			$sql.= " AND c.entity IN (".getEntity('commande').")";
 			$sql.= " AND d.fk_commande = c.rowid";
 			$sql.= " AND d.fk_product =".$product->id;
 	            if (! empty($search_month))
@@ -193,15 +197,16 @@ if ($id > 0 || ! empty($ref))
 				print '</div>';
 
 				$i = 0;
-	            print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+                print '<div class="div-table-responsive">';
+				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
-				print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","",$option,'',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$option,'',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$option,'',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"c.date_commande","",$option,'align="center"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","",$option,'align="center"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.total_ht","",$option,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","",$option,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid","",$option,'',$sortfield,$sortorder);
+				print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","",$option,'',$sortfield,$sortorder);
+				print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","",$option,'',$sortfield,$sortorder);
+				print_liste_field_titre("OrderDate",$_SERVER["PHP_SELF"],"c.date_commande","",$option,'align="center"',$sortfield,$sortorder);
+				print_liste_field_titre("Qty",$_SERVER["PHP_SELF"],"d.qty","",$option,'align="center"',$sortfield,$sortorder);
+				print_liste_field_titre("AmountHT",$_SERVER["PHP_SELF"],"c.total_ht","",$option,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"c.fk_statut","",$option,'align="right"',$sortfield,$sortorder);
 				print "</tr>\n";
 
 				if ($num > 0)
@@ -210,9 +215,9 @@ if ($id > 0 || ! empty($ref))
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($result);
-						$var=!$var;
 
-						print '<tr '.$bc[$var].'>';
+
+						print '<tr class="oddeven">';
 	 					print '<td>';
 	                    $orderstatic->id=$objp->commandeid;
 	                    $orderstatic->ref=$objp->ref;
@@ -223,7 +228,7 @@ if ($id > 0 || ! empty($ref))
 	                    print '<td>'.$societestatic->getNomUrl(1).'</td>';
 	                    print "<td>".$objp->code_client."</td>\n";
 						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->date_commande))."</td>";
+						print dol_print_date($db->jdate($objp->date_commande), 'dayhour')."</td>";
 						print  '<td align="center">'.$objp->qty."</td>\n";
 	                    print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$orderstatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
@@ -243,8 +248,8 @@ if ($id > 0 || ! empty($ref))
                 print '<td align="right">'.price($total_ht).'</td>';
                 print '<td></td>';
                 print "</table>";
+                print "</div>";
                 print '</form>';
-                print '<br>';
             } else {
 				dol_print_error($db);
 			}

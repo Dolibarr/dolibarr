@@ -38,7 +38,7 @@ require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php");
 
 $langs->load("main");
 $langs->load("errors");
@@ -291,7 +291,7 @@ if ($result >= 0)
 			{
 				// Cree premiere cotisation et met a jour datefin dans adherent
 				//print "xx".$datefirst."\n";
-				$crowid=$member->cotisation($datefirst, $pricefirst, 0);
+				$crowid=$member->subscription($datefirst, $pricefirst, 0);
 			}
 
 			// Insert last subscription
@@ -299,7 +299,7 @@ if ($result >= 0)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
 				//print "yy".dol_print_date($datelast)."\n";
-				$crowid=$member->cotisation($datelast, $pricelast, 0);
+				$crowid=$member->subscription($datelast, $pricelast, 0);
 			}
 
 		}

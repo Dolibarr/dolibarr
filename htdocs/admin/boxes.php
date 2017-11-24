@@ -235,7 +235,7 @@ $sql = "SELECT b.rowid, b.box_id, b.position, b.box_order,";
 $sql.= " bd.rowid as boxid";
 $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
 $sql.= " WHERE b.box_id = bd.rowid";
-$sql.= " AND b.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+$sql.= " AND b.entity IN (0,".$conf->entity.")";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
@@ -329,7 +329,10 @@ print load_fiche_titre($langs->trans("BoxesAvailable"));
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="add">'."\n";
-print '<table class="noborder" width="100%">'."\n";
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="tagtable liste centpercent">'."\n";
+
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
@@ -339,7 +342,7 @@ print "</tr>\n";
 $var=true;
 foreach($boxtoadd as $box)
 {
-    $var=!$var;
+
 
     if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
     {
@@ -351,7 +354,7 @@ foreach($boxtoadd as $box)
     }
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr class="oddeven">'."\n";
     print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
     if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
     print '</td>'."\n";
@@ -375,6 +378,8 @@ foreach($boxtoadd as $box)
 }
 
 print '</table>'."\n";
+print '</div>';
+
 print '<div class="right">';
 print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled').' value="'.$langs->trans("Activate").'">';
 print '</div>'."\n";
@@ -388,7 +393,9 @@ $boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 print "<br>\n\n";
 print load_fiche_titre($langs->trans("BoxesActivated"));
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="tagtable liste">'."\n";
+
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
@@ -414,7 +421,7 @@ foreach($boxactivated as $key => $box)
 	}
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
 	if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
 	print '</td>';
@@ -441,7 +448,9 @@ foreach($boxactivated as $key => $box)
 	print '</tr>'."\n";
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
+print '<br>';
 
 
 // Other parameters
@@ -459,7 +468,7 @@ print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("MaxNbOfLinesForBoxes");
 print '</td>'."\n";
@@ -470,8 +479,8 @@ print '</tr>';
 
 // Activate FileCache - Developement
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
+
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
     print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
     print '</td>';
     print '</tr>';

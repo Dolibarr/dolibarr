@@ -134,7 +134,7 @@ $dolibarr_main_db_type='';
 
 
 // dolibarr_main_db_character_set
-// Database character set used to store data (forced during database creation).
+// Database character set used to store data (forced during database creation. value of database is then used).
 // Default value: depends on database driver
 // Examples:
 // dolibarr_main_db_character_set='utf8';
@@ -143,12 +143,12 @@ $dolibarr_main_db_character_set='utf8';
 
 
 // dolibarr_main_db_collation
-// Database character set used to sort data (forced during database creation).
+// Database character set used to sort data (forced during database creation. value of database is then used).
 // Default value: depends on database driver
 // Examples:
-// dolibarr_main_db_collation='utf8_general_ci';
+// dolibarr_main_db_collation='utf8_unicode_ci';
 //
-$dolibarr_main_db_collation='utf8_general_ci';
+$dolibarr_main_db_collation='utf8_unicode_ci';
 
 
 
@@ -250,11 +250,16 @@ $dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
 $dolibarr_nocsrfcheck='0';
 
 // dolibarr_mailing_limit_sendbyweb
-// Can set a limit for mailing send by web. Can be used for a restricted mode.
-// Default value: 0 (use database value if exist)
-// Examples:
-// $dolibarr_mailing_limit_sendbyweb='0';
+// Can set a limit for mailing send by web. This overwrite database value. Can be used to restrict on OS level.
+// Default value: '25'
+// Examples: '-1' (sending by web is forbidden)
+// $dolibarr_mailing_limit_sendbyweb='25';
 
+// dolibarr_mailing_limit_sendbycli
+// Can set a limit for mailing send by cli. This overwrite database value. Can be used to restrict on OS level.
+// Default value: '0' (no hard limit, use soft database value if exists)
+// Examples: '-1' (sending by cli is forbidden)
+// $dolibarr_mailing_limit_sendbycli='0';
 
 
 //##################
@@ -318,15 +323,5 @@ $dolibarr_nocsrfcheck='0';
 //##############################
 // External module
 //##############################
-
-// multicompany_transverse_mode
-// Prerequisite: Need external module "multicompany"
-// Pyramidal   (0): The rights and groups are managed in each entity. Each user belongs to the entity he was created into.
-// Transversal (1): The user is created and managed only into master entity but can login to all entities if he is admmin
-//                  of entity or belongs to at least one user group created into entity.
-
-// Default value: 0 (pyramidal)
-// Examples:
-// $multicompany_transverse_mode='1';
 
 

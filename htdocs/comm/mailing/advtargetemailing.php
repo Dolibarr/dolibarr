@@ -22,6 +22,8 @@
  *       \brief      Page to define emailing targets
  */
 
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/comm/mailing/class/mailing.class.php';
@@ -43,13 +45,13 @@ if (! empty($conf->categorie->enabled)) {
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
 	accessforbidden();
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
-$offset = $conf->liste_limit * $page;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder)
@@ -59,14 +61,14 @@ if (! $sortfield)
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $search_nom = GETPOST("search_nom");
 $search_prenom = GETPOST("search_prenom");
 $search_email = GETPOST("search_email");
 $template_id = GETPOST('template_id', 'int');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x")) {
+if (GETPOST('button_removefilter_x','alpha')) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';
@@ -189,6 +191,10 @@ if ($action == 'add') {
 			}
 		}
 
+		if ($array_query['type_of_target'] == 2 || $array_query['type_of_target'] == 4) {
+			$user_contact_query = true;
+		}
+
 		if (preg_match("/^type_of_target/", $key)) {
 			$array_query[$key] = GETPOST($key);
 		}
@@ -203,8 +209,8 @@ if ($action == 'add') {
 		$advTarget->thirdparty_lines = array ();
 	}*/
 
-	if ($user_contact_query && ($array_query['type_of_target'] == 1 || $array_query['type_of_target'] == 2)) {
-		$result = $advTarget->query_contact($array_query);
+	if ($user_contact_query && ($array_query['type_of_target'] == 1 || $array_query['type_of_target'] == 2 || $array_query['type_of_target'] == 4)) {
+		$result = $advTarget->query_contact($array_query, 1);
 		if ($result < 0) {
 			setEventMessage($advTarget->error, 'errors');
 		}
@@ -400,14 +406,8 @@ if ($_POST["button_removefilter"]) {
  * View
  */
 
-$extrajs = array (
-		'/includes/jquery/plugins/multiselect/js/ui.multiselect.js'
-);
-$extracss = array (
-		'/includes/jquery/plugins/multiselect/css/ui.multiselect.css',
-);
 
-llxHeader('', $langs->trans("MailAdvTargetRecipients"), '', '', '', '', $extrajs, $extracss);
+llxHeader('', $langs->trans("MailAdvTargetRecipients"));
 
 print '<script type="text/javascript" language="javascript">
 	$(document).ready(function() {
@@ -763,19 +763,19 @@ if ($object->fetch($id) >= 0) {
 		} else {
 			$std_soc = new Societe($db);
 			$action_search = 'query';
-			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+
+			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			$hookmanager->initHooks(array (
-					'thirdpartycard'
-			));
+			$hookmanager->initHooks(array ('thirdpartycard'));
+
+			$parameters=array();
 			if (! empty($advTarget->id)) {
-				$parameters = array (
-						'array_query' => $advTarget->filtervalue
-				);
+				$parameters = array('array_query' => $advTarget->filtervalue);
 			}
-			// Module extrafield feature
+			// Other attributes
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $std_soc, $action_search);
+            print $hookmanager->resPrint;
 		}
 
 		// State Contact
@@ -889,6 +889,11 @@ if ($object->fetch($id) >= 0) {
 			dol_include_once('/core/class/extrafields.class.php');
 			$extrafields = new ExtraFields($db);
 			$extralabels = $extrafields->fetch_name_optionals_label('socpeople');
+            foreach($extrafields->attribute_type as $key=>&$value) {
+                if($value == 'radio')$value = 'select';
+            }
+
+
 			foreach ( $extralabels as $key => $val ) {
 
 				print '<tr><td>' . $extrafields->attribute_label[$key];
@@ -900,8 +905,8 @@ if ($object->fetch($id) >= 0) {
 					print '<input type="text" name="options_' . $key . '_cnct"/></td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'int') || ($extrafields->attribute_type[$key] == 'double')) {
-					print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options' . $key . '_min_cnct"/>';
-					print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options' . $key . '_max_cnct"/>';
+					print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options_' . $key . '_min_cnct"/>';
+					print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options_' . $key . '_max_cnct"/>';
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'date') || ($extrafields->attribute_type[$key] == 'datetime')) {
@@ -966,12 +971,6 @@ if ($object->fetch($id) >= 0) {
 		print '</table>';
 		print '</form>';
 		print '<br>';
-	}
-
-
-	if (empty($conf->mailchimp->enabled) || (! empty($conf->mailchimp->enabled) && $object->statut != 3))
-	{
-	    // List of recipients (TODO Move code of page cibles.php into a .tpl.php file and make an include here to avoid duplicate content)
 	}
 }
 

@@ -33,11 +33,11 @@ $result=restrictedArea($user,'stock');
 
 $sref=GETPOST("sref");
 $snom=GETPOST("snom");
-$sall=GETPOST("sall");
+$sall=GETPOST('sall', 'alphanohtml');
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
-if (! $sortfield) $sortfield="e.label";
+if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 if ($page < 0) $page = 0;
@@ -51,25 +51,22 @@ $year = strftime("%Y",time());
  *	View
  */
 
-$sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
+$sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
 $sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
-if ($sref)
-{
-    $sql.= " AND e.label LIKE '%".$db->escape($sref)."%'";
-}
+$sql.= " WHERE e.entity IN (".getEntity('stock').")";
+if ($sref) $sql.= natural_search("e.ref", $sref);
 if ($sall)
 {
-    $sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
+    $sql.= " AND (e.ref LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.town LIKE '%".$db->escape($sall)."%')";
 }
-$sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
+$sql.= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
@@ -87,11 +84,11 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LocationSummary"), $_SERVER["PHP_SELF"], "e.lieu","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref","","","",$sortfield,$sortorder);
+    print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu","","","",$sortfield,$sortorder);
+    print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
     if ($num)
@@ -102,7 +99,7 @@ if ($result)
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($result);
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
             print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
@@ -120,7 +117,7 @@ if ($result)
             print "</tr>\n";
             $total += price2num($objp->estimatedvalue,'MU');
             $totalsell += price2num($objp->sellvalue,'MU');
-            $var=!$var;
+
             $i++;
         }
 
@@ -134,7 +131,7 @@ if ($result)
     }
 
     $db->free($result);
-    
+
     print "</table>";
 
     print '<br>';

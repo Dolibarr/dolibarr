@@ -39,14 +39,10 @@ class Cpaiement
 	 */
 	public $table_element = 'c_paiement';
 
-	/**
-	 * @var CpaiementLine[] Lines
-	 */
-	public $lines = array();
 
 	/**
 	 */
-	
+
 	public $code;
 	public $libelle;
 	public $type;
@@ -56,7 +52,7 @@ class Cpaiement
 
 	/**
 	 */
-	
+
 
 	/**
 	 * Constructor
@@ -83,7 +79,7 @@ class Cpaiement
 		$error = 0;
 
 		// Clean parameters
-		
+
 		if (isset($this->code)) {
 			 $this->code = trim($this->code);
 		}
@@ -103,14 +99,14 @@ class Cpaiement
 			 $this->module = trim($this->module);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
+
 		$sql.= 'id,';
 		$sql.= 'code,';
 		$sql.= 'libelle,';
@@ -119,9 +115,9 @@ class Cpaiement
 		$sql.= 'accountancy_code,';
 		$sql.= 'module';
 
-		
+
 		$sql .= ') VALUES (';
-		
+
 		$sql .= ' '.(! isset($this->id)?'NULL':$this->id).',';
 		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
@@ -130,7 +126,7 @@ class Cpaiement
 		$sql .= ' '.(! isset($this->accountancy_code)?'NULL':"'".$this->db->escape($this->accountancy_code)."'").',';
 		$sql .= ' '.(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'");
 
-		
+
 		$sql .= ')';
 
 		$this->db->begin();
@@ -202,7 +198,7 @@ class Cpaiement
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->id;
-				
+
 				$this->code = $obj->code;
 				$this->libelle = $obj->libelle;
 				$this->type = $obj->type;
@@ -210,7 +206,7 @@ class Cpaiement
 				$this->accountancy_code = $obj->accountancy_code;
 				$this->module = $obj->module;
 
-				
+
 			}
 			$this->db->free($resql);
 
@@ -219,84 +215,6 @@ class Cpaiement
 			} else {
 				return 0;
 			}
-		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
-
-			return - 1;
-		}
-	}
-
-	/**
-	 * Load object in memory from the database
-	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
-	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
-	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$sql = 'SELECT';
-		$sql .= ' t.id,';
-		$sql .= " t.code,";
-		$sql .= " t.libelle,";
-		$sql .= " t.type,";
-		$sql .= " t.active,";
-		$sql .= " t.accountancy_code,";
-		$sql .= " t.module";
-
-		
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
-		}
-		
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
-		}
-		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
-		}
-		$this->lines = array();
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new CpaiementLine();
-
-				$line->id = $obj->id;
-				
-				$line->code = $obj->code;
-				$line->libelle = $obj->libelle;
-				$line->type = $obj->type;
-				$line->active = $obj->active;
-				$line->accountancy_code = $obj->accountancy_code;
-				$line->module = $obj->module;
-
-				
-
-				$this->lines[$line->id] = $line;
-			}
-			$this->db->free($resql);
-
-			return $num;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
@@ -320,7 +238,7 @@ class Cpaiement
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->code)) {
 			 $this->code = trim($this->code);
 		}
@@ -340,7 +258,7 @@ class Cpaiement
 			 $this->module = trim($this->module);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -438,8 +356,8 @@ class Cpaiement
 			return 1;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -449,7 +367,7 @@ class Cpaiement
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		
+
 		$this->code = '';
 		$this->libelle = '';
 		$this->type = '';
@@ -457,7 +375,7 @@ class Cpaiement
 		$this->accountancy_code = '';
 		$this->module = '';
 
-		
+
 	}
 
 }

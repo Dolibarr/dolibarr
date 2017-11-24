@@ -43,12 +43,11 @@ class Productlot extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'product_lot';
-	
+
 	public $picto='barcode';
-	
-	public $isnolinkedbythird = 1;
+
     public $ismultientitymanaged = 1;
-    
+
 	/**
 	 * @var ProductlotLine[] Lines
 	 */
@@ -56,7 +55,7 @@ class Productlot extends CommonObject
 
 	/**
 	 */
-	
+
 	public $entity;
 	public $fk_product;
 	public $batch;
@@ -70,7 +69,7 @@ class Productlot extends CommonObject
 
 	/**
 	 */
-	
+
 
 	/**
 	 * Constructor
@@ -97,7 +96,7 @@ class Productlot extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		
+
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
 		}
@@ -117,7 +116,7 @@ class Productlot extends CommonObject
 			 $this->import_key = trim($this->import_key);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -207,7 +206,7 @@ class Productlot extends CommonObject
 		$sql .= " t.import_key";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if ($product_id > 0 && $batch != '') {
-			$sql .= ' WHERE t.batch = ' . '\'' . $this->db->escape($batch) . '\' AND t.fk_product = ' . $product_id;
+			$sql .= " WHERE t.batch = '". $this->db->escape($batch) . "' AND t.fk_product = " . $product_id;
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
@@ -221,9 +220,9 @@ class Productlot extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 				//$this->ref = $obj->fk_product.'_'.$obj->batch;
-				
+
 				$this->batch = $obj->batch;
-				
+
 				$this->entity = $obj->entity;
 				$this->fk_product = $obj->fk_product;
 				$this->eatby = $this->db->jdate($obj->eatby);
@@ -239,7 +238,7 @@ class Productlot extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields=new ExtraFields($this->db);
 				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);				
+				$this->fetch_optionals($this->id,$extralabels);
 			}
 			$this->db->free($resql);
 
@@ -248,92 +247,6 @@ class Productlot extends CommonObject
 			} else {
 				return 0;
 			}
-		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
-
-			return - 1;
-		}
-	}
-
-	/**
-	 * Load object in memory from the database
-	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
-	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
-	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
-		
-		$sql .= " t.entity,";
-		$sql .= " t.fk_product,";
-		$sql .= " t.batch,";
-		$sql .= " t.eatby,";
-		$sql .= " t.sellby,";
-		$sql .= " t.datec,";
-		$sql .= " t.tms,";
-		$sql .= " t.fk_user_creat,";
-		$sql .= " t.fk_user_modif,";
-		$sql .= " t.import_key";
-
-		
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
-		}
-		
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
-		}
-		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
-		}
-		$this->lines = array();
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql)) 
-			{
-				$line = new ProductlotLine();
-
-				$line->id = $obj->rowid;
-				
-				$line->entity = $obj->entity;
-				$line->fk_product = $obj->fk_product;
-				$line->batch = $obj->batch;
-				$line->eatby = $this->db->jdate($obj->eatby);
-				$line->sellby = $this->db->jdate($obj->sellby);
-				$line->datec = $this->db->jdate($obj->datec);
-				$line->tms = $this->db->jdate($obj->tms);
-				$line->fk_user_creat = $obj->fk_user_creat;
-				$line->fk_user_modif = $obj->fk_user_modif;
-				$line->import_key = $obj->import_key;
-
-				$this->lines[$line->id] = $line;
-			}
-			$this->db->free($resql);
-
-			return $num;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
@@ -357,7 +270,7 @@ class Productlot extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->entity)) {
 			 $this->entity = trim($this->entity);
 		}
@@ -523,7 +436,36 @@ class Productlot extends CommonObject
 			return - 1;
 		}
 	}
-	
+
+
+	/**
+	 *	Return label of status of object
+	 *
+	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return     string      		Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut(0,$mode);
+	}
+
+	/**
+	 *	Return label of a given status
+	 *
+	 *	@param	int		$statut     Status
+	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return string      		Label of status
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+	    global $langs;
+
+	    //$langs->load('stocks');
+
+	    return '';
+	}
+
+
 	/**
 	 *  Return a link to the a lot card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
@@ -547,6 +489,14 @@ class Productlot extends CommonObject
         $label = '<u>' . $langs->trans("Batch") . '</u>';
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Batch') . ':</b> ' . $this->batch;
+        if ($this->eatby)
+        {
+            $label.= '<br><b>' . $langs->trans('EatByDate') . ':</b> ' . dol_print_date($this->eatby, 'day');
+        }
+        if ($this->sellby)
+        {
+            $label.= '<br><b>' . $langs->trans('SellByDate') . ':</b> ' . dol_print_date($this->sellby, 'day');
+        }
 
         $link = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_card.php?id='.$this->id.'"';
         $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
@@ -555,15 +505,15 @@ class Productlot extends CommonObject
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'barcode', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($link.img_object(($notooltip?'':$label), 'barcode', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $link . $this->batch . $linkend;
 		return $result;
 	}
-	
-	
-	/** 
+
+
+	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
@@ -572,7 +522,7 @@ class Productlot extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		
+
 		$this->entity = '';
 		$this->fk_product = '';
 		$this->batch = '';
@@ -587,32 +537,3 @@ class Productlot extends CommonObject
 
 }
 
-/**
- * Class ProductlotLine
- */
-class ProductlotLine
-{
-	/**
-	 * @var int ID
-	 */
-	public $id;
-	/**
-	 * @var mixed Sample line property 1
-	 */
-	
-	public $entity;
-	public $fk_product;
-	public $batch;
-	public $eatby = '';
-	public $sellby = '';
-	public $datec = '';
-	public $tms = '';
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
-
-	/**
-	 * @var mixed Sample line property 2
-	 */
-	
-}

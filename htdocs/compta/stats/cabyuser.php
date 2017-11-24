@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Antoine Iauch        <aiauch@gpcsolutions.fr>
  *
@@ -131,12 +131,11 @@ foreach($allparams as $key => $value) {
 
 llxHeader();
 
-
 $form=new Form($db);
 
 // Show report header
 if ($modecompta=="CREANCES-DETTES") {
-    $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
+    $name=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
     $calcmode=$langs->trans("CalcModeDebt");
     $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -144,29 +143,31 @@ if ($modecompta=="CREANCES-DETTES") {
     $description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
-    $builddate=time();
+    $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 } else {
-    $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
+    $name=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
 	$calcmode=$langs->trans("CalcModeEngagement");
     $calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
     $description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
-    $builddate=time();
+    $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
 
-if (! empty($conf->accounting->enabled))
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
+
+$name=array();
 
 // Show array
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -237,7 +238,7 @@ if ($modecompta != 'CREANCES-DETTES') {
     $sql.= " WHERE pf.rowid IS NULL";
     $sql.= " AND p.fk_bank = b.rowid";
     $sql.= " AND b.fk_account = ba.rowid";
-    $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+    $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($date_start && $date_end) {
 	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
@@ -260,8 +261,11 @@ if ($modecompta != 'CREANCES-DETTES') {
     }
 }
 
-$i = 0;
-print "<table class=\"noborder\" width=\"100%\">";
+$morefilter='';
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre(
 	$langs->trans("User"),
@@ -346,9 +350,11 @@ if (count($amount)) {
         $arrayforsort=$amount;
     }
 
+    $i = 0;
+
     foreach($arrayforsort as $key => $value) {
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+
+        print '<tr class="oddeven">';
 
         // Third party
         $fullname=$name[$key];
@@ -432,6 +438,8 @@ if (count($amount)) {
 }
 
 print "</table>";
+print '</div>';
+print '</form>';
 
 
 llxFooter();

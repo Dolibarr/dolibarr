@@ -20,13 +20,15 @@
 CREATE TABLE llx_website
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	entity        integer DEFAULT 1,
-	ref	          varchar(24) NOT NULL,
+	entity        integer NOT NULL DEFAULT 1,
+	ref	          varchar(128) NOT NULL,
 	description   varchar(255),
-	status		  integer,
+	status		  integer DEFAULT 1,
 	fk_default_home integer, 
 	virtualhost   varchar(255), 
-    date_creation     datetime,
-    date_modification datetime,
-	tms           timestamp
+    fk_user_create integer,
+    fk_user_modif  integer,
+    date_creation  datetime,
+	tms            timestamp,
+    import_key     varchar(14)      -- import key	
 ) ENGINE=innodb;

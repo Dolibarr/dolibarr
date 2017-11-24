@@ -53,16 +53,15 @@ AdminLogin=Administrator Benutzername für Dolibarr Datenbank
 PasswordAgain=Passwort wiederholen
 AdminPassword=Passwort des dolibarr-Datenbankadministrators
 CreateDatabase=Datenbank erstellen
-CreateUser=Erstelle Besitzer
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Datenbankserver - Superadministrator-Zugriff
 CheckToCreateDatabase=Aktivieren Sie dieses Kontrollkästchen, falls Sie noch keine Datenbank angelegt haben und diese im Zuge der Installation erstellt werden soll.<br>Hierfür müssen Sie Benutzername und Passwort des Datenbank-Superusers am Ende der Seite angeben.
-CheckToCreateUser=Aktivieren Sie dieses Kontrollkästchen, falls Sie noch keinen Datenbankbenutzer angelegt haben und dieser im Zuge der Installation erstellt werden soll.<br>Hierfür müssen Sie Benutzername und Passwort des Datenbank-Superusers am Ende der Seite angeben.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Anmeldedaten des Datenbank-Superusers zur Erstellung neuer Datenbanken und -benutzer. Sollten diese bereits existieren (z.B. weil Ihre Website bei einem Hosting-Provider liegt), ist diese Option nutzlos.
 KeepEmptyIfNoPassword=Leer lassen wenn der Benutzer kein Passwort hat (nicht empfohlen)
 SaveConfigurationFile=Konfigurationsdatei wird gespeichert
 ServerConnection=Serververbindung
 DatabaseCreation=Erstellung der Datenbank
-UserCreation=Benutzererstellung
 CreateDatabaseObjects=Anlegen der Datenbankobjekte
 ReferenceDataLoading=Referenzdaten werden geladen
 TablesAndPrimaryKeysCreation=Erstellen der Tabellen und Primärschlüssel
@@ -133,12 +132,13 @@ MigrationFinished=Migration abgeschlossen
 LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie Ihr Logo und das Passwort fest, welches Sie für dolibarr verwenden möchten. Verlieren Sie diese Administrator-Passwort nicht, da es der "Generalschlüssel" ist.
 ActivateModule=Aktivieren von Modul %s
 ShowEditTechnicalParameters=Hier klicken um erweiterte Funktionen zu zeigen/bearbeiten (Expertenmodus)
-WarningUpgrade=Warnung:\nHaben Sie ein Backup der Datenbank erstellt ?\nDies ist empfohlen, da durch Fehler in der Datenbank (z.B. MySQL Version 5.5.40/41/42/43) einige Tabellen oder Daten während der Migration verloren gehen könnten.\nAlso ist es sehr wichtig, dass Sie einen vollständigen Dump der Datenbank erstellt haben, bevor Sie die Migration durchführen.\nKlicken Sie auf OK, um den Migrationsprozess zu starten.
+WarningUpgrade=Warnung:\nHaben Sie ein Datenbank Backup erstellt ?\nDurch Bugs in Datenbank Systemen (zum Beispiel MySQL 5.5.40/42/42/43) könnten einige Daten oder Tabellen während des Prozesses verloren gehen.\nDeshlab ist es dringend empfohlen, einen kompletten Dump der Datenbank vor dem Start der Migration anzulegen !\n\nKlicke OK um die Migration zu starten...
 ErrorDatabaseVersionForbiddenForMigration=Die Version Ihres Datenbankmanager ist %s.\nDies ist einen kritischer Bug welcher zu Datenverlust führen kann, wenn Sie die Struktur der Datenbank wie vom Migrationsprozess erforderlich  ändern. Aus diesem Grund, ist die Migration nicht erlaubt bevor der Datenbankmanager auf eine später Version aktualisiert wurde (Liste betroffener Versionen %s )
 KeepDefaultValuesWamp=Wenn Sie den DoliWamp-Installationsassistent verwenden, werden hier bereits Werte vorgeschlagen. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 KeepDefaultValuesDeb=Sie verwenden den Dolibarr-Installationsassistenten in einer Linux Umgebung (Ubuntu, Debian, Fedor...), entsprechend sind hier bereits Werte vorgeschlagenen. Sie müssen lediglich das Passwort des anzulegenden Datenbankbenutzers angeben. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 KeepDefaultValuesMamp=Sie verwenden den DoliMamp-Installationsassistent, entsprechend werden hier bereits Werte vorgeschlagen. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 KeepDefaultValuesProxmox=Sie verwenden den Dolibarr Installationsassistenten einer Proxmox "virtual appliance". Die hier vorgeschlagenen Werte sind bereits optimiert. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
+UpgradeExternalModule=Dedizierten Upgradeprozess für externe Module ausführen
 
 #########
 # upgrade

@@ -7,20 +7,20 @@
 	</MASTER_PAD_VERSION_INFO>
 	<Company_Info>
 		<Company_Name>Dolibarr team</Company_Name>
-		<Address_1>11 rue raymond Queneau</Address_1>
+		<Address_1>20 rue camponac</Address_1>
 		<Address_2 />
-		<City_Town>Rueil Malmaison</City_Town>
+		<City_Town>Pessac</City_Town>
 		<State_Province />
-		<Zip_Postal_Code>92500</Zip_Postal_Code>
+		<Zip_Postal_Code>33600</Zip_Postal_Code>
 		<Country>FRANCE</Country>
-		<Company_WebSite_URL>http://www.dolibarr.org</Company_WebSite_URL>
+		<Company_WebSite_URL>https://www.dolibarr.org</Company_WebSite_URL>
 		<Contact_Info>
 			<Author_First_Name>Dolibarr team</Author_First_Name>
 			<Author_Last_Name>Dolibarr team</Author_Last_Name>
-			<Author_Email>dolibarr-dev@nongnu.org</Author_Email>
+			<Author_Email>contact@dolibarr.org</Author_Email>
 			<Contact_First_Name>Dolibarr team</Contact_First_Name>
 			<Contact_Last_Name>Dolibarr team</Contact_Last_Name>
-			<Contact_Email>dolibarr-dev@nongnu.org</Contact_Email>
+			<Contact_Email>contact@dolibarr.org</Contact_Email>
 		</Contact_Info>
 		<Support_Info>
 			<Sales_Email>dolibarr-dev@nongnu.org</Sales_Email>
@@ -34,10 +34,10 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>3.5</Program_Version>
-		<Program_Release_Month>01</Program_Release_Month>
+		<Program_Version>5.0</Program_Version>
+		<Program_Release_Month>02</Program_Release_Month>
 		<Program_Release_Day>01</Program_Release_Day>
-		<Program_Release_Year>2014</Program_Release_Year>
+		<Program_Release_Year>2017</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
@@ -71,8 +71,8 @@
 			<Char_Desc_45>Dolibarr ERP &amp; CRM</Char_Desc_45>
 			<Char_Desc_80>Dolibarr ERP &amp; CRM, the easy to use open source software to manage your activity</Char_Desc_80>
 			<Char_Desc_250>Dolibarr ERP &amp; CRM, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or mid-sized business or a foundation needs to manage.</Char_Desc_250>
-			<Char_Desc_450>Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM. Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. See DoliWamp software for this.</Char_Desc_450>
-			<Char_Desc_2000>Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations. We can say Dolibarr is an ERP or CRM (or both depending on activated modules). It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple:
+			<Char_Desc_450>Dolibarr ERP &amp; CRM is a software package built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM. Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. See DoliWamp software for this.</Char_Desc_450>
+			<Char_Desc_2000>Dolibarr ERP &amp; CRM is a software package built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations. We can say Dolibarr is an ERP or CRM (or both depending on activated modules). It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, Odoo, Neogia, Compiere, etc) because everything was made to be more simple:
 Simple to install
 Simple to use
 Simple to develop 
@@ -101,14 +101,14 @@ Dolibarr int√®gre en effet sa propre architecture (design patterns) permettant √
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
-			<Application_Info_URL>http://www.dolibarr.org</Application_Info_URL>
-			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
-			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot1.png</Application_Screenshot_URL>
-			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
-			<Application_XML_File_URL>http://www.dolibarr.org/files/pad_dolibarr.xml</Application_XML_File_URL>
+			<Application_Info_URL>https://www.dolibarr.org</Application_Info_URL>
+			<Application_Order_URL>https://www.dolibarr.org</Application_Order_URL>
+			<Application_Screenshot_URL>https://www.dolibarr.org/images/dolibarr_screenshot1.png</Application_Screenshot_URL>
+			<Application_Icon_URL>https://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
+			<Application_XML_File_URL>https://www.dolibarr.org/files/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>http://www.dolibarr.org/files/dolibarr.tgz</Primary_Download_URL>
+			<Primary_Download_URL>https://www.dolibarr.org/files/dolibarr.tgz</Primary_Download_URL>
 			<Secondary_Download_URL>http://www.dolibarr.org/files/dolibarr.tgz</Secondary_Download_URL>
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />

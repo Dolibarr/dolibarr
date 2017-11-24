@@ -74,13 +74,13 @@ if ($action == "set")
 
     $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
     if (! $res > 0) $error++;
-    
+
     if (GETPOST("PRELEVEMENT_USER") > 0)
     {
         $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
-    
+
     if (! $error)
 	{
 		$db->commit();
@@ -155,7 +155,7 @@ if ($action == 'specimen')
         setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
-}    
+}
 
 // Set default model
 else if ($action == 'setdoc')
@@ -313,7 +313,7 @@ foreach ($dirmodels as $reldir)
                             if ($modulequalified)
                             {
                                 $var = !$var;
-                                print '<tr '.$bc[$var].'><td width="100">';
+                                print '<tr class="oddeven"><td width="100">';
                                 print (empty($module->name)?$name:$module->name);
                                 print "</td><td>\n";
                                 if (method_exists($module,'info')) print $module->info($langs);
@@ -332,7 +332,7 @@ foreach ($dirmodels as $reldir)
                                 else
                                 {
                                     print '<td align="center">'."\n";
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                                     print "</td>";
                                 }
 
@@ -344,7 +344,7 @@ foreach ($dirmodels as $reldir)
                                 }
                                 else
                                 {
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
                                 }
                                 print '</td>';
 
@@ -411,7 +411,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE entity IN (0,".$conf->entity.")";
+    $sql.= " WHERE entity IN (".getEntity('facture').")";
 
     $resql=$db->query($sql);
     if ($resql)
@@ -422,7 +422,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
+
             if (!$obj->fk_soc)
             {
                 $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
@@ -495,9 +495,9 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);
-	        $var=!$var;
 
-	        print "<tr ".$bc[$var].">";
+
+	        print '<tr class="oddeven">';
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
 	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 	        print '<td>'.$label.'</td>';

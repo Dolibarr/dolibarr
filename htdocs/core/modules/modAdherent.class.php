@@ -53,7 +53,8 @@ class modAdherent extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Management of members of a foundation or association";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='user';
@@ -75,126 +76,119 @@ class modAdherent extends DolibarrModules
         //-----------
         $this->const = array();
         $r=0;
-        
+
         $this->const[$r][0] = "ADHERENT_ADDON_PDF";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "standard";
         $this->const[$r][3] = 'Name of PDF model of member';
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAIL_RESIL";
         $this->const[$r][1] = "texte";
         $this->const[$r][2] = "Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt";
         $this->const[$r][3] = "Mail de résiliation";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAIL_VALID";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\n";
+        $this->const[$r][2] = "Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n__INFOS__\r\n\r\n";
         $this->const[$r][3] = "Mail de validation";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAIL_VALID_SUBJECT";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "Votre adhésion a été validée";
         $this->const[$r][3] = "Sujet du mail de validation";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAIL_RESIL_SUBJECT";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "Résiliation de votre adhésion";
         $this->const[$r][3] = "Sujet du mail de résiliation";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAIL_FROM";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
         $this->const[$r][3] = "From des mails";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAIL_COTIS";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "Bonjour %FIRSTNAME%,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée";
+        $this->const[$r][2] = "Bonjour __FIRSTNAME__,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée";
         $this->const[$r][3] = "Mail de validation de cotisation";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAIL_COTIS_SUBJECT";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "Reçu de votre cotisation";
         $this->const[$r][3] = "Sujet du mail de validation de cotisation";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_CARD_HEADER_TEXT";
         $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "%YEAR%";
+        $this->const[$r][2] = "__YEAR__";
         $this->const[$r][3] = "Texte imprimé sur le haut de la carte adhérent";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_CARD_FOOTER_TEXT";
         $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "%COMPANY%";
+        $this->const[$r][2] = "__COMPANY__";
         $this->const[$r][3] = "Texte imprimé sur le bas de la carte adhérent";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_CARD_TEXT";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "%FULLNAME%\r\nID: %ID%\r\n%EMAIL%\r\n%ADDRESS%\r\n%ZIP% %TOWN%\r\n%COUNTRY%";
+        $this->const[$r][2] = "__FULLNAME__\r\nID: __ID__\r\n__EMAIL__\r\n__ADDRESS__\r\n__ZIP__ __TOWN__\r\n__COUNTRY__";
         $this->const[$r][3] = "Text to print on member cards";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_MAILMAN_ADMINPW";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
         $this->const[$r][3] = "Mot de passe Admin des liste mailman";
         $this->const[$r][4] = 0;
         $r++;
-        
-        $this->const[$r][0] = "ADHERENT_BANK_USE_AUTO";
-        $this->const[$r][1] = "yesno";
-        $this->const[$r][2] = "";
-        $this->const[$r][3] = "Insertion automatique des cotisations dans le compte bancaire";
-        $this->const[$r][4] = 0;
-        $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
         $this->const[$r][3] = "ID du Compte banquaire utilise";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_BANK_CATEGORIE";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
         $this->const[$r][3] = "ID de la catégorie bancaire des cotisations";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_ETIQUETTE_TYPE";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "L7163";
         $this->const[$r][3] = "Type of address sheets";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         $this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
         $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%";
+        $this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY%";
         $this->const[$r][3] = "Text to print on member address sheets";
         $this->const[$r][4] = 0;
         $r++;
-        
+
         // Boxes
         //-------
         $this->boxes = array(0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'));
@@ -267,8 +261,8 @@ class modAdherent extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-        
-        
+
+
         // Exports
         //--------
         $r=0;
@@ -285,19 +279,11 @@ class modAdherent extends DolibarrModules
         $this->export_label[$r]='MembersAndSubscriptions';
         $this->export_permission[$r]=array(array("adherent","export"));
         $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.rowid'=>'SubscriptionId','c.dateadh'=>'DateSubscription','c.subscription'=>'Amount');
-        $this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle','ta.libelle'=>'Text','c.dateadh'=>'Date','c.subscription'=>'Numeric');
+        $this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:adherent_type:libelle','ta.libelle'=>'Text','c.rowid'=>'Numeric','c.dateadh'=>'Date','c.subscription'=>'Numeric');
         $this->export_entities_array[$r]=array('a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.rowid'=>'subscription','c.dateadh'=>'subscription','c.subscription'=>'subscription');
-
-		// Add extra fields
-		$sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity = ".$conf->entity;
-		$resql=$this->db->query($sql);
-		while ($obj=$this->db->fetch_object($resql))
-		{
-			$fieldname='extra.'.$obj->name;
-			$fieldlabel=ucfirst($obj->label);
-			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-			$this->export_entities_array[$r][$fieldname]='member';
-		}
+        // Add extra fields
+        $keyforselect='adherent'; $keyforelement='member'; $keyforaliasextra='extra';
+        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add axtra fields
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'adherent_type as ta, '.MAIN_DB_PREFIX.'adherent as a)';
@@ -305,7 +291,7 @@ class modAdherent extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'subscription as c ON c.fk_adherent = a.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON a.state_id = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON a.country = co.rowid';
-        $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid AND ta.entity IN ('.getEntity('adherent', 1).') ';
+        $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid AND ta.entity IN ('.getEntity('adherent').') ';
         $this->export_dependencies_array[$r]=array('subscription'=>'c.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
         // Imports
@@ -338,10 +324,10 @@ class modAdherent extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r]=array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r]=array('a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type','a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-        $this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m-%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
+        $this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
     }
-    
-    
+
+
     /**
      *		Function called when module is enabled.
      *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
@@ -353,16 +339,16 @@ class modAdherent extends DolibarrModules
     function init($options='')
     {
         global $conf,$langs;
-    
+
         // Permissions
         $this->remove($options);
-    
+
         //ODT template
         /*
         $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
         $dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
         $dest=$dirodt.'/template_order.odt';
-    
+
         if (file_exists($src) && ! file_exists($dest))
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -375,12 +361,12 @@ class modAdherent extends DolibarrModules
                 return 0;
             }
         }*/
-    
+
         $sql = array(
-            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type='member' AND entity = ".$conf->entity,
-            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','member',".$conf->entity.")"
+            "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".$conf->entity,
+            "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".$conf->entity.")"
         );
-    
+
         return $this->_init($sql,$options);
-    }    
+    }
 }

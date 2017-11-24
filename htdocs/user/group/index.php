@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,17 +32,25 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 		accessforbidden();
 }
 
+// Users/Groups management only in master entity if transverse mode
+if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+{
+	accessforbidden();
+}
+
 $langs->load("users");
 
-$sall=GETPOST('sall');
+$sall=GETPOST('sall', 'alphanohtml');
 $search_group=GETPOST('search_group');
 $optioncss = GETPOST('optioncss','alpha');
 
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+if (empty($page) || $page == -1) { $page = 0; }
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -57,17 +65,43 @@ $fieldstosearchall = array(
 
 
 /*
+ * Actions
+ */
+
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
+{
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+    // Purge search criteria
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+    {
+        $search_label="";
+        $search_date_creation="";
+        $search_date_update="";
+        $search_array_options=array();
+    }
+}
+
+
+
+/*
  * View
  */
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("ListOfGroups"));
-
 $sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
+if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE g.entity IS NOT NULL";
 }
@@ -87,40 +121,66 @@ $resql = $db->query($sql);
 if ($resql)
 {
     $num = $db->num_rows($resql);
+
+    $nbtotalofrecords = $num;
+
     $i = 0;
 
     $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
     if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
-    
+
+    $text = $langs->trans("ListOfGroups");
+
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    print '<input type="hidden" name="mode" value="'.$mode.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+
+    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
+
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+
     $moreforfilter='';
-    
+
 	//$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    
-    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre("Group",$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
-    if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
+    if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
     {
-    	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
+    	print_liste_field_titre("Entity",$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     }
-    print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"nb",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("NbOfUsers",$_SERVER["PHP_SELF"],"nb",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("DateCreationShort",$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
+
     $var=True;
     while ($i < $num)
     {
         $obj = $db->fetch_object($resql);
-        $var=!$var;
 
-        print "<tr ".$bc[$var].">";
+
+        print '<tr class="oddeven">';
         print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
         if (! $obj->entity)
         {
@@ -128,7 +188,7 @@ if ($resql)
         }
         print "</td>";
         //multicompany
-        if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
+        if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
         {
             $mc->getInfo($obj->entity);
             print '<td align="center">'.$mc->label.'</td>';
@@ -139,7 +199,11 @@ if ($resql)
         $i++;
     }
     print "</table>";
-    $db->free();
+
+    print '</div>';
+    print "</form>\n";
+
+    $db->free($resql);
 }
 else
 {

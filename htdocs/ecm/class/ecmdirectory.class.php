@@ -23,13 +23,13 @@
  */
 
 /**
- *  \class      EcmDirectory
- *  \brief      Class to manage ECM directories
+ *  Class to manage ECM directories
  */
 class EcmDirectory // extends CommonObject
 {
-	//public $element='ecm_directories';			//!< Id that identify managed objects
+	public $element='ecm_directories';			//!< Id that identify managed objects
 	//public $table_element='ecm_directories';	//!< Name of table without prefix where object is stored
+	var $picto = 'dir';
 
 	var $id;
 
@@ -39,19 +39,20 @@ class EcmDirectory // extends CommonObject
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	var $date_c;
 	var $date_m;
-    public $fk_user_m;
-    public $fk_user_c;
-    public $ref;
+	public $fk_user_m;
+	public $fk_user_c;
+	public $ref;
 
 	var $cats=array();
 	var $motherof=array();
 
-    var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+	var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+	var $forbiddencharsdir = array('<','>',':','?','*','|','"');
 
-    public $full_arbo_loaded;
+	public $full_arbo_loaded;
 
-    public $error;
-    public $errors;
+	public $error;
+	public $errors;
 
 
 	/**
@@ -104,8 +105,8 @@ class EcmDirectory // extends CommonObject
 		$pathfound=0;
 		foreach ($cate_arbo as $key => $categ)
 		{
-			$path=str_replace($this->forbiddenchars,'_',$categ['fulllabel']);
-			//print $path.'<br>';
+			$path=str_replace($this->forbiddencharsdir, '_', $categ['fullrelativename']);
+			//print $relativepath.' - '.$path.'<br>';
 			if ($path == $relativepath)
 			{
 				$pathfound=1;
@@ -134,12 +135,12 @@ class EcmDirectory // extends CommonObject
 			$sql.= "fk_user_c";
 			$sql.= ") VALUES (";
 			$sql.= " '".$this->db->escape($this->label)."',";
-			$sql.= " '".$conf->entity."',";
-			$sql.= " '".$this->fk_parent."',";
+			$sql.= " '".$this->db->escape($conf->entity)."',";
+			$sql.= " '".$this->db->escape($this->fk_parent)."',";
 			$sql.= " '".$this->db->escape($this->description)."',";
 			$sql.= " ".$this->cachenbofdoc.",";
 			$sql.= " '".$this->db->idate($this->date_c)."',";
-			$sql.= " '".$this->fk_user_c."'";
+			$sql.= " '".$this->db->escape($this->fk_user_c)."'";
 			$sql.= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -203,7 +204,7 @@ class EcmDirectory // extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql.= " label='".$this->db->escape($this->label)."',";
-		$sql.= " fk_parent='".$this->fk_parent."',";
+		$sql.= " fk_parent='".$this->db->escape($this->fk_parent)."',";
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -411,31 +412,33 @@ class EcmDirectory // extends CommonObject
 	 *  @param	string	$option			Sur quoi pointe le lien
 	 *  @param	int		$max			Max length
 	 *  @param	string	$more			Add more param on a link
+     *  @param	int		$notooltip		1=Disable tooltip
 	 *  @return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$more='')
+	function getNomUrl($withpicto=0, $option='', $max=0, $more='', $notooltip=0)
 	{
 		global $langs;
 
 		$result='';
         //$newref=str_replace('_',' ',$this->ref);
         $newref=$this->ref;
-        $newlabel=$langs->trans("ShowECMSection").': '.$newref;
-        $linkclose='"'.($more?' '.$more:'').' title="'.dol_escape_htmltag($newlabel, 1).'" class="classfortooltip">';
+        $label=$langs->trans("ShowECMSection").': '.$newref;
+        $linkclose='"'.($more?' '.$more:'').' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
-        $link = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.$linkclose;
-        if ($option == 'index') $link = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
-        if ($option == 'indexexpanded') $link = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false'.$linkclose;
-        if ($option == 'indexnotexpanded') $link = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/dir_card.php?section='.$this->id.$linkclose;
+        if ($option == 'index') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
+        if ($option == 'indexexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false'.$linkclose;
+        if ($option == 'indexnotexpanded') $linkstart = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true'.$linkclose;
         $linkend='</a>';
 
 		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
 		$picto='dir';
 
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= ($max?dol_trunc($newref,$max,'middle'):$newref);
+		$result .= $linkend;
 
-        if ($withpicto) $result.=($link.img_object($newlabel, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.($max?dol_trunc($newref,$max,'middle'):$newref).$linkend;
 		return $result;
 	}
 
@@ -512,6 +515,31 @@ class EcmDirectory // extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+
+	/**
+	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->status,$mode);
+	}
+
+	/**
+	 *  Return the status
+	 *
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
+	 *  @return string 			       	Label of status
+	 */
+	static function LibStatut($status,$mode=0)
+	{
+		global $langs;
+		return '';
 	}
 
 
@@ -668,7 +696,7 @@ class EcmDirectory // extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
-		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview\.png)$');
+		$filelist=dol_dir_list($dir,'files',0,'','(\.meta|_preview.*\.png)$');
 
 		// Test if filelist is in database
 

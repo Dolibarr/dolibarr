@@ -33,5 +33,5 @@ NETWORK:
 # If the browser is unable to retrieve the original content, the fallback resource will be used.
 # In the example above, we display a static image in case the dynamic one is unavailable.
 FALLBACK: 
-#/ public/offline.php
-#theme/amarok/img/* theme/eldy/img/
+#/ public/notice.php
+#theme/eldy/img/* theme/md/img/*

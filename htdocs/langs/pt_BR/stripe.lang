@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - stripe
+STRIPE_PAYONLINE_SENDEMAIL=Endereço e-mail para aviso apos o pagamento (positivo ou nao)

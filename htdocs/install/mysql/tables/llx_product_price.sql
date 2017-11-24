@@ -18,6 +18,9 @@
 --
 -- ============================================================================
 
+-- To save customer prices (one price per product or several prices per segment/level)
+-- TODO We should introduce table llx_product_price_log to store changes and keep in this table only last current price !
+
 create table llx_product_price
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
@@ -31,6 +34,7 @@ create table llx_product_price
   price_min			double(24,8) default NULL,
   price_min_ttc		double(24,8) default NULL,
   price_base_type	varchar(3) DEFAULT 'HT',
+  default_vat_code	varchar(10),	         		-- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
   tva_tx			double(6,3) NOT NULL,
   recuperableonly	integer NOT NULL DEFAULT '0',  
   localtax1_tx		double(6,3) DEFAULT 0,
@@ -45,6 +49,9 @@ create table llx_product_price
   
   fk_multicurrency		integer,
   multicurrency_code	varchar(255),
-  multicurrency_price	double(24,8) DEFAULT NULL
+  multicurrency_tx			double(24,8) DEFAULT 1,
+  multicurrency_price	double(24,8) DEFAULT NULL,
+  multicurrency_price_ttc	double(24,8) DEFAULT NULL
+  
 )ENGINE=innodb;
 

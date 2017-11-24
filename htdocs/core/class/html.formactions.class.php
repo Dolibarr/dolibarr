@@ -54,15 +54,16 @@ class FormActions
      *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
      *  @param	integer	$showempty		Show an empty line if select is used
      *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+     *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
-    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
+    function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
         global $langs,$conf;
 
         $listofstatus = array(
             '-1' => $langs->trans("ActionNotApplicable"),
-            '0' => $langs->trans("ActionRunningNotStarted"),
+            '0' => $langs->trans("ActionsToDoShort"),
             '50' => $langs->trans("ActionRunningShort"),
             '100' => $langs->trans("ActionDoneShort")
         );
@@ -100,7 +101,7 @@ class FormActions
                     }
                     else if (defaultvalue == 0) {
 						percentage.val(0);
-						percentage.prop('disabled', true);
+						percentage.removeAttr('disabled'); /* Not disabled, we want to change it to higher value */
                         $('.hideifna').show();
                     }
                     else if (defaultvalue == 100) {
@@ -120,14 +121,14 @@ class FormActions
         {
         	//var_dump($selected);
         	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
+            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'">';
             if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
                 print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
                 if ($key == '50' && $onlyselect == 2)
                 {
-                	print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionRunningNotStarted")."+".$langs->trans("ActionRunningShort").')</option>';
+                	print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
                 }
             }
             print '</select>';
@@ -149,95 +150,140 @@ class FormActions
     /**
      *  Show list of actions for element
      *
-     *  @param	Object	$object			Object
-     *  @param  string	$typeelement	'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
-     *	@param	int		$socid			socid of user
-     *  @param	int		$forceshowtitle	Show title even if there is no actions to show
-     *  @param  string  $morecss        More css on table
-     *	@return	int						<0 if KO, >=0 if OK
+     *  @param	Object	$object					Object
+     *  @param  string	$typeelement			'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
+     *	@param	int		$socid					Socid of user
+     *  @param	int		$forceshowtitle			Show title even if there is no actions to show
+     *  @param  string  $morecss        		More css on table
+     *  @param	int		$max					Max number of record
+     *  @param	string	$moreparambacktopage	More param for the backtopage
+     *  @param	string	$morehtmlright			More html text on right of title line
+     *	@return	int								<0 if KO, >=0 if OK
      */
-    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0,$morecss='listactions')
+    function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='', $morehtmlright='')
     {
         global $langs,$conf,$user;
         global $bc;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
+        $sortfield='a.datep';
+        $sortorder='DESC';
+
+        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max?($max+1):0));
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
         $num = count($listofactions);
         if ($num || $forceshowtitle)
         {
-        	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
+        	if ($typeelement == 'invoice')               $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
-        	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
-        	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
-        	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
+        	elseif ($typeelement == 'propal')            $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'supplier_proposal') $title=$langs->trans('ActionsOnSupplierProposal');
+        	elseif ($typeelement == 'order')             $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
-        	elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
-            elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
-        	else $title=$langs->trans("Actions");
+        	elseif ($typeelement == 'shipping')          $title=$langs->trans('ActionsOnShipping');
+            elseif ($typeelement == 'fichinter')         $title=$langs->trans('ActionsOnFicheInter');
+            elseif ($typeelement == 'project')           $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            elseif ($typeelement == 'task')              $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            elseif ($typeelement == 'member')            $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            else $title=$langs->trans("LatestLinkedEvents", $max?$max:'');
 
-        	print load_fiche_titre($title,'','');
+            $urlbacktopage=$_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage?'&'.$moreparambacktopage:'');
 
-        	$page=0; $param=''; $sortfield='a.datep';
-        	
-        	$total = 0;	$var=true; 
+        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($urlbacktopage).'">';
+        	$buttontoaddnewevent.= $langs->trans("AddEvent");
+        	$buttontoaddnewevent.= '</a>';
+
+        	print '<!-- formactions->showactions -->'."\n";
+        	print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $buttontoaddnewevent);
+
+        	$page=0; $param='';
+
+        	$total = 0;
+
+        	print '<div class="div-table-responsive-no-min">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Action'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('By'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"');
+        	print getTitleFieldOfList('Ref',   0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('By',    0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Type',  0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
         	print '</tr>';
         	print "\n";
 
         	$userstatic = new User($this->db);
 
-        	foreach($listofactions as $action)
+        	if (count($listofactions))
         	{
-        		$ref=$action->getNomUrl(1,-1);
-        		$label=$action->getNomUrl(0,38);
-                
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
-				print '<td>'.$ref.'</td>';
-        		print '<td>'.$label.'</td>';
-        		print '<td>'.$action->type.'</td>';
-        		print '<td>'.dol_print_date($action->datep,'dayhour');
-        		if ($action->datef)
-        		{
-	        		$tmpa=dol_getdate($action->datep);
-	        		$tmpb=dol_getdate($action->datef);
-	        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
+	        	$cursorevent = 0;
+	        	foreach($listofactions as $action)
+	        	{
+	        		if ($max && $cursorevent >= $max) break;
+
+	        		$ref=$action->getNomUrl(1,-1);
+	        		$label=$action->getNomUrl(0,38);
+
+	        		print '<tr class="oddeven">';
+					print '<td>'.$ref.'</td>';
+	        		print '<td>';
+	        		if (! empty($action->userownerid))
 	        		{
-	        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef,'hour');
+	        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
+	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
 	        		}
-	        		else print '-'.dol_print_date($action->datef,'dayhour');
-        		}
-        		print '</td>';
-        		print '<td>';
-        		if (! empty($action->author->id))
-        		{
-        			$userstatic->id = $action->author->id;
-        			$userstatic->firstname = $action->author->firstname;
-        			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1);
-        		}
-        		print '</td>';
-        		print '<td align="right">';
-        		if (! empty($action->author->id))
-        		{
-        			print $action->getLibStatut(3);
-        		}
-        		print '</td>';
-        		print '</tr>';
+	        		print '</td>';
+					print '<td>';
+	        		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	        		{
+	        		    if ($action->type_picto) print img_picto('', $action->type_picto);
+	        		    else {
+	        		        if ($action->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
+	        		        if ($action->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
+	        		        if ($action->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
+	        		        if ($action->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+	        		    }
+	        		}
+	        		print $action->type_short ? $action->type_short : $action->type;
+	        		print '</td>';
+	        		print '<td>'.$label.'</td>';
+	        		print '<td align="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
+	        		if ($action->datef)
+	        		{
+		        		$tmpa=dol_getdate($action->datep);
+		        		$tmpb=dol_getdate($action->datef);
+		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
+		        		{
+		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($action->datef, 'hour', 'tzuserrel');
+		        		}
+		        		else print '-'.dol_print_date($action->datef, 'dayhour', 'tzuserrel');
+	        		}
+	        		print '</td>';
+	        		print '<td align="right">';
+	        		if (! empty($action->author->id))
+	        		{
+	        			print $action->getLibStatut(3);
+	        		}
+	        		print '</td>';
+	        		print '</tr>';
+
+	        		$cursorevent++;
+	        	}
         	}
+        	else
+        	{
+        		print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        	}
+
+        	if ($max && $num > $max)
+        	{
+        		print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("More").'...</td></tr>';
+        	}
+
         	print '</table>';
+        	print '</div>';
         }
 
         return $num;
@@ -250,13 +296,13 @@ class FormActions
      *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
      *  @param  string		    $htmlname       Name of select field
      *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
-     *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
+     *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
      *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
      *  @param  int		        $multiselect    1=Allow multiselect of action type
      *  @param  int             $nooutput       1=No output
      * 	@return	string
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
+    function select_type_actions($selected='', $htmlname='actioncode', $excludetype='', $onlyautoornot=0, $hideinfohelp=0, $multiselect=0, $nooutput=0)
     {
         global $langs,$user,$form,$conf;
 
@@ -277,22 +323,22 @@ class FormActions
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
        	$out='';
-       	
-		if (! empty($multiselect)) 
+
+		if (! empty($multiselect))
 		{
 	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
 			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
-		else 
+		else
 		{
-			$out.=$form->selectarray($htmlname, $arraylist, $selected);
+			$out.=$form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		}
-		
-        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
+
+        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)
         {
             $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
         }
-        
+
         if ($nooutput) return $out;
         else print $out;
         return '';

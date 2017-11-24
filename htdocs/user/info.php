@@ -34,7 +34,8 @@ $id = GETPOST('id','int');
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, $ref, '', 1);
+	$object->getrights();
 }
 
 // Security check
@@ -64,10 +65,14 @@ llxHeader();
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'info', $title, 0, 'user');
+dol_fiche_head($head, 'info', $title, -1, 'user');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '';
+
+if ($user->rights->user->user->lire || $user->admin) {
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+}
 
 dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
@@ -76,7 +81,6 @@ $object->info($id); // This overwrite ->ref with login instead of id
 
 
 print '<div class="fichecenter">';
-
 print '<div class="underbanner clearboth"></div>';
 
 print '<br>';

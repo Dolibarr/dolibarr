@@ -107,7 +107,7 @@ class CommandeApi extends DolibarrApi
      * @url     GET     /order/list
      * @return  array   Array of order objects
      */
-    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $societe = 0) {
+    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $societe = 0) {
         global $db, $conf;
 
         $obj_ret = array();
@@ -115,6 +115,7 @@ class CommandeApi extends DolibarrApi
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
 
         // If the internal user must only see his customers, force searching by him
+        $search_sale = 0;
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT s.rowid";
@@ -127,7 +128,7 @@ class CommandeApi extends DolibarrApi
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        $sql.= ' WHERE s.entity IN ('.getEntity('commande', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('commande').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
         if ($socid) $sql.= " AND s.fk_soc = ".$socid;
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -138,7 +139,7 @@ class CommandeApi extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -162,18 +163,19 @@ class CommandeApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
                 if($commande_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($commande_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($commande_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve commande list');
+            throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No commande found');
@@ -193,7 +195,7 @@ class CommandeApi extends DolibarrApi
      * @return  array   Array of order objects
      */
     function getListForSoc($socid = 0) {
-      return getList(0,"s.rowid","ASC",0,0,$socid);
+      return $this->getList(0,"s.rowid","ASC",0,0,$socid);
     }
 
 
@@ -314,7 +316,7 @@ class CommandeApi extends DolibarrApi
       );
 
       if ($updateRes > 0) {
-        return $this->get($id)->line->rowid;
+        return $updateRes;
 
       }
       return false;
@@ -387,7 +389,7 @@ class CommandeApi extends DolibarrApi
      *
      * @return int
      */
-    function delLine($id, $lineid) {
+    function deleteLine($id, $lineid) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
@@ -432,6 +434,7 @@ class CommandeApi extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->commande->$field = $value;
         }
 

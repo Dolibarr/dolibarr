@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
@@ -35,7 +35,7 @@ $langs->load("users");
 $langs->load('other');
 
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
@@ -76,25 +76,27 @@ if ($user->id <> $id && ! $canreaduser) accessforbidden();
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortfield) $sortfield="position_name";
 
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
-
+	$result = $object->fetch($id, $ref, '', 1);
+	$object->getrights();
 	$entitytouseforuserdir = $object->entity;
 	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;
 	$upload_dir = $conf->user->multidir_output[$entitytouseforuserdir] . "/" . $object->id ;
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('usercard','globalcard'));
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$contextpage=array('usercard','userdoc','globalcard');
+$hookmanager->initHooks($contextpage);
+
 
 /*
  * Actions
@@ -107,6 +109,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook)) {
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
+
 
 /*
  * View
@@ -127,16 +130,20 @@ if ($object->id)
 
 	$form=new Form($db);
 
-	dol_fiche_head($head, 'document', $langs->trans("User"),0,'user');
+	dol_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '';
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	}
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
+
+    print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-	
+
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -144,23 +151,26 @@ if ($object->id)
 	}
 
 
-	print '<table class="border"width="100%">';
+	print '<table class="border" width="100%">';
 
     // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$object->login.'&nbsp;</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
-	// Nbre fichiers
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	// Nbre files
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 
 	//Total taille
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print '</table>';
+    print '</div>';
 
-	print '</div>';
+	dol_fiche_end();
+
 
 	$modulepart = 'user';
 	$permission = $user->rights->user->user->creer;
+	$permtoedit = $user->rights->user->user->creer;
 	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

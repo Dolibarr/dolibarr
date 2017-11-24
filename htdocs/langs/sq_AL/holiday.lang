@@ -12,11 +12,11 @@ DateCreateCP=Creation date
 DraftCP=Draft
 ToReviewCP=Awaiting approval
 ApprovedCP=Miratuar
-CancelCP=Canceled
+CancelCP=Anulluar
 RefuseCP=Refuzuar
 ValidatorCP=Approbator
 ListeCP=List of leaves
-ReviewedByCP=Will be reviewed by
+ReviewedByCP=Will be approved by
 DescCP=Përshkrimi
 SendRequestCP=Create leave request
 DelayToRequestCP=Leave requests must be made at least <b>%s day(s)</b> before them.
@@ -76,8 +76,11 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Monthly update
 ManualUpdate=Manual update
 HolidaysCancelation=Leave request cancelation
-EmployeeLastname=Mbiemri i punonjësit
-EmployeeFirstname=Emri i punonjësit
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

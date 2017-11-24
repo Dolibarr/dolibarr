@@ -283,11 +283,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
-	
+
 						// Rect prend une longueur en 3eme param
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
-	
+
 						$tab_top = $nexY+6;
 						$height_incoterms += 4;
 					}
@@ -315,9 +315,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				$iniY = $tab_top + 11;
+				$curY = $tab_top + 11;
+				$nexY = $tab_top + 11;
 
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblines ; $i++)
@@ -566,6 +566,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;	// pas d'erreur
 			}
 			else
@@ -637,7 +639,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
+			$pdf->line($this->marge_gauche, $tab_top+10, $this->page_largeur-$this->marge_droite, $tab_top+10);
 		}
 
 		$pdf->SetDrawColor(128,128,128);
@@ -660,14 +662,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->line($this->posxqty, $tab_top, $this->posxqty, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top+1);
-			$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+			$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 2, $outputlangs->transnoentities("QtyShippedShort"),'','R');
 		}
 
 		// Remain to ship
 		$pdf->line($this->posxremainingqty, $tab_top, $this->posxremainingqty, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxremainingqty, $tab_top+1);
-			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxremainingqty, 2, $outputlangs->transnoentities("KeepToShip"),'','R');
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxremainingqty, 2, $outputlangs->transnoentities("KeepToShipShort"),'','R');
 		}
 	}
 

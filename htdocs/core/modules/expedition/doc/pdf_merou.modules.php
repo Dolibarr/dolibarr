@@ -359,6 +359,8 @@ class pdf_merou extends ModelePdfExpedition
                 if (! empty($conf->global->MAIN_UMASK))
                     @chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+                
 				return 1;
 			}
 			else
@@ -372,9 +374,6 @@ class pdf_merou extends ModelePdfExpedition
 			$this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$outputlangs->transnoentities("ErrorUnknown");
-		return 0;   // Erreur par defaut
-
 	}
 
 	/**

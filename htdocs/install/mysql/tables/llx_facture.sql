@@ -63,7 +63,8 @@ create table llx_facture
   fk_user_modif         integer,                                -- user making last change
   fk_user_valid			integer,								-- user validating
 
-  fk_facture_source		integer,								-- facture origine si facture avoir
+  fk_fac_rec_source		integer,								-- facture rec source
+  fk_facture_source		integer,								-- facture origin if credit notes or replacement invoice
   fk_projet				integer DEFAULT NULL,					-- projet auquel est associee la facture
 
   fk_account			integer,								-- bank account
@@ -76,6 +77,7 @@ create table llx_facture
   note_private			text,
   note_public			text,
   model_pdf				varchar(255),
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
 
   fk_incoterms          integer,								-- for incoterms
   location_incoterms    varchar(255),							-- for incoterms

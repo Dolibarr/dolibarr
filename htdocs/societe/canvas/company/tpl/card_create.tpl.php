@@ -29,7 +29,7 @@
 <br>
 <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
 <input type="radio" id="radiocompany" class="flat" name="private" value="0" checked>
-<?php echo $langs->trans("Company/Fundation"); ?> &nbsp; &nbsp;
+<?php echo $langs->trans("CompanyFoundation"); ?> &nbsp; &nbsp;
 <input type="radio" id="radioprivate" class="flat" name="private" value="1"> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>
 <br>
@@ -104,7 +104,7 @@
 <?php } ?>
 
 <tr>
-	<td valign="top"><?php echo $langs->trans('Address'); ?></td>
+	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
 	<td colspan="3"><textarea name="adress" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
@@ -133,7 +133,7 @@
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':''); ?></td>
+	<td><?php echo $langs->trans('EMail').($conf->global->SOCIETE_EMAIL_MANDATORY?'*':''); ?></td>
 	<td><input type="text" name="email" size="32" value="<?php echo $this->control->tpl['email']; ?>"></td>
 	<td><?php echo $langs->trans('Web'); ?></td>
 	<td><input type="text" name="url" size="32" value="<?php echo $this->control->tpl['url']; ?>"></td>

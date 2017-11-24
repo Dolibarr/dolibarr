@@ -38,7 +38,7 @@ $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $eraseallbarcode=GETPOST('eraseallbarcode');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);

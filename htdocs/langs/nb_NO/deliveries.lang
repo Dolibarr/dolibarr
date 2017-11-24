@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 DeliveryRef=Leveranse ref.
-DeliveryCard=Leveringskort
+DeliveryCard=Kvitteringskort
 DeliveryOrder=Leveringsordre
 DeliveryDate=Leveringsdato
-CreateDeliveryOrder=Opprett leveringsordre
+CreateDeliveryOrder=Generer leveringskvittering
 DeliveryStateSaved=Leveringsstatus lagret
 SetDeliveryDate=Angi leveringsdato
 ValidateDeliveryReceipt=Godkjenn leveringskvittering
 ValidateDeliveryReceiptConfirm=Er du sikker på at du vil validere denne leveringskvitteringen?
 DeleteDeliveryReceipt=Slett leveringskvittering
-DeleteDeliveryReceiptConfirm=Er du sikker på at du vil slette leveringskvitteringen <b>%s?</b>
+DeleteDeliveryReceiptConfirm=Er du sikker på at du vil slette leveringskvittering <b>%s</b>?
 DeliveryMethod=Leveringsmåte
 TrackingNumber=Trackingnummer
 DeliveryNotValidated=Levering ikke validert

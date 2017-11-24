@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Secrutiy check
 if ($user->societe_id > 0)
@@ -47,7 +47,7 @@ $mode=GETPOST("mode");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -69,7 +69,7 @@ if ($action == 'note')
 	$result = $db->query($sql);
 }
 
-if ($mode == 'search') 
+if ($mode == 'search')
 {
 	$resql=$db->query($sql);
 	if ($resql) {
@@ -93,39 +93,40 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (dol_strlen($stcomm))
 {
-	$sql.= " AND s.fk_stcomm=$stcomm";
+	$sql.= " AND s.fk_stcomm=".$stcomm;
 }
 if ($socname)
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($socname)."%'";
+	$sql.= natural_search("s.nom", $socname);
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
 if ($_GET["search_nom"])
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($_GET["search_nom"])."%'";
+	$sql.= natural_search("s.nom", GETPOST("search_nom"));
 }
 if ($_GET["search_compta"])
 {
-	$sql.= " AND s.code_compta LIKE '%".$db->escape($_GET["search_compta"])."%'";
+	$sql.= natural_search("s.code_compta", GETPOST("search_compta"));
 }
 if ($_GET["search_code_client"])
 {
-	$sql.= " AND s.code_client LIKE '%".$db->escape($_GET["search_code_client"])."%'";
+	$sql.= natural_search("s.code_client", GETPOST("search_code_client"));
 }
 if (dol_strlen($begin))
 {
-	$sql.= " AND s.nom LIKE '".$db->escape($begin)."'";
+	$sql.= natural_search("s.nom", $begin);
 }
 if ($socid)
 {
 	$sql.= " AND s.rowid = ".$socid;
 }
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -143,11 +144,11 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("AccountancyCode",$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -177,9 +178,9 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		print '<td>';
 		$thirdpartystatic->id=$obj->rowid;
 		$thirdpartystatic->name=$obj->name;

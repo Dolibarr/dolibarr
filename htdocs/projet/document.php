@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/projet/document.php
  *	\ingroup    project
- *	\brief      Page de gestion des documents attachees a un projet
+ *	\brief      Page to managed related documents linked to a project
  */
 
 require '../main.inc.php';
@@ -42,7 +42,7 @@ $mine 		= (GETPOST('mode','alpha') == 'mine' ? 1 : 0);
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user,'projet',$id,'projet&project');
 
 $object = new Project($db);
@@ -57,7 +57,7 @@ if ($id > 0 || ! empty($ref)) {
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -96,21 +96,21 @@ if ($object->id > 0)
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+	dol_fiche_head($head, 'document', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 	// Files list constructor
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
 
-	
+
 	// Project card
-	
-	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
-	
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
 	$morehtmlref='<div class="refidno">';
 	// Title
 	$morehtmlref.=$object->title;
@@ -120,30 +120,31 @@ if ($object->id > 0)
 	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref.='</div>';
-	
+
 	// Define a complementary filter for search of next/prev ref.
 	if (! $user->rights->projet->all->lire)
 	{
 	    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
 	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 	}
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';	
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
 
 	// Files infos
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print "</table>\n";
-	
+
 	print '</div>';
-	
+
+
 	dol_fiche_end();
 
 	$modulepart = 'project';

@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("users");
 $langs->load("other");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 if (!$user->admin) accessforbidden();
 
@@ -44,7 +44,7 @@ if (!$user->admin) accessforbidden();
 if ($action == 'add')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-    $sql.= " WHERE id = ".$_GET["pid"];
+    $sql.= " WHERE id = ".GETPOST("pid",'int');
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
@@ -52,7 +52,7 @@ if ($action == 'add')
 if ($action == 'remove')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-    $sql.= " WHERE id = ".$_GET["pid"];
+    $sql.= " WHERE id = ".GETPOST('pid','int');
     $sql.= " AND entity = ".$conf->entity;
     $db->query($sql);
 }
@@ -118,20 +118,20 @@ $db->commit();
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'default', $langs->trans("Security"));
+dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
 
 
 // Show warning about external users
 print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 
 // Affiche lignes des permissions
 $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql.= " AND entity IN (".(! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+$sql.= " AND entity = ".$conf->entity;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
 $sql.= " ORDER BY r.module, r.id";
 
@@ -140,7 +140,6 @@ if ($result)
 {
     $num	= $db->num_rows($result);
     $i		= 0;
-    $var	= True;
     $oldmod	= "";
 
     while ($i < $num)
@@ -186,11 +185,12 @@ if ($result)
             print "</tr>\n";
         }
 
-        $var=!$var;
-        print '<tr '. $bc[$var].'>';
 
-        print '<td>'.img_object('',$picto).' '.$objMod->getName();
+        print '<tr class="oddeven">';
+        print '<td>';
+        print img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
         print '<a name="'.$objMod->getName().'">&nbsp;</a>';
+		print '</td>';
 
         $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle));
         print '<td>'.$perm_libelle. '</td>';
@@ -215,8 +215,9 @@ if ($result)
 }
 
 print '</table>';
-
 print '</div>';
+
+dol_fiche_end();
 
 llxFooter();
 $db->close();

@@ -141,24 +141,3 @@ abstract class ModelNumRefExpedition
 		return $langs->trans("NotAvailable");
 	}
 }
-
-/**
- * 	Create a document onto disk according to template module.
- *
- * 	@param		DoliDB		$db  			Objet base de donnee
- * 	@param		Expedition		$object			Object expedition
- * 	@param		string		$modele			Force le modele a utiliser ('' to not force)
- * 	@param		Translate	$outputlangs	Objet lang a utiliser pour traduction
- *  @param      int			$hidedetails    Hide details of lines
- *  @param      int			$hidedesc       Hide description
- *  @param      int			$hideref        Hide ref
- * 	@return 	int 						1 if OK -1 if KO
- * 	@deprecated Use the new function generateDocument of Expedition class
- * @see Expedition::generateDocument()
- */
-function expedition_pdf_create(DoliDB $db, Expedition $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
-{
-	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-}

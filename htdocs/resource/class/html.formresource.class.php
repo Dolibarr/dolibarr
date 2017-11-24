@@ -109,10 +109,10 @@ class FormResource
     			while ( $i < $num)
     			{
     			    $resourceclass=ucfirst($resourcestat->lines[$i]->element);
-    			    
+
     				$label=$resourcestat->lines[$i]->ref?$resourcestat->lines[$i]->ref:''.$resourcestat->lines[$i]->label;
     				if ($resourceclass != 'Dolresource') $label.=' ('.$langs->trans($resourceclass).')';
-    				
+
     				if ($selected > 0 && $selected == $resourcestat->lines[$i]->id)
     				{
     					$out.= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
@@ -129,6 +129,7 @@ class FormResource
     			}
     		}
     		$out.= '</select>'."\n";
+    		$out.= ajax_combobox($htmlname);
 
     		if ($outputmode != 2)
     		{
@@ -172,7 +173,7 @@ class FormResource
     	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
 
     	$resourcestat->load_cache_code_type_resource();
-    	print '<select id="select'.$htmlname.'" class="flat select_'.$htmlname.'" name="'.$htmlname.'">';
+    	print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
     	if ($empty) print '<option value="">&nbsp;</option>';
     	if (is_array($resourcestat->cache_code_type_resource) && count($resourcestat->cache_code_type_resource))
     	{

@@ -1,5 +1,5 @@
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2009-2017 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,14 +13,35 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
+
+
 body {
-	font-size:13px;
-	font-family: Verdana, Arial, Helvetica, Tahoma, sans-serif;
-	background: #fcfcfc;
+	font-size:14px;
+	font-family: roboto,arial,tahoma,verdana,helvetica;
+	/* background: #fcfcfc; */
 	margin: 15px 30px 10px;
+}
+
+table.main-inside {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	color: #000000;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	line-height: 22px;
+}
+
+table.main {
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	background-color: #fff;
 }
 
 div.titre {
@@ -33,9 +54,9 @@ span.titre {
 	font-weight: bold;
 	background: #FFFFFF;
 	color: #444;
-	border: 1px solid #999;
-	padding: 5px 5px 5px 5px;
-	margin: 0 0 0 15px;
+	border: 1px solid #bbb;
+	padding: 10px 10px 10px 10px;
+	margin: 0 0 10px 10px;
 }
 
 div.soustitre {
@@ -48,6 +69,75 @@ div.soustitre {
 	border-right: 1px solid #999;
 	text-align: right;
 }
+
+.minwidth100 { min-width: 100px; }
+.minwidth200 { min-width: 200px; }
+.minwidth300 { min-width: 300px; }
+.minwidth400 { min-width: 400px; }
+.minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
+
+
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	body {
+		margin: 15px 4px 4px;
+	}
+	
+	input, input[type=text], input[type=password], select, textarea     { 
+		min-width: 20px; 
+    	min-height: 1.4em;
+    	line-height: 1.4em;
+    	padding: .4em .1em;
+    	border: 1px solid #BBB;
+    	/* max-width: inherit; why this ? */
+     }
+     
+    .hideonsmartphone { display: none; }
+    .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth50onsmartphone { max-width: 40px; }
+    .maxwidth75onsmartphone { max-width: 50px; }
+    .maxwidth100onsmartphone { max-width: 70px; }
+    .maxwidth150onsmartphone { max-width: 120px; }
+    .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 50px !important; }
+    .minwidth300imp { min-width: 50px !important; }
+    .minwidth400imp { min-width: 50px !important; }
+    .minwidth500imp { min-width: 50px !important; }
+
+	table.main {
+    	padding-left: 0;
+    	padding-right: 0;
+	}
+	
+	table.main-inside {
+		padding-left: 1px;
+		padding-right: 1px;
+		line-height: 20px;
+	}
+	
+	span.titre {
+	    font-size: 90%;
+	    font-weight: normal;
+	    background: #FFFFFF;
+	    color: #444;
+	    border: 1px solid #999;
+	    padding: 5px 5px 5px 5px;
+	    margin: 0 0 0 4px;
+	}
+}
+
 
 input:disabled
 {
@@ -94,6 +184,11 @@ input:focus, textarea:focus, button:focus, select:focus {
 }
 input[type=text], input[type=password] {
     border: 1px solid #ACBCBB;
+    padding: 4px;
+}
+select {
+    padding: 4px;
+    background-color: #fff;
 }
 input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus {
     border: 1px solid #ACBCBB;
@@ -104,39 +199,20 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
-table.main {
-	padding-left: 6px;
-	padding-right: 6px;
-	padding-top: 12px;
-	padding-bottom: 12px;
-	border: 1px solid #A0A0A0;
-	border-radius: 8px;
-	border: solid 1px rgba(90,90,90,.4);
-	background-color: #fff;
-	-moz-box-shadow: 0px 1px 6px 2px rgba(0, 0, 0, 0.2);
-	-webkit-box-shadow: 0px 1px 6px 2px rgba(0, 0, 0, 0.2);
-	box-shadow: 0px 1px 6px 2px rgba(0, 0, 0, 0.2);
-}
-
-table.main-inside {
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-bottom: 10px;
-	margin-top: 10px;
-	color: #000000;
-}
-
 table.listofchoices, tr.listofchoices, td.listofchoices {
 	border-collapse: collapse;
     padding: 4px;
     color: #000000;
-	border: 1px solid #999 !important;
+	border: 1px solid #ccc !important;
+	line-height: 18px;
 }
 
 tr.listofchoices {
     height: 42px;	
 }
-
+.listofchoicesdesc {
+	color: #999 !important;
+}
 .blinkwait {
 	font-weight: bold;
 	text-decoration:blink !important;	
@@ -170,9 +246,8 @@ font.warning {
 div.error {
 	color: #550000;
 	font-weight: bold;
-	padding: 0.2em 0.2em 0.2em 0.2em;
+	padding: 0.2em 0.2em 0.2em 0;
 	margin: 0.5em 0 0.5em 0;
-	border: 1px solid #6C7C8B;
 }
 font.error {
 	color: #550000;
@@ -181,7 +256,7 @@ font.error {
 
 /* Next button */
 div.nextbutton {
-	text-align: right;
+	text-align: center;
 	margin-top: 10px;
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -211,15 +286,14 @@ a.titre {
 div.comment {
 	text-decoration:none;
 	color:black;
-	font-size: 13px;
 }
 
 h3 {
-	margin-top: 10px;
+	margin-top: 20px;
 	font-size:16px;
 	font-weight: normal;
-	color: #4965B3;
-	text-shadow: 1px 1px 1px #c0c0c0;
+	color: rgb(100,60,20);
+	/* text-shadow: 1px 1px 1px #c0c0c0; */
 }
 
 tr.bg1 {
@@ -244,12 +318,8 @@ td.comment {
 	padding: 5px 5px 5px 5px;
 	margin: 0 0 0 0;
 	text-decoration:none;
-	font-size: 11px;
-	border-bottom: 1px solid #CCCCDB;
-}
-
-table {
 	font-size: 12px;
+	border-bottom: 1px solid #CCCCDB;
 }
 
 .install
@@ -274,16 +344,16 @@ ul {
 
 
 .button {
-    background: #FFFFFF bottom;
-    border: 1px solid #C0C0C0;
+    background: #fcfcfc;
+    border: 1px solid #e0e0e0;
     padding: 0.3em 0.7em;
     margin: 0 0.5em;
-    -moz-border-radius:0 5px 0 5px;
-    -webkit-border-radius:0 5px 0 5px;
-    border-radius:0 5px 0 5px;
-    -moz-box-shadow: 2px 2px 3px #CCC;
-    -webkit-box-shadow: 2px 2px 3px #CCC;
-    box-shadow: 2px 2px 3px #CCC;
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    -moz-box-shadow: 2px 2px 3px #ddd;
+    -webkit-box-shadow: 2px 2px 3px #ddd;
+    box-shadow: 2px 2px 3px #ddd;
 }
 a.button:hover {
     text-decoration:none;
@@ -298,3 +368,12 @@ a.button:hover {
 .center {
     text-align: center;
 }
+
+.valignmiddle {
+	vertical-align: middle;
+}
+
+.valigntextbottom {
+	vertical-align: text-bottom;
+}
+

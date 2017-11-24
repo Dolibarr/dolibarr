@@ -26,6 +26,7 @@ DocumentModelStandard=Modèle de fiche d'intervention standard
 InterventionCardsAndInterventionLines=Fiches interventions et lignes d'interventions
 InterventionClassifyBilled=Classer "Facturée"
 InterventionClassifyUnBilled=Classer "Non facturée"
+InterventionClassifyDone=Classé "Traitée"
 StatusInterInvoiced=Facturée
 ShowIntervention=Afficher intervention
 SendInterventionRef=Envoi de la fiche intervention %s
@@ -40,15 +41,19 @@ InterventionDeletedInDolibarr=Intervention %s effacée
 InterventionsArea=Espace interventions
 DraftFichinter=Interventions brouillon
 LastModifiedInterventions=Les %s dernières interventions modifiées
+FichinterToProcess=Interventions à traiter
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contact client suivi de l'intervention
 # Modele numérotation
 PrintProductsOnFichinter=Imprimer aussi les lignes de type "produit" (pas seulement de type service) sur les fiches d'intervention
 PrintProductsOnFichinterDetails=interventions générées à partir des commandes
 UseServicesDurationOnFichinter=Utiliser la durée des services dans les interventions créées depuis des commandes
+UseDurationOnFichinter=Masque le champ de durée pour les enregistrements d'intervention
+UseDateWithoutHourOnFichinter=Masque les heures et les minutes du champ de la date pour les enregistrements d'intervention
 InterventionStatistics=Statistiques des interventions
 NbOfinterventions=Nb de fiches d'intervention
 NumberOfInterventionsByMonth=Nb de fiches d'intervention par mois (date de validation)
+AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
 ##### Exports #####
 InterId=Id intervention
 InterRef=Intervention ref.

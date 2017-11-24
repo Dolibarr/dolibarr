@@ -42,8 +42,8 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(900);	// Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action');
-$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
+$action=GETPOST('action','aZ09');
+$setuplang=(GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -86,7 +86,7 @@ if (! is_writable($conffile))
 
 if ($action == "set")
 {
-    print '<h3>'.$langs->trans("Database").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
     print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
     $error=0;
@@ -514,6 +514,8 @@ if ($action == "set")
             {
                 if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
                 {
+                	if (preg_match('/^llx_accounting_account_/')) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
+
                     //print 'x'.$file.'-'.$createdata.'<br>';
                     if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i',$file))
                     {

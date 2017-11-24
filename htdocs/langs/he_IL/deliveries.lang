@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Delivery
 DeliveryRef=Ref Delivery
-DeliveryCard=Delivery card
+DeliveryCard=Receipt card
 DeliveryOrder=Delivery order
 DeliveryDate=Delivery date
-CreateDeliveryOrder=Generate delivery order
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=Set shipping date
 ValidateDeliveryReceipt=Validate delivery receipt
-ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Delete delivery receipt
-DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b> ?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Delivery method
 TrackingNumber=Tracking number
 DeliveryNotValidated=Delivery not validated

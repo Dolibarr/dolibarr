@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
@@ -40,20 +40,21 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 $search_ref = GETPOST('search_ref','int');
 $search_label = GETPOST('search_label','alpha');
 $search_amount = GETPOST('search_amount','alpha');
+$search_status = GETPOST('search_status','int');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="cs.date_ech";
 if (! $sortorder) $sortorder="DESC";
 
-$year=$_GET["year"];
-$filtre=$_GET["filtre"];
+$year=GETPOST("year",'int');
+$filtre=GETPOST("filtre",'int');
 
 if (empty($_REQUEST['typeid']))
 {
@@ -70,11 +71,12 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
 	$search_amount="";
+	$search_status='';
     $typeid="";
 	$year="";
 	$month="";
@@ -88,7 +90,7 @@ $form = new Form($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static=new ChargeSociales($db);
 
-llxHeader();
+llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
 $sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
@@ -99,11 +101,11 @@ $sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql.= " WHERE cs.fk_type = c.id";
 $sql.= " AND cs.entity = ".$conf->entity;
-
 // Search criteria
-if ($search_ref)	$sql.=" AND cs.rowid=".$search_ref;
+if ($search_ref)	$sql.=" AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql.=natural_search("cs.libelle", $search_label);
 if ($search_amount) $sql.=natural_search("cs.amount", price2num(trim($search_amount)), 1);
+if ($search_status != '' && $search_status >= 0) $sql.=" AND cs.paye = ".$db->escape($search_status);
 if ($year > 0)
 {
     $sql .= " AND (";
@@ -118,7 +120,7 @@ if ($filtre) {
     $sql .= " AND ".$filtre;
 }
 if ($typeid) {
-    $sql .= " AND cs.fk_type=".$typeid;
+    $sql .= " AND cs.fk_type=".$db->escape($typeid);
 }
 $sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
 $sql.= $db->order($sortfield,$sortorder);
@@ -150,8 +152,9 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-	
+
 	if ($year)
 	{
 	    $center=($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":"");
@@ -172,20 +175,10 @@ if ($resql)
 	}
 	else
 	{
+	    print '<div class="div-table-responsive">';
+	    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-		print '<table class="liste" width="100%">';
-		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"periode","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-		print "</tr>\n";
-
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre_filter">';
 		// Ref
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
@@ -194,7 +187,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.$search_label.'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,16,0);
+	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,0,0,'maxwidth100onsmartphone');
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -204,12 +197,26 @@ if ($resql)
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		// Status
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+		$liststatus=array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
+		print $form->selectarray('search_status', $liststatus, $search_status, 1);
+		print '</td>';
 
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
-        print $searchpitco;
+        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        print $searchpicto;
         print '</td>';
+		print "</tr>\n";
+
+		print '<tr class="liste_titre">';
+		print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"id","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"cs.libelle","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"periode","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("DateDue",$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cs.paye","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 		print "</tr>\n";
 
 		$i=0;
@@ -218,8 +225,7 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$var = !$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			// Ref
 			print '<td width="60">';
@@ -252,7 +258,7 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
 			$totalarray['totalttc'] += $obj->amount;
-			
+
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
@@ -268,7 +274,7 @@ if ($resql)
 		if (isset($totalarray['totalttcfield']))
 		{
 		    print '<tr class="liste_total">';
-            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
             else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
             print '<td></td>';
             print '<td></td>';
@@ -279,8 +285,9 @@ if ($resql)
 	        print '<td></td>';
 	        print '</tr>';
 		}
-		
+
 		print '</table>';
+		print '</div>';
 	}
 	print '</form>';
 }

@@ -140,12 +140,25 @@ class Google extends AbstractService
         $this->accessType = $accessType;
     }
 
+    // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+    public $approvalPrompt='auto';
+    public function setApprouvalPrompt($prompt)
+    {
+        if (!in_array($prompt, array('auto', 'force'), true)) {
+            // @todo Maybe could we rename this exception
+            throw new InvalidAccessTypeException('Invalid approuvalPrompt, expected either auto or force.');
+        }
+        $this->approvalPrompt = $prompt;
+    }
+    
     /**
      * {@inheritdoc}
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://accounts.google.com/o/oauth2/auth?access_type=' . $this->accessType);
+        // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+        //return new Uri('https://accounts.google.com/o/oauth2/auth?access_type='.$this->accessType);
+        return new Uri('https://accounts.google.com/o/oauth2/auth?'.($this->approvalPrompt?'approval_prompt='.$this->approvalPrompt.'&':'').'access_type='.$this->accessType);
     }
 
     /**

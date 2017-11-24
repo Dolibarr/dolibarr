@@ -34,9 +34,9 @@ $langs->load("categories");
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');
@@ -157,7 +157,7 @@ print '<tr>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td >';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
+$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -173,7 +173,9 @@ print '<tr><td>'.$langs->trans("In").'</td><td>';
 print $form->select_all_categories($type,$object->fk_parent,'parent',64,$object->id);
 print '</td></tr>';
 
+$parameters=array();
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 if (empty($reshook) && ! empty($extrafields->attribute_label))
 {
 	print $object->showOptionals($extrafields,'edit');

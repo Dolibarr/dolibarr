@@ -19,9 +19,6 @@
 /**
  * 		\defgroup   expensereport	Module expensereport
  *      \brief      Module to manage expense report. Replace old module Deplacement.
- */
-
-/**
  *      \file       htdocs/core/modules/modExpenseReport.class.php
  *      \ingroup    expensereport
  *      \brief      Description and activation file for module ExpenseReport
@@ -44,36 +41,21 @@ class modExpenseReport extends DolibarrModules
 		global $conf;
 
 		$this->db = $db;
-
-		// Id for module (must be unique).
-		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 770;
 
-		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		// It is used to group modules in module setup page
 		$this->family = "hr";
 		$this->module_position = 40;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Manage and claim expense reports (transportation, meal, ...)";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
-		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
 		$this->special = 0;
-		// Name of image file used for this module.
-		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
-		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='trip';
 
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		$this->triggers = 0;
-
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/mymodule/temp");
-		$this->dirs = array();
+		$this->dirs = array("/expensereport/temp");
 		$r=0;
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
@@ -88,9 +70,6 @@ class modExpenseReport extends DolibarrModules
 		$this->langfiles = array("companies","trips");
 
 		// Constants
-		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 		$r=0;
 
@@ -101,104 +80,98 @@ class modExpenseReport extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		// Array to add new pages in new tabs
-		$this->tabs = array();
-		// where entity can be
-		// 'thirdparty'       to add a tab in third party view
-		// 'intervention'     to add a tab in intervention view
-		// 'order_supplier'   to add a tab in supplier order view
-		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'invoice'          to add a tab in customer invoice view
-		// 'order'            to add a tab in customer order view
-		// 'product'          to add a tab in product view
-		// 'stock'            to add a tab in stock view
-		// 'propal'           to add a tab in propal view
-		// 'member'           to add a tab in fundation member view
-		// 'contract'         to add a tab in contract view
-		// 'user'             to add a tab in user view
-		// 'group'            to add a tab in group view
-		// 'contact'          to add a tab in contact view
+		$this->const[$r][0] = "EXPENSEREPORT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_expensereport_jade";
+		$this->const[$r][3] = 'Name of manager to generate expense report ref number';
+		$this->const[$r][4] = 0;
+		$r++;
 
+		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to approve';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS_TO_PAY";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "15";
+		$this->const[$r][3] = 'Tolerance delay (in days) before alert for expense reports to pay';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		// Array to add new pages in new tabs
+		$this->tabs[] = array('data'=>'user:+expensereport:ExpenseReport:expensereport:$user->rights->expensereport->lire:/expensereport/list.php?mainmenu=hrm&id=__ID__');  					// To add a new tab identified by code tabname1
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
 		$r=0;
 
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
-		// Example:
-		//$this->boxes[$r][1] = "myboxa.php";
-		//$r++;
-		//$this->boxes[$r][1] = "myboxb.php";
-		//$r++;
-
-
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$this->rights_class = 'expensereport';
 
-		$this->rights[1][0] = 771;
-		$this->rights[1][1] = 'Read expense reports (yours and your subordinates)';
-		$this->rights[1][2] = 'r';
-		$this->rights[1][3] = 1;
-		$this->rights[1][4] = 'lire';
+		$this->rights[$r][0] = 771;
+		$this->rights[$r][1] = 'Read expense reports (yours and your subordinates)';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'lire';
+		$r++;
 
-		$this->rights[3][0] = 772;
-		$this->rights[3][1] = 'Create/modify expense reports';
-		$this->rights[3][2] = 'w';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'creer';
+		$this->rights[$r][0] = 772;
+		$this->rights[$r][1] = 'Create/modify expense reports';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
+		$r++;
 
-		$this->rights[4][0] = 773;
-		$this->rights[4][1] = 'Delete expense reports';
-		$this->rights[4][2] = 'd';
-		$this->rights[4][3] = 0;
-		$this->rights[4][4] = 'supprimer';
+		$this->rights[$r][0] = 773;
+		$this->rights[$r][1] = 'Delete expense reports';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'supprimer';
+		$r++;
 
-		$this->rights[2][0] = 774;
-		$this->rights[2][1] = 'Read all expense reports';
-		$this->rights[2][2] = 'r';
-		$this->rights[2][3] = 1;
-		$this->rights[2][4] = 'readall';
+		$this->rights[$r][0] = 775;
+		$this->rights[$r][1] = 'Approve expense reports';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'approve';
+		$r++;
 
-		$this->rights[6][0] = 775;
-		$this->rights[6][1] = 'Approve expense reports';
-		$this->rights[6][2] = 'w';
-		$this->rights[6][3] = 0;
-		$this->rights[6][4] = 'approve';
+		$this->rights[$r][0] = 776;
+		$this->rights[$r][1] = 'Pay expense reports';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'to_paid';
+		$r++;
 
-		$this->rights[7][0] = 776;
-		$this->rights[7][1] = 'Pay expense reports';
-		$this->rights[7][2] = 'w';
-		$this->rights[7][3] = 0;
-		$this->rights[7][4] = 'to_paid';
+		$this->rights[$r][0] = 777;
+		$this->rights[$r][1] = 'Read expense reports of everybody';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'readall';
+		$r++;
 
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
-		{
-			$this->rights[8][0] = 777;
-			$this->rights[8][1] = 'Synchroniser les NDF avec un compte courant';
-			$this->rights[8][2] = 'w';
-			$this->rights[8][3] = 0;
-			$this->rights[8][4] = 'synchro';
+		$this->rights[$r][0] = 778;
+		$this->rights[$r][1] = 'Create expense reports for everybody';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'writeall_advance';
+		$r++;
 
-			$this->rights[9][0] = 778;
-			$this->rights[9][1] = 'Exporter les NDF au format CSV';
-			$this->rights[9][2] = 'r';
-			$this->rights[9][3] = 0;
-			$this->rights[9][4] = 'export_csv';
-		}
+		$this->rights[$r][0] = 779;
+		$this->rights[$r][1] = 'Export expense reports';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
+		$r++;
 
-		$this->rights[5][0] = 779;
-		$this->rights[5][1] = 'Export expense reports';
-		$this->rights[5][2] = 'r';
-		$this->rights[5][3] = 0;
-		$this->rights[5][4] = 'export';
-
-		
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
 		// Exports
 		$r=0;
 
@@ -217,7 +190,7 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expensereport_det as ed LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as tf ON ed.fk_c_type_fees = tf.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport',1).')';
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport').')';
 	}
 
 	/**

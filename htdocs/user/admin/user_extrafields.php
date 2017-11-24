@@ -37,7 +37,7 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
+foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
@@ -70,7 +70,7 @@ print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 $head = user_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("MenuUsersAndGroups"), 0, 'user');
+dol_fiche_head($head, 'attributes', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

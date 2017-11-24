@@ -17,20 +17,38 @@
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
+ * $action
  * $conf
  * $langs
  *
+ * $parameters
  * $cols
  */
+?>
+<!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
+<?php
 
-//$res = $object->fetch_optionals($object->id, $extralabels);
-$parameters = array('colspan' => ' colspan="'.$cols.'"', 'cols' => $cols, 'socid' => $object->fk_soc);
+if (! is_array($parameters)) $parameters = array();
+if (! empty($cols)) $parameters['colspan'] = ' colspan="'.$cols.'"';
+if (! empty($cols)) $parameters['cols'] = $cols;
+if (! empty($object->fk_soc)) $parameters['socid'] = $object->fk_soc;
+
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
+print $hookmanager->resPrint;
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook) && ! empty($extrafields->attribute_label))
+//var_dump($extrafields->attributes);
+if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label']))
 {
-	foreach ($extrafields->attribute_label as $key => $label)
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
+		// Discard if extrafield is a hidden field on form
+		if (empty($extrafields->attributes[$object->table_element]['list'][$key])) continue;	// 0 = Never visible field
+		if (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 1 && abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+
+		// Load language if required
+		if (! empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
+
 		if ($action == 'edit_extras')
 		{
 			$value = (isset($_POST["options_" . $key]) ? $_POST["options_" . $key] : $object->array_options["options_" . $key]);
@@ -39,54 +57,65 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			$value = $object->array_options["options_" . $key];
 		}
-		if ($extrafields->attribute_type[$key] == 'separate')
+		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
 			print $extrafields->showSeparator($key);
 		}
 		else
 		{
-			if (!empty($extrafields->attribute_hidden[$key])) print '<tr class="hideobject"><td>';
-			else print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td';
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding">';
+			print '<tr>';
+			print '<td';
 			//var_dump($action);exit;
-			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
+			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' class="fieldrequired"';
 			print '>' . $langs->trans($label) . '</td>';
 
 			//TODO Improve element and rights detection
 			//var_dump($user->rights);
 			$permok=false;
+
 			$keyforperm=$object->element;
 			if ($object->element == 'fichinter') $keyforperm='ficheinter';
 			if (isset($user->rights->$keyforperm)) $permok=$user->rights->$keyforperm->creer||$user->rights->$keyforperm->create||$user->rights->$keyforperm->write;
-			if ($object->element=='order_supplier') $permok=$user->rights->fournisseur->commande->creer;
+
+			if ($object->element=='order_supplier')   $permok=$user->rights->fournisseur->commande->creer;
 			if ($object->element=='invoice_supplier') $permok=$user->rights->fournisseur->facture->creer;
-			if ($object->element=='shipping') $permok=$user->rights->expedition->creer;
-			if ($object->element=='delivery') $permok=$user->rights->expedition->livraison->creer;
-			if ($object->element=='productlot') $permok=$user->rights->stock->creer;
+			if ($object->element=='shipping')         $permok=$user->rights->expedition->creer;
+			if ($object->element=='delivery')         $permok=$user->rights->expedition->livraison->creer;
+			if ($object->element=='productlot')       $permok=$user->rights->stock->creer;
+			if ($object->element=='facturerec') 	  $permok=$user->rights->facture->creer;
 
-			if (($object->statut == 0 || $extrafields->attribute_alwayseditable[$key])
-				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key))
-				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
-
+			if (($object->statut == 0 || ! empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
+				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key)
+			    && empty($extrafields->attributes[$object->table_element]['computed'][$key]))
+			{
+			    $fieldid='id';
+			    if ($object->table_element == 'societe') $fieldid='socid';
+				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
+			}
 			print '</tr></table>';
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$key.'_'.$object->id : '';
 			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'" colspan="'.$cols.'">';
 
 			// Convert date into timestamp format
-			if (in_array($extrafields->attribute_type[$key], array('date','datetime'))) {
+			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('date','datetime'))) {
 				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $db->jdate($object->array_options['options_' . $key]);
 			}
 
 			//TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permok && GETPOST('attribute') == $key)
 			{
-				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formextra">';
+			    $fieldid='id';
+			    if ($object->table_element == 'societe') $fieldid='socid';
+
+			    print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="' . $key . '">';
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-				print '<input type="hidden" name="id" value="' . $object->id . '">';
+				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
 
-				print $extrafields->showInputField($key, $value,'','','',0,$object->id);
+				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
 
 				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 
@@ -97,6 +126,41 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 				print $extrafields->showOutputField($key, $value);
 			}
 			print '</td></tr>' . "\n";
+
+			print "\n";
+			// Add code to manage list depending on others
+			if (! empty($conf->use_javascript_ajax))
+			    print '
+				<script type="text/javascript">
+				    jQuery(document).ready(function() {
+				    	function showOptions(child_list, parent_list)
+				    	{
+				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var parentVal = parent_list + ":" + val;
+							if(val > 0) {
+					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
+					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+							} else {
+								$("select[name=\""+child_list+"\"] option").show();
+							}
+				    	}
+						function setListDependencies() {
+					    	jQuery("select option[parent]").parent().each(function() {
+					    		var child_list = $(this).attr("name");
+								var parent = $(this).find("option[parent]:first").attr("parent");
+								var infos = parent.split(":");
+								var parent_list = infos[0];
+								$("select[name=\""+parent_list+"\"]").change(function() {
+									showOptions(child_list, parent_list);
+								});
+					    	});
+						}
+
+						setListDependencies();
+				    });
+				</script>'."\n";
 		}
 	}
 }
+?>
+<!-- END PHP TEMPLATE extrafields_view.tpl.php -->

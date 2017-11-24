@@ -1889,7 +1889,7 @@
       <soap:address location="http://localhostdolibarr/webservices/server_user.php"/>
     </port>
   </service>
-</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostdolibarr/webservices/server_user.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getUser" name="getUser" bindingOperationName="getUser" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/webservices/server_user.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostdolibarr/webservices/server_user.php</con:endpoint><con:endpoint>http://pchome-ld.hd.free.fr:801/dolibarr_5.0/htdocs/webservices/server_user.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getUser" name="getUser" bindingOperationName="getUser" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://pchome-ld.hd.free.fr:801/dolibarr_5.0/htdocs/webservices/server_user.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
    <soapenv:Header/>
    <soapenv:Body>
       <ns:getUser soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -1901,8 +1901,7 @@
             <password xsi:type="xsd:string">admin</password>
             <entity xsi:type="xsd:string"></entity>
          </authentication>
-         <id xsi:type="xsd:string">1</id>
-         <ref xsi:type="xsd:string"></ref>
+         <ref xsi:type="xsd:string">admin</ref>
          <ref_ext xsi:type="xsd:string"></ref_ext>
       </ns:getUser>
    </soapenv:Body>

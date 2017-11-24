@@ -54,8 +54,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	$langs->load("companies");
 
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions=new FormActions($db);
+
 	// Filters
-	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
+	//print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="month" value="' . $month . '">';
@@ -68,15 +71,15 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
 	else print '<table class="nobordernopadding" width="100%"><tr><td class="borderright">';
 
-	print '<table class="nobordernopadding">';
+	print '<table class="nobordernopadding centpercent">';
 
 	if ($canedit)
 	{
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td class="maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td><td style="padding-bottom: 2px; padding-right: 4px;">';
+		print $form->select_dolusers($filtert, 'filtert', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
 		print '</td></tr>';
@@ -85,7 +88,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		{
 		    include_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
 		    $formresource=new FormResource($db);
-		    
+
     		// Resource
     		print '<tr>';
     		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
@@ -94,21 +97,18 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
             print $formresource->select_resource_list($resourceid, "resourceid", '', 1, 0, 0, null, '', 2);
     		print '</td></tr>';
 		}
-		
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-		$formactions=new FormActions($db);
 
 		// Type
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Type");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		$multiselect=0;
 		if (! empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 		{
             $multiselect=(!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-        print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), 0, $multiselect);
+        print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1), 0, $multiselect);
 		print '</td></tr>';
 	}
 
@@ -117,8 +117,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ThirdParty").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
-		print $form->select_company($socid, 'socid', '', 1);
+		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
+		print $form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0);
 		print '</td></tr>';
 	}
 
@@ -130,19 +130,19 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px;">';
 		print $langs->trans("Project").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
+		print '</td><td class="nowrap" style="padding-bottom: 2px;">';
 		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0);
 		print '</td></tr>';
 	}
 
-	if ($canedit)
+	if ($canedit && ! preg_match('/listaction/', $_SERVER["PHP_SELF"]))
 	{
 		// Status
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
+		print ' &nbsp;</td><td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		$formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2, 'minwidth100');
 		print '</td></tr>';
 	}
 
@@ -151,7 +151,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		// Filter on hours
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">'.$langs->trans("VisibleTimeRange").'</td>';
-		print "<td class='nowrap maxwidthonsmartphone'>";
+		print "<td class='nowrap'>";
 		print '<div class="ui-grid-a"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
@@ -164,7 +164,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		// Filter on days
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("VisibleDaysRange").'</td>';
-		print "<td class='nowrap maxwidthonsmartphone'>";
+		print "<td class='nowrap'>";
 		print '<div class="ui-grid-a"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
@@ -186,7 +186,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfright">';
 	else print '<td align="center" valign="middle" class="nowrap">';
 
-	print '<table><tr><td align="center">';
+	print '<table class="centpercent"><tr><td align="center">';
 	print '<div class="formleftzone">';
 	print '<input type="submit" class="button" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '">';
 	print '</div>';
@@ -199,7 +199,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</div>';	// Close fichecenter
 	print '<div style="clear:both"></div>';
 
-	print '</form>';
+	//print '</form>';
 }
 
 
@@ -221,8 +221,8 @@ function show_array_actions_to_do($max=5)
 	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle as type_label,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c LEFT JOIN ";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
+	$sql.= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE a.entity = ".$conf->entity;
@@ -238,8 +238,8 @@ function show_array_actions_to_do($max=5)
 	    $num = $db->num_rows($resql);
 
 	    print '<table class="noborder" width="100%">';
-	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastActionsToDo",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo",$max).'</th>';
+		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$var = true;
@@ -251,9 +251,9 @@ function show_array_actions_to_do($max=5)
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
 
-            print '<tr '.$bc[$var].'>';
+
+            print '<tr class="oddeven">';
 
             $staticaction->type_code=$obj->code;
             $staticaction->label=($obj->label?$obj->label:$obj->type_label);
@@ -318,8 +318,8 @@ function show_array_last_actions_done($max=5)
 	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c LEFT JOIN ";
-	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a ON c.id = a.fk_action ";
+	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
+	$sql.= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE a.entity = ".$conf->entity;
@@ -335,8 +335,8 @@ function show_array_last_actions_done($max=5)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastDoneTasks",$max).'</td>';
-		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks",$max).'</th>';
+		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -347,9 +347,9 @@ function show_array_last_actions_done($max=5)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$var=!$var;
 
-			print '<tr '.$bc[$var].'>';
+
+			print '<tr class="oddeven">';
 
 			$staticaction->type_code=$obj->code;
 			$staticaction->libelle=$obj->label;
@@ -412,6 +412,14 @@ function agenda_prepare_head()
 	$head[$h][2] = 'autoactions';
 	$h++;
 
+	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+	{
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	$head[$h][1] = $langs->trans("Reminders");
+	$head[$h][2] = 'reminders';
+	$h++;
+	}
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
 	$head[$h][1] = $langs->trans("ExportCal");
 	$head[$h][2] = 'xcal';
@@ -458,7 +466,7 @@ function actions_prepare_head($object)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 	    $resource=new DolResource($db);
-	    
+
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
         $nbResources=count($listofresourcelinked);
@@ -472,7 +480,7 @@ function actions_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
@@ -506,9 +514,14 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewDay");
-    $head[$h][2] = 'cardday';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("ViewList");
+    $head[$h][2] = 'cardlist';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewCal");
+    $head[$h][2] = 'cardmonth';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param?'&'.$param:'');
@@ -516,9 +529,9 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardweek';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewCal");
-    $head[$h][2] = 'cardmonth';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewDay");
+    $head[$h][2] = 'cardday';
     $h++;
 
     //if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -529,16 +542,12 @@ function calendars_prepare_head($param)
         $head[$h][2] = 'cardpertype';
         $h++;
     }
-    
+
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
     $head[$h][1] = $langs->trans("ViewPerUser");
     $head[$h][2] = 'cardperuser';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
-    $head[$h][1] = $langs->trans("ViewList");
-    $head[$h][2] = 'cardlist';
-    $h++;
 
 	$object=new stdClass();
 

@@ -1,7 +1,14 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsCustomer=Facturas a clientes
+BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
+BillsSuppliersUnpaid=Facturas de proveedores pendientes de pago
+CreateCreditNote=Crear factura de abono
+BillShortStatusConverted=Pagada
 ErrorVATIntraNotConfigured=IVA aún no configurado
-DescTaxAndDividendsArea=Esta área muestra un resumen de todos los pagos realizados en gastos especiales. Solamente se incluyen los registros del año fijado
+SupplierBillsToPay=Facturas de proveedores pendientes de pago
+CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
+Statut=Estatuto
+PaymentConditionShortPT_ORDER=Pedido
+PaymentTypeShortTRA=A validar
 IntracommunityVATNumber=Número de IVA
 VATIsNotUsedForInvoice=-
 LawApplicationPart1=-

@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=การจัดส่งสินค้า
 DeliveryRef=Ref Delivery
-DeliveryCard=การ์ดจัดส่งสินค้า
+DeliveryCard=Receipt card
 DeliveryOrder=ใบตราส่ง
 DeliveryDate=วันที่ส่งมอบ
-CreateDeliveryOrder=เพื่อสร้างการส่งมอบ
+CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
 SetDeliveryDate=ตั้งวันที่จัดส่ง
 ValidateDeliveryReceipt=ตรวจสอบการจัดส่งใบเสร็จรับเงิน
-ValidateDeliveryReceiptConfirm=คุณแน่ใจหรือว่าต้องการตรวจสอบการจัดส่งใบเสร็จรับเงินนี้หรือไม่?
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=ลบใบเสร็จรับเงินการจัดส่ง
-DeleteDeliveryReceiptConfirm=คุณแน่ใจหรือว่าต้องการลบ <b>s ได้รับการส่งมอบ%?</b>
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=วิธีการจัดส่ง
 TrackingNumber=ติดตามจำนวน
 DeliveryNotValidated=การจัดส่งสินค้าไม่ได้ผ่านการตรวจสอบ
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
-StatusDeliveryValidated=Received
+StatusDeliveryCanceled=ยกเลิก
+StatusDeliveryDraft=ร่าง
+StatusDeliveryValidated=ที่ได้รับ
 # merou PDF model
 NameAndSignature=ชื่อและลายเซ็น:
 ToAndDate=To___________________________________ บน ____ / _____ / __________

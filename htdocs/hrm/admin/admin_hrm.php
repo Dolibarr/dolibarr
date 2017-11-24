@@ -78,7 +78,7 @@ print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'parameters', $langs->trans("HRM"), 0, "user");
+dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

@@ -55,5 +55,5 @@ ErrorOpenSurveyFillFirstSection=Nemůžete naplnit první část hlasování, kt
 ErrorOpenSurveyOneChoice=Zadejte alespoň jednu možnost
 ErrorInsertingComment=Došlo k chybě při vkládání vašeho komentáře
 MoreChoices=Zadejte více možností pro hlasující
-SurveyExpiredInfo=The poll has been closed or voting delay has expired.
+SurveyExpiredInfo=Doba hlasování pro tuto anketu vypršela.
 EmailSomeoneVoted=%s vyplnilo řádek.\nMůžete si najít své hlasování v odkazu: \n%s

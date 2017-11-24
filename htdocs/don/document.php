@@ -48,6 +48,7 @@ $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
+$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -58,7 +59,7 @@ $result = restrictedArea($user, 'don', $id, '');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -79,6 +80,11 @@ $modulepart='don';
 
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
+if ($action == 'classin' && $user->rights->don->creer)
+{
+	$object->fetch($id);
+	$object->setProject($projectid);
+}
 
 /*
  * View
@@ -87,7 +93,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
-llxHeader("",$langs->trans("Donation"));
+$title = $langs->trans('Donation') . " - " . $langs->trans('Documents');
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 
 if ($object->id)
@@ -96,20 +104,19 @@ if ($object->id)
 
 	$head=donation_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, 'documents',  $langs->trans("Donation"), -1, 'generic');
 
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
 
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -119,7 +126,7 @@ if ($object->id)
 	    if ($user->rights->don->creer)
 	    {
 	        if ($action != 'classify')
-	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            // $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	            if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -144,15 +151,14 @@ if ($object->id)
 	    }
 	}
 	$morehtmlref.='</div>';
-	
-	
+
+
 	dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-	
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
-    print '<table class="border" width="100%">';
 
+    print '<table class="border" width="100%">';
 
 	// Ref
 	/*
@@ -160,7 +166,7 @@ if ($object->id)
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
     */
-    
+
 	// Societe
 	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
@@ -169,9 +175,9 @@ if ($object->id)
     print '</table>';
 
     print '</div>';
-    
+
     print '<div class="clearboth"></div>';
-    
+
     dol_fiche_end();
 
     $modulepart = 'don';

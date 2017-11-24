@@ -20,7 +20,7 @@
 /**
  * 	\defgroup   api     Module Api
  *  \brief      Descriptor file for Api modulee
- *  \file       htdocs/api/core/modules/modApi.class.php
+ *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
  *  \brief      Description and activation file for module Api
  */
@@ -67,7 +67,7 @@ class modApi extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='technic';
 
-		
+
 		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.

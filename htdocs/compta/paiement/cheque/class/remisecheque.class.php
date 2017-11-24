@@ -35,6 +35,7 @@ class RemiseCheque extends CommonObject
 {
 	public $element='chequereceipt';
 	public $table_element='bordereau_cheque';
+	public $picto = 'payment';
 
 	var $num;
 	var $intitule;
@@ -177,7 +178,7 @@ class RemiseCheque extends CommonObject
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 				$sql.= " SET ref='(PROV".$this->id.")'";
-				$sql.= " WHERE rowid='".$this->id."';";
+				$sql.= " WHERE rowid=".$this->id."";
 
 				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -307,7 +308,7 @@ class RemiseCheque extends CommonObject
 			if ( $this->errno === 0) {
 			    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 			    $sql.= " SET fk_bordereau = 0";
-			    $sql.= " WHERE fk_bordereau = '".$this->id."'";
+			    $sql.= " WHERE fk_bordereau = ".$this->id;
 
 			    $resql = $this->db->query($sql);
 			    if (!$resql)
@@ -344,7 +345,7 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 
 		$this->db->begin();
-		
+
 		$numref = $this->getNextNumRef();
 
 		if ($this->errno == 0 && $numref)
@@ -480,10 +481,10 @@ class RemiseCheque extends CommonObject
 
 
 	/**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *
-     *      @param      User	$user       Objet user
-     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param      User	$user       Objet user
+	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
@@ -495,7 +496,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.fk_type = 'CHQ'";
 		$sql.= " AND b.fk_bordereau = 0";
 		$sql.= " AND b.amount > 0";
@@ -510,7 +511,7 @@ class RemiseCheque extends CommonObject
 			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
 			$response->label=$langs->trans("BankChecksToReceipt");
 			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
-			$response->img=img_object($langs->trans("BankChecksToReceipt"),"payment");
+			$response->img=img_object('',"payment");
 
 			while ($obj=$this->db->fetch_object($resql))
 			{
@@ -522,6 +523,45 @@ class RemiseCheque extends CommonObject
 			}
 
 			return $response;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if ko, >0 if ok
+	 */
+	function load_state_board()
+	{
+		global $user;
+
+		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
+		$sql = "SELECT count(b.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql.= " AND b.fk_type = 'CHQ'";
+		$sql.= " AND b.amount > 0";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["cheques"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
 		}
 		else
 		{
@@ -715,7 +755,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
 	 *	@param	date	$rejection_date    Date to use on the negative payment
-	 * 	@return	int                        Id of negative payment line created 
+	 * 	@return	int                        Id of negative payment line created
 	 */
 	function rejectCheck($bank_id, $rejection_date)
 	{
@@ -726,19 +766,19 @@ class RemiseCheque extends CommonObject
 
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
-		
+
 		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
             $this->error='ActionRefusedLineAlreadyConciliated';
 		    return -1;
 		}*/
-		
+
 		$this->db->begin();
-		
+
 		// Not conciliated, we can delete it
-		//$bankline->delete($user);    // We delete 
-			    
+		//$bankline->delete($user);    // We delete
+
 		$bankaccount = $payment->fk_account;
 
 		// Get invoices list to reopen them
@@ -752,7 +792,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment = new Paiement($db);
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
-			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement');
+			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement','code','id',1);
 			$rejectedPayment->num_paiement = $payment->numero;
 
 			while($obj = $db->fetch_object($resql))
@@ -860,7 +900,7 @@ class RemiseCheque extends CommonObject
         if ($user->rights->banque->cheque)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-            $sql.= " SET date_bordereau = ".($date ? $this->db->idate($date) : 'null');
+            $sql.= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
@@ -977,7 +1017,7 @@ class RemiseCheque extends CommonObject
 	 *  Return label of a status
 	 *
 	 *  @param	int		$status     Statut
-	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return string      		Libelle du statut
 	 */
 	function LibStatut($status,$mode=0)
@@ -1010,6 +1050,11 @@ class RemiseCheque extends CommonObject
 			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
 		}
 		if ($mode == 5)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut0');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}
+		if ($mode == 6)
 		{
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut0');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');

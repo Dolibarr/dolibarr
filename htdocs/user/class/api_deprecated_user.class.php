@@ -191,7 +191,8 @@ class UserApi extends DolibarrApi
 
 		foreach ($request_data as $field => $value)
 		{
-			$this->useraccount->$field = $value;
+            if ($field == 'id') continue;
+		    $this->useraccount->$field = $value;
 		}
 
 		if ($this->useraccount->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
@@ -256,7 +257,7 @@ class UserApi extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
      * 
-	 * @param   array $data Data to validate
+	 * @param   array|null     $data   Data to validate
 	 * @return  array
 	 * @throws RestException
 	 */

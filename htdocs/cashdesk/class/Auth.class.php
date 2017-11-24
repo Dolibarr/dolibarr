@@ -22,14 +22,14 @@
  */
 class Auth
 {
-	var $db;
+	protected $db;
 
-	var $login;
-	var $passwd;
+	private $login;
+	private $passwd;
 
-	var $reponse;
+	private $reponse;
 
-	var $sqlQuery;
+	public $sqlQuery;
 
 	/**
 	 * Enter description here ...
@@ -37,7 +37,7 @@ class Auth
 	 * @param	DoliDB	$db			Database handler
 	 * @return	void
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->reponse(null);
@@ -49,7 +49,7 @@ class Auth
 	 * @param 	string	$aLogin		Login
 	 * @return	void
 	 */
-	function login($aLogin)
+	public function login($aLogin)
 	{
 		$this->login = $aLogin;
 	}
@@ -71,7 +71,7 @@ class Auth
 	 * @param 	string 	$aReponse	Response
 	 * @return	void
 	 */
-	function reponse($aReponse)
+	public function reponse($aReponse)
 	{
 		$this->reponse = $aReponse;
 	}
@@ -83,7 +83,7 @@ class Auth
 	 * @param	string	$aPasswd	Password
 	 * @return	int					0 or 1
 	 */
-	function verif($aLogin, $aPasswd)
+	public function verif($aLogin, $aPasswd)
 	{
 		global $conf,$langs;
 		global $dolibarr_main_authentication,$dolibarr_auto_user;

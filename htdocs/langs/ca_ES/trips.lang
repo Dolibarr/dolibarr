@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Informe de despeses
-ExpenseReports=Informes de despeses
+ShowExpenseReport=Mostra l'informe de despeses
 Trips=Informes de despeses
 TripsAndExpenses=Informes de despeses
 TripsAndExpensesStatistics=Estadístiques de l'informe de despeses
@@ -8,18 +7,31 @@ TripCard=Informe de despesa de targeta
 AddTrip=Crear informe de despeses
 ListOfTrips=Llistat de informes de despeses
 ListOfFees=Llistat notes de honoraris
+TypeFees=Tipus de despeses
 ShowTrip=Mostra l'informe de despeses
 NewTrip=Nou informe de despeses
-CompanyVisited=Empresa/entitat visitada
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
+CompanyVisited=Empresa/organització visitada
 FeesKilometersOrAmout=Import o quilòmetres
 DeleteTrip=Eliminar informe de despeses
-ConfirmDeleteTrip=Esteu segur de voler eliminar aquest informe de despeses?
+ConfirmDeleteTrip=Estàs segur que vols eliminar aquest informe de despeses?
 ListTripsAndExpenses=Llistat d'informes de despeses
 ListToApprove=Pendent d'aprovació
 ExpensesArea=Àrea d'informes de despeses
 ClassifyRefunded=Classificar 'Retornat'
 ExpenseReportWaitingForApproval=S'ha generat un nou informe de vendes per aprovació
-ExpenseReportWaitingForApprovalMessage=S'ha presentat un nou informe de despeses i està esperant l'aprovació.\n- Usuari: %s\n- Període: %s\nClica aquí per validar: %s
+ExpenseReportWaitingForApprovalMessage=S'ha generat un nou informe de despeses i està esperant l'aprovació.\n- Usuari: %s\n- Període: %s\nClica aquí per validar: %s
+ExpenseReportWaitingForReApproval=S'ha generat un informe de despeses per a re-aprovació
+ExpenseReportWaitingForReApprovalMessage=S'ha generat un nou informe de despeses i està esperant la teva re-aprovació.\nEl %s no acceptada per aprovar el informe de despeses per aquesta raó: %s\nS'ha presentat una nova versió i està a l'espera de la teva aprovació.\n- Usuari: %s\n- Període: %s\nClica aquí per validar: %s
+ExpenseReportApproved=S'ha aprovat un informe de despeses
+ExpenseReportApprovedMessage=S'ha aprovat el informe de despeses %s.\n- Usuari: %s\n- Aprovat per: %s\nClica aquí per mostrar el informe de despeses: %s
+ExpenseReportRefused=S'ha rebutjat un informe de despeses
+ExpenseReportRefusedMessage=S'ha rebutjat el informe de despeses %s.\n- Usuari: %s\n- Rebutjat per: %s\n- Motiu de rebuig: %s\nClica aquí per mostrar el informe de despeses: %s
+ExpenseReportCanceled=S'ha cancel·lat un informe de despeses
+ExpenseReportCanceledMessage=S'ha cancel·lat el informe de despeses %s.\n- Usuari: %s\n- Cancel·lat per: %s\n- Motiu de la cancel·lació: %s\nClica aquí per mostrar el informe de despeses: %s
+ExpenseReportPaid=S'ha pagat un informe de despeses
+ExpenseReportPaidMessage=S'ha pagat el informe de despeses %s.\n- Usuari: %s\n- Pagat per: %s\nClica aquí per mostrar el informe de despeses: %s
 TripId=Id d'informe de despeses
 AnyOtherInThisListCanValidate=Persona a informar per a validar
 TripSociete=Informació de l'empresa
@@ -37,6 +49,30 @@ TF_PEAGE=Peatge
 TF_ESSENCE=Combustible
 TF_HOTEL=Hotel
 TF_TAXI=Taxi
+EX_KME=Mileage costs
+EX_FUE=Fuel CV
+EX_HOT=Hotel
+EX_PAR=Parking CV
+EX_TOL=Toll CV
+EX_TAX=Various Taxes
+EX_IND=Indemnity transportation subscription
+EX_SUM=Maintenance supply
+EX_SUO=Office supplies
+EX_CAR=Car rental
+EX_DOC=Documentation
+EX_CUR=Customers receiving
+EX_OTR=Other receiving
+EX_POS=Postage
+EX_CAM=CV maintenance and repair
+EX_EMM=Employees meal
+EX_GUM=Guests meal
+EX_BRE=Breakfast
+EX_FUE_VP=Fuel PV
+EX_TOL_VP=Toll PV
+EX_PAR_VP=Parking PV
+EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Has declarat un altre informe de despeses en un altre rang de dates semblant
 AucuneLigne=Encara no hi ha informe de despeses declarat
@@ -57,31 +93,64 @@ DATE_REFUS=Data de denegació
 DATE_SAVE=Data de validació
 DATE_CANCEL=Data de cancelació
 DATE_PAIEMENT=Data de pagament
-
 BROUILLONNER=Reobrir
+ExpenseReportRef=Ref del informe de despeses
 ValidateAndSubmit=Validar i sotmetre a aprovació
 ValidatedWaitingApproval=Validat (pendent d'aprovació)
-
 NOT_AUTHOR=No ets l'autor d'aquest informe de despeses. L'operació s'ha cancelat.
-
-ConfirmRefuseTrip=Esteu segur de voler denegar aquest informe de despeses ?
-
+ConfirmRefuseTrip=Estàs segur que vols denegar aquest informe de despeses?
 ValideTrip=Aprova l'informe de despeses
-ConfirmValideTrip=Esteu segur de voler aprovar aquest informe de despeses ?
-
+ConfirmValideTrip=Estàs segur que vols aprovar aquest informe de despeses?
 PaidTrip=Pagar un informe de despeses
-ConfirmPaidTrip=Esteu segur de voler canviar l'estat d'aquest informe de despeses a "Pagat" ?
-
-ConfirmCancelTrip=Esteu segur de voler cancelar aquest informe de despeses ?
-
+ConfirmPaidTrip=Estàs segur que vols canviar l'estatus d'aquest informe de despeses a "Pagat"?
+ConfirmCancelTrip=Estàs segur que vols cancel·lar aquest informe de despeses?
 BrouillonnerTrip=Tornar l'informe de despeses a l'estat "Esborrany"
-ConfirmBrouillonnerTrip=Esteu segur de voler moure aquest informe de despeses a l'estat "Esborrany" ?
-
+ConfirmBrouillonnerTrip=Estàs segur que vols moure aquest informe de despeses al estatus de "Esborrany"?
 SaveTrip=Valida l'informe de despeses
-ConfirmSaveTrip=Esteu segur de voler validar aquest informe de despeses?
-
+ConfirmSaveTrip=Estàs segur que vols validar aquest informe de despeses?
 NoTripsToExportCSV=No hi ha informe de despeses per exportar en aquest període
 ExpenseReportPayment=Informe de despeses pagades
-
 ExpenseReportsToApprove=Informes de despeses per aprovar
 ExpenseReportsToPay=Informes de despeses a pagar
+CloneExpenseReport=Clona el informe de despeses
+ConfirmCloneExpenseReport=Estàs segur de voler clonar aquest informe de despeses ?
+ExpenseReportsIk=Expense report milles index
+ExpenseReportsRules=Expense report rules
+ExpenseReportIkDesc=You can modify the calculation of kilometers expense by category and range who they are previously defined. <b>d</b> is the distance in kilometers
+ExpenseReportRulesDesc=You can create or update any rules of calculation. This part will be used when user will create a new expense report
+expenseReportOffset=Decàleg
+expenseReportCoef=Coefficient
+expenseReportTotalForFive=Example with <u>d</u> = 5
+expenseReportRangeFromTo=from %d to %d
+expenseReportRangeMoreThan=more than %d
+expenseReportCoefUndefined=(value not defined)
+expenseReportCatDisabled=Category disabled - see the c_exp_tax_cat dictionary
+expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionay
+expenseReportPrintExample=offset + (d x coef) = %s
+ExpenseReportApplyTo=Apply to
+ExpenseReportDomain=Domain to apply
+ExpenseReportLimitOn=Limit on
+ExpenseReportDateStart=Data inici
+ExpenseReportDateEnd=Data fi
+ExpenseReportLimitAmount=Limite amount
+ExpenseReportRestrictive=Restrictive
+AllExpenseReport=All type of expense report
+OnExpense=Expense line
+ExpenseReportRuleSave=Expense report rule saved
+ExpenseReportRuleErrorOnSave=Error: %s
+RangeNum=Range %d
+
+ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
+byEX_DAY=by day (limitation to %s)
+byEX_MON=by month (limitation to %s)
+byEX_YEA=by year (limitation to %s)
+byEX_EXP=by line (limitation to %s)
+ExpenseReportConstraintViolationWarning=Constraint violation id [%s]: %s  is superior to %s %s
+nolimitbyEX_DAY=by day (no limitation)
+nolimitbyEX_MON=by month (no limitation)
+nolimitbyEX_YEA=by year (no limitation)
+nolimitbyEX_EXP=by line (no limitation)
+
+CarCategory=Category of car
+ExpenseRangeOffset=Offset amount: %s
+RangeIk=Mileage range

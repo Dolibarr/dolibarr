@@ -264,7 +264,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
      * @param   Object  $localobject        Supplier order
      * @return  void
      *
-     * @depends testCommandeFournisseurValid
+     * @depends testCommandeFournisseurApprove
      * The depends says test is run only if previous is ok
      */
     public function testCommandeFournisseurCancel($localobject)

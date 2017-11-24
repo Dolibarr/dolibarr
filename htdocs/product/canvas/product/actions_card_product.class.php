@@ -74,6 +74,7 @@ class ActionsCardProduct
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -250,7 +251,7 @@ class ActionsCardProduct
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 
 	}
@@ -269,7 +270,7 @@ class ActionsCardProduct
 
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->fieldListName."'";
+		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY rang ASC";
 
@@ -309,7 +310,7 @@ class ActionsCardProduct
 
 
 	/**
-	 * 	Fetch datas list
+	 * 	Fetch datas list and save into ->list_datas
 	 *
 	 *  @param	int		$limit		Limit number of responses
 	 *  @param	int		$offset		Offset for first response
@@ -325,16 +326,15 @@ class ActionsCardProduct
 
         $this->list_datas = array();
 
-		//$_GET["sall"] = 'LL';
 		// Clean parameters
-		$sall=trim(isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"]);
+		$sall=trim(GETPOST('sall', 'alphanohtml'));
 
 		foreach($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
 				$fieldname = "s".$field['alias'];
-				$$fieldname = trim(isset($_GET[$fieldname])?$_GET[$fieldname]:$_POST[$fieldname]);
+				$$fieldname = trim(GETPOST($fieldname));
 			}
 		}
 
@@ -353,7 +353,7 @@ class ActionsCardProduct
 		}
 
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE p.entity IN (".getEntity('product').")";
 
 		if ($sall)
 		{

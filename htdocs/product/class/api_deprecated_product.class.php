@@ -115,7 +115,7 @@ class ProductApi extends DolibarrApi
 
         $sql ="SELECT rowid, ref, ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 		
         // Show products
         if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
@@ -126,7 +126,7 @@ class ProductApi extends DolibarrApi
         // Show product on buy
         if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -149,18 +149,19 @@ class ProductApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);
                 if($product_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($product_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($product_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve product list');
+            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No product found');
@@ -197,7 +198,7 @@ class ProductApi extends DolibarrApi
         $sql = "SELECT rowid, ref, ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p, ";
         $sql.= MAIN_DB_PREFIX."categorie_product as c";
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+        $sql.= ' WHERE p.entity IN ('.getEntity('product').')';
 
         // Select products of given category
         $sql.= " AND c.fk_categorie = ".$db->escape($category);
@@ -212,7 +213,7 @@ class ProductApi extends DolibarrApi
         // Show product on buy
         if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
-        $nbtotalofrecords = 0;
+        $nbtotalofrecords = '';
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
             $result = $db->query($sql);
@@ -235,18 +236,19 @@ class ProductApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);
                 if($product_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($product_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($product_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve product list');
+            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No product found');
@@ -275,7 +277,7 @@ class ProductApi extends DolibarrApi
         }
         $result = $this->product->create(DolibarrApiAccess::$user);
         if($result < 0) {
-            throw new RestException(503,'Error when creating product : '.$this->product->error);
+            throw new RestException(500,'Error when creating product : '.$this->product->error);
         }
         
         return $this->product->id;
@@ -307,6 +309,7 @@ class ProductApi extends DolibarrApi
 		}
 
         foreach($request_data as $field => $value) {
+            if ($field == 'id') continue;
             $this->product->$field = $value;
         }
         
@@ -338,7 +341,7 @@ class ProductApi extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        return $this->product->delete($id);
+        return $this->product->delete(DolibarrApiAccess::$user);
     }
     
     /**

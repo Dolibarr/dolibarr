@@ -273,7 +273,7 @@ class ProductStockEntrepot extends CommonObject
 		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 		
 		if (!empty($sortfield)) $sql .= $this->db->order($sortfield,$sortorder);
-		if (!empty($limit)) $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		if (!empty($limit)) $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		
 		$lines = array();
 
@@ -501,7 +501,7 @@ class ProductStockEntrepot extends CommonObject
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
             if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $link . $this->ref . $linkend;

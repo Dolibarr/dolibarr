@@ -29,7 +29,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
-$year=$_GET["year"];
+$year = GETPOST('year', 'int');
 if ($year == 0 )
 {
   $year_current = strftime("%Y",time());
@@ -237,7 +237,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 			$x_both[$my_coll_rate]['paye']['vat'] = 0;
 			$x_both[$my_coll_rate]['coll']['links'] = '';
 			foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy){
-				$x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
+				$x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
 			}
 		}
 		foreach(array_keys($x_paye) as $my_paye_rate){
@@ -259,8 +259,8 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$x_paye_sum = 0;
 		$x_paye_ht = 0;
 		foreach($x_both as $rate => $both){
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			
+			print '<tr class="oddeven">';
 			print "<td>$rate%</td>";
 			print "<td class=\"nowrap\" align=\"right\">".price($both['coll']['totalht'])."</td>";
 			print "<td class=\"nowrap\" align=\"right\">".price($both['coll']['vat'])."</td>";
@@ -282,8 +282,8 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$total = $total + $diff;
 		$subtotal = $subtotal + $diff;
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		
+		print '<tr class="oddeven">';
 		print '<td colspan="7"></td>';
 		print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";
 		print "</tr>\n";

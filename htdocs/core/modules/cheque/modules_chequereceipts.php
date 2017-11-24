@@ -166,15 +166,15 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 	// Positionne modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
-		if (! empty($conf->global->FACTURE_ADDON_PDF))
+		if (! empty($conf->global->CHEQUERECEIPT_ADDON_PDF))
 		{
-			$modele = $conf->global->FACTURE_ADDON_PDF;
+			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
 		}
 		else
 		{
 			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
 			//return 0;
-			$modele = 'crabe';
+			$modele = 'blochet';
 		}
 	}
 

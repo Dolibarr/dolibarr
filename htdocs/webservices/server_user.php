@@ -187,7 +187,8 @@ $thirdpartywithuser_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -199,7 +200,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['contact_options_'.$key]=array('name'=>'contact_options_'.$key,'type'=>$type);
 }
 
-$thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields,$extrafield_array);
+if (is_array($extrafield_array)) $thirdpartywithuser_fields=array_merge($thirdpartywithuser_fields,$extrafield_array);
 
 
 $server->wsdl->addComplexType(
@@ -416,7 +417,7 @@ function getListOfGroups($authentication)
 		$sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
+		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 		{
 			$sql.= " WHERE g.entity IS NOT NULL";
 		}

@@ -49,7 +49,8 @@ class modFckeditor extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Editeur WYSIWYG";
-		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
 		// Name of png file (without png) used for this module.
@@ -75,7 +76,7 @@ class modFckeditor extends DolibarrModules
         $this->const[3]  = array("FCKEDITOR_ENABLE_DETAILS","yesno","1","WYSIWIG for products details lines for all entities");
         $this->const[4]  = array("FCKEDITOR_ENABLE_USERSIGN","yesno","1","WYSIWIG for user signature");
         $this->const[5]  = array("FCKEDITOR_ENABLE_MAIL","yesno","1","WYSIWIG for products details lines for all entities");
-		$this->const[6]  = array("FCKEDITOR_SKIN","string","moono","Skin by default for fckeditor");
+		$this->const[6]  = array("FCKEDITOR_SKIN","string","moono-lisa","Skin by default for fckeditor");
 
 		// Boxes
 		$this->boxes = array();

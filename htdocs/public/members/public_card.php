@@ -95,10 +95,10 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($object->address).'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Zip").' '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->country.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$object->birth.'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
 		if (isset($object->photo) && $object->photo !='')
 		{
@@ -111,7 +111,7 @@ if ($id > 0)
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
 
-		print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note).'</td></tr>';
+		print '<tr><td class="tdtop">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
 		print '</table>';
 	}

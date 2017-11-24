@@ -45,7 +45,7 @@ $(function () {
 	// Events
 	$('#fileupload').fileupload({
 		stop: function (e, data) {
-			location.href='<?php echo $_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"]; ?>';
+			location.href='<?php echo dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]); ?>';
 		},
 		destroy: function (e, data) {
 			var that = $(this).data('fileupload');

@@ -22,6 +22,8 @@
  *		\brief		File of class to manage subscriptions of foundation members
  */
 
+//namespace DolibarrMember;
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
@@ -32,6 +34,7 @@ class Subscription extends CommonObject
 {
 	public $element='subscription';
 	public $table_element='subscription';
+    public $picto='payment';
 
 	var $datec;				// Date creation
 	var $datem;				// Date modification
@@ -192,12 +195,11 @@ class Subscription extends CommonObject
 	 */
 	function delete($user)
 	{
-		$accountline=new AccountLine($this->db);
-
 		// It subscription is linked to a bank transaction, we get it
 		if ($this->fk_bank > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+			$accountline=new AccountLine($this->db);
 			$result=$accountline->fetch($this->fk_bank);
 		}
 
@@ -216,7 +218,7 @@ class Subscription extends CommonObject
 				$result=$member->fetch($this->fk_adherent);
 				$result=$member->update_end_date($user);
 
-				if (is_object($accountline) && $accountline->id > 0)						// If we found bank account line (this means this->fk_bank defined)
+				if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0)	// If we found bank account line (this means this->fk_bank defined)
 				{
 					$result=$accountline->delete($user);		// Return false if refused because line is conciliated
 					if ($result > 0)
@@ -256,26 +258,53 @@ class Subscription extends CommonObject
 	 *  Return clicable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param	int  	$notooltip		1=Disable tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0, $notooltip=0)
 	{
 		global $langs;
 
 		$result='';
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
+
+	/**
+	 *  Retourne le libelle du statut d'une adhesion
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string				Label
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return '';
+	}
+
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int			$statut      			Id statut
+	 *  @return string      						Label
+	 */
+	function LibStatut($statut)
+	{
+	    global $langs;
+	    $langs->load("members");
+	    return '';
+	}
 
     /**
      *  Load information of the subscription object

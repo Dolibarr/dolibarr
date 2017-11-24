@@ -90,7 +90,7 @@ dol_htmloutput_errors($object->error,$object->errors);
 <?php echo $object->volume_units; ?>
 </td></tr>
 
-<tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
+<tr><td class="tdtop"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
 <?php echo $object->textarea_note; ?>
 </td></tr>
 </table>

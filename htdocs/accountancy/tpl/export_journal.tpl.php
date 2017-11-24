@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015  Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2016  Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify

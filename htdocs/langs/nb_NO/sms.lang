@@ -38,7 +38,7 @@ SmsStatusNotSent=Ikke sendt
 SmsSuccessfulySent=SMS korrekt utsendt (fra %s til %s)
 ErrorSmsRecipientIsEmpty=Mål-nummer er tomt
 WarningNoSmsAdded=Ingen nye telefonnummer for å legge til i mållisten
-ConfirmValidSms=Bekrefter du validering av dette campain?
+ConfirmValidSms=Er du sikker på at du vil validere denne kampanjen?
 NbOfUniqueSms=Antall unike telefonnumre
 NbOfSms=Antall telefonnumre
 ThisIsATestMessage=Dette er en testmelding
@@ -48,4 +48,4 @@ SmsInfoNumero= (Internasjonal prefix dvs.: +4711223344)
 DelayBeforeSending=Forsinkelse før sending (minutter)
 SmsNoPossibleSenderFound=Ingen sender tilgjengelig. Sjekk oppsett av SMS-leverandør
 SmsNoPossibleRecipientFound=Ingen mål tilgjengelig. Sjekk oppsettet fra din SMS-leverandør.
-
+DisableStopIfSupported=Deaktiver STOPP-melding (hvis støttet)

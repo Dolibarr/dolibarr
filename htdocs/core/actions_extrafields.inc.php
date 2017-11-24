@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * or see http://www.gnu.org/
+ *
+ * $elementype must be defined.
  */
 
 /**
@@ -23,12 +25,16 @@
 
 $maxsizestring=255;
 $maxsizeint=10;
+$mesg=array();
 
-$extrasize=GETPOST('size');
-if (GETPOST('type')=='double' && strpos($extrasize,',')===false) $extrasize='24,8';
-if (GETPOST('type')=='date')     $extrasize='';
-if (GETPOST('type')=='datetime') $extrasize='';
-if (GETPOST('type')=='select')   $extrasize='';
+$extrasize=GETPOST('size','int');
+$type=GETPOST('type','alpha');
+$param=GETPOST('param','alpha');;
+
+if ($type=='double' && strpos($extrasize,',')===false) $extrasize='24,8';
+if ($type=='date')     $extrasize='';
+if ($type=='datetime') $extrasize='';
+if ($type=='select')   $extrasize='';
 
 
 // Add attribute
@@ -37,73 +43,73 @@ if ($action == 'add')
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
 	    // Check values
-		if (! GETPOST('type'))
+		if (! $type)
 		{
 			$error++;
 			$langs->load("errors");
 			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
 			$action = 'create';
 		}
-		if (GETPOST('type')=='varchar' && $extrasize <= 0)
+		if ($type=='varchar' && $extrasize <= 0)
 		{
 		    $error++;
 		    $langs->load("errors");
 		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
 		    $action = 'edit';
 		}
-        if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
+        if ($type=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'create';
         }
-        if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
+        if ($type=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'create';
         }
-        if (GETPOST('type')=='select' && !GETPOST('param'))
+        if ($type=='select' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
         	$action = 'create';
         }
-        if (GETPOST('type')=='sellist' && !GETPOST('param'))
+        if ($type=='sellist' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForSelectListType");
         	$action = 'create';
         }
-        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
+        if ($type=='checkbox' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
         	$action = 'create';
         }
-        if (GETPOST('type')=='link' && !GETPOST('param'))
+        if ($type=='link' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForLinkType");
         	$action = 'create';
         }
-        if (GETPOST('type')=='radio' && !GETPOST('param'))
+        if ($type=='radio' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
         	$action = 'create';
         }
-        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox')) && GETPOST('param'))
+        if  ((($type=='radio') || ($type=='checkbox')) && $param)
         {
         	// Construct array for parameter (value of select list)
-    		$parameters = GETPOST('param');
+    		$parameters = $param;
     		$parameters_array = explode("\r\n",$parameters);
     		foreach($parameters_array as $param_ligne)
     		{
@@ -134,11 +140,11 @@ if ($action == 'add')
     		if (isset($_POST["attrname"]) && preg_match("/^[a-z0-9-_]+$/",$_POST['attrname']) && !is_numeric($_POST["attrname"]))
     		{
     			// Construct array for parameter (value of select list)
-        		$default_value = GETPOST('default_value');
-    			$parameters = GETPOST('param');
+        		$default_value = GETPOST('default_value','alpha');
+    			$parameters = $param;
     			$parameters_array = explode("\r\n",$parameters);
     			//In sellist we have only one line and it can have come to do SQL expression
-    			if (GETPOST('type')=='sellist') {
+    			if ($type=='sellist') {
     				foreach($parameters_array as $param_ligne)
     				{
     					$params['options'] = array($parameters=>null);
@@ -154,21 +160,28 @@ if ($action == 'add')
     				}
     			}
 
+    			// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
+    			$visibility = GETPOST('list', 'alpha');
+				if ($type == 'separate') $visibility=3;
+
                 $result=$extrafields->addExtraField(
-                	GETPOST('attrname'),
-                	GETPOST('label'),
-                	GETPOST('type'),
-                	GETPOST('pos'),
+                	GETPOST('attrname', 'alpha'),
+                	GETPOST('label', 'alpha'),
+                	$type,
+                	GETPOST('pos', 'int'),
                 	$extrasize,
                 	$elementtype,
-                	(GETPOST('unique')?1:0),
-                	(GETPOST('required')?1:0),
+                	(GETPOST('unique', 'alpha')?1:0),
+                	(GETPOST('required', 'alpha')?1:0),
                 	$default_value,
                 	$params,
-                	(GETPOST('alwayseditable')?1:0),
-                	(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0),
-					(GETPOST('ishidden')?1:0)
+                	(GETPOST('alwayseditable', 'alpha')?1:0),
+                	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
+                	$visibility,
+					0,
+                    GETPOST('computed_value','alpha'),
+                	(GETPOST('entitycurrentorall', 'alpha')?0:''),
+                	GETPOST('langfile', 'alpha')
                 );
     			if ($result > 0)
     			{
@@ -205,66 +218,66 @@ if ($action == 'update')
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
         // Check values
-		if (! GETPOST('type'))
+		if (! $type)
 		{
 			$error++;
 			$langs->load("errors");
 			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
 			$action = 'edit';
 		}
-		if (GETPOST('type')=='varchar' && $extrasize <= 0)
+		if ($type=='varchar' && $extrasize <= 0)
 		{
 		    $error++;
 		    $langs->load("errors");
 		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
 		    $action = 'edit';
 		}
-		if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
+		if ($type=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'edit';
         }
-        if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
+        if ($type=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
             $mesg[]=$langs->trans("ErrorSizeTooLongForIntType",$maxsizeint);
             $action = 'edit';
         }
-        if (GETPOST('type')=='select' && !GETPOST('param'))
+        if ($type=='select' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForSelectType");
         	$action = 'edit';
         }
-        if (GETPOST('type')=='sellist' && !GETPOST('param'))
+        if ($type=='sellist' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForSelectListType");
         	$action = 'edit';
         }
-        if (GETPOST('type')=='checkbox' && !GETPOST('param'))
+        if ($type=='checkbox' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForCheckBoxType");
         	$action = 'edit';
         }
-        if (GETPOST('type')=='radio' && !GETPOST('param'))
+        if ($type=='radio' && !$param)
         {
         	$error++;
         	$langs->load("errors");
         	$mesg[]=$langs->trans("ErrorNoValueForRadioType");
         	$action = 'edit';
         }
-        if  (((GETPOST('type')=='radio') || (GETPOST('type')=='checkbox')) && GETPOST('param'))
+        if  ((($type=='radio') || ($type=='checkbox')) && $param)
         {
         	// Construct array for parameter (value of select list)
-        	$parameters = GETPOST('param');
+        	$parameters = $param;
         	$parameters_array = explode("\r\n",$parameters);
         	foreach($parameters_array as $param_ligne)
         	{
@@ -295,10 +308,10 @@ if ($action == 'update')
     		{
     			$pos = GETPOST('pos','int');
     			// Construct array for parameter (value of select list)
-    			$parameters = GETPOST('param');
+    			$parameters = $param;
     			$parameters_array = explode("\r\n",$parameters);
     			//In sellist we have only one line and it can have come to do SQL expression
-    			if (GETPOST('type')=='sellist') {
+    			if ($type=='sellist') {
     				foreach($parameters_array as $param_ligne)
     				{
     					$params['options'] = array($parameters=>null);
@@ -314,20 +327,28 @@ if ($action == 'update')
     				}
     			}
 
+    			// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
+    			$visibility = GETPOST('list', 'alpha');
+    			if ($type == 'separate') $visibility=3;
+
     			$result=$extrafields->update(
-    				GETPOST('attrname'),
-    				GETPOST('label'),
-    				GETPOST('type'),
+    				GETPOST('attrname', 'alpha'),
+    				GETPOST('label', 'alpha'),
+    				$type,
     				$extrasize,
     				$elementtype,
-    				(GETPOST('unique')?1:0),
-    				(GETPOST('required')?1:0),
+    				(GETPOST('unique', 'alpha')?1:0),
+    				(GETPOST('required', 'alpha')?1:0),
     				$pos,
     				$params,
-    				(GETPOST('alwayseditable')?1:0),
-    				(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0),
-					(GETPOST('ishidden')?1:0)
+    				(GETPOST('alwayseditable', 'alpha')?1:0),
+    				(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
+                	$visibility,
+					0,
+    			    GETPOST('default_value','alpha'),
+    				GETPOST('computed_value','alpha'),
+    				(GETPOST('entitycurrentorall', 'alpha')?0:''),
+    				GETPOST('langfile')
     			);
     			if ($result > 0)
     			{

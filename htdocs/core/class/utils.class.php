@@ -28,10 +28,10 @@
 class Utils
 {
 	var $db;
-	
+
 	var $output;   // Used by Cron method to return message
 	var $result;   // Used by Cron method to return data
-	
+
 	/**
 	 *	Constructor
 	 *
@@ -47,21 +47,21 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfiles')
-	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
+	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
+	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	function purgeFiles($choice='tempfilesold')
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
-		
+
 		$langs->load("admin");
-		
+
 		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		
+
 		$filesarray=array();
 		if (empty($choice)) $choice='tempfilesold';
-		
+
 		if ($choice=='tempfiles' || $choice=='tempfilesold')
 		{
 			// Delete temporary files
@@ -78,49 +78,71 @@ class Utils
 				}
 			}
 		}
-	
+
 		if ($choice=='allfiles')
 		{
-			// Delete all files
+			// Delete all files (except install.lock)
 			if ($dolibarr_main_data_root)
 			{
 				$filesarray=dol_dir_list($dolibarr_main_data_root,"all",0,'','install\.lock$');
 			}
 		}
-	
+
 		if ($choice=='logfile')
 		{
-			// Define filelog to discard it from purge
+		    // Define files log
+			if ($dolibarr_main_data_root)
+			{
+                $filesarray=dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*$', 'install\.lock$');
+			}
+
 			$filelog='';
 			if (! empty($conf->syslog->enabled))
 			{
-				$filelog=SYSLOG_FILE;
+				$filelog=$conf->global->SYSLOG_FILE;
 				$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
-			}
 
-			$filesarray[]=array('fullname'=>$filelog,'type'=>'file');
+				$alreadyincluded=false;
+				foreach ($filesarray as $tmpcursor)
+				{
+				    if ($tmpcursor['fullname'] == $filelog) { $alreadyincluded=true; }
+				}
+				if (! $alreadyincluded) $filesarray[]=array('fullname'=>$filelog,'type'=>'file');
+			}
 		}
-	
+
 		$count=0;
+		$countdeleted=0;
+		$counterror=0;
 		if (count($filesarray))
 		{
 			foreach($filesarray as $key => $value)
 			{
-				//print "x ".$filesarray[$key]['fullname']."<br>\n";
+				//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
 				if ($filesarray[$key]['type'] == 'dir')
 				{
-					$count+=dol_delete_dir_recursive($filesarray[$key]['fullname']);
+				    $startcount=0;
+				    $tmpcountdeleted=0;
+					$result=dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+				    $count+=$result;
+				    $countdeleted+=$tmpcountdeleted;
 				}
 				elseif ($filesarray[$key]['type'] == 'file')
 				{
 					// If (file that is not logfile) or (if logfile with option logfile)
 					if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
 					{
-						$count+=(dol_delete_file($filesarray[$key]['fullname'])?1:0);
+					    $result=dol_delete_file($filesarray[$key]['fullname'], 1, 1);
+					    if ($result)
+					    {
+					        $count++;
+					        $countdeleted++;
+					    }
+					    else $counterror++;
 					}
 				}
 			}
-	
+
 			// Update cachenbofdoc
 			if (! empty($conf->ecm->enabled) && $choice=='allfiles')
 			{
@@ -129,14 +151,18 @@ class Utils
 				$result = $ecmdirstatic->refreshcachenboffile(1);
 			}
 		}
-		
-		if ($count > 0) $this->output=$langs->trans("PurgeNDirectoriesDeleted", $count);
-		else $this->output=$langs->trans("PurgeNothingToDelete");
+
+		if ($count > 0)
+		{
+		    $this->output=$langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
+		    if ($count > $countdeleted) $this->output.='<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+		}
+		else $this->output=$langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)':'');
 
 		//return $count;
 		return 0;     // This function can be called by cron so must return 0 if OK
 	}
-	
+
 
 	/**
 	 *  Make a backup of database
@@ -146,15 +172,17 @@ class Utils
 	 *  @param  string      $type              'mysql', 'postgresql', ...
 	 *  @param  int         $usedefault        1=Use default backup profile (Set this to 1 when used as cron)
 	 *  @param  string      $file              'auto' or filename to build
-	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
+	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
+	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	function dumpDatabase($compression='none', $type='auto', $usedefault=1, $file='auto')
+	function dumpDatabase($compression='none', $type='auto', $usedefault=1, $file='auto', $keeplastnfiles=0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
-		
+
+
 		$langs->load("admin");
-		
+
 		dol_syslog("Utils::dumpDatabase type=".$type." compression=".$compression." file=".$file, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -188,14 +216,14 @@ class Utils
 
 		$outputdir  = $conf->admin->dir_output.'/backup';
 		$result=dol_mkdir($outputdir);
-		
+
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli')
 		{
 		    $cmddump=$conf->global->SYSTEMTOOLS_MYSQLDUMP;
-		
-		
+
+
 		    $outputfile = $outputdir.'/'.$file;
 		    // for compression format, we add extension
 		    $compression=$compression ? $compression : 'none';
@@ -203,11 +231,11 @@ class Utils
 		    if ($compression == 'bz') $outputfile.='.bz2';
 		    $outputerror = $outputfile.'.err';
 		    dol_mkdir($conf->admin->dir_output.'/backup');
-		
+
 		    // Parameteres execution
 		    $command=$cmddump;
 		    if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
-		
+
 		    //$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 		    $param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 		    $param.=" -u ".$dolibarr_main_db_user;
@@ -248,16 +276,16 @@ class Utils
 		        $paramcrypted.=' -p"'.preg_replace('/./i','*',$dolibarr_main_db_pass).'"';
 		        $paramclear.=' -p"'.str_replace(array('"','`'),array('\"','\`'),$dolibarr_main_db_pass).'"';
 		    }
-		
+
 		    $errormsg='';
-		
+
 		    // Debut appel methode execution
 		    $fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
 		    $fullcommandclear=$command." ".$paramclear." 2>&1";
 		    if ($compression == 'none') $handle = fopen($outputfile, 'w');
 		    if ($compression == 'gz')   $handle = gzopen($outputfile, 'w');
 		    if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
-		
+
 		    if ($handle)
 		    {
 		        $ok=0;
@@ -268,17 +296,18 @@ class Utils
 		        {
 		            $i++;   // output line number
 		            $read = fgets($handlein);
-		            if ($i == 1 && preg_match('/'.preg_quote('Warning: Using a password').'/i', $read)) continue;
+		            // Exclude warning line we don't want
+		            if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
 		            fwrite($handle,$read);
 		            if (preg_match('/'.preg_quote('-- Dump completed').'/i',$read)) $ok=1;
 		            elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i',$read)) $ok=1;
 		        }
 		        pclose($handlein);
-		
+
 		        if ($compression == 'none') fclose($handle);
 		        if ($compression == 'gz')   gzclose($handle);
 		        if ($compression == 'bz')   bzclose($handle);
-		
+
 		        if (! empty($conf->global->MAIN_UMASK))
 		            @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		    }
@@ -288,7 +317,7 @@ class Utils
 		        dol_syslog("Failed to open file ".$outputfile,LOG_ERR);
 		        $errormsg=$langs->trans("ErrorFailedToWriteInDir");
 		    }
-		
+
 		    // Get errorstring
 		    if ($compression == 'none') $handle = fopen($outputfile, 'r');
 		    if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
@@ -317,13 +346,13 @@ class Utils
 		        }
 		    }
 		    // Fin execution commande
-		
+
 		    $this->output = $errormsg;
 		    $this->error = $errormsg;
 		    $this->result = array("commandbackuplastdone" => $command." ".$paramcrypted, "commandbackuptorun" => "");
 		    //if (empty($this->output)) $this->output=$this->result['commandbackuplastdone'];
 		}
-		
+
 		// MYSQL NO BIN
 		if ($type == 'mysqlnobin')
 		{
@@ -335,7 +364,7 @@ class Utils
 		    if ($compression == 'bz') $outputfile.='.bz2';
 		    $outputerror = $outputfile.'.err';
 		    dol_mkdir($conf->admin->dir_output.'/backup');
-		
+
 		    if ($compression == 'gz' or $compression == 'bz')
 		    {
 		        backup_tables($outputfiletemp);
@@ -346,16 +375,16 @@ class Utils
 		    {
 		        backup_tables($outputfile);
 		    }
-		
+
 		    $this->output = "";
 		    $this->result = array("commandbackuplastdone" => "", "commandbackuptorun" => "");
 		}
-		
+
 		// POSTGRESQL
 		if ($type == 'postgresql')
 		{
 		    $cmddump=$conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
-		    
+
 		    $outputfile = $outputdir.'/'.$file;
 		    // for compression format, we add extension
 		    $compression=$compression ? $compression : 'none';
@@ -363,11 +392,11 @@ class Utils
 		    if ($compression == 'bz') $outputfile.='.bz2';
 		    $outputerror = $outputfile.'.err';
 		    dol_mkdir($conf->admin->dir_output.'/backup');
-		
+
 		    // Parameteres execution
 		    $command=$cmddump;
 		    if (preg_match("/\s/",$command)) $command=escapeshellarg($command);	// Use quotes on command
-		
+
 		    //$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
 		    //$param="-F c";
 		    $param="-F p";
@@ -403,8 +432,95 @@ class Utils
 		    $this->output = "";
 		    $this->result = array("commandbackuplastdone" => "", "commandbackuptorun" => $command." ".$paramcrypted);
 		}
-		
-		
+
+		// Clean old files
+		if ($keeplastnfiles > 0)
+		{
+		    $tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
+		    $i=0;
+		    foreach($tmpfiles as $key => $val)
+		    {
+		        $i++;
+		        if ($i <= $keeplastnfiles) continue;
+		        dol_delete_file($val['fullname']);
+		    }
+		}
+
+
 		return 0;
 	}
+
+
+
+	/**
+	 * Execute a CLI command.
+	 *
+	 * @param 	string	$command		Command line to execute.
+	 * @param 	string	$outputfile		Output file (used only when method is 2). For exemple $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 */
+	function executeCLI($command, $outputfile, $execmethod=0)
+	{
+		global $conf, $langs;
+
+		$result = 0;
+		$output = '';
+		$error = '';
+
+		$command=escapeshellcmd($command);
+		$command.=" 2>&1";
+
+		if (! empty($conf->global->MAIN_EXEC_USE_POPEN)) $execmethod=$conf->global->MAIN_EXEC_USE_POPEN;
+		if (empty($execmethod)) $execmethod=1;
+		//$execmethod=1;
+
+		dol_syslog("Utils::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
+		$output_arr=array();
+
+		if ($execmethod == 1)
+		{
+			exec($command, $output_arr, $retval);
+			$result = $retval;
+			if ($retval != 0)
+			{
+				$langs->load("errors");
+				dol_syslog("Utils::executeCLI retval after exec=".$retval, LOG_ERR);
+				$error = 'Error '.$retval;
+			}
+		}
+		if ($execmethod == 2)	// With this method, there is no way to get the return code, only output
+		{
+			$ok=0;
+			$handle = fopen($outputfile, 'w+b');
+			if ($handle)
+			{
+				dol_syslog("Utils::executeCLI run command ".$command);
+				$handlein = popen($command, 'r');
+				while (!feof($handlein))
+				{
+					$read = fgets($handlein);
+					fwrite($handle,$read);
+					$output_arr[]=$read;
+				}
+				pclose($handlein);
+				fclose($handle);
+			}
+			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
+
+		// Update with result
+		if (is_array($output_arr) && count($output_arr)>0)
+		{
+			foreach($output_arr as $val)
+			{
+				$output.=$val.($execmethod == 2 ? '' : "\n");
+			}
+		}
+
+		dol_syslog("Utils::executeCLI result=".$result." output=".$output." error=".$error, LOG_DEBUG);
+
+		return array('result'=>$result, 'output'=>$output, 'error'=>$error);
+	}
+
 }

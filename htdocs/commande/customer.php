@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Secrutiy check
 if ($user->societe_id > 0)
@@ -44,11 +44,13 @@ accessforbidden();
 
 $langs->load("companies");
 $langs->load("orders");
+
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
@@ -73,36 +75,36 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
-$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+$sql.= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if (dol_strlen($stcomm))
 {
-	$sql.= " AND s.fk_stcomm=$stcomm";
+	$sql.= " AND s.fk_stcomm=".$stcomm;
 }
-
-if ($_GET["search_nom"])
-{
-	$sql.= " AND s.nom like '%".$db->escape(strtolower($_GET["search_nom"]))."%'";
-}
-if ($_GET["search_compta"])
-{
-	$sql.= " AND s.code_compta like '%".$db->escape($_GET["search_compta"])."%'";
-}
-if ($_GET["search_code_client"])
-{
-	$sql.= " AND s.code_client like '%".$db->escape($_GET["search_code_client"])."%'";
-}
+if (GETPOST("search_nom"))  $sql.= natural_search("s.nom", GETPOST("search_nom"));
+if (GETPOST("search_compta")) $sql.= natural_search("s.code_compta", GETPOST("search_compta"));
+if (GETPOST("search_code_client")) $sql.= natural_search("s.code_client", GETPOST("search_code_client"));
 if (dol_strlen($begin))
 {
 	$sql.= " AND s.nom like '".$db->escape($begin)."'";
 }
-if ($socid)
+if ($socid > 0)
 {
 	$sql.= " AND s.rowid = ".$socid;
 }
 $sql.= " AND c.fk_statut in (1, 2) AND c.facture = 0";
 $sql.= " GROUP BY s.nom";
-$sql.= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->order($sortfield,$sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -118,43 +120,44 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("AccountancyCode",$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+	print '<input class="flat" type="text" name="search_nom" value="'.dol_escape_htmltag(GETPOST("search_nom")).'"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.dol_escape_htmltag(GETPOST("search_code_client")).'">';
 	print '</td>';
 
 	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.dol_escape_htmltag(GETPOST("search_compta")).'">';
 	print '</td>';
 
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
+
 	print "</tr>\n";
 
 	$var=true;
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
 
-		$var=!$var;
 
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		print '<td>';
 
         $result='';

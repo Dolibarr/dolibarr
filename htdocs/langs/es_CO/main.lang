@@ -34,5 +34,4 @@ RequestAlreadyDone=La solicitud ya ha sido procesada
 December=diciembre
 FindBug=Señalar un bug
 Currency=Moneda
-SelectElementAndClickRefresh=Seleccione un elemento y haga clic en Actualizar
 PrintFile=Imprimir archivo %s

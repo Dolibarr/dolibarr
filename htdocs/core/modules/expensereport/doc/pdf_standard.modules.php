@@ -186,8 +186,6 @@ class pdf_standard extends ModeleExpenseReport
 				}
 			}
 
-			if (isset($object->lignes) && ! isset($object->lines)) $object->lines=$object->lignes;
-
 			if (file_exists($dir))
 			{
 				// Add pdfgeneration hook
@@ -284,7 +282,7 @@ class pdf_standard extends ModeleExpenseReport
 				}
 
 				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
+				$initialY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
@@ -292,43 +290,41 @@ class pdf_standard extends ModeleExpenseReport
 				{
 					$piece_comptable = $i +1;
 
-					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 2);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
-
-					// Description of product line
-					$curX = $this->posxcomment-1;
-
-					$showpricebeforepagebreak=1;
+                    $curY = $nexY;
 
 					$pdf->SetFont('','', $default_font_size - 1);
 					
-					// Accountancy piece
-					$pdf->SetXY($this->posxpiece, $curY);
-					$pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
-					
-					// Comments
-					$pdf->SetXY($this->posxcomment, $curY);
-					$pdf->writeHTMLCell($this->posxdate-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $object->lines[$i]->comments, 0, 1);
+                    // Accountancy piece
+                    $pdf->SetXY($this->posxpiece, $curY);
+                    $pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
+                    $curY = ($pdf->PageNo() > $pageposbefore) ? $pdf->GetY()-4 : $curY;
 
-					//nexY
-					$nexY = $pdf->GetY();
-					$pageposafter=$pdf->getPage();
-					$pdf->setPage($pageposbefore);
-					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+                    // Comments
+                    $pdf->SetXY($this->posxcomment, $curY );
+                    $pdf->writeHTMLCell($this->posxdate-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $object->lines[$i]->comments, 0, 1);
+                    $curY = ($pdf->PageNo() > $pageposbefore) ? $pdf->GetY()-4 : $curY;
 
-					// Date
+                    // Date
 					$pdf->SetXY($this->posxdate -1, $curY);
 					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
 
-					// Type
+                    // Type
 					$pdf->SetXY($this->posxtype -1, $curY);
-					$pdf->MultiCell($this->posxprojet-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
+					$nextColumnPosX = $this->posxup;
+                    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+                        $nextColumnPosX = $this->posxtva;
+                    }
+                    if (!empty($conf->projet->enabled)) {
+                        $nextColumnPosX = $this->posxprojet;
+                    }
+
+					$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
 
                     // Project
 					if (! empty($conf->projet->enabled)) 
@@ -344,34 +340,43 @@ class pdf_standard extends ModeleExpenseReport
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxtva, $curY);
 						$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 4,$vat_rate, 0, 'C');
-					}
+                    }
 
 					// Unit price
 					$pdf->SetXY($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 4,price($object->lines[$i]->value_unit), 0, 'R');
 
-					// Quantity
+                    // Quantity
 					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->postotalttc-$this->posxqty-0.8, 4,$object->lines[$i]->qty, 0, 'R');
 
-					// Total with all taxes
+                    // Total with all taxes
 					$pdf->SetXY($this->postotalttc-1, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalttc, 4, price($object->lines[$i]->total_ttc), 0, 'R');
 
-					// Cherche nombre de lignes a venir pour savoir si place suffisante
+                    //nexY
+                    $nexY = $pdf->GetY();
+                    $pageposafter=$pdf->getPage();
+                    $pdf->setPage($pageposbefore);
+                    $pdf->setTopMargin($this->marge_haute);
+                    $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+
+                    $nblineFollowComment = 1;
+                    // Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						//on recupere la description du produit suivant
-						$follow_comment = $object->lines[$i+1]->comments;
+					    //Fetch current description to know on which line the next one should be placed
+						$follow_comment = $object->lines[$i]->comments;
+						$follow_type = $object->lines[$i]->type_fees_code;
+
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowComment = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output)*4;
-					}
-					else	// If it's last line
-					{
-						$nblineFollowComment = 0;
+						$nbLineCommentNeed = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output);
+						$nbLineTypeNeed = dol_nboflines_bis($follow_type,4,$outputlangs->charset_output);
+
+                        $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
 					}
 
-					$nexY+=4;    // Passe espace entre les lignes
+                    $nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Passe espace entre les lignes
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -426,7 +431,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetFont('','', 10);
 				
             	// Show total area box
-				$posy=$bottomlasttab+5;//$nexY+95;
+				$posy=$bottomlasttab+5;
 				$pdf->SetXY(100, $posy);
 				$pdf->MultiCell(60, 5, $outputlangs->transnoentities("TotalHT"), 1, 'L');
 				$pdf->SetXY(160, $posy);
@@ -469,6 +474,8 @@ class pdf_standard extends ModeleExpenseReport
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -718,9 +725,10 @@ class pdf_standard extends ModeleExpenseReport
 	 *   @param		Translate	$outputlangs	Output langs
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
 		global $conf;
 		
@@ -728,12 +736,13 @@ class pdf_standard extends ModeleExpenseReport
 		$hidebottom=0;
 		if ($hidetop) $hidetop=-1;
 
+		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 4), $tab_top -4);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 

@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - companies
-ConfirmDeleteCompany=¿Está seguro de querer eliminar esta empresa y toda la información contenida?
-ConfirmDeleteContact=¿Está seguro de querer eliminar este contacto y toda la información contenida?
 ParentCompany=Sede principal
 Subsidiaries=Sucursales
 RegisteredOffice=Domicilio principal
 State=Departamento
 PhonePerso=Teléf. personal
+ProfId1AT=Id prof. 1 (USt.-IdNr)
+ProfId2AT=Id prof. 2 (USt.-Nr)
+ProfId3AT=Id prof. 3 (Handelsregister-Nr.)
 ProfId2CO=Identificación (CC, NIT, CE)
 ProfId3CO=CIIU
 VATIntra=NIT
 VATIntraShort=NIT
-CompanyHasAbsoluteDiscount=Este cliente tiene <b>%s %s</b> descuentos disponibles (descuentos, anticipos...)
 CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> anticipos disponibles
 NoContactForAnyProposal=Este contacto no es contacto de ningúna cotización
 VATIntraCheckDesc=El link <b>%s</b> permite consultar al servicio RUES el NIT. Se requiere acceso a internet para que el servicio funcione

@@ -1,12 +1,17 @@
 # Dolibarr language file - Source file is en_US - deliveries
+DeliveryRef=Ref. entrega
 DeliveryStateSaved=Estado de entrega salvo
-ValidateDeliveryReceiptConfirm=Tem certeza de que deseja confirmar esta entrega?
-DeleteDeliveryReceipt=Apagar Recibo de Entrega
-DeleteDeliveryReceiptConfirm=Tem certeza de que deseja apagar o recibo de entrega <b>%s</b> ?
-TrackingNumber=Nr. de rastreamento
-DeliveryNotValidated=Entrega nao validada
+SetDeliveryDate=Indicar a Data de Envio
+ValidateDeliveryReceipt=Confirmar a Nota de Entrega
+ValidateDeliveryReceiptConfirm=Você tem certeza que deseja validar este comprovante de entrega?
+DeleteDeliveryReceipt=Excluir recibo de entrega
+DeleteDeliveryReceiptConfirm=Você tem certeza que deseja excluir o comprovante de entrega <b>%s</b>?
+DeliveryMethod=Método de entrega
+TrackingNumber=Número de rastreamento
+StatusDeliveryValidated=Recebida
 GoodStatusDeclaration=Recebi a mercadorias acima em bom estado,
-Deliverer=Destinatario:
 Sender=Remetente
+ErrorStockIsNotEnough=Não existe estoque suficiente
 Shippable=Disponivel para envio
 NonShippable=Não disponivel para envio
+ShowReceiving=Mostrar recibo de entrega

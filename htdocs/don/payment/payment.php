@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("bills");
 
 $chid=GETPOST("rowid");
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $amounts = array();
 
 // Security check
@@ -154,7 +154,7 @@ $form=new Form($db);
 
 
 // Form to create donation payment
-if (GETPOST("action") == 'create')
+if (GETPOST('action','aZ09') == 'create')
 {
 
 	$don = new Don($db);
@@ -196,7 +196,7 @@ if (GETPOST("action") == 'create')
 		$db->free();
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-	print '<tr><td valign="top">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	print '<tr class="liste_titre">';
 	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
@@ -227,7 +227,7 @@ if (GETPOST("action") == 'create')
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
+	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
@@ -257,9 +257,9 @@ if (GETPOST("action") == 'create')
 	{
 		$objp = $don;
 
-		$var=!$var;
+		
 
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		print '<td align="right">'.price($objp->amount)."</td>";
 

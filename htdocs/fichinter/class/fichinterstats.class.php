@@ -61,6 +61,7 @@ class FichinterStats extends Stats
         $this->userid = $userid;
 		$this->cachefilesuffix = $mode; 
         
+		$this->where.= " c.entity = ".$conf->entity;
 		if ($mode == 'customer')
 		{
 			$object=new Fichinter($this->db);
@@ -68,10 +69,8 @@ class FichinterStats extends Stats
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field='0';
 			$this->field_line='0';
-			$this->where.= " c.fk_statut > 0";    // Not draft and not cancelled
+			//$this->where.= " AND c.fk_statut > 0";    // Not draft and not cancelled
 		}
-		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where.= " AND c.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($this->socid)
 		{

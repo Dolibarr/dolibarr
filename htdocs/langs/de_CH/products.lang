@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - products
+Reference=Referenz
 ProductVatMassChange=MwSt-Massenänderung
 LastRecordedProducts=%s zuletzt erfasste Produkte
 CardProduct0=Produkt-Karte
 CardProduct1=Leistungs-Karte
 SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
-CostPriceUsage=In einer zukünftigen Version kann dieser Wert für die Margenberechnung verwendet werden.
 CantBeLessThanMinPrice=Der Verkaufspreis darf den Mindestpreis für dieses Produkt (%s ohne MwSt.) nicht unterschreiten. Diese Meldung kann auch angezeigt werden, wenn Sie einen zu hohen Rabatt geben.
 ServicesArea=Leistungs-Übersicht
 SupplierCard=Lieferantenkarte

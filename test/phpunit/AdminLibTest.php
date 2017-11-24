@@ -115,7 +115,7 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testConvertTime2Seconds
+     * testVersionCompare
      *
      * @return	void
      */
@@ -142,21 +142,27 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
 
         return $result;
     }
-    
+
     /**
      * testEnableModule
-     * 
+     *
      * @return  void
      */
     public function testEnableModule()
     {
     	global $conf, $db, $langs, $user;
-    	
+
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
 		print "Enable module modExpenseReport";
 		$moduledescriptor=new modExpenseReport($db);
 		$moduledescriptor->init();
 		$conf->setValues($db);
+
+		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
+		print "Enable module modAPI";
+		$moduledescriptor=new modApi($db);
+		$moduledescriptor->init();
+		$conf->setValues($db);
     }
-    
+
 }

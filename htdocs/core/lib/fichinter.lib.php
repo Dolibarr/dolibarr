@@ -55,14 +55,6 @@ function fichinter_prepare_head($object)
 		$h++;
 	}
 
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans('Preview');
-		$head[$h][2] = 'preview';
-		$h++;
-	}
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -72,8 +64,25 @@ function fichinter_prepare_head($object)
 	// Tab to link resources
 	if ($conf->resource->enabled)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
+		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+ 		$nbResource = 0;
+		$objectres=new Dolresource($db);
+		if (is_array($objectres->available_resources))
+		{
+	 		foreach ($objectres->available_resources as $modresources => $resources)
+			{
+				$resources=(array) $resources;  // To be sure $resources is an array
+				foreach($resources as $resource_obj)
+				{
+					$linked_resources = $object->getElementResources('fichinter',$object->id,$resource_obj);
+					
+				}
+			}
+		}
+				
+   		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
+		if ($nbResource > 0) $head[$h][1].= ' <span class="badge">'.$nbResource.'</span>';
 		$head[$h][2] = 'resource';
 		$h++;
 	}
@@ -93,7 +102,7 @@ function fichinter_prepare_head($object)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->ficheinter->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");

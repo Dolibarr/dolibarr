@@ -48,7 +48,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	{
 		global $langs;
 
-		return $this->isActive()?'':$langs->trans('ClassNotFoundIntoPathWarning','ChromePhp.class.php');
+		return ($this->isActive() == 1)?'':$langs->trans('ClassNotFoundIntoPathWarning','ChromePhp.class.php');
 	}
 	
 	/**
@@ -73,7 +73,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		    if ($res)
 		    {
-		        return 1;
+        		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_CHROMEPHP)?1:0;    // Set SYSLOG_DISABLE_LOGHANDLER_CHROMEPHP to 1 to disable this loghandler
 		    }
 		    else
 		    {

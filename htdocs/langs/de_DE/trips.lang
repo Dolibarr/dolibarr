@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Spesenabrechnung
-ExpenseReports=Spesenabrechnungen
+ShowExpenseReport=Spesenabrechnung anzeigen
 Trips=Spesenabrechnungen
 TripsAndExpenses=Reise- und Fahrtspesen
 TripsAndExpensesStatistics=Reise- und Fahrtspesen Statistik
@@ -8,18 +7,31 @@ TripCard=Reisekosten - Karte
 AddTrip=Reisekostenabrechnung erstellen
 ListOfTrips=Aufstellung Spesenabrechnungen
 ListOfFees=Liste der Spesen
+TypeFees=Gebührenarten
 ShowTrip=Spesenabrechnung anzeigen
 NewTrip=neue Spesenabrechnung
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Besuchter Partner
 FeesKilometersOrAmout=Spesenbetrag bzw. Kilometergeld
 DeleteTrip=Spesenabrechnung löschen
-ConfirmDeleteTrip=Möchten Sie diese Spesenabrechnung wirklich löschen?
+ConfirmDeleteTrip=Sind Sie sicher, dass diese Spesenabrechnung löschen wollen?
 ListTripsAndExpenses=Aufstellung Spesenabrechnungen
 ListToApprove=Warten auf Bestätigung
 ExpensesArea=Spesenabrechnungen
 ClassifyRefunded=Als 'erstattet' markieren
 ExpenseReportWaitingForApproval=Eine neue Spesenabrechnung ist zur Genehmigung vorgelegt worden
-ExpenseReportWaitingForApprovalMessage=Eine neue Spesenabrechnung wurde vorgelegt und steht zur Überprüfung an.\n- Benutzer: %s \n- Zeitraum: %s  \nKlicken Sie hier, um zu überprüfen: %s 
+ExpenseReportWaitingForApprovalMessage=Ein neuer Spesenbericht wurde vorgelegt und wartet auf die Genehmigung.\n - Benutzer: %s\n - Zeitraum: %s\nKlicken Sie hier, um diesen freizugeben: %s
+ExpenseReportWaitingForReApproval=Eine Spesenabrechnung ist zur erneuten Genehmigung vorgelegt worden
+ExpenseReportWaitingForReApprovalMessage=Eine Spesenabrechnung wurde eingereicht und wartet darauf, un wartet auf erneute Freigabe.\nDie %s, Sie verweigerte die Freigabe der Spesenabrechnung aus folgenden Grunde: %s.\nEine neue Version wurde für Ihre Freigabe vorgeschlagen und wartet.\n - Benutzer: %s\n - Zeitraum: %s\nKlicken Sie hier, um diesen hier freizugeben: %s
+ExpenseReportApproved=Eine Spesenabrechnung wurde genehmigt
+ExpenseReportApprovedMessage=Der Spesenbericht %s wurde genehmigt.\n - Benutzer: %s\n - Genehmigt von: %s\nKlicken Sie hier, um die Spesenabrechnung zu zeigen: %s
+ExpenseReportRefused=Eine Spesenabrechnung wurde abgelehnt
+ExpenseReportRefusedMessage=Der Spesenbericht %s wurde abgelehnt.\n - Benutzer: %s\n - Refused von: %s\n - Motive für die Ablehnung: %s\nKlicken Sie hier, um die Spesenabrechnung zeigen: %s
+ExpenseReportCanceled=Eine Spesenabrechnung wurde storniert
+ExpenseReportCanceledMessage=Der Spesenbericht %s wurde abgebrochen.\n - Benutzer: %s\n - Storniert von: %s\n - Motive für die Stornierung: %s\nKlicken Sie hier, um die Spesenabrechnung zu zeigen: %s
+ExpenseReportPaid=Eine Spesenabrechnung wurde ausbezahlt
+ExpenseReportPaidMessage=Der Spesenbericht %s wurde bezahlt.\n - Benutzer: %s\n - Paid von: %s\nKlicken Sie hier, um die Spesenabrechnung anzuzeigen: %s
 TripId=Spesenabrechnung ID
 AnyOtherInThisListCanValidate=Person für die Validierung zu informieren .
 TripSociete=Partner
@@ -37,6 +49,30 @@ TF_PEAGE=Mautgebühr
 TF_ESSENCE=Kraftstoff
 TF_HOTEL=Hotel
 TF_TAXI=Taxi
+EX_KME=Mileage costs
+EX_FUE=Fuel CV
+EX_HOT=Hotel
+EX_PAR=Parking CV
+EX_TOL=Toll CV
+EX_TAX=Various Taxes
+EX_IND=Indemnity transportation subscription
+EX_SUM=Maintenance supply
+EX_SUO=Office supplies
+EX_CAR=Car rental
+EX_DOC=Documentation
+EX_CUR=Customers receiving
+EX_OTR=Other receiving
+EX_POS=Postage
+EX_CAM=CV maintenance and repair
+EX_EMM=Employees meal
+EX_GUM=Guests meal
+EX_BRE=Breakfast
+EX_FUE_VP=Fuel PV
+EX_TOL_VP=Toll PV
+EX_PAR_VP=Parking PV
+EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Sie haben bereits eine andere Spesenabrechnung in einem ähnlichen Datumsbereich erstellt.
 AucuneLigne=Es wurde noch keine Spesenabrechnung erstellt.
@@ -57,31 +93,64 @@ DATE_REFUS=Datum Ablehnung
 DATE_SAVE=Freigabedatum
 DATE_CANCEL=Stornodatum
 DATE_PAIEMENT=Zahlungsdatum
-
 BROUILLONNER=entwerfen
+ExpenseReportRef=Belegnummer Spesenabrechnung
 ValidateAndSubmit=Validieren und zur Genehmigung einreichen
 ValidatedWaitingApproval=Validiert (Wartet auf Genehmigung)
-
 NOT_AUTHOR=Sie sind nicht der Autor dieser Spesenabrechnung. Vorgang abgebrochen.
-
 ConfirmRefuseTrip=Möchten Sie diese Spesenabrechnung wirklich ablehnen?
-
 ValideTrip=Genehmigen Spesenabrechnung
 ConfirmValideTrip=Möchten Sie diese Spesenabrechnung wirklich genehmigen?
-
 PaidTrip=Spesenabrechnung bezahlen
 ConfirmPaidTrip=Möchten Sie den Status dieser Spesenabrechnung auf "Bezahlt" ändern?
-
-ConfirmCancelTrip=Möchten Sie diese Spesenabrechnung wirklich abbrechen?
-
+ConfirmCancelTrip=Möchten Sie diese Spesenabrechnung wirklich stornieren?
 BrouillonnerTrip=Status der Spesenabrechnung auf den Status "Entwurf" ändern
 ConfirmBrouillonnerTrip=Möchten Sie den Status dieser Spesenabrechnung wirklich auf "Entwurf" ändern?
-
 SaveTrip=Bestätige Spesenabrechnung
-ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung bestätigen wollen?
-
+ConfirmSaveTrip=Möchten Sie den diese Spesenabrechnung wirklich bestätigen?
 NoTripsToExportCSV=Keine Spesenabrechnung für diesen Zeitraum zu exportieren.
 ExpenseReportPayment=Spesenabrechnung Zahlung
-
 ExpenseReportsToApprove=zu genehmigende Spesenabrechnungen
 ExpenseReportsToPay=zu zahlende Spesenabrechnungen
+CloneExpenseReport=Spesenabrechnung duplizieren
+ConfirmCloneExpenseReport=Möchten Sie den diese Spesenabrechnung wirklich duplizieren?
+ExpenseReportsIk=Expense report milles index
+ExpenseReportsRules=Expense report rules
+ExpenseReportIkDesc=You can modify the calculation of kilometers expense by category and range who they are previously defined. <b>d</b> is the distance in kilometers
+ExpenseReportRulesDesc=You can create or update any rules of calculation. This part will be used when user will create a new expense report
+expenseReportOffset=Wertsprung
+expenseReportCoef=Coefficient
+expenseReportTotalForFive=Example with <u>d</u> = 5
+expenseReportRangeFromTo=from %d to %d
+expenseReportRangeMoreThan=more than %d
+expenseReportCoefUndefined=(value not defined)
+expenseReportCatDisabled=Category disabled - see the c_exp_tax_cat dictionary
+expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionay
+expenseReportPrintExample=offset + (d x coef) = %s
+ExpenseReportApplyTo=Apply to
+ExpenseReportDomain=Domain to apply
+ExpenseReportLimitOn=Limit on
+ExpenseReportDateStart=Startdatum
+ExpenseReportDateEnd=Ablaufdatum
+ExpenseReportLimitAmount=Limite amount
+ExpenseReportRestrictive=Restrictive
+AllExpenseReport=All type of expense report
+OnExpense=Expense line
+ExpenseReportRuleSave=Expense report rule saved
+ExpenseReportRuleErrorOnSave=Error: %s
+RangeNum=Range %d
+
+ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
+byEX_DAY=by day (limitation to %s)
+byEX_MON=by month (limitation to %s)
+byEX_YEA=by year (limitation to %s)
+byEX_EXP=by line (limitation to %s)
+ExpenseReportConstraintViolationWarning=Constraint violation id [%s]: %s  is superior to %s %s
+nolimitbyEX_DAY=by day (no limitation)
+nolimitbyEX_MON=by month (no limitation)
+nolimitbyEX_YEA=by year (no limitation)
+nolimitbyEX_EXP=by line (no limitation)
+
+CarCategory=Category of car
+ExpenseRangeOffset=Offset amount: %s
+RangeIk=Mileage range

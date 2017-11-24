@@ -34,10 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class PaiementFourn extends Paiement
 {
-    public $element='payment_supplier';
-    public $table_element='paiementfourn';
+	public $element='payment_supplier';
+	public $table_element='paiementfourn';
+	public $picto = 'payment';
 
-    var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
+	var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
@@ -73,20 +74,22 @@ class PaiementFourn extends Paiement
 	 */
 	function fetch($id, $ref='', $fk_bank='')
 	{
-	    $error=0;
-	    
+		$error=0;
+
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
-		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
 			$sql.= ' AND p.rowid = '.$ref;
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
+		//print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -140,9 +143,9 @@ class PaiementFourn extends Paiement
 		// Clean parameters
 		$totalamount = 0;
 		$totalamount_converted = 0;
-		
+
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		
+
 		if ($way == 'dolibarr')
 		{
 			$amounts = &$this->amounts;
@@ -153,13 +156,13 @@ class PaiementFourn extends Paiement
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
-		
+
 		foreach ($amounts as $key => $value)
 		{
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture_fourn');
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
-			
+
 			$newvalue = price2num($value,'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
@@ -173,7 +176,7 @@ class PaiementFourn extends Paiement
 		{
 			$ref = $this->getNextNumRef('');
 			$now=dol_now();
-			
+
 			if ($way == 'dolibarr')
 			{
 				$total = $totalamount;
@@ -184,7 +187,7 @@ class PaiementFourn extends Paiement
 				$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 				$mtotal = $totalamount;
 			}
-		
+
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql.= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
@@ -208,22 +211,22 @@ class PaiementFourn extends Paiement
 						if ($resql)
 						{
 							// If we want to closed payed invoices
-						    if ($closepaidinvoices)
-						    {
-						        $invoice=new FactureFournisseur($this->db);
-						        $invoice->fetch($facid);
-	                            $paiement = $invoice->getSommePaiement();
-	                            //$creditnotes=$invoice->getSumCreditNotesUsed();
-	                            $creditnotes=0;
-	                            //$deposits=$invoice->getSumDepositsUsed();
-	                            $deposits=0;
-	                            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-	                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-	                            if ($remaintopay == 0)
-	                            {
-	    					        $result=$invoice->set_paid($user, '', '');
-	                            }
-	                            else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
+							if ($closepaidinvoices)
+							{
+								$invoice=new FactureFournisseur($this->db);
+								$invoice->fetch($facid);
+								$paiement = $invoice->getSommePaiement();
+								//$creditnotes=$invoice->getSumCreditNotesUsed();
+								$creditnotes=0;
+								//$deposits=$invoice->getSumDepositsUsed();
+								$deposits=0;
+								$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+								$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+								if ($remaintopay == 0)
+								{
+									$result=$invoice->set_paid($user, '', '');
+								}
+								else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 							}
 						}
 						else
@@ -241,10 +244,10 @@ class PaiementFourn extends Paiement
 
 				if (! $error)
 				{
-                    // Call trigger
-                    $result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE',$user);
-                    if ($result < 0) $error++;
-                    // End call triggers
+					// Call trigger
+					$result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE',$user);
+					if ($result < 0) $error++;
+					// End call triggers
 				}
 			}
 			else
@@ -263,7 +266,7 @@ class PaiementFourn extends Paiement
 		if ($totalamount <> 0 && $error == 0) // On accepte les montants negatifs
 		{
 			$this->amount=$total;
-		    $this->total=$total;
+			$this->total=$total;
 			$this->multicurrency_amount=$mtotal;
 			$this->db->commit();
 			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
@@ -287,8 +290,8 @@ class PaiementFourn extends Paiement
 	 */
 	function delete($notrigger=0)
 	{
-	    global $conf, $user, $langs;
-	    
+		global $conf, $user, $langs;
+
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
@@ -344,32 +347,32 @@ class PaiementFourn extends Paiement
 			// Supprimer l'ecriture bancaire si paiement lie a ecriture
 			if ($bank_line_id)
 			{
-    			$accline = new AccountLine($this->db);
-    			$result=$accline->fetch($bank_line_id);
-    			if ($result > 0) // If result = 0, record not found, we don't try to delete
-    			{
-    				$result=$accline->delete();
-    			}
-    			if ($result < 0)
-    			{
-                    $this->error=$accline->error;
-                    $this->db->rollback();
-    	    		return -4;
-    		    }
+				$accline = new AccountLine($this->db);
+				$result=$accline->fetch($bank_line_id);
+				if ($result > 0) // If result = 0, record not found, we don't try to delete
+				{
+					$result=$accline->delete($user);
+				}
+				if ($result < 0)
+				{
+					$this->error=$accline->error;
+					$this->db->rollback();
+					return -4;
+				}
 			}
-			
+
 			if (! $notrigger)
 			{
-			    // Appel des triggers
-			    $result=$this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
-			    if ($result < 0)
-			    {
-			        $this->db->rollback();
-			        return -1;
-			    }
-			    // Fin appel triggers
+				// Appel des triggers
+				$result=$this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
+				if ($result < 0)
+				{
+					$this->db->rollback();
+					return -1;
+				}
+				// Fin appel triggers
 			}
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -464,29 +467,29 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
-	*	Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
-	*
-	*	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*	@return     string				Libelle
-	*/
+	 *	Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 *	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@return     string				Libelle
+	 */
 	function getLibStatut($mode=0)
 	{
 		return $this->LibStatut($this->statut,$mode);
 	}
 
 	/**
-	*	Renvoi le libelle d'un statut donne
-	*
-	*	@param      int		$status     Statut
-	*	@param      int		$mode      0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	*	@return     string      		Libelle du statut
-	*/
+	 *	Renvoi le libelle d'un statut donne
+	 *
+	 *	@param      int		$status     Statut
+	 *	@param      int		$mode      0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@return     string      		Libelle du statut
+	 */
 	function LibStatut($status,$mode=0)
 	{
 		global $langs;
 
 		$langs->load('compta');
-		if ($mode == 0)
+		/*if ($mode == 0)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
@@ -516,7 +519,12 @@ class PaiementFourn extends Paiement
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		return $langs->trans('Unknown');
+		if ($mode == 6)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}*/
+		return '';
 	}
 
 
@@ -525,31 +533,33 @@ class PaiementFourn extends Paiement
 	 *
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien
+	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
 	{
 		global $langs;
 
 		$result='';
-        $text=$this->ref;   // Sometimes ref contains label
-        if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
-            // Label generique car entre parentheses. On l'affiche en le traduisant
-            if ($reg[1]=='paiement') $reg[1]='Payment';
-            $text=$langs->trans($reg[1]);
-        }
-        $label = $langs->trans("ShowPayment").': '.$text;
+		$text=$this->ref;   // Sometimes ref contains label
+		if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
+			// Label generique car entre parentheses. On l'affiche en le traduisant
+			if ($reg[1]=='paiement') $reg[1]='Payment';
+			$text=$langs->trans($reg[1]);
+		}
+		$label = $langs->trans("ShowPayment").': '.$text;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-        $linkend='</a>';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend = '</a>';
 
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
 
-        if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$text.$linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
@@ -573,7 +583,7 @@ class PaiementFourn extends Paiement
 		$this->facid = 1;
 		$this->datepaye = $nownotime;
 	}
-	
+
 	/**
 	 *      Return next reference of supplier invoice not already used (or last reference)
 	 *      according to numbering module defined into constant SUPPLIER_PAYMENT_ADDON
@@ -661,14 +671,57 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
+	 *	Create a document onto disk according to template model.
+	 *
+	 *	@param	    string		$modele			Force template to use ('' to not force)
+	 *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->load("suppliers");
+
+		// Set the model on the model name to use
+		if (empty($modele))
+		{
+			if (! empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF))
+			{
+				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = '';       // No default value. For supplier invoice, we allow to disable all PDF generation
+			}
+		}
+
+		if (empty($modele))
+		{
+			return 0;
+		}
+		else
+		{
+			$modelpath = "core/modules/supplier_payment/doc/";
+
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
+
+
+	/**
 	 * 	get the right way of payment
-	 * 
+	 *
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
 	 */
 	function getWay()
 	{
 		global $conf;
-		
+
 		$way = 'dolibarr';
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -681,7 +734,7 @@ class PaiementFourn extends Paiement
 				}
 			}
 		}
-		
+
 		return $way;
 	}
 }

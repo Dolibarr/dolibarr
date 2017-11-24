@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungskonto für die Zahlung der Löhne/Gehälter
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard Buchhaltungskonto für Finanzaufwendungen
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard Buchhaltungskonto für persönliche Aufwendungen
 Salary=Lohn
 Salaries=Löhne
 NewSalaryPayment=Neue Lohnzahlung
@@ -12,3 +13,5 @@ TJM=Durchschnittlicher Tagessatz
 CurrentSalary=aktueller  Lohn
 THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verbrauchte Zeit eines Anwender zu berechnen, wenn das Modul Projektverwaltung verwendet wird,
 TJMDescription=Dieser Wert ist aktuell nur zu Informationszwecken und wird nicht für eine Berechnung verwendet
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

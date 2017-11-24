@@ -71,7 +71,7 @@ if ($_GET["id"])
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
 	// Description
-	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
 	print $entrepot->address;
@@ -90,12 +90,12 @@ if ($_GET["id"])
 	$calcproducts=$entrepot->nb_products();
 
 	// Nb of products
-	print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+	print '<tr><td class="tdtop">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
 	print empty($calcproducts['nb'])?'0':$calcproducts['nb'];
 	print "</td></tr>";
 
 	// Value
-	print '<tr><td valign="top">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
+	print '<tr><td class="tdtop">'.$langs->trans("EstimatedStockValueShort").'</td><td colspan="3">';
 	print empty($calcproducts['value'])?'0':$calcproducts['value'];
 	print "</td></tr>";
 

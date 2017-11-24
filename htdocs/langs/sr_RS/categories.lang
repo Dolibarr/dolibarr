@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Naziv/Kategorija
 Rubriques=Naziv/Kategorije
+RubriquesTransactions=Tags/Categories of transactions
 categories=nazivi/kategorije
 NoCategoryYet=Naziv/kategorija nije kreirana za ovaj tip
 In=U
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=Ova kategorija već postoji za ovu referencu
 ContentsVisibleByAllShort=Sadržaji vidljivi svima
 ContentsNotVisibleByAllShort=Sadržaji koji nisu vidljivi svima
 DeleteCategory=Obriši naziv/kategoriju
-ConfirmDeleteCategory=Da li ste sigurni da želite da obrišete ovaj naziv/kategoriju?
+ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=Nema definisanog naziva/kategorije
 SuppliersCategoryShort=Nazv/kategorija dobavljača
 CustomersCategoryShort=Naziv/kategorija kupca

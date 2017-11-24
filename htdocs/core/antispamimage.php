@@ -58,7 +58,8 @@ if (empty($img))
     exit;
 }
 
-header("Content-type: image/png");
+// Define mime type
+top_httphead('image/png');
 
 $background_color = imagecolorallocate($img, 250, 250, 250);
 $ecriture_color = imagecolorallocate($img, 0, 0, 0);

@@ -142,26 +142,3 @@ abstract class ModeleNumRefFactures
 		return $langs->trans("NotAvailable");
 	}
 }
-
-
-/**
- *  Create a document onto disk according to template module.
- *
- *	@param	DoliDB		$db  			Database handler
- *	@param  Facture		$object			Object invoice
- *	@param	string		$modele			Force template to use ('' to not force)
- *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param  int			$hidedetails    Hide details of lines
- *  @param  int			$hidedesc       Hide description
- *  @param  int			$hideref        Hide ref
- *	@return int        					<0 if KO, >0 if OK
- *  @deprecated Use the new function generateDocument of Facture class
- *  @see Facture::generateDocument()
- */
-function facture_pdf_create(DoliDB $db, Facture $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
-{
-	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-}
-

@@ -1,11 +1,12 @@
 # Dolibarr language file - Source file is en_US - admin
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-OtherResources=Other resources
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 HideAnyVATInformationOnPDF=Hide all information related to GST on generated PDF
 OldVATRates=Old GST rate
 NewVATRates=New GST rate
+Module50000Desc=Module to offer an online payment page by credit card with PayBox
+Module50200Desc=Module to offer an online payment page by credit card with Paypal
 DictionaryVAT=GST Rates or Sales Tax Rates
 VATManagement=GST Management
 VATIsNotUsedDesc=By default the proposed GST rate is 0 which can be used for cases like associations, individuals and small companies.
@@ -14,6 +15,7 @@ LocalTax1IsNotUsedDesc=Do not use other type of tax (other than GST)
 LocalTax2IsUsedDesc=Use a third type of tax (other than GST)
 LocalTax2IsNotUsedDesc=Do not use other type of tax (other than GST)
 OptionVatMode=GST due
-YourCompanyDoesNotUseVAT=Your company has been defined to not use GST (Home - Setup - Company/Foundation), so there is no GST options to setup.
+AGENDA_REMINDER_EMAIL=Enable event reminder by emails (defined on each event). Note: Module <strong>%s</strong> must be enabled and correctly setup to have reminder sent at the correct frequency.
+AGENDA_REMINDER_BROWSER=Enable event reminder on users browser (when event date is reached, each user is able to refuse this from the browser confirmation question)
 TextTitleColor=Colour of page title
 LinkColor=Colour of links

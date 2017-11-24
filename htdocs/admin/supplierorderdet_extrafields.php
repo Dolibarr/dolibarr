@@ -45,7 +45,7 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
+foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
@@ -76,7 +76,7 @@ print "<br>\n";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'supplierorderdet', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'supplierorderdet', $langs->trans("Suppliers"), -1, 'company');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

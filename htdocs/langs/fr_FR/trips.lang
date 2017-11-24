@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Note de frais
-ExpenseReports=Notes de frais
+ShowExpenseReport=Afficher la note de frais
 Trips=Note de frais
 TripsAndExpenses=Notes de frais
 TripsAndExpensesStatistics=Statistiques notes de frais
@@ -8,9 +7,12 @@ TripCard=Fiche note de frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des notes de frais
 ListOfFees=Liste des notes de frais
+TypeFees=Types de déplacement et notes de frais
 ShowTrip=Afficher la note de frais
 NewTrip=Nouvelle note de frais
-CompanyVisited=Société/institution visitée
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
+CompanyVisited=Société/organisation visitée
 FeesKilometersOrAmout=Montant ou kilomètres
 DeleteTrip=Supprimer les notes de frais / déplacements
 ConfirmDeleteTrip=Êtes-vous sûr de vouloir supprimer cette note de frais ?
@@ -19,13 +21,23 @@ ListToApprove=En attente d'approbation
 ExpensesArea=Espace notes de frais
 ClassifyRefunded=Classer 'Remboursé'
 ExpenseReportWaitingForApproval=Une nouvelle note de frais a été soumise pour approbation
-ExpenseReportWaitingForApprovalMessage=Une nouvelle note de frais a été soumise et est en attente de validation.\n- Utilisateur: %s\n- Période: %s\nCliquer ici pour valider: %s
+ExpenseReportWaitingForApprovalMessage=Une nouvelle note de frais a été enregistrée et est en attente d'approbation.\n- Utilisateur : %s\n- Période : %s\nCliquez ici pour afficher la note de frais: %s.
+ExpenseReportWaitingForReApproval=Une note de frais a été resoumise pour approbation
+ExpenseReportWaitingForReApprovalMessage=Une note de frais a été enregistrée et est en attente à nouveau d'approbation.\nLe %s, vous avez refusé d'approuver la note de frais pour la raison suivante: %s\nUne nouvelle version a été soumise et attend d'être approuvé.\\n\n- Utilisateur : %s\n- Période : %s\nCliquez ici pour valider la note de frais %s
+ExpenseReportApproved=Une note de frais a été approuvée
+ExpenseReportApprovedMessage=La note de frais %s a été approuvée.\n- Utilisateur : %s\n- Approuvée par : %s\nCliquez ici pour afficher la note de frais %s
+ExpenseReportRefused=Une note de frais a été refusée
+ExpenseReportRefusedMessage=La note de frais %s a été refusée.\n- Utilisateur : %s\n- Refusée par : %s\n- Motif du refus : %s\nCliquez ici pour afficher la note de frais: %s
+ExpenseReportCanceled=Une note de frais a été annulée
+ExpenseReportCanceledMessage=La note de frais %s a été annulée.\n- Utilisateur : %s\n- Annulée par : %s\n- Motif de l'annulation :%s\nCliquez ici pour afficher la note de frais %s.
+ExpenseReportPaid=Une note de frais a été réglée
+ExpenseReportPaidMessage=La note de frais %s a été réglée.\n- Utilisateur : %s\n- Réglée par : %s\nCliquez ici pour afficher la note de frais %s
 TripId=Id note de frais
 AnyOtherInThisListCanValidate=Personne à informer pour la validation.
 TripSociete=Information société
 TripNDF=Informations note de frais
 PDFStandardExpenseReports=Modèle de note de frais PDF standard
-ExpenseReportLine=Ligne de la note de frais
+ExpenseReportLine=Ligne de note de frais
 TF_OTHER=Autre
 TF_TRIP=Transport
 TF_LUNCH=Repas
@@ -37,6 +49,30 @@ TF_PEAGE=Péage
 TF_ESSENCE=Carburant
 TF_HOTEL=Hôtel
 TF_TAXI=Taxi
+EX_KME=Mileage costs
+EX_FUE=Fuel CV
+EX_HOT=Hôtel
+EX_PAR=Parking CV
+EX_TOL=Toll CV
+EX_TAX=Taxes diverses
+EX_IND=Indemnity transportation subscription
+EX_SUM=Maintenance supply
+EX_SUO=Office supplies
+EX_CAR=Car rental
+EX_DOC=Documentation
+EX_CUR=Customers receiving
+EX_OTR=Other receiving
+EX_POS=Postage
+EX_CAM=CV maintenance and repair
+EX_EMM=Employees meal
+EX_GUM=Guests meal
+EX_BRE=Petit déjeuner
+EX_FUE_VP=Fuel PV
+EX_TOL_VP=Toll PV
+EX_PAR_VP=Parking PV
+EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Vous avez déclaré une autre note de frais dans une période similaire.
 AucuneLigne=Aucune note de frais déclarée
@@ -57,31 +93,64 @@ DATE_REFUS=Date refus
 DATE_SAVE=Date validation
 DATE_CANCEL=Date annulation
 DATE_PAIEMENT=Date de paiement
-
 BROUILLONNER=Réouvrir
+ExpenseReportRef=Réf. note de frais
 ValidateAndSubmit=Valider et envoyer pour approbation
 ValidatedWaitingApproval=Validé (en attente d'approbation)
-
 NOT_AUTHOR=Vous n'êtes pas l'auteur de cette note de frais. Opération annulé.
-
 ConfirmRefuseTrip=Êtes-vous sûr de vouloir refuser cette note de frais ?
-
 ValideTrip=Approuver note de frais
 ConfirmValideTrip=Êtes-vous sûr de vouloir approuver cette note de frais ?
-
 PaidTrip=Payer note de frais
 ConfirmPaidTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Payé" ?
-
 ConfirmCancelTrip=Êtes-vous sûr de vouloir annuler cette note de frais ?
-
 BrouillonnerTrip=Passer le rapport de dépenses au statut "Brouillon"
 ConfirmBrouillonnerTrip=Êtes-vous sûr de vouloir changer le statut de cette note de frais en "Brouillon" ?
-
 SaveTrip=Valider note de frais
 ConfirmSaveTrip=Êtes-vous sûr de vouloir valider cette note de frais ?
-
 NoTripsToExportCSV=Pas de note de frais à exporter dans cette période
 ExpenseReportPayment=Paiement des notes de frais
-
 ExpenseReportsToApprove=Notes de frais à approuver
 ExpenseReportsToPay=Notes de frais à payer
+CloneExpenseReport=Cloner la note de frais
+ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir cloner cette note de frais ?
+ExpenseReportsIk=Expense report milles index
+ExpenseReportsRules=Expense report rules
+ExpenseReportIkDesc=You can modify the calculation of kilometers expense by category and range who they are previously defined. <b>d</b> is the distance in kilometers
+ExpenseReportRulesDesc=You can create or update any rules of calculation. This part will be used when user will create a new expense report
+expenseReportOffset=Décalage
+expenseReportCoef=Coefficient
+expenseReportTotalForFive=Example with <u>d</u> = 5
+expenseReportRangeFromTo=de %d à %d
+expenseReportRangeMoreThan=more than %d
+expenseReportCoefUndefined=(value not defined)
+expenseReportCatDisabled=Category disabled - see the c_exp_tax_cat dictionary
+expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionay
+expenseReportPrintExample=offset + (d x coef) = %s
+ExpenseReportApplyTo=Apply to
+ExpenseReportDomain=Domain to apply
+ExpenseReportLimitOn=Limit on
+ExpenseReportDateStart=Date début
+ExpenseReportDateEnd=Date fin
+ExpenseReportLimitAmount=Montant limite
+ExpenseReportRestrictive=Restrictive
+AllExpenseReport=Tout type de note de frais
+OnExpense=Expense line
+ExpenseReportRuleSave=Expense report rule saved
+ExpenseReportRuleErrorOnSave=Erreur: %s
+RangeNum=Range %d
+
+ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
+byEX_DAY=by day (limitation to %s)
+byEX_MON=by month (limitation to %s)
+byEX_YEA=by year (limitation to %s)
+byEX_EXP=by line (limitation to %s)
+ExpenseReportConstraintViolationWarning=Constraint violation id [%s]: %s  is superior to %s %s
+nolimitbyEX_DAY=by day (no limitation)
+nolimitbyEX_MON=by month (no limitation)
+nolimitbyEX_YEA=by year (no limitation)
+nolimitbyEX_EXP=by line (no limitation)
+
+CarCategory=Category of car
+ExpenseRangeOffset=Offset amount: %s
+RangeIk=Mileage range

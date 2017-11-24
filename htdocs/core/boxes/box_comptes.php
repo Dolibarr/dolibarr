@@ -61,6 +61,8 @@ class box_comptes extends ModeleBoxes
 		// disable module for such cases
 		$listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 		if (! in_array('banque',$listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+
+		$this->hidden = ! ($user->rights->banque->lire);
 	}
 
 	/**
@@ -103,6 +105,7 @@ class box_comptes extends ModeleBoxes
                     $objp = $db->fetch_object($result);
 
                     $account_static->id = $objp->rowid;
+					$account_static->ref = $objp->ref;
                     $account_static->label = $objp->label;
                     $account_static->number = $objp->number;
                     $solde=$account_static->solde(0);
@@ -110,18 +113,18 @@ class box_comptes extends ModeleBoxes
                     $solde_total[$objp->currency_code] += $solde;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $account_static->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $objp->number,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
                     );
 
@@ -150,15 +153,15 @@ class box_comptes extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
 
@@ -170,11 +173,11 @@ class box_comptes extends ModeleBoxes
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	void
+	 *	@return	string
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
     {
-		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

@@ -39,8 +39,8 @@
 </tr>
 
 <!-- Password -->
-<tr><td valign="top" class="nowrap"> &nbsp; <strong><label for="password">Mot de passe</label></strong> &nbsp; </td>
-<td valign="top" class="nowrap">
+<tr><td class="tdtop nowrap"> &nbsp; <strong><label for="password">Mot de passe</label></strong> &nbsp; </td>
+<td class="tdtop nowrap">
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="" tabindex="2" />
 </td></tr>
 

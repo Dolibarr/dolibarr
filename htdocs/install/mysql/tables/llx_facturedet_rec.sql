@@ -29,6 +29,7 @@ create table llx_facturedet_rec
   product_type		integer DEFAULT 0,
   label				varchar(255) DEFAULT NULL,
   description		text,
+  vat_src_code					varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx			double(6,3),	             	-- taux tva
   localtax1_tx      double(6,3) DEFAULT 0,    		-- localtax1 rate
   localtax1_type	varchar(10) NULL, 				-- localtax1 type

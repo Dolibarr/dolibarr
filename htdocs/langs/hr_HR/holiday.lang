@@ -16,7 +16,7 @@ CancelCP=Poništeno
 RefuseCP=Odbijeno
 ValidatorCP=Odobrio
 ListeCP=Popis odsustva
-ReviewedByCP=Biti će pregledano od
+ReviewedByCP=Will be approved by
 DescCP=Opis
 SendRequestCP=Kreiraj zahtjev odsustva
 DelayToRequestCP=Zahtjev odsustva mora biti kreiran najmanje <b>%s dan(a)</b> prije.
@@ -76,8 +76,11 @@ BoxTitleLastLeaveRequests=Zadnjih %s izmjenjenih zahtjeva za odlaskom
 HolidaysMonthlyUpdate=Mjesečna promjena
 ManualUpdate=Ručna promjena
 HolidaysCancelation=Odbijanje zahtjeva
-EmployeeLastname=Prezime zaposlenika
-EmployeeFirstname=Ime zaposlenika
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Zadnje automatsko ažuriranje raspodjele odlazaka

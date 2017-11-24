@@ -28,11 +28,14 @@ if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 // If we force to use jmobile, then we reenable javascript
 if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 
+$php_self = $_SERVER['PHP_SELF'];
+$php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
+
 print top_htmlhead('',$langs->trans('SendNewPassword'));
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="bodylogin">
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -44,30 +47,32 @@ $(document).ready(function () {
 <?php } ?>
 
 
-<div align="center">
+<div class="login_center center">
 <div class="login_vertical_align">
-
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="buildnewpassword">
 
-<table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
-<tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
-</table>
-<br>
+
+<!-- Title with version -->
+<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<?php
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+echo dol_escape_htmltag($title);
+if ($disablenofollow) echo '</a>';
+?>
+</div>
+
+
 
 <div class="login_table">
 
 <div id="login_line1">
 
-
 <div id="login_left">
-
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
-
 </div>
-
 
 <div id="login_right">
 
@@ -83,18 +88,24 @@ $(document).ready(function () {
 </tr>
 
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
+	}
+	else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
 	}
 }
 ?>
 
-<?php if ($captcha) { 
+<?php if ($captcha) {
 		// Add a variable param to force not using cache (jmobile)
 		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
 		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
@@ -102,7 +113,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	?>
 	<!-- Captcha -->
 	<tr>
-	<td valign="top" class="nowrap none center">
+	<td class="tdtop nowrap none center">
 
 	<table class="login_table_securitycode centpercent"><tr>
 	<td>
@@ -111,7 +122,7 @@ if (! empty($hookmanager->resArray['options'])) {
 	</span>
 	</td>
 	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
+	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
 	</td></tr>
@@ -119,17 +130,15 @@ if (! empty($hookmanager->resArray['options'])) {
 
 </table>
 
-</div> <!-- end div left -->
+</div> <!-- end div login right -->
 
+</div> <!-- end div login_line1 -->
 
-
-
-</div>
 
 <div id="login_line2" style="clear: both">
 
-<!-- Button Send password -->
-<br><input id="password" type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<!-- Button "Regenerate and Send password" -->
+<br><input type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div align="center" style="margin-top: 8px;">
@@ -151,11 +160,11 @@ if (! empty($hookmanager->resArray['options'])) {
 </form>
 
 
-<div class="center login_main_home" style="max-width: 80%">
+<div class="center login_main_home paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
-	<font style="font-size: 12px;">
+	<span class="passwordmessagedesc">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
-	</font>
+	</span>
 <?php }else{ ?>
 	<div class="warning" align="center">
 	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
@@ -172,6 +181,20 @@ if (! empty($hookmanager->resArray['options'])) {
 	</div>
 <?php } ?>
 
+<?php if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
+	{
+		if ($format == 'js') {
+			echo "\n".'<!-- Javascript by hook -->';
+			echo $option."\n";
+		}
+	}
+}
+else if (! empty($moreloginextracontent)) {
+	echo '<!-- Javascript by hook -->';
+	echo $moreloginextracontent;
+}
+?>
 
 </div>
 </div>	<!-- end of center -->

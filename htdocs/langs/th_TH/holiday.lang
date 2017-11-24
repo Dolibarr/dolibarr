@@ -16,7 +16,7 @@ CancelCP=ยกเลิก
 RefuseCP=ปฏิเสธ
 ValidatorCP=Approbator
 ListeCP=รายการของใบ
-ReviewedByCP=จะถูกตรวจสอบโดย
+ReviewedByCP=Will be approved by
 DescCP=ลักษณะ
 SendRequestCP=สร้างการร้องขอลา
 DelayToRequestCP=<b>ออกจากการร้องขอจะต้องทำอย่างน้อย% s วัน (s)</b> ก่อนหน้าพวกเขา
@@ -76,8 +76,11 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=การปรับปรุงรายเดือน
 ManualUpdate=การปรับปรุงคู่มือการใช้งาน
 HolidaysCancelation=ออกจากคำขอยกเลิก
-EmployeeLastname=Employee lastname
-EmployeeFirstname=Employee firstname
+EmployeeLastname=Employee last name
+EmployeeFirstname=Employee first name
+TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

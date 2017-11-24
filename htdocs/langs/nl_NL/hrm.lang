@@ -5,13 +5,13 @@ Establishments=Establishments
 Establishment=Establishment
 NewEstablishment=New establishment
 DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment ?
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
 OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
 # Dictionary
-DictionaryDepartment=HRM - Department list
+DictionaryDepartment=HRM - Afdelingslijst
 DictionaryFunction=HRM - Function list
 # Module
-Employees=Employees
-Employee=Employee
-NewEmployee=New employee
+Employees=Werknemers
+Employee=Werknemer
+NewEmployee=Nieuwe werknemer

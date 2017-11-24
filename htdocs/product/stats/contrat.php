@@ -41,7 +41,7 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatscontract'));
 
 $mesg = '';
@@ -49,7 +49,7 @@ $mesg = '';
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -72,7 +72,7 @@ if ($id > 0 || ! empty($ref))
 	$result = $product->fetch($id, $ref);
 
 	$object = $product;
-	
+
 	$parameters=array('id'=>$id);
 	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -84,17 +84,21 @@ if ($id > 0 || ! empty($ref))
 		$head=product_prepare_head($product);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
+		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
-		
-        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -104,9 +108,9 @@ if ($id > 0 || ! empty($ref))
 
         print '</div>';
         print '<div style="clear:both"></div>';
-		
+
 		dol_fiche_end();
-		
+
 
 		$now=dol_now();
 
@@ -123,7 +127,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$sql.= " WHERE c.rowid = cd.fk_contrat";
 		$sql.= " AND c.fk_soc = s.rowid";
-		$sql.= " AND c.entity IN (".getEntity('contrat', 1).")";
+		$sql.= " AND c.entity IN (".getEntity('contract').")";
 		$sql.= " AND cd.fk_product =".$product->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -135,18 +139,35 @@ if ($id > 0 || ! empty($ref))
 		if ($result)
 		{
 			$num = $db->num_rows($result);
+            if (! empty($id))
+                $option .= '&amp;id=' . $product->id;
+            if (! empty($search_month))
+                $option .= '&amp;search_month=' . $search_month;
+            if (! empty($search_year))
+                $option .= '&amp;search_year=' . $search_year;
+
+            print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
+            if (! empty($sortfield))
+                print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
+            if (! empty($sortorder))
+                print '<input type="hidden" name="sortorder" value="' . $sortorder . '"/>';
+            if (! empty($page)) {
+                print '<input type="hidden" name="page" value="' . $page . '"/>';
+                $option .= '&amp;page=' . $page;
+            }
 
 			print_barre_liste($langs->trans("Contrats"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 
 			$i = 0;
+            print '<div class="div-table-responsive">';
 			print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
-			//print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($staticcontratligne->LibStatut(0,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
 			print_liste_field_titre($staticcontratligne->LibStatut(4,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
 			print_liste_field_titre($staticcontratligne->LibStatut(5,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
@@ -160,16 +181,16 @@ if ($id > 0 || ! empty($ref))
 				while ($i < $num && $i < $conf->liste_limit)
 				{
 					$objp = $db->fetch_object($result);
-					$var=!$var;
 
-					print "<tr ".$bc[$var].">";
+
+					print '<tr class="oddeven">';
 					print '<td><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
 					print $objp->rowid;
 					print "</a></td>\n";
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
-					print dol_print_date($db->jdate($objp->date_contrat))."</td>";
+					print dol_print_date($db->jdate($objp->date_contrat), 'dayhour')."</td>";
 					//print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					//print '<td align="right">';
 					print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
@@ -180,13 +201,15 @@ if ($id > 0 || ! empty($ref))
 					$i++;
 				}
 			}
+
+			print '</table>';
+			print '</div>';
+			print '</form>';
 		}
 		else
 		{
 			dol_print_error($db);
 		}
-		print "</table>";
-		print '<br>';
 		$db->free($result);
 	}
 }

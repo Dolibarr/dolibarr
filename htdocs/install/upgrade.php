@@ -56,11 +56,11 @@ error_reporting(0);
 error_reporting($err);
 
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
+$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
-$dirmodule=((GETPOST("dirmodule",'',3) && GETPOST("dirmodule",'',3) != 'ignoredbversion'))?GETPOST("dirmodule",'',3):((empty($argv[3]) || $argv[3] == 'ignoredbversion')?'':$argv[3]);
+$versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
+$dirmodule=((GETPOST("dirmodule",'alpha',3) && GETPOST("dirmodule",'alpha',3) != 'ignoredbversion'))?GETPOST("dirmodule",'alpha',3):((empty($argv[3]) || $argv[3] == 'ignoredbversion')?'':$argv[3]);
 $ignoredbversion=(GETPOST('ignoredbversion','',3)=='ignoredbversion')?GETPOST('ignoredbversion','',3):((empty($argv[3]) || $argv[3] != 'ignoredbversion')?'':$argv[3]);
 
 $langs->load("admin");
@@ -97,16 +97,16 @@ if (! $versionfrom && ! $versionto)
 }
 
 
-pHeader('',"upgrade2",GETPOST('action'),'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('',"upgrade2",GETPOST('action','aZ09'),'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 $actiondone=0;
 
 // Action to launch the migrate script
-if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
+if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
 {
     $actiondone=1;
 
-    print '<h3>'.$langs->trans("DatabaseMigration").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("DatabaseMigration").'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
     $error=0;
@@ -185,10 +185,10 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerVersion") . ": " .$version);
 
         // Test database version requirement
-        $versionmindb=$db::VERSIONMIN;
+        $versionmindb=explode('.',$db::VERSIONMIN);
         //print join('.',$versionarray).' - '.join('.',$versionmindb);
         if (count($versionmindb) && count($versionarray)
-        	&& versioncompare($versionarray,$versionmindb) < 0)
+        	&& versioncompare($versionarray, $versionmindb) < 0)
         {
         	// Warning: database version too low.
         	print "<tr><td>".$langs->trans("ErrorDatabaseVersionTooLow",join('.',$versionarray),join('.',$versionmindb))."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
@@ -232,86 +232,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     {
 	    print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'</td></tr>';
 	    flush();
-    }
-
-    /*
-     * Delete duplicates in table categorie_association
-     */
-    if ($ok)
-    {
-	    $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
-	    if ($result)	// result defined for version 3.2 or -
-	    {
-		    $obj = $db->fetch_object($result);
-		    if ($obj)	// It table categorie_association exists
-		    {
-		    	$couples=array();
-			    $filles=array();
-			    $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
-			    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-			    dolibarr_install_syslog("upgrade: search duplicate");
-			    $resql = $db->query($sql);
-			    if ($resql)
-			    {
-			        $num=$db->num_rows($resql);
-			        while ($obj=$db->fetch_object($resql))
-			        {
-			            if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
-			            {
-			                if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
-			                {
-			                    $filles[$obj->fk_categorie_fille]=1;	// Set record for this child
-			                    $couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
-			                }
-			            }
-			        }
-
-			        dolibarr_install_syslog("upgrade: result is num=" . $num . " count(couples)=" . count($couples));
-
-			        // If there is duplicates couples or child with two parents
-			        if (count($couples) > 0 && $num > count($couples))
-			        {
-			            $error=0;
-
-			            $db->begin();
-
-			            // We delete all
-			            $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-			            dolibarr_install_syslog("upgrade: delete association");
-			            $resqld=$db->query($sql);
-			            if ($resqld)
-			            {
-			            	// And we insert only each record once
-			                foreach($couples as $key => $val)
-			                {
-			                    $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
-			                    $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
-			                    dolibarr_install_syslog("upgrade: insert association");
-			                    $resqli=$db->query($sql);
-			                    if (! $resqli) $error++;
-			                }
-			            }
-
-			            if (! $error)
-			            {
-			                print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
-			                print '<td align="right">'.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
-			                $db->commit();
-			            }
-			            else
-			            {
-			                print '<tr><td>'.$langs->trans("RemoveDuplicates").'</td>';
-			                print '<td align="right">'.$langs->trans("Failed").'</td></tr>';
-			                $db->rollback();
-			            }
-			        }
-			    }
-			    else
-			    {
-			        print '<div class="error">'.$langs->trans("Error").' '.$db->lasterror().'</div>';
-			    }
-		    }
-	    }
     }
 
 

@@ -38,7 +38,7 @@ SmsStatusNotSent=Nem küldött
 SmsSuccessfulySent=Sms helyesen küldött (a %s %s a)
 ErrorSmsRecipientIsEmpty=Számú cél üres
 WarningNoSmsAdded=Nincs új telefonszámot, amelyhez a tűztábla
-ConfirmValidSms=Ön megerősíti érvényesítése campain ez?
+ConfirmValidSms=Do you confirm validation of this campain?
 NbOfUniqueSms=Nb dof egyedi telefonszámok
 NbOfSms=Nbre a fon szám
 ThisIsATestMessage=Ez egy teszt üzenet
@@ -48,4 +48,4 @@ SmsInfoNumero= (Nemzetközi formátum, azaz: 33899701761)
 DelayBeforeSending=Késleltetett küldés előtt (perc)
 SmsNoPossibleSenderFound=A küldő nem elérhető. Ellenőrizze az SMS szolgáltató beállításait.
 SmsNoPossibleRecipientFound=Nincs cél elérhető. Ellenőrizze beállítása az SMS szolgáltató.
-
+DisableStopIfSupported=Disable STOP message (if supported)

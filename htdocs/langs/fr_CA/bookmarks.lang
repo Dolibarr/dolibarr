@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - bookmarks
+AddThisPageToBookmarks=Ajouter la page actuelle aux favoris
+EditBookmarks=Liste / modifie les favoris
+BehaviourOnClick=Comportement lorsqu'une URL de signet est sélectionnée
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisissez si la page liée doit être ouverte dans une nouvelle fenêtre ou non

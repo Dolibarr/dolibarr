@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ $langs->load("bills");
 $langs->load("loan");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
@@ -75,20 +75,66 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$help_url='EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("",$langs->trans("Loan"),$help_url);
+$title = $langs->trans("Loan") . ' - ' . $langs->trans("Documents");
+$help_url = 'EN:Module_Loan|FR:Module_Emprunt';
+llxHeader("",$title,$help_url);
 
 if ($object->id)
 {
-	$alreadypayed=$object->getSumPayment();
+	$totalpaid=$object->getSumPayment();
 
     $head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("Loan"), 0, 'bill');
+    dol_fiche_head($head, 'documents',  $langs->trans("Loan"), -1, 'bill');
+
+	$morehtmlref='<div class="refidno">';
+	// Ref loan
+	$morehtmlref.=$form->editfieldkey("Label", 'label', $object->label, $object, 0, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
+	// Project
+	if (! empty($conf->projet->enabled)) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>' . $langs->trans('Project') . ' : ';
+		if ($user->rights->loan->write) {
+			//if ($action != 'classify')
+			//	$morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			if ($action == 'classify') {
+				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			if (! empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= '<a href="' . DOL_URL_ROOT . '/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+				$morehtmlref .= $proj->ref;
+				$morehtmlref .= '</a>';
+			} else {
+				$morehtmlref .= '';
+			}
+		}
+	}
+	$morehtmlref.='</div>';
+
+	$linkback = '<a href="' . DOL_URL_ROOT . '/loan/index.php">' . $langs->trans("BackToList") . '</a>';
+
+	$object->totalpaid = $totalpaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 
     // Construit liste des fichiers
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -97,63 +143,13 @@ if ($object->id)
 
 
     print '<table class="border" width="100%">';
+    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print "</table>\n";
 
-    // Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object,'id');
-	print "</td></tr>";
+    print "</div>\n";
 
-    // Label
-    if ($action == 'edit')
-    {
-        print '<tr><td>'.$langs->trans("Label").'</td><td>';
-        print '<input type="text" name="label" size="40" value="'.$object->label.'">';
-        print '</td></tr>';
-    }
-    else
-    {
-        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
-    }
-
-    // Amount
-    print '<tr><td>'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
-
-	// Date start
-    print "<tr><td>".$langs->trans("DateStart")."</td>";
-    print "<td>";
-    if ($action == 'edit')
-    {
-        print $form->select_date($object->datestart, 'start', 0, 0, 0, 'loan', 1, 0, 1);
-    }
-    else
-    {
-        print dol_print_date($object->datestart,"day");
-    }
-    print "</td>";
-    print "</tr>";
-
-    // Date end
-    print "<tr><td>".$langs->trans("DateEnd")."</td>";
-    print "<td>";
-    if ($action == 'edit')
-    {
-        print $form->select_date($object->dateend, 'end', 0, 0, 0, 'loan', 1, 0, 1);
-    }
-    else
-    {
-        print dol_print_date($object->dateend,"day");
-    }
-    print "</td>";
-    print "</tr>";
-
-    // Status
-    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4,$alreadypayed).'</td></tr>';
-
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-    print '</table>';
-
-    print '</div>';
+    dol_fiche_end();
 
     $modulepart = 'loan';
     $permission = $user->rights->loan->write;

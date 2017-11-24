@@ -32,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);      // Large for one graph in a smarpthone.
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
+
 $id=GETPOST('account')?GETPOST('account','alpha'):GETPOST('id');
 $ref=GETPOST('ref');
 
@@ -52,6 +55,12 @@ else
 {
 	$year_end=$year_start+2;
 }
+
+
+
+/*
+ * View
+ */
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
 $helpurl = "";
@@ -81,7 +90,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.amount >= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -109,7 +118,7 @@ $sql.= ", date_format(b.dateo,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.amount <= 0";
 if (! empty($id))
 	$sql .= " AND b.fk_account IN (".$db->escape($id).")";
@@ -135,19 +144,19 @@ else
 
 // Onglets
 $head=bank_prepare_head($object);
-dol_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0,'account');
+dol_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), -1, 'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$object->label;
-$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
+$link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start+1)."'>".img_next('', 'class="valignbottom"')."</a>":"");
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 
 if (!empty($id))
 {
     if (! preg_match('/,/', $id))
     {
-        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
     }
     else
     {
@@ -179,7 +188,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
+	print '<td align="center" width="20%" colspan="2" class="liste_titre borderrightlight">'.$annee.'</td>';
 }
 print '</tr>';
 
@@ -187,15 +196,15 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre">&nbsp;</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
+	print '<td class="liste_titre" align="center">'.$langs->trans("Debit").'</td><td class="liste_titre" align="center">'.$langs->trans("Credit").'</td>';
 }
 print '</tr>';
 
 $var=true;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
@@ -209,7 +218,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 		}
 		print "</td>";
 
-		print '<td align="right" width="10%">&nbsp;';
+		print '<td align="right" class="borderrightlight" width="10%">&nbsp;';
 		if ($encaiss[$case]>0)
 		{
 			print price($encaiss[$case]);
@@ -241,7 +250,7 @@ $sql = "SELECT SUM(b.amount) as total";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE b.fk_account = ba.rowid";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 if (! empty($id))
 	$sql.= " AND b.fk_account IN (".$db->escape($id).")";
 
@@ -276,16 +285,12 @@ if ($result < 0)
 }
 else
 {
-	// Definition de $width et $height
-	$width = 480;
-	$height = 300;
-
 	// Calcul de $min et $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= " WHERE b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($id && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$id.")";
 
 	$resql = $db->query($sql);
@@ -316,7 +321,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount > 0";
@@ -374,8 +379,8 @@ else
 	$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
 	$px1->SetMinValue($px1->GetFloorMinValue()>0?0:$px1->GetFloorMinValue());
 	$px1->SetTitle($title);
-	$px1->SetWidth($width);
-	$px1->SetHeight($height);
+	$px1->SetWidth($WIDTH);
+	$px1->SetHeight($HEIGHT);
 	$px1->SetType(array('line','line','line'));
 	$px1->SetShading(3);
 	$px1->setBgColor('onglet');
@@ -405,7 +410,7 @@ else
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql.= " AND b.datev >= '".($year-$annee)."-01-01 00:00:00'";
 		$sql.= " AND b.datev <= '".($year-$annee)."-12-31 23:59:59'";
 		$sql.= " AND b.amount < 0";
@@ -461,8 +466,8 @@ else
 	$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
 	$px2->SetMinValue($px2->GetFloorMinValue()>0?0:$px2->GetFloorMinValue());
 	$px2->SetTitle($title);
-	$px2->SetWidth($width);
-	$px2->SetHeight($height);
+	$px2->SetWidth($WIDTH);
+	$px2->SetHeight($HEIGHT);
 	$px2->SetType(array('line','line','line'));
 	$px2->SetShading(3);
 	$px2->setBgColor('onglet');
@@ -488,7 +493,7 @@ else
 }
 
 
-print "\n</div>\n";
+print "\n</div><br>\n";
 
 llxFooter();
 $db->close();

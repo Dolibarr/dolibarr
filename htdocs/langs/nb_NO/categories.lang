@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Merke/Kategori
 Rubriques=Merker/Kategorier
+RubriquesTransactions=Etiketter/Kategorier av transaksjoner
 categories=merker/kategorier
 NoCategoryYet=Ingen merker/kategorier av denne typen er opprettet
 In=I
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=Denne kategorien finnes allerede med denne referansen
 ContentsVisibleByAllShort=Innhold synlig for alle
 ContentsNotVisibleByAllShort=Innhold ikke synlig for alle
 DeleteCategory=Slett merke/kategori
-ConfirmDeleteCategory=Er du sikke på at du vil slette dette merket/kategorien?
+ConfirmDeleteCategory=Er du sikker på at du vil slette dette merket/kategorien?
 NoCategoriesDefined=Ingen merke/kategori definert
 SuppliersCategoryShort=Leverandørs merke/kategori
 CustomersCategoryShort=Kundes merke/kategori

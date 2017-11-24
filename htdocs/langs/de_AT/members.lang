@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - members
-ThisIsContentOfYourCard=Dies sind die Detail Ihrer Karte
 SetLinkToUser=Mit Benutzer verknüpfen
 SetLinkToThirdParty=Mit Partner verknüpfen
 MenuMembersNotUpToDate=Veraltete Mitglieder
@@ -9,10 +8,13 @@ EndSubscription=Abonnementende
 SubscriptionId=Abonnement ID
 MemberId=Mitglieds ID
 MemberTypeId=Mitgliedsart ID
+MemberStatusDraftShort=Entwurf
+MemberStatusActiveLateShort=abgelaufen
 SubscriptionEndDate=Abonnementauslaufdatum
 SubscriptionLate=Versätet
 NewMemberType=Neues Mitgliedsrt
 WelcomeEMail=Willkommens-E-Mail
+DeleteType=Löschen
 Physical=Physisch
 Moral=Rechtlich
 MorPhy=Physisch/Rechtlich

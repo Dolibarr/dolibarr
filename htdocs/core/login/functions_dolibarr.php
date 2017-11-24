@@ -39,7 +39,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 
 	// Force master entity in transversal mode
 	$entity=$entitytotest;
-	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $entity=1;
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $entity=1;
 
 	$login='';
 
@@ -47,7 +47,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 	{
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./','*',$passwordtotest)." entitytotest=".$entitytotest);
 
-		// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
+		// If test username/password asked, we define $test=false if ko and $login var to login if ok, set also $_SESSION["dol_loginmesg"] if ko
 		$table = MAIN_DB_PREFIX."user";
 		$usernamecol1 = 'login';
 		$usernamecol2 = 'email';
@@ -59,6 +59,9 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 		if (preg_match('/@/',$usertotest)) $sql.=' OR '.$usernamecol2." = '".$db->escape($usertotest)."'";
 		$sql.=') AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 		$sql.=' AND statut = 1';
+		// Required to first found the user into entity, then the superadmin.
+		// For the case (TODO and that we must avoid) a user has renamed its login with same value than a user in entity 0.
+		$sql.=' ORDER BY entity DESC';
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -75,6 +78,7 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 				// Check crypted password
 				$cryptType='';
 				if (! empty($conf->global->DATABASE_PWD_ENCRYPTED)) $cryptType=$conf->global->DATABASE_PWD_ENCRYPTED;
+
 				// By default, we used MD5
 				if (! in_array($cryptType,array('md5'))) $cryptType='md5';
 				// Check crypted password according to crypt algorithm

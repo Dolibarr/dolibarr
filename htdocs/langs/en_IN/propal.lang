@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - propal
+Proposals=Quotations
+Proposal=Quotation
+ProposalShort=Quotation
+ProposalsDraft=Draft quotations
+ProposalsOpened=Open quotations
+CommercialProposal=Quotation
+PdfCommercialProposalTitle=Quotation
+ProposalCard=Quotation card
+NewProp=New quotation
+NewPropal=New quotation
+DeleteProp=Delete quotation
+ValidateProp=Validate quotation
+AddProp=Create quotation
+LastPropals=Latest %s quotations
+AllPropals=All quotations
+SearchAProposal=Search a quotation
+ShowPropal=Show quotation
+ActionsOnPropal=Events on quotation
+DatePropal=Date of quotation
+ProposalLine=Quotation line

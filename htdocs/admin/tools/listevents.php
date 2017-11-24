@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2015  Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
  *
@@ -45,15 +45,17 @@ $langs->load("companies");
 $langs->load("users");
 $langs->load("other");
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="dateevent";
+if (! $sortorder) $sortorder="DESC";
 
 $search_code = GETPOST("search_code");
 $search_ip   = GETPOST("search_ip");
@@ -61,9 +63,9 @@ $search_user = GETPOST("search_user");
 $search_desc = GETPOST("search_desc");
 $search_ua   = GETPOST("search_ua");
 
-if (!isset($_REQUEST["date_startmonth"]) || $_REQUEST["date_startmonth"] > 0) $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+if (GETPOST("date_startmonth") == '' || GETPOST("date_startmonth") > 0) $date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
 else $date_start=-1;
-if (!isset($_REQUEST["date_endmonth"]) || $_REQUEST["date_endmonth"] > 0) $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+if (GETPOST("date_endmonth") == '' || GETPOST("date_endmonth") > 0) $date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
 else $date_end=-1;
 
 // checks:if date_start>date_end  then date_end=date_start + 24 hours
@@ -71,14 +73,6 @@ if ($date_start > 0 && $date_end > 0 && $date_start > $date_end) $date_end=$date
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
-
-$params = "&amp;search_code=$search_code&amp;search_ip=$search_ip&amp;search_user=$search_user&amp;search_desc=$search_desc&amp;search_ua=$search_ua";
-$params.= "&amp;date_startmonth=".$_REQUEST["date_startmonth"];
-$params.= "&amp;date_startday=".$_REQUEST["date_startday"];
-$params.= "&amp;date_startyear=".$_REQUEST["date_startyear"];
-$params.= "&amp;date_endmonth=".$_REQUEST["date_endmonth"];
-$params.= "&amp;date_endday=".$_REQUEST["date_endday"];
-$params.= "&amp;date_endyear=".$_REQUEST["date_endyear"];
 
 if (empty($date_start)) // We define date_start and date_end
 {
@@ -88,6 +82,15 @@ if (empty($date_end))
 {
     $date_end=dol_mktime(23,59,59,$nowarray['mon'],$nowarray['mday'],$nowarray['year']);
 }
+// Set $date_startmonth...
+$tmp = dol_getdate($date_start);
+$date_startday = $tmp['mday'];
+$date_startmonth = $tmp['mon'];
+$date_startyear = $tmp['year'];
+$tmp = dol_getdate($date_end);
+$date_endday = $tmp['mday'];
+$date_endmonth = $tmp['mon'];
+$date_endyear = $tmp['year'];
 
 
 /*
@@ -97,7 +100,7 @@ if (empty($date_end))
 $now=dol_now();
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $date_start=-1;
     $date_end=-1;
@@ -165,7 +168,7 @@ $sql.= " e.fk_user, e.description,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
-$sql.= " WHERE e.entity IN (".getEntity('actioncomm', 1).")";
+$sql.= " WHERE e.entity IN (".getEntity('event').")";
 if ($date_start > 0) $sql.= " AND e.dateevent >= '".$db->idate($date_start)."'";
 if ($date_end > 0)   $sql.= " AND e.dateevent <= '".$db->idate($date_end)."'";
 if ($search_code) { $usefilter++; $sql.=natural_search("e.type", $search_code, 0); }
@@ -174,6 +177,15 @@ if ($search_user) { $usefilter++; $sql.=natural_search("u.login", $search_user, 
 if ($search_desc) { $usefilter++; $sql.=natural_search("e.description", $search_desc, 0); }
 if ($search_ua)   { $usefilter++; $sql.=natural_search("e.user_agent", $search_ua, 0); }
 $sql.= $db->order($sortfield,$sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = '';
+/*if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}*/
+
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
 $result = $db->query($sql);
@@ -183,37 +195,39 @@ if ($result)
 	$i = 0;
 
 	$param='';
-	if ($search_code) $param.='&search_code='.$search_code;
-	if ($search_ip)   $param.='&search_ip='.$search_ip;
-	if ($search_user) $param.='&search_user='.$search_user;
-	if ($search_desc) $param.='&search_desc='.$search_desc;
-	if ($search_ua)   $param.='&search_ua='.$search_ua;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	if ($search_code) $param.='&search_code='.urlencode($search_code);
+	if ($search_ip)   $param.='&search_ip='.urlencode($search_ip);
+	if ($search_user) $param.='&search_user='.urlencode($search_user);
+	if ($search_desc) $param.='&search_desc='.urlencode($search_desc);
+	if ($search_ua)   $param.='&search_ua='.urlencode($search_ua);
+	if ($date_startmonth) $param.= "&date_startmonth=".urlencode($date_startmonth);
+	if ($date_startday)   $param.= "&date_startday=".urlencode($date_startday);
+	if ($date_startyear)  $param.= "&date_startyear=".urlencode($date_startyear);
+	if ($date_endmonth)   $param.= "&date_endmonth=".urlencode($date_endmonth);
+	if ($date_endday)     $param.= "&date_endday=".urlencode($date_endday);
+	if ($date_endyear)    $param.= "&date_endyear=".urlencode($date_endyear);
 
     $langs->load('withdrawals');
     if ($num)
     {
         $center='<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
     }
-    
-	print_barre_liste($langs->trans("ListOfSecurityEvents").' ('.$num.')', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, 0, 'setup');
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+
+    print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge')
 	{
 		$formquestion=array();
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
 	}
-	
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Code"),$_SERVER["PHP_SELF"],"e.type","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("IP"),$_SERVER["PHP_SELF"],"e.ip","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"u.login","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"e.description","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre('');
-	print "</tr>\n";
 
+	print '<div class="div-table-responsive">';
+	print '<table class="liste" width="100%">';
 
 	// Lignes des champs de filtres
 	print '<tr class="liste_titre">';
@@ -238,21 +252,27 @@ if ($result)
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-	print $searchpitco;
+	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
 	print '</td>';
 
 	print "</tr>\n";
 
-	$var=True;
 
-	while ($i < min($num, $conf->liste_limit))
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"e.dateevent","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Code",$_SERVER["PHP_SELF"],"e.type","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("IP",$_SERVER["PHP_SELF"],"e.ip","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("User",$_SERVER["PHP_SELF"],"u.login","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Description",$_SERVER["PHP_SELF"],"e.description","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
+
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($result);
 
-		$var=!$var;
-
-		print '<tr '.$bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Date
 		print '<td align="left" class="nowrap">'.dol_print_date($db->jdate($obj->dateevent),'%Y-%m-%d %H:%M:%S').'</td>';
@@ -303,7 +323,10 @@ if ($result)
 		if ($usefilter) print '<tr><td colspan="6">'.$langs->trans("NoEventFoundWithCriteria").'</td></tr>';
 		else print '<tr><td colspan="6">'.$langs->trans("NoEventOrNoAuditSetup").'</td></tr>';
 	}
-	print "</table></form>";
+	print "</table>";
+	print "</div>";
+
+	print "</form>";
 	$db->free($result);
 }
 else

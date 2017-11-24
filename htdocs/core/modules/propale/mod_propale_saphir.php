@@ -88,9 +88,12 @@ class mod_propale_saphir extends ModeleNumRefPropales
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
+    	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
+    	$mysoc->typent_code='TTTTTTTTTT';
      	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
+		$mysoc->typent_code=$old_code_type;
 
 		if (! $numExample)
 		{
@@ -121,8 +124,8 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		$date=$propal->datep;
-		$customercode=$objsoc->code_client;
+		$date = $propal->date;
+
 		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date);
 
 		return  $numFinal;

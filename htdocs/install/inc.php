@@ -151,7 +151,7 @@ define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
 
 if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="UTF-8";
 if (empty($conf->db->character_set))  				$conf->db->character_set='utf8';
-if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_general_ci';
+if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
 if (empty($conf->db->dolibarr_main_db_encryption)) 	$conf->db->dolibarr_main_db_encryption=0;
 if (empty($conf->db->dolibarr_main_db_cryptkey))   	$conf->db->dolibarr_main_db_cryptkey='';
 if (empty($conf->db->user)) $conf->db->user='';
@@ -169,8 +169,8 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 
 
-// Security check
-if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
+// Security check (old method, when directory is renamed /install.lock)
+if (preg_match('/install\.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
     print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
     if (! empty($dolibarr_main_url_root))
@@ -191,7 +191,7 @@ if (constant('DOL_DATA_ROOT') === null) {
 }
 if (@file_exists($lockfile))
 {
-    print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr root directory).<br>';
+    print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr documents directory).<br>';
     if (! empty($dolibarr_main_url_root))
     {
         print 'Click on following link. ';
@@ -220,6 +220,7 @@ if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant alrea
 	else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
 	else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
 	//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
 }
 if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
 // We init log handler for install
@@ -265,7 +266,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
-if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));
+if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
 
 $bc[false]=' class="bg1"';
@@ -300,11 +301,13 @@ function conf($dolibarr_main_document_root)
     $conf->db->user = trim($dolibarr_main_db_user);
     $conf->db->pass = trim($dolibarr_main_db_pass);
 
+    // Mysql driver support has been removed in favor of mysqli
+    if ($conf->db->type == 'mysql') $conf->db->type = 'mysqli';
     if (empty($character_set_client)) $character_set_client="UTF-8";
     $conf->file->character_set_client=strtoupper($character_set_client);
-    if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($conf->db->type=='mysql'?'latin1':'');		// Old installation
+    if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($conf->db->type=='mysqli'?'utf8':'');
     $conf->db->character_set=$dolibarr_main_db_character_set;
-    if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($conf->db->type=='mysql'?'latin1_swedish_ci':'');  // Old installation
+    if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($conf->db->type=='mysqli'?'utf8_unicode_ci':'');
     $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
     if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
     $conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
@@ -323,6 +326,7 @@ function conf($dolibarr_main_document_root)
         else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
         else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+        if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
     }
     if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
     // We init log handler for install
@@ -357,9 +361,10 @@ function conf($dolibarr_main_document_root)
  * @param 	string		$action    			Action code ('set' or 'upgrade')
  * @param 	string		$param				Param
  * @param	string		$forcejqueryurl		Set jquery relative URL (must end with / if defined)
+ * @param   string      $csstable           Css for table
  * @return	void
  */
-function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
+function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$csstable='main-inside')
 {
     global $conf;
     global $langs;
@@ -381,12 +386,13 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 
     // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
+    header("X-Content-Type-Options: nosniff");
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+    print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
+    print '<meta charset='.$conf->file->character_set_client.'">'."\n";
     print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
-    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";
@@ -404,10 +410,10 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 
     print '<body>'."\n";
 
-    print '<div style="text-align:center">';
-    print '<img src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
+    print '<div class="divlogoinstall" style="text-align:center">';
+    print '<img class="imglogoinstall" src="../theme/dolibarr_logo.png" alt="Dolibarr logo"><br>';
     print DOL_VERSION;
-    print '</div><br><br>';
+    print '</div><br>';
 
     print '<span class="titre">'.$langs->trans("DolibarrSetup");
     if ($subtitle) {
@@ -415,13 +421,13 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
     }
     print '</span>'."\n";
 
-    print '<form name="forminstall" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
     print '<table class="main" width="100%"><tr><td>'."\n";
 
-    print '<table class="main-inside" width="100%"><tr><td>'."\n";
+    print '<table class="'.$csstable.'" width="100%"><tr><td>'."\n";
 }
 
 /**
@@ -449,9 +455,9 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
         print '<div class="nextbutton" id="nextbutton">';
         if ($nonext == '2')
 		{
-			print $langs->trans("ErrorFoundDuringMigration", $_SERVER["REQUEST_URI"].'&ignoreerrors=1').'<br><br>';	
+			print $langs->trans("ErrorFoundDuringMigration", isset($_SERVER["REQUEST_URI"])?$_SERVER["REQUEST_URI"].'&ignoreerrors=1':'').'<br><br>';
 		}
-        
+
         print '<input type="submit" '.($nonext == '2' ? 'disabled="disabled" ':'').'value="'.$langs->trans("NextStep").' ->"';
         if ($jscheckfunction) print ' onClick="return '.$jscheckfunction.'();"';
         print '></div>';
@@ -505,9 +511,8 @@ function detect_dolibarr_main_document_root()
 {
 	// If PHP is in CGI mode, SCRIPT_FILENAME is PHP's path.
 	// Since that's not what we want, we suggest $_SERVER["DOCUMENT_ROOT"]
-	if (preg_match('/php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/[\\/]php$/i',
-			$_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"])
-	) {
+	if ($_SERVER["SCRIPT_FILENAME"] == 'php' || preg_match('/[\\/]php$/i', $_SERVER["SCRIPT_FILENAME"]) || preg_match('/php\.exe$/i', $_SERVER["SCRIPT_FILENAME"]))
+	{
 		$dolibarr_main_document_root = $_SERVER["DOCUMENT_ROOT"];
 
 		if (!preg_match('/[\\/]dolibarr[\\/]htdocs$/i', $dolibarr_main_document_root)) {

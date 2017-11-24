@@ -48,7 +48,8 @@ class modSkype extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable Skype links into contacts";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -65,7 +66,7 @@ class modSkype extends DolibarrModules
 
         // Dependancies
         //-------------
-	    $this->hidden = ! empty($conf->global->SKYPE_MODULE_DISABLED);	// A condition to disable module
+	    $this->hidden = ! empty($conf->global->MODULE_SKYPE_DISABLED);	// A condition to disable module
 	    $this->depends = array('modSociete');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 	    $this->conflictwith = array();	// List of modules id this module is in conflict with

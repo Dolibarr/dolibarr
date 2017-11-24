@@ -79,7 +79,6 @@ override_dh_install:
 	
 	# clean from all PHP embedded libraries (we use package dependencies instead)
 #	rm -fr htdocs/includes/adodbtime
-#	rm -fr htdocs/includes/fpdfi
 #	rm -fr htdocs/includes/geoip
 #	rm -fr htdocs/includes/nusoap
 #	rm -fr htdocs/includes/odtphp/zip/pclzip
