@@ -1315,9 +1315,9 @@ class Holiday extends CommonObject
                 if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
                 	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-                	$sql.= " WHERE (ug.fk_user = u.rowid";
+                	$sql.= " WHERE ((ug.fk_user = u.rowid";
                 	$sql.= " AND ug.entity = ".$conf->entity.")";
-                	$sql.= " OR u.admin = 1";
+                	$sql.= " OR u.admin = 1)";
                 }
                 else
                 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
