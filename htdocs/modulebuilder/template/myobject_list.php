@@ -388,8 +388,8 @@ print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
 	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-	if (in_array($val['type'], array('timestamp'))) $align.=' nowrap';
+	if (in_array($val['type'], array('date','datetime','timestamp'))) $align=($align?' ':'').'center';
+	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
 	if ($key == 'status') $align.=($align?' ':'').'center';
 	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
 }
@@ -434,24 +434,24 @@ print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
 	$align='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-	if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+	if (in_array($val['type'], array('date','datetime','timestamp'))) $align=($align?' ':'').'center';
+	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
 	if ($key == 'status') $align.=($align?' ':'').'center';
 	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 }
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-	   if (! empty($arrayfields["ef.".$key]['checked']))
-	   {
+	foreach($extrafields->attribute_label as $key => $val)
+	{
+		if (! empty($arrayfields["ef.".$key]['checked']))
+		{
 			$align=$extrafields->getAlignFlag($key);
 			$sortonfield = "ef.".$key;
 			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
 			print getTitleFieldOfList($langs->trans($extralabels[$key]), 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder)."\n";
-	   }
-   }
+		}
+	}
 }
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields);
@@ -479,40 +479,40 @@ while ($i < min($num, $limit))
 	if (empty($obj)) break;		// Should not happen
 
 	// Store properties in $object
-   	$object->id = $obj->rowid;
-   	foreach($object->fields as $key => $val)
-   	{
-   		if (isset($obj->$key)) $object->$key = $obj->$key;
-   	}
+	$object->id = $obj->rowid;
+	foreach($object->fields as $key => $val)
+	{
+		if (isset($obj->$key)) $object->$key = $obj->$key;
+	}
 
 	// Show here line of result
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-			$align='';
-			if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-			if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
-			if ($key == 'status') $align.=($align?' ':'').'center';
-			if (! empty($arrayfields['t.'.$key]['checked']))
+		$align='';
+		if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
+		if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+		if ($key == 'status') $align.=($align?' ':'').'center';
+		if (! empty($arrayfields['t.'.$key]['checked']))
+		{
+			print '<td';
+			if ($align) print ' class="'.$align.'"';
+			print '>';
+			print $object->showOutputField($val, $key, $obj->$key, '');
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+			if (! empty($val['isameasure']))
 			{
-				print '<td';
-				if ($align) print ' class="'.$align.'"';
-				print '>';
-				print $object->showOutputField($val, $key, $obj->$key, '');
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-				if (! empty($val['isameasure']))
-				{
-					if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
-					$totalarray['val']['t.'.$key] += $obj->$key;
-				}
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
+				$totalarray['val']['t.'.$key] += $obj->$key;
 			}
+		}
 	}
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val)
-	   {
+		foreach($extrafields->attribute_label as $key => $val)
+		{
 			if (! empty($arrayfields["ef.".$key]['checked']))
 			{
 				$align=$extrafields->getAlignFlag($key);
@@ -529,7 +529,7 @@ while ($i < min($num, $limit))
 					$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
 				}
 			}
-	   }
+		}
 	}
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
