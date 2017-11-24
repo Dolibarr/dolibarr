@@ -83,8 +83,8 @@ class Conf
 		$this->file				= new stdClass();
 		$this->db				= new stdClass();
 		$this->global			= new stdClass();
-		$this->mycompany			= new stdClass();
-		$this->admin				= new stdClass();
+		$this->mycompany		= new stdClass();
+		$this->admin			= new stdClass();
 		$this->user				= new stdClass();
 		$this->syslog			= new stdClass();
 		$this->browser			= new stdClass();
