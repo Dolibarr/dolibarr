@@ -64,7 +64,8 @@ $entitytoicon = array(
     'virtualproduct'=>'product',
 	'subproduct'   => 'product',
     'warehouse'    => 'stock',
-    'batch'        => 'stock',
+	'batch'        => 'stock',
+	'stockbatch'   => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
     'shipment_line'=> 'sending',
@@ -100,7 +101,8 @@ $entitytolang = array(
     'service'      => 'Service',
     'stock'        => 'Stock',
 	'movement'	   => 'StockMovement',
-    'batch'        => 'Batch',
+	'batch'        => 'Batch',
+	'stockbatch'   => 'StockDetailPerBatch',
 	'warehouse'    => 'Warehouse',
 	'category'     => 'Category',
 	'other'        => 'Other',
@@ -1228,7 +1230,7 @@ if ($step == 5 && $datatoexport)
     $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
+    print '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
     print '<td>'.$langs->trans("LibraryUsed").'</td>';
     print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>'."\n";
@@ -1245,11 +1247,13 @@ if ($step == 5 && $datatoexport)
 
 
         print '<tr class="oddeven">';
-        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
+        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
-	    print '<td>'.$form->textwithpicto($label,$text).'</td>';
-        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td><td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td></tr>'."\n";
+	    print $form->textwithpicto($label,$text).'</td>';
+        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
+        print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
+        print '</tr>'."\n";
     }
     print '</table>';
 
