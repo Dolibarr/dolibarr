@@ -76,7 +76,7 @@ class AgendaEvents extends DolibarrApi
             throw new RestException(401, "Insuffisant rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id)) {
+		if ( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id,'actioncomm','','fk_soc','id')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

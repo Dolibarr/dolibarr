@@ -125,7 +125,7 @@ $arrayfields=array(
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	'sale_representative'=>array('label'=>$langs->trans("SalesRepresentative"), 'checked'=>1),
+	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
 	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
 	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -740,10 +740,16 @@ if ($resql)
 						$userstatic->id=$val['id'];
 						$userstatic->lastname=$val['lastname'];
 						$userstatic->firstname=$val['firstname'];
-						print '<div class="float">'.$userstatic->getNomUrl(1);
+						$userstatic->email=$val['email'];
+						$userstatic->statut=$val['statut'];
+						$userstatic->entity=$val['entity'];
+						$userstatic->photo=$val['photo'];
+
+						//print '<div class="float">':
+						print $userstatic->getNomUrl(-2);
 						$j++;
-						if ($j < $nbofsalesrepresentative) print ', ';
-						print '</div>';
+						if ($j < $nbofsalesrepresentative) print ' ';
+						//print '</div>';
 					}
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");

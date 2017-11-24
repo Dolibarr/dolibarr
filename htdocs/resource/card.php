@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load traductions files requiredby by page
@@ -48,6 +49,7 @@ $ref					= GETPOST('ref','alpha');
 $description			= GETPOST('description');
 $confirm				= GETPOST('confirm');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource','alpha');
+$country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
 if ($user->socid > 0)
@@ -111,6 +113,7 @@ if (empty($reshook))
 				$object->ref                    = $ref;
 				$object->description            = $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
+				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -157,6 +160,7 @@ if (empty($reshook))
 				$object->ref          			= $ref;
 				$object->description  			= $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
+				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -271,6 +275,12 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		$doleditor->Create();
 		print '</td></tr>';
 
+		// Origin country
+		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+		print $form->select_country($object->country_id,'country_id');
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+		print '</td></tr>';
+
 		// Other attributes
 		$parameters=array('objectsrc' => $objectsrc);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -343,6 +353,14 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		// Other attributes
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
+		print '</tr>';
+
+		// Origin country code
+		print '<tr>';
+		print '<td>'.$langs->trans("CountryOrigin").'</td>';
+		print '<td>';
+		print getCountry($object->country_id,0,$db);
+		print '</td>';
 		print '</tr>';
 
 		print '</table>';

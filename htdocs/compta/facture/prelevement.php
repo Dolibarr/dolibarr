@@ -591,7 +591,9 @@ if ($object->id > 0)
 
 	/*
 	 * Withdrawals
-	*/
+	 */
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
@@ -664,7 +666,6 @@ if ($object->id > 0)
 		{
 			$obj = $db->fetch_object($result);
 
-
 			print '<tr class="oddeven">';
 
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
@@ -689,7 +690,8 @@ if ($object->id > 0)
 			print "</tr>\n";
 			$i++;
 		}
-
+		if (! $num)
+			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		$db->free($result);
 	}
 	else
@@ -698,6 +700,7 @@ if ($object->id > 0)
 	}
 
 	print "</table>";
+	print '</div>';
 }
 
 

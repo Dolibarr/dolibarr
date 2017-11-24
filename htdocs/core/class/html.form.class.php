@@ -1096,11 +1096,10 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-		   	if ($conf->use_javascript_ajax && ! $forcecombo)
+		   	if (! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
 			// Construct $out and $outarray
@@ -1333,8 +1332,7 @@ class Form
 			if ($conf->use_javascript_ajax && ! $forcecombo && ! $options_only)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 			}
 
 			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlid.'" name="'.$htmlname.'" '.(!empty($moreparam) ? $moreparam : '').'>';
@@ -1530,12 +1528,8 @@ class Form
 			if ($num)
 			{
 		   		// Enhance with select2
-				if ($conf->use_javascript_ajax)
-				{
-					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-					$comboenhancement = ajax_combobox($htmlname);
-					$out.=$comboenhancement;
-				}
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname);
 
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
 				$out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
@@ -1957,7 +1951,7 @@ class Form
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
-			$sql .= " LEFT JOIN llx_product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 		}
 
 		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -2023,11 +2017,10 @@ class Form
 
 			$events=null;
 
-			if ($conf->use_javascript_ajax && ! $forcecombo)
+			if (! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlname, $events, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 			}
 
 			$out.='<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -5284,11 +5277,10 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			if ($conf->use_javascript_ajax && ! $forcecombo)
+			if (! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement =ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
 			}
 
 			// Construct $out and $outarray
@@ -5391,18 +5383,14 @@ class Form
 		$out='';
 
 		// Add code for jquery to use multiselect
-		if ($addjscombo && empty($conf->dol_use_jmobile) && $jsbeautify)
+		if ($addjscombo && $jsbeautify)
 		{
 			$minLengthToAutocomplete=0;
 			$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?(constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
 
 			// Enhance with select2
-			if ($conf->use_javascript_ajax)
-			{
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname);
-				$out.=$comboenhancement;
-			}
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
 		}
 
 		$out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'"';
@@ -6549,12 +6537,8 @@ class Form
 		if ($resql)
 		{
 			// Enhance with select2
-			if ($conf->use_javascript_ajax)
-			{
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			   	$comboenhancement = ajax_combobox($htmlname);
-				$out.= $comboenhancement;
-			}
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		   	$out .= ajax_combobox($htmlname);
 
 			$out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
 

@@ -3791,7 +3791,7 @@ else if ($id > 0 || ! empty($ref))
 
 
 	// List of payments already done
-
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder paymenttable" width="100%">';
 
 	print '<tr class="liste_titre">';
@@ -4002,6 +4002,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print '</table>';
+	print '</div>';
 
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {

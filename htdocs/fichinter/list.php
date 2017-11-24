@@ -304,7 +304,7 @@ if ($resql)
 
 	$topicmail="Information";
 	$modelmail="intervention";
-	$objecttmp=new Intervention($db);
+	$objecttmp=new Fichinter($db);
 	$trackid='int'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 

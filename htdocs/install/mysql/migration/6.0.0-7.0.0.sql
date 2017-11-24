@@ -68,6 +68,10 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+ALTER TABLE llx_inventory ADD UNIQUE INDEX uk_inventory_ref (ref, entity);
+
+ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);
+
 UPDATE llx_paiementfourn SET ref = rowid WHERE ref IS NULL;
 UPDATE llx_paiementfourn SET entity = 1 WHERE entity IS NULL;
 
@@ -581,4 +585,8 @@ ALTER TABLE llx_prelevement_lignes MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_societe MODIFY COLUMN capital double(24,8);
 ALTER TABLE llx_tva MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);
+
+ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
+ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
 

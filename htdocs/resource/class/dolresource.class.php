@@ -73,6 +73,7 @@ class Dolresource extends CommonObject
 
     	if (isset($this->ref)) $this->ref=trim($this->ref);
     	if (isset($this->description)) $this->description=trim($this->description);
+        if (!is_numeric($this->country_id)) $this->country_id = 0;
     	if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
     	if (isset($this->note_public)) $this->note_public=trim($this->note_public);
     	if (isset($this->note_private)) $this->note_private=trim($this->note_private);
@@ -84,6 +85,7 @@ class Dolresource extends CommonObject
     	$sql.= "entity,";
     	$sql.= "ref,";
     	$sql.= "description,";
+    	$sql.= "fk_country,";
     	$sql.= "fk_code_type_resource,";
     	$sql.= "note_public,";
     	$sql.= "note_private";
@@ -93,6 +95,7 @@ class Dolresource extends CommonObject
     	$sql.= $conf->entity.", ";
     	$sql.= " ".(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").",";
     	$sql.= " ".(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").",";
+        $sql.= " ".($this->country_id > 0 ? $this->country_id : 'null').",";
     	$sql.= " ".(! isset($this->fk_code_type_resource)?'NULL':"'".$this->db->escape($this->fk_code_type_resource)."'").",";
     	$sql.= " ".(! isset($this->note_public)?'NULL':"'".$this->db->escape($this->note_public)."'").",";
     	$sql.= " ".(! isset($this->note_private)?'NULL':"'".$this->db->escape($this->note_private)."'");
@@ -181,6 +184,7 @@ class Dolresource extends CommonObject
     	$sql.= " t.entity,";
     	$sql.= " t.ref,";
     	$sql.= " t.description,";
+		$sql.= " t.fk_country,";
     	$sql.= " t.fk_code_type_resource,";
     	$sql.= " t.note_public,";
     	$sql.= " t.note_private,";
@@ -203,6 +207,7 @@ class Dolresource extends CommonObject
     			$this->entity					=	$obj->entity;
     			$this->ref						=	$obj->ref;
     			$this->description				=	$obj->description;
+                $this->country_id				=	$obj->fk_country;
     			$this->fk_code_type_resource	=	$obj->fk_code_type_resource;
     			$this->note_public				=	$obj->note_public;
     			$this->note_private				=	$obj->note_private;
@@ -228,6 +233,7 @@ class Dolresource extends CommonObject
     	}
     }
 
+
     /**
      *  Update object into database
      *
@@ -244,6 +250,7 @@ class Dolresource extends CommonObject
 		if (isset($this->ref)) $this->ref=trim($this->ref);
 		if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
 		if (isset($this->description)) $this->description=trim($this->description);
+        if (!is_numeric($this->country_id)) $this->country_id = 0;
 
 		if (empty($this->oldcopy))
 		{
@@ -256,6 +263,7 @@ class Dolresource extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
 		$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
+		$sql.= " fk_country=".($this->country_id > 0 ? $this->country_id :"null").",";
 		$sql.= " fk_code_type_resource=".(isset($this->fk_code_type_resource)?"'".$this->db->escape($this->fk_code_type_resource)."'":"null").",";
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
 		$sql.= " WHERE rowid=".$this->id;
@@ -555,6 +563,7 @@ class Dolresource extends CommonObject
     				$line->id						=	$obj->rowid;
     				$line->ref						=	$obj->ref;
     				$line->description				=	$obj->description;
+                    $line->country_id				=	$obj->fk_country;
     				$line->fk_code_type_resource	=	$obj->fk_code_type_resource;
     				$line->type_label				=	$obj->type_label;
 

@@ -79,7 +79,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  * Statistics
  */
 
-$sql = "SELECT count(c.rowid), c.fk_statut, c.facture";
+$sql = "SELECT count(c.rowid), c.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."commande as c";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -87,7 +87,8 @@ $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity IN (".getEntity('societe').")";
 if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " GROUP BY c.fk_statut, c.facture";
+$sql.= " GROUP BY c.fk_statut";
+
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -98,7 +99,6 @@ if ($resql)
     $totalinprocess=0;
     $dataseries=array();
     $vals=array();
-    $bool=false;
     // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
     while ($i < $num)
     {
@@ -107,8 +107,7 @@ if ($resql)
         {
             //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
             {
-                $bool=(! empty($row[2])?true:false);
-                if (! isset($vals[$row[1].$bool])) $vals[$row[1].$bool]=0;
+                if (! isset($vals[$row[1]])) $vals[$row[1]]=0;
                 $vals[$row[1].$bool]+=$row[0];
                 $totalinprocess+=$row[0];
             }
@@ -119,37 +118,38 @@ if ($resql)
     $db->free($resql);
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
-    $listofstatus=array(0,1,2,3,3,-1);
-    $bool=false;
+    $listofstatus=array(0,1,2,3,-1);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$commandestatic->LibStatut($status,$bool,1),'data'=>(isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
-        if ($status==3 && ! $bool) $bool=true;
-        else $bool=false;
+    	$dataseries[]=array($commandestatic->LibStatut($status,$bool,1), (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
     }
     if ($conf->use_javascript_ajax)
     {
         print '<tr class="impair"><td align="center" colspan="2">';
-        $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1);
+
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+        $dolgraph = new DolGraph();
+        $dolgraph->SetData($dataseries);
+        $dolgraph->setShowLegend(1);
+        $dolgraph->setShowPercent(1);
+        $dolgraph->SetType(array('pie'));
+        $dolgraph->setWidth('100%');
+        $dolgraph->draw('idgraphstatus');
+        print $dolgraph->show($total?0:1);
+
         print '</td></tr>';
     }
-    $var=true;
-    $bool=false;
-    foreach ($listofstatus as $status)
+    else
     {
-        if (! $conf->use_javascript_ajax)
-        {
-
-            print '<tr class="oddeven">';
+	    foreach ($listofstatus as $status)
+	    {
+        	print '<tr class="oddeven">';
             print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
             print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
             print $commandestatic->LibStatut($status,$bool,3);
             print '</a>';
             print '</td>';
             print "</tr>\n";
-            if ($status==3 && ! $bool) $bool=true;
-            else $bool=false;
         }
     }
     //if ($totalinprocess != $total)
