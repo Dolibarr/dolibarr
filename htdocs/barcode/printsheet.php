@@ -292,9 +292,9 @@ foreach(array_keys($_Avery_Labels) as $codecards)
     $labeltoshow=$_Avery_Labels[$codecards]['name'];
     //$labeltoshow.=' ('.$_Avery_Labels[$row['code']]['paper-size'].')';
 	$arrayoflabels[$codecards]=$labeltoshow;
-	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
-print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
+asort($arrayoflabels);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print
