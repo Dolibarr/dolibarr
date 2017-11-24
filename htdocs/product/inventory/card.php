@@ -24,6 +24,7 @@
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("inventory","other"));
@@ -38,7 +39,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 // Initialize technical objects
 $object=new Inventory($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->inventory->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction=$conf->stock->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('inventorycard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('inventory');
@@ -79,16 +80,16 @@ if (empty($reshook))
 {
 	$error=0;
 
-	$permissiontoadd = $user->rights->inventory->create;
-	$permissiontodelete = $user->rights->inventory->delete;
-	$backurlforlist = dol_buildpath('/inventory/inventory_list.php',1);
+	$permissiontoadd = $user->rights->stock->creer;
+	$permissiontodelete = $user->rights->stock->supprimer;
+	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-	
+
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-	
+
 	// Actions to send emails
 	/*$trigger_name='MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
@@ -136,10 +137,10 @@ if ($action == 'create')
 	dol_fiche_head(array(), '');
 
 	print '<table class="border centpercent">'."\n";
-	
+
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
-	
+
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
@@ -170,10 +171,10 @@ if (($id || $ref) && $action == 'edit')
 	dol_fiche_head();
 
 	print '<table class="border centpercent">'."\n";
-	
+
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
-	
+
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
 
@@ -193,7 +194,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
     $res = $object->fetch_optionals($object->id, $extralabels);
 
-	$head = inventory_prepare_head($object);
+    $head = inventoryPrepareHead($object);
 	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'inventory');
 
 	$formconfirm = '';
@@ -288,7 +289,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
-	
+
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
@@ -303,7 +304,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</table>';
 	print '</div>';*/
-	
+
 	print '</div>';
 	print '</div>';
 
@@ -332,7 +333,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
     			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
-    	
+
     		if ($user->rights->inventory->delete)
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
@@ -355,7 +356,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    print '<div class="fichecenter"><div class="fichehalfleft">';
 	    print '<a name="builddoc"></a>'; // ancre
-	    
+
 	    // Documents
 	    /*$objref = dol_sanitizeFileName($object->ref);
 	     $relativepath = $comref . '/' . $comref . '.pdf';
@@ -374,11 +375,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	    $MAXEVENT = 10;
-	    
+
 	    $morehtmlright = '<a href="'.dol_buildpath('/mymodule/myobject_info.php', 1).'?id='.$object->id.'">';
 	    $morehtmlright.= $langs->trans("SeeAll");
 	    $morehtmlright.= '</a>';
-	    
+
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);

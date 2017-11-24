@@ -6147,8 +6147,9 @@ abstract class CommonObject
 		// Clean and check mandatory
 		foreach($keys as $key)
 		{
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
-			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';
+			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
 			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
@@ -6156,6 +6157,10 @@ abstract class CommonObject
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
+
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key]='null';
+			if (! empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key]='null';
 		}
 
 		if ($error) return -1;

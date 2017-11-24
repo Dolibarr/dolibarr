@@ -117,37 +117,37 @@ if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
 {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
-    {
-        foreach($object->fields as $key => $val)
-        {
-            $search[$key]='';
-        }
-        $toselect='';
-        $search_array_options=array();
-    }
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
-        || GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
-    {
-        $massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+	{
+		foreach($object->fields as $key => $val)
+		{
+			$search[$key]='';
+		}
+		$toselect='';
+		$search_array_options=array();
+	}
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+		|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+	{
+		$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
 
-    // Mass actions
-    $objectclass='Inventory';
-    $objectlabel='Inventory';
-    $permtoread = $user->rights->inventory->read;
-    $permtodelete = $user->rights->inventory->delete;
-    $uploaddir = $conf->inventory->dir_output;
-    //include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php'; // TODO to fix for product module
+	// Mass actions
+	$objectclass='Inventory';
+	$objectlabel='Inventory';
+	$permtoread = $user->rights->stock->lire;
+	$permtodelete = $user->rights->stock->supprimer;
+	$uploaddir = $conf->stock->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -209,6 +209,21 @@ foreach ($search_array_options as $key => $val)
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+
+/* If a group by is required
+ $sql.= " GROUP BY "
+ foreach($object->fields as $key => $val)
+ {
+ $sql.='t.'.$key.', ';
+ }
+ // Add fields from extrafields
+ foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+ // Add where from hooks
+ $parameters=array();
+ $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
+ $sql.=$hookmanager->resPrint;
+ */
+
 $sql.=$db->order($sortfield,$sortorder);
 
 // Count total nb of records
@@ -221,7 +236,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit+1, $offset);
 
-dol_syslog($script_file, LOG_DEBUG);
 $resql=$db->query($sql);
 if (! $resql)
 {
@@ -283,7 +297,7 @@ $arrayofmassactions =  array(
 	'presend'=>$langs->trans("SendByMail"),
 	'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->inventory->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -445,8 +459,8 @@ while ($i < min($num, $limit))
 	foreach($object->fields as $key => $val)
 	{
 		$align='';
-		if (in_array($val['type'], array('date','datetime','timestamp'))) $align='center';
-		if (in_array($val['type'], array('timestamp'))) $align.='nowrap';
+		if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
+		if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
 		if ($key == 'status') $align.=($align?' ':'').'center';
 		if (! empty($arrayfields['t.'.$key]['checked']))
 		{
@@ -500,9 +514,9 @@ while ($i < min($num, $limit))
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print '</tr>';
-	
+
 	$i++;
 }
 
