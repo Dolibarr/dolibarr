@@ -236,7 +236,10 @@ if ($action == 'builddoc')
 			{
 				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
-			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, 'tmp_barcode_sheet.pdf');
+
+			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(),'dayhourlog').'.pdf';
+
+			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
 		}
 
 		if ($result <= 0)
