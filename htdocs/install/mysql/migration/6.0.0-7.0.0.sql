@@ -68,6 +68,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+INSERT INTO llx_c_type_contact(rowid, element, source, code, libelle, active ) values (42, 'propal',  'external', 'SHIPPING', 'Customer contact for delivery', 1);
+
 ALTER TABLE llx_inventory ADD UNIQUE INDEX uk_inventory_ref (ref, entity);
 
 ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);
