@@ -216,7 +216,7 @@ dol_fiche_head($head,'general',$langs->trans("Survey"), -1, DOL_URL_ROOT.'/opens
 
 $morehtmlref = '';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/opensurvey/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/opensurvey/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtmlref);
 
