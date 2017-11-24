@@ -357,6 +357,8 @@ if ($resql)
 
 	$head = calendars_prepare_head($param);
 
+	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
     print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,-1,$actioncode,$usergroup,'',$resourceid);
     dol_fiche_end();
@@ -393,7 +395,6 @@ if ($resql)
     }
 
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="list">';
@@ -404,7 +405,7 @@ if ($resql)
     print '<input type="hidden" name="type" value="'.$type.'">';
     $nav='';
     if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+    //if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
     if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
     if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
     if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
@@ -627,14 +628,16 @@ if ($resql)
 			if ($late) print img_warning($langs->trans("Late")).' ';
 			print '</td>';
 		}
+
+		// End date
 		if (! empty($arrayfields['a.datep2']['checked'])) {
-			// End date
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->dp2),"dayhour");
 			print '</td>';
 		}
+
+		// Third party
 		if (! empty($arrayfields['s.nom']['checked'])) {
-			// Third party
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid)
 			{
@@ -646,8 +649,9 @@ if ($resql)
 			else print '&nbsp;';
 			print '</td>';
 		}
+
+		// Contact
 		if (! empty($arrayfields['a.fk_contact']['checked'])) {
-			// Contact
 			print '<td>';
 			if ($obj->fk_contact > 0)
 			{
@@ -662,8 +666,9 @@ if ($resql)
 			}
 			print '</td>';
 		}
+
+		// Linked object
 		if (! empty($arrayfields['a.fk_element']['checked'])) {
-		        // Linked object
 		        print '<td>';
 		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
               		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -674,6 +679,7 @@ if ($resql)
 		        print '</td>';
 
 		}
+
 		// Extra fields
 		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 		{
