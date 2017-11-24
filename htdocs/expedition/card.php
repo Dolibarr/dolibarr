@@ -750,7 +750,7 @@ if (empty($reshook))
 									}
 								}
 							}
-							if ($lineIdToAddLot) 
+							if ($lineIdToAddLot)
 							{
 								// add lot to existing line
 								if ($line->fetch($lineIdToAddLot) > 0)
@@ -787,7 +787,7 @@ if (empty($reshook))
 								}
 							}
 						}
-						else 
+						else
 						{
 							setEventMessages($lotStock->error, $lotStock->errors, 'errors');
 							$error++;
@@ -2477,7 +2477,7 @@ else if ($id || $ref)
 			}
 
 			// Create bill
-			if (! empty($conf->facture->enabled) && $object->statut > 0)
+			if (! empty($conf->facture->enabled) && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED))
 			{
 				if ($user->rights->facture->creer)
 				{
@@ -2489,18 +2489,18 @@ else if ($id || $ref)
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
-			if ($conf->livraison_bon->enabled && ($object->statut == 1 || $object->statut == 2) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
+			if ($conf->livraison_bon->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 			}
 			// Close
-			if (! empty($conf->facture->enabled) && $object->statut > 0)
+			if ($object->statut == Expedition::STATUS_VALIDATED)
 			{
 				if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
 				{
 					$label="Close"; $paramaction='classifyclosed';       // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-					if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))  // TODO Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close.
+					if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 					{
 					    $label="ClassifyBilled";
 					    $paramaction='classifybilled';

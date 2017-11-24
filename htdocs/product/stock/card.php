@@ -275,7 +275,7 @@ else
 		{
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
 
 			$formconfirm = '';
 

@@ -68,6 +68,8 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer;
 
 -- For 7.0
 
+ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);
+
 UPDATE llx_paiementfourn SET ref = rowid WHERE ref IS NULL;
 UPDATE llx_paiementfourn SET entity = 1 WHERE entity IS NULL;
 

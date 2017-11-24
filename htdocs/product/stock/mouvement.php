@@ -95,7 +95,7 @@ $arrayfields=array(
     'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(! empty($conf->productbatch->enabled))),
-    'e.label'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
+    'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(! $id > 0)),	// If we are on specific warehouse, we hide it
     'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
     'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
     'm.label'=>array('label'=>$langs->trans("LabelMovement"), 'checked'=>1),
@@ -414,7 +414,7 @@ $formproduct=new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type, p.entity,";
-$sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
+$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch,";
 $sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
@@ -529,7 +529,7 @@ if ($resql)
     {
         $head = stock_prepare_head($object);
 
-        dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), 0, 'stock');
+        dol_fiche_head($head, 'movements', $langs->trans("Warehouse"), -1, 'stock');
 
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
@@ -783,7 +783,7 @@ if ($resql)
 	    print '</td>';
     }
     // Warehouse
-    if (! empty($arrayfields['e.label']['checked']))
+    if (! empty($arrayfields['e.ref']['checked']))
     {
         print '<td class="liste_titre maxwidthonsmartphone" align="left">';
         //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
@@ -879,7 +879,7 @@ if ($resql)
     if (! empty($arrayfields['m.batch']['checked']))            print_liste_field_titre($arrayfields['m.batch']['label'],$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.eatby']['checked']))           print_liste_field_titre($arrayfields['pl.eatby']['label'],$_SERVER["PHP_SELF"],'pl.eatby','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['pl.sellby']['checked']))          print_liste_field_titre($arrayfields['pl.sellby']['label'],$_SERVER["PHP_SELF"],'pl.sellby','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['e.label']['checked']))        	print_liste_field_titre($arrayfields['e.label']['label'],$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
+    if (! empty($arrayfields['e.ref']['checked']))  	      	print_liste_field_titre($arrayfields['e.ref']['label'],$_SERVER["PHP_SELF"], "e.ref","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'],$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
@@ -982,7 +982,7 @@ if ($resql)
         	print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
 		}
         // Warehouse
-        if (! empty($arrayfields['e.label']['checked']))
+        if (! empty($arrayfields['e.ref']['checked']))
 		{
             print '<td>';
             print $warehousestatic->getNomUrl(1);

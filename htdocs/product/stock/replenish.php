@@ -263,7 +263,7 @@ $formproduct = new FormProduct($db);
 
 $title = $langs->trans('Status');
 
-if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sqldesiredtock=$db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
 	$sqlalertstock=$db->ifsql("pse.seuil_stock_alerte IS NULL", "p.seuil_stock_alerte", "pse.seuil_stock_alerte");
 } else {
@@ -427,9 +427,12 @@ print '<input type="hidden" name="snom" value="'.$snom.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
 print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-print $langs->trans('Warehouse').' '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
-print '</div>';
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
+{
+	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
+	print $langs->trans('Warehouse').' '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
+	print '</div>';
+}
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
 print '</div>';

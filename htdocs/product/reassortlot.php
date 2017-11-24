@@ -114,7 +114,7 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,';
 $sql.= ' ps.fk_entrepot,';
-$sql.= ' e.label as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
+$sql.= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql.= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
 $sql.= ' pl.rowid as lotid, pl.eatby, pl.sellby,';
 $sql.= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
@@ -150,13 +150,13 @@ if($catid) $sql.= " AND cp.fk_categorie = ".$catid;
 if ($fourn_id > 0) $sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 // Insert categ filter
 if ($search_categ) $sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
-if ($search_warehouse) $sql .= natural_search("e.label", $search_warehouse);
+if ($search_warehouse) $sql .= natural_search("e.ref", $search_warehouse);
 if ($search_batch) $sql .= natural_search("pb.batch", $search_batch);
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,";
 $sql.= " ps.fk_entrepot,";
-$sql.= " e.label, e.lieu, e.fk_parent,";
+$sql.= " e.ref, e.lieu, e.fk_parent,";
 $sql.= " pb.batch, pb.eatby, pb.sellby,";
 $sql.= " pl.rowid, pl.eatby, pl.sellby";
 if ($toolowstock) $sql.= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte";    // Not used yet
@@ -292,7 +292,7 @@ if ($resql)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
 	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.label",$param,"",'',$sortfield,$sortorder);
+	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref",$param,"",'',$sortfield,$sortorder);
 	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby",$param,"",'align="center"',$sortfield,$sortorder);
