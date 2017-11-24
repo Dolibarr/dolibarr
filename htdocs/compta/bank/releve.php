@@ -41,10 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("companies");
-$langs->load("bills");
+$langs->loadLangs(array("banks","categories","companies","bills","trips"));
 
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('account','int');
@@ -705,7 +702,7 @@ else
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='user') {
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?rowid='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowUser'),'user').' ';
 					print $links[$key]['label'];
 					print '</a>';

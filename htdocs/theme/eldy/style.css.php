@@ -456,6 +456,9 @@ fieldset { border: 1px solid #AAAAAA !important; }
 .trextrafieldseparator td {
     border-bottom: 2px solid rgb(120,120,120) !important;
 }
+input#onlinepaymenturl, input#directdownloadlink {
+	opacity: 0.7;
+}
 
 hr { border: 0; border-top: 1px solid #ccc; }
 
@@ -580,6 +583,9 @@ textarea.centpercent {
 }
 .nowraponall {
 	white-space: nowrap;
+}
+.wordwrap {
+	word-wrap: break-word;
 }
 .nobold {
 	font-weight: normal !important;
@@ -911,6 +917,9 @@ select.selectarrowonleft option {
 	body {
 		font-size: <?php print $fontsize+3; ?>px;
 	}
+	div.refidno {
+		font-size: <?php print $fontsize+3; ?>px !important;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -918,6 +927,9 @@ select.selectarrowonleft option {
 {
 	body {
 		font-size: <?php print $fontsize+3; ?>px;
+	}
+	div.refidno {
+		font-size: <?php print $fontsize+3; ?>px !important;
 	}
 
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
@@ -932,7 +944,8 @@ select.selectarrowonleft option {
 		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
 	}
 	div.titre {
-		line-height: 2em;
+		margin-top: 12px;
+		/* line-height: 2em; */
 	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
     	height: 40px !important;
@@ -4080,6 +4093,7 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+	word-wrap: break-word;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -4886,6 +4900,10 @@ div.tabsElem a.tab {
     }
 	div.tmenuleft {
 		display: none;
+	}
+
+	.dropdown dd ul {
+		max-width: 300px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
