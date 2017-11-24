@@ -121,8 +121,8 @@ $hookmanager->initHooks(array('agendalist'));
 $arrayfields=array(
 	'a.id'=>array('label'=>"Ref", 'checked'=>1),
 	'owner'=>array('label'=>"Owner", 'checked'=>1),
-	'a.label'=>array('label'=>"Title", 'checked'=>1),
 	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
+	'a.label'=>array('label'=>"Title", 'checked'=>1),
 	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
 	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
@@ -542,7 +542,7 @@ if ($resql)
 
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 	$caction=new CActionComm($db);
-	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
+	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
 
 	$var=true;
 	while ($i < min($num,$limit))
@@ -584,17 +584,21 @@ if ($resql)
 			else print '&nbsp;';
 			print '</td>';
 		}
-		if (! empty($arrayfields['c.libelle']['checked'])) {
-			// Type
+
+		// Type
+		if (! empty($arrayfields['c.libelle']['checked']))
+		{
 			print '<td>';
 			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 			{
 	    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
     			else {
-    			    if ($actionstatic->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
-    			    if ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
-    			    if ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
-    			    if ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+    			    if ($actionstatic->type_code == 'AC_RDV')       print img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_INT')   print img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif (! preg_match('/_AUTO/', $actionstatic->type_code)) print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
     			}
 			}
 			$labeltype=$obj->type_code;
@@ -603,15 +607,16 @@ if ($resql)
 			print dol_trunc($labeltype,28);
 			print '</td>';
 		}
+
+		// Label
 		if (! empty($arrayfields['a.label']['checked'])) {
-			// Label
 			print '<td class="tdoverflowmax300">';
 			print $actionstatic->label;
 			print '</td>';
 		}
 
+		// Start date
 		if (! empty($arrayfields['a.datep']['checked'])) {
-			// Start date
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->dp),"dayhour");
 			$late=0;

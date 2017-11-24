@@ -4361,7 +4361,7 @@ abstract class CommonObject
 
 
 	/**
-	 *  Function to get extra fields of a member into $this->array_options
+	 *  Function to get extra fields of an object into $this->array_options
 	 *  This method is in most cases called by method fetch of objects but you can call it separately.
 	 *
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.

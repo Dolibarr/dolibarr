@@ -246,7 +246,7 @@ class FormActions
 	        		        if ($action->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
 	        		    }
 	        		}
-	        		print $action->type;
+	        		print $action->type_short ? $action->type_short : $action->type;
 	        		print '</td>';
 	        		print '<td>'.$label.'</td>';
 	        		print '<td align="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');

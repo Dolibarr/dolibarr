@@ -571,8 +571,9 @@ class ActionComm extends CommonObject
                 $this->type_color = $obj->type_color;
                 $this->type_picto = $obj->type_picto;
                 $transcode=$langs->trans("Action".$obj->type_code);
-                $type_label=($transcode!="Action".$obj->type_code?$transcode:$obj->type_label);
-                $this->type       = $type_label;
+                $this->type       = (($transcode!="Action".$obj->type_code) ? $transcode : $obj->type_label);
+                $transcode=$langs->trans("Action".$obj->type_code.'Short');
+                $this->type_short       = (($transcode!="Action".$obj->type_code.'Short') ? $transcode : '');
 
 				$this->code					= $obj->code;
                 $this->label				= $obj->label;
@@ -589,11 +590,11 @@ class ActionComm extends CommonObject
                 $this->authorid             = $obj->fk_user_author;
                 $this->usermodid			= $obj->fk_user_mod;
 
-                if (!is_object($this->author)) $this->author = new stdClass(); // For avoid warning
+                if (!is_object($this->author)) $this->author = new stdClass(); // To avoid warning
                 $this->author->id			= $obj->fk_user_author;		// deprecated
                 $this->author->firstname	= $obj->firstname;			// deprecated
                 $this->author->lastname		= $obj->lastname;			// deprecated
-                if (!is_object($this->usermod)) $this->usermod = new stdClass(); // For avoid warning
+                if (!is_object($this->usermod)) $this->usermod = new stdClass(); // To avoid warning
                 $this->usermod->id			= $obj->fk_user_mod;		// deprecated
 
                 $this->userownerid			= $obj->fk_user_action;

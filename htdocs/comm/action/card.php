@@ -133,7 +133,7 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 		{
 			$assignedtouser=json_decode($_SESSION['assignedtouser'], true);
 		}
-		$assignedtouser[GETPOST('assignedtouser')]=array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'),'mandatory'=>1);
+		$assignedtouser[GETPOST('assignedtouser')]=array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
 		$_SESSION['assignedtouser']=json_encode($assignedtouser);
 	}
 	$donotclearsession=1;
@@ -439,7 +439,7 @@ if ($action == 'update')
 		if (! empty($_SESSION['assignedtouser']))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
-			$tmplist1=json_decode($_SESSION['assignedtouser'], true); $tmplist2=array();
+			$tmplist1=json_decode($_SESSION['assignedtouser'], true);
 			foreach($tmplist1 as $key => $val)
 			{
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
@@ -449,7 +449,6 @@ if ($action == 'update')
 			$assignedtouser=(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
 			if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : ''));	// Owner first
 		}
-
 		$object->userassigned=array();	$object->userownerid=0; // Clear old content
 		$i=0;
 		foreach($listofuserid as $key => $val)
@@ -460,6 +459,7 @@ if ($action == 'update')
 		}
 
 		$object->transparency = $transparency;		// We set transparency on event (even if we can also store it on each user, standard says this property is for event)
+		// TODO store also transparency on owner user
 
 		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 		{
@@ -954,11 +954,11 @@ if ($id > 0)
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
-		foreach ($socpeopleassigned as $id) $object->socpeopleassigned[$id] = array('id' => $id);
+		foreach ($socpeopleassigned as $tmpid) $object->socpeopleassigned[$id] = array('id' => $tmpid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
 
-		$object->note = GETPOST("note");
+		$object->note = GETPOST("note",'none');
 	}
 
 	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
@@ -1136,11 +1136,21 @@ if ($id > 0)
 	    $listofuserid=array();							// User assigned
 	    if (empty($donotclearsession))
 	    {
-	    	if ($object->userownerid > 0) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid, 'type'=>'user', 'transparency'=>$object->userassigned[$user->id]['transparency'], 'answer_status'=>$object->userassigned[$user->id]['answer_status'], 'mandatory'=>$object->userassigned[$user->id]['mandatory']);	// Owner first
+	    	if ($object->userownerid > 0)
+	    	{
+	    		$listofuserid[$object->userownerid]=array(
+	    			'id'=>$object->userownerid,
+	    			'type'=>'user',
+	    			//'transparency'=>$object->userassigned[$user->id]['transparency'],
+	    			'transparency'=>$object->transparency, 										// Force transparency on ownerfrom event
+	    			'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
+	    			'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
+	    		);
+	    	}
 	    	if (! empty($object->userassigned))	// Now concat assigned users
 	    	{
 	    		// Restore array with key with same value than param 'id'
-	    		$tmplist1=$object->userassigned; $tmplist2=array();
+	    		$tmplist1=$object->userassigned;
 	    		foreach($tmplist1 as $key => $val)
 	    		{
 	    			if ($val['id'] && $val['id'] != $object->userownerid)
@@ -1384,11 +1394,19 @@ if ($id > 0)
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
-			if ($object->userownerid > 0) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid,'transparency'=>$object->transparency);	// Owner first
+			if ($object->userownerid > 0)
+			{
+				$listofuserid[$object->userownerid]=array(
+					'id'=>$object->userownerid,
+					'transparency'=>$object->transparency,	// Force transparency on onwer from preoperty of event
+					'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
+					'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
+				);
+			}
 			if (! empty($object->userassigned))	// Now concat assigned users
 			{
 				// Restore array with key with same value than param 'id'
-				$tmplist1=$object->userassigned; $tmplist2=array();
+				$tmplist1=$object->userassigned;
 				foreach($tmplist1 as $key => $val)
 				{
 					if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
@@ -1403,6 +1421,7 @@ if ($id > 0)
 				$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
+
 		$listofcontactid=array();	// not used yet
 		$listofotherid=array();	// not used yet
 		print '<div class="assignedtouser">';

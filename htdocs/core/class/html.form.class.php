@@ -1692,10 +1692,10 @@ class Form
 			// Show my availability
 			if ($showproperties)
 			{
-				if ($user->id == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($user->id, array_keys($listofuserid)))
+				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid)))
 				{
 					$out.='<div class="myavailability inline-block">';
-					$out.='&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("MyAvailability").':</span>  <input id="transparency" class="marginleftonly marginrightonly" '.($action == 'view'?'disabled':'').' type="checkbox" name="transparency"'.($listofuserid[$user->id]['transparency']?' checked':'').'>'.$langs->trans("Busy");
+					$out.='&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("Availability").':</span>  <input id="transparency" class="marginleftonly marginrightonly" '.($action == 'view'?'disabled':'').' type="checkbox" name="transparency"'.($listofuserid[$ownerid]['transparency']?' checked':'').'>'.$langs->trans("Busy");
 					$out.='</div>';
 				}
 			}
