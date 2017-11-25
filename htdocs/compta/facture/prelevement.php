@@ -605,7 +605,6 @@ if ($object->id > 0)
 	print '<td align="center">'.$langs->trans("DateProcess").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
-	$var=true;
 
 	if ($result_sql)
 	{
@@ -614,7 +613,6 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
-
 
 			print '<tr class="oddeven">';
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
@@ -660,6 +658,7 @@ if ($object->id > 0)
 	if ($result)
 	{
 		$num = $db->num_rows($result);
+		$numclosed = $num;
 		$i = 0;
 
 		while ($i < $num)
@@ -690,8 +689,10 @@ if ($object->id > 0)
 			print "</tr>\n";
 			$i++;
 		}
-		if (! $num)
+
+		if (! $numclosed)
 			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+
 		$db->free($result);
 	}
 	else
