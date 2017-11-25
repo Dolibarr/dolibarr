@@ -530,19 +530,22 @@ if ($resql)
 			$companystatic->id=$objp->socid;
 			$companystatic->name=$objp->name;
 
-			$invoicerectmp->id=$objp->id;
+			$invoicerectmp->id=$objp->id?$objp->id:$objp->facid;
 			$invoicerectmp->frequency=$objp->frequency;
 			$invoicerectmp->suspended=$objp->suspended;
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
 			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
+			$invoicerectmp->ref=$objp->titre;
 
 			print '<tr class="oddeven">';
 
 			if (! empty($arrayfields['f.titre']['checked']))
 			{
-			   print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
-			   print "</a></td>\n";
+			   print '<td>';
+			   print $invoicerectmp->getNomUrl(1);
+			   print "</a>";
+			   print "</td>\n";
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['s.nom']['checked']))

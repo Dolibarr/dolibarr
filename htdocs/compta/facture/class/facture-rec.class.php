@@ -998,14 +998,16 @@ class FactureRec extends CommonInvoice
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 * @param	int		$withpicto       Add picto into link
-	 * @param  string	$option          Where point the link
-	 * @param  int		$max             Maxlength of ref
-	 * @param  int		$short           1=Return just URL
-	 * @param  string   $moretitle       Add more text to title tooltip
-	 * @return string 			         String with URL
+	 * @param	int		$withpicto       			Add picto into link
+	 * @param  string	$option          			Where point the link
+	 * @param  int		$max             			Maxlength of ref
+	 * @param  int		$short           			1=Return just URL
+	 * @param  string   $moretitle       			Add more text to title tooltip
+     * @param	int  	$notooltip		 			1=Disable tooltip
+     * @param  int		$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @return string 			         			String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
+	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='',$notooltip='',$save_lastsearch_value=-1)
 	{
 		global $langs;
 
@@ -1016,16 +1018,22 @@ class FactureRec extends CommonInvoice
 
         if ($short) return $url;
 
-		$picto='bill';
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
 
-		$link = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
 
-
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 
