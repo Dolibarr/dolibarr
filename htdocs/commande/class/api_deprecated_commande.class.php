@@ -438,7 +438,7 @@ class CommandeApi extends DolibarrApi
             $this->commande->$field = $value;
         }
 
-        if($this->commande->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->commande->update(DolibarrApiAccess::$user,1,'','','update'))
             return $this->get($id);
 
         return false;

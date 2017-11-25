@@ -419,7 +419,7 @@ class Orders extends DolibarrApi
 		throw new RestException(400, 'Error while updating availability');
 	}
 
-        if ($this->commande->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
+        if ($this->commande->update(DolibarrApiAccess::$user, 1, '', '', 'update'))
             return $this->get($id);
 
         return false;

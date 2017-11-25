@@ -924,7 +924,7 @@ class Commande extends CommonOrder
                 		    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
                 		    {
                 		        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-                		        $exp = new Expedition($db);
+                		        $exp = new Expedition($this->db);
                 		        $exp->fetch($this->origin_id);
                 		        $exp->fetchObjectLinked();
                 		        if (count($exp->linkedObjectsIds['commande']) > 0)
@@ -1030,8 +1030,8 @@ class Commande extends CommonOrder
                 $this->socid 				= $objsoc->id;
                 $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
                 $this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-                $this->fk_project			= '';
-                $this->fk_delivery_address	= '';
+                $this->fk_project			= 0;
+                $this->fk_delivery_address	= 0;
             }
 
             // TODO Change product price if multi-prices
@@ -2845,7 +2845,6 @@ class Commande extends CommonOrder
             if (empty($txtva)) $txtva=0;
             if (empty($txlocaltax1)) $txlocaltax1=0;
             if (empty($txlocaltax2)) $txlocaltax2=0;
-            if (empty($remise)) $remise=0;
             if (empty($remise_percent)) $remise_percent=0;
             if (empty($special_code) || $special_code == 3) $special_code=0;
 
@@ -2862,7 +2861,7 @@ class Commande extends CommonOrder
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
+            $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
        		// Clean vat code
     		$vat_src_code='';
@@ -2889,7 +2888,7 @@ class Commande extends CommonOrder
             $multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-            // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+            // Anciens indicateurs: $price, $subprice (a ne plus utiliser)
             $price = $pu_ht;
 			if ($price_base_type == 'TTC')
 			{
@@ -3018,7 +3017,7 @@ class Commande extends CommonOrder
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	function update(User $user, $notrigger=0)
 	{
 		$error=0;
 
@@ -3073,7 +3072,7 @@ class Commande extends CommonOrder
 			if (! $notrigger)
 			{
 	            // Call trigger
-	            $result=$this->call_trigger('ORDER_MODIFY',$user);
+	            $result=$this->call_trigger('ORDER_MODIFY', $user);
 	            if ($result < 0) $error++;
 	            // End call triggers
 			}
@@ -4114,7 +4113,7 @@ class OrderLine extends CommonOrderLine
 	 *	@param      int		$notrigger		1 = disable triggers
      *	@return		int		<0 si ko, >0 si ok
      */
-	function update($user=null, $notrigger=0)
+	function update(User $user, $notrigger=0)
 	{
 		global $conf,$langs;
 
