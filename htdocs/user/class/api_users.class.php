@@ -285,7 +285,9 @@ class Users extends DolibarrApi
 	 * @param   object  $object    Object to clean
 	 * @return    array    Array of cleaned object properties
 	 */
-	function _cleanObjectDatas($object) {
+	function _cleanObjectDatas($object)
+	{
+		global $conf;
 
 	    $object = parent::_cleanObjectDatas($object);
 
@@ -298,6 +300,39 @@ class Users extends DolibarrApi
 	    unset($object->total_localtax1);
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
+
+	    unset($object->libelle_incoterms);
+	    unset($object->location_incoterms);
+
+	    unset($object->fk_delivery_address);
+	    unset($object->fk_incoterms);
+	    unset($object->all_permissions_are_loaded);
+	    unset($object->shipping_method_id);
+	    unset($object->nb_rights);
+	    unset($object->search_sid);
+	    unset($object->ldap_sid);
+	    unset($object->clicktodial_loaded);
+
+	    // List of properties never returned by API, whatever are permissions
+	    unset($object->pass);
+	    unset($object->pass_indatabase);
+	    unset($object->pass_indatabase_crypted);
+	    unset($object->pass_temp);
+	    unset($object->api_key);
+	    unset($object->clicktodial_password);
+	    unset($object->openid);
+
+
+	    $canreadsalary = ((! empty($conf->salaries->enabled) && ! empty(DolibarrApiAccess::$user->rights->salaries->read))
+	    	|| (! empty($conf->hrm->enabled) && ! empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
+
+		if (! $canreadsalary)
+		{
+			unset($object->salary);
+			unset($object->salaryextra);
+			unset($object->thm);
+			unset($object->tjm);
+		}
 
 	    return $object;
 	}
