@@ -727,7 +727,8 @@ else
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
-		$formmail->withfromreadonly=0;
+		$formmail->withfromreadonly=1;
+		$formmail->fromtype='all';
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;

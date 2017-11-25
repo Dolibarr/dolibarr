@@ -138,7 +138,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 
 
 /*
- * ACTIONS
+ * Actions
  *
  * Put here all code to do according to value of "$action" parameter
  */
@@ -183,9 +183,9 @@ if (empty($reshook))
 
 
 /*
- * VIEW
+ * View
  *
- * Put here all code to build page
+ * Put here all code to render page
  */
 
 $form=new Form($db);

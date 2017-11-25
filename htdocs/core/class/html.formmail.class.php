@@ -417,6 +417,11 @@ class FormMail extends Form
 				//$out.='</div>';
 			}
 
+			/*var_dump(! empty($this->withfromreadonly));
+			var_dump($this->withfrom);
+			var_dump($this->fromtype);
+			var_dump($this->fromname);*/
+
 			// From
 			if (! empty($this->withfrom))
 			{
@@ -428,7 +433,8 @@ class FormMail extends Form
 						&& ! ($this->fromtype === 'company')
 						&& ! preg_match('/user_aliases/', $this->fromtype)
 						&& ! preg_match('/global_aliases/', $this->fromtype)
-						&& ! preg_match('/senderprofile/', $this->fromtype))
+						&& ! preg_match('/senderprofile/', $this->fromtype)
+						&& ! ($this->fromtype === 'all'))
 					{
 						// Use this->fromname and this->frommail or error if not defined
 						$out.= $this->fromname;
@@ -446,6 +452,15 @@ class FormMail extends Form
 						}
 					} else {
 						$liste = array();
+
+						if ($this->fromtype === 'all')
+						{
+							$liste['robot'] = $this->fromname;
+							if ($this->frommail)
+							{
+								$liste['robot'] .= ' &lt;'.$this->frommail.'&gt;';
+							}
+						}
 
 						// Add user email
 						if (empty($user->email))
@@ -500,15 +515,16 @@ class FormMail extends Form
 								}
 							}
 						}
+						// Using combo here make the '<email>' no more visible on list.
+						//$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200onsmartphone', 1, '', $disablebademails);
 						$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200onsmartphone', 0, '', $disablebademails);
-						//$out.= ajax_combobox('fromtype');
 					}
 
 					$out.= "</td></tr>\n";
 				}
 				else
 				{
-					$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom")."</td><td>";
+					$out.= '<tr><td class="fieldrequired width200">'.$langs->trans("MailFrom")."</td><td>";
 					$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" class="maxwidth200onsmartphone" value="'.$this->fromname.'" />';
 					$out.= '&nbsp; &nbsp; ';
 					$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" class="maxwidth200onsmartphone" value="'.$this->frommail.'" />&gt;';
@@ -639,7 +655,7 @@ class FormMail extends Form
 				}
 				else
 				{
-					$out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
+					$out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
 					if (! empty($this->withtoccc) && is_array($this->withtoccc))
 					{
 						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
