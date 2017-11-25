@@ -342,12 +342,12 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="id" value="'.$id.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton.' '.$morehtmlcenter, $num, $nbtotalofrecords, 'unlock', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton.' '.$morehtmlcenter, $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 $topicmail="Information";
-//$modelmail="websiteaccount";
-$objecttmp=new Product($db);
-//$trackid='websiteaccount'.$object->id;
+$modelmail="websiteaccount";
+$objecttmp=new WebsiteAccount($db);
+$trackid='websiteaccount'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
