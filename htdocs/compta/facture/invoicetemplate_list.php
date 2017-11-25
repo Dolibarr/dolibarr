@@ -81,6 +81,7 @@ $month_date_when=GETPOST('month_date_when');
 $search_recurring=GETPOST('search_recurring','int');
 $search_frequency=GETPOST('search_frequency','alpha');
 $search_unit_frequency=GETPOST('search_unit_frequency','alpha');
+$search_status=GETPOST('search_status','int');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -180,6 +181,7 @@ if (empty($reshook))
 		$search_recurring='';
 		$search_frequency='';
 		$search_unit_frequency='';
+		$search_status='';
 		$search_array_options=array();
 	}
 
@@ -238,7 +240,12 @@ if ($search_recurring == '1')     $sql .= ' AND f.frequency > 0';
 if ($search_recurring == '0')     $sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 if ($search_frequency != '')      $sql .= natural_search('f.frequency', $search_frequency, 1);
 if ($search_unit_frequency != '') $sql .= natural_search('f.unit_frequency', $search_unit_frequency);
-
+if ($search_status != '' && $search_status >= -1)
+{
+	if ($search_status == 0) $sql.= ' AND frequency = 0 AND suspended = 0';
+	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
+	if ($search_status == -1) $sql.= ' AND suspended = 1';
+}
 if ($month > 0)
 {
 	if ($year > 0 && empty($day))
@@ -301,6 +308,7 @@ if ($resql)
 	if ($search_recurring != '' && $search_recurrning != '-1')    $param.='&search_recurring='  .urlencode($search_recurring);
 	if ($search_frequency > 0)      $param.='&search_frequency='  .urlencode($search_frequency);
 	if ($search_unit_frequency > 0) $param.='&search_unit_frequency='.urlencode($search_unit_frequency);
+	if ($search_status != '')		$param.='&search_status='.urlencode($search_status);
 	if ($option)             $param.="&option=".urlencode($option);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
@@ -474,6 +482,12 @@ if ($resql)
 	if (! empty($arrayfields['status']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
+		$liststatus=array(
+			0=>$langs->trans("Draft"),
+			1=>$langs->trans("Active"),
+			-1=>$langs->trans("Disabled"),
+		);
+		print $form->selectarray('search_status', $liststatus, $search_status, -2);
 		print '</td>';
 	}
 	// Action column
