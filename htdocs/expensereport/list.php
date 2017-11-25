@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
@@ -114,7 +114,7 @@ $arrayfields=array(
     'd.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
     'd.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
     'd.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-    'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'd.date_create'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'd.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
@@ -613,7 +613,7 @@ if ($resql)
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
-	if (! empty($arrayfields['d.datec']['checked']))
+	if (! empty($arrayfields['d.date_create']['checked']))
 	{
 	    print '<td class="liste_titre">';
 	    print '</td>';
@@ -667,9 +667,9 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.fk_statut']['checked'])) print_liste_field_titre($arrayfields['d.fk_statut']['label'],$_SERVER["PHP_SELF"],"d.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.date_create']['checked'])) print_liste_field_titre($arrayfields['d.date_create']['label'],$_SERVER["PHP_SELF"],"d.date_create","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.tms']['checked']))         print_liste_field_titre($arrayfields['d.tms']['label'],$_SERVER["PHP_SELF"],"d.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.fk_statut']['checked']))   print_liste_field_titre($arrayfields['d.fk_statut']['label'],$_SERVER["PHP_SELF"],"d.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -813,7 +813,7 @@ if ($resql)
             $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
             // Date creation
-            if (! empty($arrayfields['d.datec']['checked']))
+            if (! empty($arrayfields['d.date_create']['checked']))
             {
                 print '<td align="center" class="nowrap">';
                 print dol_print_date($db->jdate($obj->date_create), 'dayhour');
