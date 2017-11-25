@@ -167,7 +167,7 @@ class FormActions
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $sortfield='a.datep';
+        $sortfield='a.datep,a.id';
         $sortorder='DESC';
 
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max?($max+1):0));
