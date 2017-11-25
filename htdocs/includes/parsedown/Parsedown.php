@@ -141,7 +141,11 @@ class Parsedown
 
                 foreach ($parts as $part)
                 {
-                    $shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+                	// @CHANGE LDR Fix when mb_strlen is not available
+                	//$shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+                	if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
+                	else $len = strlen($line);
+                	$shortage = 4 - $len % 4;
 
                     $line .= str_repeat(' ', $shortage);
                     $line .= $part;
@@ -515,10 +519,10 @@ class Parsedown
                 ),
             );
 
-            if($name === 'ol') 
+            if($name === 'ol')
             {
                 $listStart = stristr($matches[0], '.', true);
-                
+
                 if($listStart !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $listStart);
