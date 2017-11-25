@@ -960,7 +960,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 	                    	}
 	                    	catch(Exception $e)
 	                    	{
-
+								// No catch yet
 	                    	}
 
 	                        if (! $result)

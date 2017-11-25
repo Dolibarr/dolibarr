@@ -1021,7 +1021,7 @@ function getSourceDocRef($val, $typerecord)
 	if ($ref == '(DonationPayment)') {
 		$ref = $langs->trans('Donation');
 	}
-	if ($refl == '(SubscriptionPayment)') {
+	if ($ref == '(SubscriptionPayment)') {
 		$ref = $langs->trans('Subscription');
 	}
 	if ($ref == '(ExpenseReportPayment)') {
@@ -1030,6 +1030,8 @@ function getSourceDocRef($val, $typerecord)
 	if ($ref == '(payment_salary)') {
 		$ref = $langs->trans('Employee');
 	}
+
+	$sqlmid = '';
 	if ($typerecord == 'payment')
 	{
 		$sqlmid = 'SELECT payfac.fk_facture as id, f.facnumber as ref';
