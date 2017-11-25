@@ -5608,12 +5608,12 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 	{
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
 		{
+			$msgishtml = 0;
+			if (dol_textishtml($text,1)) $msgishtml = 1;
+
 			// If key is __(TranslationKey|langfile)__, then force load of langfile.lang
 			$tmp=explode('|',$reg[1]);
 			if (! empty($tmp[1])) $outputlangs->load($tmp[1]);
-
-			$msgishtml = 0;
-			if (dol_textishtml($text,1)) $msgishtml = 1;
 
 			$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
 		}
@@ -5626,8 +5626,9 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 		$msgishtml = 0;
 		if (dol_textishtml($text,1)) $msgishtml = 1;
 
-		$newval=empty($conf->global->$reg[1])?'':$conf->global->$reg[1];
-		$text = preg_replace('/__\['.preg_quote($reg[1], '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
+		$keyfound = $reg[1];
+		$newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
+		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
 	}
 
 	// Make substitition for array $substitutionarray
