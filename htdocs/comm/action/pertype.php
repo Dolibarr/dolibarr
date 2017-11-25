@@ -772,7 +772,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	global $user, $conf, $langs, $hookmanager, $action;
 	global $filter, $filtert, $status, $actioncode;	// Filters used into search form
 	global $theme_datacolor;	// Array with a list of different we can use (come from theme)
-	global $cachethirdparties, $cachecontacts, $colorindexused;
+	global $cachethirdparties, $cachecontacts, $cacheprojects, $colorindexused;
 	global $begin_h, $end_h;
 
 	$cases1 = array();	// Color first half hour
@@ -894,33 +894,33 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 							$cases1[$h][$event->id]['color']=$color;
 							if ($event->fk_project > 0)
 							{
-								if (empty($cache_project[$event->fk_project]))
+								if (empty($cacheprojects[$event->fk_project]))
 								{
 									$tmpproj=new Project($db);
 									$tmpproj->fetch($event->fk_project);
-									$cache_project[$event->fk_project]=$tmpproj;
+									$cacheprojects[$event->fk_project]=$tmpproj;
 								}
-								$cases1[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cache_project[$event->fk_project]->ref.' - '.$cache_project[$event->fk_project]->title;
+								$cases1[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;
 							}
 							if ($event->socid > 0)
 							{
-								if (empty($cache_thirdparty[$event->socid]))
+								if (empty($cachethirdparties[$event->socid]))
 								{
 									$tmpthirdparty=new Societe($db);
 									$tmpthirdparty->fetch($event->socid);
-									$cache_thirdparty[$event->socid]=$tmpthirdparty;
+									$cachethirdparties[$event->socid]=$tmpthirdparty;
 								}
-								$cases1[$h][$event->id]['string'].=', '.$cache_thirdparty[$event->socid]->name;
+								$cases1[$h][$event->id]['string'].=', '.$cachethirdparties[$event->socid]->name;
 							}
 							if ($event->contactid > 0)
 							{
-								if (empty($cache_contact[$event->contactid]))
+								if (empty($cachecontacts[$event->contactid]))
 								{
 									$tmpcontact=new Contact($db);
 									$tmpcontact->fetch($event->contactid);
-									$cache_contact[$event->contactid]=$tmpcontact;
+									$cachecontacts[$event->contactid]=$tmpcontact;
 								}
-								$cases1[$h][$event->id]['string'].=', '.$cache_contact[$event->contactid]->getFullName($langs);
+								$cases1[$h][$event->id]['string'].=', '.$cachecontacts[$event->contactid]->getFullName($langs);
 							}
 						}
 						if ($event->date_start_in_calendar < $c && $dateendtouse > $b)
@@ -940,33 +940,33 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 							$cases2[$h][$event->id]['color']=$color;
 							if ($event->fk_project > 0)
 							{
-								if (empty($cache_project[$event->fk_project]))
+								if (empty($cacheprojects[$event->fk_project]))
 								{
 									$tmpproj=new Project($db);
 									$tmpproj->fetch($event->fk_project);
-									$cache_project[$event->fk_project]=$tmpproj;
+									$cacheprojects[$event->fk_project]=$tmpproj;
 								}
-								$cases2[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cache_project[$event->fk_project]->ref.' - '.$cache_project[$event->fk_project]->title;
+								$cases2[$h][$event->id]['string'].=', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;
 							}
 							if ($event->socid > 0)
 							{
-								if (empty($cache_thirdparty[$event->socid]))
+								if (empty($cachethirdparties[$event->socid]))
 								{
 									$tmpthirdparty=new Societe($db);
 									$tmpthirdparty->fetch($event->socid);
-									$cache_thirdparty[$event->socid]=$tmpthirdparty;
+									$cachethirdparties[$event->socid]=$tmpthirdparty;
 								}
-								$cases2[$h][$event->id]['string'].=', '.$cache_thirdparty[$event->socid]->name;
+								$cases2[$h][$event->id]['string'].=', '.$cachethirdparties[$event->socid]->name;
 							}
 							if ($event->contactid > 0)
 							{
-								if (empty($cache_contact[$event->contactid]))
+								if (empty($cachecontacts[$event->contactid]))
 								{
 									$tmpcontact=new Contact($db);
 									$tmpcontact->fetch($event->contactid);
-									$cache_contact[$event->contactid]=$tmpcontact;
+									$cachecontacts[$event->contactid]=$tmpcontact;
 								}
-								$cases2[$h][$event->id]['string'].=', '.$cache_contact[$event->contactid]->getFullName($langs);
+								$cases2[$h][$event->id]['string'].=', '.$cachecontacts[$event->contactid]->getFullName($langs);
 							}
 						}
 					}

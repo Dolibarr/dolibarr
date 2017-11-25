@@ -35,7 +35,7 @@ function printBookmarksList($aDb, $aLangs)
 	$db = $aDb;
 	$langs = $aLangs;
 
-	$ret.= '<div class="menu_top"></div>'."\n";
+	$ret = '<div class="menu_top"></div>'."\n";
 
 	if (! empty($conf->use_javascript_ajax)) {		// Bookmark autosubmit can't work when javascript is off.
 
@@ -67,10 +67,8 @@ function printBookmarksList($aDb, $aLangs)
 		    $url.=($tmpurl?'?'.$tmpurl:'');
 		}
 
-		$ret = '';
-
 		// Menu bookmark
-		$ret.= '<div class="menu_top"></div>'."\n";
+		$ret = '<div class="menu_top"></div>'."\n";
 
 		$ret.= '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
 		$ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';

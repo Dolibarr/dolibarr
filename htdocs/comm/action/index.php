@@ -703,7 +703,7 @@ if ($showbirthday)
             $event->type_code='BIRTHDAY';
             $event->libelle=$langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname,$obj->lastname);
             $event->percentage=100;
-            $event->fulldayevent=true;
+            $event->fulldayevent=1;
 
             $event->date_start_in_calendar=$event->datep;
             $event->date_end_in_calendar=$event->datef;
@@ -876,7 +876,7 @@ if (count($listofextcals))
                     $dateend=dol_stringtotime($icalevent['DTEND;VALUE=DATE'],1)-1;  // We remove one second to get last second of day
                     //print 'x'.$datestart.'-'.$dateend;exit;
                     //print dol_print_date($dateend,'dayhour','gmt');
-                    $event->fulldayevent=true;
+                    $event->fulldayevent=1;
                     $addevent=true;
                 }
                 elseif (!is_array($icalevent['DTSTART'])) // not fullday event (DTSTART is not array. It is a value like '19700101T000000Z' for 00:00 in greenwitch)

@@ -20,7 +20,7 @@
 /**
  * \file accountancy/class/bookkeeping.class.php
  * \ingroup Advanced accountancy
- * \brief File of class for lettering
+ * \brief 	File of class for lettering
  */
 include_once DOL_DOCUMENT_ROOT . "/accountancy/class/bookkeeping.class.php";
 include_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
@@ -37,8 +37,9 @@ class lettering extends BookKeeping
 	 * @param int $socid Thirdparty id
 	 * @return void
 	 */
-	public function lettrageTiers($socid) {
-		$db = $this->db;
+	public function lettrageTiers($socid)
+	{
+		$error = 0;
 
 		$object = new Societe($this->db);
 		$object->id = $socid;
@@ -70,20 +71,20 @@ class lettering extends BookKeeping
 
 		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
 		$sql .= "  AND (bk.lettering_code != '' OR bk.lettering_code IS NULL) ";
-		$sql .= $db->order('bk.doc_date', 'DESC');
+		$sql .= $this->db->order('bk.doc_date', 'DESC');
 
 		// echo $sql;
 		//
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 
-			while ( $obj = $db->fetch_object($resql) ) {
+			while ($obj = $this->db->fetch_object($resql) ) {
 				$ids = array();
 				$ids_fact = array();
 
-				if ($obj->type == 'payment_supplier') {
-
+				if ($obj->type == 'payment_supplier')
+				{
 					$sql = 'SELECT DISTINCT bk.rowid, facf.ref, facf.ref_supplier, payf.fk_bank, facf.rowid as fact_id';
 					$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
@@ -103,9 +104,9 @@ class lettering extends BookKeeping
 					}
 					$sql .= " )  ";
 
-					$resql2 = $db->query($sql);
+					$resql2 = $this->db->query($sql);
 					if ($resql2) {
-						while ( $obj2 = $db->fetch_object($resql2) ) {
+						while ( $obj2 = $this->db->fetch_object($resql2) ) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
 						}
@@ -130,9 +131,9 @@ class lettering extends BookKeeping
 						}
 						$sql .= " )  ";
 
-						$resql2 = $db->query($sql);
+						$resql2 = $this->db->query($sql);
 						if ($resql2) {
-							while ( $obj2 = $db->fetch_object($resql2) ) {
+							while ( $obj2 = $this->db->fetch_object($resql2) ) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
 						} else {
@@ -161,9 +162,9 @@ class lettering extends BookKeeping
 					}
 					$sql .= " )  ";
 
-					$resql2 = $db->query($sql);
+					$resql2 = $this->db->query($sql);
 					if ($resql2) {
-						while ( $obj2 = $db->fetch_object($resql2) ) {
+						while ( $obj2 = $this->db->fetch_object($resql2) ) {
 							$ids[$obj2->rowid] = $obj2->rowid;
 							$ids_fact[] = $obj2->fact_id;
 						}
@@ -188,9 +189,9 @@ class lettering extends BookKeeping
 						}
 						$sql .= " )  ";
 
-						$resql2 = $db->query($sql);
+						$resql2 = $this->db->query($sql);
 						if ($resql2) {
-							while ( $obj2 = $db->fetch_object($resql2) ) {
+							while ( $obj2 = $this->db->fetch_object($resql2) ) {
 								$ids[$obj2->rowid] = $obj2->rowid;
 							}
 						} else {
@@ -220,8 +221,8 @@ class lettering extends BookKeeping
 	 *
 	 * @param array $ids ids array
 	 * @param boolean $notrigger no trigger
- 	* @return number
-	*/
+ 	 * @return number
+	 */
 	public function updateLettrage($ids = array(), $notrigger = false) {
 		$error = 0;
 

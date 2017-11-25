@@ -311,13 +311,15 @@ class Contrat extends CommonObject
 		// Load lines
 		$this->fetch_lines();
 
+		$now = dol_now();
+
 		$ok=true;
 		foreach($this->lines as $contratline)
 		{
 			// Close lines not already closed
 	        if ($contratline->statut != 5)
 	        {
-				$contratline->date_cloture=dol_now();
+				$contratline->date_cloture=$now;
 				$contratline->fk_user_cloture=$user->id;
 				$contratline->statut='5';
 				$result=$contratline->update($user);
@@ -448,9 +450,9 @@ class Contrat extends CommonObject
 			if (! $error)
 			{
 				$this->ref = $num;
-				$this->statut=1;
-				$this->brouillon=0;
-				$this->date_validation=$now;
+				$this->statut = 1;
+				$this->brouillon = 0;
+				$this->date_validation = $now;
 			}
 		}
 		else
