@@ -84,7 +84,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 if (! $versionfrom && ! $versionto)
 {
 	print 'Error: Parameter versionfrom or versionto missing.'."\n";
-	print 'Upgrade must be ran from cmmand line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);

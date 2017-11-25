@@ -22,7 +22,7 @@
  *
  * cd htdocs/install
  * php upgrade.php 3.4.0 3.5.0
- * php upgrade2.php 3.4.0 3.5.0
+ * php upgrade2.php 3.4.0 3.5.0 [MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE]
  *
  * Return code is 0 if OK, >0 if error
  */
@@ -89,7 +89,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto || preg_match('/version/', $versionto)))
 {
 	print 'Error: Parameter versionfrom or versionto missing or having a bad format.'."\n";
-	print 'Upgrade must be ran from cmmand line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
@@ -373,7 +373,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         {
             // No particular code
         }
-		
+
         // Scripts for last version
         $afterversionarray=explode('.','6.0.9');
         $beforeversionarray=explode('.','7.0.9');
