@@ -325,6 +325,7 @@ class FormMail extends Form
 			if ($this->withform == 1)
 			{
 				$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
+
 				$out.= '<a id="formmail" name="formmail"></a>';
 				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
 				$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -421,7 +422,7 @@ class FormMail extends Form
 			{
 				if (! empty($this->withfromreadonly))
 				{
-					$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
+					$out.= '<tr><td class="fieldrequired minwidth200">'.$langs->trans("MailFrom").'</td><td>';
 
 					if (! ($this->fromtype === 'user' && $this->fromid > 0)
 						&& ! ($this->fromtype === 'company')
@@ -499,7 +500,7 @@ class FormMail extends Form
 								}
 							}
 						}
-						$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
+						$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200onsmartphone', 0, '', $disablebademails);
 						//$out.= ajax_combobox('fromtype');
 					}
 
@@ -508,9 +509,9 @@ class FormMail extends Form
 				else
 				{
 					$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom")."</td><td>";
-					$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" size="32" value="'.$this->fromname.'" />';
+					$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" class="maxwidth200onsmartphone" value="'.$this->fromname.'" />';
 					$out.= '&nbsp; &nbsp; ';
-					$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" size="32" value="'.$this->frommail.'" />&gt;';
+					$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" class="maxwidth200onsmartphone" value="'.$this->frommail.'" />&gt;';
 					$out.= "</td></tr>\n";
 				}
 			}
@@ -518,7 +519,7 @@ class FormMail extends Form
 			// To
 			if (! empty($this->withto) || is_array($this->withto))
 			{
-				$out.= '<tr><td class="fieldrequired" width="180">';
+				$out.= '<tr><td class="fieldrequired">';
 				if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 				else $out.= $langs->trans("MailTo");
 				$out.= '</td><td>';
@@ -585,12 +586,15 @@ class FormMail extends Form
 			// withoptiononeemailperrecipient
 			if (! empty($this->withoptiononeemailperrecipient))
 			{
-				$out.= '<tr><td>';
+				$out.= '<tr><td class="minwidth200">';
 				$out.= $langs->trans("GroupEmails");
 				$out.= '</td><td>';
 				$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
-				$out.= $langs->trans("OneEmailPerRecipient").' - ';
+				$out.= $langs->trans("OneEmailPerRecipient");
+				$out.='<span class="hideonsmartphone">';
+				$out.=' - ';
 				$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+				$out.='</span>';
 				$out.= '</td></tr>';
 			}
 
@@ -606,7 +610,7 @@ class FormMail extends Form
 				}
 				else
 				{
-					$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
+					$out.= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
 					if (! empty($this->withtocc) && is_array($this->withtocc))
 					{
 						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
@@ -762,7 +766,7 @@ class FormMail extends Form
 
 				if (is_numeric($this->withfile))
 				{
-					// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+					// TODO Trick to have param removedfile containing nb of file to delete. But this does not works without javascript
 					$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 					$out.= '<script type="text/javascript" language="javascript">';
 					$out.= 'jQuery(document).ready(function () {';
