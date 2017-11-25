@@ -429,12 +429,14 @@ class FormMail extends Form
 				{
 					$out.= '<tr><td class="fieldrequired minwidth200">'.$langs->trans("MailFrom").'</td><td>';
 
+					// $this->fromtype is the default value to use to select sender
 					if (! ($this->fromtype === 'user' && $this->fromid > 0)
 						&& ! ($this->fromtype === 'company')
+						&& ! ($this->fromtype === 'robot')
 						&& ! preg_match('/user_aliases/', $this->fromtype)
 						&& ! preg_match('/global_aliases/', $this->fromtype)
 						&& ! preg_match('/senderprofile/', $this->fromtype)
-						&& ! ($this->fromtype === 'all'))
+						)
 					{
 						// Use this->fromname and this->frommail or error if not defined
 						$out.= $this->fromname;
@@ -452,15 +454,6 @@ class FormMail extends Form
 						}
 					} else {
 						$liste = array();
-
-						if ($this->fromtype === 'all')
-						{
-							$liste['robot'] = $this->fromname;
-							if ($this->frommail)
-							{
-								$liste['robot'] .= ' &lt;'.$this->frommail.'&gt;';
-							}
-						}
 
 						// Add user email
 						if (empty($user->email))
@@ -497,6 +490,16 @@ class FormMail extends Form
 							}
 						}
 						else dol_print_error($this->db);
+
+						// Also add robot email
+						if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM) && $conf->global->MAIN_MAIL_EMAIL_FROM != $conf->global->MAIN_INFO_SOCIETE_MAIL)
+						{
+							$liste['robot'] = $conf->global->MAIN_MAIL_EMAIL_FROM;
+							if ($this->frommail)
+							{
+								$liste['robot'] .= ' &lt;'.$conf->global->MAIN_MAIL_EMAIL_FROM.'&gt;';
+							}
+						}
 
 						foreach($listaliases as $typealias => $listalias)
 						{
