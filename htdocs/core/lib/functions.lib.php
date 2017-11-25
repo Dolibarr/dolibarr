@@ -5370,7 +5370,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 	if (empty($exclude) || ! in_array('system', $exclude))
 	{
-		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationKey');
+		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
 		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 	}
 	if (empty($exclude) || ! in_array('mycompany', $exclude))
@@ -5605,7 +5606,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 	// Make substitution for language keys
 	if (is_object($outputlangs))
 	{
-		while (preg_match('/__\(([^\)]*)\)__/', $text, $reg))
+		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
 		{
 			// If key is __(TranslationKey|langfile)__, then force load of langfile.lang
 			$tmp=explode('|',$reg[1]);
@@ -5616,6 +5617,17 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 
 			$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
 		}
+	}
+
+	// Make substitution for constant keys. Must be after the substitution of translation, so if text of translation contains a constant,
+	// it is also converted.
+	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
+	{
+		$msgishtml = 0;
+		if (dol_textishtml($text,1)) $msgishtml = 1;
+
+		$newval=empty($conf->global->$reg[1])?'':$conf->global->$reg[1];
+		$text = preg_replace('/__\['.preg_quote($reg[1], '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
 	}
 
 	// Make substitition for array $substitutionarray
@@ -5650,16 +5662,16 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 
 	// Add a substitution key for each extrafields, using key __EXTRA_XXX__
 	// TODO Remove this. Already available into the getCommonSubstitutionArray used to build the substitution array.
-	if (is_object($object) && is_array($object->array_options))
+	/*if (is_object($object) && is_array($object->array_options))
 	{
 		foreach($object->array_options as $key => $val)
 		{
 			$keyshort=preg_replace('/^(options|extra)_/','',$key);
-			$substitutionarray['__EXTRA_'.$keyshort.'__']=$val;
+			$substitutionarray['__EXTRAFIELD_'.$keyshort.'__']=$val;
 			// For backward compatibiliy
 			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
 		}
-	}
+	}*/
 
 	// Check if there is external substitution to do, requested by plugins
 	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);

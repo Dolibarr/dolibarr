@@ -402,7 +402,7 @@ class FormMail extends Form
 			$out.= '<table class="border" width="100%">'."\n";
 
 			// Substitution array
-			if (! empty($this->withsubstit))		// Unset of set ->withsubstit=0 to disable this.
+			if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
 			{
 				$out.= '<tr><td colspan="2" align="right">';
 				//$out.='<div class="floatright">';
@@ -890,8 +890,7 @@ class FormMail extends Form
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
-
-				if (isset($_POST["message"]) &&  ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
+				if (isset($_POST["message"]) && ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
 				else
 				{
 					$defaultmessage=make_substitutions($defaultmessage,$this->substit);
