@@ -270,6 +270,7 @@ if (empty($reshook))
                 if ($value == 'private' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='0';
                 if ($value == 'position' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='1';
                 if ($_POST[$keycode] == '' && $keycode != 'langcode') $sql.="null";		// lang must be '' if not defined so the unique key that include lang will work
+                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="null";
                 else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
