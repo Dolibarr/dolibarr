@@ -1033,28 +1033,31 @@ class FactureRec extends CommonInvoice
 	 *  Return label of object status
 	 *
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @return     string			        Label
+	 *  @param      integer	$alreadypaid    Not used on recurring invoices
+	 *  @return     string			        Label of status
 	 */
-	function getLibStatut($mode=0)
+	function getLibStatut($mode=0, $alreadypaid=-1)
 	{
-		return $this->LibStatut($this->frequency?1:0, $this->suspended, $mode, empty($this->type)?0:$this->type);
+
+		return $this->LibStatut($this->frequency?1:0, $this->suspended, $mode, $alreadypaid, empty($this->type)?0:$this->type);
 	}
 
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *	Return label of a status
 	 *
 	 *	@param    	int  	$recur         	Is it a recurring invoice ?
 	 *	@param      int		$status        	Id status (suspended or not)
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 *	@param		integer	$alreadypaid	Not used for recurring invoices
 	 *	@param		int		$type			Type invoice
-	 *	@return     string        			Libelle du statut
+	 *	@return     string        			Label of status
 	 */
-	function LibStatut($recur, $status, $mode=0, $type=0)
+	function LibStatut($recur, $status, $mode=0, $alreadypaid=-1, $type=0)
 	{
 		global $langs;
 		$langs->load('bills');
 
-		//print "$recur,$status,$mode,$type";
+		//print "$recur,$status,$mode,$alreadypaid,$type";
 		if ($mode == 0)
 		{
 			$prefix='';
