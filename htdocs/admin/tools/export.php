@@ -214,10 +214,10 @@ else
 
         $_SESSION["commandbackupresult"]=$resultstring;
 	}
-	else
+	/*else
 	{
-		setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'mesgs');
-	}
+		setEventMessages($langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user), null, 'warnings');
+	}*/
 }
 
 

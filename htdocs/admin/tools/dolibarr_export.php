@@ -463,6 +463,19 @@ if (! empty($_SESSION["commandbackuplastdone"]))
 	$_SESSION["commandbackuptorun"]='';
 	$_SESSION["commandbackupresult"]='';
 }
+if (! empty($_SESSION["commandbackuptorun"]))
+{
+	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user).':</font><br>'."\n";
+	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
+	print ajax_autoselect("commandbackuptoruntext", 0);
+	print '<br>';
+
+	//print $paramclear;
+
+	$_SESSION["commandbackuplastdone"]='';
+	$_SESSION["commandbackuptorun"]='';
+	$_SESSION["commandbackupresult"]='';
+}
 ?>
 
 </div> <!-- end div center button -->

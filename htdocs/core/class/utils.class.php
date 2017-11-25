@@ -196,7 +196,7 @@ class Utils
 
 		// Check type parameter
 		if ($type == 'auto') $type = $db->type;
-		if (! in_array($type, array('pgsql', 'mysql', 'mysqli','mysqlnobin')))
+		if (! in_array($type, array('postgresql', 'pgsql', 'mysql', 'mysqli', 'mysqlnobin')))
 		{
 		    $langs->load("errors");
 		    $this->error=$langs->transnoentitiesnoconv("ErrorBadValueForParameter", $type, "Basetype");
@@ -381,7 +381,7 @@ class Utils
 		}
 
 		// POSTGRESQL
-		if ($type == 'postgresql')
+		if ($type == 'postgresql' || $type == 'pgsql')
 		{
 		    $cmddump=$conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
 
