@@ -163,22 +163,6 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
                             {
                                 if ($file_searched == 'api_access.class.php') continue;
 
-                                // Support of the deprecated API.
-                                /*if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$regapi))
-                                {
-                                    $classname = ucwords($regapi[1]).'Api';
-                                    require_once $dir_part.$file_searched;
-                                    if (class_exists($classname))
-                                    {
-                                        //dol_syslog("Found deprecated API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
-                                        $api->r->addAPIClass($classname, '/');
-                                    }
-                                    else
-                                    {
-                                        dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
-                                    }
-                                }
-                                else*/
                                 if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$regapi))
                                 {
                                     $classname = ucwords($regapi[1]);
@@ -232,52 +216,33 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
     // Load a dedicated API file
     dol_syslog("Load a dedicated API file moduledirforclass=".$moduledirforclass);
 
-    if (in_array($module, array('category','contact','customer','invoice','order','product','thirdparty','user')))  // Old Apis
-    {
-        $classfile = $module;
-        if ($module == 'customer') { $classfile = 'thirdparty'; }
-        if ($module == 'order')    { $classfile = 'commande'; }
-        $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_deprecated_'.$classfile.'.class.php', 0, 2);
-        $classname=ucwords($module);
-        if ($module == 'customer') { $classname='Thirdparty'; }
-        if ($module == 'order')    { $classname='Commande'; }
-        //var_dump($classfile);var_dump($classname);exit;
+	$tmpmodule = $module;
+	if ($tmpmodule != 'api')
+		$tmpmodule = preg_replace('/api$/i', '', $tmpmodule);
+	$classfile = str_replace('_', '', $tmpmodule);
+	if ($module == 'supplierproposals')
+		$classfile = 'supplier_proposals';
+	if ($module == 'supplierorders')
+		$classfile = 'supplier_orders';
+	if ($module == 'supplierinvoices')
+		$classfile = 'supplier_invoices';
+	$dir_part_file = dol_buildpath('/' . $moduledirforclass . '/class/api_' . $classfile . '.class.php', 0, 2);
 
-        $res = false;
-        if ($dir_part_file) $res = include_once $dir_part_file;
-        if (! $res)
-        {
-        	print 'API not found (failed to include API file)';
-        	header('HTTP/1.1 501 API not found (failed to include API file)');
-        	exit(0);
-        }
-        if (class_exists($classname.'Api')) $api->r->addAPIClass($classname.'Api', '/');
-    }
-    else
-    {
-    	$tmpmodule = $module;
-    	if ($tmpmodule != 'api') $tmpmodule = preg_replace('/api$/i','', $tmpmodule);
-        $classfile = str_replace('_', '', $tmpmodule);
-        if ($module == 'supplierproposals') $classfile = 'supplier_proposals';
-        if ($module == 'supplierorders')    $classfile = 'supplier_orders';
-        if ($module == 'supplierinvoices')  $classfile = 'supplier_invoices';
-        $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
+	$classname = ucwords($module);
 
-        $classname=ucwords($module);
+	dol_syslog('Search /' . $moduledirforclass . '/class/api_' . $classfile . '.class.php => dir_part_file=' . $dir_part_file . ' classname=' . $classname);
 
-        dol_syslog('Search /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.' classname='.$classname);
+	$res = false;
+	if ($dir_part_file)
+		$res = include_once $dir_part_file;
+	if (! $res) {
+		print 'API not found (failed to include API file)';
+		header('HTTP/1.1 501 API not found (failed to include API file)');
+		exit(0);
+	}
 
-        $res = false;
-        if ($dir_part_file) $res = include_once $dir_part_file;
-        if (! $res)
-        {
-        	print 'API not found (failed to include API file)';
-        	header('HTTP/1.1 501 API not found (failed to include API file)');
-        	exit(0);
-        }
-
-        if (class_exists($classname)) $api->r->addAPIClass($classname);
-    }
+	if (class_exists($classname))
+		$api->r->addAPIClass($classname);
 }
 
 // TODO If not found, redirect to explorer
