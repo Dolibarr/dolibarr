@@ -728,12 +728,13 @@ else
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->fromid=$user->id;
-		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
-		$formmail->withfromreadonly=1;
+		$formmail->fromalsorobot=1;
 		$formmail->fromtype=(GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+		$formmail->withfromreadonly=1;
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
