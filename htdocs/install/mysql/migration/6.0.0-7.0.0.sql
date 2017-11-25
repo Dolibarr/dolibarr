@@ -551,6 +551,21 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_uniq
 -- VPGSQL8.2 SELECT setval('llx_supplier_proposaldet_rowid_seq', (SELECT MAX(rowid) FROM llx_supplier_proposaldet));
 
 
+create table llx_onlinesignature
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  entity                    integer DEFAULT 1 NOT NULL,
+  object_type               varchar(32) NOT NULL,
+  object_id					integer NOT NULL,
+  datec                     datetime NOT NULL,
+  tms                       timestamp,
+  name						varchar(255) NOT NULL,
+  ip						varchar(128),
+  pathoffile				varchar(255)
+)ENGINE=innodb;
+
+
+
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
 
