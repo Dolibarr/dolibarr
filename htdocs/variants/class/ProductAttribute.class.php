@@ -149,12 +149,14 @@ class ProductAttribute
 	/**
 	 * Updates a product attribute
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function update()
+	public function update(User $user)
 	{
 		//Ref must be uppercase
-		$this->ref = strtoupper($this->ref);
+		$this->ref = trim(strtoupper($this->ref));
+		$this->label = trim($this->label);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute SET ref = '".$this->db->escape($this->ref)."', label = '".$this->db->escape($this->label)."', rang = ".(int) $this->rang." WHERE rowid = ".(int) $this->id;
 

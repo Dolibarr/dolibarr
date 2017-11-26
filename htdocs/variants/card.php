@@ -46,10 +46,10 @@ if ($_POST) {
 
 	if ($action == 'edit') {
 
-		$object->label = $label;
 		$object->ref = $ref;
+		$object->label = $label;
 
-		if ($object->update() < 1) {
+		if ($object->update($user) < 1) {
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 		} else {
 			setEventMessage($langs->trans('RecordSaved'));
@@ -61,12 +61,26 @@ if ($_POST) {
 		if ($objectval->fetch($valueid) > 0) {
 
 			$objectval->ref = $ref;
-			$objectval->value = GETPOST('value');
+			$objectval->value = GETPOST('value','alpha');
 
-			if ($objectval->update() > 0) {
-				setEventMessage($langs->trans('RecordSaved'));
-			} else {
-				setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+			if (empty($objectval->ref))
+			{
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
+			}
+			if (empty($objectval->value))
+			{
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			}
+
+			if (! $error)
+			{
+				if ($objectval->update($user) > 0) {
+					setEventMessage($langs->trans('RecordSaved'));
+				} else {
+					setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+				}
 			}
 		}
 
