@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2017 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,16 +82,18 @@ class box_factures_imp extends ModeleBoxes
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
-            $sql.= " s.code_client,";
-            $sql.= " s.logo,";
-			$sql.= " f.facnumber, f.date_lim_reglement as datelimite,";
-            $sql.= " f.type,";
-			$sql.= " f.amount, f.datef as df,";
-            $sql.= " f.total as total_ht,";
-            $sql.= " f.tva as total_tva,";
-            $sql.= " f.total_ttc,";
-			$sql.= " f.paye, f.fk_statut, f.rowid as facid";
+			$sql = "SELECT s.nom as name, s.rowid as socid";
+            $sql.= ", s.code_client";
+            $sql.= ", s.code_compta";
+            $sql.= ", s.email";
+            $sql.= ", s.logo";
+			$sql.= ", f.facnumber, f.date_lim_reglement as datelimite";
+            $sql.= ", f.type";
+			$sql.= ", f.amount, f.datef as df";
+            $sql.= ", f.total as total_ht";
+            $sql.= ", f.tva as total_tva";
+            $sql.= ", f.total_ttc";
+			$sql.= ", f.paye, f.fk_statut, f.rowid as facid";
 			$sql.= ", sum(pf.amount) as am";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -132,8 +134,10 @@ class box_factures_imp extends ModeleBoxes
 					$facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
+                    $societestatic->email = $objp->email;
                     $societestatic->client = 1;
                     $societestatic->code_client = $objp->code_client;
+                    $societestatic->code_compta_client = $objp->code_compta;
                     $societestatic->logo = $objp->logo;
 
 					$late='';
