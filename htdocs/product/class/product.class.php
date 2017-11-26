@@ -656,21 +656,23 @@ class Product extends CommonObject
             $result = -2;
         }
 
-        $rescode = $this->check_barcode($this->barcode,$this->barcode_type_code);
-        if ($rescode <> 0)
+        $rescode = $this->check_barcode($this->barcode, $this->barcode_type_code);
+        if ($rescode)
         {
         	if ($rescode == -1)
         	{
         		$this->errors[] = 'ErrorBadBarCodeSyntax';
         	}
-        	if ($rescode == -2)
+        	elseif ($rescode == -2)
         	{
         		$this->errors[] = 'ErrorBarCodeRequired';
         	}
-        	if ($rescode == -3)
+        	elseif ($rescode == -3)
         	{
+        		// Note: Common usage is to have barcode unique. For variants, we should have a different barcode.
         		$this->errors[] = 'ErrorBarCodeAlreadyUsed';
         	}
+
         	$result = -3;
         }
 
@@ -997,6 +999,7 @@ class Product extends CommonObject
 			{
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
+					$langs->load("errors");
 					if (empty($conf->barcode->enabled)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
 					else $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductBarCodeAlreadyExists",$this->barcode);
 					$this->errors[]=$this->error;
@@ -1119,7 +1122,7 @@ class Product extends CommonObject
 				}
 
 				//We also check if it is a child product
-				if (!$error && ($prodcomb->fetchByFkProductChild($id) > 0) && ($prodcomb->delete() < 0)) {
+				if (!$error && ($prodcomb->fetchByFkProductChild($id) > 0) && ($prodcomb->delete($user) < 0)) {
 					$error++;
 					$this->errors[] = 'Error deleting child combination';
 				}

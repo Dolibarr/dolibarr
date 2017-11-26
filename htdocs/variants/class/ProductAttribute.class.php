@@ -224,6 +224,8 @@ class ProductAttribute
 	 */
 	protected function reorderLines()
 	{
+		global $user;
+
 		$tmp_order = array();
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'product_attribute WHERE rang = 0';
@@ -244,7 +246,7 @@ class ProductAttribute
 			$tmp->fetch($rowid);
 			$tmp->rang = $order+1;
 
-			if ($tmp->update() < 0) {
+			if ($tmp->update($user) < 0) {
 				return -1;
 			}
 		}
@@ -260,6 +262,8 @@ class ProductAttribute
 	 */
 	private function moveLine($type)
 	{
+		global $user;
+
 		if ($this->reorderLines() < 0) {
 			return -1;
 		}
@@ -281,7 +285,7 @@ class ProductAttribute
 
 		$this->rang = $newrang;
 
-		if ($this->update() < 0) {
+		if ($this->update($user) < 0) {
 			$this->db->rollback();
 			return -1;
 		}
@@ -319,6 +323,8 @@ class ProductAttribute
 	 */
 	public static function bulkUpdateOrder(DoliDB $db, array $order)
 	{
+		global $user;
+
 		$tmp = new ProductAttribute($db);
 
 		foreach ($order as $key => $attrid) {
@@ -328,7 +334,7 @@ class ProductAttribute
 
 			$tmp->rang = $key;
 
-			if ($tmp->update() < 0) {
+			if ($tmp->update($user) < 0) {
 				return -1;
 			}
 		}
