@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2017      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,9 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 
 
 $sql = "SELECT e.ref as label, e.rowid, e.statut";
+$sql.= ", e.lieu";
+$sql.= ", e.zip";
+$sql.= ", e.town";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " WHERE e.statut in (0,1)";
 $sql.= " AND e.entity IN (".getEntity('stock').")";
@@ -90,9 +94,13 @@ if ($result)
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
-
+            $entrepot->id = $objp->rowid;
+            $entrepot->lieu = $objp->lieu;
+            $entrepot->zip = $objp->zip;
+            $entrepot->town = $objp->town;
+            $entrepot->label = $objp->label;
             print '<tr class="oddeven">';
-            print "<td><a href=\"card.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
+            print "<td>" . $entrepot->getNomUrl(1) . "</td>\n";
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
             print "</tr>\n";
             $i++;
