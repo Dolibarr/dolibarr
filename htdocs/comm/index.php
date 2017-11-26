@@ -139,7 +139,10 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc";
+    $sql.= ", s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql.= ", s.email";
+    $sql.= ", s.code_compta";
     $sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -181,6 +184,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=$obj->client;
+                $companystatic->email = $obj->email;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
 				$companystatic->canvas=$obj->canvas;
@@ -220,8 +224,11 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 {
     $langs->load("supplier_proposal");
 
-    $sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc";
+    $sql.= ", s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql.= ", s.email";
     $sql.= ", s.code_client";
+    $sql.= ", s.code_fournisseur";
     $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
     $sql.= ", ".MAIN_DB_PREFIX."societe as s";
     if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -260,6 +267,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
                 print '<td class="nowrap">';
                 $companystatic->id=$obj->socid;
                 $companystatic->name=$obj->name;
+                $companystatic->email = $obj->email;
                 $companystatic->client=$obj->client;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
@@ -299,7 +307,9 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc";
+    $sql.= ", s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql.= ", s.email";
     $sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -339,7 +349,8 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
-				$companystatic->name=$obj->name;
+                $companystatic->name=$obj->name;
+                $companystatic->email = $obj->email;
 				$companystatic->client=$obj->client;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
@@ -380,6 +391,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
     $langs->load("orders");
 
     $sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
+    $sql.= ", s.email";
     $sql.= ", s.code_client";
     $sql.= ", s.code_fournisseur";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -421,6 +433,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 print '<td class="nowrap">';
                 $companystatic->id=$obj->socid;
                 $companystatic->name=$obj->name;
+                $companystatic->email = $obj->email;
                 $companystatic->client=$obj->client;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
@@ -466,6 +479,8 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	$langs->load("boxes");
 
 	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas";
+    $sql.= ", s.email";
+    $sql.= ", s.code_compta";
     $sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -497,9 +512,11 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 			{
 				$objp = $db->fetch_object($resql);
 				$companystatic->id=$objp->rowid;
-				$companystatic->name=$objp->name;
+                $companystatic->name=$objp->name;
+                $companystatic->email = $objp->email;
 				$companystatic->client=$objp->client;
                 $companystatic->code_client = $objp->code_client;
+                $companystatic->code_compta_client = $objp->code_compta;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas=$objp->canvas;
 				print '<tr class="oddeven">';
@@ -530,6 +547,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 	$langs->load("boxes");
 
 	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm";
+    $sql.= ", s.email";
+    $sql.= ", s.code_compta_fournisseur";
     $sql.= ", s.code_fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -558,8 +577,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 				$objp = $db->fetch_object($result);
 				$companystatic->id=$objp->rowid;
                 $companystatic->name=$objp->name;
+                $companystatic->email = $objp->email;
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
+                $companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
                 $companystatic->canvas=$objp->canvas;
                 print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'supplier',44).'</td>';
@@ -605,6 +626,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 	$langs->load("contracts");
 
 	$sql = "SELECT s.nom as name, s.rowid, s.canvas, ";
+    $sql.= ", s.email";
     $sql.= ", s.code_client";
 	$sql.= " c.statut, c.rowid as contratid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -639,6 +661,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 				print '<td>';
                 $companystatic->id=$objp->rowid;
                 $companystatic->name=$objp->name;
+                $companystatic->email = $objp->email;
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas=$objp->canvas;
@@ -665,6 +688,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	$langs->load("propal");
 
 	$sql = "SELECT s.nom as name, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+    $sql.= ", s.email";
     $sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
@@ -723,6 +747,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 print '<td class="nowrap">';
                 $companystatic->id=$obj->rowid;
                 $companystatic->name=$obj->name;
+                $companystatic->email = $obj->email;
                 $companystatic->client=$obj->client;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
@@ -762,6 +787,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	$langs->load("orders");
 
 	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
+    $sql.= ", s.email";
     $sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."commande as c";
@@ -820,6 +846,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 print '<td class="nowrap">';
                 $companystatic->id=$obj->rowid;
                 $companystatic->name=$obj->name;
+                $companystatic->email = $obj->email;
                 $companystatic->client=$obj->client;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
