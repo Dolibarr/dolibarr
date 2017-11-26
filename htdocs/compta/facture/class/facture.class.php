@@ -1306,7 +1306,7 @@ class Facture extends CommonInvoice
 
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
 		$sql.= ' l.situation_percent, l.fk_prev_id,';
-		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice, l.price,';
 		$sql.= ' l.rang, l.special_code,';
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
@@ -1344,7 +1344,7 @@ class Facture extends CommonInvoice
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$line->qty              = $objp->qty;
 				$line->subprice         = $objp->subprice;
-
+				$line->price         	= $objp->price;
                 $line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
 				$line->localtax1_tx     = $objp->localtax1_tx;
@@ -4444,7 +4444,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' (fk_facture, fk_parent_line, label, description, qty,';
 		$sql.= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql.= ' fk_product, product_type, remise_percent, subprice, fk_remise_except,';
+		$sql.= ' fk_product, product_type, remise_percent, subprice, price, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, ';
 		$sql.= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
@@ -4467,6 +4467,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= " ".$this->product_type.",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".price2num($this->subprice).",";
+		$sql.= " ".price2num($this->price).",";
 		$sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
 		$sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").",";
 		$sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").",";
