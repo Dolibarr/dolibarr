@@ -3093,10 +3093,13 @@ span.dashboardlineko {
 .tdboxstats {
 	text-align: center;
 }
+.boxworkingboard .tdboxstats {
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
 }
-
 
 .box {
     padding-right: 0px;
