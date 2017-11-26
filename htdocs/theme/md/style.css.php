@@ -1811,10 +1811,11 @@ table.login_table_securitycode tr td {
 #img_securitycode {
 	border: 1px solid #f4f4f4;
 }
-#img_logo, .img-logo {
+#img_logo, .img_logo {
 	max-width: 170px;
 	max-height: 90px;
 }
+
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
@@ -4377,12 +4378,14 @@ a span.select2-chosen
     max-height: 400px;
 }
 
-
-
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
     text-align: <?php echo $left; ?>;;
     opacity: 0.3;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: unset;
+	opacity: 0.5;
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;

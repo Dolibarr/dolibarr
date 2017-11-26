@@ -4390,6 +4390,10 @@ a span.select2-chosen
     text-align: <?php echo $left; ?>;
     opacity: 0.4;
 }
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: unset;
+	opacity: 0.5;
+}
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
     opacity: 0.5;
