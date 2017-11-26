@@ -102,7 +102,7 @@ $contactstatic = new Contact($db);
 
 $form = new Form($db);
 
-if ($id > 0)
+if ($id > 0 || $ref)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -111,7 +111,7 @@ if ($id > 0)
 
 
 	$object = new Product($db);
-	$result = $object->fetch($id);
+	$result = $object->fetch($id, $ref);
 
 	$title=$langs->trans("Agenda");
 	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
@@ -139,7 +139,7 @@ if ($id > 0)
 
     print '<div class="underbanner clearboth"></div>';
 
-    $object->info($id);
+    $object->info($object->id);
 	print dol_print_object_info($object, 1);
 
 	print '</div>';
