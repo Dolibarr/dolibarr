@@ -165,9 +165,14 @@ function product_prepare_head($object)
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
 
     // Log
-    $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
+    $head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Events");
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+    	$head[$h][1].= '/';
+    	$head[$h][1].= $langs->trans("Agenda");
+    }
+    $head[$h][2] = 'agenda';
     $h++;
 
 	return $head;

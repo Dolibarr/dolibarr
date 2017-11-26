@@ -1099,7 +1099,7 @@ function show_actions_todo($conf,$langs,$db,$filterobj,$objcon='',$noprint=0,$ac
  * 		@param	Conf		       $conf		   Object conf
  * 		@param	Translate	       $langs		   Object langs
  * 		@param	DoliDB		       $db			   Object db
- * 		@param	Adherent|Societe|Project   $filterobj	   Object third party or member or project
+ * 		@param	mixed			   $filterobj	   Object Adherent|Societe|Project|Product|CommandeFournisseur
  * 		@param	Contact		       $objcon		   Object contact
  *      @param  int			       $noprint        Return string but does not output it
  *      @param  string		       $actioncode     Filter on actioncode
@@ -1139,11 +1139,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= ", sp.lastname, sp.firstname";
         if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
+        if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", o.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
+        if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
         $sql.= " WHERE u.rowid = a.fk_user_action";
         $sql.= " AND a.entity IN (".getEntity('agenda').")";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
@@ -1155,8 +1157,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         }
         if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
         {
-            $sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
-            if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
+        }
+        if (is_object($filterobj) && get_class($filterobj) == 'Product')
+        {
+        	$sql.= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
+        	if ($filterobj->id) $sql.= " AND a.fk_element = ".$filterobj->id;
         }
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
         // Condition on actioncode

@@ -425,6 +425,7 @@ ContactsAddressesForCompany=Contacts/addresses for this third party
 AddressesForCompany=Addresses for this third party
 ActionsOnCompany=Events about this third party
 ActionsOnMember=Events about this member
+ActionsOnProduct=Events about this product
 NActionsLate=%s late
 RequestAlreadyDone=Request already recorded
 Filter=Filter
