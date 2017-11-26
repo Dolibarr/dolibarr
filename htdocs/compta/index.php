@@ -6,7 +6,6 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,11 +139,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
     $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
     $sql.= ", f.type";
     $sql.= ", s.nom as name";
-    $sql.= ", s.email";
-    $sql.= ", s.code_compta";
-    $sql.= ", s.logo";
     $sql.= ", s.rowid as socid";
-    $sql.= ", s.code_client";
+    $sql.= ",s.code_client";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -188,13 +184,10 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
-                $companystatic->name=$obj->name;
-                $companystatic->email = $obj->email;
+				$companystatic->name=$obj->name;
                 $companystatic->client = 1;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
-                $companystatic->code_compta_client = $obj->code_compta;
-                $companystatic->logo = $obj->logo;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
@@ -227,11 +220,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
 	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier";
-    $sql.= ", s.nom as name";
-    $sql.= ", s.email";
+	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_fournisseur";
-    $sql.= ", s.code_compta_fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
@@ -269,12 +260,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '</td>';
 				print '<td>';
 				$companystatic->id=$obj->socid;
-                $companystatic->name=$obj->name;
-                $companystatic->email = $obj->email;
+				$companystatic->name=$obj->name;
 				$companystatic->fournisseur = 1;
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
-                $companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 				print $companystatic->getNomUrl(1,'supplier',16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -788,7 +777,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		print '<div class="div-table-responsive-no-min">';
+		//print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsCustomersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th>';
 		print '<th align="right">'.$langs->trans("DateDue").'</th>';
@@ -870,7 +859,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print '</table></div><br>';
+        print '</table>';
+        //print '</div>';
+        print '<br>';
 		$db->free($resql);
 	}
 	else
@@ -893,7 +884,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_client";
     $sql.= ", s.code_fournisseur";
-    $sql.= ", s.code_compta_fournisseur";
     $sql.= ", s.logo";
 	$sql.= ", sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
@@ -915,7 +905,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$var=false;
 		$num = $db->num_rows($resql);
 
-		print '<div class="div-table-responsive-no-min">';
+		//print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsSuppliersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></th>';
 		print '<th align="right">'.$langs->trans("DateDue").'</th>';
@@ -947,7 +937,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
                 $societestatic->client=0;
                 $societestatic->code_client = $obj->code_client;
                 $societestatic->code_fournisseur = $obj->code_fournisseur;
-                $societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
                 $societestatic->logo = $obj->logo;
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->date_lim_reglement),'day').'</td>';
@@ -977,7 +966,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print '</table></div><br>';
+        print '</table>';
+        //print '</div>';
+        print '<br>';
 	}
 	else
 	{
