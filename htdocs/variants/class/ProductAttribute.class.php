@@ -106,39 +106,41 @@ class ProductAttribute
 		if ($query)
 		{
     		while ($result = $this->db->fetch_object($query)) {
-    
+
     			$tmp = new ProductAttribute($this->db);
     			$tmp->id = $result->rowid;
     			$tmp->ref = $result->ref;
     			$tmp->label = $result->label;
     			$tmp->rang = $result->rang;
-    
+
     			$return[] = $tmp;
     		}
 		}
 		else dol_print_error($this->db);
-		
+
 		return $return;
 	}
 
 	/**
 	 * Creates a product attribute
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @param	User	$user	Object user that create
+	 * @return 					int <0 KO, Id of new variant if OK
 	 */
-	public function create()
+	public function create(User $user)
 	{
 		//Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, label, entity, rang) 
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, label, entity, rang)
 		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
-		$query = $this->db->query($sql);
 
-		if ($query) {
+		$query = $this->db->query($sql);
+		if ($query)
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute');
 
-			return 1;
+			return $this->id;
 		}
 
 		return -1;
@@ -193,7 +195,7 @@ class ProductAttribute
 
 		return $result->count;
 	}
-	
+
 	/**
 	 * Returns the number of products that are using this attribute
 	 *
@@ -211,7 +213,7 @@ class ProductAttribute
 		return $result->count;
 	}
 
-	
+
 	/**
 	 * Reorders the order of the variants.
 	 * This is an internal function used by moveLine function
@@ -298,7 +300,7 @@ class ProductAttribute
 
 	/**
 	 * Shows this attribute after others
-	 * 
+	 *
 	 * @return int <0 KO >0 OK
 	 */
 	public function moveDown()

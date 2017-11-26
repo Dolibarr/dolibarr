@@ -421,12 +421,27 @@ if (! empty($id) || ! empty($ref))
 			<!--  Variant -->
 			<tr>
 				<td class="titlefieldcreate fieldrequired"><label for="attribute"><?php echo $langs->trans('ProductAttribute') ?></label></td>
-				<td><select class="flat minwidth100" id="attribute" name="attribute">
-					<option value="-1">&nbsp;</option>
-					<?php foreach ($prodattr_all as $attr): ?>
-					<option value="<?php echo $attr->id ?>"><?php echo $attr->label ?></option>
-					<?php endforeach ?>
-				</select></td>
+				<td>
+				<?php
+				if (is_array($prodattr_all))
+				{
+					print '<select class="flat minwidth100" id="attribute" name="attribute">';
+					print '<option value="-1">&nbsp;</option>';
+					foreach ($prodattr_all as $attr)
+					{
+						print '<option value="'.$attr->id.'">'.$attr->label.'</option>';
+					}
+					print '</select>';
+				}
+
+				$htmltext=$langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
+				print $form->textwithpicto('', $htmltext);
+				/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+				print $langs->trans("Create");
+				print '</a>';*/
+
+				?>
+				</td>
 			</tr>
 			<!-- Value -->
 			<tr>
@@ -435,12 +450,20 @@ if (! empty($id) || ! empty($ref))
 					<select class="flat minwidth100" id="value" name="value">
 						<option value="-1">&nbsp;</option>
 					</select>
+					<?php
+					$htmltext=$langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
+					print $form->textwithpicto('', $htmltext);
+					/*
+						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+						print $langs->trans("Create");
+						print '</a>';
+					*/
+					?>
 				</td>
 			</tr>
 			<tr>
 				<td></td><td>
 					<input type="submit" class="button" name="selectvariant" id="selectvariant" value="<?php echo dol_escape_htmltag($langs->trans("SelectCombination")); ?>">
-					<!-- <a href="#" class="button" id="addfeature"><?php echo $langs->trans("SelectCombination"); ?></a> -->
 				</td>
 			</tr>
 		</table>
@@ -573,7 +596,7 @@ if (! empty($id) || ! empty($ref))
 		    print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
 
-		print '<a href="combinations.php?id='.$object->id.'&action=add#parttoaddvariant" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
+		print '<a href="combinations.php?id='.$object->id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
 
 		// Too much bugged page.
 		/*
@@ -590,7 +613,7 @@ if (! empty($id) || ! empty($ref))
 
 
 		// List of variants
-		print '<form method="POST" action="#parttoaddvariant">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
 
 		// List of mass actions available
