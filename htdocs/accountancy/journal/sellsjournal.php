@@ -193,7 +193,7 @@ if ($result) {
 
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc * $situation_ratio;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
-		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
+		if (empty($line->tva_npr)) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;		// We ignore line if VAT is a NPR
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
 		$tabcompany[$obj->rowid] = array (
@@ -396,8 +396,9 @@ if ($action == 'writebookkeeping') {
 
 		if ($totaldebit != $totalcredit)
 		{
+			$error++;
 			$errorforline++;
-			setEventMessages('Try to insert a non balanced transaction in book. Canceled. Surely a bug.', null, 'errors');
+			setEventMessages('Try to insert a non balanced transaction in book for '.$invoicestatic->ref.'. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (! $errorforline)
@@ -416,6 +417,8 @@ if ($action == 'writebookkeeping') {
 		}
 
 	}
+
+	$tabpay = $tabfac;
 
 	if (empty($error) && count($tabpay) > 0) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
@@ -441,7 +444,7 @@ if ($action == 'writebookkeeping') {
 		$param.='&date_endday='.$date_endday;
 		$param.='&date_endmonth='.$date_endmonth;
 		$param.='&date_endyear='.$date_endyear;
-		$param.='&in_bookeeping='.$in_bookeeping;
+		$param.='&in_bookkeeping='.$in_bookkeeping;
 		header("Location: ".$_SERVER['PHP_SELF'].($param?'?'.$param:''));
 		exit;
 	}
@@ -560,7 +563,7 @@ if (empty($action) || $action == 'view') {
 		$description .= $langs->trans("DepositsAreIncluded");
 
 	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
-	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("AlreadyInGeneralLedger").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 

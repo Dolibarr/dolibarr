@@ -92,6 +92,8 @@ if (! $user->rights->accounting->bind->write)
 $formaccounting = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 
+$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
 
 /*
  * Action
@@ -182,18 +184,24 @@ $formother = new FormOther($db);
 
 llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 
+if (empty($chartaccountcode))
+{
+	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
+	llxFooter();
+	$db->close();
+	exit;
+}
+
 // Expense report lines
 $sql = "SELECT er.ref, er.rowid as erid, er.date_debut,";
-$sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.vat_src_code, erd.date,";
-$sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label, f.accountancy_code as code_buy,";
-$sql .= " aa.rowid as aarowid";
-$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
-$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "expensereport_det as erd ON er.rowid = erd.fk_expensereport";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON f.accountancy_code = aa.account_number";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
-$sql .= " WHERE er.fk_statut > 4 AND erd.fk_code_ventilation <= 0";
-$sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR f.accountancy_code IS NULL OR f.accountancy_code ='')";
+$sql.= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.vat_src_code, erd.date,";
+$sql.= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label, f.accountancy_code as code_buy,";
+$sql.= " aa.rowid as aarowid";
+$sql.= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
+$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "expensereport_det as erd ON er.rowid = erd.fk_expensereport";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."'";
+$sql.= " WHERE er.fk_statut > 4 AND erd.fk_code_ventilation <= 0";
 // Add search filter like
 if (strlen(trim($search_expensereport))) {
     $sql .= natural_search("er.ref",$search_expensereport);

@@ -193,13 +193,18 @@ class BookKeeping extends CommonObject
 
 		$this->piece_num = 0;
 
-		// First check if line not yet already in bookkeeping
+		// First check if line not yet already in bookkeeping.
+		// Note that we must include doc_type - fk_doc - numero_compte - label to be sure to have unicity of line (we may have several lines
+		// with same doc_type, fk_odc, numero_compte for 1 invoice line when using localtaxes with same account)
+		// WARNING: This is not reliable, label may have been modified. This is just a small protection.
+		// The page to make journalization make the test on couple doc_type - fk_doc only.
 		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE doc_type = '" . $this->db->escape($this->doc_type) . "'";
 		$sql .= " AND fk_doc = " . $this->fk_doc;
-		$sql .= " AND fk_docdet = " . $this->fk_docdet;					// This field can be 0 is record is for several lines
+		//$sql .= " AND fk_docdet = " . $this->fk_docdet;					// This field can be 0 if record is for several lines
 		$sql .= " AND numero_compte = '" . $this->db->escape($this->numero_compte) . "'";
+		$sql .= " AND label_operation = '" . $this->db->escape($this->label_operation) . "'";
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 		$resql = $this->db->query($sql);

@@ -183,6 +183,16 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
         print '<td align="right">'.$version.'</td></tr>';
         dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerVersion") . ": " .$version);
+        if ($db->type == 'mysqli')
+        {
+        	$tmparray = $db->db->get_charset();
+        	print '<tr><td>'.$langs->trans("ClientCharset").'</td>';
+        	print '<td align="right">'.$tmparray->charset.'</td></tr>';
+        	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ClientCharset") . ": " .$tmparray->charset);
+        	print '<tr><td>'.$langs->trans("ClientSortingCharset").'</td>';
+        	print '<td align="right">'.$tmparray->collation.'</td></tr>';
+        	dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ClientCollation") . ": " .$tmparray->collation);
+        }
 
         // Test database version requirement
         $versionmindb=explode('.',$db::VERSIONMIN);

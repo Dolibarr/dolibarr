@@ -109,12 +109,17 @@ class DoliDBMysqli extends DoliDB
                 $this->database_name = $name;
                 $this->ok = true;
 
-                // If client connected with different charset than Dolibarr HTML output
-                $clientmustbe='';
-                if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
-                if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
+                // If client is old latin, we force utf8
+                $clientmustbe=empty($conf->db->dolibarr_main_db_character_set)?'utf8':$conf->db->dolibarr_main_db_character_set;
+                if (preg_match('/latin1/', $clientmustbe)) $clientmustbe='utf8';
+
 				if ($this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe);
+					$this->db->set_charset($clientmustbe);	// This set charset, but with a bad collation
+
+					$collation = $conf->db->dolibarr_main_db_collation;
+					if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+
+					if (! preg_match('/general/', $collation)) $this->db->query("SET collation_connection = ".$collation);
 				}
             }
             else
@@ -133,14 +138,19 @@ class DoliDBMysqli extends DoliDB
 
             if ($this->connected)
             {
-                // If client connected with different charset than Dolibarr HTML output
-                $clientmustbe='';
-                if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
-                if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
+            	// If client is old latin, we force utf8
+            	$clientmustbe=$conf->db->dolibarr_main_db_character_set;
+            	if (preg_match('/latin1/', $clientmustbe)) $clientmustbe='utf8';
+
 				if ($this->db->character_set_name() != $clientmustbe) {
-					$this->db->set_charset($clientmustbe);
+					$this->db->set_charset($clientmustbe);	// This set utf8_general_ci
+
+					$collation = $conf->db->dolibarr_main_db_collation;
+					if (preg_match('/latin1/', $collation)) $collation='utf8_unicode_ci';
+
+					if (! preg_match('/general/', $collation)) $this->db->query("SET collation_connection = ".$collation);
 				}
-            }
+			}
         }
     }
 

@@ -2518,6 +2518,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->product_type		= $obj->product_type;
 		$this->product_label		= $obj->label;
 		$this->info_bits		    = $obj->info_bits;
+		$this->tva_npr              = ($objp->info_bits & 1 == 1) ? 1 : 0;
 		$this->fk_parent_line    = $obj->fk_parent_line;
 		$this->special_code		= $obj->special_code;
 		$this->rang       		= $obj->rang;
