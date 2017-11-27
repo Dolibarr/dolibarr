@@ -43,7 +43,6 @@ class mailing_fraise extends MailingTargets
 
     var $db;
 
-
     /**
      *    Constructor
      *
@@ -68,7 +67,7 @@ class mailing_fraise extends MailingTargets
         global $conf,$langs;
 
         $langs->load("members");
-.
+
         // Array for requests for statistics board
         $statssql=array();
 
