@@ -68,7 +68,7 @@ class mailing_fraise extends MailingTargets
         global $conf,$langs;
 
         $langs->load("members");
-
+.
         // Array for requests for statistics board
         $statssql=array();
 
@@ -92,7 +92,7 @@ class mailing_fraise extends MailingTargets
 	global $conf;    
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND aentity IN (".getEntity('member').")";
+        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
