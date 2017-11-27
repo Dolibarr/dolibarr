@@ -571,8 +571,9 @@ class Form
 		$ret.=$hookmanager->resPrint;
 
 		$ret.='</select>';
-		// Warning: if you set submit button to disabled, post using 'Enter' will no more work.
-		$ret.='<input type="submit" name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
+		$ret.='<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">';	// Hidden button BEFORE so it is the one used when we submit with ENTER.
+		$ret.='<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret.='</div>';
 
 		if (! empty($conf->use_javascript_ajax))
@@ -590,8 +591,8 @@ class Form
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
     	  				jQuery(".massaction").show();
-        			    '.($selected ? 'if (atleastoneselected) jQuery(".massactionselect").val("'.$selected.'");' : '').'
-        			    '.($selected ? 'if (! atleastoneselected) jQuery(".massactionselect").val("0");' : '').'
+        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'"); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0"); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
     	  			}
     	  			else
     	  			{
@@ -613,7 +614,7 @@ class Form
     	            }
         			$( this ).closest("form").attr("action", urlform);
                     console.log("we select a mass action "+massaction+" - "+urlform);
-        	        /* Warning: if you set submit button to disabled, post using Enter will no more work
+        	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
         			if ($(this).val() != \'0\')
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
@@ -622,7 +623,6 @@ class Form
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
     	  			}
-        	        */
     	        });
         	});
     		</script>

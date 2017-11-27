@@ -268,7 +268,7 @@ if ($result) {
 	);
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton=$form->selectMassAction('0', $arrayofmassactions, 1);
+	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
 
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";

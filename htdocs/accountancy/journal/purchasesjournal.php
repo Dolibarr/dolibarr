@@ -55,10 +55,10 @@ $now = dol_now();
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-	
+
 $hookmanager->initHooks(array('purchasesjournal'));
 $parameters=array();
-	
+
 /*
  * Actions
  */
@@ -204,7 +204,11 @@ if ($action == 'writebookkeeping') {
 	$error = 0;
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
+
 		$errorforline = 0;
+
+		$totalcredit = 0;
+		$totaldebit = 0;
 
 		$db->begin();
 
@@ -250,6 +254,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
@@ -299,6 +306,9 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
 
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
+
 						$result = $bookkeeping->create($user);
 						if ($result < 0) {
 							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -331,46 +341,55 @@ if ($action == 'writebookkeeping') {
 				if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
 				foreach ( $arrayofvat[$key] as $k => $mt ) {
-				if ($mt) {
-					$bookkeeping = new BookKeeping($db);
-					$bookkeeping->doc_date = $val["date"];
-					$bookkeeping->date_lim_reglement = $val["datereg"];
-					$bookkeeping->doc_ref = $val["refsologest"];
-					$bookkeeping->date_create = $now;
-					$bookkeeping->doc_type = 'supplier_invoice';
-					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
-					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
-					$bookkeeping->montant = $mt;
-					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
-					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
-					$bookkeeping->fk_user_author = $user->id;
+					if ($mt) {
+						$bookkeeping = new BookKeeping($db);
+						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->date_lim_reglement = $val["datereg"];
+						$bookkeeping->doc_ref = $val["refsologest"];
+						$bookkeeping->date_create = $now;
+						$bookkeeping->doc_type = 'supplier_invoice';
+						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
+						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
+						$bookkeeping->montant = $mt;
+						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+						$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
+						$bookkeeping->code_journal = $journal;
+						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->fk_user_author = $user->id;
 
-					$result = $bookkeeping->create($user);
-					if ($result < 0) {
-						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-						{
-							$error++;
-							$errorforline++;
-							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-						}
-						else
-						{
-							$error++;
-							$errorforline++;
-							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
+
+						$result = $bookkeeping->create($user);
+						if ($result < 0) {
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+							{
+								$error++;
+								$errorforline++;
+								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+							}
+							else
+							{
+								$error++;
+								$errorforline++;
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
 						}
 					}
 				}
 			}
 		}
+
+		if ($totaldebit != $totalcredit)
+		{
+			$errorforline++;
+			setEventMessages('Try to insert a non balanced transaction in book. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (! $errorforline)
@@ -686,7 +705,7 @@ if (empty($action) || $action == 'view') {
 				$accountoshow = length_accountg($k);
 				if (empty($accountoshow) || $accountoshow == 'NotDefined')
 				{
-					print '<span class="error">'.$langs->trans("VATAccountNotDefined").'</span>';
+					print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')'.'</span>';
 				}
 				else print $accountoshow;
 				print "</td>";

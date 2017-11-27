@@ -32,25 +32,18 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 class BookKeeping extends CommonObject
 {
 	/**
-	 *
 	 * @var string Error code (or message)
-	 * @deprecated
-	 *
-	 * @see Accountingbookkeeping::errors
 	 */
 	public $error;
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array ();
 	/**
-	 *
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'accountingbookkeeping';
 	/**
-	 *
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'accounting_bookkeeping';
@@ -58,13 +51,11 @@ class BookKeeping extends CommonObject
 	public $entity = 1;
 
 	/**
-	 *
 	 * @var BookKeepingLine[] Lines
 	 */
 	public $lines = array ();
 
 	/**
-	 *
 	 * @var int ID
 	 */
 	public $id;

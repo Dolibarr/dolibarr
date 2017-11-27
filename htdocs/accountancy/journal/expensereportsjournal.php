@@ -183,6 +183,9 @@ if ($action == 'writebookkeeping') {
 	{
 		$errorforline = 0;
 
+		$totalcredit = 0;
+		$totaldebit = 0;
+
 		$db->begin();
 
 		// Thirdparty
@@ -208,6 +211,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
@@ -254,6 +260,9 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
+
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
 
 						$result = $bookkeeping->create($user);
 						if ($result < 0) {
@@ -307,6 +316,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
 
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
 						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -325,6 +337,12 @@ if ($action == 'writebookkeeping') {
 					}
 				}
 			}
+		}
+
+		if ($totaldebit != $totalcredit)
+		{
+			$errorforline++;
+			setEventMessages('Try to insert a non balanced transaction in book. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (! $errorforline)

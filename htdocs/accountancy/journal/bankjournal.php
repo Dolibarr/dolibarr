@@ -402,6 +402,9 @@ if (! $error && $action == 'writebookkeeping') {
 
 		$errorforline = 0;
 
+		$totalcredit = 0;
+		$totaldebit = 0;
+
 		$db->begin();
 
 		// Introduce a protection. Total of tabtp must be total of tabbq
@@ -459,6 +462,9 @@ if (! $error && $action == 'writebookkeeping') {
 						// ???
 						$bookkeeping->subledger_account = '';
 					}
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
@@ -566,6 +572,9 @@ if (! $error && $action == 'writebookkeeping') {
 						}
 					}
 
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
 						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -583,6 +592,12 @@ if (! $error && $action == 'writebookkeeping') {
 					}
 				}
 			}
+		}
+
+		if ($totaldebit != $totalcredit)
+		{
+			$errorforline++;
+			setEventMessages('Try to insert a non balanced transaction in book. Canceled. Surely a bug.', null, 'errors');
 		}
 
 		if (! $errorforline)
