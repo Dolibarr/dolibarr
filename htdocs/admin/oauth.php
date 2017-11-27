@@ -47,7 +47,7 @@ $action = GETPOST('action', 'alpha');
 /*
  * Actions
  */
- 
+
 if ($action == 'update')
 {
     $error = 0;
@@ -86,7 +86,7 @@ print '<input type="hidden" name="action" value="update">';
 
 $head = oauthadmin_prepare_head();
 
-dol_fiche_head($head, 'services', '', 0, 'technic');
+dol_fiche_head($head, 'services', '', -1, 'technic');
 
 
 print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
@@ -102,10 +102,10 @@ foreach ($list as $key)
     if (! $supported) continue;     // show only supported
 
     $i++;
-    
+
     print '<tr class="liste_titre'.($i > 1 ?' liste_titre_add':'').'">';
     // Api Name
-    $label = $langs->trans($key[0]); 
+    $label = $langs->trans($key[0]);
     print '<td>'.$label.'</td>';
     print '<td>';
     if (! empty($key[3])) print $langs->trans($key[3]);
@@ -127,7 +127,7 @@ foreach ($list as $key)
         print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
         print '</td></tr>';
     }
-        
+
     // Api Id
     print '<tr class="oddeven value">';
     print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
