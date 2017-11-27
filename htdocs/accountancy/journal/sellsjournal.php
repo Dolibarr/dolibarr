@@ -161,9 +161,10 @@ if ($result) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':'')]=(vatrate($obj->tva_tx).($obj->vat_src_code?' ('.$obj->vat_src_code.')':''));
 		}
 
-		// Situation invoices handling
 		$line = new FactureLigne($db);
 		$line->fetch($obj->fdid);
+
+		// Situation invoices handling
 		$prev_progress = $line->get_prev_progress($obj->fdid);
 		if ($obj->type == Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
