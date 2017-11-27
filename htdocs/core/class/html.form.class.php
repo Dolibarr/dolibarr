@@ -2584,6 +2584,7 @@ class Form
 
 			$this->db->free($result);
 
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$out.=ajax_combobox($htmlname);
 
 			if (empty($outputmode)) return $out;
