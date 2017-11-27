@@ -133,7 +133,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     $error=0;
     $i=0;
     $buffer = '';
-    $arraysql = Array();
+    $arraysql = array();
 
     // Get version of database
     $versionarray=$db->getVersionArray();

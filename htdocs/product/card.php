@@ -848,7 +848,7 @@ llxHeader('', $title, $helpurl);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 // Load object modBarCodeProduct
 $res=0;
