@@ -220,28 +220,7 @@ if (! empty($arrayfields['ty.label']['checked']))
 	print '</td>';
 }
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-	foreach($extrafields->attribute_label as $key => $val)
-	{
-		if (! empty($arrayfields["ef.".$key]['checked']))
-		{
-			$align=$extrafields->getAlignFlag($key);
-			$typeofextrafield=$extrafields->attribute_type[$key];
-			print '<td class="liste_titre'.($align?' '.$align:'').'">';
-			if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-			{
-				$crit=$val;
-				$tmpkey=preg_replace('/search_options_/','',$key);
-				$searchclass='';
-				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-			}
-			print '</td>';
-		}
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Action column
 print '<td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -253,19 +232,7 @@ print '<tr class="liste_titre">';
 if (! empty($arrayfields['t.ref']['checked']))           print_liste_field_titre($arrayfields['t.ref']['label'],$_SERVER["PHP_SELF"],"t.ref","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['ty.label']['checked']))        print_liste_field_titre($arrayfields['ty.label']['label'],$_SERVER["PHP_SELF"],"ty.label","",$param,"",$sortfield,$sortorder);
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        if (! empty($arrayfields["ef.".$key]['checked']))
-        {
-            $align=$extrafields->getAlignFlag($key);
-			$sortonfield = "ef.".$key;
-			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-        }
-    }
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -292,23 +259,7 @@ if ($ret)
 	        if (! $i) $totalarray['nbfield']++;
         }
         // Extra fields
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-        {
-        	foreach($extrafields->attribute_label as $key => $val)
-        	{
-        		if (! empty($arrayfields["ef.".$key]['checked']))
-        		{
-        			print '<td';
-        			$align=$extrafields->getAlignFlag($key);
-        			if ($align) print ' align="'.$align.'"';
-        			print '>';
-        			$tmpkey='options_'.$key;
-        			print $extrafields->showOutputField($key, $resource->array_options[$tmpkey], '', 1);
-        			print '</td>';
-	                if (! $i) $totalarray['nbfield']++;
-        		}
-        	}
-        }
+        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td align="center">';
         print '<a href="./card.php?action=edit&id='.$resource->id.'">';

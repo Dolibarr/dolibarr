@@ -377,12 +377,7 @@ if ($search_req_nb) $param.='&amp;req_nb='.urlencode($search_req_nb);
 if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val)
-{
-    $crit=$val;
-    $tmpkey=preg_replace('/search_options_/','',$key);
-    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 
 
@@ -502,19 +497,8 @@ $credit = price2num(str_replace('-','',$credit));
 if ($debit) $sql.= natural_search('- b.amount', $debit, 1);
 if ($credit) $sql.= natural_search('b.amount', $credit, 1);
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-    $crit=$val;
-    $tmpkey=preg_replace('/search_options_/','',$key);
-    $typ=$extrafields->attribute_type[$tmpkey];
-	$mode_search=0;
-	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
-	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -898,19 +882,7 @@ if ($resql)
 	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'],$_SERVER['PHP_SELF'],'b.rappro','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	    foreach($extrafields->attribute_label as $key => $val)
-	    {
-	        if (! empty($arrayfields["ef.".$key]['checked']))
-	        {
-	            $align=$extrafields->getAlignFlag($key);
-    			$sortonfield = "ef.".$key;
-    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-	        }
-	    }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
