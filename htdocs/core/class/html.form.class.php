@@ -579,13 +579,14 @@ class Form
 		{
 			$ret.='<!-- JS CODE TO ENABLE mass action select -->
     		<script type="text/javascript">
-        		function initCheckForSelect()
+        		function initCheckForSelect(mode)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkbox */
         		{
         			atleastoneselected=0;
     	    		jQuery(".checkforselect").each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
+					console.log("initCheckForSelect mode="+mode+" atleastoneselected="+atleastoneselected);
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
     	  				jQuery(".massaction").show();
@@ -599,9 +600,9 @@ class Form
         		}
 
         	jQuery(document).ready(function () {
-        		initCheckForSelect();
+        		initCheckForSelect(0);
         		jQuery(".checkforselect").click(function() {
-        			initCheckForSelect();
+        			initCheckForSelect(1);
     	  		});
     	  		jQuery(".massactionselect").change(function() {
         			var massaction = $( this ).val();
@@ -6631,7 +6632,7 @@ class Form
                         console.log("We uncheck all");
                 		$(".'.$cssclass.'").prop(\'checked\', false);
                     }'."\n";
-		if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
+		if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out.='         });
                 });
             </script>';

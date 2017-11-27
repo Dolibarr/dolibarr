@@ -300,7 +300,7 @@ if ($result) {
 	);
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton=$form->selectMassAction('ventil', $arrayofmassactions, 1);
+	$massactionbutton=$form->selectMassAction('0', $arrayofmassactions, 1);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -468,12 +468,12 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td align="center">';
-		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Colonne choix ligne a ventiler
 		print '<td align="center">';
-		print '<input type="checkbox" class="flat checkforselect" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
 
 		print "</tr>";
@@ -487,6 +487,18 @@ if ($result) {
 } else {
 	print $db->error();
 }
+
+// Add code to auto check the box when we select an account
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery(".codeventil").change(function() {
+		var s=$(this).attr("id").replace("codeventil", "")
+		console.log(s+" "+$(this).val());
+		if ($(this).val() == -1) jQuery(".checkforselect"+s).prop("checked", false);
+		else jQuery(".checkforselect"+s).prop("checked", true);
+	});
+});
+</script>';
 
 llxFooter();
 $db->close();

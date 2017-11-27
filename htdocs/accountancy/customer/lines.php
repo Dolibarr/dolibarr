@@ -365,7 +365,7 @@ if ($result) {
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 		print '<td align="center">';
-		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
+		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')).'">';
 		print img_edit();
 		print '</a>';
 		print '</td>';
