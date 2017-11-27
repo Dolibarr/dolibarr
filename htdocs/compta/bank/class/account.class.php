@@ -854,10 +854,12 @@ class Account extends CommonObject
 		$sql.= " ba.datec as date_creation, ba.tms as date_update,";
 		$sql.= ' c.code as country_code, c.label as country,';
 		$sql.= ' d.code_departement as state_code, d.nom as state';
+        $sql.= ' , aj.code as accountancy_journal';
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON ba.fk_pays = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.state_id = d.rowid';
-		$sql.= " WHERE entity IN (".getEntity($this->element).")";
+        $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'accounting_journal as aj ON aj.rowid=ba.fk_accountancy_journal';
+		$sql.= " WHERE ba.entity IN (".getEntity($this->element).")";
 		if ($id)  $sql.= " AND ba.rowid  = ".$id;
 		if ($ref) $sql.= " AND ba.ref = '".$this->db->escape($ref)."'";
 
@@ -900,6 +902,7 @@ class Account extends CommonObject
 
 				$this->account_number = $obj->account_number;
 				$this->fk_accountancy_journal = $obj->fk_accountancy_journal;
+				$this->accountancy_journal = $obj->accountancy_journal;
 
 				$this->currency_code  = $obj->currency_code;
 				$this->account_currency_code  = $obj->currency_code;
