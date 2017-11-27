@@ -9,6 +9,7 @@ PrintingDriverDesc=Configuration variables for printing driver.
 ListDrivers=List of drivers
 PrintTestDesc=List of Printers.
 FileWasSentToPrinter=File %s was sent to printer
+ViaModule=via the module
 NoActivePrintingModuleFound=No active driver to print document. Check setup of module %s.
 PleaseSelectaDriverfromList=Please select a driver from list.
 PleaseConfigureDriverfromList=Please configure the selected driver from list.
