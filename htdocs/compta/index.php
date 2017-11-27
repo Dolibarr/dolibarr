@@ -778,7 +778,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		//print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsCustomersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th>';
 		print '<th align="right">'.$langs->trans("DateDue").'</th>';
@@ -861,7 +861,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
         print '</table>';
-        //print '</div>';
+        print '</div>';
         print '<br>';
 		$db->free($resql);
 	}
@@ -906,7 +906,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		$var=false;
 		$num = $db->num_rows($resql);
 
-		//print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsSuppliersUnpaid",$num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></th>';
 		print '<th align="right">'.$langs->trans("DateDue").'</th>';
@@ -968,7 +968,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
         print '</table>';
-        //print '</div>';
+        print '</div>';
         print '<br>';
 	}
 	else
