@@ -3585,15 +3585,15 @@ class Product extends CommonObject
 	{
 		switch ($type)
 		{
-		case 0:
-			return $this->LibStatut($this->status,$mode,$type);
-		case 1:
-			return $this->LibStatut($this->status_buy,$mode,$type);
-		case 2:
-			return $this->LibStatut($this->status_batch,$mode,$type);
-		default:
-			//Simulate previous behavior but should return an error string
-			return $this->LibStatut($this->status_buy,$mode,$type);
+			case 0:
+				return $this->LibStatut($this->status,$mode,$type);
+			case 1:
+				return $this->LibStatut($this->status_buy,$mode,$type);
+			case 2:
+				return $this->LibStatut($this->status_batch,$mode,$type);
+			default:
+				//Simulate previous behavior but should return an error string
+				return $this->LibStatut($this->status_buy,$mode,$type);
 		}
 	}
 
