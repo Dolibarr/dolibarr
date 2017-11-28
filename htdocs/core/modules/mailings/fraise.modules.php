@@ -64,7 +64,7 @@ class mailing_fraise extends MailingTargets
      */
     function getSqlArrayForStats()
     {
-        global $conf,$langs;
+        global $langs;
 
         $langs->load("members");
 
@@ -88,7 +88,6 @@ class mailing_fraise extends MailingTargets
      */
     function getNbOfRecipients($sql='')
     {
-	global $conf;    
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
