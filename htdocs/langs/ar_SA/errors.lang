@@ -155,6 +155,7 @@ ErrorPriceExpression19=التعبير لم يتم العثور على
 ErrorPriceExpression20=التعبير فارغة
 ErrorPriceExpression21=نتيجة فارغة '٪ ق'
 ErrorPriceExpression22=نتيجة سلبية '٪ ق'
+ErrorPriceExpression23=Unknown or non set variable '%s' in %s
 ErrorPriceExpressionInternal=خطأ داخلي '٪ ق'
 ErrorPriceExpressionUnknown=خطأ غير معروف '٪ ق'
 ErrorSrcAndTargetWarehouseMustDiffers=يجب المصدر والهدف يختلف المستودعات
@@ -202,6 +203,9 @@ ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Only validated invoices can be sent using the "Send by email" mass action.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a predefined product or not
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
+ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
+ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+
 # Warnings
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
 WarningMandatorySetupNotComplete=لا يتم تعريف معلمات الإعداد إلزامية حتى الآن

@@ -152,5 +152,7 @@ OrderCreated=Οι παραγγελίες σας έχουν δημιουργηθ�
 OrderFail=Ένα σφάλμα συνέβη κατά τη διάρκεια την δημιουργία τις παραγγελίες
 CreateOrders=Δημιουργία παραγγελιών
 ToBillSeveralOrderSelectCustomer=Για να δημιουργήσετε ένα τιμολόγιο για αρκετές παραγγελίες, κάντε κλικ πρώτα στον πελάτη, στη συνέχεια, επιλέξτε "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

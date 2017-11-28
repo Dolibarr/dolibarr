@@ -11,7 +11,7 @@ BirthdayAlertOn=alerte anniversaire active
 BirthdayAlertOff=alerte anniversaire inactive
 TransKey=Traduction de la clé TransKey
 MonthOfInvoice=Mois (numéro 1-12) de la date de facturation
-TextMonthOfInvoice=Mois (texte) de la date de facturation
+TextMonthOfInvoice=Mois (texte) de la date de facture
 PreviousMonthOfInvoice=Mois précédent (numéro 1-12) la date de facturation
 TextPreviousMonthOfInvoice=Mois précédent (texte) de la date de facturation
 NextMonthOfInvoice=Le mois suivant (numéro 1-12) la date de facturation
@@ -214,6 +214,7 @@ StartUpload=Transférer
 CancelUpload=Annuler le transfert
 FileIsTooBig=Le fichier est trop volumineux
 PleaseBePatient=Merci de patienter quelques instants…
+ResetPassword=Réinitialiser le mot de passe
 RequestToResetPasswordReceived=Une demande de modification de mot de passe a été reçue
 NewKeyIs=Voici vos nouveaux identifiants pour vous connecter
 NewKeyWillBe=Vos nouveaux identifiants pour vous connecter à l'application seront
@@ -223,6 +224,7 @@ ForgetIfNothing=Si vous n'êtes pas à l'origine de cette demande, ignorez simpl
 IfAmountHigherThan=Si le montant est supérieur à <strong>%s</strong>
 SourcesRepository=Répertoire pour les sources
 Chart=Graphique
+PassEncoding=Codage du mot de passe
 
 ##### Export #####
 ExportsArea=Espace exports

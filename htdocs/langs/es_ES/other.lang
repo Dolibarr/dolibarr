@@ -11,7 +11,7 @@ BirthdayAlertOn=alerta aniversario activada
 BirthdayAlertOff=alerta aniversario desactivada
 TransKey=Traducción de la clave TransKey
 MonthOfInvoice=Mes (numero 1-12) de la fecha de la factura
-TextMonthOfInvoice=Mes (texto) de la fecha de la factura
+TextMonthOfInvoice=Mes (texto) de la fecha de factura
 PreviousMonthOfInvoice=Mes anterior (texto) de la fecha de la factura
 TextPreviousMonthOfInvoice=Mes anterior (texto) de la fecha de la factura
 NextMonthOfInvoice=Mes siguiente (número 1-12) de la fecha de la factura
@@ -214,6 +214,7 @@ StartUpload=Transferir
 CancelUpload=Cancelar la transferencia
 FileIsTooBig=El archivo es demasiado grande
 PleaseBePatient=Rogamos espere unos instantes...
+ResetPassword=Reiniciar contraseña
 RequestToResetPasswordReceived=Se ha recibido una solicitud para cambiar tu contraseña de Dolibarr
 NewKeyIs=Esta es su nueva contraseña para iniciar sesión
 NewKeyWillBe=Su nueva contraseña para iniciar sesión en el software será
@@ -223,6 +224,7 @@ ForgetIfNothing=Si usted no ha solicitado este cambio, simplemente ignore este e
 IfAmountHigherThan=si el importe es mayor que <strong>%s</strong>
 SourcesRepository=Repositorio de los fuentes
 Chart=Gráfico
+PassEncoding=Cifrado de contraseña
 
 ##### Export #####
 ExportsArea=Área de exportaciones

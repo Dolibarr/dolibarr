@@ -66,6 +66,7 @@ ActionAC_OTH=Ostatní
 ActionAC_OTH_AUTO=Automaticky vložené události
 ActionAC_MANUAL=Ručně vložené události
 ActionAC_AUTO=Automaticky vložené události
+ActionAC_OTH_AUTOShort=Auto
 Stats=Prodejní statistiky
 StatusProsp=Stav cíle
 DraftPropals=Navrhnout obchodní návrhy

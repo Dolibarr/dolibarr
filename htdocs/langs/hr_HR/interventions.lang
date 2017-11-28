@@ -28,7 +28,6 @@ InterventionClassifyBilled=Označi "Naplačeno"
 InterventionClassifyUnBilled=Označi "Nenaplačeno"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Naplačeno
-ShowIntervention=Prikaži intervenciju
 SendInterventionRef=Podnošenje intervencije %s
 SendInterventionByMail=Pošalji intervenciju putem e-pošte
 InterventionCreatedInDolibarr=Intervencija %s kreirana

@@ -60,6 +60,7 @@ ReadmeFile=Readme-fil
 ChangeLog=ChangeLog-fil
 TestClassFile=Fil for PHP Unit Testklasse
 SqlFile=Sql-fil
+PageForLib=Fil for PHP-biblioteker
 SqlFileExtraFields=Sql-fil for komplementære attributter
 SqlFileKey=Sql-fil for nøkler
 AnObjectAlreadyExistWithThisNameAndDiffCase=Et objekt eksisterer allerede med dette navnet
@@ -69,6 +70,7 @@ DirScanned=Mappe skannet
 NoTrigger=Ingen utløser
 NoWidget=Ingen widget
 GoToApiExplorer=Gå til API-utforsker
+ListOfMenusEntries=Liste over menyoppføringer
 ListOfPermissionsDefined=Liste over definerte tillatelser
 EnabledDesc=Betingelse for å ha dette feltet aktivt (Eksempler: 1 eller $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Er feltet synlig? (Eksempler: 0=Aldri synlig, 1=Synlig på liste og opprett/oppdater/vis skjemaer, 2=Bare synlig på listen, 3=Synlig på opprett/oppdater/vis kun skjema. Bruk av negativ verdi betyr at feltet ikke vises som standard på listen, men kan velges for visning)
@@ -83,3 +85,10 @@ TriggerDefDesc=Definer koden som skal utføres for hver forretningshendelse utf�
 SeeIDsInUse=Se IDer som brukes i installasjonen din
 SeeReservedIDsRangeHere=Se område av reserverte IDer
 ToolkitForDevelopers=Verktøy for Dolibarr-utviklere
+TryToUseTheModuleBuilder=Hvis du har kunnskap i SQL og PHP, kan du prøve å bruke veiviseren for modulbyggeren. Bare aktiver modulen og bruk veiviseren ved å klikke på <span class = "fa fa-bug"> </span> i øverste høyre meny. Advarsel: Dette er en utviklerfunksjon, feil bruk kan ødelegge applikasjonen din.
+SeeTopRightMenu=Se <span class="fa fa-bug"></span> i øverste høyre meny
+AddLanguageFile=Legg til språkfil
+YouCanUseTranslationKey=Her kan du bruke en nøkkel som er oversettelsesnøkkelen funnet i språkfilen (se kategorien "Språk")
+DropTableIfEmpty=(Delete table if empty)
+TableDoesNotExists=The table %s does not exists
+TableDropped=Table %s deleted

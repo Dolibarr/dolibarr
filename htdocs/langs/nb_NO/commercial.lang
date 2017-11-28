@@ -66,6 +66,7 @@ ActionAC_OTH=Andre
 ActionAC_OTH_AUTO=Automatisk satte hendelser
 ActionAC_MANUAL=Manuelt satte hendelser
 ActionAC_AUTO=Automatisk satte hendelser
+ActionAC_OTH_AUTOShort=Auto
 Stats=Salgsstatistikk
 StatusProsp=Prospect status
 DraftPropals=Utkast kommersielle tilbud

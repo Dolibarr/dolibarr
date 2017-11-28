@@ -155,6 +155,7 @@ ErrorPriceExpression19=Ausdruck nicht gefunden
 ErrorPriceExpression20=Leerer Ausdruck
 ErrorPriceExpression21=Leeres Ergebnis '%s'
 ErrorPriceExpression22=Negatives Ergebnis '%s'
+ErrorPriceExpression23=Unknown or non set variable '%s' in %s
 ErrorPriceExpressionInternal=Interner Fehler '%s'
 ErrorPriceExpressionUnknown=Unbekannter Fehler '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Quelle und Ziel-Lager müssen unterschiedlich sein
@@ -202,6 +203,9 @@ ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Only validated invoices can be sent using the "Send by email" mass action.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a predefined product or not
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
+ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
+ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+
 # Warnings
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert

@@ -155,6 +155,7 @@ ErrorPriceExpression19=Expression introuvable
 ErrorPriceExpression20=Expression vide
 ErrorPriceExpression21=Résultat '%s' vide
 ErrorPriceExpression22=Résultat négatif '%s'
+ErrorPriceExpression23=Unknown or non set variable '%s' in %s
 ErrorPriceExpressionInternal=Erreur interne '%s'
 ErrorPriceExpressionUnknown=Erreur inconnue '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Les entrepôts source et destination doivent être différents
@@ -202,6 +203,9 @@ ErrorObjectMustHaveLinesToBeValidated=L'objet %s doit contenir des lignes
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Seules les factures validées peuvent être envoyées à l'aide de l'action de masse "Envoyer par courrier électronique".
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=Vous devez choisir si l'article est un produit prédéfini ou non
 ErrorDiscountLargerThanRemainToPaySplitItBefore=La réduction que vous essayez d'appliquer est supérieure au montant du paiement. Auparavant, divisez le rabais en 2 rabais plus petits.
+ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
+ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+
 # Warnings
 WarningPasswordSetWithNoAccount=Un mot de passe a été fixé pour cet adhérent. Cependant, aucun compte d'utilisateur n'a été créé. Donc, ce mot de passe est stocké, mais ne peut être utilisé pour accéder à Dolibarr. Il peut être utilisé par un module/interface externe, mais si vous n'avez pas besoin de définir ni login ni mot de passe pour un adhérent, vous pouvez désactiver l'option «Gérer un login pour chaque adhérent" depuis la configuration du module Adhérents. Si vous avez besoin de gérer un login, mais pas de mot de passe, vous pouvez laisser ce champ vide pour éviter cet avertissement. Remarque: L'email peut également être utilisé comme login si l'adhérent est lié à un utilisateur.
 WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées

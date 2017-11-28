@@ -155,6 +155,7 @@ ErrorPriceExpression19=Expresia nu a fost găsită
 ErrorPriceExpression20=Expresie goală
 ErrorPriceExpression21=Rezultat gol '%s'
 ErrorPriceExpression22=Rezultat negativ '%s'
+ErrorPriceExpression23=Unknown or non set variable '%s' in %s
 ErrorPriceExpressionInternal=Eroare internă '%s'
 ErrorPriceExpressionUnknown=Eroare Necunoscută '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere
@@ -202,6 +203,9 @@ ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Only validated invoices can be sent using the "Send by email" mass action.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a predefined product or not
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
+ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
+ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+
 # Warnings
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi

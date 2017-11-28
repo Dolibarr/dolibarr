@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Oblast računovodstva/trezora
 NewPayment=Nova uplata
 Payments=Uplate
 PaymentCustomerInvoice=Uplata po računu klijenta
+PaymentSupplierInvoice=Uplata po računu dobavljača
 PaymentSocialContribution=Uplata poreza/doprinosa
 PaymentVat=PDV uplata
 ListPayment=Lista uplata

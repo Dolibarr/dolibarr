@@ -57,3 +57,4 @@ ErrorInsertingComment=Wystąpił błąd podczas wstawiania twojego komentarza
 MoreChoices=Wprowadź więcej możliwości dla głosujących
 SurveyExpiredInfo=Ankieta została zamknięta lub upłynął termin ważności oddawania głosów.
 EmailSomeoneVoted=% S napełnił linię. Możesz znaleźć ankietę na link:% s
+ShowSurvey=Show survey

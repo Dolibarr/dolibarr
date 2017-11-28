@@ -155,6 +155,7 @@ ErrorPriceExpression19=Expressió no trobada
 ErrorPriceExpression20=Expressió buida
 ErrorPriceExpression21=Resultat '%s' buit
 ErrorPriceExpression22=Resultat'%s' negatiu
+ErrorPriceExpression23=Unknown or non set variable '%s' in %s
 ErrorPriceExpressionInternal=Error intern '%s'
 ErrorPriceExpressionUnknown=Error desconegut '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Els magatzems d'origen i destí han de ser diferents
@@ -202,6 +203,9 @@ ErrorObjectMustHaveLinesToBeValidated=L'objecte %s ha de tenir línies per ser v
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Only validated invoices can be sent using the "Send by email" mass action.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a predefined product or not
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
+ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
+ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+
 # Warnings
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits

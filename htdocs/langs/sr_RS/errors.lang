@@ -155,6 +155,7 @@ ErrorPriceExpression19=Izraz nije pronađen
 ErrorPriceExpression20=Prazan izraz
 ErrorPriceExpression21=Prazan rezultat "%s"
 ErrorPriceExpression22=Negativan rezultat "%s"
+ErrorPriceExpression23=Unknown or non set variable '%s' in %s
 ErrorPriceExpressionInternal=Interna greška "%s"
 ErrorPriceExpressionUnknown=Nepoznata greška "%s"
 ErrorSrcAndTargetWarehouseMustDiffers=Izvorni i ciljani magacini moraju biti različiti
@@ -202,6 +203,9 @@ ErrorObjectMustHaveLinesToBeValidated=Object %s must have lines to be validated.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Only validated invoices can be sent using the "Send by email" mass action.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a predefined product or not
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
+ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
+ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+
 # Warnings
 WarningPasswordSetWithNoAccount=Lozinka je podešena za ovog člana, ali korisnik nije kreiran. To znači da je lozinka sačuvana, ali se član ne može ulogovati na Dolibarr. Informaciju može koristiti neka eksterna komponenta, ali ako nemate potrebe da definišete korisnika/lozinku za članove, možete deaktivirati opciju "Upravljanje lozinkama za svakog člana" u podešavanjima modula Članovi. Ukoliko morate da kreirate login, ali Vam nije potrebna lozinka, ostavite ovo polje prazno da se ovo upozorenje ne bi prikazivalo. Napomena: email može biti korišćen kao login ako je član povezan sa korisnikom.
 WarningMandatorySetupNotComplete=Obavezna podešavanja još nisu obavljena.

@@ -79,6 +79,7 @@ AccountancyTreasuryArea=会计/库务区
 NewPayment=新建支付
 Payments=付款
 PaymentCustomerInvoice=客户发票付款
+PaymentSupplierInvoice=供应商发票付款
 PaymentSocialContribution=社会/财政税款
 PaymentVat=增值税纳税
 ListPayment=付款列表

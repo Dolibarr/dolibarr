@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Exporter le libellé
 ACCOUNTING_EXPORT_AMOUNT=Exporter le montant
 ACCOUNTING_EXPORT_DEVISE=Exporter la devise
 Selectformat=Sélectionnez le format du fichier
+ACCOUNTING_EXPORT_FORMAT=Sélectionnez le format du fichier
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe pour le nom du fichier
 ThisService=Ce service
 ThisProduct=Ce produit
@@ -33,12 +35,13 @@ AlreadyInGeneralLedger=Enregistrement déjà présent dans le grand livre
 NotYetInGeneralLedger=non encore envoyé dans le grand livre
 GroupIsEmptyCheckSetup=Le groupe est vide. Vérifier la configuration du groupe personnalisé
 DetailByAccount=Afficher le détail par compte
-AccountWithNonZeroValues=Comptes sans les zéros
+AccountWithNonZeroValues=Comptes avec valeurs non nulles
+ListOfAccounts=List of accounts
 
-MainAccountForCustomersNotDefined=Compte comptable général pour les clients sans compte dédié
-MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs sans compte dédié
-MainAccountForUsersNotDefined=Compte comptable général pour les utilisateurs sans compte dédié
-MainAccountForVatPaymentNotDefined=Compte comptable général pour les paiements de TVA sans compte dédié
+MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
+MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
+MainAccountForUsersNotDefined=Compte comptable général pour les utilisateurs non défini dans la configuration
+MainAccountForVatPaymentNotDefined=Compte comptable général pour les paiements de TVA non défini dans la configuration
 
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=Étape %s : Ajouter ou modifier les opérations exist
 AccountancyAreaDescClosePeriod=Étape %s : Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Une étape obligatoire dans la configuration n'était pas terminée (journal de code de comptabilité non défini pour tous les comptes bancaires)
-MenuAccountancy=Comptabilité
 Selectchartofaccounts=Sélectionnez le plan de compte actif
 ChangeAndLoad=Changer et charger
 Addanaccount=Ajouter un compte comptable
@@ -79,11 +81,11 @@ ShowAccountingJournal=Afficher le journal
 AccountAccountingSuggest=Code comptable suggéré
 MenuDefaultAccounts=Comptes par défaut
 MenuBankAccounts=Comptes bancaires
-MenuVatAccounts=Compte TVA
+MenuVatAccounts=Comptes TVA
 MenuTaxAccounts=Comptes charges
 MenuExpenseReportAccounts=Comptes notes de frais
 MenuLoanAccounts=Comptes emprunts
-MenuProductsAccounts=Compte produits
+MenuProductsAccounts=Comptes produits
 ProductsBinding=Comptes produits
 Ventilation=Liés aux comptes
 CustomersVentilation=Liaison factures client
@@ -166,7 +168,7 @@ DeleteMvt=Supprimer les lignes du grand livre
 DelYear=Année à supprimer
 DelJournal=Journal à supprimer
 ConfirmDeleteMvt=Cela supprimera toutes les lignes du grand livre pour l'année et/ou d'un journal spécifique. Un critère au moins est requis.
-ConfirmDeleteMvtPartial=Cela supprimera la/les lignes sélectionnée(s) du grand livre
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Supprimer l'enregistrement du grand livre
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
@@ -218,13 +220,13 @@ MvtNotCorrectlyBalanced=Mouvement non équilibré. Crédit = %s. Débit = %s
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être enregistrées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà enregistrées.
-NoNewRecordSaved=Pas de nouvelle ligne liée
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
-AddAccountFromBookKeepingWithNoCategories=Le compte disponible n'est pas encore dans un groupe personnalisé
+AddAccountFromBookKeepingWithNoCategories=Comptes disponibles pas encore dans un groupe personnalisé
 CategoryDeleted=Le groupe de comptes comptables a été supprimé
 AccountingJournals=Journaux comptables
 AccountingJournal=Journal comptable
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
 Modelcsv_agiris=Export vers Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service

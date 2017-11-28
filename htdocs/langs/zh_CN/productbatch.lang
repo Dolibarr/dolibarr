@@ -22,3 +22,4 @@ ProductDoesNotUseBatchSerial=此产品不使用批号/序列号
 ProductLotSetup=Setup of module lot/serial
 ShowCurrentStockOfLot=Show current stock for couple product/lot
 ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

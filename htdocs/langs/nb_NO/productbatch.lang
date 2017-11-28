@@ -22,3 +22,4 @@ ProductDoesNotUseBatchSerial=Denne varen har ikke lot/serienummer
 ProductLotSetup=Oppsett av model Lot/serienmmer
 ShowCurrentStockOfLot=Vis gjeldende beholdning for vare/lot
 ShowLogOfMovementIfLot=Vis logg over bevegelser for vare/lot
+StockDetailPerBatch=Stock detail per lot

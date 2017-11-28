@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Oblast Účetnictví/Pokladna
 NewPayment=Nová platba
 Payments=Platby
 PaymentCustomerInvoice=Platba zákaznické faktury
+PaymentSupplierInvoice=Platba dodavatelské faktury
 PaymentSocialContribution=Sociální / fiskální placení daní
 PaymentVat=Platba DPH
 ListPayment=Seznam plateb

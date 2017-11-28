@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Exportar a etiqueta
 ACCOUNTING_EXPORT_AMOUNT=Exportar quantia
 ACCOUNTING_EXPORT_DEVISE=Exportar moeda
 Selectformat=Selecione o formato para o ficheiro
+ACCOUNTING_EXPORT_FORMAT=Selecione o formato para o ficheiro
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique o prefixo para o nome de ficheiro
 ThisService=Este serviço
 ThisProduct=Este produto
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=PASSO %s: Adicionar ou editar transações e gerar re
 AccountancyAreaDescClosePeriod=PASSO %s: Fechar período para que não seja possível modificar no futuro.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Contabilidade
 Selectchartofaccounts=Selecione gráfico de contas ativo 
 ChangeAndLoad=Mudar e carregar
 Addanaccount=Adicione uma conta contabilística
@@ -166,7 +168,7 @@ DeleteMvt=Eliminar as linhas do Livro Razão
 DelYear=Ano a apagar
 DelJournal=Diário a apagar
 ConfirmDeleteMvt=Isto irá apagar todas as linhas do Livro Razão para o ano atual e/ou de um diário específico. Pelo menos um critério é necessário.
-ConfirmDeleteMvtPartial=Isto irá apagar a(s) linha(s) selecionada(s) do livro razão
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Eliminar entrada do Livro Razão
 FinanceJournal=Diário financeiro
 ExpenseReportsJournal=Diário de relatórios de despesas
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Cartão de vinculação
 GeneralLedgerIsWritten=As transações são escritas no Livro Razão
 GeneralLedgerSomeRecordWasNotRecorded=Algumas das transações não puderam ser gravadas. Se não existir outra mensagem de erro, então é provável que as transações já tenham sido gravadas.
-NoNewRecordSaved=Nenhum registo novo guardado
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Lista de produtos não vinculados a qualquer conta contabilística
 ChangeBinding=Alterar vinculação
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Exportar relativamente a Quadratus QuadraCompta
 Modelcsv_ebp=Exportar relativamente a EBP
 Modelcsv_cogilog=Exportar relativamente a Cogilog
 Modelcsv_agiris=Exportar para Agiris (Teste)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=ID de plano de contas
 
 ## Tools - Init accounting account on product / service

@@ -7,11 +7,14 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear automáticamente un pedido de cliente
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente después de la firma de un presupuesto (la nueva factura tendrá el mismo importe que el presupuesto)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamente al validar un contrato
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente después del cierre del pedido de cliente (la nueva factura tendrá el mismo importe que el pedido)
-# Autoclassify
+# Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar presupuesto(s) origen como facturado cuando el pedido de cliente sea marcado como facturado (y si el importe del pedido es igual a la suma de los importes de los presupuestos relacionados)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar los presupuesto(s) origen como facturados cuando la factura a cliente sea validada (y si el importe de la factura es igual a la suma de los importes de los presupuestos relacionados)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar pedido(s) de cliente origen como facturado cuando la factura a cliente se valide (y si el importe de la factura es igual a la suma de los importes de los pedidos relacionados)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar pedido(s) de cliente origen como facturado cuando la factura a cliente sea marcada como pagada (y si el importe de la factura es la misma que la suma de los importes de los pedidos relacionados)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar automáticamente el pedido origen como enviado cuando el envío se valide (y si la cantidad enviada por todos los envíos sea la misma que el pedido)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source supplier proposal(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source supplier order(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked orders)
 AutomaticCreation=Creación automática
 AutomaticClassification=Clasificación automática

@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Exporta l'etiqueta
 ACCOUNTING_EXPORT_AMOUNT=Exporta l'import
 ACCOUNTING_EXPORT_DEVISE=Exporta la moneda
 Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_FORMAT=Select the format for the file
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 ThisService=Aquest servei
 ThisProduct=Aquest producte
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=No s'ha registrat en el Llibre Major
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Compte comptable per a clients no definida en la configuració
 MainAccountForSuppliersNotDefined=Compte comptable per a proveïdors no definit en la configuració
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=PAS %s: Afegir o editar transaccions existents i gene
 AccountancyAreaDescClosePeriod=PAS %s: Tancar el període de forma que no pot fer modificacions en un futur.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Comptabilitat
 Selectchartofaccounts=Seleccionar el pla de comptes actiu
 ChangeAndLoad=Canviar i carregar
 Addanaccount=Afegir un compte comptable
@@ -166,7 +168,7 @@ DeleteMvt=Elimina línies del llibre major
 DelYear=Any a eliminar
 DelJournal=Diari per esborrar
 ConfirmDeleteMvt=Això eliminarà totes les línies del Llibre Major de l'any i/o d'un diari específic. Es requereix com a mínim un criteri.
-ConfirmDeleteMvtPartial=Això eliminarà la línia o línies seleccionades del llibre major 
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Elimina el registre del libre major
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Informe-diari de despeses
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Registre comptabilitzat incorrectament. Deure=%s. Haver=
 FicheVentilation=Fitxa de comptabilització
 GeneralLedgerIsWritten=Les transaccions s'han escrit al llibre major
 GeneralLedgerSomeRecordWasNotRecorded=Algunes de les transaccions no s'han registrat. Si no hi ha cap altre missatge d'error, probablement és perquè ja s'han registrat.
-NoNewRecordSaved=No s'ha enviat cap nou registre
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Llista de productes no comptabilitzats en cap compte comptable
 ChangeBinding=Canvia la comptabilització
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Exporta cap a Quadratus QuadraCompta
 Modelcsv_ebp=Exporta cap a EBP
 Modelcsv_cogilog=Exporta cap a Cogilog
 Modelcsv_agiris=Exportar a Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Id pla comptable
 
 ## Tools - Init accounting account on product / service

@@ -22,3 +22,4 @@ ProductDoesNotUseBatchSerial=Tento produkt nepoužívá šarže/sériové čísl
 ProductLotSetup=Setup of module lot/serial
 ShowCurrentStockOfLot=Show current stock for couple product/lot
 ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

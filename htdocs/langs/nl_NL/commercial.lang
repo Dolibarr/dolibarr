@@ -66,6 +66,7 @@ ActionAC_OTH=Ander
 ActionAC_OTH_AUTO=Automatisch ingevoegde gebeurtenissen
 ActionAC_MANUAL=Handmatig ingevoerde gebeurtenissen
 ActionAC_AUTO=Automatisch ingevoegde gebeurtenissen
+ActionAC_OTH_AUTOShort=Auto
 Stats=Verkoopstatistieken
 StatusProsp=Prospect-status
 DraftPropals=Ontwerp van commerciële voorstellen

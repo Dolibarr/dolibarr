@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Eksporter label
 ACCOUNTING_EXPORT_AMOUNT=Eksporter beløb
 ACCOUNTING_EXPORT_DEVISE=Eksporter valuta
 Selectformat=Vælg formatet for filen
+ACCOUNTING_EXPORT_FORMAT=Vælg formatet for filen
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Angiv præfiks for filnavnet
 ThisService=Denne ydelse
 ThisProduct=Denne vare
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=Kladder der ikke er bogført endnu
 GroupIsEmptyCheckSetup=Gruppen er tom, kontroller opsætningen af ​​den brugerdefinerede regnskabsgruppe
 DetailByAccount=Vis detaljer efter konto
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Standardkonto for kunder, der ikke er defineret i opsætningen
 MainAccountForSuppliersNotDefined=Standardkonto for leverandører, der ikke er defineret i opsætningen
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=Trin %s: Tilføj eller rediger eksisterende transakti
 AccountancyAreaDescClosePeriod=Trin %s: Luk periode, så vi kan ikke foretage ændringer i fremtiden.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Et obligatorisk trin i opsætningen er ikke gennemført (regnskabskode ikke defineret for alle bankkonti)
-MenuAccountancy=Regnskab
 Selectchartofaccounts=Vælg aktiv kontoplan
 ChangeAndLoad=Ret og indlæs
 Addanaccount=Tilføj en regnskabskonto
@@ -166,7 +168,7 @@ DeleteMvt=Slet posteringer i hovedbogen
 DelYear=År, der skal slettes
 DelJournal=Kladde, der skal slettes
 ConfirmDeleteMvt=Dette vil slette alle bogførte linjer i hovedbogen for år og/eller fra en bestemt journal. Mindst ét ​​kriterium er påkrævet.
-ConfirmDeleteMvtPartial=Dette vil slette de valgte posteringer i hovedbogen
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Slet indhold i hovedbogen
 FinanceJournal=Finanskladde
 ExpenseReportsJournal=Udgiftskladder
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Bevægelsen er ikke korrekt afstemt. Kredit = %s. Debet 
 FicheVentilation=Oversigt over bindinger
 GeneralLedgerIsWritten=Transaktionerne er blevet bogført
 GeneralLedgerSomeRecordWasNotRecorded=Nogle af transaktionerne kunne ikke sendes. Hvis der ikke er nogen anden fejlmeddelelse, er det sandsynligvis fordi de allerede var afsendt.
-NoNewRecordSaved=Ingen ny post gemt
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Liste over varer, der ikke er bundet til nogen regnskabskonto
 ChangeBinding=Ret binding
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Eksporter til Quadratus QuadraCompta
 Modelcsv_ebp=Eksporter til EBP
 Modelcsv_cogilog=Ekpsporter til Cogilog
 Modelcsv_agiris=Eksporter til Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=ID for kontoplan
 
 ## Tools - Init accounting account on product / service

@@ -22,3 +22,4 @@ ProductDoesNotUseBatchSerial=Bu ürün parti/seri numarası kullanmıyor
 ProductLotSetup=Parti/seri modülü ayarları
 ShowCurrentStockOfLot=Çift ürün/lot için mevcut stoğu göster
 ShowLogOfMovementIfLot=Çift ürün/lot için hareketler günlüğünü göster
+StockDetailPerBatch=Stock detail per lot

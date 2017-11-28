@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Rechnungswesen/Vermögensverwaltung
 NewPayment=Neue Zahlung
 Payments=Zahlungen
 PaymentCustomerInvoice=Zahlung Kundenrechnung
+PaymentSupplierInvoice=Zahlung Lieferantenrechnung
 PaymentSocialContribution=Sozialabgaben-/Steuer Zahlung
 PaymentVat=USt.-Zahlung
 ListPayment=Liste der Zahlungen

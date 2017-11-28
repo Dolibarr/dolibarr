@@ -22,3 +22,4 @@ ProductDoesNotUseBatchSerial=Este producto no usa lotes/series
 ProductLotSetup=Configuración del módulo lotes/series
 ShowCurrentStockOfLot=Mostrar el stock actual de este producto/lote
 ShowLogOfMovementIfLot=Ver los movimientos de stock de este producto/lote
+StockDetailPerBatch=Stock detail per lot

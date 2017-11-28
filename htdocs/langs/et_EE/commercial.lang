@@ -66,6 +66,7 @@ ActionAC_OTH=Muud
 ActionAC_OTH_AUTO=Automaatselt sisestatud tegevused
 ActionAC_MANUAL=Käsitsi sisestatud tegevused
 ActionAC_AUTO=Automaatselt sisestatud tegevused
+ActionAC_OTH_AUTOShort=Auto
 Stats=Müügistatistika
 StatusProsp=Huviliste staatus
 DraftPropals=Mustandi staatuses olevad pakkumised

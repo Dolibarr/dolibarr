@@ -66,6 +66,7 @@ ActionAC_OTH=Andra
 ActionAC_OTH_AUTO=Automatiskt införda händelser
 ActionAC_MANUAL=Manuellt införda händelser
 ActionAC_AUTO=Automatiskt införda händelser
+ActionAC_OTH_AUTOShort=Auto
 Stats=Försäljningsstatistik
 StatusProsp=Prospect status
 DraftPropals=Utforma kommersiella förslag

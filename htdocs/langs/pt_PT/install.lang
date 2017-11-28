@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Você pode usar o assistente de configuração Dolibarr de 
 KeepDefaultValuesMamp=Você usa o DoliMamp Setup Wizard, para valores propostos aqui já estão otimizados. Alterá-los apenas se souber o que você faz.
 KeepDefaultValuesProxmox=Você usa o assistente de configuração Dolibarr de um appliance virtual Proxmox, para valores propostos aqui já são otimizados. Alterá-los apenas se você sabe o que fazer.
 UpgradeExternalModule=Corra o processo de atualização dedicado dos módulos externos
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Correção para os dados não normalizados
@@ -191,6 +192,7 @@ MigrationActioncommElement=Atualizar os dados nas ações
 MigrationPaymentMode=A migração de dados para o modo de pagamento
 MigrationCategorieAssociation=Migração de categorias
 MigrationEvents=Migração dos eventos de forma a adicionar o criador do evento à tabela de atribuições
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Atualize o valor do campo entity da tabela llx_societe_remise
 MigrationRemiseExceptEntity=Atualize o valor do campo entity da tabela llx_societe_remise_except
 MigrationReloadModule=Recarregar módulo %s

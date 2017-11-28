@@ -28,7 +28,6 @@ InterventionClassifyBilled=Klassificera "Fakturerad"
 InterventionClassifyUnBilled=Classify "ofakturerade"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Fakturerade
-ShowIntervention=Visar ingripande
 SendInterventionRef=Inlämning av ingrepp %s
 SendInterventionByMail=Skicka ingripa Email
 InterventionCreatedInDolibarr=Ingrepp %s skapad

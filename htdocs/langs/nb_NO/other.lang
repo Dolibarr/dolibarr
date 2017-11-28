@@ -11,7 +11,7 @@ BirthdayAlertOn=fødselsdagsvarsling aktiv
 BirthdayAlertOff=fødselsdagsvarsling inaktiv
 TransKey=Oversettelse av nøkkelen TransKey
 MonthOfInvoice=Måned (nummer 1-12) på fakturadato
-TextMonthOfInvoice=Måned (tex) på fakturadato
+TextMonthOfInvoice=Måned (tekst) i fakturadato
 PreviousMonthOfInvoice=Forrige måned (nummer 1-12) på fakturadato
 TextPreviousMonthOfInvoice=Forrige måned (tekst) av fakturadato
 NextMonthOfInvoice=Følgende måned (nummer 1-12) på fakturadato
@@ -214,6 +214,7 @@ StartUpload=Start opplasting
 CancelUpload=Avbryt opplasting
 FileIsTooBig=Filene er for store
 PleaseBePatient=Vent et øyeblikk eller to...
+ResetPassword=Tilbakestill passord
 RequestToResetPasswordReceived=Forespørsel om å endre Dolibarr-passordet ditt er blitt mottatt
 NewKeyIs=Dette er din nye innloggingsnøkkel
 NewKeyWillBe=Ny nøkkel for innlogging er
@@ -223,6 +224,7 @@ ForgetIfNothing=Hvis det ikke er du som har bedt om endringen, kan du glemme den
 IfAmountHigherThan=Hvis beløpet er høyere enn<strong>%s</strong>
 SourcesRepository=Oppbevaring av kilder
 Chart=Diagram
+PassEncoding=Passordkoding
 
 ##### Export #####
 ExportsArea=Eksportområde

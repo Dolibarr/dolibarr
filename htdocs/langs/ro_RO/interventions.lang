@@ -28,7 +28,6 @@ InterventionClassifyBilled=Clasează Facturat
 InterventionClassifyUnBilled=Clasează Nefacturat
 InterventionClassifyDone=Clasificați "Efectuat"
 StatusInterInvoiced=Facturat
-ShowIntervention=Afişează  intervenţie
 SendInterventionRef=Trimiterea intervenţiei %s
 SendInterventionByMail=Trimite intervenţie prin Email
 InterventionCreatedInDolibarr=Intervenţia %s creată

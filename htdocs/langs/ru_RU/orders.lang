@@ -152,5 +152,7 @@ OrderCreated=Ваши заказы созданы
 OrderFail=Возникла ошибка при создании заказов
 CreateOrders=Создать заказы
 ToBillSeveralOrderSelectCustomer=Для создания счёта на несколько заказов, сначала нажмите на клиента, затем выберете  "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

@@ -66,6 +66,7 @@ ActionAC_OTH=其他
 ActionAC_OTH_AUTO=自动插入事件
 ActionAC_MANUAL=手动插入事件
 ActionAC_AUTO=自动插入事件
+ActionAC_OTH_AUTOShort=Auto
 Stats=销售统计
 StatusProsp=准客户状态
 DraftPropals=起草商业报价

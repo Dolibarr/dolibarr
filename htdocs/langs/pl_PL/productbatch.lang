@@ -22,3 +22,4 @@ ProductDoesNotUseBatchSerial=Ten produkt nie używa lotu/numeru seryjnego
 ProductLotSetup=Konfiguracja modułu lot/seria
 ShowCurrentStockOfLot=Pokaż aktualny zapas dla pasy produkt/lot
 ShowLogOfMovementIfLot=Pokaż historię przesunięć dla pary produkt/lot
+StockDetailPerBatch=Stock detail per lot

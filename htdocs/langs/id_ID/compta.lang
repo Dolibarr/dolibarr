@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Accountancy/Treasury area
 NewPayment=New payment
 Payments=Semua pembayaran
 PaymentCustomerInvoice=Customer invoice payment
+PaymentSupplierInvoice=Supplier invoice payment
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=VAT payment
 ListPayment=List of payments

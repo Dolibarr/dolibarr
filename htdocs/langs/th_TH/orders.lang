@@ -152,5 +152,7 @@ OrderCreated=คำสั่งของคุณได้ถูกสร้า�
 OrderFail=ข้อผิดพลาดที่เกิดขึ้นในระหว่างการสร้างคำสั่งของคุณ
 CreateOrders=สร้างคำสั่งซื้อ
 ToBillSeveralOrderSelectCustomer=การสร้างใบแจ้งหนี้สำหรับการสั่งซื้อหลายคลิกแรกบนลูกค้าแล้วเลือก "% s"
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

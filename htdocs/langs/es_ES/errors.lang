@@ -155,6 +155,7 @@ ErrorPriceExpression19=Expresión no encontrada
 ErrorPriceExpression20=Expresión vacía
 ErrorPriceExpression21=Resultado '%s' vacío
 ErrorPriceExpression22=Resultado '%s' negativo
+ErrorPriceExpression23=Unknown or non set variable '%s' in %s
 ErrorPriceExpressionInternal=Error interno '%s'
 ErrorPriceExpressionUnknown=Error desconocido '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Los almacenes de origen y destino deben de ser diferentes
@@ -202,6 +203,9 @@ ErrorObjectMustHaveLinesToBeValidated=Objeto %s debe tener líneas para ser vali
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Sólo se pueden enviar facturas validadas mediante la acción masiva "Enviar por e-mail".
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=Debe elegir si el artículo es un producto predefinido o no
 ErrorDiscountLargerThanRemainToPaySplitItBefore=El descuento que usted intenta aplicar es más grande que el resto a pagar. Divida el descuento en 2 descuentos más pequeños antes.
+ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
+ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+
 # Warnings
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

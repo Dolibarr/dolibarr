@@ -11,7 +11,7 @@ BirthdayAlertOn=urodziny wpisu aktywnych
 BirthdayAlertOff=urodziny wpisu nieaktywne
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=Rozpocznij przesyłanie
 CancelUpload=Anuluj przesyłanie
 FileIsTooBig=Plik jest za duży
 PleaseBePatient=Proszę o cierpliwość...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=Wniosek o zmianę hasła Dolibarr został odebrany
 NewKeyIs=To są twoje nowe klucze do logowania
 NewKeyWillBe=Twój nowy klucz, aby zalogować się do programu będzie
@@ -223,6 +224,7 @@ ForgetIfNothing=Jeśli nie zwrócić tę zmianę, po prostu zapomnieć ten e-mai
 IfAmountHigherThan=Jeśli kwota wyższa niż <strong>%s</strong>
 SourcesRepository=Źródła dla repozytorium
 Chart=Chart
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Wywóz obszarze

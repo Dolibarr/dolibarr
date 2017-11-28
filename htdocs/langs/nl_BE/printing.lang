@@ -2,7 +2,6 @@
 MenuDirectPrinting=Direct Printing opdrachten
 ListDrivers=Lijst van beschikbare drivers
 PrintTestDesc=Beschikbare printers
-NoActivePrintingModuleFound=Geen actieve module om af te drukken
 TargetedPrinter=Doelprinter
 PRINTGCP_INFO=Google OAuth API instellingen
 PRINTGCP_AUTHLINK=Authentificatie

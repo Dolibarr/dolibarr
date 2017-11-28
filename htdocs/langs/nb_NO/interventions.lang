@@ -28,7 +28,6 @@ InterventionClassifyBilled=Merk "Fakturert"
 InterventionClassifyUnBilled=Merk "Ikke fakturert"
 InterventionClassifyDone=Klassifiser som "utført"
 StatusInterInvoiced=Fakturert
-ShowIntervention=Vis intervensjon
 SendInterventionRef=Send intervensjon %s
 SendInterventionByMail=Send intervensjon med e-post
 InterventionCreatedInDolibarr=Intervensjon %s opprettet

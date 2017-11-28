@@ -66,6 +66,7 @@ ActionAC_OTH=Kitas
 ActionAC_OTH_AUTO=Automatiškai įterpti įvykiai
 ActionAC_MANUAL=Rankiniu būdu įterpti įvykiai
 ActionAC_AUTO=Automatiškai įterpti įvykiai
+ActionAC_OTH_AUTOShort=Auto
 Stats=Pardavimų statistika
 StatusProsp=Plano būklė
 DraftPropals=Komercinių pasiūlymų projektai

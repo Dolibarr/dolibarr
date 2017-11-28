@@ -44,7 +44,6 @@ ConfirmActivateService=Êtes-vous sûr de vouloir activer ce service en date du 
 RefContract=Référence du contrat
 DateContract=Date contrat
 DateServiceActivate=Date activation du service
-ShowContract=Afficher contrat
 ListOfServices=Liste des services
 ListOfInactiveServices=Liste des services inactifs
 ListOfExpiredServices=Liste des services actifs expirés
@@ -88,7 +87,7 @@ ContactNameAndSignature=Pour %s, nom et signature:
 OnlyLinesWithTypeServiceAreUsed=Seules les lignes de type "Service" seront clonées
 CloneContract=Cloner le contrat
 ConfirmCloneContract=Etes vous sûr de vouloir cloner le contrat <b>%s</b> ?
-LowerDateEndPlannedShort=Next expired service date
+LowerDateEndPlannedShort=Date de fin de service la plus basse parmi les services actifs
 SendContractRef=Informations contrat __REF__
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
