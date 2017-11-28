@@ -43,7 +43,6 @@ class mailing_fraise extends MailingTargets
 
     var $db;
 
-
     /**
      *    Constructor
      *
@@ -65,7 +64,7 @@ class mailing_fraise extends MailingTargets
      */
     function getSqlArrayForStats()
     {
-        global $langs;
+        global $conf,$langs;
 
         $langs->load("members");
 
@@ -73,7 +72,7 @@ class mailing_fraise extends MailingTargets
         $statssql=array();
 
         $statssql[0] ="SELECT '".$this->db->escape($langs->trans("FundationMembers"))."' as label, count(*) as nb";
-        $statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+        $statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1 and entity IN (".getEntity('member').")";
 
         return $statssql;
     }
@@ -89,9 +88,10 @@ class mailing_fraise extends MailingTargets
      */
     function getNbOfRecipients($sql='')
     {
+	global $conf;    
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '')";
+        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
