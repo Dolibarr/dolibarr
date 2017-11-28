@@ -106,8 +106,17 @@ if ($result)
 
 	$i = 0;
 
+	if (! empty($user->rights->accounting->fiscalyear))
+	{
+		$addbutton = '<a class="butAction" href="fiscalyear_card.php?action=create">' . $langs->trans("NewFiscalYear") . '</a>';
+	}
+	else
+	{
+		$addbutton = '<a class="butActionRefused" href="#">' . $langs->trans("NewFiscalYear") . '</a>';
+	}
+
 	$title = $langs->trans('AccountingPeriods');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
 
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
@@ -142,18 +151,6 @@ if ($result)
 	dol_print_error($db);
 }
 
-
-// Buttons
-print '<div class="tabsAction">';
-if (! empty($user->rights->accounting->fiscalyear))
-{
-    print '<a class="butAction" href="fiscalyear_card.php?action=create">' . $langs->trans("NewFiscalYear") . '</a>';
-}
-else
-{
-    print '<a class="butActionRefused" href="#">' . $langs->trans("NewFiscalYear") . '</a>';
-}
-print '</div>';
 
 llxFooter();
 $db->close();

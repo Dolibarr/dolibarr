@@ -655,7 +655,6 @@ if ($id)
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
             	$valuetoshow=$langs->trans("Label");
-               	if ($id != 25) $valuetoshow.="*";
             }
             if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
