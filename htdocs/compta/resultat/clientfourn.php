@@ -193,7 +193,7 @@ elseif ($modecompta=="BOOKKEEPING")
 	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesResultBookkeepingPredefined");
-	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("Chartofaccounts")).')';
+	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("Chartofaccounts")).')';
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }

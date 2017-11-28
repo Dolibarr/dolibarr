@@ -36,6 +36,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
