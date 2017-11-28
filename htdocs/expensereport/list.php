@@ -319,19 +319,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-    $crit=$val;
-    $tmpkey=preg_replace('/search_options_/','',$key);
-    $typ=$extrafields->attribute_type[$tmpkey];
-	$mode_search=0;
-	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
-	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -367,12 +355,7 @@ if ($resql)
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-	    $crit=$val;
-	    $tmpkey=preg_replace('/search_options_/','',$key);
-	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
@@ -586,28 +569,8 @@ if ($resql)
 	   print '<td class="liste_titre" align="right"><input class="flat" type="text" size="5" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	    foreach($extrafields->attribute_label as $key => $val)
-	    {
-	        if (! empty($arrayfields["ef.".$key]['checked']))
-	        {
-	            $align=$extrafields->getAlignFlag($key);
-	            $typeofextrafield=$extrafields->attribute_type[$key];
-	            print '<td class="liste_titre'.($align?' '.$align:'').'">';
-	            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-	            {
-	                $crit=$val;
-	                $tmpkey=preg_replace('/search_options_/','',$key);
-	                $searchclass='';
-	                if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-	                if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-	                print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-	            }
-	            print '</td>';
-	        }
-	    }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -650,19 +613,7 @@ if ($resql)
 	if (! empty($arrayfields['d.total_vat']['checked']))            print_liste_field_titre($arrayfields['d.total_vat']['label'],$_SERVER["PHP_SELF"],"d.total_tva","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.total_ttc']['checked']))            print_liste_field_titre($arrayfields['d.total_ttc']['label'],$_SERVER["PHP_SELF"],"d.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	    foreach($extrafields->attribute_label as $key => $val)
-	    {
-	        if (! empty($arrayfields["ef.".$key]['checked']))
-	        {
-	            $align=$extrafields->getAlignFlag($key);
-    			$sortonfield = "ef.".$key;
-    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-	        }
-	    }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -791,23 +742,7 @@ if ($resql)
             }
 
             // Extra fields
-            if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-            {
-                foreach($extrafields->attribute_label as $key => $val)
-                {
-                    if (! empty($arrayfields["ef.".$key]['checked']))
-                    {
-                        print '<td';
-                        $align=$extrafields->getAlignFlag($key);
-                        if ($align) print ' align="'.$align.'"';
-                        print '>';
-                        $tmpkey='options_'.$key;
-                        print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-                        print '</td>';
-                        if (! $i) $totalarray['nbfield']++;
-                    }
-                }
-            }
+            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
             // Fields from hook
             $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
             $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
