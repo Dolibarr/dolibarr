@@ -1488,7 +1488,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			if (is_array($_POST))
 			{
 				foreach($_POST as $key=>$value) {
-					if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
+					if ($key!=='action' && $key!=='password' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
 				}
 			}
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
