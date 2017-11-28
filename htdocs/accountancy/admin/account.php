@@ -229,7 +229,7 @@ if ($resql)
 
 	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 
-    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd, '', $limit);
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd, '', $limit);
 
 	// Box to select active chart of account
     print $langs->trans("Selectchartofaccounts") . " : ";
@@ -258,6 +258,7 @@ if ($resql)
     print "</select>";
     print ajax_combobox("chartofaccounts");
     print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+
     print '<br>';
 	print '<br>';
 

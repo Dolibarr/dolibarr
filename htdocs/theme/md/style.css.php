@@ -2155,6 +2155,13 @@ div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
 }
 
+/* ============================================================================== */
+/* Boutons actions                                                                */
+/* ============================================================================== */
+
+div.divButAction {
+	margin-bottom: 1.4em;
+}
 div.tabsAction {
     margin: 20px 0em 20px 0em;
     padding: 0em 0em;

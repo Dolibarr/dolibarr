@@ -2250,6 +2250,9 @@ div.divButAction {
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
 	margin-bottom: 1.4em !important;
 }
+div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
+	margin-bottom: 0 !important;
+}
 
 span.butAction, span.butActionDelete {
 	cursor: pointer;
@@ -2269,6 +2272,11 @@ span.butAction, span.butActionDelete {
     color: #fff;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
     border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
+
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
 
 .butAction:hover   {
@@ -2819,7 +2827,6 @@ input.liste_titre {
 .listactionlargetitle .liste_titre {
 	line-height: 24px;
 }
-
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #551188;
     font-weight: normal;

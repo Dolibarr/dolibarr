@@ -3709,19 +3709,19 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
- *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
+ *	@param	string	    $morehtmlcenter     String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
  *	@param	int		    $num				Number of records found by select with limit+1
  *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	    $morehtml			More html to show
+ *  @param	string	    $morehtmlright			More html to show
  *  @param  string      $morecss            More css to the table
  *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
  *  @param  int         $hideselectlimit    Force to hide select limit
  *  @param  int         $hidenavigation     Force to hide all navigation tools
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0, $hidenavigation=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $morehtmlcenter='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtmlright='', $morecss='', $limit=-1, $hideselectlimit=0, $hidenavigation=0)
 {
 	global $conf,$langs;
 
@@ -3755,9 +3755,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print '</div></td>';
 
 	// Center
-	if ($center)
+	if ($morehtmlcenter)
 	{
-		print '<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
+		print '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
 	}
 
 	// Right
@@ -3811,7 +3811,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 	}
 
-	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
 
 	print '</td>';
 

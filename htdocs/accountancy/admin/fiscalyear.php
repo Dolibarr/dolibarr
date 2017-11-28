@@ -47,16 +47,16 @@ if ($user->societe_id > 0)
 	accessforbidden();
 if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we shoul be able to see fiscal year.
     accessforbidden();
-	
+
 $error = 0;
 
 // List of status
 static $tmpstatut2label = array (
 		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear' 
+		'1' => 'CloseFiscalYear'
 );
 $statut2label = array (
-		'' 
+		''
 );
 foreach ( $tmpstatut2label as $key => $val )
 	$statut2label[$key] = $langs->trans($val);
@@ -100,8 +100,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
-if ($result) {
-	$var = false;
+if ($result)
+{
 	$num = $db->num_rows($result);
 
 	$i = 0;
@@ -132,8 +132,7 @@ if ($result) {
 			print '<td align="left">' . dol_print_date($db->jdate($obj->date_end), 'day') . '</td>';
 			print '<td align="right">' . $fiscalyearstatic->LibStatut($obj->statut, 5) . '</td>';
 			print '</tr>';
-			$var = ! $var;
-			$i ++;
+			$i++;
 		}
 	} else {
 		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
@@ -143,7 +142,6 @@ if ($result) {
 	dol_print_error($db);
 }
 
-dol_fiche_end();
 
 // Buttons
 print '<div class="tabsAction">';
