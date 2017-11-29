@@ -842,42 +842,39 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $colspan=9;
 
-    if ($num || (GETPOST('button_search','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search_x','alpha')))
-    {
-    	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 
-    	// Photo - Name
-    	print '<td class="liste_titre">';
-    	print '<input type="text" class="flat minwidth75" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
-    	print '</td>';
+	// Photo - Name
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat minwidth75" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+	print '</td>';
 
-    	// Position
-    	print '<td class="liste_titre">';
-    	print '</td>';
+	// Position
+	print '<td class="liste_titre">';
+	print '</td>';
 
-    	// Address - Phone - Email
-    	print '<td class="liste_titre"></td>';
+	// Address - Phone - Email
+	print '<td class="liste_titre"></td>';
 
-    	// Status
-    	print '<td class="liste_titre maxwidthonsmartphone">';
-    	print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
-    	print '</td>';
+	// Status
+	print '<td class="liste_titre maxwidthonsmartphone">';
+	print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
+	print '</td>';
 
-    	// Add to agenda
-    	if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
-    	{
-    		$colspan++;
-    		print '<td class="liste_titre"></td>';
-    	}
+	// Add to agenda
+	if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+	{
+		$colspan++;
+		print '<td class="liste_titre"></td>';
+	}
 
-    	// Action
-		print '<td class="liste_titre" align="right">';
-		$searchpicto=$form->showFilterButtons();
-		print $searchpicto;
-		print '</td>';
+	// Action
+	print '<td class="liste_titre" align="right">';
+	$searchpicto=$form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
 
-    	print "</tr>";
-    }
+	print "</tr>";
 
     print '<tr class="liste_titre">';
     print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
