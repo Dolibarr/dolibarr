@@ -245,7 +245,11 @@ if (empty($reshook))
 
 					// Call trigger
 					$result=$object->call_trigger('COMPANY_MODIFY',$user);
-					if ($result < 0) $error++;
+					if ($result < 0)
+					{
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+					}
 					// End call triggers
 				}
 
