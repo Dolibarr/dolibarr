@@ -223,8 +223,10 @@ class lettering extends BookKeeping
 	 * @param boolean $notrigger no trigger
  	 * @return number
 	 */
-	public function updateLettrage($ids = array(), $notrigger = false) {
+	public function updateLettrage($ids = array(), $notrigger = false)
+	{
 		$error = 0;
+		$lettre = 'AAA';
 
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 
@@ -236,11 +238,10 @@ class lettering extends BookKeeping
 			$obj = $this->db->fetch_object($result);
 			$lettre = (empty($obj->lettering_code) ? 'AAA' : $obj->lettering_code);
 			if (! empty($obj->lettering_code))
-				$lettre ++;
+				$lettre++;
 		} else {
 			$this->errors[] = 'Error' . $this->db->lasterror();
-			;
-			$error ++;
+			$error++;
 		}
 
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
@@ -250,29 +251,31 @@ class lettering extends BookKeeping
 			$obj = $this->db->fetch_object($result);
 			if (! (round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
 				$this->errors[] = 'Total not exacts ' . round(abs($obj->deb), 2) . ' vs ' . round(abs($obj->cred), 2);
-				$error ++;
+				$error++;
 			}
 		} else {
 			$this->errors[] = 'Erreur sql' . $this->db->lasterror();
-			;
-			$error ++;
+			$error++;
 		}
 
 		// Update request
 
 		$now = dol_now();
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
-		$sql .= " lettering_code='" . $lettre . "'";
-		$sql .= " , date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
-		$sql .= "  WHERE rowid IN (" . implode(',', $ids) . ") ";
-		$this->db->begin();
+		if (! $error)
+		{
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+			$sql .= " lettering_code='" . $lettre . "'";
+			$sql .= " , date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
+			$sql .= "  WHERE rowid IN (" . implode(',', $ids) . ") ";
+			$this->db->begin();
 
-		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (! $resql) {
-			$error ++;
-			$this->errors[] = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (! $resql) {
+				$error++;
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
 		}
 
 		if (! $error) {

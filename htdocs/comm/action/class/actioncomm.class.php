@@ -1215,7 +1215,7 @@ class ActionComm extends CommonObject
      */
     function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0, $notooltip=0)
     {
-		global $conf, $langs, $user, $hookmanager;
+		global $conf, $langs, $user, $hookmanager, $action;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1231,7 +1231,7 @@ class ActionComm extends CommonObject
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
 		}
 
-		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
+		$tooltip = '<u>' . $langs->trans('ShowAction') . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($label))
