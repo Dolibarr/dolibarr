@@ -239,7 +239,7 @@ if (empty($reshook))
 				}
 
 
-				if (! $error && $call_trigger)
+				if (! $error)
 				{
 					$object->context=array('merge'=>1, 'mergefromid'=>$soc_origin->id);
 
@@ -1994,7 +1994,7 @@ else
 			    )
 		    );
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 200);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
 	    }
 
         dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
