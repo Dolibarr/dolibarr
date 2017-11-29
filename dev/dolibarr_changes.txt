@@ -110,4 +110,17 @@ to get
         if ($className == 'Luracast\Restler\string') return;
         if ($className == 'Luracast\Restler\mixed') return;
 		...
-        
+    	
+    	
+PARSEDOWN
+---------
+
+* Fix to avoid fatal error when mb_strlen not available:
+
+	// @CHANGE LDR Fix when mb_strlen is not available
+	//$shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+	if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
+	else $len = strlen($line);
+	$shortage = 4 - $len % 4;
+                	
+    	
