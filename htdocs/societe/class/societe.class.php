@@ -727,7 +727,7 @@ class Societe extends CommonObject
 	 *
 	 *      @param	int		$id              			Id of company (deprecated, use 0 here and call update on an object loaded by a fetch)
 	 *      @param  User	$user            			Utilisateur qui demande la mise a jour
-	 *      @param  int		$call_trigger    			0=non, 1=oui
+	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
 	 *		@param	string	$action						'add' or 'update'

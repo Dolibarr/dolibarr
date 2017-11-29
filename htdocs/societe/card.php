@@ -146,15 +146,16 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-				    'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-				    'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-				    'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
-				    'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				    'model_pdf', 'fk_projet'
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+					'model_pdf', 'fk_projet'
 				);
 				foreach ($listofproperties as $property)
 				{
-				    if (empty($object->$property)) $object->$property = $soc_origin->$property;
+					if (empty($object->$property)) $object->$property = $soc_origin->$property;
 				}
 
 				// Concat some data
@@ -183,7 +184,7 @@ if (empty($reshook))
 				$object->setCategories($suppcats, 'supplier');
 
 				// Update
-				$object->update($object->id, $user);
+				$object->update($object->id, $user, 0);
 
 				// Move links
 				$objects = array(
@@ -235,6 +236,17 @@ if (empty($reshook))
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$errors++;
 					}
+				}
+
+
+				if (! $error && $call_trigger)
+				{
+					$object->context=array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+
+					// Call trigger
+					$result=$object->call_trigger('COMPANY_MODIFY',$user);
+					if ($result < 0) $error++;
+					// End call triggers
 				}
 
 				if (!$errors)
