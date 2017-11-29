@@ -415,8 +415,8 @@ if (empty($reshook)) {
 					}
 				}
 
-				$contactid = GETPOST('contactid', 'int');
-				if (!$error && $contactid >= 0) {
+				if (!$error && GETPOSTISSET('contactid')) {
+					$contactid = GETPOST('contactid', 'int');				
 
 					if ($contactid > 0) {
 						$contact = new Contact($db);
