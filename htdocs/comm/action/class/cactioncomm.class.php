@@ -156,6 +156,7 @@ class CActionComm
                     if ($qualified)
                     {
                     	$keyfortrans='';
+                    	$transcode='';
                     	$code=$obj->code;
                     	if ($onlyautoornot > 0 && $code == 'AC_OTH') $code='AC_MANUAL';
                     	if ($onlyautoornot > 0 && $code == 'AC_OTH_AUTO') $code='AC_AUTO';

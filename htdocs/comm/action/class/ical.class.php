@@ -222,7 +222,7 @@ class ICal
         if (($key == "DTSTAMP") || ($key == "LAST-MODIFIED") || ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
         //if ($key == "RRULE" ) $value = $this->ical_rrule($value);
 
-        if (stristr($key,"DTSTART") or stristr($key,"DTEND") || stristr($key,"DTSTART;VALUE=DATE") || stristr($key,"DTEND;VALUE=DATE"))
+        if (stristr($key,"DTSTART") || stristr($key,"DTEND") || stristr($key,"DTSTART;VALUE=DATE") || stristr($key,"DTEND;VALUE=DATE"))
         {
         	if (stristr($key,"DTSTART;VALUE=DATE") || stristr($key,"DTEND;VALUE=DATE"))
         	{
