@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013-2015	Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2017		Ion Agorria         <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- *  \file      	resource/class/resource.class.php
+ *  \file      	resource/class/dolresource.class.php
  *  \ingroup    resource
  *  \brief      Class file for resource object
 
@@ -34,12 +35,6 @@ class Dolresource extends CommonObject
 	public $table_element='resource';	//!< Name of table without prefix where object is stored
     public $picto = 'resource';
 
-	public $resource_id;
-	public $resource_type;
-	public $element_id;
-	public $element_type;
-	public $busy;
-	public $mandatory;
 	public $fk_user_create;
 	public $type_label;
 	public $tms='';
@@ -113,16 +108,13 @@ class Dolresource extends CommonObject
     	if (! $error)
     	{
     		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-    	}
 
-    	if (! $error)
-    	{
     		$action='create';
 
     		// Actions on extra fields (by external module or standard code)
     		// TODO le hook fait double emploi avec le trigger !!
-    		$hookmanager->initHooks(array('actioncommdao'));
-    		$parameters=array('actcomm'=>$this->id);
+    		$hookmanager->initHooks(array('resourcedao'));
+    		$parameters=array();
     		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
     		if (empty($reshook))
     		{
@@ -176,8 +168,16 @@ class Dolresource extends CommonObject
      *    @param	string	$ref	Ref of object
      *    @return   int         	<0 if KO, >0 if OK
      */
-    function fetch($id, $ref='')
+    function fetch($id=0, $ref='')
     {
+        // Check parameters
+        if (! $id && ! $ref)
+        {
+            $this->error='ErrorWrongParameters';
+            dol_print_error(get_class($this)."::fetch ".$this->error);
+            return -1;
+        }
+
     	global $langs;
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
@@ -193,12 +193,13 @@ class Dolresource extends CommonObject
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	if ($id) $sql.= " WHERE t.rowid = ".$this->db->escape($id);
-    	else $sql.= " WHERE t.ref = '".$this->db->escape($ref)."'";
+    	else $sql.= " WHERE t.entity IN (".getEntity('resource', 1).") AND t.ref = '".$this->db->escape($ref)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
+    		$result = 0;
     		if ($this->db->num_rows($resql))
     		{
     			$obj = $this->db->fetch_object($resql);
@@ -212,10 +213,11 @@ class Dolresource extends CommonObject
     			$this->note_public				=	$obj->note_public;
     			$this->note_private				=	$obj->note_private;
     			$this->type_label				=	$obj->type_label;
+    			$result = $this->id;
 
     			// Retreive all extrafield for thirdparty
     			// fetch optionals attributes and labels
-    			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+    			dol_include_once('/core/class/extrafields.class.php');
     			$extrafields=new ExtraFields($this->db);
     			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
     			$this->fetch_optionals($this->id,$extralabels);
@@ -223,7 +225,7 @@ class Dolresource extends CommonObject
     		}
     		$this->db->free($resql);
 
-    		return $this->id;
+    		return $result;
     	}
     	else
     	{
@@ -311,8 +313,8 @@ class Dolresource extends CommonObject
 
 			// Actions on extra fields (by external module or standard code)
 			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('actioncommdao'));
-			$parameters=array('actcomm'=>$this->id);
+			$hookmanager->initHooks(array('resourcedao'));
+			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
@@ -344,64 +346,6 @@ class Dolresource extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
-
-    /**
-     *    Load object in memory from database
-     *
-     *    @param      int	$id          id object
-     *    @return     int         <0 if KO, >0 if OK
-     */
-    function fetch_element_resource($id)
-    {
-    	global $langs;
-    	$sql = "SELECT";
-    	$sql.= " t.rowid,";
-   		$sql.= " t.resource_id,";
-		$sql.= " t.resource_type,";
-		$sql.= " t.element_id,";
-		$sql.= " t.element_type,";
-		$sql.= " t.busy,";
-		$sql.= " t.mandatory,";
-		$sql.= " t.fk_user_create,";
-		$sql.= " t.tms";
-		$sql.= " FROM ".MAIN_DB_PREFIX."element_resources as t";
-    	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
-
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-    	$resql=$this->db->query($sql);
-    	if ($resql)
-    	{
-    		if ($this->db->num_rows($resql))
-    		{
-    			$obj = $this->db->fetch_object($resql);
-
-    			$this->id				=	$obj->rowid;
-    			$this->resource_id		=	$obj->resource_id;
-    			$this->resource_type	=	$obj->resource_type;
-    			$this->element_id		=	$obj->element_id;
-    			$this->element_type		=	$obj->element_type;
-    			$this->busy				=	$obj->busy;
-    			$this->mandatory		=	$obj->mandatory;
-    			$this->fk_user_create	=	$obj->fk_user_create;
-
-				if($obj->resource_id && $obj->resource_type) {
-					$this->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
-				}
-				if($obj->element_id && $obj->element_type) {
-					$this->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
-				}
-
-    		}
-    		$this->db->free($resql);
-
-    		return $this->id;
-    	}
-    	else
-    	{
-    		$this->error="Error ".$this->db->lasterror();
-    		return -1;
-    	}
     }
 
     /**
@@ -425,8 +369,9 @@ class Dolresource extends CommonObject
 		dol_syslog(get_class($this), LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-			$sql.= " WHERE element_type='resource' AND resource_id =".$this->db->escape($rowid);
+			$obj = new ResourceLink($this->db);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$obj->table_element;
+			$sql.= " WHERE resource_id =".$this->db->escape($rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (!$resql)
@@ -442,7 +387,7 @@ class Dolresource extends CommonObject
 		}
 
 		// Removed extrafields
-		if (! $error) {
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
 			$result=$this->deleteExtraFields();
 			if ($result < 0)
 			{
@@ -451,7 +396,7 @@ class Dolresource extends CommonObject
 			}
 		}
 
-		if (! $notrigger)
+		if (! $error && ! $notrigger)
 		{
 			// Call trigger
 			$result=$this->call_trigger('RESOURCE_DELETE',$user);
@@ -500,7 +445,7 @@ class Dolresource extends CommonObject
      *  @param	array		$filter    	  filter output
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all($sortorder, $sortfield, $limit, $offset, $filter='')
+    function fetchAll($sortorder, $sortfield, $limit, $offset, $filter='')
     {
     	global $conf;
     	$sql="SELECT ";
@@ -524,7 +469,7 @@ class Dolresource extends CommonObject
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
-    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
+    	$sql.= " WHERE t.entity IN (".getEntity('resource',1).")";
 
     	//Manage filter
     	if (!empty($filter)){
@@ -585,310 +530,6 @@ class Dolresource extends CommonObject
     	}
 
     }
-
-     /**
-     *	Load all objects into $this->lines
-     *
-     *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
-     */
-    function fetch_all_resources($sortorder, $sortfield, $limit, $offset, $filter='')
-    {
-   		global $conf;
-   		$sql="SELECT ";
-   		$sql.= " t.rowid,";
-   		$sql.= " t.resource_id,";
-		$sql.= " t.resource_type,";
-		$sql.= " t.element_id,";
-		$sql.= " t.element_type,";
-		$sql.= " t.busy,";
-		$sql.= " t.mandatory,";
-		$sql.= " t.fk_user_create,";
-		$sql.= " t.tms";
-   		$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-   		$sql.= " WHERE t.entity IN (".getEntity('resource').")";
-
-   		//Manage filter
-   		if (!empty($filter)){
-   			foreach($filter as $key => $value) {
-   				if (strpos($key,'date')) {
-   					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-   				}
-   				else {
-   					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
-   				}
-   			}
-   		}
-    	$sql.= $this->db->order($sortfield,$sortorder);
-   		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
-   		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
-
-   		$resql=$this->db->query($sql);
-   		if ($resql)
-   		{
-   			$num = $this->db->num_rows($resql);
-   			if ($num)
-   			{
-   				while ($obj = $this->db->fetch_object($resql))
-   				{
-   					$line = new Dolresource($this->db);
-   					$line->id				=	$obj->rowid;
-   					$line->resource_id		=	$obj->resource_id;
-   					$line->resource_type	=	$obj->resource_type;
-   					$line->element_id		=	$obj->element_id;
-   					$line->element_type		=	$obj->element_type;
-   					$line->busy				=	$obj->busy;
-   					$line->mandatory		=	$obj->mandatory;
-   					$line->fk_user_create	=	$obj->fk_user_create;
-
-					if($obj->resource_id && $obj->resource_type)
-						$line->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
-					if($obj->element_id && $obj->element_type)
-						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
-        			$this->lines[] = $line;
-
-   				}
-   				$this->db->free($resql);
-   			}
-   			return $num;
-   		}
-   		else
-   		{
-   			$this->error = $this->db->lasterror();
-   			return -1;
-   		}
-
-    }
-
-    /**
-     *	Load all objects into $this->lines
-     *
-     *  @param	string		$sortorder    sort order
-     *  @param	string		$sortfield    sort field
-     *  @param	int			$limit		  limit page
-     *  @param	int			$offset    	  page
-     *  @param	array		$filter    	  filter output
-     *  @return int          	<0 if KO, >0 if OK
-     */
-    function fetch_all_used($sortorder, $sortfield, $limit, $offset=1, $filter='')
-    {
-    	global $conf;
-
-    	if ( ! $sortorder) $sortorder="ASC";
-    	if ( ! $sortfield) $sortfield="t.rowid";
-
-    	$sql="SELECT ";
-    	$sql.= " t.rowid,";
-    	$sql.= " t.resource_id,";
-    	$sql.= " t.resource_type,";
-    	$sql.= " t.element_id,";
-    	$sql.= " t.element_type,";
-    	$sql.= " t.busy,";
-    	$sql.= " t.mandatory,";
-    	$sql.= " t.fk_user_create,";
-    	$sql.= " t.tms";
-    	$sql.= ' FROM '.MAIN_DB_PREFIX .'element_resources as t ';
-    	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
-
-    	//Manage filter
-    	if (!empty($filter)){
-    		foreach($filter as $key => $value) {
-    			if (strpos($key,'date')) {
-    				$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
-    			}
-    		}
-    	}
-    	$sql.= $this->db->order($sortfield,$sortorder);
-    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
-    	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
-
-    	$resql=$this->db->query($sql);
-    	if ($resql)
-    	{
-    		$num = $this->db->num_rows($resql);
-    		if ($num)
-    		{
-    			$this->lines=array();
-    			while ($obj = $this->db->fetch_object($resql))
-    			{
-    				$line = new Dolresource($this->db);
-    				$line->id				=	$obj->rowid;
-    				$line->resource_id		=	$obj->resource_id;
-    				$line->resource_type	=	$obj->resource_type;
-    				$line->element_id		=	$obj->element_id;
-    				$line->element_type		=	$obj->element_type;
-    				$line->busy				=	$obj->busy;
-    				$line->mandatory		=	$obj->mandatory;
-    				$line->fk_user_create	=	$obj->fk_user_create;
-
-    				$this->lines[] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
-    			}
-    			$this->db->free($resql);
-    		}
-    		return $num;
-    	}
-    	else
-    	{
-    		$this->error = $this->db->lasterror();
-    		return -1;
-    	}
-
-    }
-
-    /**
-     * Fetch all resources available, declared by modules
-     * Load available resource in array $this->available_resources
-     *
-     * @return int 	number of available resources declared by modules
-     * @deprecated, remplaced by hook getElementResources
-     * @see getElementResources()
-     */
-    function fetch_all_available() {
-    	global $conf;
-
-    	if (! empty($conf->modules_parts['resources']))
-    	{
-    		$this->available_resources=(array) $conf->modules_parts['resources'];
-
-    		return count($this->available_resources);
-    	}
-    	return 0;
-    }
-
-    /**
-     *  Update element resource into database
-     *
-     *  @param	User	$user        User that modifies
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return int     		   	 <0 if KO, >0 if OK
-     */
-    function update_element_resource($user=null, $notrigger=0)
-    {
-    	global $conf, $langs;
-		$error=0;
-
-		// Clean parameters
-		if (isset($this->resource_id)) $this->resource_id=trim($this->resource_id);
-		if (isset($this->resource_type)) $this->resource_type=trim($this->resource_type);
-		if (isset($this->element_id)) $this->element_id=trim($this->element_id);
-		if (isset($this->element_type)) $this->element_type=trim($this->element_type);
-		if (isset($this->busy)) $this->busy=trim($this->busy);
-		if (isset($this->mandatory)) $this->mandatory=trim($this->mandatory);
-
-        // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
-		$sql.= " resource_id=".(isset($this->resource_id)?"'".$this->db->escape($this->resource_id)."'":"null").",";
-		$sql.= " resource_type=".(isset($this->resource_type)?"'".$this->db->escape($this->resource_type)."'":"null").",";
-		$sql.= " element_id=".(isset($this->element_id)?$this->element_id:"null").",";
-		$sql.= " element_type=".(isset($this->element_type)?"'".$this->db->escape($this->element_type)."'":"null").",";
-		$sql.= " busy=".(isset($this->busy)?$this->busy:"null").",";
-		$sql.= " mandatory=".(isset($this->mandatory)?$this->mandatory:"null").",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
-
-        $sql.= " WHERE rowid=".$this->id;
-
-		$this->db->begin();
-
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-                // Call trigger
-                $result=$this->call_trigger('RESOURCE_MODIFY',$user);
-                if ($result < 0) $error++;
-                // End call triggers
-	    	}
-		}
-
-        // Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
-    }
-
-
-    /**
-     * Return an array with resources linked to the element
-     *
-     * @param string    $element        Element
-     * @param int       $element_id     Id
-     * @param string    $resource_type  Type
-     * @return array                    Aray of resources
-     */
-    function getElementResources($element,$element_id,$resource_type='')
-    {
-	    // Links beetween objects are stored in this table
-	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
-	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
-	    if($resource_type)
-	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
-	    $sql .= ' ORDER BY resource_type';
-
-	    dol_syslog(get_class($this)."::getElementResources", LOG_DEBUG);
-	    $resql = $this->db->query($sql);
-	    if ($resql)
-	    {
-	    	$num = $this->db->num_rows($resql);
-	    	$i = 0;
-	    	while ($i < $num)
-	    	{
-	    		$obj = $this->db->fetch_object($resql);
-
-	    		$resources[$i] = array(
-	    			'rowid' => $obj->rowid,
-	    			'resource_id' => $obj->resource_id,
-	    			'resource_type'=>$obj->resource_type,
-	    			'busy'=>$obj->busy,
-	    			'mandatory'=>$obj->mandatory
-	    		);
-	    		$i++;
-	    	}
-	    }
-
-	    return $resources;
-    }
-
-    /*
-     *  Return an int number of resources linked to the element
-     *
-     *  @return     int
-     */
-    function fetchElementResources($element,$element_id)
-    {
-        $resources = $this->getElementResources($element,$element_id);
-        $i=0;
-        foreach($resources as $nb => $resource) {
-            $this->lines[$i] = fetchObjectByElement($resource['resource_id'],$resource['resource_type']);
-            $i++;
-        }
-        return $i;
-
-    }
-
 
     /**
      *      Load in cache resource type code (setup in dictionary)
@@ -989,4 +630,392 @@ class Dolresource extends CommonObject
 
         return '';
     }
+}
+
+/**
+ *	DAO Resource Link object
+ */
+class ResourceLink extends CommonObject
+{
+    public $element='element_resources';		//!< Id that identify managed objects
+    public $table_element='element_resources';	//!< Name of table without prefix where object is stored
+
+    public $resource_id;
+    public $resource_type;
+    public $element_id;
+    public $element_type;
+    public $busy;
+    public $mandatory;
+    public $tms;
+    public $fk_user_create;
+
+    /**
+     *  Constructor
+     *
+     *  @param	DoliDb		$db      Database handler
+     */
+    function __construct($db)
+    {
+        $this->db = $db;
+        return 1;
+    }
+
+    /**
+     *  Create object into database
+     *
+     *  @param	User	$user        User that creates
+     *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
+     *  @return int      		   	 <0 if KO, Id of created object if OK
+     */
+    function create($user, $notrigger=0)
+    {
+        global $conf, $langs;
+        $error=0;
+
+        // Clean parameters
+		if (isset($this->resource_id)) $this->resource_id=trim($this->resource_id);
+		if (isset($this->resource_type)) $this->resource_type=trim($this->resource_type);
+		if (isset($this->element_id)) $this->element_id=trim($this->element_id);
+		if (isset($this->element_type)) $this->element_type=trim($this->element_type);
+		if (isset($this->busy)) $this->busy=trim($this->busy);
+		if (isset($this->mandatory)) $this->mandatory=trim($this->mandatory);
+
+        // Insert request
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+		$sql.= "resource_id,";
+		$sql.= "resource_type,";
+		$sql.= "element_id,";
+		$sql.= "element_type,";
+		$sql.= "busy,";
+		$sql.= "mandatory";
+		$sql.= ") VALUES (";
+		$sql.= "'".$this->db->escape($this->resource_id)."'";
+		$sql.= ", '".$this->db->escape($this->resource_type)."'";
+		$sql.= ", '".$this->db->escape($this->element_id)."'";
+		$sql.= ", '".$this->db->escape($this->element_type)."'";
+		$sql.= ", '".$this->db->escape($this->busy)."'";
+		$sql.= ", '".$this->db->escape($this->mandatory)."'";
+		$sql.= ")";
+
+        $this->db->begin();
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if (! $resql) {
+            $error++; $this->errors[]="Error ".$this->db->lasterror();
+        }
+
+        if (! $error)
+        {
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+
+            if (! $notrigger)
+            {
+                // Call triggers
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('RESOURCELINK_CREATE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error)
+        {
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+    }
+
+    /**
+     *    Load object in memory from database
+     *
+     *    @param      int	$id          id object
+     *    @return     int         <0 if KO, >0 if OK
+     */
+    function fetch($id)
+    {
+    	$sql = "SELECT";
+    	$sql.= " t.rowid,";
+   		$sql.= " t.resource_id,";
+		$sql.= " t.resource_type,";
+		$sql.= " t.element_id,";
+		$sql.= " t.element_type,";
+		$sql.= " t.busy,";
+		$sql.= " t.mandatory,";
+		$sql.= " t.fk_user_create,";
+		$sql.= " t.tms";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+    	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
+
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		if ($this->db->num_rows($resql))
+    		{
+    			$obj = $this->db->fetch_object($resql);
+
+    			$this->id				=	$obj->rowid;
+    			$this->resource_id		=	$obj->resource_id;
+    			$this->resource_type	=	$obj->resource_type;
+    			$this->element_id		=	$obj->element_id;
+    			$this->element_type		=	$obj->element_type;
+    			$this->busy				=	$obj->busy;
+    			$this->mandatory		=	$obj->mandatory;
+    			$this->fk_user_create	=	$obj->fk_user_create;
+    			$this->tms				=	$obj->tms;
+
+    		}
+    		$this->db->free($resql);
+
+    		return $this->id;
+    	}
+    	else
+    	{
+    		$this->error="Error ".$this->db->lasterror();
+    		return -1;
+    	}
+    }
+
+    /**
+     *  Update element resource into database
+     *
+     *  @param	User	$user        User that modifies
+     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+     *  @return int     		   	 <0 if KO, >0 if OK
+     */
+    function update($user=null, $notrigger=0)
+    {
+    	global $conf, $langs;
+		$error=0;
+
+		// Clean parameters
+		if (isset($this->resource_id)) $this->resource_id=trim($this->resource_id);
+		if (isset($this->resource_type)) $this->resource_type=trim($this->resource_type);
+		if (isset($this->element_id)) $this->element_id=trim($this->element_id);
+		if (isset($this->element_type)) $this->element_type=trim($this->element_type);
+		if (isset($this->busy)) $this->busy=trim($this->busy);
+		if (isset($this->mandatory)) $this->mandatory=trim($this->mandatory);
+
+        // Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql.= " resource_id=".(isset($this->resource_id)?"'".$this->db->escape($this->resource_id)."'":"null").",";
+		$sql.= " resource_type=".(isset($this->resource_type)?"'".$this->db->escape($this->resource_type)."'":"null").",";
+		$sql.= " element_id=".(isset($this->element_id)?$this->element_id:"null").",";
+		$sql.= " element_type=".(isset($this->element_type)?"'".$this->db->escape($this->element_type)."'":"null").",";
+		$sql.= " busy=".(isset($this->busy)?"'".$this->db->escape($this->busy)."'":"null").",";
+		$sql.= " mandatory=".(isset($this->mandatory)?"'".$this->db->escape($this->mandatory)."'":"null").",";
+		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+
+        $sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+                // Call trigger
+                $result=$this->call_trigger('RESOURCELINK_MODIFY',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+	    	}
+		}
+
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+    }
+
+    /**
+     *    Delete a resource object
+     *
+     *    @param	int		$notrigger		Disable all triggers
+     *    @return   int						>0 if OK, <0 if KO
+     */
+    function delete($notrigger=0)
+    {
+        global $user;
+
+        if (! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('RESOURCELINK_DELETE',$user);
+            if ($result < 0) return -1;
+            // End call triggers
+        }
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " WHERE rowid =".$this->id;
+
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
+            return -1;
+        }
+    }
+
+    /**
+     * Return an array with resources linked to the element
+     *
+     *  @param		int		$element_id			Type of id
+     *  @param		string	$element_type		Type of element
+     *  @param		string	$resource_type		Type of resource
+     *  @return		int|array					0 < if KO, array if OK
+     */
+    function getResourcesLinked($element_id, $element_type, $resource_type='', $mandatory_only = false)
+    {
+        $resources = array();
+
+        // Links between objects are stored in this table
+        $res = new Dolresource($this->db);
+        $sql = "SELECT";
+        $sql.= " t.rowid,";
+        $sql.= " t.resource_id,";
+        $sql.= " t.resource_type,";
+        $sql.= " t.element_id,";
+        $sql.= " t.element_type,";
+        $sql.= " t.busy,";
+        $sql.= " t.mandatory,";
+        $sql.= " t.fk_user_create,";
+        $sql.= " t.tms";
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t ';
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$res->table_element." as tr ON tr.rowid=t.resource_id";
+        $sql.= " WHERE tr.entity IN (".getEntity('resource', 1).")";
+        $sql.= " AND t.element_id='".$element_id."'";
+        $sql.= " AND t.element_type='".$this->db->escape($element_type)."'";
+        if ($resource_type)
+            $sql.= " AND t.resource_type='".$this->db->escape($resource_type)."'";
+        if ($mandatory_only)
+            $sql.= " AND t.mandatory = 1";
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $reslink = new ResourceLink($this->db);
+                $reslink->id             = $obj->rowid;
+                $reslink->resource_id    = $obj->resource_id;
+                $reslink->resource_type  = $obj->resource_type;
+                $reslink->element_id     = $obj->element_id;
+                $reslink->element_type   = $obj->element_type;
+                $reslink->busy           = $obj->busy;
+                $reslink->mandatory      = $obj->mandatory;
+                $reslink->fk_user_create = $obj->fk_user_create;
+                $reslink->tms            = $obj->tms;
+                $resources[] = $reslink;
+                $i++;
+            }
+        } else {
+            $this->errors[] = 'Error ' . $this->db->lasterror();
+            dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+            return -1;
+        }
+
+        return $resources;
+    }
+
+    /**
+     * Return an array with elements which have linked the resource
+     *
+     *  @param		int		$resource_id		Type of id
+     *  @param		string	$resource_type		Type of resource
+     *  @param		string	$element_type		Type of element
+     *  @param		bool	$mandatory_only		Only account mandatory links
+     *  @return		int|array					0 < if KO, array if OK
+     */
+    function getElementLinked($resource_id, $resource_type='', $element_type='', $mandatory_only = false)
+    {
+        $elements = array();
+
+        // Links between objects are stored in this table
+        $sql = "SELECT DISTINCT";
+        $sql.= " t.rowid,";
+        $sql.= " t.resource_id,";
+        $sql.= " t.resource_type,";
+        $sql.= " t.element_id,";
+        $sql.= " t.element_type,";
+        $sql.= " t.busy,";
+        $sql.= " t.mandatory,";
+        $sql.= " t.fk_user_create,";
+        $sql.= " t.tms";
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " WHERE resource_id='".$resource_id."'";
+        if ($resource_type)
+            $sql.= " AND resource_type='".$this->db->escape($resource_type)."'";
+        if ($element_type)
+            $sql.= " AND element_type='".$this->db->escape($element_type)."'";
+        if ($mandatory_only)
+            $sql.= " AND mandatory = 1";
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $reslink = new ResourceLink($this->db);
+                $reslink->id             = $obj->rowid;
+                $reslink->resource_id    = $obj->resource_id;
+                $reslink->resource_type  = $obj->resource_type;
+                $reslink->element_id     = $obj->element_id;
+                $reslink->element_type   = $obj->element_type;
+                $reslink->busy           = $obj->busy;
+                $reslink->mandatory      = $obj->mandatory;
+                $reslink->fk_user_create = $obj->fk_user_create;
+                $reslink->tms            = $obj->tms;
+                $elements[] = $reslink;
+                $i++;
+            }
+        } else {
+            $this->errors[] = 'Error ' . $this->db->lasterror();
+            dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+            return -1;
+        }
+
+        return $elements;
+    }
+
 }
