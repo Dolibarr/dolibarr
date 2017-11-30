@@ -38,6 +38,10 @@ $showonlyerrors = GETPOST('showonlyerrors','int');
 
 $block_static = new BlockedLog($db);
 
+/*
+ * Actions
+ */
+
 if($action === 'downloadblockchain') {
 
 	$auth = new BlockedLogAuthority($db);
@@ -54,8 +58,11 @@ if($action === 'downloadblockchain') {
 }
 else if($action === 'downloadcsv') {
 
-	$res = $db->query("SELECT rowid,tms,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user
-					FROM ".MAIN_DB_PREFIX."blockedlog ORDER BY rowid ASC");
+	$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
+	$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
+	$sql.= " WHERE entity = ".$conf->entity;
+	$sql.= " ORDER BY rowid ASC";
+	$res = $db->query($sql);
 
 	if($res) {
 
@@ -63,32 +70,35 @@ else if($action === 'downloadcsv') {
 
 		header('Content-Type: application/octet-stream');
 		header("Content-Transfer-Encoding: Binary");
-		header("Content-disposition: attachment; filename=\"" .$signature. ".csv\"");
+		header("Content-disposition: attachment; filename=\"archive-log-" .$signature. ".csv\"");
 
 		print $langs->transnoentities('Id')
-			.';'.$langs->transnoentities('Timestamp')
+			.';'.$langs->transnoentities('Date')
+			.';'.$langs->transnoentities('User')
 			.';'.$langs->transnoentities('Action')
-			.';'.$langs->transnoentities('Amounts')
 			.';'.$langs->transnoentities('Element')
+			.';'.$langs->transnoentities('Amounts')
 			.';'.$langs->transnoentities('ObjectId')
 			.';'.$langs->transnoentities('Date')
 			.';'.$langs->transnoentities('Ref')
 			.';'.$langs->transnoentities('Fingerprint')
-			.';'.$langs->transnoentities('User')."\n";
+			.';'.$langs->transnoentities('FullData')
+			."\n";
 
 		while($obj = $db->fetch_object($res)) {
 
 			print $obj->rowid
-				.';'.$obj->tms
+				.';'.$obj->date_creation
+				.';"'.$obj->user_fullname.'"'
 				.';'.$obj->action
-				.';'.$obj->amounts
 				.';'.$obj->element
+				.';'.$obj->amounts
 				.';'.$obj->fk_object
 				.';'.$obj->date_object
-				.';'.$obj->ref_object
+				.';"'.$obj->ref_object.'"'
 				.';'.$obj->signature
-				.';'.$obj->fk_user."\n";
-
+				.';"'.str_replace('"','""',$obj->object_data).'"'
+				."\n";
 		}
 
 		exit;
@@ -99,11 +109,12 @@ else if($action === 'downloadcsv') {
 
 }
 
+
 /*
  *	View
  */
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all') ? 0 : 50);
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50);
 
 $form=new Form($db);
 
@@ -144,12 +155,13 @@ print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],
 print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
 print '</tr>';
 
+$atleastoneerror=0;
 foreach($blocks as &$block) {
 
 	$checksignature = $block->checkSignature();
 	$object_link = $block->getObjectLink();
 
-	if(!$showonlyerrors || $block->error>0) {
+	if (!$showonlyerrors || $block->error>0) {
 
 	   	print '<tr class="oddeven">';
 	   	print '<td>'.$block->id.'</td>';
@@ -166,7 +178,16 @@ foreach($blocks as &$block) {
 	   	print '</td>';
 
 	   	print '<td>';
-	   	print $block->error == 0 ? img_picto($langs->trans('OkCheckFingerprintValidity'), 'tick') : img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
+	   	if (empty($block->error))
+	   	{
+	   		if (empty($atleastoneerror)) print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
+	   		else print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
+	   	}
+	   	else
+	   	{
+	   		$atleastoneerror++;
+	   		print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
+	   	}
 
 	   	if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
 	   		print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') :  img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black') );

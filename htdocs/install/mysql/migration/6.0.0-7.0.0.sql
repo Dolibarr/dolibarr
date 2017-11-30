@@ -575,6 +575,10 @@ ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTE
 ALTER TABLE llx_facture_rec ADD COLUMN modelpdf varchar(255) AFTER note_public;
 ALTER TABLE llx_facture_rec ADD COLUMN generate_pdf integer DEFAULT 1 AFTER auto_validate;
 
+ALTER TABLE llx_blockedlog ADD COLUMN date_creation	datetime;
+ALTER TABLE llx_blockedlog ADD COLUMN user_fullname	varchar(255);
+ALTER TABLE llx_blockedlog MODIFY COLUMN ref_object varchar(255);
+
 -- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
 ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
