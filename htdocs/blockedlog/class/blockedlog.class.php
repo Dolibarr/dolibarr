@@ -179,6 +179,8 @@ class BlockedLog
 	 */
 	public function setObjectData(&$object)
 	{
+		global $mysoc;
+
 		// Set date
 		if ($object->element == 'payment' || $object->element == 'payment_supplier')
 		{
@@ -200,16 +202,32 @@ class BlockedLog
 
 		if ($this->element == 'facture')
 		{
-			if(empty($object->thirdparty))$object->fetch_thirdparty();
+			if (empty($object->thirdparty)) $object->fetch_thirdparty();
 			$this->object_data->thirdparty = new stdClass();
 
 			foreach($object->thirdparty as $key=>$value) {
-				if(!is_object($value)) $this->object_data->thirdparty->{$key} = $value;
+				if (in_array($key, array('fields')) continue;	// Discard some properties
+				if (! in_array($key, array(
+					'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4'',idprof5','idprof6','phone','fax','email','barcode',
+					'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
+					))) continue;								// Discard if not into a dedicated list
+				if (!is_object($value)) $this->object_data->thirdparty->{$key} = $value;
+			}
+
+			foreach($mysoc as $key=>$value) {
+				if (in_array($key, array('fields')) continue;	// Discard some properties
+				if (! in_array($key, array(
+				'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4'',idprof5','idprof6','phone','fax','email','barcode',
+				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
+				))) continue;									// Discard if not into a dedicated list
+				if (!is_object($value)) $this->object_data->mycompany->{$key} = $value;
 			}
 
 			$this->object_data->total_ht 	= (double) $object->total_ht;
 			$this->object_data->total_tva	= (double) $object->total_tva;
 			$this->object_data->total_ttc	= (double) $object->total_ttc;
+			$this->object_data->total_localtax1= (double) $object->total_localtax1;
+			$this->object_data->total_localtax2= (double) $object->total_localtax2;
 			$this->object_data->total_localtax1= (double) $object->total_localtax1;
 			$this->object_data->total_localtax2= (double) $object->total_localtax2;
 			$this->object_data->note_public	= (double) $object->note_public;

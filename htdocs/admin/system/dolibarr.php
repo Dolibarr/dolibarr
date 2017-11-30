@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
@@ -120,8 +120,13 @@ if (function_exists('curl_init'))
     }
 }
 
+// Now show link to the changelog
 print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
-print '<a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/develop/ChangeLog" target="_blank">'.$langs->trans("SeeChangeLog").'</a>';
+
+$version=DOL_VERSION;
+if (preg_match('/[a-z]+/i', $version)) $version='develop';	// If version contains text, it is not an official tagged version, so we use the full change log.
+
+print '<a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank">'.$langs->trans("SeeChangeLog").'</a>';
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
