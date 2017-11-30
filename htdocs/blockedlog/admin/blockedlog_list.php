@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/blockedlog/admin/fingerprints.php
+ *	\file       htdocs/blockedlog/admin/blockedlog_list.php
  *  \ingroup    blockedlog
  *  \brief      Page setup for blockedlog module
  */
@@ -36,7 +36,21 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $showonlyerrors = GETPOST('showonlyerrors','int');
 
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if (empty($sortfield)) $sortfield='rowid';
+if (empty($sortorder)) $sortorder='DESC';
+
 $block_static = new BlockedLog($db);
+
 
 /*
  * Actions
@@ -114,7 +128,7 @@ else if($action === 'downloadcsv') {
  *	View
  */
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50);
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder);
 
 $form=new Form($db);
 
@@ -143,11 +157,11 @@ print '<div class="div-table-responsive">';		// You can use div-table-responsive
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'minwidth50 ')."\n";
-print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"],'rowid','','','',$sortfield,$sortorder,'minwidth50 ')."\n";
+print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"],'date_creation','','','',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'user_fullname','','','',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"],'ref_object','','','',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Element'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'')."\n";
@@ -155,18 +169,31 @@ print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],
 print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
 print '</tr>';
 
-$atleastoneerror=0;
+$loweridinerror=0;
+$checkresult=array();
 foreach($blocks as &$block) {
-
 	$checksignature = $block->checkSignature();
+	$checkresult[$block->id]=$checksignature;	// false if error
+	if (! $checksignature)
+	{
+		if (empty($loweridinerror)) $loweridinerror=$block->id;
+		else $loweridinerror = min($loweridinerror, $block->id);
+	}
+
+}
+
+foreach($blocks as &$block) {
 	$object_link = $block->getObjectLink();
 
-	if (!$showonlyerrors || $block->error>0) {
+	if (empty($showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {
 
 	   	print '<tr class="oddeven">';
 	   	print '<td>'.$block->id.'</td>';
 	   	print '<td>'.dol_print_date($block->tms,'dayhour').'</td>';
-	   	print '<td>'.$block->getUser().'</td>';
+	   	print '<td>';
+	   	//print $block->getUser()
+	   	print $block->user_fullname;
+	   	print '</td>';
 	   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
 	   	print '<td>'.$block->ref_object.'</td>';
 	   	print '<td>'.$object_link.'</td>';
@@ -178,15 +205,14 @@ foreach($blocks as &$block) {
 	   	print '</td>';
 
 	   	print '<td>';
-	   	if (empty($block->error))
+	   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
 	   	{
-	   		if (empty($atleastoneerror)) print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
-	   		else print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
+	   		if (empty($checkresult[$block->id])) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
+	   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
 	   	}
 	   	else
 	   	{
-	   		$atleastoneerror++;
-	   		print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
+	   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
 	   	}
 
 	   	if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {

@@ -495,7 +495,7 @@ class BlockedLog
 	/**
 	 *	Check if current signature still correct compare to the chain
 	 *
-	 *	@return	boolean
+	 *	@return	boolean			True if OK, False if KO
 	 */
 	public function checkSignature()
 	{
@@ -512,8 +512,8 @@ class BlockedLog
 
 		$res = ($signature === $this->signature);
 
-		if(!$res) {
-			$this->error++;
+		if (!$res) {
+			$this->error = 'Signature KO';
 		}
 
 		return $res;
@@ -578,10 +578,11 @@ class BlockedLog
 	 *	@param	string 	$element      	element to search
 	 *	@param	int 	$fk_object		id of object to search
 	 *	@param	int 	$limit      	max number of element, 0 for all
-	 *	@param	string 	$order      	sort of query
+	 *	@param	string 	$sortfield     	sort field
+	 *	@param	string 	$sortorder     	sort order
 	 *	@return	array					array of object log
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $order = -1)
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '')
 	{
 		global $conf, $cachedlogs;
 
@@ -609,7 +610,8 @@ class BlockedLog
 	         WHERE element='".$element."' AND fk_object=".(int) $fk_object;
 		}
 
-		$sql.=($order<0 ? ' ORDER BY rowid DESC ' : ' ORDER BY rowid ASC ');
+		$sql.=$this->db->order($sortfield, $sortorder);
+		//($order<0 ? ' ORDER BY rowid DESC ' : ' ORDER BY rowid ASC ');
 
 		if($limit > 0 )$sql.=' LIMIT '.$limit;
 
