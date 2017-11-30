@@ -13,6 +13,9 @@ NEW: complete_head_from_modules() in ldap_prepare_head()
 
 WARNING: 
 
+If you enabled (for test) the experimental BlockedLog module before 7.0, you must purge  the table llx_blockedlog because
+way to save data for final version has changed.
+
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The methode "cloture" on contract were renamed into "closeAll".
 * The substitution key for reference of objects is now __REF__ whatever is the object (it replaces __ORDERREF__, 
