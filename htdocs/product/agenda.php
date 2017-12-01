@@ -165,23 +165,21 @@ if ($id > 0 || $ref)
     	//$out.="</a>";
 	}
 
+	print '<div class="tabsAction">';
 
-	//print '<div class="tabsAction">';
-	//print '</div>';
-
-
-	$morehtmlcenter='';
     if (! empty($conf->agenda->enabled))
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	$morehtmlcenter.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
     	}
     	else
     	{
-        	$morehtmlcenter.='<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
     	}
     }
+	
+	print '</div>';
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
@@ -191,7 +189,7 @@ if ($id > 0 || $ref)
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', '', '', '', 0, 1, 1);
 
         // List of all actions
 		$filters=array();
