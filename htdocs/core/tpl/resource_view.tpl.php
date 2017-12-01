@@ -1,6 +1,5 @@
 <!-- BEGIN TEMPLATE resource_view.tpl.php -->
 <?php
-//var_dump($linked_resources);
 
 $form= new Form($db);
 
@@ -34,32 +33,29 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 	foreach ($linked_resources as $linked_resource)
 	{
+		$object_resource = fetchObjectByElement($linked_resource->resource_id,$linked_resource->resource_type);
 		
-		$object_resource = fetchObjectByElement($linked_resource['resource_id'],$linked_resource['resource_type']);
-		
-		//$element_id = $linked_resource['rowid'];
-		
-		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
+		if ($mode == 'edit' && $linked_resource->id == $lineid)
 		{
 
-			print '<form class="tagtr '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'?element='.$element.'&element_id='.$element_id.'" method="POST">';
+			print '<form class="tagtr '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'?element_type='.$element_type.'&element_id='.$element_id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="action" value="update_linked_resource" />';
-			print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
-			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
+			print '<input type="hidden" name="resource_type" value="'.$linked_resource->resource_type.'" />';
+			print '<input type="hidden" name="lineid" value="'.$linked_resource->id.'" />';
 
 			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
 			print '<div class="tagtd">'.$object_resource->type_label.'</div>';
-			print '<div class="tagtd" align="center">'.$form->selectyesno('busy',$linked_resource['busy']?1:0,1).'</div>';
-			print '<div class="tagtd" align="center">'.$form->selectyesno('mandatory',$linked_resource['mandatory']?1:0,1).'</div>';
+			print '<div class="tagtd" align="center">'.$form->selectyesno('busy',$linked_resource->busy?1:0,1).'</div>';
+			print '<div class="tagtd" align="center">'.$form->selectyesno('mandatory',$linked_resource->mandatory?1:0,1).'</div>';
 			print '<div class="tagtd" align="right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</form>';
 		}
 		else
 		{
 			$style='';
-			if ($linked_resource['rowid'] == GETPOST('lineid'))
+			if ($linked_resource->id == $lineid)
 				$style='style="background: orange;"';
 
 			print '<form class="tagtr '.($var==true?"pair":"impair").'" '.$style.'>';
@@ -73,19 +69,20 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '</div>';
 
 			print '<div class="tagtd" align="center">';
-			print yn($linked_resource['busy']);
+			print yn($linked_resource->busy);
 			print '</div>';
 
 			print '<div class="tagtd" align="center">';
-			print yn($linked_resource['mandatory']);
+			print yn($linked_resource->mandatory);
 			print '</div>';
 
+			$url = 'element_id='.$element_id.'&element_type='.$element_type.'&resource_type='.$linked_resource->resource_type.'&lineid='.$linked_resource->id;
 			print '<div class="tagtd" align="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&resource_type='.$linked_resource['resource_type'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?mode=edit&'.$url.'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&id='.$linked_resource['resource_id'].'&element='.$element.'&element_id='.$element_id.'&lineid='.$linked_resource['rowid'].'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&'.$url.'">';
 			print img_delete();
 			print '</a>';
 			print '</div>';

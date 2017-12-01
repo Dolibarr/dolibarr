@@ -67,9 +67,10 @@ class FormResource
      *  @param	string	$filterkey		Filter on key value
      *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
      *  @param	int		$limit			Limit number of answers
+     *  @param	int		$offset			Limit page
      * 	@return	string					HTML string with
      */
-    function select_resource_list($selected='',$htmlname='fk_resource',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
+    function select_resource_list($selected='',$htmlname='fk_resource',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20, $offset = 0)
     {
     	global $conf,$user,$langs;
 
@@ -78,7 +79,7 @@ class FormResource
 
     	$resourcestat = new Dolresource($this->db);
 
-    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
+    	$resources_used = $resourcestat->fetchAll('ASC', 't.rowid', $limit, $offset, $filter='');
 
     	if ($outputmode != 2)
     	{

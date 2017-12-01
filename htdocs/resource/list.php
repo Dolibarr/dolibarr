@@ -17,8 +17,8 @@
 
 /**
  *      \file       resource/index.php
- *              \ingroup    resource
- *              \brief      Page to manage resource objects
+ *      \ingroup    resource
+ *      \brief      Page to manage resource objects
  */
 
 
@@ -41,6 +41,8 @@ $resource_id            = GETPOST('resource_id','int');
 
 $sortorder      = GETPOST('sortorder','alpha');
 $sortfield      = GETPOST('sortfield','alpha');
+if (empty($sortorder)) $sortorder="ASC";
+if (empty($sortfield)) $sortfield="t.rowid";
 
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'resourcelist';
@@ -55,8 +57,8 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 $search_ref=GETPOST("search_ref");
 $search_type=GETPOST("search_type");
 
+$param='';
 $filter=array();
-
 if ($search_ref != ''){
 	$param.='&search_ref='.$search_ref;
 	$filter['t.ref']=$search_ref;
@@ -86,17 +88,13 @@ foreach ($search_array_options as $key => $val)
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 
 
-$hookmanager->initHooks(array('resource_list'));
-
-if (empty($sortorder)) $sortorder="ASC";
-if (empty($sortfield)) $sortfield="t.rowid";
-if (empty($arch)) $arch = 0;
+$hookmanager->initHooks(array('resource', 'resource_list'));
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-$offset = $limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -183,7 +181,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	$ret = $object->fetchAll('', '', 0, 0, $filter);
 	if($ret == -1) {
 		dol_print_error($db,$object->error);
 		exit;
@@ -193,13 +191,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 // Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if($ret == -1) {
-	dol_print_error($db,$object->error);
-	exit;
-} else {
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords,'title_generic.png', 0, '', '', $limit);
+        dol_print_error($db,$object->error);
+        exit;
 }
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png', 0, '', '', $limit);
+
 
 $moreforfilter = '';
 
