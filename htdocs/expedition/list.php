@@ -30,9 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("sendings");
-$langs->load("deliveries");
-$langs->load('companies');
+$langs->loadLangs(array("sendings","deliveries",'companies','bills'));
 
 $socid=GETPOST('socid','int');
 // Security check
