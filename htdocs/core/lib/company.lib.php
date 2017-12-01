@@ -819,7 +819,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<input type="hidden" name="page" value="'.$page.'">';
 
 
-	print '<div class="div-table-responsive-nomin">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     print "\n".'<table class="noborder" width="100%">'."\n";
 
     $param="socid=".$object->id;
@@ -879,11 +879,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	print "</tr>";
     }
 
+    $titlefieldaddress=$langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email");
+    if (! empty($conf->dol_optimize_smallscreen)) $titlefieldaddress=$langs->trans("Address");
+
     print '<tr class="liste_titre">';
     print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre("Poste",$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre( $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"p.statut","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($titlefieldaddress ,$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"p.statut","",$param,'align="center"',$sortfield,$sortorder);
     // Add to agenda
     if (! empty($conf->agenda->enabled) && ! empty($user->rights->agenda->myactions->create)) print_liste_field_titre('');
     // Edit
@@ -941,7 +944,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print '</td>';
 
             // Status
-			print '<td>'.$contactstatic->getLibStatut(5).'</td>';
+			print '<td align="center">'.$contactstatic->getLibStatut(5).'</td>';
 
             // Add to agenda
             if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)

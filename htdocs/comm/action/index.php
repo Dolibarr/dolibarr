@@ -360,6 +360,8 @@ $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 $head = calendars_prepare_head($paramnoaction);
 
 print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,$listofextcals,$actioncode,$usergroup,'', $resourceid);
@@ -1027,8 +1029,11 @@ if (empty($action) || $action == 'show_month')      // View by month
     $newparam=preg_replace('/viewcal=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
     $newparam.='&viewcal=1';
-    echo '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
-    echo ' <tr class="liste_titre">';
+
+
+    print '<div class="div-table-responsive-no-min">';
+    print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
+    print ' <tr class="liste_titre">';
     $i=0;
     while ($i < 7)
     {
@@ -1092,11 +1097,12 @@ if (empty($action) || $action == 'show_month')      // View by month
         }
         echo " </tr>\n";
     }
-    echo "</table>\n";
+    print "</table>\n";
+	print '</div>';
 
-    echo '<input type="hidden" name="actionmove" value="mupdate">';
-    echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
-    echo '<input type="hidden" name="newdate" id="newdate">' ;
+	print '<input type="hidden" name="actionmove" value="mupdate">';
+	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
+	print '<input type="hidden" name="newdate" id="newdate">' ;
 }
 elseif ($action == 'show_week') // View by week
 {
@@ -1110,8 +1116,10 @@ elseif ($action == 'show_week') // View by week
     $newparam=preg_replace('/viewweek=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
     $newparam.='&viewweek=1';
-    echo '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
-    echo ' <tr class="liste_titre">';
+
+    print '<div class="div-table-responsive-no-min">';
+    print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
+    print ' <tr class="liste_titre">';
     $i=0;
     while ($i < 7)
     {
@@ -1144,7 +1152,8 @@ elseif ($action == 'show_week') // View by week
     }
     echo " </tr>\n";
 
-    echo "</table>\n";
+    print "</table>\n";
+	print '</div>';
 
     echo '<input type="hidden" name="actionmove" value="mupdate">';
     echo '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
@@ -1166,6 +1175,8 @@ else    // View by day
 
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
     $arraytimestamp=dol_getdate($timestamp);
+
+    print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     echo '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
     echo ' <tr class="liste_titre">';
     echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
@@ -1177,6 +1188,7 @@ else    // View by day
     echo "</td>\n";
     echo " </tr>\n";
     echo '</table>';
+    print '</div>';
 }
 
 print "\n".'</form>';

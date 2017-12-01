@@ -411,6 +411,7 @@ td.actionbuttons a {
 }
 select.flat, form.flat select {
 	font-weight: normal;
+	font-size: unset;
 	height: 2em;
 }
 .optionblue {
@@ -625,7 +626,7 @@ textarea.centpercent {
 	padding: 2px 5px;
 	font-size: 10px;
 	font-weight: 700;
-	line-height: 0.9em;
+	line-height: 1em;
 	color: #fff;
 	text-align: center;
 	white-space: nowrap;
@@ -5005,6 +5006,12 @@ border-top-right-radius: 6px;
         object-fit: contain;
     }
 
+	.titlefield {
+		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
+	}
+	.tableforfield>tr>td:first-child {
+		max-width: 100px;			/* but no more than 100px */
+	}
 }
 
 

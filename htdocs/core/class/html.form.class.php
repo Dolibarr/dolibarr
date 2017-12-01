@@ -4840,21 +4840,33 @@ class Form
 				{
 					if (! $disabled)
 					{
+						// Output javascript for datepicker
 						$retstring.="<script type='text/javascript'>";
 						$retstring.="$(function(){ $('#".$prefix."').datepicker({
-            				dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
+							dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
 							autoclose: true,
-                			todayHighlight: true,";
+							todayHighlight: true,";
+							if (! empty($conf->dol_use_jmobile))
+							{
+								$retstring.="
+								beforeShow: function (input, datePicker) {
+									input.disabled = true;
+								},
+								onClose: function (dateText, datePicker) {
+									this.disabled = false;
+								},
+								";
+							}
 							// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
-						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
-						{
-						$retstring.="
-                			showOn: 'button',
-							buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
-							buttonImageOnly: true";
-						}
-						$retstring.="
-                			}) });";
+							if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
+							{
+							$retstring.="
+								showOn: 'button',
+								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
+								buttonImageOnly: true";
+							}
+							$retstring.="
+							}) });";
 						$retstring.="</script>";
 					}
 
