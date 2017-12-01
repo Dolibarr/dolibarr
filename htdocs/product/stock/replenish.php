@@ -260,6 +260,7 @@ if ($action == 'order' && isset($_POST['valid']))
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+$prod = new Product($db);
 
 $title = $langs->trans('Status');
 
@@ -480,6 +481,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	);
 }
 
+print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="liste" width="100%">';
 
 $param = (isset($type)? '&type=' . $type : '');
@@ -535,9 +537,6 @@ print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', 'ali
 print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
-$prod = new Product($db);
-
-$var = True;
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$objp = $db->fetch_object($resql);
@@ -564,7 +563,6 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
-		$var =! $var;
 
 		if ($usevirtualstock)
 		{
@@ -665,34 +663,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	$i++;
 }
 print '</table>';
-
-
-if ($num > $conf->liste_limit)
-{
-	if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha'))
-	{
-		$filters = '&sref=' . $sref . '&snom=' . $snom;
-		$filters .= '&sall=' . $sall;
-		$filters .= '&salert=' . $salert;
-		$filters .= '&draftorder=' . $draftorder;
-		$filters .= '&mode=' . $mode;
-		$filters .= '&fk_supplier=' . $fk_supplier;
-		$filters .= '&fk_entrepot=' . $fk_entrepot;
-		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
-	}
-	else
-	{
-		$filters = '&sref=' . $sref . '&snom=' . $snom;
-		$filters .= '&fourn_id=' . $fourn_id;
-		$filters .= (isset($type)? '&type=' . $type : '');
-		$filters .= '&salert=' . $salert;
-		$filters .= '&draftorder=' . $draftorder;
-		$filters .= '&mode=' . $mode;
-		$filters .= '&fk_supplier=' . $fk_supplier;
-		$filters .= '&fk_entrepot=' . $fk_entrepot;
-		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
-	}
-}
+print '</div>';
 
 $db->free($resql);
 

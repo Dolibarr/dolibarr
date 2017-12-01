@@ -900,7 +900,7 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (preg_match('/varchar/', $type))
 		{
@@ -908,13 +908,20 @@ class ExtraFields
 		}
 		elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
-			$out=$doleditor->Create(1);
+			if (! preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
+				$out=$doleditor->Create(1);
+			}
+			else
+			{
+				$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
+			}
 		}
 		elseif ($type == 'boolean')
 		{
