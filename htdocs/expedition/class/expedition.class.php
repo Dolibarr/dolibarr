@@ -644,7 +644,6 @@ class Expedition extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			// TODO in future, shipment lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
