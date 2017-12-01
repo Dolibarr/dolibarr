@@ -3468,7 +3468,11 @@ class Product extends CommonObject
     		if ($this->length)  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
     		if ($this->surface) $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
     		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
-            if (! empty($conf->productbatch->enabled))
+        }
+
+        if ($this->type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+        {
+    		if (! empty($conf->productbatch->enabled))
             {
             	$langs->load("productbatch");
                 $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);

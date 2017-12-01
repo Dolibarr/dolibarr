@@ -1259,7 +1259,7 @@ if ($action == 'create')
 					{
 						// Quantity to send
 						print '<td align="center">';
-						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
                             if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
                             print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1272,7 +1272,7 @@ if ($action == 'create')
 						if (! empty($conf->stock->enabled))
 						{
 							print '<td align="left">';
-							if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
+							if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
 							{
 								// Show warehouse combo list
 								$ent = "entl".$indiceAsked;
@@ -1415,7 +1415,7 @@ if ($action == 'create')
 								// Quantity to send
 								print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'>';
 								print '<td colspan="3" ></td><td align="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
-								if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+								if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 								{
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
@@ -1427,7 +1427,7 @@ if ($action == 'create')
 								if (! empty($conf->stock->enabled))
 								{
 									print '<td align="left">';
-									if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+									if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 									{
 										print $tmpwarehouseObject->getNomUrl(0).' ';
 
@@ -1542,7 +1542,7 @@ if ($action == 'create')
 					{
 					    print '<!-- line not shown yet, we show it -->';
 						print '<tr class="oddeven"><td colspan="3" ></td><td align="center">';
-						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
 						    $disabled='';
 					        if (! empty($conf->productbatch->enabled) && $product->hasbatch())
@@ -1558,7 +1558,7 @@ if ($action == 'create')
 						print '</td>';
 
 						print '<td align="left">';
-						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
 							$warehouse_selected_id = GETPOST('entrepot_id','int');
     						if ($warehouse_selected_id > 0)
@@ -2362,13 +2362,13 @@ else if ($id || $ref)
 
 			// Weight
 			print '<td align="center">';
-			if ($lines[$i]->fk_product_type == 0) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units,"weight");
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units,"weight");
 			else print '&nbsp;';
 			print '</td>';
 
 			// Volume
 			print '<td align="center">';
-			if ($lines[$i]->fk_product_type == 0) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume");
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume");
 			else print '&nbsp;';
 			print '</td>';
 
