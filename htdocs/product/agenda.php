@@ -191,7 +191,7 @@ if ($id > 0 || $ref)
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnProduct"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
 
         // List of all actions
 		$filters=array();
