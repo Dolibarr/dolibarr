@@ -80,6 +80,9 @@ function product_prepare_head($object)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/composition/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
+
+		$nbFatherAndChild = $object->hasFatherOrChild();
+		if ($nbFatherAndChild > 0) $head[$h][1].= ' <span class="badge">'.$nbFatherAndChild.'</span>';
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}

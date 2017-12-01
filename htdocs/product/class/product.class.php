@@ -3317,6 +3317,32 @@ class Product extends CommonObject
 	/**
 	 *  Return all parent products for current product (first level only)
 	 *
+	 *  @return 	int			Nb of father + child
+	 */
+	function hasFatherOrChild()
+	{
+		$nb = 0;
+
+		$sql = "SELECT COUNT(pa.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa";
+		$sql.= " WHERE pa.fk_product_fils = ".$this->id." OR pa.fk_product_pere = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) $nb = $obj->nb;
+		}
+		else
+		{
+			return -1;
+		}
+
+		return $nb;
+	}
+
+	/**
+	 *  Return all parent products for current product (first level only)
+	 *
 	 *  @return 	array 		Array of product
 	 */
 	function getFather()
