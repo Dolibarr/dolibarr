@@ -78,16 +78,19 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
 function test_sql_and_script_inject($val, $type)
 {
 	$inj = 0;
-	// For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
-	if ($type != 2)
+	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
+	if ($type == 1)
 	{
 		$inj += preg_match('/delete\s+from/i',	 $val);
 		$inj += preg_match('/create\s+table/i',	 $val);
-		$inj += preg_match('/update.+set.+=/i',  $val);
 		$inj += preg_match('/insert\s+into/i', 	 $val);
-		$inj += preg_match('/select.+from/i', 	 $val);
-		$inj += preg_match('/union.+select/i', 	 $val);
+		$inj += preg_match('/select\s+from/i', 	 $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+	}
+	if ($type != 2)	// Not common, we can check on POST
+	{
+		$inj += preg_match('/update.+set.+=/i',  $val);
+		$inj += preg_match('/union.+select/i', 	 $val);
 		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
 	}
 	// For XSS Injection done by adding javascript with script
