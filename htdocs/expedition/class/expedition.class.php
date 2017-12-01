@@ -2544,8 +2544,8 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (! empty($batch) && $conf->productbatch->enabled)
 		{
-			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");			
-			
+			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");
+
 			if (empty($batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
 				$this->errors[]='ErrorMandatoryParametersNotProvided';
@@ -2594,10 +2594,10 @@ class ExpeditionLigne extends CommonObjectLine
 						$error++;
 					}
 				}
-				if (! $error && $this->detail_batch->dluo_qty > 0) 
+				if (! $error && $this->detail_batch->dluo_qty > 0)
 				{
 					// create lot expedition line
-					if (isset($lot->id)) 
+					if (isset($lot->id))
 					{
 						$shipmentLot = new ExpeditionLineBatch($this->db);
 						$shipmentLot->batch = $lot->batch;
@@ -2606,7 +2606,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
 						$shipmentLot->dluo_qty = $this->detail_batch->dluo_qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
-						if ($shipmentLot->create($this->id) < 0) 
+						if ($shipmentLot->create($this->id) < 0)
 						{
 							$this->errors[]=$shipmentLot->errors;
 							$error++;
@@ -2619,7 +2619,7 @@ class ExpeditionLigne extends CommonObjectLine
 		{
 			// update line
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql.= " fk_entrepot = ".$this->entrepot_id;
+			$sql.= " fk_entrepot = ".($this->entrepot_id > 0 ? $this->entrepot_id : 'null');
 			$sql.= " , qty = ".$qty;
 			$sql.= " WHERE rowid = ".$this->id;
 

@@ -653,7 +653,6 @@ if (empty($reshook))
 	else if ($action == 'updateline' && $user->rights->expedition->creer && GETPOST('save'))
 	{
 		// Clean parameters
-
 		$qty=0;
 		$entrepot_id = 0;
 		$batch_id = 0;
@@ -662,9 +661,8 @@ if (empty($reshook))
 		$num_prod = count($lines);
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
-			if ($lines[$i]->id == $line_id)
+			if ($lines[$i]->id == $line_id)		// we have found line to update
 			{
-				// line to update
 				$line = new ExpeditionLigne($db);
 				// Extrafields Lines
 				$extrafieldsline = new ExtraFields($db);
@@ -796,45 +794,60 @@ if (empty($reshook))
 				}
 				else
 				{
-					// line without lot
-					if ($lines[$i]->entrepot_id > 0)
+					if ($lines[$i]->fk_product > 0)
 					{
-						// single warehouse shipment line
-						$stockLocation="entl".$line_id;
+						// line without lot
+						if ($lines[$i]->entrepot_id > 0)
+						{
+							// single warehouse shipment line
+							$stockLocation="entl".$line_id;
+							$qty = "qtyl".$line_id;
+							$line->id = $line_id;
+							$line->entrepot_id = GETPOST($stockLocation,'int');
+							$line->qty = GETPOST($qty, 'int');
+							if ($line->update($user) < 0) {
+								setEventMessages($line->error, $line->errors, 'errors');
+								$error++;
+							}
+							unset($_POST[$stockLocation]);
+							unset($_POST[$qty]);
+						}
+						else if (count($lines[$i]->details_entrepot) > 1)
+						{
+							// multi warehouse shipment lines
+							foreach ($lines[$i]->details_entrepot as $detail_entrepot)
+							{
+								if (! $error) {
+									$stockLocation="entl".$detail_entrepot->line_id;
+									$qty = "qtyl".$detail_entrepot->line_id;
+									$warehouse = GETPOST($stockLocation,'int');
+									if (!empty ($warehouse))
+									{
+										$line->id = $detail_entrepot->line_id;
+										$line->entrepot_id = $warehouse;
+										$line->qty = GETPOST($qty, 'int');
+										if ($line->update($user) < 0) {
+											setEventMessages($line->error, $line->errors, 'errors');
+											$error++;
+										}
+									}
+									unset($_POST[$stockLocation]);
+									unset($_POST[$qty]);
+								}
+							}
+						}
+					}
+					else	// Product no predefined
+					{
 						$qty = "qtyl".$line_id;
 						$line->id = $line_id;
-						$line->entrepot_id = GETPOST($stockLocation,'int');
 						$line->qty = GETPOST($qty, 'int');
+						$line->entrepot_id = 0;
 						if ($line->update($user) < 0) {
 							setEventMessages($line->error, $line->errors, 'errors');
 							$error++;
 						}
-						unset($_POST[$stockLocation]);
 						unset($_POST[$qty]);
-					}
-					else if (count($lines[$i]->details_entrepot) > 1)
-					{
-						// multi warehouse shipment lines
-						foreach ($lines[$i]->details_entrepot as $detail_entrepot)
-						{
-							if (! $error) {
-								$stockLocation="entl".$detail_entrepot->line_id;
-								$qty = "qtyl".$detail_entrepot->line_id;
-								$warehouse = GETPOST($stockLocation,'int');
-								if (!empty ($warehouse))
-								{
-									$line->id = $detail_entrepot->line_id;
-									$line->entrepot_id = $warehouse;
-									$line->qty = GETPOST($qty, 'int');
-									if ($line->update($user) < 0) {
-										setEventMessages($line->error, $line->errors, 'errors');
-										$error++;
-									}
-								}
-								unset($_POST[$stockLocation]);
-								unset($_POST[$qty]);
-							}
-						}
 					}
 				}
 			}
@@ -2010,9 +2023,8 @@ else if ($id || $ref)
 		print '<div class="clearboth"></div>';
 
 
-		/*
-		 * Lines of products
-		 */
+		// Lines of products
+
 		if ($action == 'editline')
 		{
 			print '	<form name="updateline" id="updateline" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;lineid=' . $line_id . '" method="POST">
@@ -2027,11 +2039,14 @@ else if ($id || $ref)
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
+		// #
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
 			print '<td width="5" align="center">&nbsp;</td>';
 		}
+		// Product/Service
 		print '<td>'.$langs->trans("Products").'</td>';
+		// Qty
 		print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)
 		{
@@ -2107,7 +2122,7 @@ else if ($id || $ref)
 			}
 		}
 
-        // Get list of products already sent for same source object
+		// Get list of products already sent for same source object into $alreadysent
 		$alreadysent = array();
 		if ($origin && $origin_id > 0)
 		{
@@ -2156,6 +2171,7 @@ else if ($id || $ref)
 		    print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
 			print '<tr class="oddeven">';
 
+			// #
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 			{
 				print '<td align="center">'.($i+1).'</td>';
@@ -2195,7 +2211,7 @@ else if ($id || $ref)
 			else
 			{
 				print "<td>";
-				if ($lines[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
+				if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'),'service');
 				else $text = img_object($langs->trans('Product'),'product');
 
 				if (! empty($lines[$i]->label)) {
@@ -2246,9 +2262,10 @@ else if ($id || $ref)
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				// edit mode
-				print '<td colspan="'.$editColspan.'"><table>';
+				print '<td colspan="'.$editColspan.'" align="center"><table class="nobordernopadding">';
 				if (is_array($lines[$i]->detail_batch) && count($lines[$i]->detail_batch) > 0)
 				{
+					print '<!-- case edit 1 -->';
 					$line = new ExpeditionLigne($db);
 					foreach ($lines[$i]->detail_batch as $detail_batch)
 					{
@@ -2274,30 +2291,52 @@ else if ($id || $ref)
 				}
 				else if (! empty($conf->stock->enabled))
 				{
-					if ($lines[$i]->entrepot_id > 0)
+					if ($lines[$i]->fk_product > 0)
 					{
-						print '<tr>';
-						// Qty to ship or shipped
-						print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">' . '</td>';
-						// Warehouse source
-						print '<td>' . $formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
-						// Batch number managment
-						print '<td> - ' . $langs->trans("NA") . '</td>';
-						print '</tr>';
-					}
-					else if (count($lines[$i]->details_entrepot) > 1)
-					{
-						foreach ($lines[$i]->details_entrepot as $detail_entrepot)
+						if ($lines[$i]->entrepot_id > 0)
 						{
+							print '<!-- case edit 2 -->';
 							print '<tr>';
 							// Qty to ship or shipped
-							print '<td>' . '<input name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">' . '</td>';
+							print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">' . '</td>';
 							// Warehouse source
-							print '<td>' . $formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1) . '</td>';
+							print '<td>' . $formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1). '</td>';
 							// Batch number managment
 							print '<td> - ' . $langs->trans("NA") . '</td>';
 							print '</tr>';
 						}
+						else if (count($lines[$i]->details_entrepot) > 1)
+						{
+							print '<!-- case edit 3 -->';
+							foreach ($lines[$i]->details_entrepot as $detail_entrepot)
+							{
+								print '<tr>';
+								// Qty to ship or shipped
+								print '<td>' . '<input name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">' . '</td>';
+								// Warehouse source
+								print '<td>' . $formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1) . '</td>';
+								// Batch number managment
+								print '<td> - ' . $langs->trans("NA") . '</td>';
+								print '</tr>';
+							}
+						}
+						else
+						{
+							print '<!-- case edit 4 -->';
+							print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
+						}
+					}
+					else
+					{
+						print '<!-- case edit 5 -->';
+						print '<tr>';
+						// Qty to ship or shipped
+						print '<td>' . '<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">' . '</td>';
+						// Warehouse source
+						print '<td>' . '</td>';
+						// Batch number managment
+						print '<td>' . '</td>';
+						print '</tr>';
 					}
 				}
 				print '</table></td>';
