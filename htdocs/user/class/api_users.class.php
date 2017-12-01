@@ -216,10 +216,14 @@ class Users extends DolibarrApi
 		    $this->useraccount->$field = $value;
 		}
 
-		if ($this->useraccount->update(DolibarrApiAccess::$user, 1))
+		if ($this->useraccount->update(DolibarrApiAccess::$user) > 0)
+		{
 			return $this->get($id);
-
-        return false;
+		}
+		else
+		{
+			throw new RestException(500, $this->task->error);
+		}
     }
 
     /**

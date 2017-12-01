@@ -184,7 +184,7 @@ class BlockedLog
 	 */
 	public function setObjectData(&$object, $action, $amounts)
 	{
-		global $user, $mysoc;
+		global $langs, $user, $mysoc;
 
 		// Generic fields
 

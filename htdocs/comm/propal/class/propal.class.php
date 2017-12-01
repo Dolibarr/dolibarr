@@ -1456,6 +1456,93 @@ class Propal extends CommonObject
 	}
 
 	/**
+	 *      Update database
+	 *
+	 *      @param      User	$user        	User that modify
+	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *      @return     int      			   	<0 if KO, >0 if OK
+	 */
+	function update(User $user, $notrigger=0)
+	{
+		$error=0;
+
+		// Clean parameters
+		if (isset($this->ref)) $this->ref=trim($this->ref);
+		if (isset($this->ref_client)) $this->ref_client=trim($this->ref_client);
+		if (isset($this->note) || isset($this->note_private)) $this->note_private=(isset($this->note_private) ? trim($this->note_private) : trim($this->note));
+		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
+		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
+		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
+
+		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
+		$sql.= " ref_client=".(isset($this->ref_client)?"'".$this->db->escape($this->ref_client)."'":"null").",";
+		$sql.= " ref_ext=".(isset($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null").",";
+		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
+		$sql.= " datep=".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql.= " date_valid=".(strval($this->date_validation)!='' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+		$sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
+		$sql.= " localtax1=".(isset($this->total_localtax1)?$this->total_localtax1:"null").",";
+		$sql.= " localtax2=".(isset($this->total_localtax2)?$this->total_localtax2:"null").",";
+		$sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
+		$sql.= " total=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
+		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " fk_user_author=".(isset($this->user_author_id)?$this->user_author_id:"null").",";
+		$sql.= " fk_user_valid=".(isset($this->user_valid)?$this->user_valid:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
+		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
+		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
+		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
+		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
+		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
+
+		$sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+
+	/**
 	 * Load array lines
 	 *
 	 * @param		int		$only_product	Return only physical products

@@ -38,7 +38,7 @@ class ExpenseReport extends CommonObject
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
 
-    var $lignes=array();
+    var $lines=array();
 
     public $date_debut;
 
@@ -1934,7 +1934,7 @@ class ExpenseReport extends CommonObject
 
             $tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
-            // calcul de tous les totaux de la ligne
+            // calcul total of line
             //$total_ttc  = price2num($qty*$value_unit, 'MT');
 
             $tx_tva = $vatrate / 100;
@@ -2565,7 +2565,7 @@ class ExpenseReportLine
 
         $this->db->begin();
 
-        // Mise a jour ligne en base
+        // Update line in database
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
         $sql.= ",value_unit=".$this->value_unit;

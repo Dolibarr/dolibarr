@@ -483,10 +483,14 @@ class Contracts extends DolibarrApi
             $this->contract->$field = $value;
         }
 
-        if($this->contract->update(DolibarrApiAccess::$user, 0))
+        if ($this->contract->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $this->task->error);
+        }
     }
 
     /**

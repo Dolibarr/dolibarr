@@ -378,7 +378,6 @@ class ExpenseReports extends DolibarrApi
      *
      * @return int
      */
-    /*
     function put($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
@@ -397,12 +396,15 @@ class ExpenseReports extends DolibarrApi
             $this->expensereport->$field = $value;
         }
 
-        if($this->expensereport->update(DolibarrApiAccess::$user))
+        if ($this->expensereport->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+		}
+		else
+		{
+			throw new RestException(500, $this->task->error);
+		}
     }
-    */
 
     /**
      * Delete Expense Report
@@ -479,6 +481,24 @@ class ExpenseReports extends DolibarrApi
             )
         );
     }*/
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->barcode_type);
+    	unset($object->barcode_type_code);
+    	unset($object->barcode_type_label);
+    	unset($object->barcode_type_coder);
+
+    	return $object;
+    }
 
     /**
      * Validate fields before create or update object

@@ -191,9 +191,13 @@ class BankAccounts extends DolibarrApi
         }
 
         if ($account->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $this->task->error);
+        }
     }
 
     /**

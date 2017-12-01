@@ -413,16 +413,20 @@ class Orders extends DolibarrApi
             $this->commande->$field = $value;
         }
 
-	// Update availability
-	if (!empty($this->commande->availability_id)) {
-	    if ($this->commande->availability($this->commande->availability_id) < 0)
-		throw new RestException(400, 'Error while updating availability');
-	}
+		// Update availability
+		if (!empty($this->commande->availability_id)) {
+		    if ($this->commande->availability($this->commande->availability_id) < 0)
+			throw new RestException(400, 'Error while updating availability');
+		}
 
-        if ($this->commande->update(DolibarrApiAccess::$user, 1, '', '', 'update'))
+        if ($this->commande->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $this->task->error);
+        }
     }
 
     /**

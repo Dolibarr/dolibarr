@@ -149,6 +149,7 @@ class Proposals extends DolibarrApi
 		{
 			$num = $db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
 			while ($i < $min)
 			{
 				$obj = $db->fetch_object($result);
@@ -272,7 +273,7 @@ class Proposals extends DolibarrApi
                         $request_data->product_type,
                         $request_data->rang,
                         $request_data->special_code,
-                        $fk_parent_line,
+      					$request_data->fk_parent_line,
                         $request_data->fk_fournprice,
                         $request_data->pa_ht,
                         $request_data->label,
@@ -374,25 +375,25 @@ class Proposals extends DolibarrApi
      * @throws 404
 	 */
 	function deleteLine($id, $lineid) {
-	  if(! DolibarrApiAccess::$user->rights->propal->creer) {
+		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
-		  }
+		}
 
-	  $result = $this->propal->fetch($id);
-	  if( ! $result ) {
-		 throw new RestException(404, 'Proposal not found');
-	  }
+		$result = $this->propal->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Proposal not found');
+		}
 
-		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-	  }
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
 
-	  $request_data = (object) $request_data;
-	  $updateRes = $this->propal->deleteline($lineid);
-	  if ($updateRes > 0) {
-		return $this->get($id);
-	  }
-	  return false;
+		$updateRes = $this->propal->deleteline($lineid);
+		if ($updateRes > 0) {
+			return $this->get($id);
+		}
+
+		return false;
 	}
 
 	/**
@@ -421,10 +422,14 @@ class Proposals extends DolibarrApi
 			$this->propal->$field = $value;
 		}
 
-		if($this->propal->update($id, DolibarrApiAccess::$user,1,'','','update'))
+		if ($this->propal->update(DolibarrApiAccess::$user) > 0)
+		{
 			return $this->get($id);
-
-		return false;
+		}
+		else
+		{
+			throw new RestException(500, $this->task->error);
+		}
 	}
 
 	/**

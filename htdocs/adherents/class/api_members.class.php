@@ -226,9 +226,13 @@ class Members extends DolibarrApi
         // If there is no error, update() returns the number of affected rows
         // so if the update is a no op, the return value is zero.
         if($member->update(DolibarrApiAccess::$user) >= 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $this->task->error);
+        }
     }
 
     /**

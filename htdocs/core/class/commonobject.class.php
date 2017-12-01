@@ -391,7 +391,7 @@ abstract class CommonObject
 	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
-	 *	@param	Translate	$langs			Language object for translation of civility
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option, 1=Add civility
 	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
 	 * 	@param	int			$maxlen			Maximum length
