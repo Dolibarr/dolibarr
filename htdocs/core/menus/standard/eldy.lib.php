@@ -74,7 +74,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 
 	// Third parties
 	$tmpentry=array('enabled'=>(( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("companies");
@@ -90,7 +90,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 
 	// Products-Services
 	$tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("products");
@@ -125,7 +125,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	    'enabled'=>$menuqualified,
 	    'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)),
 	    'module'=>'propal|commande|supplier_order|contrat|ficheinter');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("commercial");
@@ -151,7 +151,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	   'enabled'=>$menuqualified,
 	   'perms'=>(! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire) || ! empty($user->rights->salaries->read) || ! empty($user->rights->fournisseur->facture->lire) || ! empty($user->rights->loan->read) || ! empty($user->rights->banque->lire)),
 	   'module'=>'facture|supplier_invoice|don|tax|salaries|loan|banque');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("compta");
@@ -172,7 +172,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		'enabled'=>$menuqualified,
 		'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire)),
 		'module'=>'comptabilite|accounting');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("compta");
@@ -190,7 +190,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$tmpentry=array('enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
 	'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
 	'module'=>'banque|prelevement');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("compta");
@@ -208,7 +208,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$tmpentry=array('enabled'=>(! empty($conf->projet->enabled)),
 	'perms'=>(! empty($user->rights->projet->lire)),
 	'module'=>'projet');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("projects");
@@ -225,7 +225,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$tmpentry=array('enabled'=>(! empty($conf->hrm->enabled) || ! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled)),
 	'perms'=>(! empty($user->rights->hrm->employee->read) || ! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->expensereport->lire)),
 	'module'=>'hrm|holiday|deplacement|expensereport');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("holiday");
@@ -245,7 +245,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	'enabled'=>1,
 	'perms'=>1,
 	'module'=>'');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$langs->load("other");
@@ -262,7 +262,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$tmpentry=array('enabled'=>(! empty($conf->adherent->enabled)),
 	'perms'=>(! empty($user->rights->adherent->lire)),
 	'module'=>'adherent');
-	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
 		$classname="";
@@ -283,7 +283,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	{
 		$idsel=(empty($newTabMenu[$i]['mainmenu'])?'none':$newTabMenu[$i]['mainmenu']);
 
-		$showmode=dol_eldy_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
+		$showmode=isVisibleToUserType($type_user,$newTabMenu[$i],$listofmodulesforexternal);
 		if ($showmode == 1)
 		{
 		    // url = url from host, shorturl = relative path into dolibarr sources
@@ -1695,37 +1695,4 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	return count($menu_array);
 }
 
-
-/**
- * Function to test if an entry is enabled or not
- *
- * @param	string		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
- * @param	array		$menuentry					Array for menu entry
- * @param	array		$listofmodulesforexternal	Array with list of modules allowed to external users
- * @return	int										0=Hide, 1=Show, 2=Show gray
- */
-function dol_eldy_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
-{
-	global $conf;
-
-	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
-	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
-	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
-	if ($type_user && $menuentry['module'])
-	{
-		$tmploops=explode('|',$menuentry['module']);
-		$found=0;
-		foreach($tmploops as $tmploop)
-		{
-			if (in_array($tmploop, $listofmodulesforexternal)) {
-				$found++; break;
-			}
-		}
-		if (! $found) return 0;	// Entry is for menus all excluded to external users
-	}
-	if (! $menuentry['perms'] && $type_user) return 0; 											// No permissions and user is external
-	if (! $menuentry['perms'] && ! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))	return 0;	// No permissions and option to hide when not allowed, even for internal user, is on
-	if (! $menuentry['perms']) return 2;															// No permissions and user is external
-	return 1;
-}
 

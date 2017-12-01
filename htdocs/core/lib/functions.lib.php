@@ -6965,3 +6965,36 @@ function colorIsLight($stringcolor)
 	}
 	return $res;
 }
+
+/**
+ * Function to test if an entry is enabled or not
+ *
+ * @param	string		$type_user					0=We test for internal user, 1=We test for external user
+ * @param	array		$menuentry					Array for feature entry to test
+ * @param	array		$listofmodulesforexternal	Array with list of modules allowed to external users
+ * @return	int										0=Hide, 1=Show, 2=Show gray
+ */
+function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal)
+{
+	global $conf;
+
+	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
+	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
+	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
+	if ($type_user && $menuentry['module'])
+	{
+		$tmploops=explode('|',$menuentry['module']);
+		$found=0;
+		foreach($tmploops as $tmploop)
+		{
+			if (in_array($tmploop, $listofmodulesforexternal)) {
+				$found++; break;
+			}
+		}
+		if (! $found) return 0;	// Entry is for menus all excluded to external users
+	}
+	if (! $menuentry['perms'] && $type_user) return 0; 											// No permissions and user is external
+	if (! $menuentry['perms'] && ! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))	return 0;	// No permissions and option to hide when not allowed, even for internal user, is on
+	if (! $menuentry['perms']) return 2;															// No permissions and user is external
+	return 1;
+}

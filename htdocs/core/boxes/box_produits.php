@@ -53,11 +53,14 @@ class box_produits extends ModeleBoxes
 	 */
 	function __construct($db,$param)
 	{
-	    global $user;
+	    global $conf, $user;
 
 	    $this->db=$db;
 
-	    $this->hidden=! ($user->rights->produit->lire || $user->rights->service->lire);
+	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
+	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden=($showmode != 1);
 	}
 
 	/**

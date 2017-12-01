@@ -59,6 +59,7 @@ $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel     = GETPOST('cancel','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
+
 $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
