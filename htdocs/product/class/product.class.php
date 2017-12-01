@@ -1384,6 +1384,7 @@ class Product extends CommonObject
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT';                // Price base type
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
+				$this->product_fourn_price_id = $obj->rowid;	    // supplier price id
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$result=$obj->fk_product;
@@ -1428,6 +1429,7 @@ class Product extends CommonObject
 						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
 						$this->fourn_price_base_type = 'HT';                // Price base type for a virtual supplier
+						$this->product_fourn_price_id = $obj->rowid;	    // supplier price id
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
