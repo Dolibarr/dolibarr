@@ -471,6 +471,8 @@ print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'ali
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print "</tr>\n";
 
+$listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+
 // Lines
 if (! empty($holiday->holiday))
 {
@@ -481,6 +483,10 @@ if (! empty($holiday->holiday))
 
 	foreach($holiday->holiday as $infos_CP)
 	{
+		// Leave request
+		$holidaystatic->id=$infos_CP['rowid'];
+		$holidaystatic->ref=$infos_CP['rowid'];
+
 		// User
 		$userstatic->id=$infos_CP['fk_user'];
 		$userstatic->lastname=$infos_CP['user_lastname'];
@@ -499,10 +505,11 @@ if (! empty($holiday->holiday))
 
 		$date = $infos_CP['date_create'];
 
+		$starthalfday=($infos_CP['halfday'] == -1 || $infos_CP['halfday'] == 2)?'afternoon':'morning';
+		$endhalfday=($infos_CP['halfday'] == 1 || $infos_CP['halfday'] == 2)?'morning':'afternoon';
+
 		print '<tr class="oddeven">';
 		print '<td>';
-		$holidaystatic->id=$infos_CP['rowid'];
-		$holidaystatic->ref=$infos_CP['rowid'];
 		print $holidaystatic->getNomUrl(1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
@@ -515,8 +522,14 @@ if (! empty($holiday->holiday))
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
 		print '</td>';
-		print '<td align="center">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
-		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
+		print '<td align="center">';
+		print dol_print_date($infos_CP['date_debut'],'day');
+		print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+		print '</td>';
+		print '<td align="center">';
+		print dol_print_date($infos_CP['date_fin'],'day');
+		print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+		print '</td>';
 		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
 
 	    // Action column

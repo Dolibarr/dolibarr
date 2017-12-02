@@ -1526,7 +1526,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				$title=$appli.'<br>';
 				$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 				if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-				$text.='<a class="help" target="_blank" href="';
+				$text.='<a class="help" target="_blank" rel="noopener" href="';
 				if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 				else $text.=sprintf($helpbaseurl,$helppage);
 				$text.='">';
@@ -1609,8 +1609,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 			foreach($arrayresult as $key => $val)
 			{
-				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleftt', img_picto('',$val['img']));
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleftt', img_picto('', $val['img'], '', false, 1, 1));
+				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleft', img_picto('',$val['img']));
+				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft', img_picto('', $val['img'], '', false, 1, 1));
 			}
 		}
 
@@ -1689,7 +1689,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			}
 			else $appli.=" ".DOL_VERSION;
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
-			if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+			if ($doliurl) print '<a class="help" target="_blank" rel="noopener" href="'.$doliurl.'">';
 			else print '<span class="help">';
 			print $appli;
 			if ($doliurl) print '</a>';
@@ -1719,7 +1719,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '<a class="help" target="_blank" rel="noopener" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';
 		}
 

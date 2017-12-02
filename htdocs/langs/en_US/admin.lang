@@ -131,6 +131,7 @@ HoursOnThisPageAreOnServerTZ=Warning, in contrary of other screens, hours on thi
 Box=Widget
 Boxes=Widgets
 MaxNbOfLinesForBoxes=Max number of lines for widgets
+AllWidgetsWereEnabled=All available widgets are enabled
 PositionByDefault=Default order
 Position=Position
 MenusDesc=Menu managers set content of the two menu bars (horizontal and vertical).

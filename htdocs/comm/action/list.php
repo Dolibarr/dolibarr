@@ -343,6 +343,26 @@ if ($resql)
 
 	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
+	$nav='';
+	if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	//if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+	if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
+	if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+	if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+	if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+	if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
+	if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+	if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+	print $nav;
+
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
     print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,-1,$actioncode,$usergroup,'',$resourceid);
     dol_fiche_end();
@@ -378,27 +398,6 @@ if ($resql)
     	$s = $hookmanager->resPrint;
     }
 
-
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="list">';
-    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
-    print '<input type="hidden" name="type" value="'.$type.'">';
-    $nav='';
-    if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    //if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-    if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
-    if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-    if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-    if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-    if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-    if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-    if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-    print $nav;
-
     if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
     {
         $tmpforcreatebutton=dol_getdate(dol_now(), true);
@@ -412,7 +411,7 @@ if ($resql)
         $link.= '</a>';
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$link, '', $limit);
 
     $moreforfilter='';
 

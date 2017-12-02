@@ -1478,7 +1478,7 @@ if ($step == 5 && $datatoimport)
             while ($sourcelinenb < $nboflines && ! $endoffile)
             {
                 $sourcelinenb++;
-                // Read line and stor it into $arrayrecord
+                // Read line and store it into $arrayrecord
                 $arrayrecord=$obj->import_read_record();
                 if ($arrayrecord === false)
                 {
