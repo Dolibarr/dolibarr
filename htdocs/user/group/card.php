@@ -252,8 +252,8 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td class="fieldrequired" width="15%">'.$langs->trans("Name").'</td>';
-	print '<td class="valeur"><input size="30" type="text" id="nom" name="nom" value=""></td></tr>';
+	print '<td class="fieldrequired titlefield">'.$langs->trans("Name").'</td>';
+	print '<td><input type="text" id="nom" name="nom" value="'.GETPOST('nom','alpha').'"></td></tr>';
 
 	// Multicompany
 	if (! empty($conf->multicompany->enabled) && is_object($mc))
@@ -348,13 +348,13 @@ else
 			if (! empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 			{
 				$mc->getInfo($object->entity);
-				print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
+				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 				print '<td class="valeur">'.$mc->label;
 				print "</td></tr>\n";
 			}
 
 			// Note
-			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
 			print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'&nbsp;</td>';
 			print "</tr>\n";
 
