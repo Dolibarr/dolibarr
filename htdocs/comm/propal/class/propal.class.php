@@ -2959,6 +2959,8 @@ class Propal extends CommonObject
 	 */
 	function demand_reason($demand_reason_id, $notrigger=0)
 	{
+		global $user;
+
 		if ($this->statut >= self::STATUS_DRAFT)
 		{
 			$error=0;
