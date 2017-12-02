@@ -857,7 +857,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	print '<td class="liste_titre"></td>';
 
 	// Status
-	print '<td class="liste_titre maxwidthonsmartphone">';
+	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 	print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
 	print '</td>';
 

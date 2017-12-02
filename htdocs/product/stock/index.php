@@ -140,8 +140,8 @@ if ($resql)
 	if (! empty($conf->productbatch->enabled))
 	{
 		print '<th>'.$langs->trans("Batch").'</th>';
-		print '<th>'.$langs->trans("EatByDate").'</th>';
 		print '<th>'.$langs->trans("SellByDate").'</th>';
+		print '<th>'.$langs->trans("EatByDate").'</th>';
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
 	print '<th align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></th>';
@@ -152,23 +152,24 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
-		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
-		print "<td>";
 		$producttmp->id = $objp->rowid;
 		$producttmp->ref = $objp->produit;
 		$producttmp->status_batch = $objp->tobatch;
 		$producttmp->status_sell = $objp->tosell;
 		$producttmp->status_buy = $objp->tobuy;
+
+		print '<tr class="oddeven">';
+		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
+		print '<td class="tdoverflowmax200">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
 		if (! empty($conf->productbatch->enabled))
 		{
 			print '<td>'.$objp->batch.'</td>';
-			print '<td>'.dol_print_date($db->jdate($objp->eatby),'day').'</td>';
 			print '<td>'.dol_print_date($db->jdate($objp->sellby),'day').'</td>';
+			print '<td>'.dol_print_date($db->jdate($objp->eatby),'day').'</td>';
 		}
-		print '<td><a href="card.php?id='.$objp->entrepot_id.'">';
+		print '<td class="tdoverflowmax200"><a href="card.php?id='.$objp->entrepot_id.'">';
 		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
 		print "</a></td>\n";
 		print '<td align="right">';
