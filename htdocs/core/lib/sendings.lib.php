@@ -352,8 +352,8 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				            foreach ($lines[$i]->detail_batch as $dbatch)
 				            {
 								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
-								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
+								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
 								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
 								$detail.= '<br>';
 				            }
