@@ -1295,8 +1295,7 @@ class Expedition extends CommonObject
 		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
 		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
-		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
-		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
@@ -1411,12 +1410,13 @@ class Expedition extends CommonObject
 				{
 					$line->detail_batch = array();
 				}
-				// Eat-by date
-				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0)
+
+				// Detail of batch
+				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0 && $obj->product_tobatch > 0)
 				{
 					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
-					$newdetailbatch = ExpeditionLineBatch::fetchAll($this->db,$obj->line_id);
+					$newdetailbatch = ExpeditionLineBatch::fetchAll($this->db, $obj->line_id, $obj->fk_product);
 					if (is_array($newdetailbatch))
 					{
 						if ($originline != $obj->fk_origin_line)

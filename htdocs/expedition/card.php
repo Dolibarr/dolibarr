@@ -52,14 +52,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("sendings");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
-$langs->load('stocks');
-$langs->load('other');
-$langs->load('propal');
+$langs->loadLangs(array("sendings","companies","bills",'deliveries','orders','stocks','other','propal'));
+
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
 
@@ -108,6 +102,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 $hookmanager->initHooks(array('expeditioncard','globalcard'));
 
 $permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the include of actions_dellink.inc.php
+//var_dump($object->lines[0]->detail_batch);
 
 
 /*
@@ -1191,7 +1186,8 @@ if ($action == 'create')
                 if ($line->fk_product > 0)  // If predefined product
                 {
                     $product->fetch($line->fk_product);
-                    $product->load_stock('warehouseopen');
+                    $product->load_stock('warehouseopen');	// Load all $product->stock_warehouse[idwarehouse]->detail_batch
+                    //var_dump($product->stock_warehouse[1]);
 
                     print '<td>';
                     print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
@@ -1368,13 +1364,21 @@ if ($action == 'create')
 								print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 								print '</td>';
 
+								print '<!-- Show details of lot -->';
 								print '<td align="left">';
 
 								print $staticwarehouse->getNomUrl(0).' / ';
 
-								print '<!-- Show details of lot -->';
 								print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-								print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+
+								$detail='';
+								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
+								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
+								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
+								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
+								$detail.= '<br>';
+								print $detail;
+
 								$quantityToBeDelivered -= $deliverableQty;
 								if ($quantityToBeDelivered < 0)
 								{
@@ -1530,14 +1534,12 @@ if ($action == 'create')
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
 
-									//print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 									//print $line->fk_product.' - '.$dbatch->batch;
 									print $langs->trans("Batch").': ';
 									$result = $productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
 									if ($result > 0) print $productlotObject->getNomUrl(1);
 									else print 'TableLotIncompleteRunRepair';
 									print ' ('.$dbatch->qty.')';
-									//print $langs->trans("DetailBatchFormat", 'ee'.$dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
 									{
@@ -2378,13 +2380,18 @@ else if ($id || $ref)
 				{
 					if (isset($lines[$i]->detail_batch))
 					{
+						print '<!-- Detail of lot -->';
 						print '<td>';
 						if ($lines[$i]->product_tobatch)
 						{
 							$detail = '';
 							foreach ($lines[$i]->detail_batch as $dbatch)
 							{
-								$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
+								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
+								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
+								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
+								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
+								$detail.= '<br>';
 							}
 							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
 						}
