@@ -2,6 +2,27 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 6.0.4 compared to 6.0.3 *****
+FIX: #7737
+FIX: #7751
+FIX: #7756 Add better error message
+FIX: #7786
+FIX: #7806
+FIX: #7824
+FIX: add line bad price and ref
+FIX: A lot of several fix on local taxes and NPR tax
+FIX: createfromorder
+FIX: CSS for IE10
+FIX: external user cannot be set as internal
+FIX: Filter type on actioncomm with multiselect doesn't work
+FIX: list of donation not filtered on multicompany
+FIX: list of module not complete when module mb_strlen not available
+FIX: Locatax were not propagated when cloning order or proposal
+FIX: Searching translation should not be case sensitive
+FIX: Search into language is ok for file into external modules two.
+FIX: test for filter fk_status
+FIX: too much users on holiday list
+FIX: Wrong alias sql
 
 ***** ChangeLog for 6.0.3 compared to 6.0.2 *****
 FIX: #7211 Update qty dispatched on qty change
