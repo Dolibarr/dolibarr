@@ -1169,7 +1169,6 @@ CacheByServerDesc=Por exemplo, usando a diretiva Apache "ExpiresByType image/gif
 CompressionOfResources=Comprimir as respostas HTTP
 TestNotPossibleWithCurrentBrowsers=Não é possível detecção automática
 DefaultValuesDesc=Você pode definir/forçar aqui o valor padrão que desejas obter quando crias um novo registro, e/ou os filtros padrão ou a ordem dos pedidos quando você lista um registro.
-DefaultCreateForm=Valores padrão para a criação de formulário
 DefaultSearchFilters=Filtros de busca padrão
 DefaultSortOrder=Ordem padrão dos pedidos
 DefaultFocus=Campos de foco padrão

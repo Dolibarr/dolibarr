@@ -119,6 +119,8 @@ KeepDefaultValuesDeb=Utiliza el asistente de configuración de Dolibarr desde un
 KeepDefaultValuesMamp=Utiliza el asistente de configuración Dolibarr de DoliMamp, por lo que los valores propuestos aquí ya están optimizados. Cámbialos solo si sabes lo que haces.
 KeepDefaultValuesProxmox=Utiliza el asistente de configuración de Dolibarr desde un dispositivo virtual Proxmox, por lo que los valores propuestos aquí ya están optimizados. Cámbialos solo si sabes lo que haces.
 UpgradeExternalModule=Ejecutar un proceso de actualización dedicado de módulos externos
+SetAtLeastOneOptionAsUrlParameter=Establezca al menos una opción como parámetro en URL. Por ejemplo: '... repair.php? Standard = confirmed'
+NothingToDelete=Nada para limpiar / eliminar
 MigrationFixData=Solución para datos desnormalizados
 MigrationOrder=Migración de datos para pedidos del cliente
 MigrationSupplierOrder=Migración de datos para pedidos del proveedor
@@ -166,6 +168,7 @@ MigrationActioncommElement=Actualizar datos sobre acciones
 MigrationPaymentMode=Migración de datos para el modo de pago
 MigrationCategorieAssociation=Migración de categorías
 MigrationEvents=Migración de eventos para agregar el propietario del evento a la tabla de asignación
+MigrationEventsContact=Migración de eventos para agregar contacto de evento en la tabla de asignación
 MigrationRemiseEntity=Actualizar el valor del campo de entidad de llx_societe_remise
 MigrationRemiseExceptEntity=Actualizar el valor del campo de entidad de llx_societe_remise_except
 ErrorFoundDuringMigration=Se informó un error durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s"> hacer clic aquí </a>, pero la aplicación o algunas características pueden no funcionar correctamente hasta que se solucionen.

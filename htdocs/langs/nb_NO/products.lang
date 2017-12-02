@@ -202,8 +202,8 @@ UseMultipriceRules=Bruk prissegment-regler (definert i oppsettet i Varemodulen) 
 PercentVariationOver=%% variasjon over %s
 PercentDiscountOver=%% rabatt på %s
 KeepEmptyForAutoCalculation=Hold tom for å få dette beregnet automatisk fra vekt eller volum av produkter
-VariantRefExample=Example: COL
-VariantLabelExample=Example: Color
+VariantRefExample=Eksempel: COL
+VariantLabelExample=Eksempel: Farge
 ### composition fabrication
 Build=Produser
 ProductsMultiPrice=Varer og priser for hvert prissegment
@@ -287,8 +287,8 @@ ConfirmDeleteProductBuyPrice=Er du sikker på at du vil slette denne innkjøpspr
 SubProduct=Sub-vare
 ProductSheet=Produktark
 ServiceSheet=Serviceark
-PossibleValues=Possible values
-GoOnMenuToCreateVairants=Go on menu %s - %s to prepare attribute variants (like colors, size, ...)
+PossibleValues=Mulige verdier
+GoOnMenuToCreateVairants=Gå tilmenyen %s - %s for å forberede attributtvarianter (som farger, størrelse, ...)
 
 #Attributes
 VariantAttributes=Variantattributter

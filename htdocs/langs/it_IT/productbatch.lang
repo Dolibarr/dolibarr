@@ -11,7 +11,6 @@ BatchNumberShort=Lotto/numero di serie
 EatByDate=Data di scadenza
 SellByDate=Data limite per la vendita
 DetailBatchNumber=dettagli lotto/numero di serie
-DetailBatchFormat=Lotto/numero di serie: %s - Consumare entro: %s - Da vendere entro: %s (Quantità: %d)
 printBatch=Lotto/numero di serie: %s
 printEatby=Consumare entro: %s
 printSellby=Da vendere entro: %s

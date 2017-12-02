@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Rechnungswesen
 TaxModuleSetupToModifyRules=Im <a href="%s">Steuer-Modul</a> können Sie die Einstellungen für die Berechnungen vornehmen
 TaxModuleSetupToModifyRulesLT=Hier können Sie die <a href="%s">Einstellungen</a> für die Berechnungen vornehmen
 OptionMode=Buchhaltungsoptionen
@@ -34,7 +34,7 @@ VATToPay=MwSt. Verkäufe - USt.
 VATReceived=Tax received
 VATToCollect=Tax purchases
 VATSummary=Tax Balance
-VATPaid=Tax paid
+VATPaid=Bezahlte USt.
 LT1Summary=Tax 2 summary
 LT2Summary=Tax 3 summary
 LT1SummaryES=Saldo RE
@@ -159,7 +159,7 @@ RulesCAIn=- Beinhaltet alle tatsächlich erfolgten Zahlungen von Kunden.<br>- Es
 RulesAmountOnInOutBookkeepingRecord=It includes record in your Ledger with accounting accounts that has the group "EXPENSE" or "INCOME"
 RulesResultBookkeepingPredefined=It includes record in your Ledger with accounting accounts that has the group "EXPENSE" or "INCOME"
 RulesResultBookkeepingPersonalized=It show record in your Ledger with accounting accounts <b>grouped by personalized groups</b>
-SeePageForSetup=See menu <a href="%s">%s</a> for setup
+SeePageForSetup=Siehe Menü <a href="%s"> %s </a> für die Einrichtung
 DepositsAreNotIncluded=- Ohne Anzahlungsrechnungen
 DepositsAreIncluded=- Inklusive Anzahlungsrechnungen
 LT2ReportByCustomersInInputOutputModeES=Bericht von Partner EKSt.

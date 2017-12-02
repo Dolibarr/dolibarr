@@ -328,7 +328,7 @@ PaperFormatCAP6=Format P6 Kanada
 #### Expense report categories ####
 ExpAutoCat=Auto
 ExpCycloCat=Moped
-ExpMotoCat=Motorbike
+ExpMotoCat=Motorrad
 ExpAuto3CV=3 CV
 ExpAuto4CV=4 CV
 ExpAuto5CV=5 CV

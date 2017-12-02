@@ -205,6 +205,7 @@ ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a p
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
 ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
 ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Lozinka je podešena za ovog člana, ali korisnik nije kreiran. To znači da je lozinka sačuvana, ali se član ne može ulogovati na Dolibarr. Informaciju može koristiti neka eksterna komponenta, ali ako nemate potrebe da definišete korisnika/lozinku za članove, možete deaktivirati opciju "Upravljanje lozinkama za svakog člana" u podešavanjima modula Članovi. Ukoliko morate da kreirate login, ali Vam nije potrebna lozinka, ostavite ovo polje prazno da se ovo upozorenje ne bi prikazivalo. Napomena: email može biti korišćen kao login ako je član povezan sa korisnikom.

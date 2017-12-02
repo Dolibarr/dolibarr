@@ -89,6 +89,6 @@ TryToUseTheModuleBuilder=Hvis du har kunnskap i SQL og PHP, kan du prøve å bru
 SeeTopRightMenu=Se <span class="fa fa-bug"></span> i øverste høyre meny
 AddLanguageFile=Legg til språkfil
 YouCanUseTranslationKey=Her kan du bruke en nøkkel som er oversettelsesnøkkelen funnet i språkfilen (se kategorien "Språk")
-DropTableIfEmpty=(Delete table if empty)
-TableDoesNotExists=The table %s does not exists
-TableDropped=Table %s deleted
+DropTableIfEmpty=(Slett tabell hvis tom)
+TableDoesNotExists=Tabellen %s finnes ikke
+TableDropped=Tabell %s slettet

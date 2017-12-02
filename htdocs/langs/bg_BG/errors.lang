@@ -205,6 +205,7 @@ ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a p
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
 ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
 ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Парола е зададено за този член. Обаче, няма създаден потребителски акаунт. Следователно тази парола е записана, но не може да бъде използвана за влизане в Dolibarr. Може да бъде използвана от външен модул/интерфейс, но ако нямате нужда да определите нито потребителско име нито парола за член, можете да деактивирате тази опция. Ако имате нужда да управлявате потребителско име, но нямата нужда от парола, можете да оставите това поле празно, за да избегнете това предупреждение. Забележка: Имейл също може да бъде използван като потребителско име ако члена с свързан към потребител.

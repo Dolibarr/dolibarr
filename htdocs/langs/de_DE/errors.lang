@@ -205,6 +205,7 @@ ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a p
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
 ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
 ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.

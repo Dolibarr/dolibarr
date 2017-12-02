@@ -36,7 +36,7 @@ NotYetInGeneralLedger=Ikke ennå journalisert i ledgers
 GroupIsEmptyCheckSetup=Gruppen er tom, sjekk oppsettet for den personlige regnskapsgruppen
 DetailByAccount=Vis detaljer etter konto
 AccountWithNonZeroValues=Kontoer med ingen nullverdier
-ListOfAccounts=List of accounts
+ListOfAccounts=Liste over kontoer
 
 MainAccountForCustomersNotDefined=Hoved regnskapskonto for kunder som ikke er definert i oppsettet
 MainAccountForSuppliersNotDefined=Hoved regnskapskonto for leverandører som ikke er definert i oppsettet
@@ -168,7 +168,7 @@ DeleteMvt=Slett linjer fra hovedboken
 DelYear=År som skal slettes
 DelJournal=Journal som skal slettes
 ConfirmDeleteMvt=Dette vil slette alle linjene i hovedboken for år og/eller fra en bestemt journal. Minst ett kriterium kreves.
-ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
+ConfirmDeleteMvtPartial=Dette vil slette transaksjonen fra hovedboken(alle linjer knyttet til samme transaksjon vil bli slettet)
 DelBookKeeping=Slett post fra hovedboken
 FinanceJournal=Finansjournal
 ExpenseReportsJournal=Journal for utgiftsrapporter
@@ -220,7 +220,7 @@ MvtNotCorrectlyBalanced=Bevegelsen er ikke riktig balansert. Kreditt = %s. Debet
 FicheVentilation=Binding-kort
 GeneralLedgerIsWritten=Transaksjoner blir skrevet inn i hovedboken
 GeneralLedgerSomeRecordWasNotRecorded=Noen av transaksjonene kunne ikke sendes. Hvis det ikke er noen annen feilmelding, er dette trolig fordi de allerede var sendt.
-NoNewRecordSaved=No more record to journalize
+NoNewRecordSaved=Ingen flere poster å journalisere
 ListOfProductsWithoutAccountingAccount=Liste over varer som ikke bundet til en regnskapskonto
 ChangeBinding=Endre bindingen
 

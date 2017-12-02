@@ -204,7 +204,8 @@ ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Kun godkjente fakturaer kan sende
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=Du må velge om artikkelen er et forhåndsdefinert produkt eller ikke
 ErrorDiscountLargerThanRemainToPaySplitItBefore=Rabatten du prøver å legge til er større enn restbeløp. Del rabatten i 2 mindre rabatter.
 ErrorFileNotFoundWithSharedLink=Filen ble ikke funnet. Kanskje delingsnøkkelen ble endret eller filen ble fjernet nylig.
-ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+ErrorProductBarCodeAlreadyExists=Vare-strekkoden %s finnes allerede i en annen produktreferanse.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.

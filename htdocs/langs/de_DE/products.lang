@@ -143,7 +143,7 @@ RowMaterial=Rohmaterial
 CloneProduct=Produkt/Leistung duplizieren
 ConfirmCloneProduct=Möchten Sie ddas Produkt/service <b>%s</b> wirklich duplizieren?
 CloneContentProduct=Allgemeine Informationen des Produkts/Leistungen duplizieren
-ClonePricesProduct=Clone prices
+ClonePricesProduct=Preise duplizieren
 CloneCompositionProduct=Dupliziere Produkt-/Leistungszusammenstellung
 CloneCombinationsProduct=Dupliziere Produkt-Variante
 ProductIsUsed=Produkt in Verwendung
@@ -203,7 +203,7 @@ PercentVariationOver=%%  Veränderung über %s
 PercentDiscountOver=%% Nachlass über %s
 KeepEmptyForAutoCalculation=Leer lassen um den Wert basierend auf Gewicht oder Volumen der Produkte automatisch zu berechnen
 VariantRefExample=Example: COL
-VariantLabelExample=Example: Color
+VariantLabelExample=Beispiel: Farbe
 ### composition fabrication
 Build=Produzieren
 ProductsMultiPrice=Produkte und Preise für jedes Preissegment
@@ -273,7 +273,7 @@ WarningSelectOneDocument=Bitte wählen Sie mindestens ein Dokument aus
 DefaultUnitToShow=Einheit
 NbOfQtyInProposals=Stückzahl in Angeboten
 ClinkOnALinkOfColumn=Klicken Sie auf einen Link in Spalte %s zur detaillierten Anzeige
-ProductsOrServicesTranslations=Products or services translation
+ProductsOrServicesTranslations=Übersetzung von Produkten oder Dienstleistungen
 TranslatedLabel=Übersetztes Label
 TranslatedDescription=Übersetzte Beschreibung
 TranslatedNote=Übersetzte Notizen
@@ -287,8 +287,8 @@ ConfirmDeleteProductBuyPrice=Möchten Sie diesen Einkaufspreis wirklich löschen
 SubProduct=Unterprodukt
 ProductSheet=Datenblatt
 ServiceSheet=Wartungsblatt
-PossibleValues=Possible values
-GoOnMenuToCreateVairants=Go on menu %s - %s to prepare attribute variants (like colors, size, ...)
+PossibleValues=Mögliche Werte
+GoOnMenuToCreateVairants=Rufen Sie das Menü %s - %s auf, um Attributvarianten (wie Farben, Größe, ...) vorzubereiten.
 
 #Attributes
 VariantAttributes=Variante Attribute

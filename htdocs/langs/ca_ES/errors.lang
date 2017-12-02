@@ -205,6 +205,7 @@ ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a p
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
 ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
 ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 
 # Warnings
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí

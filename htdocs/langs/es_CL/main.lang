@@ -244,6 +244,7 @@ ContactsAddressesForCompany=Contactos / direcciones para este tercero
 AddressesForCompany=Direcciones para este tercero
 ActionsOnCompany=Eventos sobre este tercero
 ActionsOnMember=Eventos sobre este miembro
+ActionsOnProduct=Eventos sobre este producto
 NActionsLate=%s tarde
 RequestAlreadyDone=Solicitud ya grabada
 Filter=Filtrar

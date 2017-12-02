@@ -205,6 +205,7 @@ ErrorChooseBetweenFreeEntryOrPredefinedProduct=You must choose if article is a p
 ErrorDiscountLargerThanRemainToPaySplitItBefore=The discount you try to apply is larger than remain to pay. Split the discount in 2 smaller discounts before.
 ErrorFileNotFoundWithSharedLink=File was not found. May be the share key was modified or file was removed recently.
 ErrorProductBarCodeAlreadyExists=The product barcode %s already exists on another product reference.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using virtual product to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 
 # Warnings
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 

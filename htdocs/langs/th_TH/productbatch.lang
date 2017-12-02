@@ -11,7 +11,6 @@ BatchNumberShort=จัดสรร / อนุกรม
 EatByDate=กินตามวันที่
 SellByDate=ขายตามวันที่
 DetailBatchNumber=จัดสรร / รายละเอียดอนุกรม
-DetailBatchFormat=จัดสรร / อนุกรม:% s - กินโดย:% s - ขายโดย:% s (จำนวน:% d)
 printBatch=จัดสรร / อนุกรม:% s
 printEatby=กินโดย:% s
 printSellby=ขายโดย:% s

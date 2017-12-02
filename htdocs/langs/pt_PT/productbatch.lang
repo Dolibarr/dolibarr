@@ -11,7 +11,6 @@ BatchNumberShort=Lote/Nr. de Série
 EatByDate=Data de validade
 SellByDate=Data de venda
 DetailBatchNumber=Detalhes de Lote/Nr. de Série
-DetailBatchFormat=Lote/Número de Série: %s - Data de validade:%s - Data de venda:%s (Qtd: %d)
 printBatch=Lote/Nr. de Série: %s
 printEatby=Data de validade: %s
 printSellby=Data de venda: %s

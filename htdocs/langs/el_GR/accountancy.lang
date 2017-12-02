@@ -1,6 +1,6 @@
 # Dolibarr language file - en_US - Accounting Expert
 ACCOUNTING_EXPORT_SEPARATORCSV=Διαχωριστής στηλών για το αρχείο που θα εξαχθεί
-ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαγθεί
+ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαχθεί
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
 ACCOUNTING_EXPORT_LABEL=Εξαγωγή ετικέτας
@@ -19,7 +19,7 @@ AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done fr
 ConfigAccountingExpert=Διαμόρφωση της μονάδας λογιστικής expert
 Journalization=Journalization
 Journaux=Ημερολόγια
-JournalFinancial=Οικονιμικά ημερολόγια
+JournalFinancial=Οικονομικά ημερολόγια
 BackToChartofaccounts=Επιστροφή στο διάγραμμα των λογαριασμών
 Chartofaccounts=Διάγραμμα λογαριασμών
 CurrentDedicatedAccountingAccount=Current dedicated account
