@@ -113,7 +113,8 @@ if ($action == 'addline')
 			if (empty($batch))
 			{
 				$error++;
-				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), null, 'errors');
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $producttmp->ref), null, 'errors');
 			}
 		}
 	}
