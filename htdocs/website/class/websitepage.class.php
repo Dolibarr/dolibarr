@@ -53,6 +53,7 @@ class WebsitePage extends CommonObject
 
 	public $fk_website;
 	public $pageurl;
+	public $type_container;
 	public $title;
 	public $description;
 	public $keywords;
@@ -67,25 +68,26 @@ class WebsitePage extends CommonObject
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
 	public $fields=array(
-	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
-		'pageurl'       =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Alias of page'),
-	    'title'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-	    'description'   =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-	    'keywords'      =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
-		'lang'          =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+	    'rowid'          =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'index'=>1, 'position'=>1,  'comment'=>'Id'),
+		'pageurl'        =>array('type'=>'varchar(16)',  'label'=>'WEBSITE_PAGENAME', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Alias of page'),
+		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>11, 'comment'=>'Type of container'),
+		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
+	    'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
+		'lang'           =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
-	    'fk_website'    =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
-	    'fk_page'       =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'position'=>45,  'searchall'=>0, 'foreignkey'=>'website.rowid'),
-	    'htmlheader'    =>array('type'=>'text',         'label'=>'HtmlHeader',       'enabled'=>1, 'visible'=>0,  'position'=>50,  'searchall'=>0),
-	    'content'       =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>0,  'position'=>51,  'searchall'=>0),
-		'grabbed_from'  =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom',      'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>400, 'comment'=>'URL page content was grabbed from'),
-	    'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
-		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
+	    'fk_website'     =>array('type'=>'integer',      'label'=>'WebsiteId',        'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'position'=>40,  'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
+	    'fk_page'        =>array('type'=>'integer',      'label'=>'ParentPageId',     'enabled'=>1, 'visible'=>1,  'notnull'=>-1, 'position'=>45,  'searchall'=>0, 'foreignkey'=>'website.rowid'),
+	    'htmlheader'     =>array('type'=>'text',         'label'=>'HtmlHeader',       'enabled'=>1, 'visible'=>0,  'position'=>50,  'searchall'=>0),
+	    'content'        =>array('type'=>'mediumtext',   'label'=>'Content',          'enabled'=>1, 'visible'=>0,  'position'=>51,  'searchall'=>0),
+		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom',      'enabled'=>1, 'visible'=>1,  'index'=>1,   'position'=>400, 'comment'=>'URL page content was grabbed from'),
+	    'date_creation'  =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'tms'            =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
 		//'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>true, 'position'=>510),
 		//'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
+		'import_key'     =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1,  'index'=>1,  'position'=>1000, 'notnull'=>-1),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -128,6 +130,7 @@ class WebsitePage extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.fk_website,";
+		$sql .= ' t.type_container,';
 		$sql .= " t.pageurl,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
@@ -165,6 +168,7 @@ class WebsitePage extends CommonObject
 				$this->id = $obj->rowid;
 
 				$this->fk_website = $obj->fk_website;
+				$this->type_container = $obj->type_container;
 				$this->pageurl = $obj->pageurl;
 				$this->title = $obj->title;
 				$this->description = $obj->description;
@@ -214,6 +218,7 @@ class WebsitePage extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.fk_website,";
+		$sql .= " t.type_container,";
 		$sql .= " t.pageurl,";
 		$sql .= " t.title,";
 		$sql .= " t.description,";
@@ -260,6 +265,7 @@ class WebsitePage extends CommonObject
 
 				$record->id = $obj->rowid;
 				$record->fk_website = $obj->fk_website;
+				$record->type_container = $obj->type_container;
 				$record->pageurl = $obj->pageurl;
 				$record->title = $obj->title;
 				$record->description = $obj->description;
@@ -497,7 +503,8 @@ class WebsitePage extends CommonObject
 		$now=dol_now();
 
 		$this->fk_website = '';
-		$this->pageurl = '';
+		$this->type_container = 'page';
+		$this->pageurl = 'specimen';
 		$this->title = 'My Page';
 		$this->description = 'This is my page';
 		$this->keywords = 'keyword1, keyword2';

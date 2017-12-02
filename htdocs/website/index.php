@@ -54,6 +54,8 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel','alpha');
 
+$type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
+
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
 
@@ -144,7 +146,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
 
 // Add directory
-if ($action == 'add' && $permtouploadfile)
+/*
+if ($action == 'adddir' && $permtouploadfile)
 {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
@@ -164,7 +167,7 @@ if ($action == 'add' && $permtouploadfile)
 
 	clearstatcache();
 }
-
+*/
 
 // Remove directory
 if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
@@ -276,6 +279,7 @@ if ($action == 'add')
 			preg_match('/<head>(.*)<\/head>/is', $tmp['content'], $reg);
 			$head = $reg[1];
 
+			$objectpage->type_container = 'page';
    			$objectpage->pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-',$urltograbwithoutdomainandparam));
    			if (empty($objectpage->pageurl))
    			{
@@ -454,6 +458,7 @@ if ($action == 'add')
 	}
 	else
 	{
+		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER','alpha');
 		$objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
@@ -621,7 +626,7 @@ if ($action == 'delete')
 // Update css
 if ($action == 'updatecss')
 {
-	if (GETPOST('refreshsite') || GETPOST('refreshpage'))		// If we tried to reload another site/page, we stay on editcss mode.
+	if (GETPOST('refreshsite','alpha') || GETPOST('refreshpage','alpha'))		// If we tried to reload another site/page, we stay on editcss mode.
 	{
 		$action='editcss';
 	}
@@ -859,6 +864,7 @@ if ($action == 'updatemeta')
 	{
 		$objectpage->old_object = clone $objectpage;
 
+		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
 		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
@@ -1379,6 +1385,7 @@ if (count($object->records) > 0)
 					$out.='<option value="'.$key.'"';
 					if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
 					$out.='>';
+					$out.='['.$valpage->type_container.'] ';
 					$out.=$valpage->pageurl.' - '.$valpage->title;
 					if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
 					$out.='</option>';
@@ -1766,7 +1773,7 @@ if ($action == 'editmeta' || $action == 'create')
 
 		print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br><hr>';
 		print '<table class="border" width="100%">';
-		print '<tr><td class="titlefieldcreate">';
+		print '<tr><td class="titlefield">';
 		print $langs->trans("URL");
 		print '</td><td>';
 		print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="http://externalsite/pagetofetch"> ';
@@ -1803,6 +1810,7 @@ if ($action == 'editmeta' || $action == 'create')
         print '</td></tr>';
         */
 
+		$type_container=$objectpage->type_container;
 		$pageurl=$objectpage->pageurl;
 		$pagetitle=$objectpage->title;
 		$pagedescription=$objectpage->description;
@@ -1816,6 +1824,13 @@ if ($action == 'editmeta' || $action == 'create')
 	if (GETPOST('WEBSITE_KEYWORDS','alpha'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
 	if (GETPOST('WEBSITE_LANG','aZ09'))         $pagelang=GETPOST('WEBSITE_LANG','aZ09');
 	if (GETPOST('htmlheader','none'))			$pagehtmlheader=GETPOST('htmlheader','none');
+
+	print '<tr><td class="titlefield fieldrequired">';
+	print $langs->trans('WEBSITE_TYPE_CONTAINER');
+	print '</td><td>';
+	$arrayoftype=array('page'=>$langs->trans("Page"), 'banner'=>$langs->trans("Banner"), 'blogpost'=>$langs->trans("BlogPost"));
+	print $form->selectarray('WEBSITE_TYPE_CONTAINER', $arrayoftype, $type_container);
+	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');

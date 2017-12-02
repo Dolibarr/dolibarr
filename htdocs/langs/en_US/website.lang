@@ -3,6 +3,7 @@ Shortname=Code
 WebsiteSetupDesc=Create here as much entry as number of different websites you need. Then go into menu Websites to edit them.
 DeleteWebsite=Delete website
 ConfirmDeleteWebsite=Are you sure you want to delete this web site. All its pages and content will also be removed. 
+WEBSITE_TYPE_CONTAINER=Type of page/container
 WEBSITE_PAGENAME=Page name/alias
 WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 HtmlHeaderPage=HTML specific header for page
