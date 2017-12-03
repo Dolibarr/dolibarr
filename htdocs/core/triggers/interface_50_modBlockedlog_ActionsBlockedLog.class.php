@@ -56,7 +56,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 		// Event/record is qualified
-		if ($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
+		if ($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED' || $action==='BILL_DELETE'
 			|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW'
 			|| $action === 'BILL_SUPPLIER_PAYED')
 		{

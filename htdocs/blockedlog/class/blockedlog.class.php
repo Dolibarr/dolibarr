@@ -148,7 +148,7 @@ class BlockedLog
 			}
 		}
 
-		return $langs->trans('ImpossibleToReloadObject', $this->element, $this->fk_object);
+		return '<i class="opacitymedium">'.$langs->trans('ImpossibleToReloadObject', $this->element, $this->fk_object).'</i>';
 
 	}
 

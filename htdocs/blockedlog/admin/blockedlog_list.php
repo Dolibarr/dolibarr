@@ -162,7 +162,7 @@ print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"],'date_c
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'user_fullname','','','',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"],'ref_object','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Element'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
@@ -185,8 +185,8 @@ foreach($blocks as &$block) {
 foreach($blocks as &$block) {
 	$object_link = $block->getObjectLink();
 
-	if (empty($showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {
-
+	if (empty($showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
+	{
 	   	print '<tr class="oddeven">';
 	   	print '<td>'.$block->id.'</td>';
 	   	print '<td>'.dol_print_date($block->tms,'dayhour').'</td>';
