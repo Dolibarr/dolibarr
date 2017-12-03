@@ -788,6 +788,24 @@ if (empty($reshook))
 		}
 	}
 
+	// Delete payment
+	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $user->rights->facture->creer)
+	{
+		$object->fetch($id);
+		if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0)
+		{
+			$paiement = new Paiement($db);
+			$result=$paiement->fetch(GETPOST('paiement_id'));
+			if ($result > 0) {
+				$result=$paiement->delete(); // If fetch ok and found
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			}
+			if ($result < 0) {
+				setEventMessages($paiement->error, $paiement->errors, 'errors');
+			}
+		}
+	}
+
 	/*
 	 * Insert new invoice in database
 	 */
@@ -3148,6 +3166,13 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
+	if ($action == 'deletepaiement')
+	{
+		$payment_id = GETPOST('paiement_id');
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 1);
+
+	}
+
 	// Confirmation de la suppression d'une ligne produit
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
@@ -3791,6 +3816,7 @@ else if ($id > 0 || ! empty($ref))
 
 
 	// List of payments already done
+
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder paymenttable" width="100%">';
 
@@ -3862,7 +3888,15 @@ else if ($id > 0 || ! empty($ref))
 					print '</td>';
 				}
 				print '<td align="right">' . price($sign * $objp->amount) . '</td>';
-				print '<td>&nbsp;</td>';
+				// TODO Add link to delete payment
+				print '<td align="center">';
+				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
+				{
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
+					print img_delete();
+					print '</a>';
+				}
+				print '</td>';
 				print '</tr>';
 				$i ++;
 			}

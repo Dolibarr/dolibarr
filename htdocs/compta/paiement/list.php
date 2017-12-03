@@ -148,8 +148,7 @@ else
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE ";
-    $sql.= " AND p.entity IN (" . getEntity('facture') . ")";
+    $sql.= " WHERE p.entity IN (" . getEntity('facture') . ")";
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
