@@ -512,6 +512,8 @@ class SMTPs
 	 */
 	function sendMsg($_bolTestMsg = false, $_bolDebug = false)
 	{
+		global $conf;
+
 		/**
 		 * Default return value
 		 */
@@ -537,6 +539,15 @@ class SMTPs
 				$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
+
+				if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
+				{
+					// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+					$host = $this->getFrom('addr');
+					$host = preg_replace('/^.*</', '', $host);
+					$host = preg_replace('/>.*$/', '', $host);
+					$host = preg_replace('/.*@/', '', $host);
+				}
 
 				$_retVal = $this->socket_send_str('HELO ' . $host, '250');
 			}
