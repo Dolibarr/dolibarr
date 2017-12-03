@@ -790,6 +790,8 @@ class Propal extends CommonObject
 	 */
 	function deleteline($lineid)
 	{
+		global $user;
+
 		if ($this->statut == self::STATUS_DRAFT)
 		{
 			$line=new PropaleLigne($this->db);
@@ -797,7 +799,7 @@ class Propal extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
-			if ($line->delete() > 0)
+			if ($line->delete($user) > 0)
 			{
 				$this->update_price(1);
 
@@ -3975,10 +3977,11 @@ class PropaleLigne extends CommonObjectLine
 	/**
 	 * 	Delete line in database
 	 *
+	 *  @param	User	$user		Object user
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	 int  <0 if ko, >0 if ok
+	 *	@return	 int  				<0 if ko, >0 if ok
 	 */
-	function delete($notrigger=0)
+	function delete($user=null, $notrigger=0)
 	{
 		global $conf,$user;
 
