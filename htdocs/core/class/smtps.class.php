@@ -1725,7 +1725,7 @@ class SMTPs
 	 * using SMTP Extensions
 	 *
 	 * @param	Handler		$socket			Socket handler
-	 * @param	string		$response		Response
+	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
 	function server_parse($socket, $response)
@@ -1737,20 +1737,22 @@ class SMTPs
 		$_retVal = true;
 
 		$server_response = '';
+
         // avoid infinite loop
         $limit=0;
 
-		while ( substr($server_response,3,1) != ' ' && $limit<100)
+		while (substr($server_response,3,1) != ' ' && $limit<100)
 		{
-			if( !( $server_response = fgets($socket, 256) ) )
+			if (! ($server_response = fgets($socket, 256)))
 			{
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
+				break;
 			}
             $limit++;
 		}
 
-		if( !( substr($server_response, 0, 3) == $response ) )
+		if (! (substr($server_response, 0, 3) == $response))
 		{
 			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
 			$_retVal = false;
