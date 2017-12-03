@@ -427,18 +427,18 @@ class SMTPs
 
 		if ($usetls) $host='tls://'.$host;
 
-		$hostehlo = $host;
+		$hosth = $host;
 
 		if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
 		{
 			// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
-			$hostehlo = $this->getFrom('addr');
-			$hostehlo = preg_replace('/^.*</', '', $host);
-			$hostehlo = preg_replace('/>.*$/', '', $host);
-			$hostehlo = preg_replace('/.*@/', '', $host);
+			$hosth = $this->getFrom('addr');
+			$hosth = preg_replace('/^.*</', '', $hosth);
+			$hosth = preg_replace('/>.*$/', '', $hosth);
+			$hosth = preg_replace('/.*@/', '', $hosth);
 		}
 
-		if ( $_retVal = $this->socket_send_str('EHLO ' . $hostehlo, '250') )
+		if ( $_retVal = $this->socket_send_str('EHLO ' . $hosth, '250') )
 		{
 			if ($usetls)
 			{
@@ -551,18 +551,18 @@ class SMTPs
 				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
-				$hosthelo = $host;
+				$hosth = $host;
 
 				if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
 				{
 					// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
-					$hosthelo = $this->getFrom('addr');
-					$hosthelo = preg_replace('/^.*</', '', $host);
-					$hosthelo = preg_replace('/>.*$/', '', $host);
-					$hosthelo = preg_replace('/.*@/', '', $host);
+					$hosth = $this->getFrom('addr');
+					$hosth = preg_replace('/^.*</', '', $hosth);
+					$hosth = preg_replace('/>.*$/', '', $hosth);
+					$hosth = preg_replace('/.*@/', '', $hosth);
 				}
 
-				$_retVal = $this->socket_send_str('HELO ' . $hosthelo, '250');
+				$_retVal = $this->socket_send_str('HELO ' . $hosth, '250');
 			}
 
 			// Well, did we get to the server?
