@@ -215,7 +215,7 @@ class BlockedLog
 
 		// Add thirdparty info
 
-		if (empty($object->thirdparty) && method_exists('fetch_thirdparty')) $object->fetch_thirdparty();
+		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();
 
 		if (! empty($object->thirdparty))
 		{
