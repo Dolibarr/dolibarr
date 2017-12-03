@@ -3107,7 +3107,7 @@ else if ($id > 0 || ! empty($ref))
 	if ($action == 'paid' && $resteapayer > 0) {
 		// Code
 		$i = 0;
-		$close [$i] ['code'] = 'discount_vat';
+		$close [$i] ['code'] = 'discount_vat';	// escompte
 		$i ++;
 		$close [$i] ['code'] = 'badcustomer';
 		$i ++;

@@ -101,10 +101,15 @@ $sql .= " AND erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND er.date_debut >= '" . $db->idate($date_start) . "' AND er.date_debut <= '" . $db->idate($date_end) . "'";
+// Already in bookkeeping or not
 if ($in_bookkeeping == 'already')
+{
     $sql .= " AND er.rowid IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
+}
 if ($in_bookkeeping == 'notyet')
+{
     $sql .= " AND er.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
+}
 $sql .= " ORDER BY er.date_debut";
 
 dol_syslog('accountancy/journal/expensereportsjournal.php', LOG_DEBUG);
