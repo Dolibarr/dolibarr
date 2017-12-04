@@ -455,11 +455,11 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	print '<br>';
 
-	/*
-     * List of bank accounts
-     */
+	// List of bank accounts
 
-	print load_fiche_titre($langs->trans("AllRIB"), '', '');
+	$morehtmlright='<a href="rib.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
+
+	print load_fiche_titre($langs->trans("AllRIB"), $morehtmlright, '');
 
 	$rib_list = $object->get_all_rib();
 	$var = false;
@@ -654,12 +654,10 @@ if ($socid && $action != 'edit' && $action != "create")
 	dol_fiche_end();
 
 
-
+	/*
 	if ($socid && $action != 'edit' && $action != 'create')
 	{
-		/*
-         * Barre d'actions
-         */
+		// Barre d'actions
 		print '<div class="tabsAction">';
 
 		if ($user->rights->societe->creer)
@@ -669,7 +667,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
 		print '</div>';
 	}
-
+	*/
 
 
 

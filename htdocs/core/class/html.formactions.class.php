@@ -196,7 +196,7 @@ class FormActions
         	$buttontoaddnewevent.= '</a>';
 
         	print '<!-- formactions->showactions -->'."\n";
-        	print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $buttontoaddnewevent);
+        	print load_fiche_titre($title, $buttontoaddnewevent, '', 0, 0, '', $morehtmlright);
 
         	$page=0; $param='';
 
