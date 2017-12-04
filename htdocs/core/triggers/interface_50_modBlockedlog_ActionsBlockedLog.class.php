@@ -62,7 +62,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		{
 			$amounts=  (double) $object->total_ttc;
 		}
-		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK' || $action === 'PAYMENT_SUPPLIER_CREATE')
+		else if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE'
+			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE')			// 'PAYMENT_ADD_TO_BANK'
 		{
 			$amounts = 0;
 			if(!empty($object->amounts)) {
