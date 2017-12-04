@@ -72,7 +72,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				}
 			}
 		}
-		else if(strpos($action,'PAYMENT')!==false) {
+		else if (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK'))) {
 			$amounts= (double) $object->amount;
 		}
 		else {
