@@ -207,7 +207,7 @@ foreach($blocks as &$block) {
 	   	print '<td>';
 	   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
 	   	{
-	   		if (empty($checkresult[$block->id])) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
+	   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
 	   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
 	   	}
 	   	else
