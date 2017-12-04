@@ -205,7 +205,7 @@ class BlockedLog
 			$this->date_object = $object->date;
 		}
 		// ref
-		$this->ref_object = $object->ref;
+		$this->ref_object = ((! empty($object->newref)) ? $object->newref : $object->ref);		// newref is set when validating a draft, ref is set in other cases
 		// type of object
 		$this->element = $object->element;
 		// id of object
