@@ -615,7 +615,8 @@ class Facture extends CommonInvoice
 							$line->array_options,
 							$line->situation_percent,
 							$line->fk_prev_id,
-							$line->fk_unit
+							$line->fk_unit,
+							$line->pu_ht_devise
 						);
 						if ($result < 0)
 						{
@@ -673,7 +674,8 @@ class Facture extends CommonInvoice
 						empty($_facrec->lines[$i]->array_options)?null:$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->situation_percent,
 						'',
-						$_facrec->lines[$i]->fk_unit
+						$_facrec->lines[$i]->fk_unit,
+						$_facrec->lines[$i]->pu_ht_devise
 					);
 
 					if ( $result_insert < 0)
@@ -1433,6 +1435,8 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+
+				// TODO Fetch optional like done in fetch line of facture_rec ?
 
 				$this->lines[$i] = $line;
 
@@ -2756,7 +2760,7 @@ class Facture extends CommonInvoice
 
 		global $mysoc,$langs;
 
-		dol_syslog(get_class($this)."::updateline rowid=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, date_start=$date_start, date_end=$date_end, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, type=$type, fk_parent_line=$fk_parent_line pa_ht=$pa_ht, special_code=$special_code fk_unit=$fk_unit", LOG_DEBUG);
+		dol_syslog(get_class($this)."::updateline rowid=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, date_start=$date_start, date_end=$date_end, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, type=$type, fk_parent_line=$fk_parent_line pa_ht=$pa_ht, special_code=$special_code, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
 
 		if ($this->brouillon)
 		{
