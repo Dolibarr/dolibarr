@@ -36,7 +36,7 @@ class modBlockedLog extends DolibarrModules
      */
     function __construct($db)
     {
-    	global $langs,$conf;
+    	global $langs,$conf,$mysoc;
 
         $this->db = $db;
         $this->numero = 3200;
@@ -88,6 +88,9 @@ class modBlockedLog extends DolibarrModules
         // Main menu entries
         //------------------
         $this->menu = array();
+        
+        $this->always_enabled = !empty($conf->blockedlog->enabled) && !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) && in_array($mysoc->country_code, explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY));
+
     }
     
     /**
