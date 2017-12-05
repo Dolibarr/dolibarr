@@ -464,7 +464,7 @@ if (empty($reshook))
 		// Credit note invoice
 		if ($_POST['type'] == FactureFournisseur::TYPE_CREDIT_NOTE)
 		{
-			$sourceinvoice = GETPOST('fac_avoir');
+			$sourceinvoice = GETPOST('fac_avoir','int');
 			if (! ($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
 			{
 				$error ++;
@@ -1921,7 +1921,24 @@ else
 		// fetch optionals attributes and labels
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
-		$alreadypaid=$object->getSommePaiement();
+		$totalpaye = $object->getSommePaiement();
+		$totalcreditnotes = $object->getSumCreditNotesUsed();
+		$totaldeposits = $object->getSumDepositsUsed();
+		// print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
+		// selleruserrevenuestamp=".$selleruserevenustamp;
+
+		// We can also use bcadd to avoid pb with floating points
+		// For example print 239.2 - 229.3 - 9.9; does not return 0.
+		// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+		// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+		$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+
+		if ($object->paye)
+		{
+			$resteapayer = 0;
+		}
+		$resteapayeraffiche = $resteapayer;
+
 
 		/*
          *	View card
@@ -2119,7 +2136,7 @@ else
     	}
     	$morehtmlref.='</div>';
 
-    	$object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+    	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
     	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -2609,6 +2626,8 @@ else
 		}
 		else // Credit note
 		{
+			$cssforamountpaymentcomplete='';
+
 			// Total already paid back
 			print '<tr><td colspan="' . $nbcols . '" align="right">';
 			print $langs->trans('AlreadyPaidBack');
@@ -2624,7 +2643,7 @@ else
 			else
 				print $langs->trans('ExcessPaydBack');
 			print ' :</td>';
-			print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
 			// Sold credit note

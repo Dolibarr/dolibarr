@@ -2931,7 +2931,9 @@ else if ($id > 0 || ! empty($ref))
 	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
 	if ($object->paye)
+	{
 		$resteapayer = 0;
+	}
 	$resteapayeraffiche = $resteapayer;
 
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
