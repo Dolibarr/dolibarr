@@ -37,10 +37,10 @@ $langs->load("accountancy");
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 
 // Security check
 
@@ -52,7 +52,7 @@ $object = new AccountingAccount($db);
  * Action
  */
 
-if (GETPOST('cancel'))
+if (GETPOST('cancel','alpha'))
 {
 	$urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
 	header("Location: ".$urltogo);
@@ -63,7 +63,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 {
 	if (! $cancel) {
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
-		
+
 		dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 		$result = $db->query($sql);
 		$obj = $db->fetch_object($result);
@@ -172,16 +172,16 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 	}
 } else if ($action == 'delete' && $user->rights->accounting->chartofaccount) {
 	$result = $object->fetch($id);
-	
+
 	if (! empty($object->id)) {
 		$result = $object->delete($user);
-		
+
 		if ($result > 0) {
 			header("Location: account.php");
 			exit;
 		}
 	}
-	
+
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -270,7 +270,7 @@ if ($action == 'create') {
 		$head = accounting_prepare_head($object);
 
 		// Edit mode
-		if ($action == 'update') 
+		if ($action == 'update')
 		{
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
@@ -327,7 +327,7 @@ if ($action == 'create') {
 			print '</form>';
 		} else {
 			// View mode
-			$linkback = '<a href="../admin/account.php">' . $langs->trans("BackToChartofaccounts") . '</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php">' . $langs->trans("BackToList") . '</a>';
 
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 

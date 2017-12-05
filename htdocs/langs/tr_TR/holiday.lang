@@ -79,6 +79,8 @@ HolidaysCancelation=İzin isteği iptali
 EmployeeLastname=Çalışanın soyadı
 EmployeeFirstname=Çalışanın ilk adı
 TypeWasDisabledOrRemoved=Ayrılma türü (id %s) devre dışı bırakıldı veya kaldırıldı
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=İzin tahsislerinin son otomatik güncellenmesi

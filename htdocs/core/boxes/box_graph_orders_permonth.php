@@ -113,7 +113,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
-			if (empty($shownb) && empty($showtot)) $showtot=1;
+			if (empty($shownb) && empty($showtot)) { $shownb=1; $showtot=1; }
 			$nowarray=dol_getdate(dol_now(),true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;

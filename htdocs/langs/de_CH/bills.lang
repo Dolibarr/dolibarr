@@ -54,7 +54,6 @@ SendBillRef=Einreichung der Rechnung %s
 SendReminderBillRef=Einreichung von Rechnung %s (Erinnerung)
 NoOtherDraftBills=Keine Rechnungsentwürfe Anderer
 RelatedRecurringCustomerInvoices=Verknüpfte wiederkehrende Kundenrechnung
-DateMaxPayment=Zahlung fällig bis
 SupplierBillsToPay=Offene Lieferantenrechnungen
 Reduction=Ermässigung
 Reductions=Ermässigungen

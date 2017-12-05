@@ -25,9 +25,9 @@ create table llx_livraison
   entity                integer DEFAULT 1 NOT NULL,		-- multi company id
   fk_soc                integer      NOT NULL,
   
-  ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
-  ref_customer          varchar(30),					-- customer number
+  ref_ext               varchar(255),					-- reference into an external system (not used by dolibarr)
+  ref_int				varchar(255),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
+  ref_customer          varchar(255),					-- customer number
   
   date_creation         datetime,						-- date de creation
   fk_user_author        integer,						-- createur du bon de livraison
@@ -40,7 +40,10 @@ create table llx_livraison
   note_private          text,
   note_public           text,
   model_pdf             varchar(255),
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
   fk_incoterms          integer,						-- for incoterms
-  location_incoterms    varchar(255)					-- for incoterms
-  
+  location_incoterms    varchar(255),					-- for incoterms
+
+  import_key        varchar(14),
+  extraparams		varchar(255)						-- for other parameters with json format
 )ENGINE=innodb;

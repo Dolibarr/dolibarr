@@ -91,7 +91,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST("cancel") && ! empty($backtopage))
+    if (GETPOST('cancel','alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -224,7 +224,7 @@ if (empty($reshook))
                 $action = 'create';
 			} else {
 				// Categories association
-				$contcats = GETPOST( 'contcats', 'array' );
+				$contcats = GETPOST( 'contcats', 'array');
 				$object->setCategories($contcats);
 			}
         }
@@ -383,7 +383,7 @@ if (empty($reshook))
 				$db->query( $sql );
 
 				// Then we add the associated categories
-				$categories = GETPOST( 'contcats', 'array' );
+				$categories = GETPOST( 'contcats', 'array');
 				$object->setCategories($categories);
 
                 $object->old_lastname='';
@@ -395,6 +395,15 @@ if (empty($reshook))
                 setEventMessages($object->error, $object->errors, 'errors');
                 $action = 'edit';
             }
+        }
+
+        if (! $error && empty($errors))
+        {
+       		if (! empty($backtopage))
+       		{
+       			header("Location: ".$backtopage);
+       			exit;
+       		}
         }
     }
 }
@@ -541,7 +550,7 @@ else
                 {
                     print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                     print '<td colspan="3" class="maxwidthonsmartphone">';
-                    print $objsoc->getNomUrl(1);
+                    print $objsoc->getNomUrl(1, 'contact');
                     print '</td>';
                     print '<input type="hidden" name="socid" id="socid" value="'.$objsoc->id.'">';
                     print '</td></tr>';
@@ -1055,7 +1064,7 @@ else
 
         }
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $morehtmlref='<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -1063,7 +1072,7 @@ else
             $objsoc->fetch($object->socid);
             // Thirdparty
             $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
-            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1, 'contact');
             else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
         }
         $morehtmlref.='</div>';

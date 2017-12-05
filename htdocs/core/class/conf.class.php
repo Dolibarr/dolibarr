@@ -254,13 +254,13 @@ class Conf
 		if (! isset($this->global->LDAP_KEY_GROUPS)) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
 		if (! isset($this->global->LDAP_KEY_CONTACTS)) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
 		if (! isset($this->global->LDAP_KEY_MEMBERS)) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! isset($this->global->LDAP_KEY_MEMBERS_TYPES)) $this->global->LDAP_KEY_MEMBERS_TYPES=$this->global->LDAP_FIELD_FULLNAME;
 
 		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
-        // By default, we repeat info on all tabs
-		if (! isset($this->global->MAIN_REPEATCONTACTONEACHTAB)) $this->global->MAIN_REPEATCONTACTONEACHTAB=1;
-		if (! isset($this->global->MAIN_REPEATADDRESSONEACHTAB)) $this->global->MAIN_REPEATADDRESSONEACHTAB=1;
+		//if (! isset($this->global->MAIN_REPEATCONTACTONEACHTAB)) $this->global->MAIN_REPEATCONTACTONEACHTAB=1;
+		//if (! isset($this->global->MAIN_REPEATADDRESSONEACHTAB)) $this->global->MAIN_REPEATADDRESSONEACHTAB=1;
 
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
@@ -287,15 +287,18 @@ class Conf
 		{
 			foreach($this->modules_parts['dir'] as $module => $dirs)
 			{
-				foreach($dirs as $type => $name)
+				if (! empty($this->$module->enabled))
 				{
-					$subdir=($type=='temp'?'/temp':'');
-					// For multicompany sharings
-					$varname = 'multidir_'.$type;
-					$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
-					// For backward compatibility
-					$varname = 'dir_'.$type;
-					$this->$module->$varname = $rootfordata."/".$name.$subdir;
+					foreach($dirs as $type => $name)
+					{
+						$subdir=($type=='temp'?'/temp':'');
+						// For multicompany sharings
+						$varname = 'multidir_'.$type;
+						$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
+						// For backward compatibility
+						$varname = 'dir_'.$type;
+						$this->$module->$varname = $rootfordata."/".$name.$subdir;
+					}
 				}
 			}
 		}
@@ -583,6 +586,9 @@ class Conf
 		{
 		    $conf->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
 		}
+
+		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
+		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;

@@ -110,10 +110,10 @@ $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
 
 $arraydetailsforpdffoot = array(
-	0 => $langs->trans('NoDetails'),
-	1 => $langs->trans('DisplayCompanyInfo'),
-	2 => $langs->trans('DisplayCompanyManagers'),
-	3 => $langs->trans('DisplayCompanyInfoAndManagers')
+	0 => $langs->transnoentitiesnoconv('NoDetails'),
+	1 => $langs->transnoentitiesnoconv('DisplayCompanyInfo'),
+	2 => $langs->transnoentitiesnoconv('DisplayCompanyManagers'),
+	3 => $langs->transnoentitiesnoconv('DisplayCompanyInfoAndManagers')
 );
 
 print load_fiche_titre($langs->trans("PDF"),'','title_setup');
@@ -589,7 +589,7 @@ else	// Show
 
 
     print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
-	print $arraydetailsforpdffoot[$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS];
+	print $arraydetailsforpdffoot[($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0)];
 	print '</td></tr>';
 
 	print '</table>';

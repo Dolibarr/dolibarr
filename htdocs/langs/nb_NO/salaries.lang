@@ -13,3 +13,5 @@ TJM=Gjennomsnittlig dagspris
 CurrentSalary=Nåværende lønn
 THMDescription=Denne verdien kan brukes til å kalkulere tidsforbruket på et prosjekt hvis prosjekt-modulen er i bruk
 TJMDescription=Dene verdien er foreløpig brukt til informasjon, og er ikke brukt i noen kalkulasjoner
+LastSalaries=Siste %s lønnsutbetalinger
+AllSalaries=Alle lønnsutbetalinger

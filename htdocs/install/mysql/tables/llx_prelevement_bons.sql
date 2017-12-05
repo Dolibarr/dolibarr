@@ -29,7 +29,7 @@ create table llx_prelevement_bons
   ref            varchar(12),        -- reference
   entity         integer DEFAULT 1 NOT NULL, -- multi company id
   datec          datetime,           -- date de creation
-  amount         real DEFAULT 0,     -- montant total du prelevement
+  amount         double(24,8) DEFAULT 0, -- montant total du prelevement
   statut         smallint DEFAULT 0, -- statut
   credite        smallint DEFAULT 0, -- indique si le prelevement a ete credite
   note           text,

@@ -509,6 +509,9 @@ class FormProjets
 				$sql = 'SELECT t.rowid, t.label as ref';
 				$projectkey='fk_origin';
 				break;
+			case "payment_various":
+				$sql = "SELECT t.rowid, t.num_payment as ref";
+				break;
 			case "chargesociales":
 			default:
 				$sql = "SELECT t.rowid, t.ref";

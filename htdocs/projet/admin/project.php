@@ -927,11 +927,8 @@ print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td>';
-print '</tr>';
 
 print '</table></form>';
-
-
 
 llxFooter();
 $db->close();

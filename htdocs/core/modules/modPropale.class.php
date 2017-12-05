@@ -77,14 +77,14 @@ class modPropale extends DolibarrModules
 		$this->const[$r][0] = "PROPALE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "azur";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des propales en PDF';
+		$this->const[$r][3] = 'Name of the proposal generation manager in PDF format';
 		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "PROPALE_ADDON";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_propale_marbre";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des propales';
+		$this->const[$r][3] = 'Name of proposal numbering manager';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -121,21 +121,21 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 21; // id de la permission
-		$this->rights[$r][1] = 'Lire les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Read commercial proposals'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 22; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Create and update commercial proposals'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 24; // id de la permission
-		$this->rights[$r][1] = 'Valider les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Validate commercial proposals'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'propal_advance';
@@ -143,7 +143,7 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 25; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les propositions commerciales aux clients'; // libelle de la permission
+		$this->rights[$r][1] = 'Send commercial proposals to customers'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'propal_advance';
@@ -151,21 +151,21 @@ class modPropale extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 26; // id de la permission
-		$this->rights[$r][1] = 'Cloturer les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Close commercial proposals'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'cloturer';
 
 		$r++;
 		$this->rights[$r][0] = 27; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les propositions commerciales'; // libelle de la permission
+		$this->rights[$r][1] = 'Delete commercial proposals'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 28; // id de la permission
-		$this->rights[$r][1] = 'Exporter les propositions commerciales et attributs'; // libelle de la permission
+		$this->rights[$r][1] = 'Exporting commercial proposals and attributes'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';

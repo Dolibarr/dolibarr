@@ -38,6 +38,10 @@ create table llx_product_fournisseur_price
   unitcharges			double(24,8) DEFAULT 0,		-- deprecated
   default_vat_code	    varchar(10),
   tva_tx				double(6,3) NOT NULL,
+  localtax1_tx		    double(6,3) DEFAULT 0,
+  localtax1_type        varchar(10)  NOT NULL DEFAULT '0',
+  localtax2_tx		    double(6,3) DEFAULT 0,
+  localtax2_type        varchar(10)  NOT NULL DEFAULT '0',
   info_bits				integer NOT NULL DEFAULT 0,
   fk_user				integer,
   fk_supplier_price_expression	integer,            -- Link to the rule for dynamic price calculation

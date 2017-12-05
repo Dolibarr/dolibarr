@@ -67,7 +67,7 @@ $db->begin();
 
 require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
-// Create invoice object
+// Create contract object
 $obj = new Contrat($db);
 $obj->socid=$argv[1];
 

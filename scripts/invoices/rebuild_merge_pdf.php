@@ -289,7 +289,7 @@ function usage()
     print "To exclude deposit invoices, use filter=nodeposit\n";
     print "To exclude some thirdparties, use filter=excludethirdparties id1,id2...\n";
     print "To limit to some thirdparties, use filter=onlythirdparties id1,id2...\n";
-    print "To regenerate existing PDF, use regenerate=crabe\n";
+    print "To regenerate existing PDF, use regenerate=templatename\n";
     print "To generate invoices in a language, use lang=xx_XX\n";
     print "To set prefix of generated file name, use prefix=myfileprefix\n";
     print "\n";

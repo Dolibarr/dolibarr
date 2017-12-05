@@ -16,11 +16,9 @@
  */
 
 /**
- * \file    lib/mymodule.lib.php
+ * \file    htdocs/modulebuilder/template/lib/mymodule.lib.php
  * \ingroup mymodule
- * \brief   Example module library.
- *
- * Put detailed description here.
+ * \brief   Library files with common functions for MyModule
  */
 
 /**
