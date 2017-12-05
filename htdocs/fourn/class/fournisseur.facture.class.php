@@ -2757,7 +2757,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         $sql.= " VALUES (".$this->fk_facture_fourn.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->db->escape($this->fk_parent_line)."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
-        $sql.= " '".$this->db->escape($this->desc)."',";
+        $sql.= " '".$this->db->escape($this->desc ? $this->desc : $this->description)."',";
         $sql.= " '".$this->db->escape($this->ref_supplier)."',";
         $sql.= " ".price2num($this->qty).",";
 
