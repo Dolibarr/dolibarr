@@ -1783,7 +1783,7 @@ class Facture extends CommonInvoice
 		// Test to avoid invoice deletion (allowed if draft)
 		$test = $this->is_erasable();
 
-		if ($test <= 0) return $test;
+		if ($test <= 0) return 0;
 
 		$error=0;
 
