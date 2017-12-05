@@ -94,6 +94,8 @@ $hookmanager->initHooks(array('adminmodules','globaladmin'));
  * Actions
  */
 
+$formconfirm = '';
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -236,8 +238,7 @@ if ($action == 'set' && $user->admin)
     header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
-
-if ($action == 'reset' && $user->admin)
+else if ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
@@ -422,6 +423,22 @@ foreach ($modulesdir as $dir)
 		dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 	}
 }
+
+if ($action == 'reset_confirm' && $user->admin)
+{
+	if(!empty($modules[$value])) {
+		$objMod  = $modules[$value];
+		
+		if(!empty($objMod->langfiles)) $langs->loadLangs($objMod->langfiles);
+	
+		$form = new Form($db);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
+		
+	}
+	
+}
+
+print $formconfirm;
 
 asort($orders);
 //var_dump($orders);
@@ -679,9 +696,20 @@ if ($mode == 'common')
         	}
         	else
         	{
-        		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
-        		print img_picto($langs->trans("Activated"),'switch_on');
-        		print '</a>';
+        		if(!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
+        			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print '</a>';
+        			
+        		}
+        		else {
+        			
+        			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
+        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print '</a>';
+        			
+        		}
+        		
         	}
         	print '</td>'."\n";
 
