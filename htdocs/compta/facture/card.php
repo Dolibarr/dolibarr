@@ -3888,7 +3888,6 @@ else if ($id > 0 || ! empty($ref))
 					print '</td>';
 				}
 				print '<td align="right">' . price($sign * $objp->amount) . '</td>';
-				// TODO Add link to delete payment
 				print '<td align="center">';
 				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
 				{
@@ -4380,13 +4379,30 @@ else if ($id > 0 || ! empty($ref))
 			// Delete
 			if ($user->rights->facture->supprimer)
 			{
-				if ($object->is_erasable() <= 0) {
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
-				} else if ($objectidnext) {
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
-				} elseif ($object->getSommePaiement()) {
+				$isErasable = $object->is_erasable();
+				//var_dump($isErasable);
+				if ($isErasable == -4) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
-				} else {
+				}
+				elseif ($isErasable == -3) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($isErasable == -2) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($isErasable == -1) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($isErasable <= 0)	// Any other cases
+				{
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($objectidnext)
+				{
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				else
+				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a></div>';
 				}
 			} else {

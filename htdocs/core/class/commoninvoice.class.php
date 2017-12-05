@@ -275,6 +275,100 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Return if an invoice can be deleted
+	 *	Rule is:
+	 *  If invoice is draft and has a temporary ref -> yes
+	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on -> no (0)
+	 *  If invoice is dispatched in bookkeeping -> no (-1)
+	 *  If invoice has a definitive ref, is not last and INVOICE_CAN_ALWAYS_BE_REMOVED off -> no (-2)
+	 *  If invoice not last in a cycle -> no (-3)
+	 *  If there is payment -> no (-4)
+	 *
+	 *  @return    int         <=0 if no, >0 if yes
+	 */
+	function is_erasable()
+	{
+		global $conf;
+
+		// We check if invoice is a temporary number (PROVxxxx)
+		$tmppart = substr($this->ref, 1, 4);
+
+		if ($this->statut == self::STATUS_DRAFT && $tmppart === 'PROV') // If draft invoice and ref not yet defined
+		{
+			return 1;
+		}
+
+		if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED)) return 0;
+
+		// If not a draft invoice and not temporary invoice
+		if ($tmppart !== 'PROV')
+		{
+			$ventilExportCompta = $this->getVentilExportCompta();
+			if ($ventilExportCompta != 0) return -1;
+
+			// Get last number of validated invoice
+			if ($this->element != 'invoice_supplier')
+			{
+				if (empty($this->thirdparty)) $this->fetch_thirdparty();	// We need to have this->thirdparty defined, in case of numbering rule use tags that depend on thirdparty (like {t} tag).
+				$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
+
+				// If there is no invoice into the reset range and not already dispatched, we can delete
+				// If invoice to delete is last one and not already dispatched, we can delete
+				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxfacnumber != '' && $maxfacnumber != $this->ref) return -2;
+
+				// TODO If there is payment in bookkeeping, check payment is not dispatched in accounting
+				// ...
+
+				if ($this->situation_cycle_ref) {
+					$last = $this->is_last_in_cycle();
+					if (! $last) return -3;
+				}
+			}
+		}
+
+		// Test if there is at least one payment. If yes, refuse to delete.
+		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $this->getSommePaiement() > 0) return -4;
+
+		return 1;
+	}
+
+	/**
+	 *	Return if an invoice was dispatched in bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	function getVentilExportCompta()
+	{
+		$alreadydispatched = 0;
+
+		$type = 'customer_invoice';
+		if ($this->element == 'invoice_supplier') $type = 'supplier_invoice';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$alreadydispatched = $obj->nb;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched)
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+
+	/**
 	 *	Return label of type of invoice
 	 *
 	 *	@return     string        Label of type of invoice

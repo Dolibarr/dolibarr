@@ -2836,9 +2836,26 @@ else
 	            // Delete
 	            if ($action != 'confirm_edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
-                    if ($object->getSommePaiement()) {
-                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
-                    } else {
+	            	$isErasable=$object->is_erasable();
+	            	//var_dump($isErasable);
+	            	if ($isErasable == -4) {
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable == -3) {	// Should never happen with supplier invoice
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable == -2) {	// Should never happen with supplier invoice
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable == -1) {
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable <= 0)	// Any other cases
+	            	{
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+                    else
+                    {
     	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
                     }
 	            }
