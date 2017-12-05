@@ -18,6 +18,7 @@ way to save data for final version has changed.
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The methode "cloture" on contract were renamed into "closeAll".
+* The method "is_erasable" of invoice return a value <= 0 if not erasable (value is meaning) instead of always 0.  
 * The substitution key for reference of objects is now __REF__ whatever is the object (it replaces __ORDERREF__, 
   __PROPALREF__, ...)
 * The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to follow naming conventions. 
