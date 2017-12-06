@@ -32,7 +32,7 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
 	exit(-1);
 }
 
@@ -113,13 +113,13 @@ if ($resql)
 
 			// On choisit les mails non deja envoyes pour ce mailing (statut=0)
 			// ou envoyes en erreur (statut=-1)
-			$sql2 = "SELECT mc.rowid, mc.lastname as lastname, mc.firstname as firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
+			$sql2 = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql2.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql2.= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
-		    if ($conf->global->MAILING_LIMIT_SENDBYCLI > 0)
-		    {
-		        $sql2.= " LIMIT ".$conf->global->MAILING_LIMIT_SENDBYCLI;
-		    }
+			if ($conf->global->MAILING_LIMIT_SENDBYCLI > 0)
+			{
+				$sql2.= " LIMIT ".$conf->global->MAILING_LIMIT_SENDBYCLI;
+			}
 
 			$resql2=$db->query($sql2);
 			if ($resql2)
@@ -149,38 +149,39 @@ if ($resql)
 						$res=1;
 						$now=dol_now();
 
-						$obj2 = $db->fetch_object($resql2);
+						$obj = $db->fetch_object($resql2);
 
 						// sendto en RFC2822
-						$sendto = str_replace(',',' ',dolGetFirstLastname($obj2->firstname, $obj2->lastname) ." <".$obj2->email.">");
+						$sendto = str_replace(',',' ',dolGetFirstLastname($obj->firstname, $obj->lastname) ." <".$obj->email.">");
 
 						// Make subtsitutions on topic and body
-						$other=explode(';',$obj2->other);
+						$other=explode(';',$obj->other);
 						$tmpfield=explode('=',$other[0],2); $other1=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-	                    $tmpfield=explode('=',$other[1],2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-	                    $tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-	                    $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-	                    $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
-	                    $signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
+						$tmpfield=explode('=',$other[1],2); $other2=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$tmpfield=explode('=',$other[2],2); $other3=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
+						$signature = ((!empty($user->signature) && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'');
 
-	                    $object = null;		// Not defined with mass emailing
-	                    $parameters=array('mode'=>'emailing');
-	                    $substitutionarray=getCommonSubstitutionArray($langs, 2, array('object','objectamount'), $object);			// Note: On mass emailing, this is null because we don't know object
+						$object = null;		// Not defined with mass emailing
+						$parameters=array('mode'=>'emailing');
+						$substitutionarray=getCommonSubstitutionArray($langs, 0, array('object','objectamount'), $object);			// Note: On mass emailing, this is null because we don't know object
 
-	                    // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
-	                    $substitutionarray['__ID__'] = $obj->source_id;
-	                    $substitutionarray['__EMAIL__'] = $obj->email;
-	                    $substitutionarray['__LASTNAME__'] = $obj->lastname;
-	                    $substitutionarray['__FIRSTNAME__'] = $obj->firstname;
-	                    $substitutionarray['__MAILTOEMAIL__'] = '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
-	                    $substitutionarray['__OTHER1__'] = $other1;
-	                    $substitutionarray['__OTHER2__'] = $other2;
-	                    $substitutionarray['__OTHER3__'] = $other3;
-	                    $substitutionarray['__OTHER4__'] = $other4;
-	                    $substitutionarray['__OTHER5__'] = $other5;
-	                    $substitutionarray['__SIGNATURE__'] = $signature;	// Signature is empty when ran from command line or taken from user in parameter)
-	                    $substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
-	                    $substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
+						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
+						$substitutionarray['__ID__'] = $obj->source_id;
+						$substitutionarray['__EMAIL__'] = $obj->email;
+						$substitutionarray['__LASTNAME__'] = $obj->lastname;
+						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
+						$substitutionarray['__MAILTOEMAIL__'] = '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
+						$substitutionarray['__OTHER1__'] = $other1;
+						$substitutionarray['__OTHER2__'] = $other2;
+						$substitutionarray['__OTHER3__'] = $other3;
+						$substitutionarray['__OTHER4__'] = $other4;
+						$substitutionarray['__OTHER5__'] = $other5;
+						$substitutionarray['__USER_SIGNATURE__'] = $signature;	// Signature is empty when ran from command line or taken from user in parameter)
+						$substitutionarray['__SIGNATURE__'] = $signature;	// For backward compatibility
+						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
 
 						$onlinepaymentenabled = 0;
 						if (! empty($conf->paypal->enabled)) $onlinepaymentenabled++;
@@ -229,24 +230,24 @@ if ($resql)
 						$substitutionisok=true;
 
 						// Fabrication du mail
-						$trackid='emailing-'.$obj2->source_type.$obj2->source_id;
+						$trackid='emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$mail = new CMailFile(
-						    $newsubject,
-						    $sendto,
-						    $from,
-						    $newmessage,
-						    array(),
-						    array(),
-						    array(),
-						    '',
-						    '',
-						    0,
-						    $msgishtml,
-						    $errorsto,
-						    '',
-						    $trackid,
-						    '',
-						    'emailing'
+							$newsubject,
+							$sendto,
+							$from,
+							$newmessage,
+							array(),
+							array(),
+							array(),
+							'',
+							'',
+							0,
+							$msgishtml,
+							$errorsto,
+							'',
+							$trackid,
+							'',
+							'emailing'
 						);
 
 						if ($mail->error)
@@ -276,13 +277,13 @@ if ($resql)
 							// We must union table llx_mailing_taget for event tab OR enter 1 event with a special table link (id of email in event)
 							// Run trigger
 							/*
-							if ($obj2->source_type == 'contact')
+							if ($obj->source_type == 'contact')
 							{
-							    $emailing->sendtoid = $obj2->source_id;
+							    $emailing->sendtoid = $obj->source_id;
 							}
-							if ($obj2->source_type == 'thirdparty')
+							if ($obj->source_type == 'thirdparty')
 							{
-							    $emailing->socid = $obj2->source_id;
+							    $emailing->socid = $obj->source_id;
 							}
                             // Call trigger
                             $result=$emailing->call_trigger('EMAILING_SENTBYMAIL',$user);
@@ -291,7 +292,7 @@ if ($resql)
 						    */
 
 							$sqlok ="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sqlok.=" SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj2->rowid;
+							$sqlok.=" SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
 							$resqlok=$db->query($sqlok);
 							if (! $resqlok)
 							{
@@ -304,7 +305,7 @@ if ($resql)
 								if (strpos($message, '__CHECK_READ__') !== false)
 								{
 									//Update status communication of thirdparty prospect
-									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj2->rowid.")";
+									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj->rowid.")";
 									dol_syslog("card.php: set prospect thirdparty status", LOG_DEBUG);
 									$resqlx=$db->query($sqlx);
 									if (! $resqlx)
@@ -313,8 +314,8 @@ if ($resql)
 										$error++;
 									}
 
-					    			//Update status communication of contact prospect
-									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj2->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+									//Update status communication of contact prospect
+									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 									dol_syslog("card.php: set prospect contact status", LOG_DEBUG);
 
 									$resqlx=$db->query($sqlx);
@@ -325,9 +326,9 @@ if ($resql)
 									}
 								}
 
-                                if (!empty($conf->global->MAILING_DELAY)) {
-                                    sleep($conf->global->MAILING_DELAY);
-                                }
+								if (!empty($conf->global->MAILING_DELAY)) {
+									sleep($conf->global->MAILING_DELAY);
+								}
 
 							}
 						}
@@ -339,7 +340,7 @@ if ($resql)
 							dol_syslog("error for emailing id ".$id." #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 							$sqlerror="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sqlerror.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj2->rowid;
+							$sqlerror.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
 							$resqlerror=$db->query($sqlerror);
 							if (! $resqlerror)
 							{

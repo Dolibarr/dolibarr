@@ -71,6 +71,8 @@ create table llx_facture_fourn
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
   model_pdf				varchar(255),
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
+
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
   

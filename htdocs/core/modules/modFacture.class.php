@@ -128,14 +128,14 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 11;
-		$this->rights[$r][1] = 'Lire les factures';
+		$this->rights[$r][1] = 'Read invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 12;
-		$this->rights[$r][1] = 'Creer/modifier les factures';
+		$this->rights[$r][1] = 'Create and update invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
@@ -143,7 +143,7 @@ class modFacture extends DolibarrModules
 		// There is a particular permission for unvalidate because this may be not forbidden by some laws
 		$r++;
 		$this->rights[$r][0] = 13;
-		$this->rights[$r][1] = 'Dévalider les factures';
+		$this->rights[$r][1] = 'Devalidate invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'invoice_advance';
@@ -151,7 +151,7 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 14;
-		$this->rights[$r][1] = 'Valider les factures';
+		$this->rights[$r][1] = 'Validate invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
@@ -159,7 +159,7 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 15;
-		$this->rights[$r][1] = 'Envoyer les factures par mail';
+		$this->rights[$r][1] = 'Send invoices by email';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
@@ -167,21 +167,21 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 16;
-		$this->rights[$r][1] = 'Emettre des paiements sur les factures';
+		$this->rights[$r][1] = 'Issue payments on invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'paiement';
 
 		$r++;
 		$this->rights[$r][0] = 19;
-		$this->rights[$r][1] = 'Supprimer les factures';
+		$this->rights[$r][1] = 'Delete invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = 1321;
-		$this->rights[$r][1] = 'Exporter les factures clients, attributs et reglements';
+		$this->rights[$r][1] = 'Export customer invoices, attributes and payments';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'facture';
@@ -189,7 +189,7 @@ class modFacture extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1322;
-		$this->rights[$r][1] = 'Rouvrir une facture totalement réglée';
+		$this->rights[$r][1] = 'Re-open a fully paid invoice';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
@@ -249,23 +249,23 @@ class modFacture extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('payment'=>'p.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		$keyforselect = 'facture'; $keyforelement = 'invoice'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid,';
-		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'facture as f';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON f.fk_projet = pj.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON f.fk_user_author = uc.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON f.fk_user_valid = uv.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pt ON pt.id = p.fk_paiement';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON b.rowid = p.fk_bank';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
-		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('facture').')';
-		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
+		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid,';
+		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture as f';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON f.fk_projet = pj.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON f.fk_user_author = uc.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON f.fk_user_valid = uv.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pt ON pt.id = p.fk_paiement AND pt.entity IN ('.getEntity('c_paiement').')';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON b.rowid = p.fk_bank';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
+		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture').')';
+		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 		$r++;
 	}
 

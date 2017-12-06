@@ -34,8 +34,10 @@ if ($action == 'presend')
 
 	$object->fetch_projet();
 
-	if (! in_array($object->element, array('societe', 'user')))
+	if (! in_array($object->element, array('societe', 'user', 'member')))
 	{
+		// TODO get also the main_lastdoc field of $object. If not found, try to guess with following code
+
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
@@ -75,19 +77,17 @@ if ($action == 'presend')
 	}
 
 	// Build document if it not exists
-	if (! in_array($object->element, array('societe', 'user')))
+	if (! in_array($object->element, array('societe', 'user', 'member')))
 	{
-		if (! $file || ! is_readable($file)) {
-			if ($object->element != 'member')
-			{
-				$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result <= 0) {
-					dol_print_error($db, $object->error, $object->errors);
-					exit();
-				}
-				$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
-				$file = $fileparams['fullname'];
+		if ((! $file || ! is_readable($file)) && method_exists($object, 'generateDocument'))
+		{
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result <= 0) {
+				dol_print_error($db, $object->error, $object->errors);
+				exit();
 			}
+			$fileparams = dol_most_recent_file($diroutput . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
+			$file = $fileparams['fullname'];
 		}
 	}
 
@@ -116,12 +116,13 @@ if ($action == 'presend')
 	}
 	$formmail->withfrom = 1;
 
+	// Fill list of recipient with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport')
 	{
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
-		$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+		$liste['thirdparty'] = $fuser->getFullName($langs)." <".$fuser->email.">";
 	}
 	elseif ($object->element == 'societe')
 	{
@@ -129,9 +130,9 @@ if ($action == 'presend')
 			$liste[$key] = $value;
 		}
 	}
-	elseif ($object->element == 'member')
+	elseif ($object->element == 'user' || $object->element == 'member')
 	{
-		$liste['thirdparty'] = $object->getFullName($langs)." &lt;".$object->email."&gt;";
+		$liste['thirdparty'] = $object->getFullName($langs)." <".$object->email.">";
 	}
 	else
 	{
@@ -169,12 +170,15 @@ if ($action == 'presend')
 	$formmail->param['models_id']=GETPOST('modelmailselected','int');
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
+	$formmail->param['fileinit'] = array($file);
 
 	// Init list of files
-	if (GETPOST("mode") == 'init') {
+	/*if (GETPOST('mode','alpha') == 'init')
+	{
 		$formmail->clear_attached_files();
+
 		$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-	}
+	}*/
 
 	// Show form
 	print $formmail->get_form();

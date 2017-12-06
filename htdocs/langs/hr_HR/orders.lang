@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Drugo odobrenje je već napravljeno
 SupplierOrderReceivedInDolibarr=Narudžba dobavljaču %s zaprimljena %s
 SupplierOrderSubmitedInDolibarr=Narudžba dobavljaču %s poslana
 SupplierOrderClassifiedBilled=Narudžba dobavljaču %s postavljena za naplatu
+OtherOrders=Other orders
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Predstavnik praćena narudžbe kupca
 TypeContact_commande_internal_SHIPPING=Predstavnik praćenja utovara
@@ -151,5 +152,7 @@ OrderCreated=Vaša narudžba je kreirana
 OrderFail=Dogodila se greška prilikom kreiranja narudžbe
 CreateOrders=Kreiranje narudžbi
 ToBillSeveralOrderSelectCustomer=Za kreiranje računa za nekoliko narudžbi, prvo kliknite na kupca, te odaberite "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

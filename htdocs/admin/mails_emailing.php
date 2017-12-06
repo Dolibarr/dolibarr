@@ -51,7 +51,7 @@ $substitutionarrayfortest=array(
 '__EMAIL__' => 'TESTEMail',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
-'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),
+'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),
 //'__PERSONALIZED__' => 'TESTPersonalized'	// Hiden because not used yet
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
@@ -114,27 +114,7 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
-$head[$h][1] = $langs->trans("OutGoingEmailSetup");
-$head[$h][2] = 'common';
-$h++;
-
-if ($conf->mailing->enabled)
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
-	$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
-	$head[$h][2] = 'common_emailing';
-	$h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
-$head[$h][2] = 'templates';
-$h++;
-
+$head = email_admin_prepare_head();
 
 // List of sending methods
 $listofmethods=array();

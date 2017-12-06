@@ -48,7 +48,7 @@ class modBlockedLog extends DolibarrModules
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'development';
+        $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)

@@ -113,15 +113,15 @@ function parseTime(timeStr, dt)
 function updateTotal(days,mode)
 {
 	console.log('updateTotal days='+days+' mode='+mode);
-    if(mode=="hours")
+    if (mode=="hours")
     {
         var total = new Date(0);
         total.setHours(0);
         total.setMinutes(0);   
         var nbline = document.getElementById('numberOfLines').value;
-        for (var i=0;i<nbline;i++)
+        for (var i=-1; i<nbline; i++)
         { 
-            var id='timespent['+i+']['+days+']';   
+            var id='timespent['+i+']['+days+']';
             var taskTime= new Date(0);
             var element=document.getElementById(id);
             if(element)
@@ -223,7 +223,7 @@ function updateTotal(days,mode)
     {
         var total =0;
         var nbline = document.getElementById('numberOfLines').value;
-        for (var i=0;i<nbline;i++)
+        for (var i=-1; i<nbline; i++)
         { 
             var id='timespent['+i+']['+days+']';   
             var taskTime= new Date(0);

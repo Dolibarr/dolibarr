@@ -45,7 +45,7 @@ $auth->syncSignatureWithAuthority();
 
 $block_static = new BlockedLog($db);
 
-$blocks = $block_static->getLog('just_certified', 0, 0, 1) ;
+$blocks = $block_static->getLog('just_certified', 0, 0, 'rowid', 'ASC');
 
 $auth->signature = $block_static->getSignature();
 

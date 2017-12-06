@@ -43,12 +43,13 @@ class EcmFiles //extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'ecm_files';
+	public $picto = 'generic';
 
 	/**
 	 */
 	public $ref;					// hash of file path
 	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
-	public $share;					// hash for file sharing. empty by default
+	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 	public $entity;
 	public $filename;
 	public $filepath;
@@ -82,14 +83,13 @@ class EcmFiles //extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @param  User $user      	User that creates
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @return int 				<0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-	    global $conf;
+		global $conf;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -113,6 +113,7 @@ class EcmFiles //extends CommonObject
 		}
 		if (isset($this->filepath)) {
 			 $this->filepath = trim($this->filepath);
+			 $this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath);		// Remove last /
 		}
 		if (isset($this->fullpath_orig)) {
 			 $this->fullpath_orig = trim($this->fullpath_orig);
@@ -141,29 +142,35 @@ class EcmFiles //extends CommonObject
 		if (isset($this->acl)) {
 			 $this->acl = trim($this->acl);
 		}
-        if (empty($this->date_c)) $this->date_c = dol_now();
+		if (empty($this->date_c)) $this->date_c = dol_now();
+		if (empty($this->date_m)) $this->date_m = dol_now();
 
-        // If ref not defined
-        if (empty($ref)) $ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+		// If ref not defined
+		$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+		if (! empty($this->ref)) $ref=$this->ref;
 
-
-        $maxposition=0;
+		$maxposition=0;
 		if (empty($this->position))   // Get max used
 		{
-		    $sql = "SELECT MAX(position) as maxposition FROM " . MAIN_DB_PREFIX . $this->table_element;
-		    $sql.= " WHERE filepath ='".$this->db->escape($this->filepath)."'";
+			$sql = "SELECT MAX(position) as maxposition FROM " . MAIN_DB_PREFIX . $this->table_element;
+			$sql.= " WHERE filepath ='".$this->db->escape($this->filepath)."'";
 
-		    $resql = $this->db->query($sql);
-		    if ($resql)
-		    {
-		        $obj = $this->db->fetch_object($resql);
-		        $maxposition = (int) $obj->maxposition;
-		    }
-		    else dol_print_error($this->db);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$maxposition = (int) $obj->maxposition;
+			}
+			else dol_print_error($this->db);
 		}
 		$maxposition=$maxposition+1;
 
 		// Check parameters
+		if (empty($this->filename) || empty($this->filepath))
+		{
+			$this->errors[] = 'Bad property filename or filepath';
+			return -1;
+		}
 		// Put here code to add control on parameters values
 
 		// Insert request
@@ -218,7 +225,7 @@ class EcmFiles //extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
-            $this->position = $maxposition;
+			$this->position = $maxposition;
 
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -349,7 +356,7 @@ class EcmFiles //extends CommonObject
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -409,7 +416,7 @@ class EcmFiles //extends CommonObject
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
-            $sql .=  ' ' . $this->db->plimit($limit, $offset);
+			$sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 
 		$this->lines = array();
@@ -677,49 +684,49 @@ class EcmFiles //extends CommonObject
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	int  	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
+	 *  @param	int  	$notooltip			1=Disable tooltip
+	 *  @param	int		$maxlen				Max length of visible user name
+	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
 	{
 		global $db, $conf, $langs;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        $result = '';
-        $companylink = '';
+		$result = '';
+		$companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		$label = '<u>' . $langs->trans("MyModule") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $url = DOL_URL_ROOT.'/ecm/'.$this->table_name.'_card.php?id='.$this->id;
+		$url = DOL_URL_ROOT.'/ecm/'.$this->table_name.'_card.php?id='.$this->id;
 
-        $linkclose='';
-        if (empty($notooltip))
-        {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-            {
-                $label=$langs->trans("ShowProject");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
-        }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowProject");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		}
+		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto)
-        {
-            $result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
+		if ($withpicto)
+		{
+			$result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
+			if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $linkstart . $this->ref . $linkend;
 		return $result;
@@ -746,43 +753,7 @@ class EcmFiles //extends CommonObject
 	static function LibStatut($status,$mode=0)
 	{
 		global $langs;
-
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
-		}
-		if ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
-		}
-		if ($mode == 6)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
-		}
+		return '';
 	}
 
 
@@ -794,7 +765,7 @@ class EcmFiles //extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-	    global $conf,$user;
+		global $conf,$user;
 
 		$this->id = 0;
 

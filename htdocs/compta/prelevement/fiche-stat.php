@@ -29,9 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("withdrawals");
+$langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();

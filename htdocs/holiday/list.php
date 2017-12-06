@@ -259,6 +259,8 @@ if ($id > 0)
 	$fuser->fetch($id, '', '', 1);
 	$fuser->getrights();
 	$user_id = $fuser->id;
+
+	$search_employee = $user_id;
 }
 
 // Récupération des congés payés de l'utilisateur ou de tous les users
@@ -296,8 +298,8 @@ $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->holiday->delete) $arrayofmassactions['delete']=$langs->trans("Delete");
-//if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->holiday->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -313,7 +315,7 @@ if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 if ($id > 0)		// For user tab
 {
 	$title = $langs->trans("User");
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	$head = user_prepare_head($fuser);
 
 	dol_fiche_head($head, 'paidholidays', $title, -1, 'user');
@@ -330,6 +332,18 @@ if ($id > 0)		// For user tab
 	}
 
 	dol_fiche_end();
+
+	print '<div class="tabsAction">';
+
+	$canedit=(($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && $user->rights->holiday->write_all));
+
+	// Boutons d'actions
+	if ($canedit)
+	{
+		print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
+	}
+
+	print '</div>';
 }
 else
 {
@@ -338,17 +352,12 @@ else
     //print count($holiday->holiday);
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, '', '', $limit);
 
-	/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
-	{
-		dol_fiche_head('', '', '', -1);
-
-		showMyBalance($holiday, $user_id);
-
-		dol_fiche_end();
-	}*/
+	$topicmail="Information";
+	$modelmail="leaverequest";
+	$objecttmp=new Holiday($db);
+	$trackid='leav'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 }
-
-if ($id > 0) print '<br>';
 
 if ($sall)
 {
@@ -418,7 +427,7 @@ foreach($typeleaves as $key => $val)
     //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
     $arraytypeleaves[$val['rowid']]=$labeltoshow;
 }
-print $form->selectarray('search_type', $arraytypeleaves, (GETPOST('search_type')?GETPOST('search_type'):''), 1);
+print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1);
 print '</td>';
 
 // Duration
@@ -462,6 +471,8 @@ print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'ali
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print "</tr>\n";
 
+$listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+
 // Lines
 if (! empty($holiday->holiday))
 {
@@ -472,6 +483,10 @@ if (! empty($holiday->holiday))
 
 	foreach($holiday->holiday as $infos_CP)
 	{
+		// Leave request
+		$holidaystatic->id=$infos_CP['rowid'];
+		$holidaystatic->ref=$infos_CP['rowid'];
+
 		// User
 		$userstatic->id=$infos_CP['fk_user'];
 		$userstatic->lastname=$infos_CP['user_lastname'];
@@ -490,10 +505,11 @@ if (! empty($holiday->holiday))
 
 		$date = $infos_CP['date_create'];
 
+		$starthalfday=($infos_CP['halfday'] == -1 || $infos_CP['halfday'] == 2)?'afternoon':'morning';
+		$endhalfday=($infos_CP['halfday'] == 1 || $infos_CP['halfday'] == 2)?'morning':'afternoon';
+
 		print '<tr class="oddeven">';
 		print '<td>';
-		$holidaystatic->id=$infos_CP['rowid'];
-		$holidaystatic->ref=$infos_CP['rowid'];
 		print $holidaystatic->getNomUrl(1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
@@ -506,8 +522,14 @@ if (! empty($holiday->holiday))
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
 		print '</td>';
-		print '<td align="center">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
-		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
+		print '<td align="center">';
+		print dol_print_date($infos_CP['date_debut'],'day');
+		print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+		print '</td>';
+		print '<td align="center">';
+		print dol_print_date($infos_CP['date_fin'],'day');
+		print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+		print '</td>';
 		print '<td align="right">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
 
 	    // Action column

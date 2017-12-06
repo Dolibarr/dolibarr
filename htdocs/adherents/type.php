@@ -107,7 +107,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -160,7 +160,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -204,9 +204,9 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
  * View
  */
 
-llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
 $form=new Form($db);
+
+llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 // List of members type
@@ -252,11 +252,21 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
+		$membertype = new AdherentType($db);
+
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
+
+			$membertype->id = $objp->rowid;
+			$membertype->ref = $objp->rowid;
+			$membertype->label = $objp->rowid;
+
 			print '<tr class="oddeven">';
-			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
+			print '<td>';
+			print $membertype->getNomUrl(1);
+			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
@@ -365,7 +375,7 @@ if ($rowid > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'rowid', $linkback);
 
@@ -440,11 +450,11 @@ if ($rowid > 0)
 		}
 		if ($status != '')
 		{
-		    $sql.= " AND d.statut IN (".$db->escape($status).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+		    $sql.= natural_search('d.statut', $status, 2);
 		}
 		if ($action == 'search')
 		{
-			if (GETPOST('search'))
+			if (GETPOST('search','alpha'))
 			{
 		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search','alpha'));
 		  	}

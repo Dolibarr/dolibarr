@@ -79,7 +79,7 @@ $formfile->form_attach_new_file(
 );
 
 $disablemove=1;
-if ($modulepart == 'product' || $modulepart == 'produit') $disablemove=0;		// Drag and drop for up and down allowed on product
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user'))) $disablemove=0;		// Drag and drop for up and down allowed on product
 
 // List of document
 $formfile->list_of_documents(

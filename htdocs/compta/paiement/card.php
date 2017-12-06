@@ -42,6 +42,7 @@ $id=GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -82,8 +83,17 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	if ($result > 0)
 	{
         $db->commit();
-        header("Location: list.php");
-        exit;
+
+        if ($backtopage)
+        {
+        	header("Location: ".$backtopage);
+        	exit;
+        }
+        else
+        {
+        	header("Location: list.php");
+        	exit;
+        }
 	}
 	else
 	{
@@ -263,7 +273,7 @@ if (! empty($conf->banque->enabled))
     	print '</td>';
     	print '</tr>';
 
-		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) 
+		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0)
 		{
 			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
 			$bordereau = new RemiseCheque($db);
@@ -303,14 +313,14 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	
+
 	$moreforfilter='';
-	
+
 	print '<br>';
-	
+
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
-	
+
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
@@ -327,7 +337,7 @@ if ($resql)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			
+
 			print '<tr class="oddeven">';
 
             $invoice=new Facture($db);
@@ -372,11 +382,11 @@ if ($resql)
 			$i++;
 		}
 	}
-	
+
 
 	print "</table>\n";
 	print '</div>';
-	
+
 	$db->free($resql);
 }
 else

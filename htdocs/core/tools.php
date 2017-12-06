@@ -46,7 +46,7 @@ $text=$langs->trans("Tools");
 print load_fiche_titre($text);
 
 // Show description of content
-print $langs->trans("ToolsDesc").'<br><br>';
+print '<div class="justify">'.$langs->trans("ToolsDesc").'</div><br><br>';
 
 
 // Show logo

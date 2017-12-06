@@ -163,7 +163,7 @@ class Categorie extends CommonObject
 	 */
 	public $socid;
 	/**
-	 * @var int Category type
+	 * @var string	Category type
 	 *
 	 * @see Categorie::TYPE_PRODUCT
 	 * @see Categorie::TYPE_SUPPLIER
@@ -392,7 +392,7 @@ class Categorie extends CommonObject
 	 *          					-1 : SQL error
 	 *          					-2 : invalid category
 	 */
-	function update($user='')
+	function update(User $user)
 	{
 		global $conf, $langs,$hookmanager;
 
@@ -766,12 +766,10 @@ class Categorie extends CommonObject
 		// For backward compatibility
 		if ($type == 'societe') {
 			$type = 'customer';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead",
-				LOG_WARNING );
+			dol_syslog( get_class( $this ) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead", LOG_WARNING);
 		} elseif ($type == 'fournisseur') {
 			$type = 'supplier';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead",
-				LOG_WARNING );
+			dol_syslog( get_class( $this ) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
 		}
 
         $this->db->begin();
@@ -877,6 +875,100 @@ class Categorie extends CommonObject
 			$this->error=$this->db->error().' sql='.$sql;
 			return -1;
 		}
+	}
+
+	/**
+	 * List categories of an element id
+	 *
+	 * @param	int		$id			Id of element
+	 * @param	string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param	string	$sortfield	Sort field
+	 * @param	string	$sortorder	Sort order
+	 * @param	int		$limit		Limit for list
+	 * @param	int		$page		Page number
+	 * @return	array				Array of categories
+	 */
+	function getListForItem($id, $type='customer', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		global $conf;
+
+		$categories = array();
+
+		$sub_type = $type;
+		$subcol_name = "fk_".$type;
+		if ($type=="customer" || $type=="supplier") {
+			$sub_type="societe";
+			$subcol_name="fk_soc";
+		}
+		if ($type=="contact") {
+			$subcol_name="fk_socpeople";
+		}
+		$sql = "SELECT s.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
+		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
+		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
+		$sql.= ' AND s.type='.array_search($type, self::$MAP_ID_TO_CODE);
+		$sql.= ' AND s.rowid = sub.fk_categorie';
+		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
+
+		$nbtotalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$result = $this->db->query($sql);
+			$nbtotalofrecords = $this->db->num_rows($result);
+		}
+
+		$sql.= $this->db->order($sortfield, $sortorder);
+		if ($limit)	{
+			if ($page < 0)
+			{
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql.= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$i=0;
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min)
+			{
+				$obj = $this->db->fetch_object($result);
+				$category_static = new Categorie($this->db);
+				if ($category_static->fetch($obj->rowid))
+				{
+					$categories[$i]['id'] 				= $category_static->id;
+					$categories[$i]['fk_parent']		= $category_static->fk_parent;
+					$categories[$i]['label']			= $category_static->label;
+					$categories[$i]['description']		= $category_static->description;
+					$categories[$i]['color']    		= $category_static->color;
+					$categories[$i]['socid']			= $category_static->socid;
+					$categories[$i]['visible']			= $category_static->visible;
+					$categories[$i]['type']			= $category_static->type;
+					$categories[$i]['entity']			= $category_static->entity;
+					$categories[$i]['array_options']	= $category_static->array_options;
+
+					// multilangs
+					if (! empty($conf->global->MAIN_MULTILANGS)) 	{
+						$categories[$i]['multilangs']	= $category_static->multilangs;
+					}
+				}
+				$i++;
+			}
+		}
+		else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		if ( ! count($categories)) {
+			return 0;
+		}
+
+		return $categories;
 	}
 
 	/**
@@ -1233,6 +1325,7 @@ class Categorie extends CommonObject
 		{
 			$w = array();
 			$i = 0;
+			$forced_color='';
 			foreach ($way as $cat)
 			{
 			    $i++;
@@ -1246,12 +1339,7 @@ class Categorie extends CommonObject
     			        $forced_color='categtextwhite';
     			        if ($cat->color)
     			        {
-    			            $hex=$cat->color;
-    			            $r = hexdec($hex[0].$hex[1]);
-    			            $g = hexdec($hex[2].$hex[3]);
-    			            $b = hexdec($hex[4].$hex[5]);
-    			            $bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-    			            if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
+    			            if (colorIsLight($cat->color)) $forced_color='categtextblack';
     			        }
     			    }
 			    }
@@ -1508,12 +1596,7 @@ class Categorie extends CommonObject
 		$forced_color='categtextwhite';
 		if ($this->color)
 		{
-    		$hex=$this->color;
-    		$r = hexdec($hex[0].$hex[1]);
-    		$g = hexdec($hex[2].$hex[3]);
-    		$b = hexdec($hex[4].$hex[5]);
-    		$bright = (max($r, $g, $b) + min($r, $g, $b)) / 510.0;    // HSL algorithm
-    		if ($bright >= 0.5) $forced_color='categtextblack';        // Higher than 60%
+			if (colorIsLight($this->color)) $forced_color='categtextblack';
 		}
 
         $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$this->id.'&type='.$this->type.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip '.$forced_color .'">';

@@ -74,24 +74,25 @@ function dol_decode($chain)
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5, 3:md5, 4:md5 for OpenLdap). Use 3 here, if hash is not needed for security purpose, for security need, prefer 0.
+ * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  */
-function dol_hash($chain,$type=0)
+function dol_hash($chain, $type='0')
 {
 	global $conf;
 
 	// Salt value
 	if (! empty($conf->global->MAIN_SECURITY_SALT)) $chain=$conf->global->MAIN_SECURITY_SALT.$chain;
 
-	if ($type == 1) return sha1($chain);
-	else if ($type == 2) return sha1(md5($chain));
-	else if ($type == 3) return md5($chain);
-	else if ($type == 4) return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5
+	if ($type == '1' || $type == 'sha1') return sha1($chain);
+	else if ($type == '2' || $type == 'sha1md5') return sha1(md5($chain));
+	else if ($type == '3' || $type == 'md5') return md5($chain);
+	else if ($type == '4' || $type == 'md5openldap') return '{md5}'.base64_encode(mhash(MHASH_MD5,$chain)); // For OpenLdap with md5 (based on an unencrypted password in base)
+	else if ($type == '5') return hash('sha256',$chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
 	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 
-	// No particular enconding defined, use default
+	// No particular encoding defined, use default
 	return md5($chain);
 }
 
@@ -308,6 +309,10 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             {
                 if (! $user->rights->ftp->write) $deleteok=0;
             }
+            else if ($feature == 'salaries')
+            {
+                if (! $user->rights->salaries->delete) $deleteok=0;
+            }
             else if (! empty($feature2))	// This should be used for future changes
             {
             	foreach($feature2 as $subfeature)
@@ -383,8 +388,12 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		$nocheck = array('barcode','stock','fournisseur');	// No test
 		$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
-		// If dbtable not defined, we use same name for table than module name
-		if (empty($dbtablename)) $dbtablename = $feature;
+		// If dbtablename not defined, we use same name for table than module name
+		if (empty($dbtablename))
+		{
+			$dbtablename = $feature;
+			$sharedelement = (! empty($params[1]) ? $params[1] : $dbtablename);		// We change dbtablename, so we set sharedelement too.
+		}
 
 		// Check permission for object with entity
 		if (in_array($feature,$check))

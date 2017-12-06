@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=Supplier order %s received %s
 SupplierOrderSubmitedInDolibarr=Supplier order %s submited
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=دیگر سفارشات
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=نماینده سفارش مشتری زیر به بالا
 TypeContact_commande_internal_SHIPPING=نماینده زیر را به بالا حمل و نقل
@@ -151,5 +152,7 @@ OrderCreated=سفارشات شما ساخته شده است
 OrderFail=خطا در هنگام ایجاد سفارشات شما اتفاق افتاده است
 CreateOrders=ایجاد سفارشات
 ToBillSeveralOrderSelectCustomer=برای ایجاد یک فاکتور برای چند دستور، برای اولین بار بر روی مشتری را کلیک کنید، و سپس "٪ s" را انتخاب کنید.
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

@@ -64,12 +64,12 @@ else
 		else
 		{
 			$range = ExpenseReportIk::getRangeByUser($userauthor, $fk_c_exp_tax_cat);
-			
+
 			if (empty($range)) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'range' => $range));
 			else
 			{
-				$offset = price($range->offset, 0, $langs, 1, -1, -1, $conf->currency);
-				echo json_encode(array('up' => $range->coef, 'offset' => $range->offset, 'title' => $langs->transnoentitiesnoconv('ExpenseRangeOffset', $offset), 'comment' => 'offset should be apply on addline or updateline'));
+				$ikoffset = price($range->ikoffset, 0, $langs, 1, -1, -1, $conf->currency);
+				echo json_encode(array('up' => $range->coef, 'ikoffset' => $range->ikoffset, 'title' => $langs->transnoentitiesnoconv('ExpenseRangeOffset', $offset), 'comment' => 'offset should be apply on addline or updateline'));
 			}
 		}
 	}

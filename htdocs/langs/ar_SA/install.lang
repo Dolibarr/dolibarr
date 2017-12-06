@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=يمكنك استخدام معالج الإعداد Dolibar
 KeepDefaultValuesMamp=استخدام معالج الإعداد DoliMamp ، حتى القيم المقترحة هنا بالفعل الأمثل. تغييرها إلا إذا كنت تعرف ما تفعله.
 KeepDefaultValuesProxmox=يمكنك استخدام معالج إعداد Dolibarr من الأجهزة الظاهرية Proxmox، بحيث يتم تحسين بالفعل القيم المقترحة هنا. تغييرها إلا إذا كنت تعرف ما تفعله.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=إصلاح البيانات الذي لم تتم تسويته
@@ -191,6 +192,7 @@ MigrationActioncommElement=تحديث البيانات على الإجراءات
 MigrationPaymentMode=بيانات الهجرة لطريقة الدفع
 MigrationCategorieAssociation=تحديث الفئات
 MigrationEvents=الترحيل من الأحداث لإضافة مالك الحدث في جدول الاحالة
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=إعادة تحديث الوحدات %s

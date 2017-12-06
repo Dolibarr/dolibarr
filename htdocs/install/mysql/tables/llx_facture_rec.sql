@@ -54,6 +54,7 @@ create table llx_facture_rec
   fk_account         integer,			  -- bank account id
   note_private       text,
   note_public        text,
+  modelpdf           varchar(255),
 
   fk_multicurrency          integer,
   multicurrency_code        varchar(255),
@@ -70,5 +71,6 @@ create table llx_facture_rec
   date_last_gen      datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
   nb_gen_done        integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
   nb_gen_max         integer DEFAULT NULL,		    -- maximum number of generation
-  auto_validate      integer DEFAULT 0		-- 0 to create in draft, 1 to create and validate the new invoice
+  auto_validate      integer DEFAULT 0,		-- 0 to create in draft, 1 to create and validate the new invoice
+  generate_pdf       integer DEFAULT 1      -- 0 disable pdf, 1 to generate pdf
 )ENGINE=innodb;

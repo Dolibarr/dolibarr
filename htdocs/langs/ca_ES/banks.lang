@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banc
 MenuBankCash=Bancs/Caixes
+MenuVariousPayment=Pagaments varis
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Nom del banc
 FinancialAccount=Compte
 BankAccount=Compte bancari
@@ -155,3 +157,6 @@ NewVariousPayment=Nou pagament varis
 VariousPayment=Pagaments varis
 VariousPayments=Pagaments varis
 ShowVariousPayment=Mostra els pagaments varis
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

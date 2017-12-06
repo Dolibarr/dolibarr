@@ -193,7 +193,7 @@ elseif ($modecompta=="BOOKKEEPING")
 	$period.=' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '. $form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year']+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesResultBookkeepingPredefined");
-	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->trans("Chartofaccounts")).')';
+	$description.=' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("Chartofaccounts")).')';
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -338,7 +338,7 @@ else
 	/*
 	 * Factures clients
 	 */
-	print '<tr><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES')
 	{
@@ -500,7 +500,7 @@ else
 	$sql .= " GROUP BY name, socid";
 	$sql.= $db->order($sortfield, $sortorder);
 
-	print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
 
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
@@ -554,7 +554,7 @@ else
 	 * Charges sociales non deductibles
 	 */
 
-	print '<tr><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES')
 	{
@@ -630,7 +630,7 @@ else
 	 * Charges sociales deductibles
 	 */
 
-	print '<tr><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES')
 	{
@@ -727,7 +727,7 @@ else
 
 	if (! empty($conf->salaries->enabled))
 	{
-		print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
+		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 
 	 	if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')
 		{
@@ -822,7 +822,7 @@ else
 				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
-				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
 				$sql.= " WHERE p.entity = ".getEntity('expensereport');
 				$sql.= " AND p.fk_statut>=5";
 
@@ -840,7 +840,7 @@ else
 		    $sql.= $db->order($newsortfield, $sortorder);
 		}
 
-		print '<tr><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
+		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
 
 		dol_syslog("get expense report outcome");
 		$result=$db->query($sql);
@@ -890,7 +890,7 @@ else
 
 	if (! empty($conf->don->enabled))
 	{
-		print '<tr><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
+		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES')
 		{
@@ -906,8 +906,8 @@ else
 			    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
 			    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
-			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-			    $sql.= " WHERE p.entity = ".getEntity('donation');
+			    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+			    $sql.= " WHERE p.entity IN (".getEntity('donation').")";
 			    $sql.= " AND fk_statut >= 2";
 			}
 			if (! empty($date_start) && ! empty($date_end))
@@ -972,7 +972,7 @@ else
 	 * VAT
 	 */
 
-	print '<tr><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
+	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
 

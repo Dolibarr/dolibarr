@@ -17,7 +17,9 @@
 
 use Luracast\Restler\RestException;
 
-//require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 /**
  * API class for contacts
@@ -48,7 +50,8 @@ class Contacts extends DolibarrApi
 		global $db, $conf;
 		$this->db = $db;
 
-		include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		$this->contact = new Contact($this->db);
 	}
@@ -93,13 +96,13 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-     * @param string   	$thirdparty_ids	    Thirdparty ids to filter projects of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return array                        Array of contact objects
      *
 	 * @throws RestException
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -271,9 +274,9 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
-	 * Create useraccount object from contact
+	 * Create an user account object from contact (external user)
 	 *
-	 * @param   int   $id   Id of contact
+	 * @param   int   	$id   Id of contact
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of user
 	 *
@@ -333,9 +336,25 @@ class Contacts extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        $categories = new Categories();
-        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'contact', $id);
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'contact', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
     }
 
 	/**

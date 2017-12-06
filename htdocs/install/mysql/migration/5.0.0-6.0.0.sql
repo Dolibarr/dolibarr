@@ -26,6 +26,12 @@
 
 
 
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) COLLATE utf8_unicode_ci;
+
+
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 
 ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
@@ -151,6 +157,7 @@ ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_projet ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_projet_task_time ADD COLUMN datec date;
 ALTER TABLE llx_projet_task_time ADD COLUMN tms timestamp;
@@ -375,7 +382,10 @@ ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_tx	     d
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price	 double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price_log ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
+ALTER TABLE llx_product_customer_price_log ADD COLUMN default_vat_code varchar(10);
+
 UPDATE llx_contrat SET ref = rowid WHERE ref IS NULL OR ref = '';
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '';
 
 CREATE TABLE llx_payment_various
 (

@@ -50,11 +50,12 @@ class FormSocialContrib
      * 	@param	int		$useempty		Set to 1 if we want an empty value
      * 	@param	int		$maxlen			Max length of text in combo box
      * 	@param	int		$help			Add or not the admin help picto
+     *  @param	string	$morecss		Add more CSS on select
      * 	@return	void
      */
-    function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1)
+    function select_type_socialcontrib($selected='',$htmlname='actioncode', $useempty=0, $maxlen=40, $help=1, $morecss='minwidth300')
     {
-        global $db,$langs,$user,$mysoc;
+        global $conf,$db,$langs,$user,$mysoc;
 
         if (empty($mysoc->country_id) && empty($mysoc->country_code))
         {
@@ -86,7 +87,7 @@ class FormSocialContrib
             $num = $db->num_rows($resql);
             if ($num)
             {
-                print '<select class="flat" name="'.$htmlname.'">';
+            	print '<select class="'.($morecss?$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
                 $i = 0;
 
                 if ($useempty) print '<option value="0">&nbsp;</option>';
@@ -100,6 +101,7 @@ class FormSocialContrib
                 }
                 print '</select>';
                 if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+                if (! empty($conf->use_javascript_ajax)) print ajax_combobox($htmlname);
             }
             else
             {

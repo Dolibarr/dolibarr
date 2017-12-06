@@ -64,7 +64,7 @@ $active = 1;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1 || $page == null) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -418,18 +418,15 @@ if ($action == 'disable_favorite')
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-llxHeader();
+llxHeader('', $langs->trans('AccountingCategory'));
 
 $titre=$langs->trans($tablib[$id]);
 $linkback='';
 $titlepicto='title_setup';
 
-print load_fiche_titre($titre,$linkback,$titlepicto);
+print load_fiche_titre($titre, $linkback, $titlepicto);
 
-if ($id == 32)
-{
-	print $langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'<br><br>';
-}
+print $langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'<br><br>';
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
@@ -569,6 +566,7 @@ if ($id)
         print "</tr>";
 
         $colspan=count($fieldlist)+3;
+        if ($id == 32) $colspan++;
 
         print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>';	// Keep &nbsp; to have a line with enough height
     }
@@ -657,7 +655,6 @@ if ($id)
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')
             {
             	$valuetoshow=$langs->trans("Label");
-               	if ($id != 25) $valuetoshow.="*";
             }
             if ($fieldlist[$field]=='country')         { $valuetoshow=$langs->trans("Country"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='country_id') { $showfield=0; }
@@ -806,10 +803,12 @@ if ($id)
                     else print '<td>&nbsp;</td>';
 
                     // Link to setup the group
-                    print '<td>';
+                    print '<td class="center">';
                     if (empty($obj->formula))
                     {
-                        print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&account_category='.$obj->rowid.'">'.$langs->trans("Setup").'</a>';
+                        print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&account_category='.$obj->rowid.'">';
+                        print $langs->trans("ListOfAccounts");
+                        print '</a>';
                     }
                     print '</td>';
                 }

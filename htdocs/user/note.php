@@ -50,7 +50,8 @@ if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','globalcard'));
+$contextpage=array('usercard','usernote','globalcard');
+$hookmanager->initHooks($contextpage);
 
 
 /*
@@ -96,11 +97,11 @@ if ($id)
 	if ($user->rights->user->user->lire || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	}
-	
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 

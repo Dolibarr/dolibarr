@@ -65,7 +65,10 @@ if ($nolinesbefore) {
 	<td class="linecoldescription minwidth500imp">
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
-	<?php if ($object->element == 'supplier_proposal') { ?>
+	<?php
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+	?>
 		<td class="linecolrefsupplier" align="right"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierProposalRefFourn'); ?></span></td>
 	<?php } ?>
 	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
@@ -270,8 +273,11 @@ else {
 	?>
 	</td>
 
-	<?php if ($object->element == 'supplier_proposal') { ?>
-		<td class="nobottom linecolresupplier" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" size="10" value=""></td>
+	<?php
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+	?>
+		<td class="nobottom linecolresupplier" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" size="10" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat" align="right"><?php
@@ -728,9 +734,11 @@ function setforfree() {
 	jQuery("#price_ht").show();
 	jQuery("#multicurrency_price_ht").show();
 	jQuery("#price_ttc").show();	// May no exists
+	jQuery("#fourn_ref").show();
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
 	jQuery("#fournprice_predef").hide();
+	jQuery("#title_fourn_ref").show();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
 	jQuery("#title_up_ht_currency").show();
@@ -751,9 +759,10 @@ function setforpredef() {
 	jQuery("#price_ht").val('').hide();
 	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
+	jQuery("#fourn_ref").hide();
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
-	//jQuery("#fournprice_predef").show(); // management somewhere else
+	jQuery("#title_fourn_ref").hide();
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ht_currency").hide();

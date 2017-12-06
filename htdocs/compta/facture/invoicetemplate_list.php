@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-    //require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	//require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
@@ -81,6 +81,7 @@ $month_date_when=GETPOST('month_date_when');
 $search_recurring=GETPOST('search_recurring','int');
 $search_frequency=GETPOST('search_frequency','alpha');
 $search_unit_frequency=GETPOST('search_unit_frequency','alpha');
+$search_status=GETPOST('search_status','int');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -116,30 +117,30 @@ $permissiondellink=$user->rights->facture->creer;	// Used by the include of acti
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
 
 $arrayfields=array(
-    'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-    'f.total'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-    'f.tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
-    'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-    'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>0),
-    'f.fk_cond_reglement'=>array('label'=>$langs->trans("PaymentTerm"), 'checked'=>0),
+	'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+	'f.total'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
+	'f.tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
+	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
+	'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>0),
+	'f.fk_cond_reglement'=>array('label'=>$langs->trans("PaymentTerm"), 'checked'=>0),
 	'recurring'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
-    'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
+	'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
 	'f.unit_frequency'=>array('label'=>$langs->trans("FrequencyUnit"), 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
-    'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
-    'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
-    'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
+	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDoneShort"), 'checked'=>1),
+	'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGenerationShort"), 'checked'=>1),
+	'f.date_when'=>array('label'=>$langs->trans("NextDateToExecutionShort"), 'checked'=>1),
+	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
 	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-    'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-    }
+	foreach($extrafields->attribute_label as $key => $val)
+	{
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+	}
 }
 
 
@@ -156,35 +157,36 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if (GETPOST('cancel','alpha')) $action='';
+	if (GETPOST('cancel','alpha')) $action='';
 
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Do we click on purge search criteria ?
-    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
-    {
-        $search_ref='';
-        $search_societe='';
-        $search_montant_ht='';
-        $search_montant_vat='';
-        $search_montant_ttc='';
-        $search_payment_mode='';
-        $search_payment_term='';
-        $day='';
-        $year='';
-        $month='';
-        $day_date_when='';
-        $year_date_when='';
-        $month_date_when='';
-        $search_recurring='';
-        $search_frequency='';
-        $search_unit_frequency='';
-        $search_array_options=array();
-    }
+	// Do we click on purge search criteria ?
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
+	{
+		$search_ref='';
+		$search_societe='';
+		$search_montant_ht='';
+		$search_montant_vat='';
+		$search_montant_ttc='';
+		$search_payment_mode='';
+		$search_payment_term='';
+		$day='';
+		$year='';
+		$month='';
+		$day_date_when='';
+		$year_date_when='';
+		$month_date_when='';
+		$search_recurring='';
+		$search_frequency='';
+		$search_unit_frequency='';
+		$search_status='';
+		$search_array_options=array();
+	}
 
-    // Mass actions
-    /*$objectclass='MyObject';
+	// Mass actions
+	/*$objectclass='MyObject';
     $objectlabel='MyObject';
     $permtoread = $user->rights->mymodule->read;
     $permtodelete = $user->rights->mymodule->delete;
@@ -215,7 +217,7 @@ $today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year'
  *  List mode
  */
 $sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
-$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when,";
+$sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql.= " f.datec, f.tms,";
 $sql.= " f.fk_cond_reglement, f.fk_mode_reglement";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
@@ -238,32 +240,37 @@ if ($search_recurring == '1')     $sql .= ' AND f.frequency > 0';
 if ($search_recurring == '0')     $sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 if ($search_frequency != '')      $sql .= natural_search('f.frequency', $search_frequency, 1);
 if ($search_unit_frequency != '') $sql .= natural_search('f.unit_frequency', $search_unit_frequency);
-
+if ($search_status != '' && $search_status >= -1)
+{
+	if ($search_status == 0) $sql.= ' AND frequency = 0 AND suspended = 0';
+	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
+	if ($search_status == -1) $sql.= ' AND suspended = 1';
+}
 if ($month > 0)
 {
-    if ($year > 0 && empty($day))
-        $sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-    else if ($year > 0 && ! empty($day))
-        $sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-    else
-        $sql.= " AND date_format(f.date_last_gen, '%m') = '".$month."'";
+	if ($year > 0 && empty($day))
+		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+	else if ($year > 0 && ! empty($day))
+		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+	else
+		$sql.= " AND date_format(f.date_last_gen, '%m') = '".$month."'";
 }
 else if ($year > 0)
 {
-    $sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($month_date_when > 0)
 {
-    if ($year_date_when > 0 && empty($day_date_when))
-        $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,$month_date_when,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,$month_date_when,false))."'";
-    else if ($year_date_when > 0 && ! empty($day_date_when))
-        $sql.= " AND f.date_date_when_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date_when, $day_date_when, $year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date_when, $day_date_when, $year_date_when))."'";
+	if ($year_date_when > 0 && empty($day_date_when))
+		$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,$month_date_when,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,$month_date_when,false))."'";
+	else if ($year_date_when > 0 && ! empty($day_date_when))
+		$sql.= " AND f.date_date_when_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date_when, $day_date_when, $year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date_when, $day_date_when, $year_date_when))."'";
 	else
 		$sql.= " AND date_format(f.date_when, '%m') = '".$month_date_when."'";
 }
 else if ($year_date_when > 0)
 {
-    $sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
+	$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
 }
 
 $nbtotalofrecords = '';
@@ -282,7 +289,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($socid)              $param.='&socid='.urlencode($socid);
 	if ($day)                $param.='&day='.urlencode($day);
@@ -301,15 +308,11 @@ if ($resql)
 	if ($search_recurring != '' && $search_recurrning != '-1')    $param.='&search_recurring='  .urlencode($search_recurring);
 	if ($search_frequency > 0)      $param.='&search_frequency='  .urlencode($search_frequency);
 	if ($search_unit_frequency > 0) $param.='&search_unit_frequency='.urlencode($search_unit_frequency);
+	if ($search_status != '')		$param.='&search_status='.urlencode($search_status);
 	if ($option)             $param.="&option=".urlencode($option);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-	    $crit=$val;
-	    $tmpkey=preg_replace('/search_options_/','',$key);
-	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
@@ -342,118 +345,98 @@ if ($resql)
 	// Ref
 	if (! empty($arrayfields['f.titre']['checked']))
 	{
-	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-	    print '</td>';
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '</td>';
 	}
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
-	    print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+		print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	}
 	if (! empty($arrayfields['f.total']['checked']))
 	{
-	    // Amount net
-	    print '<td class="liste_titre" align="right">';
-	    print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
-	    print '</td>';
+		// Amount net
+		print '<td class="liste_titre" align="right">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
+		print '</td>';
 	}
 	if (! empty($arrayfields['f.tva']['checked']))
 	{
-	    // Amount Vat
-	    print '<td class="liste_titre" align="right">';
-	    print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
-	    print '</td>';
+		// Amount Vat
+		print '<td class="liste_titre" align="right">';
+		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
+		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ttc']['checked']))
 	{
-	    // Amount
-	    print '<td class="liste_titre" align="right">';
-	    print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
-	    print '</td>';
+		// Amount
+		print '<td class="liste_titre" align="right">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
+		print '</td>';
 	}
 	if (! empty($arrayfields['f.fk_cond_reglement']['checked']))
 	{
-	    // Payment term
-	    print '<td class="liste_titre" align="right">';
-	    print $form->select_conditions_paiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
-	    print "</td>";
+		// Payment term
+		print '<td class="liste_titre" align="right">';
+		print $form->select_conditions_paiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
+		print "</td>";
 	}
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
-	    // Payment mode
-	    print '<td class="liste_titre" align="right">';
-	    print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100');
-	    print '</td>';
+		// Payment mode
+		print '<td class="liste_titre" align="right">';
+		print $form->select_types_paiements($search_payment_mode, 'search_payment_mode', '', 0, 1, 1, 0, 1, 'maxwidth100');
+		print '</td>';
 	}
 	if (! empty($arrayfields['recurring']['checked']))
 	{
-	    // Recurring or not
-	    print '<td class="liste_titre" align="center">';
-	    print $form->selectyesno('search_recurring', $search_recurring, 1, false, 1);
-	    print '</td>';
+		// Recurring or not
+		print '<td class="liste_titre" align="center">';
+		print $form->selectyesno('search_recurring', $search_recurring, 1, false, 1);
+		print '</td>';
 	}
 	if (! empty($arrayfields['f.frequency']['checked']))
 	{
-	    // Recurring or not
-	    print '<td class="liste_titre" align="center">';
-	    print '<input class="flat" type="text" size="1" name="search_frequency" value="'.dol_escape_htmltag($search_frequency).'">';
-	    print '</td>';
+		// Recurring or not
+		print '<td class="liste_titre" align="center">';
+		print '<input class="flat" type="text" size="1" name="search_frequency" value="'.dol_escape_htmltag($search_frequency).'">';
+		print '</td>';
 	}
 	if (! empty($arrayfields['f.unit_frequency']['checked']))
 	{
-	    // Frequency unit
-	    print '<td class="liste_titre" align="center">';
-	    print '<input class="flat" type="text" size="1" name="search_unit_frequency" value="'.dol_escape_htmltag($search_unit_frequency).'">';
-	    print '</td>';
+		// Frequency unit
+		print '<td class="liste_titre" align="center">';
+		print '<input class="flat" type="text" size="1" name="search_unit_frequency" value="'.dol_escape_htmltag($search_unit_frequency).'">';
+		print '</td>';
 	}
 	if (! empty($arrayfields['f.nb_gen_done']['checked']))
 	{
-	    // Nb generation
-	    print '<td class="liste_titre" align="center">';
-	    print '</td>';
+		// Nb generation
+		print '<td class="liste_titre" align="center">';
+		print '</td>';
 	}
 	// Date invoice
 	if (! empty($arrayfields['f.date_last_gen']['checked']))
 	{
-	    print '<td class="liste_titre" align="center">';
-	    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-	    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	    $formother->select_year($year?$year:-1,'year',1, 20, 5);
-	    print '</td>';
+		print '<td class="liste_titre" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+		$formother->select_year($year?$year:-1,'year',1, 20, 5);
+		print '</td>';
 	}
 	// Date due
 	if (! empty($arrayfields['f.date_when']['checked']))
 	{
-	    print '<td class="liste_titre" align="center">';
-	    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_date_when" value="'.$day_date_when.'">';
-	    print '<input class="flat" type="text" size="1" maxlength="2" name="month_date_when" value="'.$month_date_when.'">';
-	    $formother->select_year($year_date_when?$year_date_when:-1,'year_date_when',1, 20, 5);
-	    print '</td>';
+		print '<td class="liste_titre" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_date_when" value="'.$day_date_when.'">';
+		print '<input class="flat" type="text" size="1" maxlength="2" name="month_date_when" value="'.$month_date_when.'">';
+		$formother->select_year($year_date_when?$year_date_when:-1,'year_date_when',1, 20, 5);
+		print '</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	    foreach($extrafields->attribute_label as $key => $val)
-	    {
-	        if (! empty($arrayfields["ef.".$key]['checked']))
-	        {
-	            $align=$extrafields->getAlignFlag($key);
-	            $typeofextrafield=$extrafields->attribute_type[$key];
-	            print '<td class="liste_titre'.($align?' '.$align:'').'">';
-	            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-	            {
-	                $crit=$val;
-	                $tmpkey=preg_replace('/search_options_/','',$key);
-	                $searchclass='';
-	                if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-	                if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-	                print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-	            }
-	            print '</td>';
-	        }
-	    }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -461,20 +444,26 @@ if ($resql)
 	// Date creation
 	if (! empty($arrayfields['f.datec']['checked']))
 	{
-	    print '<td class="liste_titre">';
-	    print '</td>';
+		print '<td class="liste_titre">';
+		print '</td>';
 	}
 	// Date modification
 	if (! empty($arrayfields['f.tms']['checked']))
 	{
-	    print '<td class="liste_titre">';
-	    print '</td>';
+		print '<td class="liste_titre">';
+		print '</td>';
 	}
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-	    print '<td class="liste_titre" align="center">';
-	    print '</td>';
+		print '<td class="liste_titre" align="center">';
+		$liststatus=array(
+			0=>$langs->trans("Draft"),
+			1=>$langs->trans("Active"),
+			-1=>$langs->trans("Disabled"),
+		);
+		print $form->selectarray('search_status', $liststatus, $search_status, -2);
+		print '</td>';
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
@@ -500,7 +489,7 @@ if ($resql)
 	if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'],$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'],$_SERVER['PHP_SELF'],"f.datec","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'],$_SERVER['PHP_SELF'],"f.tms","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'],$_SERVER['PHP_SELF'],"f.suspended,f.frequency","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'nomaxwidthsearch ')."\n";
 	print "</tr>\n";
 
@@ -516,17 +505,22 @@ if ($resql)
 			$companystatic->id=$objp->socid;
 			$companystatic->name=$objp->name;
 
-			$invoicerectmp->id=$objp->id;
+			$invoicerectmp->id=$objp->id?$objp->id:$objp->facid;
 			$invoicerectmp->frequency=$objp->frequency;
-			$invoicerectmp->suspend=$objp->suspend;
+			$invoicerectmp->suspended=$objp->suspended;
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
+			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
+			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
+			$invoicerectmp->ref=$objp->titre;
 
 			print '<tr class="oddeven">';
 
 			if (! empty($arrayfields['f.titre']['checked']))
 			{
-			   print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
-			   print "</a></td>\n";
+			   print '<td>';
+			   print $invoicerectmp->getNomUrl(1);
+			   print "</a>";
+			   print "</td>\n";
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['s.nom']['checked']))
@@ -588,10 +582,10 @@ if ($resql)
 			}
 			if (! empty($arrayfields['f.nb_gen_done']['checked']))
 			{
-			    print '<td align="center">';
-			    print ($objp->frequency ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
-			    print '</td>';
-			    if (! $i) $totalarray['nbfield']++;
+				print '<td align="center">';
+				print ($objp->frequency ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+				print '</td>';
+				if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['f.date_last_gen']['checked']))
 			{
@@ -603,7 +597,7 @@ if ($resql)
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
 			   print '<td align="center">';
-			   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_when),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
@@ -630,21 +624,21 @@ if ($resql)
 			}
 			// Action column
 			print '<td align="center">';
-			if ($user->rights->facture->creer)
+			if ($user->rights->facture->creer && empty($invoicerectmp->suspended))
 			{
-		        if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
-		        {
+				if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
+				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 					print $langs->trans("CreateBill").'</a>';
-		        }
-		        else
-		        {
-		            print $langs->trans("DateIsNotEnough");
-		        }
+				}
+				else
+				{
+					print $langs->trans("DateIsNotEnough");
+				}
 			}
 			else
 			{
-			    print "&nbsp;";
+				print "&nbsp;";
 			}
 			if (! $i) $totalarray['nbfield']++;
 			print "</td>";
@@ -656,9 +650,9 @@ if ($resql)
 	}
 	else
 	{
-	    $colspan=1;
-	    foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
-	    print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		$colspan=1;
+		foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 
 	//var_dump($totalarray);

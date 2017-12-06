@@ -7,11 +7,14 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer automatiquement une commande client 
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la signature d'une proposition commerciale (la facture sera du même montant que la proposition commerciale source)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la cloture d'un commande (la facture sera du même montant que la commande)
-# Autoclassify
+# Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source(s) facturée(s) au classement facturé de la commande (et si le montant des deux documents est le même)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) facturée(s) à la validation d'une facture client (si la facture est du même montant que la commande)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée à la validation de la facture client (et si le montant des deux documents est le même)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée au classement payé de la facture client (et si le montant des deux documents est le même)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer la commande source expédiée à la validation d'une expédition (si les quantité des documents sont les mêmes)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source supplier proposal(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source supplier order(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked orders)
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique
