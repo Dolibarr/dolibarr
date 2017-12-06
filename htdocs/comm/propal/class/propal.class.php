@@ -683,6 +683,7 @@ class Propal extends CommonObject
 
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
+			$remise = 0;
 			if ($remise_percent > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
@@ -1983,7 +1984,7 @@ class Propal extends CommonObject
 			$sql.= " SET fk_availability = '".$id."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(__METHOD__.' availability('.$availability_id.')', LOG_DEBUG);
+			dol_syslog(__METHOD__.' availability('.$id.')', LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (!$resql)
 			{
@@ -3103,6 +3104,7 @@ class Propal extends CommonObject
 		global $langs;
 		$langs->load("propal");
 
+		$statuttrans='';
 		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
 		if ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
 		if ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
@@ -3151,6 +3153,9 @@ class Propal extends CommonObject
 			$langs->load("propal");
 			$now=dol_now();
 
+			$delay_warning = 0;
+			$statut = 0;
+			$label = '';
 			if ($mode == 'opened') {
 				$delay_warning=$conf->propal->cloture->warning_delay;
 				$statut = self::STATUS_VALIDATED;
@@ -3981,9 +3986,9 @@ class PropaleLigne extends CommonObjectLine
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return	 int  				<0 if ko, >0 if ok
 	 */
-	function delete($user=null, $notrigger=0)
+	function delete(User $user, $notrigger=0)
 	{
-		global $conf,$user;
+		global $conf;
 
 		$error=0;
 		$this->db->begin();
