@@ -437,8 +437,8 @@ class FactureRec extends CommonInvoice
 		// Retreive all extrafield for line
 		// fetch optionals attributes and labels
 		require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-		$extrafieldsline=new ExtraFields($line->db);
-		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label($line->table_element,true);
+		$extrafieldsline=new ExtraFields($this->db);
+		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec',true);
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
