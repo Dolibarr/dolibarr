@@ -115,7 +115,7 @@ if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-	$builddate=time();
+	$builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
@@ -133,7 +133,7 @@ if ($calc==2) 	// Invoice for goods, payment for services
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $builddate=time();
+    $builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("Description");
@@ -142,7 +142,7 @@ if ($calc==2) 	// Invoice for goods, payment for services
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 
 $vatcust=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
@@ -169,7 +169,7 @@ if($calc ==0 || $calc == 2)
 	$parameters["end"] = $date_end;
 	$parameters["direction"] = 'sell';
 	$parameters["type"] = 'localtax'.$local;
-	
+
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -183,7 +183,7 @@ if($calc ==0 || $calc == 2)
 		{
 			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
-				
+
 				$intra = str_replace($find,$replace,$coll->tva_intra);
 				if(empty($intra))
 				{
@@ -247,7 +247,7 @@ if($calc ==0 || $calc == 1){
 	$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 	$parameters["direction"] = 'buy';
 	$parameters["type"] = 'localtax'.$local;
-	
+
 	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if (is_array($coll_list))
 	{
@@ -258,7 +258,7 @@ if($calc ==0 || $calc == 1){
 		{
 			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
-				
+
 				$intra = str_replace($find,$replace,$coll->tva_intra);
 				if(empty($intra))
 				{

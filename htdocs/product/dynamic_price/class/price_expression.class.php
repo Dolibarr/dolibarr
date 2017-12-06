@@ -74,7 +74,7 @@ class PriceExpression
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -121,11 +121,18 @@ class PriceExpression
      */
     function fetch($id)
     {
+        // Check parameters
+        if (empty($id))
+        {
+            $this->error='ErrorWrongParameters';
+            return -1;
+        }
+        
         $sql = "SELECT title, expression";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
 
-    	dol_syslog(get_class($this)."::fetch");
+    	dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -160,7 +167,7 @@ class PriceExpression
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " ORDER BY title";
 
-        dol_syslog(get_class($this)."::list_price_expression");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -198,7 +205,7 @@ class PriceExpression
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE title = '".$this->db->escape($title)."'";
 
-    	dol_syslog(get_class($this)."::find_title");
+    	dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -243,7 +250,7 @@ class PriceExpression
 
 		$this->db->begin();
 
-    	dol_syslog(get_class($this)."::update");
+    	dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -266,7 +273,7 @@ class PriceExpression
 		{
 			foreach($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
@@ -314,7 +321,7 @@ class PriceExpression
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
     		$sql.= " WHERE rowid = ".$rowid;
 
-	        dol_syslog(get_class($this)."::delete");
+	        dol_syslog(__METHOD__);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -324,7 +331,7 @@ class PriceExpression
 		{
 			foreach($this->errors as $errmsg)
 			{
-	        	dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	        	dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 	            $this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();

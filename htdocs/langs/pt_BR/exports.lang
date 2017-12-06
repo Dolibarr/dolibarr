@@ -88,5 +88,6 @@ ExportDateFilter=AAAA, AAAAMM, AAAAMMDD : filtros por um ano / mês / dia<br>AAA
 ImportFromLine=Importar iniciando da linha número
 SetThisValueTo2ToExcludeFirstLine=Por exemplo, coloque 3 para este valor para excluir as 2 primeiras linhas
 KeepEmptyToGoToEndOfFile=Manter este campo em branco para ir até o fim do arquivo
+ComputedField=Campo computado
 SelectFilterFields=Se você deseja filtrar alguns valores, apenas os valores de entrada aqui.
 FilteredFieldsValues=Valor para o filtro

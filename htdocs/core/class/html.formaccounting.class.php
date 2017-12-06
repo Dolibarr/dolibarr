@@ -218,7 +218,7 @@ class FormAccounting extends Form
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
-	    $sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+	    $sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= ' ORDER BY import_key DESC';
 
 		dol_syslog(get_class($this) . "::select_bookkeeping_importkey", LOG_DEBUG);

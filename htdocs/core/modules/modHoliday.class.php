@@ -69,9 +69,6 @@ class modHoliday extends DolibarrModules
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='holiday';
 
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		$this->triggers = 0;
-
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
@@ -94,26 +91,7 @@ class modHoliday extends DolibarrModules
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 
 		// Array to add new pages in new tabs
-		// Example: $this->tabs = array('objecttype:+tabname1:Title1:@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab identified by code tabname1
-        //                              'objecttype:+tabname2:Title2:@mymodule:$user->rights->othermodule->read:/mymodule/mynewtab2.php?id=__ID__',  // To add another new tab identified by code tabname2
-        //                              'objecttype:-tabname');                                                     // To remove an existing tab identified by code tabname
-		// where objecttype can be
-		// 'thirdparty'       to add a tab in third party view
-		// 'intervention'     to add a tab in intervention view
-		// 'order_supplier'   to add a tab in supplier order view
-		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'invoice'          to add a tab in customer invoice view
-		// 'order'            to add a tab in customer order view
-		// 'product'          to add a tab in product view
-		// 'stock'            to add a tab in stock view
-		// 'propal'           to add a tab in propal view
-		// 'member'           to add a tab in fundation member view
-		// 'contract'         to add a tab in contract view
-		// 'user'             to add a tab in user view
-		// 'group'            to add a tab in group view
-		// 'contact'          to add a tab in contact view
-		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-		$this->tabs = array('user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');
+		$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');  					// To add a new tab identified by code tabname1
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
@@ -173,11 +151,11 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 
 		// Exports
 		$r=1;

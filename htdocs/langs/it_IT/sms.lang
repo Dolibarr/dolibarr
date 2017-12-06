@@ -38,7 +38,7 @@ SmsStatusNotSent=Non inviato
 SmsSuccessfulySent=SMS inviato correttamente (da %s a %s)
 ErrorSmsRecipientIsEmpty=Manca il numero del destinatario
 WarningNoSmsAdded=Nessun nuovo numero di telefono da aggiungere alla lista dei destinatari
-ConfirmValidSms=Do you confirm validation of this campain?
+ConfirmValidSms=Convalidi questa campagna?
 NbOfUniqueSms=Quantità di numeri telefonici univoci
 NbOfSms=Quantità di numeri telefonici
 ThisIsATestMessage=Questo è un messaggio di prova.
@@ -48,4 +48,4 @@ SmsInfoNumero= (formato internazionale, per esempio: +393499701761)
 DelayBeforeSending=Ritardo prima dell'invio (minuti)
 SmsNoPossibleSenderFound=Nessun mittente disponibile. Controlla le impostazioni del tuo provider SMS.
 SmsNoPossibleRecipientFound=Nessun destinatario disponibile. Controllare le impostazioni del provider SMS.
-
+DisableStopIfSupported=Disabilita i messaggi di STOP (se supportati)

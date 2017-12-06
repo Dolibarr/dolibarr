@@ -36,7 +36,7 @@ class AgendaEvents extends DolibarrApi
     );
 
     /**
-     * @var Event $actioncomm {@type ActionComm}
+     * @var ActionComm $actioncomm {@type ActionComm}
      */
     public $actioncomm;
 
@@ -76,7 +76,7 @@ class AgendaEvents extends DolibarrApi
             throw new RestException(401, "Insuffisant rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id)) {
+		if ( ! DolibarrApi::_checkAccessToResource('agenda',$this->actioncomm->id,'actioncomm','','fk_soc','id')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -115,11 +115,11 @@ class AgendaEvents extends DolibarrApi
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.id as rowid";
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= ' WHERE t.entity IN ('.getEntity('agenda').')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($user_ids) $sql.=" AND t.fk_user_action IN (".$user_ids.")";
         if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
         // Insert sale filter
@@ -153,6 +153,7 @@ class AgendaEvents extends DolibarrApi
 
         if ($result)
         {
+        	$i=0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)

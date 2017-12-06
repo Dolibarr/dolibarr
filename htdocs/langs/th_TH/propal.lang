@@ -4,7 +4,6 @@ Proposal=ข้อเสนอเชิงพาณิชย์
 ProposalShort=ข้อเสนอ
 ProposalsDraft=ข้อเสนอในเชิงพาณิชย์ร่าง
 ProposalsOpened=ข้อเสนอในเชิงพาณิชย์เปิด
-Prop=ข้อเสนอเชิงพาณิชย์
 CommercialProposal=ข้อเสนอเชิงพาณิชย์
 PdfCommercialProposalTitle=ข้อเสนอเชิงพาณิชย์
 ProposalCard=การ์ดเสนอ
@@ -64,6 +63,7 @@ ProposalLine=โฆษณาข้อเสนอ
 AvailabilityPeriod=ความล่าช้าที่ว่าง
 SetAvailability=ความล่าช้าในการตั้งค่าความพร้อม
 AfterOrder=หลังจากที่สั่งซื้อ
+OtherProposals=ข้อเสนออื่น ๆ
 ##### Availability #####
 AvailabilityTypeAV_NOW=ทันทีทันใด
 AvailabilityTypeAV_1W=1 สัปดาห์

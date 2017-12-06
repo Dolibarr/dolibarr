@@ -4,7 +4,6 @@ Proposal=Oferta handlowa
 ProposalShort=Oferta
 ProposalsDraft=Szkic ofert handlowych
 ProposalsOpened=Otwarte oferty handlowe
-Prop=Oferty handlowe
 CommercialProposal=Oferta handlowa
 PdfCommercialProposalTitle=Oferta handlowa
 ProposalCard=Karta oferty
@@ -64,6 +63,7 @@ ProposalLine=Wniosek linii
 AvailabilityPeriod=Opóźnienie w dostępności
 SetAvailability=Ustaw opóźnienie w dostępności
 AfterOrder=od zamówienia
+OtherProposals=Inne oferty
 ##### Availability #####
 AvailabilityTypeAV_NOW=Natychmiastowo
 AvailabilityTypeAV_1W=1 tydzień

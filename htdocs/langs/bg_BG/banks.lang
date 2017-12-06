@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Банка
 MenuBankCash=Банка/Каса
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Име на банката
 FinancialAccount=Сметка
 BankAccount=Банкова сметка
@@ -155,3 +157,6 @@ NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
 ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

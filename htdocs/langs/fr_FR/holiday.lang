@@ -79,6 +79,8 @@ HolidaysCancelation=Annulation de la demande de congés
 EmployeeLastname=Nom du salarié
 EmployeeFirstname=Prénom du salarié
 TypeWasDisabledOrRemoved=Le type de congés (id %s) a été désactivé ou supprimé
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Dernière mise à jour automatique de l'allocation des congés

@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Druhý schválení již učinili
 SupplierOrderReceivedInDolibarr=Dodavatel pořadí %s obdržel %s
 SupplierOrderSubmitedInDolibarr=Dodavatel pořadí %s odeslán
 SupplierOrderClassifiedBilled=Dodavatel pořadí %s set účtoval
+OtherOrders=Ostatní objednávky
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Zástupce následující-up, zákaznické objednávky
 TypeContact_commande_internal_SHIPPING=Zástupce následující-up dopravy
@@ -151,5 +152,7 @@ OrderCreated=Vaše objednávky byly vytvořeny
 OrderFail=Došlo k chybě během vytváření objednávky
 CreateOrders=Vytvoření objednávky
 ToBillSeveralOrderSelectCustomer=Chcete-li vytvořit fakturu z několika řádů, klikněte nejprve na zákazníka, pak zvolte "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=V blízkosti, aby se „%s“ automaticky, pokud jsou přijaty všechny výrobky.
 SetShippingMode=Nastavení režimu dopravy

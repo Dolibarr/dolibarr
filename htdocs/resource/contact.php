@@ -36,7 +36,7 @@ $langs->load("sendings");
 $langs->load("companies");
 
 $id = GETPOST('id','int');
-$ref = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref','alpha');
 $action = GETPOST('action','alpha');
 
 // Security check
@@ -123,19 +123,19 @@ if ($id > 0 || ! empty($ref))
 
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	 
-	 
+
+
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';
-	 
-	 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-	 
-	 
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	 
-	
+
+
 	// Object
 
 	print '<table width="100%" class="border">';
@@ -152,7 +152,7 @@ if ($id > 0 || ! empty($ref))
 	print '</div>';
 
 	dol_fiche_end();
-	
+
 	print '<br>';
 
 	if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser=1;

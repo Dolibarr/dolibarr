@@ -45,7 +45,7 @@ $langs->load("productbatch");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $batch  	= GETPOST('batch','alpha');
 $productid  = GETPOST('productid','int');
 $ref        = GETPOST('ref','alpha');       // ref is productid_batch
@@ -136,9 +136,11 @@ if (empty($reshook))
             // some hooks
             if (empty($reshook)) {
                 $result = $object->insertExtraFields();
-                if ($result < 0) {
-                    $error++;
-                }
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
             } else if ($reshook < 0)
                 $error++;
         }
@@ -150,7 +152,7 @@ if (empty($reshook))
 	// Action to add record
 	if ($action == 'add')
 	{
-		if (GETPOST('cancel'))
+		if (GETPOST('cancel','alpha'))
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php',1);
 			header("Location: ".$urltogo);
@@ -198,10 +200,10 @@ if (empty($reshook))
 	}
 
 	// Cancel
-	if ($action == 'update' && GETPOST('cancel')) $action='view';
+	if ($action == 'update' && GETPOST('cancel','alpha')) $action='view';
 
 	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel'))
+	if ($action == 'update' && ! GETPOST('cancel','alpha'))
 	{
 		$error=0;
 
@@ -284,7 +286,6 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	//
-    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.GETPOST('entity').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.GETPOST('fk_product').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.GETPOST('batch').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td><input class="flat" type="text" name="fk_user_creat" value="'.GETPOST('fk_user_creat').'"></td></tr>';

@@ -144,15 +144,15 @@ class Menubase
         $sql.= "enabled,";
         $sql.= "usertype";
         $sql.= ") VALUES (";
-        $sql.= " '".$this->menu_handler."',";
-        $sql.= " '".$conf->entity."',";
-        $sql.= " '".$this->module."',";
-        $sql.= " '".$this->type."',";
-        $sql.= " ".($this->mainmenu?"'".$this->mainmenu."'":"''").",";    // Can't be null
-        $sql.= " ".($this->leftmenu?"'".$this->leftmenu."'":"null").",";
-        $sql.= " '".$this->fk_menu."',";
-        $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
-        $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
+        $sql.= " '".$this->db->escape($this->menu_handler)."',";
+        $sql.= " '".$this->db->escape($conf->entity)."',";
+        $sql.= " '".$this->db->escape($this->module)."',";
+        $sql.= " '".$this->db->escape($this->type)."',";
+        $sql.= " ".($this->mainmenu?"'".$this->db->escape($this->mainmenu)."'":"''").",";    // Can't be null
+        $sql.= " ".($this->leftmenu?"'".$this->db->escape($this->leftmenu)."'":"null").",";
+        $sql.= " '".$this->db->escape($this->fk_menu)."',";
+        $sql.= " ".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
+        $sql.= " ".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
         $sql.= " '".(int) $this->position."',";
         $sql.= " '".$this->db->escape($this->url)."',";
         $sql.= " '".$this->db->escape($this->target)."',";
@@ -160,7 +160,7 @@ class Menubase
         $sql.= " '".$this->db->escape($this->langs)."',";
         $sql.= " '".$this->db->escape($this->perms)."',";
         $sql.= " '".$this->db->escape($this->enabled)."',";
-        $sql.= " '".$this->user."'";
+        $sql.= " '".$this->db->escape($this->user)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -220,8 +220,8 @@ class Menubase
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
         $sql.= " fk_menu='".$this->db->escape($this->fk_menu)."',";
-        $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
-        $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
+        $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
+        $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
         $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
         $sql.= " url='".$this->db->escape($this->url)."',";
         $sql.= " target='".$this->db->escape($this->target)."',";

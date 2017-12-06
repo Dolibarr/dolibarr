@@ -41,7 +41,7 @@ if (!$user->rights->cron->create) accessforbidden();
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $backtourl=GETPOST('backtourl','alpha');
 $securitykey = GETPOST('securitykey','alpha');
 
@@ -148,7 +148,7 @@ if ($action=='add')
 	$object->params=GETPOST('params');
 	$object->md5params=GETPOST('md5params');
 	$object->module_name=GETPOST('module_name','alpha');
-	$object->note=GETPOST('note');
+	$object->note=GETPOST('note','none');
 	$object->datestart=dol_mktime(GETPOST('datestarthour','int'), GETPOST('datestartmin','int'), 0, GETPOST('datestartmonth','int'), GETPOST('datestartday','int'), GETPOST('datestartyear','int'));
 	$object->dateend=dol_mktime(GETPOST('dateendhour','int'), GETPOST('dateendmin','int'), 0, GETPOST('dateendmonth','int'), GETPOST('dateendday','int'), GETPOST('dateendyear','int'));
 	$object->datenextrun=dol_mktime(GETPOST('datenextrunhour','int'), GETPOST('datenextrunmin','int'), 0, GETPOST('datenextrunmonth','int'), GETPOST('datenextrunday','int'), GETPOST('datenextrunyear','int'));
@@ -184,7 +184,7 @@ if ($action=='update')
 	$object->params=GETPOST('params');
 	$object->md5params=GETPOST('md5params');
 	$object->module_name=GETPOST('module_name','alpha');
-	$object->note=GETPOST('note');
+	$object->note=GETPOST('note','none');
 	$object->datestart=dol_mktime(GETPOST('datestarthour','int'), GETPOST('datestartmin','int'), 0, GETPOST('datestartmonth','int'), GETPOST('datestartday','int'), GETPOST('datestartyear','int'));
 	$object->dateend=dol_mktime(GETPOST('dateendhour','int'), GETPOST('dateendmin','int'), 0, GETPOST('dateendmonth','int'), GETPOST('dateendday','int'), GETPOST('dateendyear','int'));
 	$object->datenextrun=dol_mktime(GETPOST('datenextrunhour','int'), GETPOST('datenextrunmin','int'), 0, GETPOST('datenextrunmonth','int'), GETPOST('datenextrunday','int'), GETPOST('datenextrunyear','int'));

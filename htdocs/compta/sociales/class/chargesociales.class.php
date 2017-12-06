@@ -26,7 +26,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/** 
+/**
  *	Classe permettant la gestion des paiements des charges
  *  La tva collectee n'est calculee que sur les factures payees.
  */
@@ -36,7 +36,7 @@ class ChargeSociales extends CommonObject
     public $table='chargesociales';
     public $table_element='chargesociales';
     public $picto = 'bill';
-    
+
     /**
      * {@inheritdoc}
      */
@@ -83,9 +83,10 @@ class ChargeSociales extends CommonObject
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
-        if ($ref) $sql.= " WHERE cs.rowid = ".$ref;
-        else $sql.= " WHERE cs.rowid = ".$id;
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
+        $sql.= ' WHERE cs.entity IN ('.getEntity('tax').')';
+        if ($ref) $sql.= " AND cs.rowid = ".$ref;
+        else $sql.= " AND cs.rowid = ".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -110,7 +111,7 @@ class ChargeSociales extends CommonObject
                 $this->paye					= $obj->paye;
                 $this->periode				= $this->db->jdate($obj->periode);
                 $this->import_key			= $this->import_key;
-                
+
                 $this->db->free($resql);
 
                 return 1;
@@ -171,8 +172,8 @@ class ChargeSociales extends CommonObject
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, date_creation)";
         $sql.= " VALUES (".$this->type;
-        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
-        $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"NULL");
+        $sql.= ", ".($this->fk_account>0 ? $this->fk_account:'NULL');
+        $sql.= ", ".($this->mode_reglement_id>0 ? $this->mode_reglement_id:"NULL");
         $sql.= ", '".$this->db->escape($this->lib)."'";
         $sql.= ", '".$this->db->idate($this->date_ech)."'";
 		$sql.= ", '".$this->db->idate($this->periode)."'";
@@ -378,7 +379,7 @@ class ChargeSociales extends CommonObject
         if ($return) return 1;
         else return -1;
     }
-    
+
     /**
      *  Retourne le libelle du statut d'une charge (impaye, payee)
      *
@@ -445,19 +446,20 @@ class ChargeSociales extends CommonObject
             if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
-        
+
         return "Error, mode/status not found";
     }
 
 
     /**
-     *  Return clicable name (with picto eventually)
-     *
-     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     * 	@param	int		$maxlen			Longueur max libelle
-     *	@return	string					Chaine avec URL
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     * 	@param	int		$maxlen			Max length of label
+     *  @param	int  	$notooltip		1=Disable tooltip
+     *	@return	string					String with link
      */
-    function getNomUrl($withpicto=0,$maxlen=0)
+    function getNomUrl($withpicto=0, $maxlen=0, $notooltip=0)
     {
         global $langs;
 
@@ -466,12 +468,14 @@ class ChargeSociales extends CommonObject
         if (empty($this->ref)) $this->ref=$this->lib;
         $label = $langs->trans("ShowSocialContribution").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object($label, 'bill', 'class="classfortooltip"').$linkend.' ');
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+        $result .= $linkend;
+
         return $result;
     }
 

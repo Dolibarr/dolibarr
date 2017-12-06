@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014      Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2017 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Frederic France       <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,9 +28,9 @@
 // $cancel must be defined
 // $id or $ref must be defined (object is loaded in this file with fetch)
 
-if (($id > 0 || (! empty($ref) && ! in_array($action, array('create','createtask')))) && empty($cancel))
+if (($id > 0 || (! empty($ref) && ! in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0))
 {
-    $ret = $object->fetch($id,$ref);
+    $ret = $object->fetch($id, $ref);
     if ($ret > 0)
     {
         $object->fetch_thirdparty();
@@ -38,7 +38,8 @@ if (($id > 0 || (! empty($ref) && ! in_array($action, array('create','createtask
     }
     else
     {
-        setEventMessages($object->error, $object->errors, 'errors');
+    	if (empty($object->error) && ! count($object->errors)) setEventMessages('Fetch on object return an error without filling $object->error nor $object->errors', null, 'errors');
+        else setEventMessages($object->error, $object->errors, 'errors');
         $action='';
     }
 }

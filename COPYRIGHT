@@ -34,12 +34,11 @@ Swift Mailer           5.4.2-DEV     MIT license                 Yes            
 Stripe                 4.7.0         MIT licence                 Yes             Library for Stripe module
 
 JS libraries:
-jQuery                 1.11.3        MIT License                 Yes             JS library
-jQuery UI              1.11.4        GPL and MIT License         Yes             JS library plugin UI
-jQuery select2         3.5.2         GPL and Apache License      Yes             JS library plugin for sexier multiselect
+jQuery                 3.1.1         MIT License                 Yes             JS library
+jQuery UI              1.12.1        GPL and MIT License         Yes             JS library plugin UI
+jQuery select2         4.0.5         GPL and Apache License      Yes             JS library plugin for sexier multiselect
 jQuery blockUI         2.70.0        GPL and MIT License         Yes             JS library plugin blockUI (to use ajax popups)
 jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors
-jQuery FileUpload      5.0.3         GPL and MIT License         Yes             JS library to upload files
 jQuery Flot            0.8.3         MIT License                 Yes             JS library to build graph
 jQuery JCrop           0.9.8         GPL and MIT License         Yes             JS library plugin Crop (to crop images)
 jQuery Jeditable       1.7.1         GPL and MIT License         Yes             JS library plugin jeditable (to edit in place)
@@ -49,10 +48,10 @@ jQuery jqueryFileTree  1.0.1         GPL and MIT License         Yes            
 jQuery jquerytreeview  1.4.1         MIT License                 Yes             JS library for filetree
 jQuery TableDnD        0.6           GPL and MIT License         Yes             JS library plugin TableDnD (to reorder table rows)
 jQuery Timepicker      1.1.0         GPL and MIT License         Yes             JS library Timepicker addon for Datepicker
-jQuery Tiptip          1.3           GPL and MIT License         Yes             JS library for tooltips
-jsGanttImproved        1.7.5.2       BSD License                 Yes             JS library (to build Gantt reports)
+jsGanttImproved        1.7.5.4       BSD License                 Yes             JS library (to build Gantt reports)
 JsTimezoneDetect       1.0.6         MIT License                 Yes             JS library to detect user timezone
 SwaggerUI			   2.0.24		 GPL-2+                      Yes             JS library to offer the REST API explorer
+Ace                    1.2.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.    
 
 For licenses compatibility informations:
 http://www.gnu.org/licenses/licenses.en.html

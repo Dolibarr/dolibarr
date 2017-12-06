@@ -36,7 +36,7 @@ $action=GETPOST('action','alpha');
 $modulepart=GETPOST('modulepart','alpha')?GETPOST('modulepart','alpha'):'produit|service';
 $original_file = GETPOST("file");
 $backtourl=GETPOST('backtourl');
-$cancel=GETPOST("cancel");
+$cancel=GETPOST('cancel','alpha');
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
@@ -67,9 +67,15 @@ elseif ($modulepart == 'expensereport')
 }
 elseif ($modulepart == 'user')
 {
-    $result=restrictedArea($user,'user',$id,'user');
-    if (! $user->rights->user->user->lire) accessforbidden();
-    $accessallowed=1;
+	$result=restrictedArea($user,'user',$id,'user');
+	if (! $user->rights->user->user->lire) accessforbidden();
+	$accessallowed=1;
+}
+elseif ($modulepart == 'societe')
+{
+	$result=restrictedArea($user,'societe',$id,'societe');
+	if (! $user->rights->societe->lire) accessforbidden();
+	$accessallowed=1;
 }
 
 // Security:
@@ -115,6 +121,17 @@ elseif ($modulepart == 'holiday')
 		$dir=$conf->holiday->dir_output;	// By default
 	}
 }
+elseif ($modulepart == 'societe')
+{
+    require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+    $object = new Societe($db);
+    if ($id > 0)
+    {
+        $result = $object->fetch($id);
+        if ($result <= 0) dol_print_error($db,'Failed to load object');
+        $dir=$conf->societe->dir_output;
+    }
+}
 elseif ($modulepart == 'user')
 {
     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -145,6 +162,7 @@ if (empty($backtourl))
     else if (in_array($modulepart, array('holiday'))) $backtourl=DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('project'))) $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('user'))) $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('societe'))) $backtourl=DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
 

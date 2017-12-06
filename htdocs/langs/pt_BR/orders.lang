@@ -4,6 +4,7 @@ SuppliersOrdersArea=Área de Pedidos a Fornecedores
 OrderCard=Ficha Pedido
 OrderId=ID Pedido
 Order=Pedido
+PdfOrderTitle=Pedido
 Orders=Pedidos
 OrderLine=Linha de Comando
 OrderDate=Data Pedido

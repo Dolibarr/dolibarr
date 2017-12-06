@@ -471,14 +471,14 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename='SUPPLIER_INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {

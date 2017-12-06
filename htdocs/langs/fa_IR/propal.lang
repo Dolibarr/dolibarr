@@ -4,7 +4,6 @@ Proposal=پیشنهاد تجاری
 ProposalShort=پیشنهاد
 ProposalsDraft=طرح تجاری پیش نویس
 ProposalsOpened=Open commercial proposals
-Prop=طرح های تجاری
 CommercialProposal=پیشنهاد تجاری
 PdfCommercialProposalTitle=پیشنهاد تجاری
 ProposalCard=کارت های پیشنهادی
@@ -64,6 +63,7 @@ ProposalLine=خط پیشنهاد
 AvailabilityPeriod=تاخیر در دسترس
 SetAvailability=تنظیم تاخیر در دسترس
 AfterOrder=پس از سفارش
+OtherProposals=طرح های دیگر
 ##### Availability #####
 AvailabilityTypeAV_NOW=فوری
 AvailabilityTypeAV_1W=1 هفته

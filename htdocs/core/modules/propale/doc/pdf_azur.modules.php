@@ -43,6 +43,7 @@ class pdf_azur extends ModelePDFPropales
 	var $db;
 	var $name;
 	var $description;
+	var $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
 	var $type;
 
 	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
@@ -74,8 +75,9 @@ class pdf_azur extends ModelePDFPropales
 		$this->db = $db;
 		$this->name = "azur";
 		$this->description = $langs->trans('DocModelAzurDescription');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
-		// Dimension page pour format A4
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -292,10 +294,10 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
+				$pdf->SetSubject($outputlangs->transnoentities("PdfCommercialProposalTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("CommercialProposal")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfCommercialProposalTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -758,6 +760,8 @@ class pdf_azur extends ModelePDFPropales
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+				$this->result = array('fullpath'=>$file);
 
 				return 1;   // Pas d'erreur
 			}
@@ -1428,7 +1432,7 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$title=$outputlangs->transnoentities("CommercialProposal");
+		$title=$outputlangs->transnoentities("PdfCommercialProposalTitle");
 		$pdf->MultiCell(100, 4, $title, '', 'R');
 
 		$pdf->SetFont('','B',$default_font_size);
