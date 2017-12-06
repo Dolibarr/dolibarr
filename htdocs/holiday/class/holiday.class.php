@@ -989,7 +989,7 @@ class Holiday extends CommonObject
 		                while ($i < $nbUser)
 		                {
 		                    $now_holiday = $this->getCPforUser($users[$i]['rowid'], $val['rowid']);
-		                    $new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
+		                    $new_solde = $now_holiday + $nb_holiday;
 
 		                    // We add a log for each user
 		                    $this->addLogCP($user->id, $users[$i]['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $new_solde, $val['rowid']);
