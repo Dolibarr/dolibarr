@@ -3997,8 +3997,8 @@ class Product extends CommonObject
 
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 		{
-			$dirold .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
-			$pdirold .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
+			$dir = $sdir . '/'. get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
+			$pdir = '/' . get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
 		}
 
 		// Defined relative dir to DOL_DATA_ROOT
