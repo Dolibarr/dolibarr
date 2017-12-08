@@ -41,7 +41,10 @@ $action = GETPOST('action','alpha');
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
-	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
+	$values = GETPOST($code);
+	if(is_array($values))$values = implode(',', $values);
+	
+	if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -114,6 +117,35 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	print '</form>';
 	print '</td></tr>';
 }
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
+
+$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_country";
+$sql.= " WHERE active > 0";
+
+$countryArray=array();
+$resql=$db->query($sql);
+if ($resql)
+{
+	while ($obj = $db->fetch_object($resql))
+	{
+			$countryArray[$obj->code_iso]		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+	}
+}
+
+$seledted = empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) ? array() : explode(',',$conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+
+print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $seledted);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
 
 print '</table>';
 

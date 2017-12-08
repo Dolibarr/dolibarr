@@ -36,7 +36,7 @@ class modBlockedLog extends DolibarrModules
      */
     function __construct($db)
     {
-    	global $langs,$conf;
+    	global $langs,$conf,$mysoc;
 
         $this->db = $db;
         $this->numero = 3200;
@@ -69,8 +69,12 @@ class modBlockedLog extends DolibarrModules
 	    $this->depends = array('always'=>'modFacture');	   // List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	                   // List of modules id to disable if this one is disabled
 	    $this->conflictwith = array();	                   // List of modules id this module is in conflict with
-        $this->langfiles = array();
+        $this->langfiles = array('blockedlog');
 
+        $this->warnings_unactivation = array('FR'=>'BlockedLogAreRequiredByYourCountryLegislation');
+        
+        $this->automatic_activation = array('FR'=>'BlockedLogActivatedBecauseRequiredByYourCountryLegislation');
+        
         // Constants
         //-----------
 
@@ -86,5 +90,55 @@ class modBlockedLog extends DolibarrModules
         // Main menu entries
         //------------------
         $this->menu = array();
+        
+        $this->always_enabled = !empty($conf->blockedlog->enabled) && !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) && in_array($mysoc->country_code, explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY));
+
+    }
+    
+    /**
+     * Check if module was already used before unactivation linked to warnings_unactivation property  
+     */
+    function alreadyUsed() {
+    	
+    	$res = $this->db->query("SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."blockedlog");
+    	if($res!==false) {
+    		$obj = $this->db->fetch_object($res);
+    		return ($obj->nb > 0);
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+	 * Function called when module is disabled.
+	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
+	 * Data directories are not deleted
+	 *
+	 * @param      string	$options    Options when enabling module ('', 'noboxes')
+	 * @return     int             		1 if OK, 0 if KO
+	 */
+    function remove($options = '') {
+    	
+    	global $user;
+    	
+    	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+    	
+    	$object=new stdClass;
+    	$object->id = 1;
+    	$object->element = 'module';
+    	$object->ref = 'module';
+    	$object->date = time();
+    	
+    	$b=new BlockedLog($this->db);
+    	$b->setObjectData($object, 'MODULE_RESET', -1);
+    	
+    	$res = $b->create($user);
+    	if($res<=0) {
+    		$this->error = $b->error;
+    		return $res;
+    	}
+    	
+    	return $this->_remove(array(), $options);
+    	
     }
 }
