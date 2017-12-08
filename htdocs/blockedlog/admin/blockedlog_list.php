@@ -46,6 +46,13 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+$search_start = -1;
+if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
+
+$search_end = -1;
+if(GETPOST('search_endyear')!='') $search_end= dol_mktime(0, 0, 0, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+
+
 if (empty($sortfield)) $sortfield='rowid';
 if (empty($sortorder)) $sortorder='DESC';
 
@@ -128,7 +135,7 @@ else if($action === 'downloadcsv') {
  *	View
  */
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder);
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_start, $search_end);
 
 $form=new Form($db);
 
@@ -154,7 +161,27 @@ print ' </div>';
 
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+
 print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre_filter">';
+print '<td class="liste_titre">&nbsp;</td>';
+
+print '<td class="liste_titre">';
+print $form->select_date($search_start,'search_start');
+print $form->select_date($search_end,'search_end');
+print '</td>';
+
+print '<td class="liste_titre" colspan="7">&nbsp;</td>';
+
+// Action column
+print '<td class="liste_titre" align="middle">';
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
+print '</td>';
+
+print '</tr>';
 
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"],'rowid','','','',$sortfield,$sortorder,'minwidth50 ')."\n";
@@ -226,6 +253,9 @@ foreach($blocks as &$block) {
 }
 
 print '</table>';
+
+print '</form>';
+
 print '</div>';
 
 print '<script type="text/javascript">
