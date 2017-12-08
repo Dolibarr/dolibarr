@@ -613,10 +613,10 @@ class BlockedLog
 		}
 
 		if($search_start > 0) $sql.=" AND date_creation >= '".$this->db->idate($search_start)."'";
-		if($search_end> 0) $sql.=" AND date_creation <= '".$this->db->idate($search_end)."'";
-		
+		if($search_end > 0) $sql.=" AND date_creation <= '".$this->db->idate($search_end)."'";
+
 		$sql.=$this->db->order($sortfield, $sortorder);
-		
+
 		if($limit > 0 )$sql.=' LIMIT '.$limit;
 
 		$res = $this->db->query($sql);

@@ -34,6 +34,12 @@ $langs->load("blockedlog");
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
+
+$search=array();
+
 $showonlyerrors = GETPOST('showonlyerrors','int');
 
 // Load variable for pagination
@@ -46,15 +52,16 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+if (empty($sortfield)) $sortfield='rowid';
+if (empty($sortorder)) $sortorder='DESC';
+
 $search_start = -1;
 if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
 
 $search_end = -1;
-if(GETPOST('search_endyear')!='') $search_end= dol_mktime(0, 0, 0, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+if(GETPOST('search_endyear')!='') $search_end= dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
 
 
-if (empty($sortfield)) $sortfield='rowid';
-if (empty($sortorder)) $sortorder='DESC';
 
 $block_static = new BlockedLog($db);
 
@@ -63,7 +70,16 @@ $block_static = new BlockedLog($db);
  * Actions
  */
 
-if($action === 'downloadblockchain') {
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+{
+	$search_start = -1;
+	$search_end = -1;
+	$toselect='';
+	$search_array_options=array();
+}
+
+if ($action === 'downloadblockchain') {
 
 	$auth = new BlockedLogAuthority($db);
 
@@ -135,9 +151,9 @@ else if($action === 'downloadcsv') {
  *	View
  */
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_start, $search_end);
-
 $form=new Form($db);
+
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_start, $search_end);
 
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
@@ -151,6 +167,20 @@ dol_fiche_head($head, 'fingerprints', '', -1);
 print $langs->trans("FingerprintsDesc")."<br>\n";
 
 print '<br>';
+
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if ($search_start > 0) $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int')).'&search_startmonth='.urlencode(GETPOST('search_startmonth','int')).'&search_startday='.urlencode(GETPOST('search_startday','int'));
+if ($search_end > 0)   $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int')).'&search_endmonth='.urlencode(GETPOST('search_endmonth','int')).'&search_endday='.urlencode(GETPOST('search_endday','int'));
+foreach($search as $key => $val)
+{
+	$param.= '&search_'.$key.'='.urlencode($search[$key]);
+}
+if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
+// Add $param from extra fields
+//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
 
 print '<div align="right">';
 print ' <a href="?all=1">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a>';
@@ -184,16 +214,16 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"],'rowid','','','',$sortfield,$sortorder,'minwidth50 ')."\n";
-print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"],'date_creation','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'user_fullname','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"],'ref_object','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"],'rowid','',$param,'',$sortfield,$sortorder,'minwidth50 ')."\n";
+print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"],'date_creation','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'user_fullname','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"],'ref_object','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
 print '</tr>';
 
 $loweridinerror=0;
