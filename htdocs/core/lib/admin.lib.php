@@ -1133,17 +1133,17 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
 }
 
 /**
- *  Activate external modules for country if neccessary
+ *  Activate external modules mandatroy when country is country_code
  *
  * 	@param		string		$country_code	CountryCode
  * 	@return		int			1
  */
-function module_require_by_country($country_code)
+function activateModulesRequiredByCountry($country_code)
 {
 	global $db, $conf, $langs;
 
 	$modulesdir = dolGetModulesDirs();
-	
+
 	foreach ($modulesdir as $dir)
 	{
 		// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -1156,12 +1156,12 @@ function module_require_by_country($country_code)
 				if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
 				{
 					$modName = substr($file, 0, dol_strlen($file) - 10);
-					
+
 					if ($modName)
 					{
 						include_once $dir.$file;
 						$objMod = new $modName($db);
-						
+
 						if ($objMod->numero > 0)
 						{
 							$j = $objMod->numero;
@@ -1170,28 +1170,26 @@ function module_require_by_country($country_code)
 						{
 							$j = 1000 + $i;
 						}
-						
+
 						$modulequalified=1;
-						
+
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-						
+
 						if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
 						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 						if(!empty($conf->global->$const_name)) $modulequalified=0; // already activated
-						
+
 						if ($modulequalified)
 						{
 							// Load languages files of module
 							if (isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code]))
 							{
-								
 								activateModule($modName);
-								
+
 								setEventMessage($objMod->automatic_activation[$country_code],'warnings');
-								
 							}
-							
+
 						}
 						else dol_syslog("Module ".get_class($objMod)." not qualified");
 					}
@@ -1204,7 +1202,7 @@ function module_require_by_country($country_code)
 			dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 		}
 	}
-	
+
 	return 1;
 }
 

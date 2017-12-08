@@ -1104,6 +1104,10 @@ div.blockvmenuend, div.blockvmenubookmarks {
 div.vmenu, td.vmenu {
 	padding-right: 10px !important;
 }
+.blockvmenu .menu_titre {
+    margin-top: 4px;
+    margin-bottom: 3px;
+}
 
 /* Try responsive even not on smartphone
 #id-container {
@@ -1798,7 +1802,7 @@ div.login_block {
 	position: absolute;
 	text-align: <?php print $right; ?>;
 	<?php print $right; ?>: 0;
-	top: 0;
+	top: <?php print $disableimages?'4px':'0'; ?>;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
