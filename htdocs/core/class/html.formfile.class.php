@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -958,10 +958,10 @@ class FormFile
 			if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
 			if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 		}
-		// For backward compatiblity, we detect file is stored into an old path
-		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
+		// For backward compatiblity, we detect file stored into an old path
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos')
 		{
-			$relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
+		    $relativepath=preg_replace('/^.*\/produit\//','',$filearray[0]['path']).'/';
 		}
 		// Defined relative dir to DOL_DATA_ROOT
 		$relativedir = '';
