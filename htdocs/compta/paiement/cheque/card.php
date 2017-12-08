@@ -46,7 +46,7 @@ $confirm=GETPOST('confirm', 'alpha');
 // Security check
 $fieldname = (! empty($ref)?'ref':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldname);
+$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','fk_user_author',$fieldname);
 
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
