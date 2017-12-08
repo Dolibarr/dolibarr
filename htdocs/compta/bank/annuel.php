@@ -180,9 +180,9 @@ dol_fiche_end();
 
 
 // Affiche tableau
-print '<div class="floatright">'.$link.'</div>';
+print load_fiche_titre('', $link, '');
 
-
+print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
@@ -238,7 +238,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print "</tr>\n";
 
 print "</table>";
-
+print "</div>";
 
 print '<br>';
 
