@@ -490,53 +490,54 @@ if ($action == 'new')
 
 		if (count($lines[$bid]))
 		{
-    		foreach ($lines[$bid] as $lid => $value)
-    		{
-    			$account_id = $bid;
-    			if (! isset($accounts[$bid]))
-    				$accounts[$bid]=0;
-    			$accounts[$bid] += 1;
+			foreach ($lines[$bid] as $lid => $value)
+			{
+				$account_id = $bid;
+				if (! isset($accounts[$bid]) || $accounts[$bid] == '') {
+					$accounts[$bid]=0;
+				}
+				$accounts[$bid] += 1;
 
-    			print '<tr class="oddeven">';
-    			print '<td>'.dol_print_date($value["date"],'day').'</td>';
-    			print '<td>'.$value["numero"]."</td>\n";
-    			print '<td>'.$value["emetteur"]."</td>\n";
-    			print '<td>'.$value["banque"]."</td>\n";
-    			print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<tr class="oddeven">';
+				print '<td>'.dol_print_date($value["date"],'day').'</td>';
+				print '<td>'.$value["numero"]."</td>\n";
+				print '<td>'.$value["emetteur"]."</td>\n";
+				print '<td>'.$value["banque"]."</td>\n";
+				print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 
-    			// Link to payment
-    			print '<td align="center">';
-    			$paymentstatic->id=$value["paymentid"];
-    			$paymentstatic->ref=$value["paymentid"];
-    			if ($paymentstatic->id)
-    			{
-    				print $paymentstatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
-    			// Link to bank transaction
-    			print '<td align="center">';
-    			$accountlinestatic->rowid=$value["id"];
-    			if ($accountlinestatic->rowid)
-    			{
-    				print $accountlinestatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
+				// Link to payment
+				print '<td align="center">';
+				$paymentstatic->id=$value["paymentid"];
+				$paymentstatic->ref=$value["paymentid"];
+				if ($paymentstatic->id)
+				{
+					print $paymentstatic->getNomUrl(1);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
+				// Link to bank transaction
+				print '<td align="center">';
+				$accountlinestatic->rowid=$value["id"];
+				if ($accountlinestatic->rowid)
+				{
+					print $accountlinestatic->getNomUrl(1);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
 
-    			print '<td align="center">';
-    			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
-    			print '</td>' ;
-    			print '</tr>';
+				print '<td align="center">';
+				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+				print '</td>' ;
+				print '</tr>';
 
-    			$i++;
-    		}
+				$i++;
+			}
 		}
 		print "</table>";
         print '</div>';
