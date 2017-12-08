@@ -521,7 +521,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);
@@ -632,7 +633,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);
