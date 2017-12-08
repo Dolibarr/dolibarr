@@ -492,11 +492,12 @@ if ($action == 'new')
 		{
 			foreach ($lines[$bid] as $lid => $value)
 			{
-				$account_id = $bid;
-				if (! isset($accounts[$bid]) || $accounts[$bid] == '') {
+				//$account_id = $bid; FIXME not used
+
+				// FIXME $accounts[$bid] is a label !
+				/*if (! isset($accounts[$bid]))
 					$accounts[$bid]=0;
-				}
-				$accounts[$bid] += 1;
+				$accounts[$bid] += 1;*/
 
 				print '<tr class="oddeven">';
 				print '<td>'.dol_print_date($value["date"],'day').'</td>';
@@ -689,10 +690,12 @@ else
         {
     		while ($objp = $db->fetch_object($resql))
     		{
-    			$account_id = $objp->bid;
-    			if (! isset($accounts[$objp->bid]))
+    			//$account_id = $objp->bid; FIXME not used
+
+    			// FIXME $accounts[$objp->bid] is a label
+    			/*if (! isset($accounts[$objp->bid]))
     				$accounts[$objp->bid]=0;
-    			$accounts[$objp->bid] += 1;
+    			$accounts[$objp->bid] += 1;*/
 
     			print '<tr class="oddeven">';
     			print '<td align="center">'.$i.'</td>';
