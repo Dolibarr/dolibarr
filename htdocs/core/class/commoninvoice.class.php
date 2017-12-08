@@ -319,7 +319,8 @@ abstract class CommonInvoice extends CommonObject
 				// TODO If there is payment in bookkeeping, check payment is not dispatched in accounting
 				// ...
 
-				if ($this->situation_cycle_ref) {
+				if ($this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) 
+				{
 					$last = $this->is_last_in_cycle();
 					if (! $last) return -3;
 				}
