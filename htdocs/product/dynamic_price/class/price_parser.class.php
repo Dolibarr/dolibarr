@@ -82,6 +82,7 @@ class PriceParser
 		17, undefined variable '%s'
 		21, empty result '%s'
 		22, negative result '%s'
+		24, variable '%s' exists but has no value
 
 		-2 Args
 		 6, wrong number of arguments (%s given, %s expected)
@@ -192,9 +193,12 @@ class PriceParser
 		$expression = str_replace("\n", $this->separator_chr, $expression);
 		foreach ($values as $key => $value)
 		{
-			if ($value === null) $value = "NULL";
-			$expression = str_replace($this->special_chr.$key.$this->special_chr, strval($value), $expression);
-		}
+            if ($value === null && strpos($expression, $key) !== false) {
+                $this->error_parser = array(24, $key);
+                return -7;
+            }
+            $expression = str_replace($this->special_chr.$key.$this->special_chr, strval($value), $expression);
+        }
 
 		//Check if there is unfilled variable
 		if (strpos($expression, $this->special_chr) !== false)
