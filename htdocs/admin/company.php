@@ -69,6 +69,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 
 		$s=$mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
 		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s,'chaine',0,'',$conf->entity);
+		module_require_by_country($mysoc->country_code);
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);

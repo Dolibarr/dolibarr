@@ -73,6 +73,8 @@ class modBlockedLog extends DolibarrModules
 
         $this->warnings_unactivation = array('FR'=>'BlockedLogAreRequiredByYourCountryLegislation');
         
+        $this->automatic_activation = array('FR'=>'BlockedLogActivatedBecauseRequiredByYourCountryLegislation');
+        
         // Constants
         //-----------
 
