@@ -714,7 +714,7 @@ if ($resql)
 		// Date
 		if (! empty($arrayfields['c.date_contrat']['checked']))
 		{
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day').'</td>';
+			print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -742,7 +742,7 @@ if ($resql)
 		if (! empty($arrayfields['lower_planned_end_date']['checked']))
 		{
 			print '<td align="center" class="nowrap">';
-			print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day');
+			print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

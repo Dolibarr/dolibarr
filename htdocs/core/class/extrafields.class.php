@@ -145,7 +145,7 @@ class ExtraFields
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields
 	 *  @param  string  		$langfile  		 	Language file
-	 *  @return int      					<=0 if KO, >0 if OK
+	 *  @return int      							<=0 if KO, >0 if OK
 	 */
 	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='')
 	{
@@ -234,6 +234,7 @@ class ExtraFields
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
+				if ($type == 'varchar' && empty($lengthdb)) $lengthdb='255';
 			}
 			$field_desc = array(
 			'type'=>$typedb,
@@ -1362,12 +1363,12 @@ class ExtraFields
 		if ($type == 'date')
 		{
 			$showsize=10;
-			$value=dol_print_date($value,'day');
+			$value=dol_print_date($value, 'day', 'tzuser');
 		}
 		elseif ($type == 'datetime')
 		{
 			$showsize=19;
-			$value=dol_print_date($value,'dayhour');
+			$value=dol_print_date($value, 'dayhour', 'tzuser');
 		}
 		elseif ($type == 'int')
 		{
@@ -1389,7 +1390,7 @@ class ExtraFields
 		}
 		elseif ($type == 'mail')
 		{
-			$value=dol_print_email($value,0,0,0,64,1,1);
+			$value=dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		}
 		elseif ($type == 'url')
 		{
@@ -1401,7 +1402,7 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$value=price($value,0,$langs,0,0,-1,$conf->currency);
+			$value=price($value, 0, $langs, 0, 0, -1, $conf->currency);
 		}
 		elseif ($type == 'select')
 		{

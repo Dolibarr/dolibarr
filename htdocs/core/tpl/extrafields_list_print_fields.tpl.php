@@ -1,4 +1,5 @@
 <?php
+// Loop to show all columns of extrafields from $obj, $extrafields and $db
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
 	foreach($extrafields->attribute_label as $key => $val)
@@ -10,7 +11,15 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 			if ($align) print ' align="'.$align.'"';
 			print '>';
 			$tmpkey='options_'.$key;
-			print $extrafields->showOutputField($key, $obj->$tmpkey, '');
+			if (in_array($extrafields->attribute_type[$key], array('date', 'datetime', 'timestamp')))
+			{
+				$value = $db->jdate($obj->$tmpkey);
+			}
+			else
+			{
+				$value = $obj->$tmpkey;
+			}
+			print $extrafields->showOutputField($key, $value, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! empty($val['isameasure']))

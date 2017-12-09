@@ -1,4 +1,5 @@
 <?php
+// Loop to complete $param for extrafields
 foreach ($search_array_options as $key => $val)
 {
 	$crit=$val;
