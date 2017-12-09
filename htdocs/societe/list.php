@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
+ * Copyright (C) 2017       Juanjo Menent      		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -850,6 +851,8 @@ print "</tr>\n";
 
 $var=True;
 
+$typenArray = $formcompany->typent_array(1);
+
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -925,7 +928,6 @@ while ($i < min($num, $limit))
     if (! empty($arrayfields['typent.code']['checked']))
     {
         print '<td align="center">';
-		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 		print $typenArray[$obj->typent_code];
 		print '</td>';
     }
