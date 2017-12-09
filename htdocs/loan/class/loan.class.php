@@ -415,13 +415,15 @@ class Loan extends CommonObject
             $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
         if (! empty($this->label))
             $tooltip .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
-        $link = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'"';
-        $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
+
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
         $linkend = '</a>';
 
-        if ($withpicto) $result.=($link.$linkclose.img_object($langs->trans("ShowLoan").': '.$this->label,'bill', 'class="classfortooltip"').$linkend.' ');
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$linkclose.($maxlen?dol_trunc($this->ref,$maxlen):$this->ref).$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+        $result .= $linkend;
+
         return $result;
     }
 

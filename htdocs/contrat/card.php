@@ -517,6 +517,9 @@ if (empty($reshook))
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
 							$tva_tx = $prodcustprice->lines [0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 				}
@@ -1087,6 +1090,10 @@ if ($action == 'create')
 			$objectsrc->fetch(GETPOST('originid'));
 			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
 			$objectsrc->fetch_thirdparty();
+			
+			// Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options = $objectsrc->array_options;
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 

@@ -137,13 +137,18 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	}
 	?>
 	</td>
-	<?php if ($object->element == 'supplier_proposal') { ?>
-		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php }
+	<?php
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+	?>
+		<td class="linecolrefsupplier"><?php
+		echo ($line->ref_fourn?$line->ref_fourn:$line->ref_supplier);
+		?></td>
+	<?php
+	}
 	// VAT Rate
 	?>
 	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php
-	//var_dump($line);
 	$positiverates='';
 	if (price2num($line->tva_tx))          $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
 	if (price2num($line->total_localtax1)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);

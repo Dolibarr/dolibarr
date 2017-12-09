@@ -50,7 +50,6 @@ abstract class CommonObject
 	public $id;
 	/**
 	 * @var string 		Error string
-	 * @deprecated		Use instead the array of error strings
 	 * @see             errors
 	 */
 	public $error;
@@ -150,13 +149,13 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var CommonObject An originating object?
+	 * @var string 	The type of originating object ('commande', 'facture', ...)
 	 * @see fetch_origin()
 	 */
 	public $origin;
 	/**
-	 * @var int The originating object?
-	 * @see fetch_origin(), origin
+	 * @var int 	The id of originating object
+	 * @see fetch_origin()
 	 */
 	public $origin_id;
 
@@ -392,7 +391,7 @@ abstract class CommonObject
 	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
-	 *	@param	Translate	$langs			Language object for translation of civility
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option, 1=Add civility
 	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
 	 * 	@param	int			$maxlen			Maximum length
@@ -612,15 +611,16 @@ abstract class CommonObject
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-		$forcedownload=1;
-		$rellink='/document.php?modulepart='.$modulepart;
-		if ($forcedownload) $rellink.='&attachment=1';
-		if (! empty($ecmfile->entity)) $rellink.='&entity='.$ecmfile->entity;
-		//$rellink.='&file='.urlencode($filepath);		// No need of name of file for public link, we will use the hash
-		$fulllink=$urlwithroot.$rellink;
-		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;			// Hash of file path
-		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
-		if (! empty($ecmfile->share))  $fulllink.='&hashp='.$ecmfile->share;			// Hash for public share
+		$forcedownload=0;
+
+		$paramlink='';
+		//if (! empty($modulepart)) $paramlink.=($paramlink?'&':'').'modulepart='.$modulepart;		// For sharing with hash (so public files), modulepart is not required.
+		//if (! empty($ecmfile->entity)) $paramlink.='&entity='.$ecmfile->entity; 					// For sharing with hash (so public files), entity is not required.
+		//$paramlink.=($paramlink?'&':'').'file='.urlencode($filepath);								// No need of name of file for public link, we will use the hash
+		if (! empty($ecmfile->share)) $paramlink.=($paramlink?'&':'').'hashp='.$ecmfile->share;			// Hash for public share
+		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
+
+		$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
 
 		// Here $ecmfile->share is defined
 		return $fulllink;
@@ -3025,7 +3025,7 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, canvas";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+		$sql.= " WHERE entity IN (".getEntity($this->element).")";
 		if (! empty($id))  $sql.= " AND rowid = ".$id;
 		if (! empty($ref)) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 
@@ -3504,9 +3504,9 @@ abstract class CommonObject
 			// Description
 			print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
-			if ($this->element == 'supplier_proposal')
+			if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier')
 			{
-				print '<td class="linerefsupplier" align="right"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
+				print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
 			}
 
 			// VAT
@@ -3878,9 +3878,10 @@ abstract class CommonObject
 			$this->tpl['description'] = '&nbsp;';
 		}
 
-		// VAT Rate
-		$this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
-		if (! empty($line->vat_src_code) && ! preg_match('/\(/', $this->tpl['vat_rate'])) $this->tpl['vat_rate'].=' ('.$line->vat_src_code.')';
+        // VAT Rate
+        $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
+        $this->tpl['vat_rate'] .= (($line->info_bits & 1) == 1) ? '*' : '';
+        if (! empty($line->vat_src_code) && ! preg_match('/\(/', $this->tpl['vat_rate'])) $this->tpl['vat_rate'].=' ('.$line->vat_src_code.')';
 
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
@@ -4211,8 +4212,9 @@ abstract class CommonObject
 						/*$this->result['fullname']=$destfull;
 						$this->result['filepath']=$ecmfile->filepath;
 						$this->result['filename']=$ecmfile->filename;*/
+						//var_dump($obj->update_main_doc_field);exit;
 
-						// Update the last_main_doc field into main object
+						// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
 						$update_main_doc_field=0;
 						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
 						if ($update_main_doc_field && ! empty($this->table_element))
@@ -4359,7 +4361,7 @@ abstract class CommonObject
 
 
 	/**
-	 *  Function to get extra fields of a member into $this->array_options
+	 *  Function to get extra fields of an object into $this->array_options
 	 *  This method is in most cases called by method fetch of objects but you can call it separately.
 	 *
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
@@ -5620,7 +5622,7 @@ abstract class CommonObject
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				if (empty($extrafields->attribute_list[$key])) continue;												// 0 = Never visible field
-				if (($mode == 'create' || $mode == 'edit') && abs($extrafields->attribute_list[$key]) != 1) continue;	// <> -1 and <> 1 = not visible on forms, only on list
+				if (($mode == 'create' || $mode == 'edit') && abs($extrafields->attribute_list[$key]) != 1 && abs($extrafields->attribute_list[$key]) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 
 				// Load language if required
 				if (! empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
@@ -6145,8 +6147,9 @@ abstract class CommonObject
 		// Clean and check mandatory
 		foreach($keys as $key)
 		{
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
-			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';
+			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
 			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
@@ -6154,6 +6157,10 @@ abstract class CommonObject
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
+
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key]='null';
+			if (! empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key]='null';
 		}
 
 		if ($error) return -1;
@@ -6173,15 +6180,23 @@ abstract class CommonObject
 			}
 		}
 
-		if (! $error && ! $notrigger) {
+		if (! $error)
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+		}
 
-			if (!$notrigger) {
-				// Call triggers
-				$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
-				if ($result < 0) { $error++; }
-				// End call triggers
-			}
+		if (! $error)
+		{
+			$result=$this->insertExtraFields();
+			if ($result < 0) $error++;
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Commit or rollback

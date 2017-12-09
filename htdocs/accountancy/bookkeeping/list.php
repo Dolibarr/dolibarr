@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("accountancy");
@@ -99,9 +100,19 @@ $formother = new FormOther($db);
 $form = new Form($db);
 
 
-if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page)) {
-	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page))
+{
+	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+	$year_start = dol_print_date(dol_now(), '%Y');
+	$year_end = $year_start + 1;
+	$month_end = $month_start - 1;
+	if ($month_end < 1)
+	{
+		$month_end = 12;
+		$year_end--;
+	}
+	$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+	$search_date_end = dol_get_last_day($year_end, $month_end);
 }
 
 $arrayfields=array(
@@ -398,18 +409,14 @@ $listofformat=AccountancyExport::getType();
 $button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
-$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
+//$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
 $button.= '</a>';
 
+
 $groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php"">' . $langs->trans("GroupByAccountAccounting") . '</a>';
+$addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby, '', $limit);
-
-print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
-print '<div class="inline-block divButAction"><a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a></div>';
-
-print '</div>';
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$addbutton, '', $limit);
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
@@ -695,6 +702,12 @@ if ($num > 0)
 
 print "</table>";
 print '</div>';
+
+// TODO Replace this with mass action
+print '<div class="tabsAction tabsActionNoBottom">' . "\n";
+print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a>';
+print '</div>';
+
 
 print '</form>';
 

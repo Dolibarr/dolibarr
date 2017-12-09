@@ -35,7 +35,7 @@ function printBookmarksList($aDb, $aLangs)
 	$db = $aDb;
 	$langs = $aLangs;
 
-	$ret.= '<div class="menu_top"></div>'."\n";
+	$ret = '<div class="menu_top"></div>'."\n";
 
 	if (! empty($conf->use_javascript_ajax)) {		// Bookmark autosubmit can't work when javascript is off.
 
@@ -67,22 +67,23 @@ function printBookmarksList($aDb, $aLangs)
 		    $url.=($tmpurl?'?'.$tmpurl:'');
 		}
 
-		$ret = '';
-
 		// Menu bookmark
-		$ret.= '<div class="menu_top"></div>'."\n";
+		$ret = '<div class="menu_top"></div>'."\n";
 
 		$ret.= '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
 		$ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';
 		$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo" alt="Bookmarks">';
 		$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
-	    $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'">'.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
+	    $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
+	    $ret.= ' html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
+	    $ret.= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 		// Url to go on create new bookmark page
 		if (! empty($user->rights->bookmark->creer))
 		{
 	    	//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
 		    $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
-	    	$ret.= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'...</option>';
+	    	$ret.= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
+	    	$ret.= ' html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
 		}
 		// Menu with all bookmarks
 		if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
@@ -96,9 +97,9 @@ function printBookmarksList($aDb, $aLangs)
 				$i=0;
 				while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
 				{
-				    $ret.='<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' rel="'.dol_escape_htmltag($obj->url).'">';
-				    //$ret.='<span class="fa fa-print">aa</span>';
-				    $ret.=img_picto('','object_bookmark').' ';
+				    $ret.='<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' rel="'.dol_escape_htmltag($obj->url).'"';
+				    //$ret.=' html="'.dol_escape_htmltag('<span class="fa fa-print"></span> '.$obj->title).'"';
+				    $ret.='>';
 				    $ret.=dol_escape_htmltag($obj->title);
 				    $ret.='</option>';
 					$i++;

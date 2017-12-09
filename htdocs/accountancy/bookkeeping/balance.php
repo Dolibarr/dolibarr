@@ -66,8 +66,8 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (empty($search_date_start)) {
-
+if (empty($search_date_start))
+{
 	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
 	$year_start = dol_print_date(dol_now(), '%Y');
 	$year_end = $year_start + 1;

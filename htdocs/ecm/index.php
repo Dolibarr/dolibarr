@@ -77,8 +77,8 @@ $error=0;
  *	Actions
  */
 
-// Upload file
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
+// Upload file (code similar but different than actions_linkedfiles.inc.php)
+if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Define relativepath and upload_dir
     $relativepath='';
@@ -86,14 +86,20 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	else $relativepath=$section_dir;
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (empty($_FILES['userfile']['tmp_name']))
+	if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
+	else $userfiles=array($_FILES['userfile']['tmp_name']);
+
+	foreach($userfiles as $key => $userfile)
 	{
-		$error++;
-		if($_FILES['userfile']['error'] == 1 || $_FILES['userfile']['error'] == 2){
-			setEventMessages($langs->trans('ErrorFileSizeTooLarge'),null, 'errors');
-		}
-		else {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		if (empty($_FILES['userfile']['tmp_name'][$key]))
+		{
+			$error++;
+			if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
+				setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+			}
+			else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+			}
 		}
 	}
 
@@ -106,8 +112,6 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	    }
 	}
 }
-
-
 
 // Add directory
 if ($action == 'add' && $user->rights->ecm->setup)
@@ -131,7 +135,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	clearstatcache();
 }
 
-// Remove file
+// Remove file (code similar but different than actions_linkedfiles.inc.php)
 if ($action == 'confirm_deletefile')
 {
     if (GETPOST('confirm') == 'yes')
@@ -141,7 +145,6 @@ if ($action == 'confirm_deletefile')
 
     	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
     	$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
-		//var_dump($file);exit;
 
     	$ret=dol_delete_file($file);	// This include also the delete from file index in database.
     	if ($ret)
@@ -335,166 +338,7 @@ dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECM
 
 // Add filemanager component
 $module='ecm';
-include DOL_DOCUMENT_ROOT.'/ecm/tpl/filemanager.tpl.php';
-
-
-/*
-// Start container of all panels
-?>
-<!-- Begin div id="containerlayout" -->
-<div id="containerlayout">
-<div id="ecm-layout-north" class="toolbar largebutton">
-<?php
-
-// Start top panel, toolbar
-print '<div class="inline-block toolbarbutton centpercent">';
-
-// Toolbar
-if ($user->rights->ecm->setup)
-{
-    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
-}
-else
-{
-    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
-}
-$url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
-print '</a>';
-
-
-// Start Add new file area
-$nameforformuserfile = 'formuserfileecm';
-
-print '<div class="inline-block valignmiddle floatright">';
-
-// To attach new file
-if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || ! empty($section))
-{
-	if ((empty($section) || $section == -1) && ($module != 'medias'))
-	{
-		?>
-		<script type="text/javascript">
-    	jQuery(document).ready(function() {
-			jQuery('#<?php echo $nameforformuserfile ?>').hide();
-    	});
-    	</script>
-		<?php
-	}
-
-    $formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48, null, '', 0, '', 0, $nameforformuserfile);
-}
-else print '&nbsp;';
-
-print '</div>';
-// End Add new file area
-
-
-print '</div>';
-// End top panel, toolbar
-
-?>
-</div>
-<div id="ecm-layout-west" class="inline-block">
-<?php
-// Start left area
-
-
-// Confirmation de la suppression d'une ligne categorie
-if ($action == 'delete_section')
-{
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
-}
-// End confirm
-
-
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
-{
-	print '<table width="100%" class="liste noborderbottom">'."\n";
-
-	print '<!-- Title for manual directories -->'."\n";
-	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left" colspan="6">';
-    print '&nbsp;'.$langs->trans("ECMSections");
-	print '</th></tr>';
-
-    $showonrightsize='';
-
-	// Manual section
-	$htmltooltip=$langs->trans("ECMAreaDesc2");
-
-    if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
-    {
-        print '<tr><td colspan="6">';
-
-    	// Show filemanager tree (will be filled by call of ajax enablefiletreeajax.tpl.php that execute ajaxdirtree.php)
-	    print '<div id="filetree" class="ecmfiletree"></div>';
-
-	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
-
-	    print '</td></tr>';
-    }
-    else
-    {
-        print '<tr><td colspan="6" style="padding-left: 20px">';
-
-        if (empty($module)) $module='ecm';
-
-        $_POST['modulepart'] = $module;
-        $_POST['openeddir'] = GETPOST('openeddir');
-        $_POST['dir'] = empty($_POST['dir'])?'/':$_POST['dir'];
-
-        // Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
-        print '<div id="filetree" class="ecmfiletree">';
-
-        $mode='noajax';
-        $url=DOL_URL_ROOT.'/ecm/index.php';
-        include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirtree.php';
-
-    	print '</div>';
-    	print '</td></tr>';
-    }
-
-
-	print "</table>";
-}
-
-
-// End left panel
-?>
-</div>
-<div id="ecm-layout-center" class="inline-block">
-<div class="pane-in ecm-in-layout-center">
-<div id="ecmfileview" class="ecmfileview">
-<?php
-// Start right panel
-
-
-$mode='noajax';
-$url=DOL_URL_ROOT.'/ecm/index.php';
-include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
-
-
-// End right panel
-?>
-</div>
-</div>
-
-</div>
-</div> <!-- End div id="containerlayout" -->
-<?php
-
-
-if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
-	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
-}
-*/
+include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 // End of page
 dol_fiche_end();

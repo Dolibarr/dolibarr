@@ -184,7 +184,7 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' -
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
-    $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,1,($bool?1:0)),'data'=>(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
+    $dataseries[]=array($staticcontratligne->LibStatut($status,1,($bool?1:0)),(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
 
@@ -199,8 +199,17 @@ foreach($listofstatus as $status)
 if (! empty($conf->use_javascript_ajax))
 {
     print '<tr class="impair"><td align="center" colspan="2">';
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($total?0:1);
+
     print '</td></tr>';
 }
 $listofstatus=array(0,4,4,5); $bool=false;

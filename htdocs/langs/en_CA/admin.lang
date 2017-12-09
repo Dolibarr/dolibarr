@@ -2,12 +2,8 @@
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-Module50000Desc=Module to offer an online payment page by credit card with PayBox
-Module50200Desc=Module to offer an online payment page by credit card with Paypal
 VATManagement=GST Management
 LocalTax1IsUsedDesc=Use a second tax (PST)
 LocalTax1IsNotUsedDesc=Do not use second tax (PST)
 LocalTax1Management=PST Management
 LocalTax2IsNotUsedDesc=Do not use second tax (PST)
-AGENDA_REMINDER_EMAIL=Enable event reminder by emails (defined on each event). Note: Module <strong>%s</strong> must be enabled and correctly setup to have reminder sent at the correct frequency.
-AGENDA_REMINDER_BROWSER=Enable event reminder on users browser (when event date is reached, each user is able to refuse this from the browser confirmation question)

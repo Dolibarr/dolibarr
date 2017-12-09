@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Apskaitos/Iždo sritis
 NewPayment=Naujas mokėjimas
 Payments=Mokėjimai
 PaymentCustomerInvoice=Kliento sąskaitos-faktūros mokėjimas
+PaymentSupplierInvoice=Tiekėjo sąskaitos-faktūros apmokėjimas
 PaymentSocialContribution=Socialinio / fiskalinio mokesčio mokėjimas
 PaymentVat=PVM mokėjimas
 ListPayment=Mokėjimų sąrašas

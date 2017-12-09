@@ -79,6 +79,7 @@ AccountancyTreasuryArea=会計/財務エリア
 NewPayment=新しいお支払い
 Payments=支払い
 PaymentCustomerInvoice=顧客の請求書の支払い
+PaymentSupplierInvoice=サプライヤの請求書の支払い
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=付加価値税の支払い
 ListPayment=支払いのリスト

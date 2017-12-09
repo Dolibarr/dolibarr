@@ -1023,7 +1023,11 @@ class FormOther
 			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
-            $selectboxlist.=ajax_combobox("boxcombo");
+            if (! empty($conf->use_javascript_ajax))
+            {
+            	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            	$selectboxlist.=ajax_combobox("boxcombo");
+            }
         }
 
         // Javascript code for dynamic actions

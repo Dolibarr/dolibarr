@@ -11,7 +11,7 @@ BirthdayAlertOn=ziua de nastere de alertă activă
 BirthdayAlertOff=ziua de nastere de alertă inactiv
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=Începeţi încărcarea
 CancelUpload=Anulaţi încărcarea
 FileIsTooBig=Fişiere este prea mare
 PleaseBePatient=Vă rugăm să aveţi răbdare ...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=O cerere pentru a schimba parola dvs. Dolibarr a fost primită
 NewKeyIs=Aceasta este noua cheie pentru login
 NewKeyWillBe=Noua dvs. cheie pentru a vă conecta la software-ul va fi
@@ -223,6 +224,7 @@ ForgetIfNothing=Dacă nu ați solicitat această schimbare, ignoraţi acest e-ma
 IfAmountHigherThan=Daca valoarea mai mare  <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Export

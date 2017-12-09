@@ -225,6 +225,8 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
 PassEncoding=Password encoding
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions revomed
 
 ##### Export #####
 ExportsArea=Exports area

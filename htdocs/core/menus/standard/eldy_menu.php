@@ -200,7 +200,7 @@ class MenuManager
         				print '<a href="'.$relurl.'">';
         				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation
         				{
-        				    if (in_array($val['mainmenu'], array('cashdesk', 'websites'))) print $langs->trans("Access");
+        					if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab'))) print $langs->trans("Access");
         				    else print $langs->trans("Dashboard");
         				}
         				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");

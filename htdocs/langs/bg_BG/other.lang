@@ -11,7 +11,7 @@ BirthdayAlertOn=Известяването за рожден ден е акти�
 BirthdayAlertOff=Известяването за рожден ден е неактивно
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=Започни качване
 CancelUpload=Анулирай качване
 FileIsTooBig=Файлът е твърде голям
 PleaseBePatient=Моля, бъдете търпеливи...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=Получена е заявка за промяна на вашата парола за достъп
 NewKeyIs=Това е вашият нов ключ за влизане
 NewKeyWillBe=Вашият нов ключ за влизане в софтуера ще бъде
@@ -223,6 +224,7 @@ ForgetIfNothing=Ако не сте заявили промяната, прост
 IfAmountHigherThan=Ако сумаta e по-висока от <strong>%s</strong>
 SourcesRepository=Хранилище за източници
 Chart=Chart
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Секция за експорт

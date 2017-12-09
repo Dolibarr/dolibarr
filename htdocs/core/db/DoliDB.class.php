@@ -84,12 +84,12 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *   @param	    int		$param      	Date TMS to convert
+	 *   @return	string      			Date in a string YYYYMMDDHHMMSS
 	 */
 	function idate($param)
 	{
-		return dol_print_date($param,"%Y%m%d%H%M%S");
+		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
 	/**
@@ -220,9 +220,9 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string	        $sortfield  List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
-	 * @param	'ASC'|'DESC'	$sortorder  Sort order
-	 * @return	string      		        String to provide syntax of a sort sql string
+	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda, t2.fieldb'
+	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC, DESC';
+	 * @return	string						String to provide syntax of a sort sql string
 	 */
 	function order($sortfield=null,$sortorder=null)
 	{

@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Contabilitate / Trezorerie
 NewPayment=Plată nouă
 Payments=Plăţi
 PaymentCustomerInvoice=Plată factură client
+PaymentSupplierInvoice=Plată factură  furnizor
 PaymentSocialContribution=Plata taxe sociale sau fiscale
 PaymentVat=Plată TVA
 ListPayment=Listă plăţi

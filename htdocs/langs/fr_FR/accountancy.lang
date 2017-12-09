@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Exporter le libellé
 ACCOUNTING_EXPORT_AMOUNT=Exporter le montant
 ACCOUNTING_EXPORT_DEVISE=Exporter la devise
 Selectformat=Sélectionnez le format du fichier
+ACCOUNTING_EXPORT_FORMAT=Sélectionnez le format du fichier
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe pour le nom du fichier
 ThisService=Ce service
 ThisProduct=Ce produit
@@ -33,12 +35,13 @@ AlreadyInGeneralLedger=Enregistrement déjà présent dans le grand livre
 NotYetInGeneralLedger=non encore envoyé dans le grand livre
 GroupIsEmptyCheckSetup=Le groupe est vide. Vérifier la configuration du groupe personnalisé
 DetailByAccount=Afficher le détail par compte
-AccountWithNonZeroValues=Comptes sans les zéros
+AccountWithNonZeroValues=Comptes avec valeurs non nulles
+ListOfAccounts=List of accounts
 
-MainAccountForCustomersNotDefined=Compte comptable général pour les clients sans compte dédié
-MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs sans compte dédié
-MainAccountForUsersNotDefined=Compte comptable général pour les utilisateurs sans compte dédié
-MainAccountForVatPaymentNotDefined=Compte comptable général pour les paiements de TVA sans compte dédié
+MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
+MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
+MainAccountForUsersNotDefined=Compte comptable général pour les utilisateurs non défini dans la configuration
+MainAccountForVatPaymentNotDefined=Compte comptable général pour les paiements de TVA non défini dans la configuration
 
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
@@ -55,7 +58,7 @@ AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables 
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDonation=Étape %s : Définissez le compte comptable par défaut des dons. Pour cela, suivez le menu suivant %s.
-AccountancyAreaDescMisc=ÉTAPE 1%s : définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu 1%s.
+AccountancyAreaDescMisc=Étape %s : Définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu suivant %s.
 AccountancyAreaDescLoan=Étape %s : Définissez les comptes comptables par défaut des emprunts. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, suivez le menu suivant %s.
@@ -66,8 +69,7 @@ AccountancyAreaDescAnalyze=Étape %s : Ajouter ou modifier les opérations exist
 
 AccountancyAreaDescClosePeriod=Étape %s : Fermer la période pour ne plus pouvoir faire de modification à l'avenir.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Comptabilité
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Une étape obligatoire dans la configuration n'était pas terminée (journal de code de comptabilité non défini pour tous les comptes bancaires)
 Selectchartofaccounts=Sélectionnez le plan de compte actif
 ChangeAndLoad=Changer et charger
 Addanaccount=Ajouter un compte comptable
@@ -79,11 +81,11 @@ ShowAccountingJournal=Afficher le journal
 AccountAccountingSuggest=Code comptable suggéré
 MenuDefaultAccounts=Comptes par défaut
 MenuBankAccounts=Comptes bancaires
-MenuVatAccounts=Compte TVA
+MenuVatAccounts=Comptes TVA
 MenuTaxAccounts=Comptes charges
 MenuExpenseReportAccounts=Comptes notes de frais
 MenuLoanAccounts=Comptes emprunts
-MenuProductsAccounts=Compte produits
+MenuProductsAccounts=Comptes produits
 ProductsBinding=Comptes produits
 Ventilation=Liés aux comptes
 CustomersVentilation=Liaison factures client
@@ -158,7 +160,7 @@ AccountingCategory=Groupes personnalisés
 GroupByAccountAccounting=Grouper par compte comptable
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
 ByAccounts=Par compte comptable
-ByPredefinedAccountGroups=Par groupes personnalisés
+ByPredefinedAccountGroups=Par groupes prédéfinis
 ByPersonalizedAccountGroups=Par groupes personnalisés
 ByYear=Par année
 NotMatch=Non défini
@@ -166,7 +168,7 @@ DeleteMvt=Supprimer les lignes du grand livre
 DelYear=Année à supprimer
 DelJournal=Journal à supprimer
 ConfirmDeleteMvt=Cela supprimera toutes les lignes du grand livre pour l'année et/ou d'un journal spécifique. Un critère au moins est requis.
-ConfirmDeleteMvtPartial=Cela supprimera la/les lignes sélectionnée(s) du grand livre
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Supprimer l'enregistrement du grand livre
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
@@ -218,13 +220,13 @@ MvtNotCorrectlyBalanced=Mouvement non équilibré. Crédit = %s. Débit = %s
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être enregistrées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà enregistrées.
-NoNewRecordSaved=Pas de nouvelle ligne liée
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories
-AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Comptes disponibles pas encore dans un groupe personnalisé
 CategoryDeleted=Le groupe de comptes comptables a été supprimé
 AccountingJournals=Journaux comptables
 AccountingJournal=Journal comptable
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
 Modelcsv_agiris=Export vers Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service
@@ -266,7 +269,7 @@ OptionModeProductSellDesc=Afficher tous les produits/services avec le compte com
 OptionModeProductBuyDesc=Afficher tous les produits/services avec le compte comptable pour les achats.
 CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Réinitialiser tous les liens pour l'année sélectionnée
-PredefinedGroups=Groupes personnalisés
+PredefinedGroups=Groupes prédéfinis
 WithoutValidAccount=Sans compte dédié valide
 WithValidAccount=Avec un compte dédié valide
 ValueNotIntoChartOfAccount=Cette valeur de compte comptable n'existe pas dans le plan comptable
@@ -284,6 +287,6 @@ BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre
 NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
-UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
+UseMenuToSetBindindManualy=L'autodection n'est pas possible, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement
 
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.

@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Treasury- (schatkist) / boekhoudingsoverzicht
 NewPayment=Nieuwe betaling
 Payments=Betalingen
 PaymentCustomerInvoice=Afnemersfactuur betaling
+PaymentSupplierInvoice=Leveranciersfactuur betaling
 PaymentSocialContribution=Sociale/fiscale belastingbetaling
 PaymentVat=BTW betaling
 ListPayment=Betalingenlijst

@@ -209,224 +209,6 @@ if (empty($reshook))
 	$uploaddir = $conf->commande->dir_output;
 	$trigger_name='ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
-	// TODO Move this into mass action include
-	if ($massaction == 'confirm_createbills') {
-
-		$orders = GETPOST('toselect','array');
-		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-		$validate_invoices = GETPOST('valdate_invoices', 'int');
-
-		$TFact = array();
-		$TFactThird = array();
-
-		$nb_bills_created = 0;
-
-		$db->begin();
-
-		foreach($orders as $id_order)
-		{
-			$cmd = new Commande($db);
-			if ($cmd->fetch($id_order) <= 0) continue;
-
-			$object = new Facture($db);
-			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
-			else {
-
-				$object->socid = $cmd->socid;
-				$object->type = Facture::TYPE_STANDARD;
-				$object->cond_reglement_id	= $cmd->cond_reglement_id;
-				$object->mode_reglement_id	= $cmd->mode_reglement_id;
-				$object->fk_project			= $cmd->fk_project;
-
-				$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-				if (empty($datefacture))
-				{
-					$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
-				}
-
-				$object->date = $datefacture;
-				$object->origin    = 'commande';
-				$object->origin_id = $id_order;
-
-				$res = $object->create($user);
-
-				if($res > 0) $nb_bills_created++;
-			}
-
-			if ($object->id > 0)
-			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
-				$sql.= "fk_source";
-				$sql.= ", sourcetype";
-				$sql.= ", fk_target";
-				$sql.= ", targettype";
-				$sql.= ") VALUES (";
-				$sql.= $id_order;
-				$sql.= ", '".$object->origin."'";
-				$sql.= ", ".$object->id;
-				$sql.= ", '".$object->element."'";
-				$sql.= ")";
-
-				if (! $db->query($sql))
-				{
-					$error++;
-				}
-
-				if (! $error)
-				{
-					$lines = $cmd->lines;
-					if (empty($lines) && method_exists($cmd, 'fetch_lines'))
-					{
-						$cmd->fetch_lines();
-						$lines = $cmd->lines;
-					}
-
-					$fk_parent_line=0;
-					$num=count($lines);
-
-					for ($i=0;$i<$num;$i++)
-					{
-						$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
-						if ($lines[$i]->subprice < 0)
-						{
-							// Negative line, we create a discount line
-							$discount = new DiscountAbsolute($db);
-							$discount->fk_soc=$object->socid;
-							$discount->amount_ht=abs($lines[$i]->total_ht);
-							$discount->amount_tva=abs($lines[$i]->total_tva);
-							$discount->amount_ttc=abs($lines[$i]->total_ttc);
-							$discount->tva_tx=$lines[$i]->tva_tx;
-							$discount->fk_user=$user->id;
-							$discount->description=$desc;
-							$discountid=$discount->create($user);
-							if ($discountid > 0)
-							{
-								$result=$object->insert_discount($discountid);
-								//$result=$discount->link_to_invoice($lineid,$id);
-							}
-							else
-							{
-								setEventMessages($discount->error, $discount->errors, 'errors');
-								$error++;
-								break;
-							}
-						}
-						else
-						{
-							// Positive line
-							$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
-							// Date start
-							$date_start=false;
-							if ($lines[$i]->date_debut_prevue) $date_start=$lines[$i]->date_debut_prevue;
-							if ($lines[$i]->date_debut_reel) $date_start=$lines[$i]->date_debut_reel;
-							if ($lines[$i]->date_start) $date_start=$lines[$i]->date_start;
-							//Date end
-							$date_end=false;
-							if ($lines[$i]->date_fin_prevue) $date_end=$lines[$i]->date_fin_prevue;
-							if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
-							if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
-							// Reset fk_parent_line for no child products and special product
-							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9)
-							{
-								$fk_parent_line = 0;
-							}
-							$result = $object->addline(
-									$desc,
-									$lines[$i]->subprice,
-									$lines[$i]->qty,
-									$lines[$i]->tva_tx,
-									$lines[$i]->localtax1_tx,
-									$lines[$i]->localtax2_tx,
-									$lines[$i]->fk_product,
-									$lines[$i]->remise_percent,
-									$date_start,
-									$date_end,
-									0,
-									$lines[$i]->info_bits,
-									$lines[$i]->fk_remise_except,
-									'HT',
-									0,
-									$product_type,
-									$ii,
-									$lines[$i]->special_code,
-									$object->origin,
-									$lines[$i]->rowid,
-									$fk_parent_line,
-									$lines[$i]->fk_fournprice,
-									$lines[$i]->pa_ht,
-									$lines[$i]->label
-							);
-							if ($result > 0)
-							{
-								$lineid=$result;
-							}
-							else
-							{
-								$lineid=0;
-								$error++;
-								break;
-							}
-							// Defined the new fk_parent_line
-							if ($result > 0 && $lines[$i]->product_type == 9)
-							{
-								$fk_parent_line = $result;
-							}
-						}
-					}
-				}
-			}
-
-			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
-
-			if(!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) $TFactThird[$cmd->socid] = $object;
-			else $TFact[$object->id] = $object;
-		}
-
-		// Build doc with all invoices
-		$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
-		$toselect = array();
-
-		if (! $error && $validate_invoices)
-		{
-			$massaction = $action = 'builddoc';
-			foreach($TAllFact as &$object)
-			{
-				$result = $object->validate($user);
-				if ($result <= 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-					break;
-				}
-
-				$id = $object->id; // For builddoc action
-
-				// Fac builddoc
-				$donotredirect = 1;
-				$upload_dir = $conf->facture->dir_output;
-				$permissioncreate=$user->rights->facture->creer;
-				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-			}
-
-			$massaction = $action = 'confirm_createbills';
-		}
-
-		if (! $error)
-		{
-			$db->commit();
-			setEventMessage($langs->trans('BillCreated', $nb_bills_created));
-		}
-		else
-		{
-			$db->rollback();
-			$action='create';
-			$_GET["origin"]=$_POST["origin"];
-			$_GET["originid"]=$_POST["originid"];
-			setEventMessages($object->error, $object->errors, 'errors');
-			$error++;
-		}
-	}
 }
 
 
@@ -547,19 +329,7 @@ if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.elemen
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -638,12 +408,7 @@ if ($resql)
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($billed != '')			$param.='&billed='.$billed;
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
-		if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
@@ -651,8 +416,8 @@ if ($resql)
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if($user->rights->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-	if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+	if ($user->rights->commande->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lines of title fields
@@ -669,15 +434,11 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	if ($massaction == 'presend')
-	{
-		$topicmail="SendOrderRef";
-		$modelmail="order_send";
-		$objecttmp=new Commande($db);
-		$trackid='ord'.$object->id;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-	}
+	$topicmail="SendOrderRef";
+	$modelmail="order_send";
+	$objecttmp=new Commande($db);
+	$trackid='ord'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($massaction == 'createbills')
 	{
@@ -686,7 +447,7 @@ if ($resql)
 
 		print '<table class="noborder" width="100%" >';
 		print '<tr>';
-		print '<td class="titlefieldmiddle">';
+		print '<td class="titlefield">';
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
@@ -715,6 +476,8 @@ if ($resql)
 		{
 			print $form->selectyesno('valdate_invoices', 0, 1);
 		}
+		if (! empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
+		else print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetOrderBilledNotEnabled").'</span>';
 		print '</td>';
 		print '</tr>';
 		print '</table>';
@@ -872,28 +635,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				print '<td class="liste_titre'.($align?' '.$align:'').'">';
-				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-				{
-					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
-					$searchclass='';
-					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-				print '</td>';
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -957,19 +699,7 @@ if ($resql)
 	if (! empty($arrayfields['c.total_vat']['checked']))      print_liste_field_titre($arrayfields['c.total_vat']['label'],$_SERVER["PHP_SELF"],'c.tva','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'],$_SERVER["PHP_SELF"],'c.total_ttc','',$param, 'align="right"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val)
-	   {
-		   if (! empty($arrayfields["ef.".$key]['checked']))
-		   {
-				$align=$extrafields->getAlignFlag($key);
-				$sortonfield = "ef.".$key;
-				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-		   }
-	   }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -1282,23 +1012,7 @@ if ($resql)
 		}
 
 		// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-			foreach($extrafields->attribute_label as $key => $val)
-			{
-				if (! empty($arrayfields["ef.".$key]['checked']))
-				{
-					print '<td';
-					$align=$extrafields->getAlignFlag($key);
-					if ($align) print ' align="'.$align.'"';
-					print '>';
-					$tmpkey='options_'.$key;
-					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-					print '</td>';
-					if (! $i) $totalarray['nbfield']++;
-				}
-			}
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook

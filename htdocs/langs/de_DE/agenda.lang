@@ -82,13 +82,13 @@ PRODUCT_CREATEInDolibarr=Produkt %s erstellt
 PRODUCT_MODIFYInDolibarr=Produkt %s aktualisiert
 PRODUCT_DELETEInDolibarr=Produkt %s gelöscht
 EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
-EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_VALIDATEInDolibarr=Ausgabenbericht %s validiert
 EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
 EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
 EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
 PROJECT_CREATEInDolibarr=Projekt %s erstellt
 PROJECT_MODIFYInDolibarr=Projekt %s geändert
-PROJECT_DELETEInDolibarr=Project %s deleted
+PROJECT_DELETEInDolibarr=Projekt %s gelöscht
 ##### End agenda events #####
 AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginnt

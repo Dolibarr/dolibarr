@@ -315,19 +315,8 @@ if ($search_user > 0)
 	$sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$db->escape($search_user);
 }
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -388,20 +377,15 @@ if ($resql)
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
 
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
-		if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	if ($user->rights->propal->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	if ($massaction == 'presend') $arrayofmassactions=array();
+	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lignes des champs de filtre
@@ -417,15 +401,11 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	if ($massaction == 'presend')
-	{
-		$topicmail="SendSupplierProposalRef";
-		$modelmail="supplier_proposal_send";
-		$objecttmp=new Propal($db);
-		$trackid='ord'.$object->id;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-	}
+	$topicmail="SendProposalRef";
+	$modelmail="proposal_send";
+	$objecttmp=new Propal($db);
+	$trackid='pro'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
 	{
@@ -570,28 +550,8 @@ if ($resql)
 		print '</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				print '<td class="liste_titre'.($align?' '.$align:'').'">';
-   				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-				{
-					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
-					$searchclass='';
-					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-				print '</td>';
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -641,19 +601,7 @@ if ($resql)
 	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'],$_SERVER["PHP_SELF"],'p.total','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'],$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val)
-	   {
-		   if (! empty($arrayfields["ef.".$key]['checked']))
-		   {
-				$align=$extrafields->getAlignFlag($key);
-				$sortonfield = "ef.".$key;
-				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-		   }
-	   }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -841,23 +789,7 @@ if ($resql)
 		}
 
 		// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-			foreach($extrafields->attribute_label as $key => $val)
-			{
-				if (! empty($arrayfields["ef.".$key]['checked']))
-				{
-					print '<td';
-					$align=$extrafields->getAlignFlag($key);
-					if ($align) print ' align="'.$align.'"';
-					print '>';
-					$tmpkey='options_'.$key;
-					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-					print '</td>';
-					if (! $i) $totalarray['nbfield']++;
-				}
-			}
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook

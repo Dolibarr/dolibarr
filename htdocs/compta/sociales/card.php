@@ -586,13 +586,11 @@ if ($id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
     	$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
     	$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
-		$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id AND c.entity IN (" . getEntity('c_paiement').")";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql.= " WHERE p.fk_charge = ".$id;
 		$sql.= " AND p.fk_charge = cs.rowid";
-		$sql.= " AND cs.entity = ".$conf->entity;
-		$sql.= " AND p.fk_typepaiement = c.id";
-		$sql.= " AND c.entity = " . getEntity('c_paiement');
+		$sql.= " AND cs.entity IN (".getEntity('tax').")";
 		$sql.= " ORDER BY dp DESC";
 
 		//print $sql;

@@ -217,10 +217,14 @@ class Categories extends DolibarrApi
             $this->category->$field = $value;
         }
 
-        if($this->category->update(DolibarrApiAccess::$user))
+        if ($this->category->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get ($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $this->task->error);
+        }
     }
 
     /**

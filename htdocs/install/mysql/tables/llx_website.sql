@@ -20,6 +20,7 @@
 CREATE TABLE llx_website
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	type_container varchar(16) NOT NULL DEFAULT 'page',
 	entity        integer NOT NULL DEFAULT 1,
 	ref	          varchar(128) NOT NULL,
 	description   varchar(255),

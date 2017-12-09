@@ -77,11 +77,6 @@ $model_option = array (
         'label' => 'ACCOUNTING_EXPORT_DATE',
         'param' => '',
     ),
-    //'ACCOUNTING_EXPORT_PIECE',
-    //'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
-    //'ACCOUNTING_EXPORT_LABEL',
-    //'ACCOUNTING_EXPORT_AMOUNT',
-    //'ACCOUNTING_EXPORT_DEVISE',
 );
 
 /*

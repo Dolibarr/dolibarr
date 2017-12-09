@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Grāmatvedība / kase laukums
 NewPayment=Jauns maksājums
 Payments=Maksājumi
 PaymentCustomerInvoice=Klienta rēķina apmaksa
+PaymentSupplierInvoice=Piegādātāja rēķina apmaksa
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=PVN maksājumi
 ListPayment=Maksājumu saraksts

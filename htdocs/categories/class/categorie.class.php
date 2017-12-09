@@ -392,7 +392,7 @@ class Categorie extends CommonObject
 	 *          					-1 : SQL error
 	 *          					-2 : invalid category
 	 */
-	function update($user='')
+	function update(User $user)
 	{
 		global $conf, $langs,$hookmanager;
 

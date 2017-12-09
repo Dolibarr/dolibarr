@@ -79,16 +79,17 @@ class PaiementFourn extends Paiement
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiementfourn as p';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
-		$sql.= ' WHERE p.fk_paiement = c.id';
-		$sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
+		$sql.= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
 			$sql.= ' AND p.rowid = '.$ref;
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
+		//print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -533,9 +534,10 @@ class PaiementFourn extends Paiement
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien
 	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
+     *  @param		int  	$notooltip		1=Disable tooltip
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
+	function getNomUrl($withpicto=0, $option='', $mode='withlistofinvoices', $notooltip=0)
 	{
 		global $langs;
 
@@ -548,13 +550,14 @@ class PaiementFourn extends Paiement
 		}
 		$label = $langs->trans("ShowPayment").': '.$text;
 
-		$link = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend = '</a>';
 
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
 
-		if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$text.$linkend;
 		return $result;
 	}
 

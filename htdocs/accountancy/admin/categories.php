@@ -86,9 +86,11 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxheader('', $langs->trans('AccountAccounting'));
+llxheader('', $langs->trans('AccountingCategory'));
 
-print load_fiche_titre($langs->trans('AccountingCategory'));
+$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'">'.$langs->trans("BackToList").'</a>';
+
+print load_fiche_titre($langs->trans('AccountingCategory'), $linkback);
 
 print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -110,7 +112,7 @@ if (! empty($cat_id))
 	if ($return < 0) {
 		setEventMessages(null, $accountingcategory->errors, 'errors');
 	}
-	print '<tr><td class="tdtop">' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
+	print '<tr><td>' . $langs->trans("AddAccountFromBookKeepingWithNoCategories") . '</td>';
 	print '<td>';
 
 	$arraykeyvalue=array();

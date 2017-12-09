@@ -118,7 +118,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable nohover" width="100%">';
+    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
     $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     $boxstat.='</tr>';
@@ -500,6 +500,14 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
+$object=new stdClass();
+$parameters=array();
+$action='';
+$reshook=$hookmanager->executeHooks('addOpenElementsDashboardLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook == 0) {
+	$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
+}
+
 // Calculate total nb of late
 $totallate=$totaltodo=0;
 $var=true;
@@ -525,7 +533,7 @@ if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($to
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
-$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
+$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard" width="100%">'."\n";
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre">'.$langs->trans("DolibarrWorkBoard").'</th>';
 $boxwork.='</tr>'."\n";

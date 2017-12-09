@@ -1000,6 +1000,22 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
+	 *	Drop a table into database
+	 *
+	 *	@param	    string	$table 			Name of table
+	 *	@return	    int						<0 if KO, >=0 if OK
+	 */
+	function DDLDropTable($table)
+	{
+		$sql = "DROP TABLE ".$table;
+
+		if (! $this->query($sql))
+			return -1;
+		else
+			return 1;
+	}
+
+	/**
 	 * 	Create a user to connect to database
 	 *
 	 *	@param	string	$dolibarr_main_db_host 		Ip server

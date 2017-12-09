@@ -40,6 +40,7 @@ class User extends CommonObject
 {
 	public $element='user';
 	public $table_element='user';
+	public $fk_element='fk_user';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	public $id=0;
@@ -53,17 +54,17 @@ class User extends CommonObject
 	public $job;
 	public $signature;
 	public $address;
-		public $zip;
-		public $town;
-		public $state_id;
-		public $state_code;
-		public $state;
+	public $zip;
+	public $town;
+	public $state_id;
+	public $state_code;
+	public $state;
 	public $office_phone;
 	public $office_fax;
 	public $user_mobile;
 	public $admin;
 	public $login;
-		public $api_key;
+	public $api_key;
 	public $entity;
 
 	//! Clear password in memory
@@ -520,7 +521,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);
@@ -631,7 +633,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);

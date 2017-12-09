@@ -1140,4 +1140,23 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 		return true;
 	}
 
+
+	/**
+	 * testDolGetDate
+	 *
+	 * @return boolean
+	 */
+	public function testMakeSubstitutions()
+	{
+		global $conf, $langs;
+		$langs->load("main");
+
+		$substit=array("AAA"=>'Not used', "BBB"=>'Not used', "CCC"=>"C replaced");
+		$chaine='This is a string with __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__';
+		$newstring = make_substitutions($chaine, $substit);
+		$this->assertEquals($newstring, 'This is a string with eldy and ltr and __C replaced__');
+
+		return true;
+	}
+
 }

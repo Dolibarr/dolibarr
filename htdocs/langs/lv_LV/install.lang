@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Jūs izmantojat Dolibarr iestatīšanas vedni no Linux pake
 KeepDefaultValuesMamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliMamp, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesProxmox=Jūs izmantojat Dolibarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Noteikt, denormalized datiem
@@ -191,6 +192,7 @@ MigrationActioncommElement=Atjaunināt informāciju par pasākumiem
 MigrationPaymentMode=Datu migrācija uz maksājumu režīmā
 MigrationCategorieAssociation=Kategoriju migrācija
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s

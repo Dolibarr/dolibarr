@@ -325,6 +325,7 @@ class FormMail extends Form
 			if ($this->withform == 1)
 			{
 				$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
+
 				$out.= '<a id="formmail" name="formmail"></a>';
 				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
 				$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -401,7 +402,7 @@ class FormMail extends Form
 			$out.= '<table class="border" width="100%">'."\n";
 
 			// Substitution array
-			if (! empty($this->withsubstit))		// Unset of set ->withsubstit=0 to disable this.
+			if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
 			{
 				$out.= '<tr><td colspan="2" align="right">';
 				//$out.='<div class="floatright">';
@@ -416,18 +417,26 @@ class FormMail extends Form
 				//$out.='</div>';
 			}
 
+			/*var_dump(! empty($this->withfromreadonly));
+			var_dump($this->withfrom);
+			var_dump($this->fromtype);
+			var_dump($this->fromname);*/
+
 			// From
 			if (! empty($this->withfrom))
 			{
 				if (! empty($this->withfromreadonly))
 				{
-					$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td>';
+					$out.= '<tr><td class="fieldrequired minwidth200">'.$langs->trans("MailFrom").'</td><td>';
 
+					// $this->fromtype is the default value to use to select sender
 					if (! ($this->fromtype === 'user' && $this->fromid > 0)
 						&& ! ($this->fromtype === 'company')
+						&& ! ($this->fromtype === 'robot')
 						&& ! preg_match('/user_aliases/', $this->fromtype)
 						&& ! preg_match('/global_aliases/', $this->fromtype)
-						&& ! preg_match('/senderprofile/', $this->fromtype))
+						&& ! preg_match('/senderprofile/', $this->fromtype)
+						)
 					{
 						// Use this->fromname and this->frommail or error if not defined
 						$out.= $this->fromname;
@@ -462,6 +471,19 @@ class FormMail extends Form
 
 						// Add also email aliases if there is some
 						$listaliases=array('user_aliases'=>$user->email_aliases, 'global_aliases'=>$conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+
+						// Also add robot email
+						if (! empty($this->fromalsorobot))
+						{
+							if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM) && $conf->global->MAIN_MAIL_EMAIL_FROM != $conf->global->MAIN_INFO_SOCIETE_MAIL)
+							{
+								$liste['robot'] = $conf->global->MAIN_MAIL_EMAIL_FROM;
+								if ($this->frommail)
+								{
+									$liste['robot'] .= ' &lt;'.$conf->global->MAIN_MAIL_EMAIL_FROM.'&gt;';
+								}
+							}
+						}
 
 						// Add also email aliases from the c_email_senderprofile table
 						$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1 ORDER BY position';
@@ -499,18 +521,19 @@ class FormMail extends Form
 								}
 							}
 						}
-						$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', '', 0, '', $disablebademails);
-						//$out.= ajax_combobox('fromtype');
+						// Using combo here make the '<email>' no more visible on list.
+						//$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200onsmartphone', 1, '', $disablebademails);
+						$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200onsmartphone', 0, '', $disablebademails);
 					}
 
 					$out.= "</td></tr>\n";
 				}
 				else
 				{
-					$out.= '<tr><td class="fieldrequired">'.$langs->trans("MailFrom")."</td><td>";
-					$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" size="32" value="'.$this->fromname.'" />';
+					$out.= '<tr><td class="fieldrequired width200">'.$langs->trans("MailFrom")."</td><td>";
+					$out.= $langs->trans("Name").':<input type="text" id="fromname" name="fromname" class="maxwidth200onsmartphone" value="'.$this->fromname.'" />';
 					$out.= '&nbsp; &nbsp; ';
-					$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" size="32" value="'.$this->frommail.'" />&gt;';
+					$out.= $langs->trans("EMail").':&lt;<input type="text" id="frommail" name="frommail" class="maxwidth200onsmartphone" value="'.$this->frommail.'" />&gt;';
 					$out.= "</td></tr>\n";
 				}
 			}
@@ -518,7 +541,7 @@ class FormMail extends Form
 			// To
 			if (! empty($this->withto) || is_array($this->withto))
 			{
-				$out.= '<tr><td class="fieldrequired" width="180">';
+				$out.= '<tr><td class="fieldrequired">';
 				if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
 				else $out.= $langs->trans("MailTo");
 				$out.= '</td><td>';
@@ -547,7 +570,7 @@ class FormMail extends Form
 						$out.= ' &lt;'.$this->tomail.'&gt;';
 						if ($this->withtofree)
 						{
-							$out.= '<br>'.$langs->trans("and").' <input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+							$out.= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
 						}
 					}
 					else
@@ -560,7 +583,7 @@ class FormMail extends Form
 				{
 					if (! empty($this->withtofree))
 					{
-						$out.= '<input size="'.(is_array($this->withto)?"30":"60").'" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
+						$out.= '<input class="minwidth200" id="sendto" name="sendto" value="'.(! is_array($this->withto) && ! is_numeric($this->withto)? (isset($_REQUEST["sendto"])?$_REQUEST["sendto"]:$this->withto) :"").'" />';
 					}
 					if (! empty($this->withto) && is_array($this->withto))
 					{
@@ -585,12 +608,15 @@ class FormMail extends Form
 			// withoptiononeemailperrecipient
 			if (! empty($this->withoptiononeemailperrecipient))
 			{
-				$out.= '<tr><td>';
+				$out.= '<tr><td class="minwidth200">';
 				$out.= $langs->trans("GroupEmails");
 				$out.= '</td><td>';
 				$out.=' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0?' checked="checked"':'').'> ';
-				$out.= $langs->trans("OneEmailPerRecipient").' - ';
+				$out.= $langs->trans("OneEmailPerRecipient");
+				$out.='<span class="hideonsmartphone">';
+				$out.=' - ';
 				$out.= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+				$out.='</span>';
 				$out.= '</td></tr>';
 			}
 
@@ -606,7 +632,7 @@ class FormMail extends Form
 				}
 				else
 				{
-					$out.= '<input size="'.(is_array($this->withtocc)?"30":"60").'" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
+					$out.= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.((! is_array($this->withtocc) && ! is_numeric($this->withtocc))? (isset($_POST["sendtocc"])?$_POST["sendtocc"]:$this->withtocc) : (isset($_POST["sendtocc"])?$_POST["sendtocc"]:"") ).'" />';
 					if (! empty($this->withtocc) && is_array($this->withtocc))
 					{
 						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
@@ -635,7 +661,7 @@ class FormMail extends Form
 				}
 				else
 				{
-					$out.= '<input size="'.(is_array($this->withtoccc)?"30":"60").'" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
+					$out.= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))? (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:$this->withtoccc) : (isset($_POST["sendtoccc"])?$_POST["sendtoccc"]:"") ).'" />';
 					if (! empty($this->withtoccc) && is_array($this->withtoccc))
 					{
 						$out.= " ".$langs->trans("and")."/".$langs->trans("or")." ";
@@ -762,7 +788,7 @@ class FormMail extends Form
 
 				if (is_numeric($this->withfile))
 				{
-					// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+					// TODO Trick to have param removedfile containing nb of file to delete. But this does not works without javascript
 					$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 					$out.= '<script type="text/javascript" language="javascript">';
 					$out.= 'jQuery(document).ready(function () {';
@@ -864,8 +890,7 @@ class FormMail extends Form
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
-
-				if (isset($_POST["message"]) &&  ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
+				if (isset($_POST["message"]) && ! $_POST['modelselected']) $defaultmessage=$_POST["message"];
 				else
 				{
 					$defaultmessage=make_substitutions($defaultmessage,$this->substit);

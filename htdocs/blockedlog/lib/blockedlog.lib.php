@@ -38,7 +38,7 @@ function blockedlogadmin_prepare_head()
 	$head[$h][2] = 'blockedlog';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/fingerprints.php";
+	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php";
 	$head[$h][1] = $langs->trans("Fingerprints");
 	$head[$h][2] = 'fingerprints';
 	$h++;

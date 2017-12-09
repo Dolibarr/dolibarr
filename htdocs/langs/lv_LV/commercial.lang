@@ -66,6 +66,7 @@ ActionAC_OTH=Cits
 ActionAC_OTH_AUTO=Automātiski ievietoti notikumi
 ActionAC_MANUAL=Manuāli ievietoti notikumi
 ActionAC_AUTO=Automātiski ievietoti notikumi
+ActionAC_OTH_AUTOShort=Auto
 Stats=Tirdzniecības statistika
 StatusProsp=Prospekta statuss
 DraftPropals=Izstrādā komerciālos priekšlikumus

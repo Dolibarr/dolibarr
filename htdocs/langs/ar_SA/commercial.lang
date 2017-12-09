@@ -66,6 +66,7 @@ ActionAC_OTH=آخر
 ActionAC_OTH_AUTO=أحداث إدراجها تلقائيا
 ActionAC_MANUAL=أحداث إدراجها يدويا
 ActionAC_AUTO=أحداث إدراجها تلقائيا
+ActionAC_OTH_AUTOShort=Auto
 Stats=إحصاءات المبيعات
 StatusProsp=احتمال وضع
 DraftPropals=صياغة مقترحات تجارية

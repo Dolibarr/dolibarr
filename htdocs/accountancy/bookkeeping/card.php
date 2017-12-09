@@ -434,7 +434,7 @@ if ($action == 'create')
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-			print $book->doc_date ? dol_print_date($book->doc_date, 'daytext') : '&nbsp;';
+			print $book->doc_date ? dol_print_date($book->doc_date, 'day') : '&nbsp;';
 		}
 		print '</td>';
 		print '</tr>';
@@ -507,7 +507,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans("DateCreation") . '</td>';
 		print '<td>';
-		print $book->date_creation ? dol_print_date($book->date_creation, 'daytext') : '&nbsp;';
+		print $book->date_creation ? dol_print_date($book->date_creation, 'day') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
@@ -648,7 +648,7 @@ if ($action == 'create')
 					print "</tr>\n";
 				}
 
-				if ($total_debit != $total_credit)
+				if (price2num($total_debit) != price2num($total_credit))
 				{
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_credit, $total_debit)), 'warnings');
 				}

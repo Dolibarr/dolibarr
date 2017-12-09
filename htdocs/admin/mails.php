@@ -587,9 +587,13 @@ else
 	}
 	else dol_print_error($db);
 
-	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
 	print '<td>';
-	if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
+	if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'robot')
+	{
+		print $langs->trans('RobotEmail');
+	}
+	else if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
 	{
 		print $langs->trans('UserEmail');
 	}
@@ -724,10 +728,13 @@ else
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
-		$formmail->withfromreadonly=0;
+		$formmail->fromid=$user->id;
+		$formmail->fromalsorobot=1;
+		$formmail->fromtype=(GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+		$formmail->withfromreadonly=1;
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;

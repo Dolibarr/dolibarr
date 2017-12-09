@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Účtovníctvo / Treasury oblasť
 NewPayment=Nový platobný
 Payments=Platby
 PaymentCustomerInvoice=Zákazník faktúru
+PaymentSupplierInvoice=Dodávateľ faktúru
 PaymentSocialContribution=Platba sociálnej/fiškálnej dane
 PaymentVat=DPH platba
 ListPayment=Zoznam platieb

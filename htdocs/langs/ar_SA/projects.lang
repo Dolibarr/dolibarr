@@ -21,7 +21,7 @@ OnlyOpenedProject=المشاريع المفتوحة فقط مرئية (المش�
 ClosedProjectsAreHidden=Closed projects are not visible.
 TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
 TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
-AllTaskVisibleButEditIfYouAreAssigned=All tasks for qualified projects are visible, but you can enter time only for task assigned to you. Assign task to yourself if you need to enter time on it.
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for qualified projects are visible, but you can enter time only for task assigned to selected user. Assign task if you need to enter time on it.
 OnlyYourTaskAreVisible=Only tasks assigned to you are visible. Assign task to yourself if it is not visible and you need to enter time on it.
 ImportDatasetTasks=Tasks of projects
 ProjectCategories=Project tags/categories
@@ -96,7 +96,8 @@ ActivityOnProjectYesterday=النشاط على المشروع أمس
 ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
 ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر
 ActivityOnProjectThisYear=نشاط المشروع هذا العام
-ChildOfTask=طفل من مشروع / مهمة
+ChildOfProjectTask=طفل من مشروع / مهمة
+ChildOfTask=Child of task
 NotOwnerOfProject=لا صاحب هذا المشروع من القطاع الخاص
 AffectedTo=إلى المتضررين
 CantRemoveProject=هذا المشروع لا يمكن إزالتها كما هي المرجعية بعض أشياء أخرى (الفاتورة ، أو غيرها من الأوامر). انظر referers تبويبة.
@@ -136,7 +137,7 @@ ProjectReportDate=Change task dates according to new project start date
 ErrorShiftTaskDate=من المستحيل تحويل التاريخ المهمة وفقا لتاريخ بدء المشروع الجديد
 ProjectsAndTasksLines=المشاريع والمهام
 ProjectCreatedInDolibarr=مشروع٪ الصورة التي تم إنشاؤها
-ProjectModifiedInDolibarr=Project %s modified
+ProjectModifiedInDolibarr=المشروع %s تم تعديلة
 TaskCreatedInDolibarr=مهمة٪ الصورة التي تم إنشاؤها
 TaskModifiedInDolibarr=مهمة٪ الصورة المعدلة
 TaskDeletedInDolibarr=مهمة٪ الصورة حذف
@@ -170,12 +171,13 @@ ProjectMustBeValidatedFirst=يجب التحقق من صحة المشروع أو�
 FirstAddRessourceToAllocateTime=Assign a user resource to task to allocate time
 InputPerDay=إدخال يوميا
 InputPerWeek=مساهمة في الأسبوع
-InputPerAction=مساهمة في عمل
+InputDetail=Input detail
 TimeAlreadyRecorded=This is time spent already recorded for this task/day and user %s
 ProjectsWithThisUserAsContact=مشاريع مع هذا العضو عن الاتصال
 TasksWithThisUserAsContact=المهام الموكلة إلى هذا المستخدم
 ResourceNotAssignedToProject=لم يتم تعيين إلى المشروع
 ResourceNotAssignedToTheTask=Not assigned to the task
+TimeSpentBy=Time spent by
 TasksAssignedTo=Tasks assigned to
 AssignTaskToMe=تعيين مهمة بالنسبة لي
 AssignTaskToUser=Assign task to %s
@@ -209,6 +211,9 @@ OppStatusPENDING=بانتظار
 OppStatusWON=فاز
 OppStatusLOST=ضائع
 Budget=Budget
+LatestProjects=Latest %s projects
+LatestModifiedProjects=Latest %s modified projects
+OtherFilteredTasks=Other filtered tasks
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects

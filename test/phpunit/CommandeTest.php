@@ -166,12 +166,37 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testCommandeUpdate
+     *
+     * @param	Object		$localobject	Commande
+     * @return	Commande
+     *
+     * @depends	testCommandeFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testCommandUpdate($localobject)
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$localobject->note_private='New note private after update';
+    	$result=$localobject->update($user);
+
+    	$this->assertLessThan($result, 0);
+    	print __METHOD__." id=".$id." result=".$result."\n";
+    	return $localobject;
+    }
+
+    /**
      * testCommandeValid
      *
      * @param   Object  $localobject    Order
-     * @return  void
+     * @return  Commande
      *
-     * @depends	testCommandeFetch
+     * @depends	testCommandUpdate
      * The depends says test is run only if previous is ok
      */
     public function testCommandeValid($localobject)
@@ -193,7 +218,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * testCommandeCancel
      *
      * @param   Object  $localobject    Order
-     * @return  void
+     * @return  Commande
      *
      * @depends testCommandeValid
      * The depends says test is run only if previous is ok
@@ -217,7 +242,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * testCommandeOther
      *
      * @param   Object  $localobject    Order
-     * @return  void
+     * @return  int						Order id
      *
      * @depends testCommandeCancel
      * The depends says test is run only if previous is ok

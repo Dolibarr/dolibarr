@@ -66,6 +66,7 @@ ActionAC_OTH=Inny
 ActionAC_OTH_AUTO=Automatycznie wstawione wydarzenia
 ActionAC_MANUAL=Ręcznie wstawione wydarzenia
 ActionAC_AUTO=Automatycznie wstawione wydarzenia
+ActionAC_OTH_AUTOShort=Auto
 Stats=Statystyka sprzedaży
 StatusProsp=Stan oferty
 DraftPropals=Szkic oferty handlowej

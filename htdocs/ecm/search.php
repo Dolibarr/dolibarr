@@ -30,14 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("users");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("contracts");
+$langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -51,6 +44,11 @@ $socid = GETPOST('socid','int');
 $action = GETPOST('action','alpha');
 $section=GETPOST('section');
 if (! $section) $section=0;
+
+$module  = GETPOST('module', 'alpha');
+$website = GETPOST('website', 'alpha');
+$pageid  = GETPOST('pageid', 'int');
+if (empty($module)) $module='ecm';
 
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
@@ -104,7 +102,7 @@ $rowspan=0;
 $sectionauto=array();
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>$conf->product->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
 if (! empty($conf->societe->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-if (! empty($conf->propal->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
+if (! empty($conf->propal->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Proposals"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
 if (! empty($conf->contrat->enabled))     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
 if (! empty($conf->commande->enabled))    { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
 if (! empty($conf->fournisseur->enabled)) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
@@ -123,7 +121,7 @@ print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
 // Tool bar
-$head = ecm_prepare_head_fm($ecmdir);
+$head = ecm_prepare_head_fm($ecmdir, $module, $section);
 //dol_fiche_head($head, 'search_form', '', 1);
 
 

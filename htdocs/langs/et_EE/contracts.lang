@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Lepingu viid
 DateContract=Lepingu kuupäev
 DateServiceActivate=Teenuse aktiveerimise kuupäev
-ShowContract=Näita lepingut
 ListOfServices=Teenuste nimekiri
 ListOfInactiveServices=Mitteaktiivsete teenuste nimekiri
 ListOfExpiredServices=Aegunud aktiivsete teenuste nimekiri

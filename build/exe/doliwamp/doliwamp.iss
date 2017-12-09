@@ -202,10 +202,30 @@ var value: String;
 function InitializeSetup(): Boolean;
 begin
   Result := MsgBox(CustomMessage('YouWillInstallDoliWamp')+#13#13+CustomMessage('ThisAssistantInstallOrUpgrade')+#13#13+CustomMessage('IfYouHaveTechnicalKnowledge')+#13#13+CustomMessage('ButIfYouLook')+#13#13+CustomMessage('DoYouWantToStart'), mbConfirmation, MB_YESNO) = IDYES;
+
+  if Result then
+  begin
+  
+	//----------------------------------------------
+	// Test if msvcr110 DLL has been installed
+	//----------------------------------------------
+	
+	if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
+	begin
+	    // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept 
+	    Result := MsgBox(CustomMessage('DLLMissing')+#13#13+CustomMessage('ContinueAnyway'), mbConfirmation, MB_YESNO) = IDYES;
+	    
+	end;
+	// Pb seems similar with msvcp110.dll
+	//vcredist_x64.exe
+	  
+  end;
+
 end;
 
 procedure InitializeWizard();
 begin
+
   //version des applis, a modifier pour chaque version de WampServer 2
   apacheVersion := '2.4.9';
   phpVersion := '5.5.12' ;
@@ -216,6 +236,7 @@ begin
   apachePort := '80';
   mysqlPort := '3306';
   newPassword := 'changeme';
+
 
   firstinstall := true;
 
@@ -344,18 +365,6 @@ begin
     exedirold := pathWithSlashes+'/bin/mysql/mysql5.0.45';
     exedirnew := pathWithSlashes+'/bin/mysql/mysql5.0.45';
 
-
-    //----------------------------------------------
-    // Test if msvcr110 DLL has been installed
-    //----------------------------------------------
-	
-    if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
-    begin
-      // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept 
-      MsgBox('The "Visual C++ Redistributable for Visual Studio 2012" component is missing. Please install the 32-bit version (vcredit_x86.exe) first from http://www.microsoft.com/en-us/download/details.aspx?id=30679 and restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
-    end;
-	// Pb seems similar with msvcp110.dll
-	//vcredist_x64.exe
 	
 	
     // If we have a new database version, we should only copy old my.ini file into new directory

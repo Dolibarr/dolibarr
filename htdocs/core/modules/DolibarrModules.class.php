@@ -1815,7 +1815,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		{
 			$menu = new Menubase($this->db);
 			$menu->menu_handler='all';
+
+			//$menu->module=strtolower($this->name);	TODO When right_class will be same than module name
 			$menu->module=$this->rights_class;
+
 			if (! $this->menu[$key]['fk_menu'])
 			{
 				$menu->fk_menu=0;
@@ -1909,8 +1912,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 		$err=0;
 
+		//$module=strtolower($this->name);		TODO When right_class will be same than module name
+		$module=$this->rights_class;
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-		$sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
+		$sql.= " WHERE module = '".$this->db->escape($module)."'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);

@@ -727,7 +727,7 @@ class Societe extends CommonObject
 	 *
 	 *      @param	int		$id              			Id of company (deprecated, use 0 here and call update on an object loaded by a fetch)
 	 *      @param  User	$user            			Utilisateur qui demande la mise a jour
-	 *      @param  int		$call_trigger    			0=non, 1=oui
+	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
 	 *		@param	string	$action						'add' or 'update'
@@ -2021,7 +2021,7 @@ class Societe extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    @return   string        		Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -2033,7 +2033,7 @@ class Societe extends CommonObject
 	 *  Renvoi le libelle d'un statut donne
 	 *
 	 *  @param	int		$statut         Id statut
-	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string          		Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
@@ -2068,8 +2068,13 @@ class Societe extends CommonObject
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-			if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+		}
+		if ($mode == 6)
+		{
+			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
 		}
 	}
 

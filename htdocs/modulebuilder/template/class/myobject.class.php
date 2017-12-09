@@ -39,7 +39,7 @@ class MyObject extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'myobject';
+	public $table_element = 'mymodule_myobject';
 	/**
 	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */

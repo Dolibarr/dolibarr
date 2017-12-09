@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Bókhalds / ríkissjóðs area
 NewPayment=Ný greiðsla
 Payments=Greiðslur
 PaymentCustomerInvoice=Viðskiptavinur Reikningar greiðslu
+PaymentSupplierInvoice=Birgir Reikningar greiðslu
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=VSK-greiðslu
 ListPayment=Listi yfir greiðslur

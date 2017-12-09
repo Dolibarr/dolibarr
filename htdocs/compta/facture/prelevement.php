@@ -520,6 +520,7 @@ if ($object->id > 0)
 	dol_fiche_end();
 
 
+	$numopen = 0; $numclosed = 0;
 
 	/*
 	 * Withdrawal opened requests
@@ -540,6 +541,7 @@ if ($object->id > 0)
 	if ($result_sql)
 	{
 		$num = $db->num_rows($result_sql);
+		$numopen = $num;
 	}
 
 
@@ -591,7 +593,9 @@ if ($object->id > 0)
 
 	/*
 	 * Withdrawals
-	*/
+	 */
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
@@ -603,7 +607,6 @@ if ($object->id > 0)
 	print '<td align="center">'.$langs->trans("DateProcess").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
-	$var=true;
 
 	if ($result_sql)
 	{
@@ -612,7 +615,6 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
-
 
 			print '<tr class="oddeven">';
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
@@ -658,12 +660,12 @@ if ($object->id > 0)
 	if ($result)
 	{
 		$num = $db->num_rows($result);
+		$numclosed = $num;
 		$i = 0;
 
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
-
 
 			print '<tr class="oddeven">';
 
@@ -690,6 +692,9 @@ if ($object->id > 0)
 			$i++;
 		}
 
+		if (! $numopen && ! $numclosed)
+			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+
 		$db->free($result);
 	}
 	else
@@ -698,6 +703,7 @@ if ($object->id > 0)
 	}
 
 	print "</table>";
+	print '</div>';
 }
 
 

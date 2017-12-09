@@ -393,8 +393,10 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 {
 	global $conf;
 
-	if (! empty($conf->browser->phone)) return '';	// select2 disabled for smartphones with standard browser (does not works, popup appears outside screen)
-	//if (! empty($conf->dol_use_jmobile)) return '';	// select2 works with jmobile but it breaks the autosize feature of jmobile.
+	// select2 disabled for smartphones with standard browser.
+	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
+	if (! empty($conf->browser->phone)) return '';
+
 	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
 	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
@@ -405,19 +407,15 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
     $msg="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
-    			var query = {};
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.',
 					language: select2arrayoflanguage,
-    				containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
+    				containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
-						if (data.element) {
-							$(container).addClass($(data.element).attr("class"));
-						}
-
+						if (data.element) { $(container).addClass($(data.element).attr("class")); }
 					    //console.log(data.html);
 						if ($(data.element).attr("html") != undefined) return htmlEntityDecodeJs($(data.element).attr("html"));		// If property html set, we decode html entities and use this
 					    return data.text;
@@ -445,13 +443,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 			});
 
 			function runJsCodeForEvent'.$htmlname.'(obj) {
-			    console.log("Run runJsCodeForEvent'.$htmlname.'");
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-	    		$.getJSON(url,
+			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				$.getJSON(url,
 						{
 							action: method,
 							id: id,

@@ -28,7 +28,6 @@ InterventionClassifyBilled=طبقه بندی "صورتحساب"
 InterventionClassifyUnBilled=Classify "Unbilled"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=ثبت شده در صورتحساب یا لیست
-ShowIntervention=نمایش مداخله
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by Email
 InterventionCreatedInDolibarr=Intervention %s created

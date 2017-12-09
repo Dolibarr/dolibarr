@@ -368,13 +368,13 @@ if ($result) {
 		print '</td>';
 
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
-		print '<td align="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
-		print '<td align="left">';
-		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
+		print '<td align="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
+		print '<td align="center">';
+		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid  . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')) . '">';
 		print img_edit();
 		print '</a></td>';
-		print '<td align="right">' . $objp->country .'</td>';
-		print '<td align="center">' . $objp->tva_intra . '</td>';
+		print '<td>' . $objp->country .'</td>';
+		print '<td>' . $objp->tva_intra . '</td>';
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 
 		print "</tr>";

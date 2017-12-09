@@ -28,7 +28,6 @@ InterventionClassifyBilled=Classifica come "Fatturato"
 InterventionClassifyUnBilled=Classifica come "Non fatturato"
 InterventionClassifyDone=Classifica "Eseguito"
 StatusInterInvoiced=Fatturato
-ShowIntervention=Mostra intervento
 SendInterventionRef=Invio di intervento %s
 SendInterventionByMail=Invia intervento via email
 InterventionCreatedInDolibarr=Intervento %s creato

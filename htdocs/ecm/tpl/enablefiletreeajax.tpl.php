@@ -25,6 +25,7 @@
 
 <?php
 if (empty($module)) $module='ecm';
+$paramwithoutsection=preg_replace('/&?section=(\d+)/', '', $param);
 
 $openeddir='/';
 ?>
@@ -33,22 +34,31 @@ $(document).ready(function() {
 
 	$('#filetree').fileTree({
 		root: '<?php print dol_escape_js($openeddir); ?>',
-		// Ajax called if we click to expand a dir (not a file). Parameter 'dir' is provided as a POST parameter by fileTree code.
-		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart='.$module.'&openeddir='.urlencode($openeddir); ?>',
+		// Ajax called if we click to expand a dir (not a file). Parameter 'dir' is provided as a POST parameter by fileTree code to this following URL.
+		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart='.$module.'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection)?'':$paramwithoutsection); ?>',
 		folderEvent: 'click',	// 'dblclick'
 		multiFolder: false  },
 		// Called if we click on a file (not a dir)
 		function(file) {
+			console.log("We click on a file");
 			$("#mesg").hide();
 			loadandshowpreview(file,0);
 		},
 		// Called if we click on a dir (not a file)
 		function(elem) {
 			id=elem.attr('id').substr(12);	// We get id that is 'fmdirlia_id_xxx' (id we want is xxx)
-			jQuery("#<?php echo $nameforformuserfile ?>_section_dir").val(elem.attr('rel'));
-   			jQuery("#<?php echo $nameforformuserfile ?>_section_id").val(id);
+			rel=elem.attr('rel')
+			console.log("We click on a dir, we call the ajaxdirtree.php with modulepart=<?php echo $module; ?>, param=<?php echo $paramwithoutsection; ?>");
+			console.log("We also save dir name or id into <?php echo $nameforformuserfile ?>_section_... with name section_... id="+id+" rel="+rel);
+			jQuery("#<?php echo $nameforformuserfile ?>_section_dir").val(rel);
+			jQuery("#<?php echo $nameforformuserfile ?>_section_id").val(id);
+			jQuery("#section_dir").val(rel);
+			jQuery("#section_id").val(id);
+			jQuery("#section").val(id);
 			jQuery('#<?php echo $nameforformuserfile ?>').show();
+			console.log("We also execute the loadandshowpreview() that is on the onclick of each li defined by ajaxdirtree");
 		}
+		// The loadanshowpreview is also call by the 'onclick' set on each li return by ajaxdirtree
 	);
 
 	$('#refreshbutton').click( function() {
@@ -73,7 +83,7 @@ function loadandshowpreview(filedirname,section)
 
 	$('#ecmfileview').empty();
 
-	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname);
+	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo (empty($paramwithoutsection)?'':"+'".$paramwithoutsection."'"); ?>;
 	$.get(url, function(data) {
 		//alert('Load of url '+url+' was performed : '+data);
 		pos=data.indexOf("TYPE=directory",0);

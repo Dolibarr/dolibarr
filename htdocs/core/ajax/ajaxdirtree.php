@@ -198,10 +198,13 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    				print '</td>';
 
 	    				// Edit link
-	    				print '<td align="right" width="18"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']).'">'.img_view($langs->trans("Edit").' - '.$langs->trans("View"), 0, 'class="valignmiddle"').'</a></td>';
+	    				print '<td align="right" width="18"><a href="';
+	    				print DOL_URL_ROOT.'/ecm/dir_card.php?module='.urlencode($modulepart).'&section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']);
+	    				print '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid);
+	    				print '">'.img_view($langs->trans("Edit").' - '.$langs->trans("View"), 0, 'class="valignmiddle"').'</a></td>';
 
 	    				// Add link
-	    				//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
+	    				//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
 	    				//print '<td align="right" width="14">&nbsp;</td>';
 
 	    				// Info
@@ -230,25 +233,19 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	    			}
 	    		}
 
-	    		// Enable jquery handlers on new generated HTML objects
-				print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
+	    		// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
+	    		// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
+				print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip (reload into ajaxdirtree) -->\n";
 	    		print '<script type="text/javascript">
 	            	jQuery(document).ready(function () {
 	            		jQuery(".classfortooltip").tooltip({
 							show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-							hide: { effect:\'toggle\', delay: 50 },
+							hide: { delay: 50 }, 	/* If I enable effect:\'toggle\' here, a bug appears: the tooltip is shown when collpasing a new dir if it was shown before */
 							tooltipClass: "mytooltip",
 							content: function () {
 	              				return $(this).prop(\'title\');		/* To force to get title as is */
 	          				}
 	            		});
-
-						/* TODO Remove this. Is replaced with function as 3rd parameter of fileTree */
-	            		jQuery(".fmdirlia").click(function(e) {
-	            			id=jQuery(this).attr(\'id\').substr(12);
-	            			jQuery("#formuserfile_section_dir").val(jQuery(this).attr(\'rel\'));
-	            			jQuery("#formuserfile_section_id").val(id);
-	    				});
 	            	});
 	            	</script>';
 
