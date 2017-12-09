@@ -520,8 +520,8 @@ class Menubase
         $sql.= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-//$tmp1=microtime(true);
-//print '>>> 1 0<br>';
+		//$tmp1=microtime(true);
+		//print '>>> 1 0<br>';
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -558,7 +558,8 @@ class Menubase
                 // Define $title
                 if ($enabled)
                 {
-                	$title = $langs->trans($menu['titre']);
+                	$title = $langs->trans($menu['titre']);		// If $menu['titre'] start with $, a dol_eval is done.
+                	//var_dump($title.'-'.$menu['titre']);
                     if ($title == $menu['titre'])   // Translation not found
                     {
                         if (! empty($menu['langs']))    // If there is a dedicated translation file
@@ -566,6 +567,9 @@ class Menubase
                         	//print 'Load file '.$menu['langs'].'<br>';
                             $langs->load($menu['langs']);
                         }
+
+                        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+                        $menu['titre'] = make_substitutions($menu['titre'], $substitarray);
 
                         if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
                         {
@@ -584,8 +588,8 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
-//$tmp4=microtime(true);
-//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
+					//$tmp4=microtime(true);
+					//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
 
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];

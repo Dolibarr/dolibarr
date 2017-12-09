@@ -273,7 +273,6 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$menu->add('/adherents/index.php?mainmenu=members&amp;leftmenu=', $langs->trans("MenuMembers"), 0, $showmode, $atarget, "members", '', 100, $id, $idsel, $classname);
 	}
 
-
 	// Show personalized menus
 	$menuArbo = new Menubase($db,'eldy');
 	$newTabMenu = $menuArbo->menuTopCharger('','',$type_user,'eldy',$tabMenu);	// Return tabMenu with only top entries
@@ -286,6 +285,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$showmode=isVisibleToUserType($type_user,$newTabMenu[$i],$listofmodulesforexternal);
 		if ($showmode == 1)
 		{
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+
 		    // url = url from host, shorturl = relative path into dolibarr sources
 			$url = $shorturl = $newTabMenu[$i]['url'];
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))	// Do not change url content for external links
@@ -301,10 +304,6 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
                 $shorturl = $url;
 				if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/','',$shorturl);
 			}
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
-			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
 
 			// Define the class (top menu selected or not)
 			if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
@@ -1598,12 +1597,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 			}
 
-			// $menu_array[$i]['url'] can be a relative url, a full external url or a dynamic value like '$conf->global->APARAM)
-			if (preg_match('/^\$conf->global->([^\?]+)/', $menu_array[$i]['url'], $reg))
-			{
-				$keyforsconst=$reg[1];
-				$menu_array[$i]['url'] = $conf->global->$keyforsconst;
-			}
+			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
 			$url = $shorturl = $menu_array[$i]['url'];
 
@@ -1626,11 +1623,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			    $url = dol_buildpath($url,1).($param?'?'.$param:'');
 			    $shorturl = $shorturl.($param?'?'.$param:'');
 			}
+			//var_dump($url);
 
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
-			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
 
 			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
@@ -1656,6 +1650,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					print '<div class="menu_top"></div>'."\n";
 				}
 			}
+
 			// Menu level > 0
 			if ($menu_array[$i]['level'] > 0)
 			{

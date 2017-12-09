@@ -452,7 +452,6 @@ input[type=file ]    { background-color: transparent; border-top: none; border-l
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
-input[type=text]     { min-width: 20px; }
 input:-webkit-autofill {
 	background-color: #FBFFEA !important;
 	background-image:none !important;

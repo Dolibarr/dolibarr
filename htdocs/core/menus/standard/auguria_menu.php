@@ -157,9 +157,11 @@ class MenuManager
         		print '<li class="lilevel0">';
         		if ($val['enabled'] == 1)
         		{
+        			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+        			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+        			$val['url'] = make_substitutions($val['url'], $substitarray);
+
         			$relurl=dol_buildpath($val['url'],1);
-        			$relurl=preg_replace('/__LOGIN__/',$user->login,$relurl);
-        			$relurl=preg_replace('/__USERID__/',$user->id,$relurl);
         			$canonurl=preg_replace('/\?.*$/','',$val['url']);
 
         			print '<a class="alilevel0" href="#">';
@@ -233,9 +235,11 @@ class MenuManager
 
 						if ($showmenu)		// Visible (option to hide when not allowed is off or allowed)
        					{
+       						$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+       						$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+       						$val2['url'] = make_substitutions($val2['url'], $substitarray);
+
 	        				$relurl2=dol_buildpath($val2['url'],1);
-		        			$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
-	    	    			$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
 	        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
 	        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
 	        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';

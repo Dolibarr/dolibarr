@@ -467,7 +467,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 	}
 
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
-	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
+	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (! is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
 	{
@@ -485,7 +485,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 				elseif ($reg[1] == 'NEXT_DAY')       { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
 				elseif ($reg[1] == 'NEXT_MONTH')     { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
 				elseif ($reg[1] == 'NEXT_YEAR')      { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
-				elseif ($reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
+				elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
 				{
 					$newout = $mysoc->country_id;
 				}
@@ -493,11 +493,11 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 				{
 					$newout = $user->id;
 				}
-				elseif ($reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
+				elseif ($reg[1] == 'USER_SUPERVISOR_ID' || $reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
 				{
 					$newout = $user->fk_user;
 				}
-				elseif ($reg[1] == 'ENTITYID')
+				elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID')
 				{
 					$newout = $conf->entity;
 				}
