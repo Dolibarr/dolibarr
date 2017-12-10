@@ -160,6 +160,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_date_creation_end = '';
 	$search_date_modification_start = '';
 	$search_date_modification_end = '';
+	$search_debit = '';
+	$search_credit = '';
 }
 
 // Must be after the remove filter action, before the export.
@@ -247,6 +249,14 @@ if (! empty($search_date_modification_end)) {
 	$filter['t.tms<='] = $search_date_modification_end;
 	$tmp=dol_getdate($search_date_modification_end);
 	$param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
+}
+if (! empty($search_debit)) {
+	$filter['t.debit'] = $search_debit;
+	$param .= '&search_debit=' . $search_debit;
+}
+if (! empty($search_credit)) {
+	$filter['t.credit'] = $search_credit;
+	$param .= '&search_credit=' . $search_credit;
 }
 
 if ($action == 'delbookkeeping') {
@@ -507,12 +517,16 @@ if (! empty($arrayfields['t.label_operation']['checked']))
 // Debit
 if (! empty($arrayfields['t.debit']['checked']))
 {
-	print '<td class="liste_titre center">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'">';
+	print '</td>';
 }
 // Credit
 if (! empty($arrayfields['t.credit']['checked']))
 {
-	print '<td class="liste_titre center">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
+	print '</td>';
 }
 // Code journal
 if (! empty($arrayfields['t.code_journal']['checked']))
