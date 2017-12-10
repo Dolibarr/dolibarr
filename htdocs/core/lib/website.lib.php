@@ -29,14 +29,19 @@
  *
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
+ * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @return	boolean							True if OK
  */
-function dolWebsiteReplacementOfLinks($website, $content)
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 {
 	// Replace php code. Note $content may come from database and does not contains body tags.
+	$replacewith='...php...';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/value="<\?php((?!\?>).)*\?>\n*/ims', 'value="'.$replacewith.'"', $content);
 
-	$content = preg_replace('/value="<\?php((?!\?>).)*\?>\n*/ims', 'value="...php..."', $content);
-	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
+	$replacewith='<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
 	// Replace relative link / with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);

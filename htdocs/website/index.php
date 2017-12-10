@@ -2007,9 +2007,9 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// REPLACEMENT OF LINKS When page called by website editor
 
 		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-		$out.= '<!-- Include website CSS file -->'."\n";
-		$out.=dolWebsiteReplacementOfLinks($object, $csscontent);
-		$out.= '<!-- Include HTML header from page inline block -->'."\n";
+		$out.= '/* Include website CSS file */'."\n";
+		$out.=dolWebsiteReplacementOfLinks($object, $csscontent, 1);
+		$out.= '/* Include HTML header from the inline block */'."\n";
 		$out.= $objectpage->htmlheader."\n";
 		$out.='</style>'."\n";
 
