@@ -223,7 +223,7 @@ if ($action=="dl" && $numref > 0)
                         $payment = new Paiement($db);
                         $payment->fetch($val['url_id']);
                         $arraybill = $payment->getBillsArray();
-                        if (count($arraybill) > 0)
+                        if (is_array($arraybill) && count($arraybill) > 0)
                         {
                             foreach ($arraybill as $billid)
                             {
@@ -260,7 +260,7 @@ if ($action=="dl" && $numref > 0)
                         $payment = new PaiementFourn($db);
                         $payment->fetch($val['url_id']);
                         $arraybill = $payment->getBillsArray();
-                        if (count($arraybill) > 0)
+                        if (is_array($arraybill) && count($arraybill) > 0)
                         {
                             foreach ($arraybill as $billid)
                             {
