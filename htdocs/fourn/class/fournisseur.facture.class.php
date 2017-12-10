@@ -2013,7 +2013,7 @@ class FactureFournisseur extends CommonInvoice
     }
                 /**
      *  return the directory of the uploaded files
-     *
+     *  @param	string		$refparam 	to specify a new reference different from the ref or id of the object 
      *  @return		int		file dir
      */
     function getFilesDir($refparam=''){
