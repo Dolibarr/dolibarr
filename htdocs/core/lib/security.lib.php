@@ -242,17 +242,17 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             {
             	foreach($feature2 as $subfeature)
             	{
-            		if (empty($user->rights->$feature->$subfeature->creer)
-            		&& empty($user->rights->$feature->$subfeature->write)
-            		&& empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
+                        if (empty($user->rights->{$feature}->{$subfeature}->creer)
+                        && empty($user->rights->{$feature}->{$subfeature}->write)
+                        && empty($user->rights->{$feature}->{$subfeature}->create)) { $createok=0; $nbko++; }
             		else { $createok=1; break; } // Break to bypass second test if the first is ok
             	}
             }
             else if (! empty($feature))		// This is for old permissions ('creer' or 'write')
             {
                 //print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
-                if (empty($user->rights->$feature->creer)
-                && empty($user->rights->$feature->write)) { $createok=0; $nbko++; }
+                if (empty($user->rights->{$feature}->creer)
+                && empty($user->rights->{$feature}->write)) { $createok=0; $nbko++; }
             }
         }
 
@@ -306,21 +306,24 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             else if ($feature == 'ftp')
             {
                 if (! $user->rights->ftp->write) $deleteok=0;
+            }else if ($feature == 'salaries')
+            {
+                if (! $user->rights->salaries->delete) $deleteok=0;
             }
             else if (! empty($feature2))	// This should be used for future changes
             {
             	foreach($feature2 as $subfeature)
             	{
-            		if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
+            		if (empty($user->rights->{$feature}->{$subfeature}->supprimer) && empty($user->rights->$feature->$subfeature->delete)) $deleteok=0;
             		else { $deleteok=1; break; } // For bypass the second test if the first is ok
             	}
             }
             else if (! empty($feature))		// This is for old permissions
             {
                 //print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
-                if (empty($user->rights->$feature->supprimer)
-                && empty($user->rights->$feature->delete)
-                && empty($user->rights->$feature->run)) $deleteok=0;
+                if (empty($user->rights->{$feature}->supprimer)
+                && empty($user->rights->{$feature}->delete)
+                && empty($user->rights->{$feature}->run)) $deleteok=0;
             }
         }
 
