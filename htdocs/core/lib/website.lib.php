@@ -225,7 +225,16 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	{
 		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
 
-		$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+		if (preg_match('/^\//', $regs[2][$key]))
+		{
+			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
+			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+		}
+		else
+		{
+			$urltograbbis = $urltograb.'/'.$regs[2][$key];	// We use dir of grabbed file
+		}
+
 		$linkwithoutdomain = $regs[2][$key];
 		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 		if (preg_match('/^http/', $regs[2][$key]))
@@ -251,7 +260,13 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 			if ($tmpgeturl['curl_error_no'])
 			{
 				$error++;
-				setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+				$action='create';
+			}
+			elseif ($tmpgeturl['http_code'] != '200')
+			{
+				$error++;
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 				$action='create';
 			}
 			else
@@ -281,7 +296,15 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	{
 		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
 
-		$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+		if (preg_match('/^\//', $regs[2][$key]))
+		{
+			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
+			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+		}
+		else
+		{
+			$urltograbbis = $urltograb.'/'.$regs[2][$key];	// We use dir of grabbed file
+		}
 
 		$linkwithoutdomain = $regs[2][$key];
 		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
@@ -309,7 +332,13 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 			if ($tmpgeturl['curl_error_no'])
 			{
 				$error++;
-				setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+				$action='create';
+			}
+			elseif ($tmpgeturl['http_code'] != '200')
+			{
+				$error++;
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 				$action='create';
 			}
 			else
