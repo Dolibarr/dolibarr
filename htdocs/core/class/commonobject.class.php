@@ -3189,6 +3189,18 @@ abstract class CommonObject
 
 		//print $total_discount; exit;
 		return price2num($total_discount);
+	} 
+        
+	/**
+	*  return the directory of the uploaded files
+	*
+	*  @return		int		file dir
+	*/
+	function getFilesDir($refparam=''){
+		global $conf;
+		$idref=$this->ref?$this->ref:$this->id;
+		$ref=($refparam=='')?$idref:$refparam;
+		return $conf->facture->dir_output.'/'.$ref;
 	}
 
 
