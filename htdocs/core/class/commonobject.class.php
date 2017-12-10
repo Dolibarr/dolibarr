@@ -3200,7 +3200,7 @@ abstract class CommonObject
 		global $conf;
 		$idref=$this->ref?$this->ref:$this->id;
 		$ref=($refparam=='')?$idref:$refparam;
-		return $conf->facture->dir_output.'/'.$ref;
+                return $conf->{strtolower(get_class($this))}->dir_output.'/'.$ref;
 	}
 
 
