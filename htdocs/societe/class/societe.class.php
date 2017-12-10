@@ -1959,7 +1959,7 @@ class Societe extends CommonObject
 		if (! empty($this->country_code))
 			$label.= '<br><b>' . $langs->trans('Country') . ':</b> '. $this->country_code;
 		if (! empty($this->tva_intra))
-			$label.= '<br><b>' . $langs->trans('VATNumber') . ':</b> '. $this->tva_intra;
+			$label.= '<br><b>' . $langs->trans('VATIntra') . ':</b> '. $this->tva_intra;
 			if (! empty($this->code_client) && $this->client)
 			$label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
 		if (! empty($this->code_fournisseur) && $this->fournisseur)
