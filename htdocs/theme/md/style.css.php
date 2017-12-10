@@ -119,14 +119,12 @@ if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTL
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
     // 90A4AE, 607D8B, 455A64, 37474F
-	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
-
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
@@ -265,6 +263,9 @@ a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decor
 
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FDFDFD;
+}
+select.vmenusearchselectcombo {
+	background-color: unset;
 }
 
 textarea:focus, button:focus {
@@ -1074,7 +1075,7 @@ td.showDragHandle {
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 	display: none;
 <?php } else { ?>
-	background: #FFF;
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.2);
 	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
@@ -1161,7 +1162,7 @@ div.login_block {
 }
 #id-left {
 	z-index: 91;
-	background: #FFF;
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.3);
 <?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 	top: 50px ! important;
@@ -1838,7 +1839,7 @@ div.login_block {
 	z-index: 10;
 	text-align: center;
 	vertical-align: middle;
-	background: #FFF;
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	width: 228px;
 	height: 43px;
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -3052,7 +3053,7 @@ div .tdtop {
 }
 span.boxstatstext {
     line-height: 18px;
-    opacity: 0.7;
+    /* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
 }
 span.boxstatsindicator {
 	font-size: 110%;

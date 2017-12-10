@@ -550,7 +550,7 @@ if ($object->id > 0)
 	 */
 	print "\n<div class=\"tabsAction\">\n";
 
-	// Add a withdraw request
+	// Add a transfer request
 	if ($object->statut > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0)
 	{
 	    if ($resteapayer > 0)
@@ -588,7 +588,7 @@ if ($object->id > 0)
 	print "</div><br>\n";
 
 
-	print $langs->trans("DoStandingOrdersBeforePayments").'<br><br>';
+	print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments").'</div><br>';
 
 
 	/*
