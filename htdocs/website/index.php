@@ -1695,7 +1695,7 @@ if ($action == 'editcss')
 	print '</td><td>';
 
 	$doleditor=new DolEditor('WEBSITE_ROBOT', $robotcontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
-	print $doleditor->Create(1, '', true, 'Robot file', 'txt');
+	print $doleditor->Create(1, '', true, 'Robot file', 'text');
 
 	print '</td></tr>';
 
@@ -1705,7 +1705,7 @@ if ($action == 'editcss')
 	print '</td><td>';
 
 	$doleditor=new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
-	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'txt');
+	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'text');
 
 	print '</td></tr>';
 

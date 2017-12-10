@@ -273,20 +273,20 @@ class DolEditor
 	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.$this->htmlname.'"));	// Init status bar. Need lib ext-statusbar
 	            			var oldNbOfLines = 0
 							jQuery(".morelines'.$this->htmlname.'").click(function() {
-	        	    				var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
-									currentline = aceEditor.getOption("maxLines");
+	        	    				var aceEditorClicked = window.ace.edit("'.$this->htmlname.'aceeditorid");
+									currentline = aceEditorClicked.getOption("maxLines");
 									if (oldNbOfLines == 0)
 									{
 										oldNbOfLines = currentline;
 									}
-									console.log("We click on more lines - we have currently "+oldNbOfLines);
+									console.log("We click on more lines, oldNbOfLines is "+oldNbOfLines+", we have currently "+currentline);
 									if (currentline < 500)
 									{
-										aceEditor.setOptions({ maxLines: 500 });
+										aceEditorClicked.setOptions({ maxLines: 500 });
 									}
 									else
 									{
-										aceEditor.setOptions({ maxLines: oldNbOfLines });
+										aceEditorClicked.setOptions({ maxLines: oldNbOfLines });
 									}
 							});
 						})';
