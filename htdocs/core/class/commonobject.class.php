@@ -3200,7 +3200,13 @@ abstract class CommonObject
 		global $conf;
 		$idref=$this->ref?$this->ref:$this->id;
 		$ref=($refparam=='')?$idref:$refparam;
-                return $conf->{strtolower(get_class($this))}->dir_output.'/'.$ref;
+		$ret='';
+		if (!empty($conf->{strtolower($this->module_name)}->{strtolower(get_class($this))}->dir_output)){
+			$ret=$conf->{strtolower($this->module_name)}->{strtolower(get_class($this))}->dir_output.'/'.$ref;
+		}else{
+			$ret=$conf->{strtolower(get_class($this))}->dir_output.'/'.$ref;
+		}
+                return $ret
 	}
 
 
