@@ -1885,8 +1885,8 @@ class Facture extends CommonInvoice
 					$ref = dol_sanitizeFileName($this->ref);
 					if ($conf->facture->dir_output && !empty($this->ref))
 					{
-						$dir = $conf->facture->dir_output . "/" . $ref;
-						$file = $conf->facture->dir_output . "/" . $ref . "/" . $ref . ".pdf";
+						$dir = $this->getFilesDir($ref);
+						$file = $dir . "/" . $ref . ".pdf";
 						if (file_exists($file))	// We must delete all files before deleting directory
 						{
 							$ret=dol_delete_preview($this);
@@ -2285,8 +2285,8 @@ class Facture extends CommonInvoice
 					// to  not lose the linked files
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
-					$dirsource = $conf->facture->dir_output.'/'.$oldref;
-					$dirdest = $conf->facture->dir_output.'/'.$newref;
+					$dirsource = $this->getFilesDir($oldref);
+					$dirdest = $this->getFilesDir($newref);
 					if (file_exists($dirsource))
 					{
 						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
@@ -2295,7 +2295,7 @@ class Facture extends CommonInvoice
 						{
 							dol_syslog("Rename ok");
 	                        // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($this->getFilesDir($newref), 'files', 1, '^'.preg_quote($oldref,'/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];
@@ -4191,6 +4191,7 @@ class Facture extends CommonInvoice
 
 		return $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 	}
+
 }
 
 /**
@@ -4277,7 +4278,7 @@ class FactureLigne extends CommonInvoiceLine
 	var $multicurrency_total_ht;
 	var $multicurrency_total_tva;
 	var $multicurrency_total_ttc;
-
+                        
 	/**
 	 *	Load invoice line from database
 	 *
