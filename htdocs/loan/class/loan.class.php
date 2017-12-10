@@ -17,128 +17,128 @@
  */
 
 /**
- *      \file       htdocs/loan/class/loan.class.php
- *		\ingroup    loan
- *		\brief      Class for loan module
+ *  \file       htdocs/loan/class/loan.class.php
+ *  \ingroup    loan
+ *  \brief      Class for loan module
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
- *      Loan
+ *  Loan
  */
 class Loan extends CommonObject
 {
-    public $element='loan';
-    public $table='loan';
-    public $table_element='loan';
+	public $element='loan';
+	public $table='loan';
+	public $table_element='loan';
 
-    public $picto = 'bill';
+	public $picto = 'bill';
 
-    public $rowid;
-    public $datestart;
-    public $dateend;
-    public $label;
-    public $capital;
-    public $nbterm;
-    public $rate;
-    public $paid;
-    public $account_capital;
-    public $account_insurance;
-    public $account_interest;
-    public $date_creation;
-    public $date_modification;
-    public $date_validation;
-    public $fk_bank;
-    public $fk_user_creat;
-    public $fk_user_modif;
-    public $fk_project;
+	public $rowid;
+	public $datestart;
+	public $dateend;
+	public $label;
+	public $capital;
+	public $nbterm;
+	public $rate;
+	public $paid;
+	public $account_capital;
+	public $account_insurance;
+	public $account_interest;
+	public $date_creation;
+	public $date_modification;
+	public $date_validation;
+	public $fk_bank;
+	public $fk_user_creat;
+	public $fk_user_modif;
+	public $fk_project;
 
 
-    /**
-     * Constructor
-     *
-     * @param	DoliDB		$db		Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-        return 1;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param	DoliDB		$db		Database handler
+	 */
+	function __construct($db)
+	{
+		$this->db = $db;
+		return 1;
+	}
 
-    /**
-     *  Load object in memory from database
-     *
-	 *  @param	int		$id         id object
-     *  @return int                 <0 error , >=0 no error
-     */
-    function fetch($id)
-    {
-        $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public,";
+	/**
+	 *  Load object in memory from database
+	 *
+	 *  @param	int		$id		 id object
+	 *  @return int				 <0 error , >=0 no error
+	 */
+	function fetch($id)
+	{
+		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public,";
 		$sql.= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
-        $sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
-        $sql.= " WHERE l.rowid = ".$id;
+		$sql.= " FROM ".MAIN_DB_PREFIX."loan as l";
+		$sql.= " WHERE l.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id             		= $obj->rowid;
-				$this->ref            		= $obj->rowid;
-                $this->datestart      		= $this->db->jdate($obj->datestart);
-				$this->dateend	      		= $this->db->jdate($obj->dateend);
-                $this->label          		= $obj->label;
-                $this->capital        		= $obj->capital;
-				$this->nbterm		  		= $obj->nbterm;
-				$this->rate           		= $obj->rate;
-                $this->note_private   		= $obj->note_private;
-                $this->note_public    		= $obj->note_public;
-				$this->paid           		= $obj->paid;
+				$this->id					= $obj->rowid;
+				$this->ref					= $obj->rowid;
+				$this->datestart			= $this->db->jdate($obj->datestart);
+				$this->dateend				= $this->db->jdate($obj->dateend);
+				$this->label				= $obj->label;
+				$this->capital				= $obj->capital;
+				$this->nbterm				= $obj->nbterm;
+				$this->rate					= $obj->rate;
+				$this->note_private			= $obj->note_private;
+				$this->note_public			= $obj->note_public;
+				$this->paid					= $obj->paid;
 
 				$this->account_capital		= $obj->accountancy_account_capital;
 				$this->account_insurance	= $obj->accountancy_account_insurance;
 				$this->account_interest		= $obj->accountancy_account_interest;
 				$this->fk_project			= $obj->fk_project;
 
-                $this->db->free($resql);
+				$this->db->free($resql);
 				return 1;
-            }
-            else
-            {
-                $this->db->free($resql);
-                return 0;
-            }
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            return -1;
-        }
-    }
+			}
+			else
+			{
+				$this->db->free($resql);
+				return 0;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
 
 
-    /**
-     *      Create a loan into database
-     *
-     *      @param	User	$user   User making creation
-     *      @return int     		<0 if KO, id if OK
-     */
-    function create($user)
-    {
-    	global $conf, $langs;
+	/**
+	 *  Create a loan into database
+	 *
+	 *  @param	User	$user	User making creation
+	 *  @return int				<0 if KO, id if OK
+	 */
+	function create($user)
+	{
+		global $conf, $langs;
 
 		$error=0;
 
-        $now=dol_now();
+		$now=dol_now();
 
-        // clean parameters
-        $newcapital=price2num($this->capital,'MT');
-        if (isset($this->note_private)) $this->note_private = trim($this->note_private);
-        if (isset($this->note_public)) $this->note_public = trim($this->note_public);
+		// clean parameters
+		$newcapital=price2num($this->capital,'MT');
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->account_capital)) $this->account_capital = trim($this->account_capital);
 		if (isset($this->account_insurance)) $this->account_insurance = trim($this->account_insurance);
 		if (isset($this->account_interest)) $this->account_interest = trim($this->account_interest);
@@ -147,177 +147,187 @@ class Loan extends CommonObject
 		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 		if (isset($this->fk_project)) $this->fk_project=trim($this->fk_project);
 
-        // Check parameters
-        if (! $newcapital > 0 || empty($this->datestart) || empty($this->dateend))
-        {
-            $this->error="ErrorBadParameter";
-            return -2;
-        }
-		if (($conf->accounting->enabled) && empty($this->account_capital) && empty($this->account_insurance) && empty($this->account_interest))
+		// Check parameters
+		if (! $newcapital > 0 || empty($this->datestart) || empty($this->dateend))
 		{
-            $this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Accounting"));
-            return -2;
+			$this->error="ErrorBadParameter";
+			return -2;
+		}
+		if (($conf->accounting->enabled) && empty($this->account_capital))
+		{
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyCapitalCode"));
+			return -2;
+		}
+		if (($conf->accounting->enabled) && empty($this->account_insurance))
+		{
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInsuranceCode"));
+			return -2;
+		}
+		if (($conf->accounting->enabled) && empty($this->account_interest))
+		{
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInterestCode"));
+			return -2;
 		}
 
-        $this->db->begin();
+		$this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note_private, note_public,";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."loan (label, fk_bank, capital, datestart, dateend, nbterm, rate, note_private, note_public,";
 		$sql.= " accountancy_account_capital, accountancy_account_insurance, accountancy_account_interest, entity,";
 		$sql.= " datec, fk_projet, fk_user_author)";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."',";
 		$sql.= " '".$this->db->escape($this->fk_bank)."',";
-        $sql.= " '".price2num($newcapital)."',";
+		$sql.= " '".price2num($newcapital)."',";
 		$sql.= " '".$this->db->idate($this->datestart)."',";
 		$sql.= " '".$this->db->idate($this->dateend)."',";
-        $sql.= " '".$this->db->escape($this->nbterm)."',";
+		$sql.= " '".$this->db->escape($this->nbterm)."',";
 		$sql.= " '".$this->db->escape($this->rate)."',";
 		$sql.= " '".$this->db->escape($this->note_private)."',";
 		$sql.= " '".$this->db->escape($this->note_public)."',";
 		$sql.= " '".$this->db->escape($this->account_capital)."',";
 		$sql.= " '".$this->db->escape($this->account_insurance)."',";
 		$sql.= " '".$this->db->escape($this->account_interest)."',";
-        $sql.= " ".$conf->entity.",";
+		$sql.= " ".$conf->entity.",";
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " ".(empty($this->fk_project)?'NULL':$this->fk_project).",";
 		$sql.= " ".$user->id;
-        $sql.= ")";
+		$sql.= ")";
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."loan");
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."loan");
 
-            //dol_syslog("Loans::create this->id=".$this->id);
-            $this->db->commit();
-            return $this->id;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
-        }
-    }
-
-
-    /**
-     *      Delete a loan
-     *
-     *      @param		User    $user   Object user making delete
-     *      @return     		int 	<0 if KO, >0 if OK
-     */
-    function delete($user)
-    {
-        $error=0;
-
-        $this->db->begin();
-
-        // Get bank transaction lines for this loan
-        include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-        $account=new Account($this->db);
-        $lines_url=$account->get_url('',$this->id,'loan');
-
-        // Delete bank urls
-        foreach ($lines_url as $line_url)
-        {
-            if (! $error)
-            {
-                $accountline=new AccountLine($this->db);
-                $accountline->fetch($line_url['fk_bank']);
-                $result=$accountline->delete_urls($user);
-                if ($result < 0)
-                {
-                    $error++;
-                }
-            }
-        }
-
-        // Delete payments
-        if (! $error)
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan=".$this->id;
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if (! $resql)
-            {
-                $error++;
-                $this->error=$this->db->lasterror();
-            }
-        }
-
-        if (! $error)
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid=".$this->id;
-            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if (! $resql)
-            {
-                $error++;
-                $this->error=$this->db->lasterror();
-            }
-        }
-
-        if (! $error)
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->db->rollback();
-            return -1;
-        }
-
-    }
+			//dol_syslog("Loans::create this->id=".$this->id);
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 
-    /**
-     *      Update loan
-     *
-     *      @param	User	$user   User who modified
-     *      @return int     		<0 if error, >0 if ok
-     */
-    function update($user)
-    {
-        $this->db->begin();
+	/**
+	 *  Delete a loan
+	 *
+	 *  @param	User	$user	Object user making delete
+	 *  @return int 			<0 if KO, >0 if OK
+	 */
+	function delete($user)
+	{
+		$error=0;
 
-        $sql = "UPDATE ".MAIN_DB_PREFIX."loan";
-        $sql.= " SET label='".$this->db->escape($this->label)."',";
+		$this->db->begin();
+
+		// Get bank transaction lines for this loan
+		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$account=new Account($this->db);
+		$lines_url=$account->get_url('',$this->id,'loan');
+
+		// Delete bank urls
+		foreach ($lines_url as $line_url)
+		{
+			if (! $error)
+			{
+				$accountline=new AccountLine($this->db);
+				$accountline->fetch($line_url['fk_bank']);
+				$result=$accountline->delete_urls($user);
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+		}
+
+		// Delete payments
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan=".$this->id;
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error=$this->db->lasterror();
+			}
+		}
+
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid=".$this->id;
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error=$this->db->lasterror();
+			}
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+
+	}
+
+
+	/**
+	 *  Update loan
+	 *
+	 *  @param	User	$user	User who modified
+	 *  @return int				<0 if error, >0 if ok
+	 */
+	function update($user)
+	{
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."loan";
+		$sql.= " SET label='".$this->db->escape($this->label)."',";
 		$sql.= " capital='".price2num($this->db->escape($this->capital))."',";
-        $sql.= " datestart='".$this->db->idate($this->datestart)."',";
-        $sql.= " dateend='".$this->db->idate($this->dateend)."',";
-        $sql.= " fk_projet=".(empty($this->fk_project)?'NULL':$this->fk_project).",";
+		$sql.= " datestart='".$this->db->idate($this->datestart)."',";
+		$sql.= " dateend='".$this->db->idate($this->dateend)."',";
+		$sql.= " fk_projet=".(empty($this->fk_project)?'NULL':$this->fk_project).",";
 		$sql.= " fk_user_modif = ".$user->id;
-        $sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::update", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
-        }
-    }
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
-    /**
-     *    Tag loan as payed completely
-     *
-     *    @param	User	$user       Object user making change
-     *    @return	int					<0 if KO, >0 if OK
-     */
-    function set_paid($user)
-    {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-        $sql.= " paid = 1";
-        $sql.= " WHERE rowid = ".$this->id;
-        $return = $this->db->query($sql);
+	/**
+	 *  Tag loan as payed completely
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	function set_paid($user)
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
+		$sql.= " paid = 1";
+		$sql.= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
 		} else {
@@ -326,145 +336,145 @@ class Loan extends CommonObject
 		}
     }
 
-    /**
-     *  Return label of loan status (unpaid, paid)
-     *
-     *  @param	int		$mode       	0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
+	/**
+	 *  Return label of loan status (unpaid, paid)
+	 *
+	 *  @param  int		$mode			0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
 	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-     *  @return	string        			Label
-     */
-    function getLibStatut($mode=0,$alreadypaid=-1)
-    {
-        return $this->LibStatut($this->paid,$mode,$alreadypaid);
-    }
-
-    /**
-     *  Return label for given status
-     *
-     *  @param	int		$statut        	Id statut
-     *  @param  int		$mode          	0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-     *  @return string        			Label
-     */
-    function LibStatut($statut,$mode=0,$alreadypaid=-1)
-    {
-        global $langs;
-        $langs->load('customers');
-        $langs->load('bills');
-
-        if ($mode == 0)
-        {
-            if ($statut ==  0) return $langs->trans("Unpaid");
-            if ($statut ==  1) return $langs->trans("Paid");
-        }
-        if ($mode == 1)
-        {
-            if ($statut ==  0) return $langs->trans("Unpaid");
-            if ($statut ==  1) return $langs->trans("Paid");
-        }
-        if ($mode == 2)
-        {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
-        }
-        if ($mode == 3)
-        {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
-            if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
-        }
-        if ($mode == 4)
-        {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
-        }
-        if ($mode == 5)
-        {
-            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
-        }
-        if ($mode == 6)
-        {
-            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
-        }
-
-        return "Error, mode/status not found";
-    }
-
-
-    /**
-     *  Return clicable name (with eventually the picto)
-     *
-     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     * 	@param	int		$maxlen			Label max length
-     *	@return	string					Chaine with URL
-     */
-    function getNomUrl($withpicto=0,$maxlen=0)
-    {
-        global $langs;
-
-        $result='';
-
-        $tooltip = '<u>' . $langs->trans("ShowLoan") . '</u>';
-        if (! empty($this->ref))
-            $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->label))
-            $tooltip .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
-
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
-        $linkend = '</a>';
-
-        $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
-        $result .= $linkend;
-
-        return $result;
-    }
-
-    /**
-     * 	Return amount of payments already done
-     *
-     *	@return		int		Amount of payment already done, <0 if KO
-     */
-    function getSumPayment()
-    {
-        $table='payment_loan';
-        $field='fk_loan';
-
-        $sql = 'SELECT sum(amount) as amount';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
-        $sql.= ' WHERE '.$field.' = '.$this->id;
-
-        dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $amount=0;
-
-            $obj = $this->db->fetch_object($resql);
-            if ($obj) $amount=$obj->amount?$obj->amount:0;
-
-            $this->db->free($resql);
-            return $amount;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-			return -1;
-        }
-    }
+	 *  @return string					Label
+	 */
+	function getLibStatut($mode=0,$alreadypaid=-1)
+	{
+		return $this->LibStatut($this->paid,$mode,$alreadypaid);
+	}
 
 	/**
-	 * Information on record
+	 *  Return label for given status
 	 *
-	 * @param	int		$id      Id of record
-	 * @return	integer|null
+	 *  @param  int		$statut			Id statut
+	 *  @param  int		$mode			0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return string					Label
+	 */
+	function LibStatut($statut,$mode=0,$alreadypaid=-1)
+	{
+		global $langs;
+		$langs->load('customers');
+		$langs->load('bills');
+
+		if ($mode == 0)
+		{
+			if ($statut ==  0) return $langs->trans("Unpaid");
+			if ($statut ==  1) return $langs->trans("Paid");
+		}
+		if ($mode == 1)
+		{
+			if ($statut ==  0) return $langs->trans("Unpaid");
+			if ($statut ==  1) return $langs->trans("Paid");
+		}
+		if ($mode == 2)
+		{
+			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+		}
+		if ($mode == 3)
+		{
+			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
+			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+			if ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+			if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+		}
+		if ($mode == 5)
+		{
+			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+			if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+		}
+		if ($mode == 6)
+		{
+			if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+			if ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+			if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+		}
+
+		return "Error, mode/status not found";
+	}
+
+
+	/**
+	 *  Return clicable name (with eventually the picto)
+	 *
+	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param	int		$maxlen			Label max length
+	 *  @return	string					Chaine with URL
+	 */
+	function getNomUrl($withpicto=0,$maxlen=0)
+	{
+		global $langs;
+
+		$result='';
+
+		$tooltip = '<u>' . $langs->trans("ShowLoan") . '</u>';
+		if (! empty($this->ref))
+			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		if (! empty($this->label))
+			$tooltip .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
+
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
+		$linkend = '</a>';
+			
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		$result .= $linkend;
+			
+		return $result;
+	}
+
+	/**
+	 *  Return amount of payments already done
+	 *
+	 *  @return		int		Amount of payment already done, <0 if KO
+	 */
+	function getSumPayment()
+	{
+		$table='payment_loan';
+		$field='fk_loan';
+
+		$sql = 'SELECT sum(amount) as amount';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+		$sql.= ' WHERE '.$field.' = '.$this->id;
+
+		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$amount=0;
+
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) $amount=$obj->amount?$obj->amount:0;
+
+			$this->db->free($resql);
+			return $amount;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Information on record
+	 *
+	 *  @param	int			$id		Id of record
+	 *  @return	integer|null
 	 */
 	function info($id)
 	{
@@ -494,17 +504,17 @@ class Loan extends CommonObject
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation	 = $this->db->jdate($obj->datec);
 				if (empty($obj->fk_user_modif)) $obj->tms = "";
 				$this->date_modification = $this->db->jdate($obj->tms);
 
-			    $this->db->free($result);
+				$this->db->free($result);
 				return 1;
 			}
 			else
 			{
-			    $this->db->free($result);
-			    return 0;
+				$this->db->free($result);
+				return 0;
 			}
 		}
 		else

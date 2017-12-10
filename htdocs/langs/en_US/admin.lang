@@ -1765,3 +1765,4 @@ ResourceSetup=Configuration du module Resource
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
 DisabledResourceLinkUser=Disabled resource link to user
 DisabledResourceLinkContact=Disabled resource link to contact
+ConfirmUnactivation=Confirm module reset

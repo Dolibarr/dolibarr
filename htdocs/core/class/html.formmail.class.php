@@ -521,9 +521,19 @@ class FormMail extends Form
 								}
 							}
 						}
+
+						// Set the default "From"
+						$defaultfrom='';
+						$reshook=$hookmanager->executeHooks('getDefaultFromEmail', $parameters, $this);
+						if (empty($reshook))
+						{
+							$defaultfrom = $this->fromtype;
+						}
+						if (! empty($hookmanager->resArray['defaultfrom'])) $defaultfrom=$hookmanager->resArray['defaultfrom'];
+
 						// Using combo here make the '<email>' no more visible on list.
-						//$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200onsmartphone', 1, '', $disablebademails);
-						$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200onsmartphone', 0, '', $disablebademails);
+						//$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
+						$out.= ' '.$form->selectarray('fromtype', $liste, $defaultfrom, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 0, '', $disablebademails);
 					}
 
 					$out.= "</td></tr>\n";

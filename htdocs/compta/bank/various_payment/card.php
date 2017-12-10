@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/bank/various_expenses/card.php
- *      \ingroup    bank
- *		\brief      Page of various expenses
+ *  \file       htdocs/compta/bank/various_expenses/card.php
+ *  \ingroup    bank
+ *  \brief      Page of various expenses
  */
 
 require '../../../main.inc.php';
@@ -40,8 +40,8 @@ $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 // Get parameters
 $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
+$cancel		= GETPOST('cancel', 'aZ09');
+$backtopage	= GETPOST('backtopage', 'alpha');
 
 $accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 $label=GETPOST("label","alpha");

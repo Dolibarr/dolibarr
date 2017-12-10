@@ -75,7 +75,7 @@ function printBookmarksList($aDb, $aLangs)
 		$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo" alt="Bookmarks">';
 		$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 	    $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
-	    $ret.= ' html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
+	    $ret.= ' data-html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
 	    $ret.= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 		// Url to go on create new bookmark page
 		if (! empty($user->rights->bookmark->creer))
@@ -83,7 +83,7 @@ function printBookmarksList($aDb, $aLangs)
 	    	//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
 		    $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
 	    	$ret.= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
-	    	$ret.= ' html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
+	    	$ret.= ' data-html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
 		}
 		// Menu with all bookmarks
 		if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
@@ -98,7 +98,7 @@ function printBookmarksList($aDb, $aLangs)
 				while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
 				{
 				    $ret.='<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' rel="'.dol_escape_htmltag($obj->url).'"';
-				    //$ret.=' html="'.dol_escape_htmltag('<span class="fa fa-print"></span> '.$obj->title).'"';
+				    //$ret.=' data-html="'.dol_escape_htmltag('<span class="fa fa-print"></span> '.$obj->title).'"';
 				    $ret.='>';
 				    $ret.=dol_escape_htmltag($obj->title);
 				    $ret.='</option>';

@@ -557,7 +557,7 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))       print_liste_field_titre($arrayfields['lower_planned_end_date']['label'],$_SERVER["PHP_SELF"],"lower_planned_end_date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['status']['checked']))
@@ -714,7 +714,7 @@ if ($resql)
 		// Date
 		if (! empty($arrayfields['c.date_contrat']['checked']))
 		{
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day').'</td>';
+			print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -742,7 +742,7 @@ if ($resql)
 		if (! empty($arrayfields['lower_planned_end_date']['checked']))
 		{
 			print '<td align="center" class="nowrap">';
-			print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day');
+			print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

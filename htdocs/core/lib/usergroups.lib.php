@@ -578,7 +578,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
-		$default='ffffff';
+		$default='f0f0f0';
 		if ($conf->theme == 'md') $default='ffffff';
 
 		print '<tr class="oddeven">';

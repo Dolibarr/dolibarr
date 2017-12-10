@@ -230,14 +230,14 @@ foreach($listofstatus as $status)
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
 print "</table><br>";
 
-/**
- * Draft contratcs
- */
+
+// Draft contracts
+
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
-	$sql  = "SELECT c.rowid as ref, c.rowid,";
+	$sql  = "SELECT c.rowid, c.ref,";
 	$sql.= " s.nom as name, s.rowid as socid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = c.fk_soc";
 	$sql.= " AND c.entity IN (".getEntity('contract', 0).")";
@@ -263,15 +263,18 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven"><td class="nowrap">';
+
 				$staticcontrat->ref=$obj->ref;
 				$staticcontrat->id=$obj->rowid;
-				print $staticcontrat->getNomUrl(1,'');
-				print '</td>';
-				print '<td>';
+
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=1;
+
+				print '<tr class="oddeven"><td class="nowrap">';
+				print $staticcontrat->getNomUrl(1,'');
+				print '</td>';
+				print '<td>';
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '</tr>';

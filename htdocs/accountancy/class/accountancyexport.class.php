@@ -7,8 +7,9 @@
  * Copyright (C) 2016		Pierre-Henry Favre	<phf@atm-consulting.fr>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2013-2017  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2017       Elarifr. Ari Elbaz	<github@accedinfo.com>  MAJ QUADRATUS EXPORT 2015
- * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017       Elarifr. Ari Elbaz	<github@accedinfo.com>
+ * Copyright (C) 2017		Frédéric France     <frederic.france@netlogic.fr>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ class AccountancyExport
 	/**
 	 * @var Type of export. Defined by $conf->global->ACCOUNTING_EXPORT_MODELCSV
 	 */
-	public static $EXPORT_TYPE_NORMAL = 1;     // Classic CSV
+	public static $EXPORT_TYPE_NORMAL = 1;	 // Classic CSV
 	public static $EXPORT_TYPE_CEGID = 2;
 	public static $EXPORT_TYPE_COALA = 3;
 	public static $EXPORT_TYPE_BOB50 = 4;
@@ -82,7 +83,7 @@ class AccountancyExport
 
 		$this->db = &$db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-        $this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?"\n":($conf->global->ACCOUNTING_EXPORT_ENDLINE==1?"\n":"\r\n");
+		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?"\n":($conf->global->ACCOUNTING_EXPORT_ENDLINE==1?"\n":"\r\n");
 	}
 
 	/**
@@ -104,70 +105,70 @@ class AccountancyExport
 				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 				self::$EXPORT_TYPE_AGIRIS => $langs->trans('Modelcsv_agiris'),
 				self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
-            );
+			);
 	}
 
-    /**
-     * Array with all export type available (key + label) and parameters for config
-     *
-     * @return array of type
-     */
-    public static function getTypeConfig() {
-        global $conf, $langs;
+	/**
+	 * Array with all export type available (key + label) and parameters for config
+	 *
+	 * @return array of type
+	 */
+	public static function getTypeConfig() {
+		global $conf, $langs;
 
-        return array (
-            'param' => array(
-                self::$EXPORT_TYPE_NORMAL => array(
-                    'label' => $langs->trans('Modelcsv_normal'),
-                    'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
-                    'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-                    'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
-                    'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
-                ),
-                self::$EXPORT_TYPE_CEGID => array(
-                    'label' => $langs->trans('Modelcsv_CEGID'),
-                ),
-                self::$EXPORT_TYPE_COALA => array(
-                    'label' => $langs->trans('Modelcsv_COALA'),
-                ),
-                self::$EXPORT_TYPE_BOB50 => array(
-                    'label' => $langs->trans('Modelcsv_bob50'),
-                ),
-                self::$EXPORT_TYPE_CIEL => array(
-                    'label' => $langs->trans('Modelcsv_ciel'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'txt',
-                ),
-                self::$EXPORT_TYPE_QUADRATUS => array(
-                    'label' => $langs->trans('Modelcsv_quadratus'),
-                    'ACCOUNTING_EXPORT_FORMAT' => 'txt',
-                ),
-                self::$EXPORT_TYPE_EBP => array(
-                    'label' => $langs->trans('Modelcsv_ebp'),
-                ),
-                self::$EXPORT_TYPE_COGILOG => array(
-                    'label' => $langs->trans('Modelcsv_cogilog'),
-                ),
-                self::$EXPORT_TYPE_AGIRIS => array(
-                    'label' => $langs->trans('Modelcsv_agiris'),
-                ),
-                self::$EXPORT_TYPE_CONFIGURABLE => array(
-                    'label' => $langs->trans('Modelcsv_configurable'),
-                    'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
-                    'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-                    'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
-                    'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
-                ),
-            ),
-            'cr'=> array (
-                '1' => $langs->trans("Unix"),
-                '2' => $langs->trans("Windows")
-            ),
-            'format' => array (
-                'csv' => $langs->trans("csv"),
-                'txt' => $langs->trans("txt")
-            ),
-        );
-    }
+		return array (
+			'param' => array(
+				self::$EXPORT_TYPE_NORMAL => array(
+					'label' => $langs->trans('Modelcsv_normal'),
+					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
+					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
+					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
+					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
+				),
+				self::$EXPORT_TYPE_CEGID => array(
+					'label' => $langs->trans('Modelcsv_CEGID'),
+				),
+				self::$EXPORT_TYPE_COALA => array(
+					'label' => $langs->trans('Modelcsv_COALA'),
+				),
+				self::$EXPORT_TYPE_BOB50 => array(
+					'label' => $langs->trans('Modelcsv_bob50'),
+				),
+				self::$EXPORT_TYPE_CIEL => array(
+					'label' => $langs->trans('Modelcsv_ciel'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+				self::$EXPORT_TYPE_QUADRATUS => array(
+					'label' => $langs->trans('Modelcsv_quadratus'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+				self::$EXPORT_TYPE_EBP => array(
+					'label' => $langs->trans('Modelcsv_ebp'),
+				),
+				self::$EXPORT_TYPE_COGILOG => array(
+					'label' => $langs->trans('Modelcsv_cogilog'),
+				),
+				self::$EXPORT_TYPE_AGIRIS => array(
+					'label' => $langs->trans('Modelcsv_agiris'),
+				),
+				self::$EXPORT_TYPE_CONFIGURABLE => array(
+					'label' => $langs->trans('Modelcsv_configurable'),
+					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT)?'txt':$conf->global->ACCOUNTING_EXPORT_FORMAT,
+					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV)?',':$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
+					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE)?1:$conf->global->ACCOUNTING_EXPORT_ENDLINE,
+					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE)?'%d%m%Y':$conf->global->ACCOUNTING_EXPORT_DATE,
+				),
+			),
+			'cr'=> array (
+				'1' => $langs->trans("Unix"),
+				'2' => $langs->trans("Windows")
+			),
+			'format' => array (
+				'csv' => $langs->trans("csv"),
+				'txt' => $langs->trans("txt")
+			),
+		);
+	}
 
 	/**
 	 * Download the export
@@ -218,7 +219,7 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_AGIRIS :
 				$this->exportAgiris($TData);
 				break;
-            case self::$EXPORT_TYPE_CONFIGURABLE :
+			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
 			default:
@@ -261,8 +262,8 @@ class AccountancyExport
 	public function exportCegid($objectLines) {
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
-            $separator = ";";
-            $end_line = "\n";
+			$separator = ";";
+			$end_line = "\n";
 
 			print $date . $separator;
 			print $line->code_journal . $separator;
@@ -286,8 +287,8 @@ class AccountancyExport
 	public function exportCogilog($objectLines) {
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
-            $separator = ";";
-            $end_line = "\n";
+			$separator = ";";
+			$end_line = "\n";
 
 			print $line->code_journal . $separator;
 			print $date . $separator;
@@ -318,8 +319,8 @@ class AccountancyExport
 	 */
 	public function exportCoala($objectLines) {
 		// Coala export
-        $separator = ";";
-        $end_line = "\n";
+		$separator = ";";
+		$end_line = "\n";
 
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
@@ -346,8 +347,8 @@ class AccountancyExport
 	public function exportBob50($objectLines) {
 
 		// Bob50
-        $separator = ";";
-        $end_line = "\n";
+		$separator = ";";
+		$end_line = "\n";
 
 		foreach ( $objectLines as $line ) {
 			print $line->piece_num . $separator;
@@ -426,7 +427,7 @@ class AccountancyExport
 
 		$end_line ="\r\n";
 
-        //elarifr we should use dol_now function not time however this is wrong date to transfert in accounting
+        //We should use dol_now function not time however this is wrong date to transfert in accounting
 		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ( $TData as $data ) {
@@ -440,7 +441,7 @@ class AccountancyExport
 			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
 			$Tab['folio'] = '000';
 
-            //elarifr we use invoice date $data->doc_date not $date_ecriture which is the transfert date
+            //We use invoice date $data->doc_date not $date_ecriture which is the transfert date
             //maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
 			//$Tab['date_ecriture'] = $date_ecriture;
 			$Tab['date_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
@@ -507,7 +508,7 @@ class AccountancyExport
 	public function exportEbp($objectLines) {
 
 		$separator = ',';
-        $end_line = "\n";
+		$end_line = "\n";
 
 		foreach ( $objectLines as $line ) {
 
@@ -539,7 +540,7 @@ class AccountancyExport
 	public function exportAgiris($objectLines) {
 
 		$separator = ';';
-        $end_line = "\n";
+		$end_line = "\n";
 
 		foreach ( $objectLines as $line ) {
 
@@ -566,35 +567,35 @@ class AccountancyExport
 		}
 	}
 
-    /**
-     * Export format : Configurable
-     *
-     * @param array $objectLines data
-     *
-     * @return void
-     */
-    public function exportConfigurable($objectLines) {
-        global $conf;
+	/**
+	 * Export format : Configurable
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportConfigurable($objectLines) {
+		global $conf;
 
-        foreach ($objectLines as $line) {
-            $tab = array();
-            // export configurable
-            $date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-            $tab[] = $line->piece_num;
-            $tab[] = $date;
-            $tab[] = $line->doc_ref;
-            $tab[] = $line->label_operation;
-            $tab[] =  length_accountg($line->numero_compte);
-            $tab[] =  length_accounta($line->subledger_account);
-            $tab[] =  price($line->debit);
-            $tab[] =  price($line->credit);
-            $tab[] =  price($line->montant);
-            $tab[] =  $line->code_journal;
+		foreach ($objectLines as $line) {
+			$tab = array();
+			// export configurable
+			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
+			$tab[] = $line->piece_num;
+			$tab[] = $date;
+			$tab[] = $line->doc_ref;
+			$tab[] = $line->label_operation;
+			$tab[] =  length_accountg($line->numero_compte);
+			$tab[] =  length_accounta($line->subledger_account);
+			$tab[] =  price($line->debit);
+			$tab[] =  price($line->credit);
+			$tab[] =  price($line->montant);
+			$tab[] =  $line->code_journal;
 
-            $separator = $this->separator;
-            print implode($separator, $tab) . $this->end_line;
-        }
-    }
+			$separator = $this->separator;
+			print implode($separator, $tab) . $this->end_line;
+		}
+	}
 
 
 	/**

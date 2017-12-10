@@ -105,7 +105,8 @@ print '
     li.lilevel1 {
         padding: 1em 15px 0.5em 40px;
         border-top: 1px solid #aaa;
-        margin-right: 20px;
+        margin-right: 0px;
+    	margin-left: 0px;
         border-right: 0px ! important;
     }
     li.lilevel1:first-child {
@@ -121,13 +122,13 @@ print '
         display: block;
     }
     li.lilevel2 a {
-        padding: 0 15px 0.5em 40px;
+        padding: 0.7em 15px 0.7em 40px;
         color: #000;
         cursor: pointer;
         display: block;
     }
     li.lilevel3 a {
-        padding: 0.2em 15px 8px 60px;
+        padding: 0.2em 15px 0.2em 60px;
         color: #000;
         cursor: pointer;
         display: block;
@@ -139,7 +140,7 @@ print '
         display: block;
     }
     li.lilevel5 a {
-        padding: 0.2em 15px 8px 60px;
+        padding: 0.2em 15px 0.2em 60px;
         color: #000;
         cursor: pointer;
         display: block;

@@ -580,9 +580,11 @@ class BlockedLog
 	 *	@param	int 	$limit      	max number of element, 0 for all
 	 *	@param	string 	$sortfield     	sort field
 	 *	@param	string 	$sortorder     	sort order
+	 *	@param	int 	$search_start   start time limit
+	 *	@param	int 	$search_end     end time limit
 	 *	@return	array					array of object log
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '')
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_start = -1, $search_end = -1)
 	{
 		global $conf, $cachedlogs;
 
@@ -610,8 +612,10 @@ class BlockedLog
 	         WHERE element='".$element."' AND fk_object=".(int) $fk_object;
 		}
 
+		if($search_start > 0) $sql.=" AND date_creation >= '".$this->db->idate($search_start)."'";
+		if($search_end > 0) $sql.=" AND date_creation <= '".$this->db->idate($search_end)."'";
+
 		$sql.=$this->db->order($sortfield, $sortorder);
-		//($order<0 ? ' ORDER BY rowid DESC ' : ' ORDER BY rowid ASC ');
 
 		if($limit > 0 )$sql.=' LIMIT '.$limit;
 

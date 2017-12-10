@@ -1,6 +1,6 @@
-BlockedLog=Non Reversible Logs
+BlockedLog=Unalterable Logs
 Field=Field
-BlockedLogDesc=This module tracks some events into a non reversible log (that you can't modify once recorded) into a block chain, in real time. This module provides compatibility with requirements of laws of some countries (like France with the law Fincance 2016 - Norme NF535).
+BlockedLogDesc=This module tracks some events into an unalterable log (that you can't modify once recorded) into a block chain, in real time. This module provides compatibility with requirements of laws of some countries (like France with the law Fincance 2016 - Norme NF535).
 Fingerprints=Archived events and fingerprints
 FingerprintsDesc=Archived business events and fingerprints
 CompanyInitialKey=Company initial key (hash of genesis block)
@@ -27,3 +27,6 @@ logDOC_PREVIEW=Preview of a validated document in order to print or download
 logDOC_DOWNLOAD=Download of a validated document in order to print or send
 DataOfArchivedEvent=Full datas of archived event
 ImpossibleToReloadObject=Object (type %s, id %s) removed
+BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
+BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Unalterable Logs module was activated because of the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
+BlockedLogDisableNotAllowedForCountry=Disable not allowed for this countries

@@ -66,7 +66,7 @@ if ($action == 'presend')
 	{
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
-		$outputlangs->load('commercial');
+		$outputlangs->loadLangs(array('commercial','bills','orders','contracts','members','propal','supplier_proposal','interventions'));
 	}
 
 	$topicmail='';
@@ -98,7 +98,7 @@ if ($action == 'presend')
 
 	dol_fiche_head('');
 
-	// Cree l'objet formulaire mail
+	// Create form for email
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);

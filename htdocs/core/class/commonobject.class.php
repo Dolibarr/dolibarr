@@ -4505,8 +4505,10 @@ abstract class CommonObject
 			//Eliminate copied source object extra_fields that do not exist in target object
 			$new_array_options=array();
 			foreach ($this->array_options as $key => $value) {
-				if (in_array(substr($key,8), array_keys($target_extrafields)))	// We remove the 'options_' from $key
+				if (in_array(substr($key,8), array_keys($target_extrafields)))	// We remove the 'options_' from $key for test
 					$new_array_options[$key] = $value;
+				elseif (in_array($key, array_keys($target_extrafields)))		// We test on $key that does not contains the 'options_' prefix
+					$new_array_options['options_'.$key] = $value;
 			}
 
 			foreach($new_array_options as $key => $value)
@@ -4759,12 +4761,17 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-		$label=$val['label'];
-		$type =$val['type'];
-		$size =$val['css'];
+		$label= $val['label'];
+		$type = $val['type'];
+		$size = $val['css'];
 
 		// Convert var to be able to share same code than showInputField of extrafields
-		if (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
+		{
+			$type = 'varchar';		// convert varchar(xx) int varchar
+			$size = $reg[1];
+		}
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -4833,6 +4840,7 @@ abstract class CommonObject
 				}
 			}
 		}
+		//var_dump($showsize.' '.$size);
 
 		if (in_array($type,array('date','datetime')))
 		{
@@ -4862,6 +4870,12 @@ abstract class CommonObject
 			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,0,ROWS_5,'90%');
+			$out=$doleditor->Create(1);
+		}
+		elseif ($type == 'html')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
@@ -5285,12 +5299,17 @@ abstract class CommonObject
 		}
 
 		$objectid = $this->id;
-		$label=$val['label'];
-		$type =$val['type'];
-		$size =$val['css'];
+		$label = $val['label'];
+		$type  = $val['type'];
+		$size  = $val['css'];
 
 		// Convert var to be able to share same code than showOutputField of extrafields
-		if (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
+		{
+			$type = 'varchar';		// convert varchar(xx) int varchar
+			$size = $reg[1];
+		}
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -5325,20 +5344,42 @@ abstract class CommonObject
 		{
 			if ($type == 'date')
 			{
-				$showsize=10;
+				//$showsize=10;
+				$showsize = 'minwidth100imp';
 			}
 			elseif ($type == 'datetime')
 			{
-				$showsize=19;
+				//$showsize=19;
+				$showsize = 'minwidth200imp';
 			}
-			elseif ($type == 'int' || $type == 'integer')
+			elseif (in_array($type,array('int','double','price')))
 			{
-				$showsize=10;
+				//$showsize=10;
+				$showsize = 'maxwidth75';
+			}
+			elseif ($type == 'url')
+			{
+				$showsize='minwidth400';
+			}
+			elseif ($type == 'boolean')
+			{
+				$showsize='';
 			}
 			else
 			{
-				$showsize=round($size);
-				if ($showsize > 48) $showsize=48;
+				if (round($size) < 12)
+				{
+					$showsize = 'minwidth100';
+				}
+				else if (round($size) <= 48)
+				{
+					$showsize = 'minwidth200';
+				}
+				else
+				{
+					//$showsize=48;
+					$showsize = 'minwidth400';
+				}
 			}
 		}
 
@@ -5579,7 +5620,7 @@ abstract class CommonObject
 				}
 			}
 		}
-		elseif ($type == 'text')
+		elseif ($type == 'text' || $type == 'html')
 		{
 			$value=dol_htmlentitiesbr($value);
 		}

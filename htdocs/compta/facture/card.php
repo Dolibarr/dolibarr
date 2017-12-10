@@ -64,15 +64,9 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('compta');
-$langs->load('products');
-$langs->load('banks');
-$langs->load('main');
-if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
-if (! empty($conf->margin->enabled))
-	$langs->load('margins');
+$langs->loadLangs(array('bills','companies','compta','products','banks','main'));
+if (! empty($conf->incoterm->enabled)) $langs->load('incoterm');
+if (! empty($conf->margin->enabled)) $langs->load('margins');
 
 $projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : 0);
 
@@ -4410,11 +4404,9 @@ else if ($id > 0 || ! empty($ref))
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("NotAllowed") . '">' . $langs->trans('Delete') . '</a></div>';
 			}
-
-			print '</div>';
 		}
+		print '</div>';
 	}
-	print '<br>';
 
 	// Select mail models is same action as presend
 	if (GETPOST('modelselected','alpha')) {
