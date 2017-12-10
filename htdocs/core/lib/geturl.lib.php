@@ -124,7 +124,7 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 
     dol_syslog("getURLContent request=".$request);
     //dol_syslog("getURLContent response =".response);	// This may contains binary data, so we dont output it
-    dol_syslog("getURLContent response size =".strlen($response));	// This may contains binary data, so we dont output it
+    dol_syslog("getURLContent response size=".strlen($response));	// This may contains binary data, so we dont output it
 
     $rep=array();
     if (curl_errno($ch))

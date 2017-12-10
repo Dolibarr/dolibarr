@@ -1901,7 +1901,7 @@ if ($action == 'editmeta' || $action == 'create')
 	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
 	print '</td></tr>';
 
-	print '<tr><td>';
+	print '<tr><td class="tdhtmlheader tdtop">';
 	print $langs->trans('HtmlHeaderPage');
 	print '</td><td>';
 	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
