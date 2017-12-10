@@ -195,9 +195,9 @@ if ($action=="dl" && $numref > 0)
     dol_mkdir($outdirinvoices);
     dol_mkdir($outdirsupplierinvoices);
 
-    //$zipname = $object->label.'-'.$numref . '.zip';
-    //$zip = new ZipArchive();
-    //$zip->open($zipname, ZipArchive::OVERWRITE);
+    $zipname = $object->label.'-'.$numref . '.zip';
+    $zip = new ZipArchive();
+    $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
 
     $sql = $sqlrequestforbankline;
 
@@ -207,23 +207,23 @@ if ($action=="dl" && $numref > 0)
     if ($resd) {
         $numd = $db->num_rows($resd);
         $i = 0;
-        if ($numd > 0)
+        while ( $i> $numd)
         {
             $objd = $db->fetch_object($resd);
 
             $log.='Transaction '.$objd->rowid;
-            $links = $object->get_url($objd->rowid);
+            //$links = $object->get_url($objd->rowid);
 
-            foreach($links as $key=>$val)
-            {
+            //foreach($links as $key=>$val)
+            //{
                 $link = ''; $upload_dir = '';
 
-                switch ($val['type']) {
-                    case "payment":
+                switch ($objd->label) {
+                    case "(CustomerInvoicePayment)":
                         $payment = new Paiement($db);
                         $payment->fetch($val['url_id']);
                         $arraybill = $payment->getBillsArray();
-                        if (count($arraybill) > 0)
+                        if (is_array($arraybill))
                         {
                             foreach ($arraybill as $billid)
                             {
@@ -256,11 +256,11 @@ if ($action=="dl" && $numref > 0)
                             }
                         }
                         break;
-                    case "payment_supplier":
+                    case "(SupplierInvoicePayment)":
                         $payment = new PaiementFourn($db);
                         $payment->fetch($val['url_id']);
                         $arraybill = $payment->getBillsArray();
-                        if (count($arraybill) > 0)
+                        if (is_array($arraybill) )
                         {
                             foreach ($arraybill as $billid)
                             {
@@ -293,25 +293,25 @@ if ($action=="dl" && $numref > 0)
                             }
                         }
                         break;
-                    case "payment_expensereport":
+                    case "(ExpenseReportPayment)":
                         /*$subdir = dol_sanitizeFileName($objd->refe);
                         $upload_dir = $conf->expensereport->dir_output . '/' . $subdir;*/
                         break;
-                    case "payment_salary":
+                    case "Salary payment":
                         /*$subdir = dol_sanitizeFileName($objd->ids);
                         $upload_dir = $conf->salaries->dir_output . '/' . $subdir;*/
                         break;
-                    case "payment_donation":
+                    case "(DonationPayment)":
                         /*$subdir = get_exdir(null, 2, 0, 1, $objd, 'donation') . '/' . dol_sanitizeFileName($objd->idd);
                         $upload_dir = $conf->don->dir_output . '/' . $subdir;*/
                         break;
                     default:
                         break;
                 }
-            }
+            //}
             $log.="\n";
 
-            /*if (! empty($upload_dir))
+            if (! empty($upload_dir))
             {
                 $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 
@@ -324,16 +324,17 @@ if ($action=="dl" && $numref > 0)
                     $log .= $key . ',' . $langs->trans("Nofile") . "\n";
                 }
 
-            }*/
+            }
+            $i++;
         }
     }
 
     $db->free($resd);
 
 
-    //$zip->addFromString('log '.$numref.'.csv', $log);
-    //$zip->close();
-
+    $zip->addFromString('log '.$numref.'.csv', $log);
+    $zip->close();
+/* 
     // /Then download the zipped file.
     /*header('Content-Type: application/zip');
     header('Content-disposition: attachment; filename=' . $zipname);
@@ -794,13 +795,13 @@ else
 	print "</div>";
 
 	print "</form>\n";
-
+/*
 	// Add a download button
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)   // Started a rewrite to make this feature more Dolibarr compliant. Still need dev to be completed.
 	{
 	    // TODO Replace this with standard box to generate document.
 	   print '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$numref.'&account='.$id.'&action=dl" class="butAction" name="Send" >'.$langs->trans('DownloadPackageWithAllDocuments')." </a>\n";
-	}
+	}*/
 }
 
 
