@@ -4,7 +4,7 @@
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 --
@@ -29,7 +29,7 @@
 --
 
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('VT', 'Sale Journal', 2, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Purhcase Journal', 3, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Purchase Journal', 3, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Bank Journal', 4, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Other Journal', 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Has new Journal', 9, 1);
