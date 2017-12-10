@@ -243,9 +243,9 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             {
             	foreach($feature2 as $subfeature)
             	{
-            		if (empty($user->rights->$feature->$subfeature->creer)
-            		&& empty($user->rights->$feature->$subfeature->write)
-            		&& empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
+                        if (empty($user->rights->$feature->$subfeature->creer)
+                        && empty($user->rights->$feature->$subfeature->write)
+                        && empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
             		else { $createok=1; break; } // Break to bypass second test if the first is ok
             	}
             }
@@ -308,6 +308,9 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
             else if ($feature == 'ftp')
             {
                 if (! $user->rights->ftp->write) $deleteok=0;
+            }else if ($feature == 'salaries')
+            {
+                if (! $user->rights->salaries->delete) $deleteok=0;
             }
             else if ($feature == 'salaries')
             {

@@ -559,7 +559,7 @@ if (! empty($valid_dashboardlines))
 	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
     foreach($valid_dashboardlines as $board)
     {
-        if (empty($boad->nbtodo)) $nbworkboardempty++;
+        if (empty($board->nbtodo)) $nbworkboardempty++;
 
         $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
         $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
