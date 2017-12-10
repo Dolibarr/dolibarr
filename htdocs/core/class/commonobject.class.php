@@ -3206,7 +3206,7 @@ abstract class CommonObject
 		}else{
 			$ret=$conf->{strtolower(get_class($this))}->dir_output.'/'.$ref;
 		}
-                return $ret
+                return $ret;
 	}
 
 
