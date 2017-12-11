@@ -368,7 +368,7 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $dashboardlines=array();
 
 // Do not include sections without management permission
-require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
