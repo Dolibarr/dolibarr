@@ -771,6 +771,12 @@ class Website extends CommonObject
 		$website = $this;
 
 		dol_mkdir($conf->website->dir_temp);
+		if (! is_writable($conf->website->dir_temp))
+		{
+			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
+			return '';
+		}
+
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref;
 
@@ -790,7 +796,7 @@ class Website extends CommonObject
 		$fp = fopen($filesql,"w");
 		if (empty($fp))
 		{
-			setEventMessage("Failed to create file ".$filesql, null, 'errors');
+			setEventMessages("Failed to create file ".$filesql, null, 'errors');
 			return '';
 		}
 
