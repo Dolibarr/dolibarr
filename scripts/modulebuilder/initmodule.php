@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: ".$script_file." modulename\n";
+	print "Usage: ".$script_file." ModuleName\n";
 	exit(-1);
 }
 $modulename=$argv[1];
@@ -92,7 +92,7 @@ print "dirins=".$dirins."\n";
 if (preg_match('/[^a-z0-9_]/i', $modulename))
 {
 	$error++;
-	print 'Error '.$langs->trans("SpaceOrSpecialCharAreNotAllowed");
+	print 'Error '.$langs->trans("SpaceOrSpecialCharAreNotAllowed")."\n";
 	exit(1);
 }
 
@@ -114,11 +114,12 @@ if (! $error)
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToCopyDir", $srcdir, $destdir), null, 'errors');
+			print $langs->trans("ErrorFailToCopyDir", $srcdir, $destdir)."\n";
+			exit(2);
 		}
 		else	// $result == 0
 		{
-			setEventMessages($langs->trans("AllFilesDidAlreadyExist", $srcdir, $destdir), null, 'warnings');
+			print $langs->trans("AllFilesDidAlreadyExist", $srcdir, $destdir)."\n";
 		}
 	}
 
@@ -163,10 +164,12 @@ if (! $error)
 		//var_dump($result);
 		if ($result < 0)
 		{
-			setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+			print $langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname'])."\n";
+			exit(3);
 		}
 	}
 }
 
-
+print 'Module initialized'."\n";
+exit(0);
 

@@ -40,7 +40,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: ".$script_file." modulename\n";
+	print "Usage: ".$script_file." ModuleName\n";
 	exit(-1);
 }
 $modulename=$argv[1];
@@ -101,12 +101,11 @@ $outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
 $util = new Utils($db);
 $result = $util->generateDoc($module);
 
-if ($result > 0)
+if ($result <= 0)
 {
-	print $langs->trans("DocFileGeneratedInto", $outputfiledoc);
-}
-else
-{
-	setEventMessages($util->errors, null, 'errors');
+	print $util->errors;
+	exit(1)
 }
 
+print $langs->trans("DocFileGeneratedInto", $outputfiledoc);
+exit(0);
