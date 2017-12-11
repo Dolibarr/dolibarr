@@ -139,7 +139,7 @@ class DoliDBMysqli extends DoliDB
             if ($this->connected)
             {
             	// If client is old latin, we force utf8
-            	$clientmustbe=$conf->db->dolibarr_main_db_character_set;
+            	$clientmustbe=empty($conf->db->dolibarr_main_db_character_set)?'utf8':$conf->db->dolibarr_main_db_character_set;
             	if (preg_match('/latin1/', $clientmustbe)) $clientmustbe='utf8';
 
 				if ($this->db->character_set_name() != $clientmustbe) {
