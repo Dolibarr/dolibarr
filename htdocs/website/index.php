@@ -1169,14 +1169,17 @@ if (GETPOST('exportsite'))
 {
 	$fileofzip = $object->exportWebSite();
 
-	$file_name = basename($fileofzip);
+	if ($fileofzip)
+	{
+		$file_name = basename($fileofzip);
 
-	header("Content-Type: application/zip");
-	header("Content-Disposition: attachment; filename=".$file_name);
-	header("Content-Length: " . filesize($fileofzip));
+		header("Content-Type: application/zip");
+		header("Content-Disposition: attachment; filename=".$file_name);
+		header("Content-Length: " . filesize($fileofzip));
 
-	readfile($fileofzip);
-	exit;
+		readfile($fileofzip);
+		exit;
+	}
 }
 
 

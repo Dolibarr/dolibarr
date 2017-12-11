@@ -788,6 +788,11 @@ class Website extends CommonObject
 
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/export/pages.sql';
 		$fp = fopen($filesql,"w");
+		if (empty($fp))
+		{
+			setEventMessage("Failed to create file ".$filesql, null, 'errors');
+			return '';
+		}
 
 		$objectpages = new WebsitePage($this->db);
 		$listofpages = $objectpages->fetchAll($website->id);
