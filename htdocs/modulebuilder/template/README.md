@@ -1,7 +1,7 @@
 # MYMODULE FOR <a href="https://www.dolibarr.org">DOLIBARR ERP CRM</a>
 
 ## Features
-MyModuleDescription
+Description...
 
 Other modules are available on <a href="https://www.dolistore.com" target="_new">Dolistore.com</a>.
 
@@ -9,10 +9,11 @@ Other modules are available on <a href="https://www.dolistore.com" target="_new"
 
 ### Translations
 
-This module contains a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service. 
 Translations can be define manually by editing files into directories [langs](langs). 
 
 <!--
+This module contains also a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service. 
+
 For more informations, see the [translator's documentation](https://wiki.dolibarr.org/index.php/Translator_documentation).
 
 There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-template) for this module.
