@@ -618,8 +618,8 @@ if (! $error && $action == 'writebookkeeping') {
 			$MAXNBERRORS=5;
 			if ($error >= $MAXNBERRORS)
 			{
-			    setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
-			    break;  // Break in the foreach
+				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
+				break;  // Break in the foreach
 			}
 		}
 	}
@@ -1059,59 +1059,59 @@ function getSourceDocRef($val, $typerecord)
 		$sqlmid = 'SELECT payfac.fk_facture as id, f.facnumber as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
 		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=" . $val["paymentid"];
-        $ref = $langs->trans("Invoice");
+		$ref = $langs->trans("Invoice");
 	}
 	elseif ($typerecord == 'payment_supplier')
 	{
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfac, ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=" . $val["paymentsupplierid"];
-        $ref = $langs->trans("SupplierInvoice");
+		$ref = $langs->trans("SupplierInvoice");
 	}
 	elseif ($typerecord == 'payment_expensereport')
 	{
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_expensereport as pe, " . MAIN_DB_PREFIX . "expensereport as e";
 		$sqlmid .= " WHERE pe.rowid=" . $val["paymentexpensereport"]." AND pe.fk_expensereport = e.rowid";
-        $ref = $langs->trans("ExpenseReport");
+		$ref = $langs->trans("ExpenseReport");
 	}
 	elseif ($typerecord == 'payment_salary')
 	{
 		$sqlmid = 'SELECT s.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_salary as s";
 		$sqlmid .= " WHERE s.rowid=" . $val["paymentsalid"];
-        $ref = $langs->trans("SalaryPayment");
+		$ref = $langs->trans("SalaryPayment");
 	}
 	elseif ($typerecord == 'payment_vat')
 	{
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "tva as v";
 		$sqlmid .= " WHERE v.rowid=" . $val["paymentvatid"];
-        $ref = $langs->trans("PaymentVat");
+		$ref = $langs->trans("PaymentVat");
 	}
 	elseif ($typerecord == 'payment_donation')
 	{
 		$sqlmid = 'SELECT payd.fk_donation as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_donation as payd";
 		$sqlmid .= " WHERE payd.fk_donation=" . $val["paymentdonationid"];
-        $ref = $langs->trans("Donation").' ';
+		$ref = $langs->trans("Donation").' ';
 	}
 	elseif ($typerecord == 'payment_various')
 	{
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_various as v";
 		$sqlmid .= " WHERE v.rowid=" . $val["paymentvariousid"];
-        $ref = $langs->trans("VariousPayment");
+		$ref = $langs->trans("VariousPayment");
 	}
-    dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-    $resultmid = $db->query($sqlmid);
-    if ($resultmid) {
-        while ($objmid = $db->fetch_object($resultmid))
-        {
-            $ref.=' '.$objmid->ref;
-        }
-    }
-    else dol_print_error($db);
+	dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+	$resultmid = $db->query($sqlmid);
+	if ($resultmid) {
+		while ($objmid = $db->fetch_object($resultmid))
+		{
+			$ref.=' '.$objmid->ref;
+		}
+	}
+	else dol_print_error($db);
 
 	return $ref;
 }
