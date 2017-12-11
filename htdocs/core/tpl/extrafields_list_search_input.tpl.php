@@ -1,4 +1,5 @@
 <?php
+// Loop to show all columns of extrafields for the search title line
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
 	foreach($extrafields->attribute_label as $key => $val)

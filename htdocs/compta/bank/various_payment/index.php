@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file		htdocs/compta/bank/various_payment/index.php
- *	\ingroup	bank
- *	\brief		List of various payments
+ *  \file       htdocs/compta/bank/various_payment/index.php
+ *  \ingroup    bank
+ *  \brief      List of various payments
  */
 
 require '../../../main.inc.php';
@@ -92,7 +92,7 @@ $form = new Form($db);
 $variousstatic = new PaymentVarious($db);
 $accountstatic = new Account($db);
 
-$sql = "SELECT v.rowid, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code,";
+$sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
@@ -102,9 +102,9 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.row
 $sql.= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
-if ($search_ref)	$sql.=" AND v.rowid=".$search_ref;
-if ($search_label) 	$sql.=natural_search(array('v.label'), $search_label);
-if ($search_amount_deb) $sql.=natural_search("v.amount", $search_amount_deb, 1);
+if ($search_ref)         $sql.=" AND v.rowid=".$search_ref;
+if ($search_label)       $sql.=natural_search(array('v.label'), $search_label);
+if ($search_amount_deb)  $sql.=natural_search("v.amount", $search_amount_deb, 1);
 if ($search_amount_cred) $sql.=natural_search("v.amount", $search_amount_cred, 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {

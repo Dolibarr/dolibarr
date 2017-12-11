@@ -322,6 +322,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
+	//$keyforbreak='fieldkeytoswithonsecondcolumn';
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes
@@ -329,16 +330,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</table>';
 	print '</div>';
-	
-	/* Second column
-	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
-	
-	print '</table>';
-	print '</div>';*/
-	
 	print '</div>';
 	print '</div>';
 
@@ -439,13 +430,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//Select mail models is same action as presend
 	/*
 	 if (GETPOST('modelselected')) $action = 'presend';
-	 
+
 	 // Presend form
 	 $modelmail='inventory';
 	 $defaulttopic='InformationMessage';
 	 $diroutput = $conf->product->dir_output.'/inventory';
 	 $trackid = 'stockinv'.$object->id;
-	 
+
 	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	 */
 }

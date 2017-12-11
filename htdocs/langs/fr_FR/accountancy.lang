@@ -36,7 +36,7 @@ NotYetInGeneralLedger=non encore envoyé dans le grand livre
 GroupIsEmptyCheckSetup=Le groupe est vide. Vérifier la configuration du groupe personnalisé
 DetailByAccount=Afficher le détail par compte
 AccountWithNonZeroValues=Comptes avec valeurs non nulles
-ListOfAccounts=List of accounts
+ListOfAccounts=Liste des comptes
 
 MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration

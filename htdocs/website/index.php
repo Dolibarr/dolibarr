@@ -255,6 +255,8 @@ if ($action == 'add')
 
 	if ($urltograb)
 	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
 		// Clean url to grab, so url can be
 		// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
 		$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
@@ -263,24 +265,35 @@ if ($action == 'add')
 		{
 			$urltograb.='/';
 		}
-		$urltograbdirwithoutslash = dirname($urltograb.'.');
 
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		$urltograbdirwithoutslash = dirname($urltograb.'.');
+		$urltograbdirrootwithoutslash = getRootURLFromURL($urltograbdirwithoutslash);
+		// Exemple, now $urltograbdirwithoutslash is https://www.dolimed.com/screenshots
+		// and $urltograbdirrootwithoutslash is https://www.dolimed.com
 
 		$tmp = getURLContent($urltograb);
 		if ($tmp['curl_error_no'])
 		{
 			$error++;
-			setEventMessages($tmp['curl_error_msg'], null, 'errors');
+			setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
+			$action='create';
+		}
+		elseif ($tmp['http_code'] != '200')
+		{
+			$error++;
+			setEventMessages('Error getting '.$urltograb.': '.$tmp['http_code'], null, 'errors');
 			$action='create';
 		}
 		else
 		{
+			// Remove comments
+			$tmp['content'] = removeHtmlComment($tmp['content']);
+
 			preg_match('/<head>(.*)<\/head>/is', $tmp['content'], $reg);
 			$head = $reg[1];
 
 			$objectpage->type_container = 'page';
-   			$objectpage->pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-',$urltograbwithoutdomainandparam));
+   			$objectpage->pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-', preg_replace('/\/+$/', '', $urltograbwithoutdomainandparam)));
    			if (empty($objectpage->pageurl))
    			{
    				$tmpdomain = getDomainFromURL($urltograb);
@@ -336,10 +349,17 @@ if ($action == 'add')
 			preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
 			foreach ($regs[0] as $key => $val)
 			{
-				dol_syslog("We will grab the resource ".$regs[2][$key]);
+				dol_syslog("We will grab the resource found into script tag ".$regs[2][$key]);
 
 				$linkwithoutdomain = $regs[2][$key];
-				$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+				if (preg_match('/^\//', $regs[2][$key]))
+				{
+					$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+				}
+				else
+				{
+					$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key];	// We use dir of grabbed file
+				}
 
 				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 				if (preg_match('/^http/', $regs[2][$key]))
@@ -362,10 +382,16 @@ if ($action == 'add')
     			if ($tmpgeturl['curl_error_no'])
     			{
     				$error++;
-    				setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+    				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
     				$action='create';
     			}
-    			else
+				elseif ($tmpgeturl['http_code'] != '200')
+				{
+					$error++;
+					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+					$action='create';
+				}
+				else
     			{
     				dol_mkdir(dirname($filetosave));
 
@@ -389,10 +415,17 @@ if ($action == 'add')
 			preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
 			foreach ($regs[0] as $key => $val)
 			{
-				dol_syslog("We will grab the resource ".$regs[2][$key]);
+				dol_syslog("We will grab the resource found into link tag ".$regs[2][$key]);
 
 				$linkwithoutdomain = $regs[2][$key];
-				$urltograbbis = $urltograbdirwithoutslash.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+				if (preg_match('/^\//', $regs[2][$key]))
+				{
+					$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+				}
+				else
+				{
+					$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key];	// We use dir of grabbed file
+				}
 
 				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 				if (preg_match('/^http/', $regs[2][$key]))
@@ -414,28 +447,34 @@ if ($action == 'add')
 				if ($tmpgeturl['curl_error_no'])
 				{
 					$error++;
-					setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+					$action='create';
+				}
+				elseif ($tmpgeturl['http_code'] != '200')
+				{
+					$error++;
+					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action='create';
 				}
 				else
 				{
-					 //dol_mkdir(dirname($filetosave));
+					//dol_mkdir(dirname($filetosave));
 
-					 //$fp = fopen($filetosave, "w");
-					 //fputs($fp, $tmpgeturl['content']);
-					 //fclose($fp);
-					 //if (! empty($conf->global->MAIN_UMASK))
-					 //	@chmod($file, octdec($conf->global->MAIN_UMASK));
-				 }
+					//$fp = fopen($filetosave, "w");
+					//fputs($fp, $tmpgeturl['content']);
+					//fclose($fp);
+					//if (! empty($conf->global->MAIN_UMASK))
+					//	@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				 //	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-				 $pagecsscontent.='/* Content of file '.$urltograbbis.' */'."\n";
+					//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+					$pagecsscontent.='/* Content of file '.$urltograbbis.' */'."\n";
 
-				 getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1);
+					getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1);
 
-				 $pagecsscontent.=$tmpgeturl['content']."\n";
+					$pagecsscontent.=$tmpgeturl['content']."\n";
 
-				 $objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key],'/').'\n*/ims', '', $objectpage->htmlheader);
+					$objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key],'/').'\n*/ims', '', $objectpage->htmlheader);
+				}
 			}
 
 			$pagecsscontent.='</style>'."\n";
@@ -1130,14 +1169,17 @@ if (GETPOST('exportsite'))
 {
 	$fileofzip = $object->exportWebSite();
 
-	$file_name = basename($fileofzip);
+	if ($fileofzip)
+	{
+		$file_name = basename($fileofzip);
 
-	header("Content-Type: application/zip");
-	header("Content-Disposition: attachment; filename=".$file_name);
-	header("Content-Length: " . filesize($fileofzip));
+		header("Content-Type: application/zip");
+		header("Content-Disposition: attachment; filename=".$file_name);
+		header("Content-Length: " . filesize($fileofzip));
 
-	readfile($fileofzip);
-	exit;
+		readfile($fileofzip);
+		exit;
+	}
 }
 
 
@@ -1656,7 +1698,7 @@ if ($action == 'editcss')
 	print '</td><td>';
 
 	$doleditor=new DolEditor('WEBSITE_ROBOT', $robotcontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
-	print $doleditor->Create(1, '', true, 'Robot file', 'txt');
+	print $doleditor->Create(1, '', true, 'Robot file', 'text');
 
 	print '</td></tr>';
 
@@ -1666,7 +1708,7 @@ if ($action == 'editcss')
 	print '</td><td>';
 
 	$doleditor=new DolEditor('WEBSITE_HTACCESS', $htaccesscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
-	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'txt');
+	print $doleditor->Create(1, '', true, $langs->trans("File").' .htaccess', 'text');
 
 	print '</td></tr>';
 
@@ -1790,7 +1832,7 @@ if ($action == 'editmeta' || $action == 'create')
 
 	if ($action != 'create')
 	{
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('IDOfPage');
 		print '</td><td>';
 		print $pageid;
@@ -1828,7 +1870,7 @@ if ($action == 'editmeta' || $action == 'create')
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
-	$arrayoftype=array('page'=>$langs->trans("Page"), 'banner'=>$langs->trans("Banner"), 'blogpost'=>$langs->trans("BlogPost"));
+	$arrayoftype=array('page'=>$langs->trans("Page"), 'banner'=>$langs->trans("Banner"), 'blogpost'=>$langs->trans("BlogPost"), 'other'=>$langs->trans("Other"));
 	print $form->selectarray('WEBSITE_TYPE_CONTAINER', $arrayoftype, $type_container);
 	print '</td></tr>';
 
@@ -1862,7 +1904,7 @@ if ($action == 'editmeta' || $action == 'create')
 	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
 	print '</td></tr>';
 
-	print '<tr><td>';
+	print '<tr><td class="tdhtmlheader tdtop">';
 	print $langs->trans('HtmlHeaderPage');
 	print '</td><td>';
 	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
@@ -1968,9 +2010,9 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// REPLACEMENT OF LINKS When page called by website editor
 
 		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-		$out.= '<!-- Include website CSS file -->'."\n";
-		$out.=dolWebsiteReplacementOfLinks($object, $csscontent);
-		$out.= '<!-- Include HTML header from page inline block -->'."\n";
+		$out.= '/* Include website CSS file */'."\n";
+		$out.=dolWebsiteReplacementOfLinks($object, $csscontent, 1);
+		$out.= '/* Include HTML header from the inline block */'."\n";
 		$out.= $objectpage->htmlheader."\n";
 		$out.='</style>'."\n";
 

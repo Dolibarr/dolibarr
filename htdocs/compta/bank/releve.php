@@ -206,7 +206,8 @@ if ($action=="dl" && $numref > 0)
                         $payment = new Paiement($db);
                         $payment->fetch('','',$objd->rowid);
                         $arraybill = $payment->getBillsArray();
-                        if (is_array($arraybill))
+
+                        if (is_array($arraybill) && count($arraybill) > 0)
                         {
                             $facturestatic=new Facture($db);
                             foreach ($arraybill as $billid)
@@ -228,7 +229,8 @@ if ($action=="dl" && $numref > 0)
                         $payment = new PaiementFourn($db);
                         $payment->fetch('','',$objd->rowid);
                         $arraybill = $payment->getBillsArray();
-                        if (is_array($arraybill) )
+
+                        if (is_array($arraybill) && count($arraybill) > 0)
                         {
                             $facturestatic=new FactureFournisseur($db);
                             foreach ($arraybill as $billid)
@@ -328,11 +330,22 @@ if ($id > 0) $param.='&id='.urlencode($id);
 
 if (empty($numref))
 {
+	$sortfield='numr';
+	$sortorder='DESC';
+
 	// List of all standing receipts
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " WHERE b.fk_account = ".$object->id;
-	$sql.= " ORDER BY numr DESC";
+	$sql.=$db->order($sortfield,$sortorder);
+
+	// Count total nb of records
+	$nbtotalofrecords = '';
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+	}
 
 	$sql.= $db->plimit($conf->liste_limit+1,$offset);
 
@@ -368,7 +381,7 @@ if (empty($numref))
 		print '</div>';
 
 
-		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows);
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder,'',$numrows, $totalnboflines, '');
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -378,7 +391,7 @@ if (empty($numref))
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("AccountStatement").'</td>';
+		print '<td>'.$langs->trans("Ref").'</td>';
 		print '<td align="right">'.$langs->trans("InitialBankBalance").'</td>';
 		print '<td align="right">'.$langs->trans("EndBankBalance").'</td>';
 		print '<td></td>';

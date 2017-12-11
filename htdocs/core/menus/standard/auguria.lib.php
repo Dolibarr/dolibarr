@@ -73,12 +73,9 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 		$showmode=dol_auguria_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
 		if ($showmode == 1)
 		{
-			// $menu_array[$i]['url'] can be a relative url, a full external url or a dynamic value like '$conf->global->APARAM)
-			if (preg_match('/^\$conf->global->([^\?]+)/', $newTabMenu[$i]['url'], $reg))
-			{
-				$keyforsconst=$reg[1];
-				$newTabMenu[$i]['url'] = $conf->global->$keyforsconst;
-			}
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
 
 			$url = $shorturl = $newTabMenu[$i]['url'];
 
@@ -104,11 +101,6 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 
 				if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/','',$shorturl);
 			}
-
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
-			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
 
 			// TODO Find a generic solution
 			if (preg_match('/search_project_user=__search_project_user__/', $shorturl))
@@ -511,10 +503,13 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				}
 			}
 
+			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
+
 			// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
 			$url=dol_buildpath($menu_array[$i]['url'],1);
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
 
 			if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
 			{

@@ -449,6 +449,7 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
+			$month='unknown';
 			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
 			elseif ($format == 1) $month=$i;
 			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
@@ -503,6 +504,7 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
+			$month='unknown';
 			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
 			elseif ($format == 1) $month=$i;
 			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
@@ -555,6 +557,7 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
+			$month='unknown';
 			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
 			elseif ($format == 1) $month=$i;
 			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));

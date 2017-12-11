@@ -1053,7 +1053,8 @@ class Paiement extends CommonObject
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();
-            if (is_array($arraybill) )
+
+            if (is_array($arraybill) && count($arraybill) > 0)
             {
             	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             	$facturestatic=new Facture($this->db);

@@ -2474,8 +2474,6 @@ else
 	            $genallowed=$user->rights->societe->lire;
 	            $delallowed=$user->rights->societe->creer;
 
-	            $var=true;
-
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 	        }
 

@@ -2055,7 +2055,7 @@ class User extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to
+	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
 	 *  @param  integer $infologin      			Add complete info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
@@ -2095,7 +2095,7 @@ class User extends CommonObject
 		{
 			$thirdpartystatic = new Societe($db);
 			$thirdpartystatic->fetch($this->societe_id);
-			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
+			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink')?'nolink':''));	// picto only of company
 			$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 		}
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
@@ -2161,7 +2161,7 @@ class User extends CommonObject
 		$linkend='</a>';
 
 		//if ($withpictoimg == -1) $result.='<div class="nowrap">';
-		$result.=$linkstart;
+		$result.=(($option == 'nolink')?'':$linkstart);
 		if ($withpictoimg)
 		{
 		  	$paddafterimage='';
@@ -2179,7 +2179,7 @@ class User extends CommonObject
 			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
-		$result.=$linkend;
+		$result.=(($option == 'nolink')?'':$linkend);
 		//if ($withpictoimg == -1) $result.='</div>';
 
 		$result.=$companylink;

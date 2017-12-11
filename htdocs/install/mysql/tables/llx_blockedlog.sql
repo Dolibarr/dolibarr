@@ -26,7 +26,7 @@ CREATE TABLE llx_blockedlog
 	amounts double(24,8) NOT NULL, 
 	element varchar(50), 
 	fk_user	integer,
-	user_fullname varchar(255);
+	user_fullname varchar(255),
 	fk_object integer,
 	ref_object varchar(255), 
 	date_object	datetime,
