@@ -1162,15 +1162,6 @@ function activateModulesRequiredByCountry($country_code)
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 
-						if ($objMod->numero > 0)
-						{
-							$j = $objMod->numero;
-						}
-						else
-						{
-							$j = 1000 + $i;
-						}
-
 						$modulequalified=1;
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
