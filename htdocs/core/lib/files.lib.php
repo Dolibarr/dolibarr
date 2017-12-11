@@ -540,7 +540,7 @@ function dol_filemtime($pathoffile)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dolCopyr dolReplaceRegExInFile
+ * @see		dol_copy dolReplaceRegExInFile
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
@@ -610,7 +610,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dolCopyr dolReplaceInFile
+ * @see		dol_copy dolReplaceInFile
  */
 function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
@@ -626,7 +626,7 @@ function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newma
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
- * @see		dolCopyr
+ * @see		dol_delete_file
  */
 function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -1205,7 +1205,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
  *  @param	string	$dir            Directory to delete
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @return boolean         		True if success, false if error
- *  @see dol_delete_file
+ *  @see dol_delete_file dol_copy
  */
 function dol_delete_dir($dir,$nophperrors=0)
 {
