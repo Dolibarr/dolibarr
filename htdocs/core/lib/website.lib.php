@@ -160,17 +160,20 @@ function dolWebsiteSaveContent($content)
  * Clean an HTML page to report only content, so we can include it into another page.
  * It outputs content of file sanitized from html and body part.
  *
- * @param 	string	$contentfile		Path to file to include (must include website root. Example: 'mywebsite/mypage.php')
+ * @param 	string	$containeralias		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
  * @return  void
  */
-function dolIncludeHtmlContent($contentfile)
+function includeContainer($containeralias)
 {
 	global $conf, $db, $langs, $mysoc, $user, $website;
 	global $includehtmlcontentopened;
+	global $websitekey;
 
 	$MAXLEVEL=20;
 
-	$fullpathfile=DOL_DATA_ROOT.'/website/'.$contentfile;
+	if (! preg_match('/\.php$/i', $containeralias)) $containeralias.='.php';
+
+	$fullpathfile=DOL_DATA_ROOT.'/website/'.$websitekey.'/'.$containeralias;
 
 	if (empty($includehtmlcontentopened)) $includehtmlcontentopened=0;
 	$includehtmlcontentopened++;
@@ -193,7 +196,7 @@ function dolIncludeHtmlContent($contentfile)
 
 	if (! $res)
 	{
-		print 'ERROR: FAILED TO INCLUDE PAGE '.$contentfile.".\n";
+		print 'ERROR: FAILED TO INCLUDE PAGE '.$containeralias.".\n";
 	}
 
 	$includehtmlcontentopened--;

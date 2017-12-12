@@ -3873,10 +3873,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .cke_dialog {
     border: 1px #bbb solid ! important;
 }
-.cke_editable
-{
-	margin: 5px !important;
-}
 /*.cke_editor table, .cke_editor tr, .cke_editor td
 {
     border: 0px solid #FF0000 !important;
@@ -3898,11 +3894,13 @@ a.cke_dialog_ui_button
 {
 	vertical-align: bottom ! important;
 }
+/*
 .cke_editable
 {
 	line-height: 1.4 !important;
 	margin: 6px !important;
 }
+*/
 a.cke_dialog_ui_button_ok span {
     text-shadow: none !important;
     color: #333 !important;

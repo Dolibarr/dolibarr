@@ -62,7 +62,7 @@ $file_manager = GETPOST('file_manager', 'alpha');
 if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('createsite')) { $action='createsite'; }
-if (GETPOST('create')) { $action='create'; }
+if (GETPOST('createcontainer')) { $action='createcontainer'; }
 if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
 if (GETPOST('setashome')) { $action='setashome'; }
@@ -107,7 +107,7 @@ if ($website)
 }
 
 if ($pageid < 0) $pageid = 0;
-if (($pageid > 0 || $pageref) && $action != 'add')
+if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
 	$pageid = $objectpage->id;
@@ -162,7 +162,7 @@ if ($action == 'adddir' && $permtouploadfile)
 	else
 	{
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
-		$action = "create";
+		$action = "createcontainer";
 	}
 
 	clearstatcache();
@@ -240,8 +240,8 @@ if ($action == 'addsite')
 	}
 }
 
-// Add page
-if ($action == 'add')
+// Add page/container
+if ($action == 'addcontainer')
 {
 	dol_mkdir($pathofwebsite);
 
@@ -276,13 +276,13 @@ if ($action == 'add')
 		{
 			$error++;
 			setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
-			$action='create';
+			$action='createcontainer';
 		}
 		elseif ($tmp['http_code'] != '200')
 		{
 			$error++;
 			setEventMessages('Error getting '.$urltograb.': '.$tmp['http_code'], null, 'errors');
-			$action='create';
+			$action='createcontainer';
 		}
 		else
 		{
@@ -383,13 +383,13 @@ if ($action == 'add')
     			{
     				$error++;
     				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-    				$action='create';
+    				$action='createcontainer';
     			}
 				elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-					$action='create';
+					$action='createcontainer';
 				}
 				else
     			{
@@ -448,13 +448,13 @@ if ($action == 'add')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-					$action='create';
+					$action='createcontainer';
 				}
 				elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-					$action='create';
+					$action='createcontainer';
 				}
 				else
 				{
@@ -504,6 +504,8 @@ if ($action == 'add')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
 		$objectpage->htmlheader = GETPOST('htmlheader','none');
+
+		$objectpage->content = '<div class="dolcontenteditable" contenteditable="true"><div class="center"><h1>'.$langs->trans("MyContainerTitle").'</h1>'.$langs->trans("MyContainerContent").'</div><br><br></div>';
 	}
 
 	if (! $error)
@@ -512,19 +514,19 @@ if ($action == 'add')
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
 			$error++;
-			$action='create';
+			$action='createcontainer';
 		}
 		else if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
 			$error++;
-			$action='create';
+			$action='createcontainer';
 		}
 		if (empty($objectpage->title))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE")), null, 'errors');
 			$error++;
-			$action='create';
+			$action='createcontainer';
 		}
 	}
 
@@ -535,6 +537,7 @@ if ($action == 'add')
 		{
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+			$action='createcontainer';
 		}
 	}
 	if (! $error)
@@ -1222,9 +1225,9 @@ if ($action == 'createsite')
 {
 	print '<input type="hidden" name="action" value="addsite">';
 }
-if ($action == 'create')
+if ($action == 'createcontainer')
 {
-	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="action" value="addcontainer">';
 }
 if ($action == 'editcss')
 {
@@ -1264,6 +1267,7 @@ print '<div>';
 // Add a margin under toolbar ?
 $style='';
 if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource') $style=' margin-bottom: 5px;';
+
 
 if (! GETPOST('hide_websitemenu'))
 {
@@ -1400,18 +1404,18 @@ if (count($object->records) > 0)
 		print '</div>';
 
 		print '<div class="websiteselection hideonsmartphoneimp">';
-		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="create">';
+		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createcontainer">';
 		print '</div>';
 
 		print '<div class="websiteselection">';
 
-		if ($action != 'add')
+		if ($action != 'addcontainer')
 		{
 			$out='';
 			$out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300">';
 			if ($atleastonepage)
 			{
-				if (empty($pageid) && $action != 'create')      // Page id is not defined, we try to take one
+				if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
 				{
 					$firstpageid=0;$homepageid=0;
 					foreach($array as $key => $valpage)
@@ -1526,7 +1530,7 @@ if (count($object->records) > 0)
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (! in_array($action, array('editcss','editmenu','file_manager','createsite','create','createpagefromclone')))
+		if (! in_array($action, array('editcss','editmenu','file_manager','createsite','createcontainer','createpagefromclone')))
 		{
 			if (preg_match('/^create/',$action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 			if (preg_match('/^edit/',$action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
@@ -1737,7 +1741,7 @@ if ($action == 'createsite')
 
     dol_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
     */
-	if ($action == 'create') print_fiche_titre($langs->trans("AddSite"));
+	if ($action == 'createcontainer') print_fiche_titre($langs->trans("AddSite"));
 
 	print '<!-- Add site -->'."\n";
 	//print '<div class="fichecenter">';
@@ -1772,7 +1776,7 @@ if ($action == 'createsite')
 	{
 		print '<div class="center">';
 
-		print '<input class="button" type="submit" name="add" value="'.$langs->trans("Create").'">';
+		print '<input class="button" type="submit" name="addcontainer" value="'.$langs->trans("Create").'">';
 		print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
@@ -1788,7 +1792,7 @@ if ($action == 'createsite')
 	print '<br>';
 }
 
-if ($action == 'editmeta' || $action == 'create')
+if ($action == 'editmeta' || $action == 'createcontainer')
 {
 	print '<div class="fiche">';
 
@@ -1804,33 +1808,36 @@ if ($action == 'editmeta' || $action == 'create')
 
     dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
     */
-	if ($action == 'create') print_fiche_titre($langs->trans("AddPage"));
+	if ($action == 'createcontainer') print_fiche_titre($langs->trans("AddPage"));
 
-	print '<!-- Edit or create page -->'."\n";
+	print '<!-- Edit or create page/container -->'."\n";
 	//print '<div class="fichecenter">';
 
-	if ($action == 'create')
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 	{
-		print '<br>';
+		if ($action == 'createcontainer')
+		{
+			print '<br>';
 
-		print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br><hr>';
-		print '<table class="border" width="100%">';
-		print '<tr><td class="titlefield">';
-		print $langs->trans("URL");
-		print '</td><td>';
-		print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="http://externalsite/pagetofetch"> ';
-		print '<input class="button" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
-		print '</td></tr>';
-		print '</table>';
+			print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br><hr>';
+			print '<table class="border" width="100%">';
+			print '<tr><td class="titlefield">';
+			print $langs->trans("URL");
+			print '</td><td>';
+			print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="http://externalsite/pagetofetch"> ';
+			print '<input class="button" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
+			print '</td></tr>';
+			print '</table>';
 
-		print '<br>';
+			print '<br>';
 
-		print ' * '.$langs->trans("OrEnterPageInfoManually").'<br><hr>';
+			print ' * '.$langs->trans("OrEnterPageInfoManually").'<br><hr>';
+		}
 	}
 
 	print '<table class="border" width="100%">';
 
-	if ($action != 'create')
+	if ($action != 'createcontainer')
 	{
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('IDOfPage');
@@ -1913,11 +1920,11 @@ if ($action == 'editmeta' || $action == 'create')
 
 	print '</table>';
 
-	if ($action == 'create')
+	if ($action == 'createcontainer')
 	{
 		print '<div class="center">';
 
-		print '<input class="button" type="submit" name="add" value="'.$langs->trans("Create").'">';
+		print '<input class="button" type="submit" name="addcontainer" value="'.$langs->trans("Create").'">';
 		print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
