@@ -598,6 +598,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
  * View
  */
 
+$form=new Form($db);
 $formproject=new FormProjets($db);
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
@@ -871,11 +872,8 @@ if ($action == 'create')
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
-		if ($numproject==0)
-		{
-			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
-		}
+		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1), GETPOST("projectid")?GETPOST("projectid"):'', 'projectid', 0, 0, 1, 1);
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 		print '</td></tr>';
 	}
 	if (!empty($origin) && !empty($originid))
