@@ -104,7 +104,7 @@ $result = $util->generateDoc($module);
 if ($result <= 0)
 {
 	print $util->errors;
-	exit(1)
+	exit(1);
 }
 
 print $langs->trans("DocFileGeneratedInto", $outputfiledoc);
