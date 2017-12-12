@@ -68,7 +68,7 @@ class FormProjets
 		global $langs,$conf,$form;
 
 		$out='';
-
+		var_dump($conf->global->PROJECT_USE_SEARCH_TO_SELECT);
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT))
 		{
 			$placeholder='';

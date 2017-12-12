@@ -277,7 +277,7 @@ elseif ($action == 'updateoptions')
 else if ($action == "linkOtherCompany")
 {
 	$projectToSelect = GETPOST('projectToSelect');
-	
+
 	dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity);	//Allow to disable this configuration if empty value
 }
 
@@ -919,16 +919,15 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
 print '<td align="right" width="60" colspan="2">';
-
-print '<form action="project.php" method="POST">';
-print '<input type="hidden" id="action" name="action" value="linkOtherCompany" />';
 print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
-print '</form>';
 print '</td>';
 
-print '</table></form>';
+print '</table>';
+
+
+print '</form>';
 
 llxFooter();
 $db->close();

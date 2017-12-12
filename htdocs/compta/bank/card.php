@@ -39,13 +39,9 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("categories");
-$langs->load("companies");
-$langs->load("compta");
+$langs->loadLangs(array("banks","bills","categories","companies","compta"));
 
-$action=GETPOST('action','aZ09');
+$action = GETPOST('action','aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
