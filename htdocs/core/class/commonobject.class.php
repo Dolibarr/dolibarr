@@ -4167,7 +4167,12 @@ abstract class CommonObject
 
 						// Set the public "share" key
 						$setsharekey = false;
-						if ($this->element == 'propal'   && ! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						if ($this->element == 'propal')
+						{
+							$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok
+							if ($useonlinesignature) $setsharekey=true;
+							if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						}
 						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))    $setsharekey=true;
 						if ($this->element == 'facture'  && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))  $setsharekey=true;
 						if ($setsharekey)

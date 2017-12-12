@@ -401,7 +401,7 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	$topicmail="SendProposalRef";
+	$topicmail="SendPropalRef";
 	$modelmail="proposal_send";
 	$objecttmp=new Propal($db);
 	$trackid='pro'.$object->id;

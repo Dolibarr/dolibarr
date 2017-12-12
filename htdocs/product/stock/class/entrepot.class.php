@@ -442,7 +442,7 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *	Return number of unique different product into a warehosue
+	 *	Return number of unique different product into a warehouse
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */

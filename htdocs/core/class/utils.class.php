@@ -531,7 +531,8 @@ class Utils
 	 */
 	function generateDoc($module)
 	{
-		global $conf, $dirins;
+		global $conf, $langs;
+		global $dirins;
 
 		$error = 0;
 
@@ -549,7 +550,7 @@ class Utils
 		if (class_exists($class))
 		{
 			try {
-				$moduleobj = new $class($db);
+				$moduleobj = new $class($this->db);
 			}
 			catch(Exception $e)
 			{
