@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2017		Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,7 +257,7 @@ if ($result)
 		// Accounting account
 		if (! empty($conf->accounting->enabled)) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('',$obj->accountancy_code);
+			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
 			print '<td>'.$accountingaccount->getNomUrl(0,1,1,'',1).'</td>';
 		}
