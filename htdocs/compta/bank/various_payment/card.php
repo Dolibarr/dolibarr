@@ -437,7 +437,7 @@ if ($id)
 	if (! empty($conf->accounting->enabled))
 	{
 		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('',$object->accountancy_code);
+		$accountingaccount->fetch('',$object->accountancy_code, 1);
 
 		print $accountingaccount->getNomUrl(0,1,1,'',1);
 	} else {
