@@ -86,9 +86,8 @@ else
     {
         $tmp=explode('?', $val['url']);
         $urlaction=$tmp[0];
-        $keysearch=$tmp[1];
-        $keysearch=preg_replace('/mainmenu=(.*)&/','',$keysearch);
-        $keysearch=preg_replace('/=/','',$keysearch);
+        $keysearch='search_all';
+
         $accesskey='';
         if (! $accesskeyalreadyassigned[$val['label'][0]])
         {

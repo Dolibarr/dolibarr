@@ -66,7 +66,7 @@ if (!$sortfield) $sortfield="d.date_debut";
 
 $id = GETPOST('id', 'int');
 
-$sall         = GETPOST('sall', 'alphanohtml');
+$sall         = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref   = GETPOST('search_ref');
 $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');
@@ -77,7 +77,7 @@ $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
 $month_end    = GETPOST("month_end","int");
 $year_end     = GETPOST("year_end","int");
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss    = GETPOST('optioncss','alpha');
 
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;

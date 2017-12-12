@@ -1829,10 +1829,6 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 {
 	global $conf,$langs,$user;
 
-	if (empty($htmlinputid)) {
-		$htmlinputid = $htmlinputname;
-	}
-
 	$ret='';
 	$ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

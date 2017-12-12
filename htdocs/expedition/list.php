@@ -50,7 +50,7 @@ $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_billed=GETPOST("search_billed",'int');
-$sall = GETPOST('sall', 'alphanohtml');
+$sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $optioncss = GETPOST('optioncss','alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;

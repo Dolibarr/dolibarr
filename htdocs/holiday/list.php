@@ -73,7 +73,7 @@ if (! $sortorder) $sortorder="DESC";
 
 $id = GETPOST('id','int');
 
-$sall            = GETPOST('sall', 'alphanohtml');
+$sall            = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref      = GETPOST('search_ref');
 $month_create    = GETPOST('month_create');
 $year_create     = GETPOST('year_create');

@@ -46,7 +46,7 @@ $search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');
 $search_status=GETPOST('search_status');
-$sall=GETPOST('sall');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $optioncss = GETPOST('optioncss','alpha');
 $socid=GETPOST('socid','int');
 
@@ -75,7 +75,7 @@ if (! $sortfield)
 // Initialize technical object to manage context to save list fields
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'interventionlist';
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST('search_ref')?GETPOST('search_ref','alpha'):GETPOST('search_inter','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_desc=GETPOST('search_desc','alpha');

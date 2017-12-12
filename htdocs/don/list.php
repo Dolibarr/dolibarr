@@ -43,7 +43,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
 $statut=(GETPOST("statut",'intcomma')!='')?GETPOST("statut",'intcomma'):"-1";
-$search_all=GETPOST('sall', 'alphanohtml');
+$search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_name=GETPOST('search_name','alpha');

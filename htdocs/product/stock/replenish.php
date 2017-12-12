@@ -48,7 +48,7 @@ $result=restrictedArea($user,'produit|service');
 $action = GETPOST('action','alpha');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
-$sall = GETPOST('sall', 'alphanohtml');
+$sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');

@@ -107,7 +107,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 
 // Init search fields
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_user=GETPOST('search_user','alpha');
 $search_login=GETPOST('search_login','alpha');
 $search_lastname=GETPOST('search_lastname','alpha');

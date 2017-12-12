@@ -766,7 +766,7 @@ class Form
 				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			}
 
-			$out.= '<select id="'.$htmlname.'" class="flat selectincoterm noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+			$out.= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
 			$out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;

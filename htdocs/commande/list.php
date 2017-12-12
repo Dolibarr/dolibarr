@@ -67,7 +67,7 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');

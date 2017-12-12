@@ -51,7 +51,7 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST("search_ref");
 $search_barcode=GETPOST("search_barcode");
 $search_label=GETPOST("search_label");

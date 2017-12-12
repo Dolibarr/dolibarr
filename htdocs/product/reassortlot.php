@@ -45,7 +45,7 @@ $result=restrictedArea($user,'produit|service');
 $action=GETPOST('action','alpha');
 $sref=GETPOST("sref");
 $snom=GETPOST("snom");
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $type=GETPOST("type","int");
 $search_barcode=GETPOST("search_barcode",'alpha');
 $search_warehouse=GETPOST('search_warehouse','alpha');

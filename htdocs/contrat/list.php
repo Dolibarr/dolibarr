@@ -56,7 +56,7 @@ $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_contract=GETPOST('search_contract');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');

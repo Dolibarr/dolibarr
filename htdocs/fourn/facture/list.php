@@ -68,7 +68,7 @@ if ($user->societe_id > 0)
 
 $mode=GETPOST("mode");
 
-$search_all = GETPOST('sall', 'alphanohtml');
+$search_all = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_label = GETPOST("search_label","alpha");
 $search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");

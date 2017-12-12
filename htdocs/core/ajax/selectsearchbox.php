@@ -130,11 +130,11 @@ if (! empty($conf->user->enabled) && empty($conf->global->MAIN_SEARCHFORM_USER_D
 }
 if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->rights->expensereport->lire)
 {
-	$arrayresult['searchintoexpensereport']=array('position'=>210, 'img'=>'object_trip', 'label'=>$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'text'=>img_picto('','object_trip').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm'.($search_boxvalue?'?sall='.urlencode($search_boxvalue):''));
+	$arrayresult['searchintoexpensereport']=array('position'=>210, 'img'=>'object_trip', 'label'=>$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'text'=>img_picto('','object_trip').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm'.($search_boxvalue?'&sall='.urlencode($search_boxvalue):''));
 }
 if (! empty($conf->holiday->enabled) && empty($conf->global->MAIN_SEARCHFORM_HOLIDAY_DISABLED) && $user->rights->holiday->read)
 {
-	$arrayresult['searchintoleaves']=array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('','object_holiday').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm&'.($search_boxvalue?'sall='.urlencode($search_boxvalue):''));
+	$arrayresult['searchintoleaves']=array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('','object_holiday').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue?'&sall='.urlencode($search_boxvalue):''));
 }
 
 

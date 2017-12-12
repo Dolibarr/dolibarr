@@ -74,7 +74,7 @@ $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
 $search_status=GETPOST('viewstatut','alpha')?GETPOST('viewstatut','alpha'):GETPOST('search_status','int');
 $object_statut=$db->escape(GETPOST('supplier_proposal_statut'));
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");

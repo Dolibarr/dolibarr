@@ -327,7 +327,7 @@ class ActionsCardProduct
         $this->list_datas = array();
 
 		// Clean parameters
-		$sall=trim(GETPOST('sall', 'alphanohtml'));
+        $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 
 		foreach($this->field_list as $field)
 		{

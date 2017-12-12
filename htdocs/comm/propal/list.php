@@ -81,7 +81,7 @@ $viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $object_statut=GETPOST('propal_statut','alpha');
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 

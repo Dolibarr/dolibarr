@@ -53,7 +53,7 @@ $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 
-$sall=trim(GETPOST('sall', 'alphanohtml'));
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
