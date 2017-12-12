@@ -2023,6 +2023,9 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.= $objectpage->htmlheader."\n";
 		$out.='</style>'."\n";
 
+		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
+		// so editable will be available from container created from scratch
+		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
 		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
 
 		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->content)."\n";
