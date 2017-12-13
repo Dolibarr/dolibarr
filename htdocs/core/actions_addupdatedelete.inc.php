@@ -46,7 +46,9 @@ if ($action == 'add' && ! empty($permissiontoadd))
 	{
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
-		$value = GETPOST($key,'alpha');
+		// Set value to insert
+		if (in_array($object->fields[$key]['type'], array('text', 'html'))) $value = GETPOST($key,'none');
+		else $value = GETPOST($key,'alpha');
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
@@ -90,7 +92,9 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		if (! GETPOSTISSET($key)) continue;		// The field was not submited to be edited
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
-		$value = GETPOST($key,'alpha');
+		// Set value to update
+		if (in_array($object->fields[$key]['type'], array('text', 'html'))) $value = GETPOST($key,'none');
+		else $value = GETPOST($key,'alpha');
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
