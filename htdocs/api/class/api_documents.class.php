@@ -23,8 +23,6 @@ use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 /**
  * API class for receive files
@@ -53,8 +51,10 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Returns a document. Note that, this API is similar to using the wrapper link "documents.php" to download
-	 * a file (used for internal HTML links of documents into application), but with no need to be into a logged session (no need to post the session cookie).
+	 * Download a document.
+	 *
+	 * Note that, this API is similar to using the wrapper link "documents.php" to download a file (used for
+	 * internal HTML links of documents into application), but with no need to have a session cookie (the token is used instead).
 	 *
 	 * @param   string  $module_part    Name of module or area concerned by file download ('facture', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
@@ -67,6 +67,8 @@ class Documents extends DolibarrApi
 	 * @throws 400
 	 * @throws 401
 	 * @throws 200
+	 *
+	 * @url GET /download
 	 */
 	public function index($module_part, $original_file='', $regeneratedoc=0)
 	{
@@ -115,6 +117,20 @@ class Documents extends DolibarrApi
 					throw new RestException(500, 'Error generating document');
 				}
 			}
+                        if ($module_part == 'commande' || $module_part == 'order')
+                        {
+                                require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+                                $this->order = new Commande($this->db);
+                                $result = $this->order->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+                                if( ! $result ) {
+                                        throw new RestException(404, 'Order not found');
+                                }
+                                $result = $this->order->generateDocument($this->order->modelpdf, $langs, $hidedetails, $hidedesc, $hideref);
+                                if( $result <= 0 ) {
+                                        throw new RestException(500, 'Error generating document');
+                                }
+                        }
+
 		}
 
 		$filename = basename($original_file);
@@ -132,7 +148,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
 	 *
-	 * @param   string 	$modulepart		Name of module or area concerned ('facture', 'project', 'member', ...)
+	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'facture', 'project',  ...)
 	 * @param	int		$id				ID of element
 	 * @param	string	$ref			Ref of element
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
@@ -141,7 +157,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @throws RestException
 	 *
-	 * @url GET list
+	 * @url GET /
 	 */
 	function getDocumentsListByElement($modulepart, $id=0, $ref='', $sortfield='', $sortorder='')
 	{
@@ -159,6 +175,8 @@ class Documents extends DolibarrApi
 
 		if ($modulepart == 'societe' || $modulepart == 'thirdparty')
 		{
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 			if (!DolibarrApiAccess::$user->rights->societe->lire) {
 				throw new RestException(401);
 			}
@@ -216,11 +234,12 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Push a file.
+	 * Upload a file.
+	 *
 	 * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 *
-	 * @param   string  $filename           Name of file to create ('FA1705-0123')
+	 * @param   string  $filename           Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
 	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
 	 * @param   string  $subdir             Subdirectory (Only if ref not provided)
@@ -229,6 +248,8 @@ class Documents extends DolibarrApi
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
 	 * @return  bool     				    State of copy
 	 * @throws RestException
+	 *
+	 * @url GET /upload
 	 */
 	public function post($filename, $modulepart, $ref='', $subdir='', $filecontent='', $fileencoding='', $overwriteifexists=0)
 	{
@@ -264,15 +285,20 @@ class Documents extends DolibarrApi
 			if ($modulepart == 'facture' || $modulepart == 'invoice')
 			{
 				$modulepart='facture';
+
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$object = new Facture($this->db);
 			}
 			elseif ($modulepart == 'project')
 			{
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
 			}
 			elseif ($modulepart == 'task' || $modulepart == 'project_task')
 			{
 				$modulepart = 'project_task';
+
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$object = new Task($this->db);
 
 				$task_result = $object->fetch('', $ref);

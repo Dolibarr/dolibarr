@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Περιοχή Οικονομικών/Περιουσια
 NewPayment=Νέα Πληρωμή
 Payments=Πληρωμές
 PaymentCustomerInvoice=Πληρωμή τιμολογίου πελάτη
+PaymentSupplierInvoice=Πληρωμή τιμολογίου προμηθευτή
 PaymentSocialContribution=Πληρωμή Κοινωνικής/Φορολογικής εισφοράς
 PaymentVat=Πληρωμή Φ.Π.Α.
 ListPayment=Λίστα πληρωμών

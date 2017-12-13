@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Export label
 ACCOUNTING_EXPORT_AMOUNT=Export amount
 ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_FORMAT=Select the format for the file
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 ThisService=This service
 ThisProduct=This product
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and genera
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Raamatupidamine
 Selectchartofaccounts=Select active chart of accounts
 ChangeAndLoad=Change and load
 Addanaccount=Add an accounting account
@@ -166,7 +168,7 @@ DeleteMvt=Delete Ledger lines
 DelYear=Year to delete
 DelJournal=Journal to delete
 ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criteria is required.
-ConfirmDeleteMvtPartial=This will delete the selected line(s) of the Ledger
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
-NoNewRecordSaved=No new record dispatched
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
 Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

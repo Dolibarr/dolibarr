@@ -29,12 +29,19 @@
  *
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
+ * @param	int			$removephppart		0=Replace PHP sections with a PHP badge. 1=Remove completely PHP sections.
  * @return	boolean							True if OK
  */
-function dolWebsiteReplacementOfLinks($website, $content)
+function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 {
 	// Replace php code. Note $content may come from database and does not contains body tags.
-	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', '<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>', $content);
+	$replacewith='...php...';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/value="<\?php((?!\?>).)*\?>\n*/ims', 'value="'.$replacewith.'"', $content);
+
+	$replacewith='<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
 	// Replace relative link / with dolibarr URL
 	$content = preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
@@ -153,17 +160,20 @@ function dolWebsiteSaveContent($content)
  * Clean an HTML page to report only content, so we can include it into another page.
  * It outputs content of file sanitized from html and body part.
  *
- * @param 	string	$contentfile		Path to file to include (must include website root. Example: 'mywebsite/mypage.php')
+ * @param 	string	$containeralias		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
  * @return  void
  */
-function dolIncludeHtmlContent($contentfile)
+function includeContainer($containeralias)
 {
 	global $conf, $db, $langs, $mysoc, $user, $website;
 	global $includehtmlcontentopened;
+	global $websitekey;
 
 	$MAXLEVEL=20;
 
-	$fullpathfile=DOL_DATA_ROOT.'/website/'.$contentfile;
+	if (! preg_match('/\.php$/i', $containeralias)) $containeralias.='.php';
+
+	$fullpathfile=DOL_DATA_ROOT.'/website/'.$websitekey.'/'.$containeralias;
 
 	if (empty($includehtmlcontentopened)) $includehtmlcontentopened=0;
 	$includehtmlcontentopened++;
@@ -186,133 +196,12 @@ function dolIncludeHtmlContent($contentfile)
 
 	if (! $res)
 	{
-		print 'ERROR: FAILED TO INCLUDE PAGE '.$contentfile.".\n";
+		print 'ERROR: FAILED TO INCLUDE PAGE '.$containeralias.".\n";
 	}
 
 	$includehtmlcontentopened--;
 }
 
-/**
- * Generate a zip with all data of web site.
- *
- * @param 	Website		$website		Object website
- * @return  string						Path to file with zip
- */
-function exportWebSite($website)
-{
-	global $db, $conf;
-
-	dol_mkdir($conf->website->dir_temp);
-	$srcdir = $conf->website->dir_output.'/'.$website->ref;
-	$destdir = $conf->website->dir_temp.'/'.$website->ref;
-
-	$arrayreplacement=array();
-
-	dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
-
-	$srcdir = DOL_DATA_ROOT.'/medias/images/'.$website->ref;
-	$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/images/'.$website->ref;
-
-	dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
-
-	// Build sql file
-	dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/export');
-
-	$filesql = $conf->website->dir_temp.'/'.$website->ref.'/export/pages.sql';
-	$fp = fopen($filesql,"w");
-
-	$objectpages = new WebsitePage($db);
-	$listofpages = $objectpages->fetchAll($website->id);
-
-	// Assign ->newid and ->newfk_page
-	$i=1;
-	foreach($listofpages as $pageid => $objectpageold)
-	{
-		$objectpageold->newid=$i;
-		$i++;
-	}
-	$i=1;
-	foreach($listofpages as $pageid => $objectpageold)
-	{
-		// Search newid
-		$newfk_page=0;
-		foreach($listofpages as $pageid2 => $objectpageold2)
-		{
-			if ($pageid2 == $objectpageold->fk_page)
-			{
-				$newfk_page = $objectpageold2->newid;
-				break;
-			}
-		}
-		$objectpageold->newfk_page=$newfk_page;
-		$i++;
-	}
-	foreach($listofpages as $pageid => $objectpageold)
-	{
-		$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keyword, status, date_creation, tms, lang, import_key, grabbed_from, content)';
-		$line.= " VALUES(";
-		$line.= $objectpageold->newid."+__MAXROWID__, ";
-		$line.= ($objectpageold->newfk_page ? $db->escape($objectpageold->newfk_page)."+__MAXROWID__" : "null").", ";
-		$line.= "__WEBSITE_ID__, ";
-		$line.= "'".$db->escape($objectpageold->pageurl)."', ";
-		$line.= "'".$db->escape($objectpageold->title)."', ";
-		$line.= "'".$db->escape($objectpageold->description)."', ";
-		$line.= "'".$db->escape($objectpageold->keyword)."', ";
-		$line.= "'".$db->escape($objectpageold->status)."', ";
-		$line.= "'".$db->idate($objectpageold->date_creation)."', ";
-		$line.= "'".$db->idate($objectpageold->date_modification)."', ";
-		$line.= "'".$db->escape($objectpageold->lang)."', ";
-		$line.= ($objectpageold->import_key ? "'".$db->escape($objectpageold->import_key)."'" : "null").", ";
-		$line.= "'".$db->escape($objectpageold->grabbed_from)."', ";
-		$line.= "'".$db->escape($objectpageold->content)."'";
-		$line.= ");";
-		$line.= "\n";
-		fputs($fp, $line);
-	}
-
-	fclose($fp);
-	if (! empty($conf->global->MAIN_UMASK))
-		@chmod($filesql, octdec($conf->global->MAIN_UMASK));
-
-	// Build zip file
-	$filedir  = $conf->website->dir_temp.'/'.$website->ref;
-	$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-*.zip';
-	$filename = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
-
-	dol_delete_file($fileglob, 0);
-	dol_compress_file($filedir, $filename, 'zip');
-
-	return $filename;
-}
-
-
-/**
- * Open a zip with all data of web site and load it into database.
- *
- * @param 	string		$pathtofile		Path of zip file
- * @return  int							<0 if KO, >0 if OK
- */
-function importWebSite($pathtofile)
-{
-	global $db;
-
-	$result = 0;
-
-	$filename = basename($pathtofile);
-	if (! preg_match('/^website_(.*)-(.*)$/', $filename, $reg))
-	{
-		$this->errors[]='Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
-		return -1;
-	}
-
-	$websitecode = $reg[1];
-
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."website(ref, entity, description, status) values('".$websitecode."', ".$conf->entity.", 'Portal to sell your SaaS. Do not remove this entry.', 1)";
-	$resql = $db->query($sql);
-
-
-	return $result;
-}
 
 
 /**
@@ -344,7 +233,16 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	{
 		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
 
-		$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+		if (preg_match('/^\//', $regs[2][$key]))
+		{
+			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
+			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+		}
+		else
+		{
+			$urltograbbis = $urltograb.'/'.$regs[2][$key];	// We use dir of grabbed file
+		}
+
 		$linkwithoutdomain = $regs[2][$key];
 		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 		if (preg_match('/^http/', $regs[2][$key]))
@@ -370,7 +268,13 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 			if ($tmpgeturl['curl_error_no'])
 			{
 				$error++;
-				setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+				$action='create';
+			}
+			elseif ($tmpgeturl['http_code'] != '200')
+			{
+				$error++;
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 				$action='create';
 			}
 			else
@@ -400,7 +304,15 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	{
 		if (preg_match('/^data:image/i', $regs[2][$key])) continue;		// We do nothing for such images
 
-		$urltograbbis = $urltograb.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+		if (preg_match('/^\//', $regs[2][$key]))
+		{
+			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
+			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+		}
+		else
+		{
+			$urltograbbis = $urltograb.'/'.$regs[2][$key];	// We use dir of grabbed file
+		}
 
 		$linkwithoutdomain = $regs[2][$key];
 		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
@@ -428,7 +340,13 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 			if ($tmpgeturl['curl_error_no'])
 			{
 				$error++;
-				setEventMessages($tmpgeturl['curl_error_msg'], null, 'errors');
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+				$action='create';
+			}
+			elseif ($tmpgeturl['http_code'] != '200')
+			{
+				$error++;
+				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 				$action='create';
 			}
 			else

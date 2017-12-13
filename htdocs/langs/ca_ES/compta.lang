@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Àrea comptabilitat/tresoreria
 NewPayment=Nou pagament
 Payments=Pagaments
 PaymentCustomerInvoice=Cobrament factura a client
+PaymentSupplierInvoice=Pagament factura de proveïdor
 PaymentSocialContribution=Pagament d'impost varis
 PaymentVat=Pagament IVA
 ListPayment=Llistat de pagaments

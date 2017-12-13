@@ -64,27 +64,27 @@ class PropaleStats extends Stats
         if ($mode == 'customer')
         {
     		$object=new Propal($this->db);
-    
+
     		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
     		$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
     		$this->field_date='p.datep';
     		$this->field='total_ht';
     		$this->field_line='total_ht';
-    
+
     		$this->where.= " p.fk_statut > 0";
         }
         if ($mode == 'supplier')
         {
     		$object=new SupplierProposal($this->db);
-    
+
     		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
     		$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
     		$this->field_date='p.date_valid';
     		$this->field='total_ht';
     		$this->field_line='total_ht';
-    
+
     		$this->where.= " p.fk_statut > 0";    // Validated, accepted, refused and closed
-        }        
+        }
 		//$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
 		$this->where.= " AND p.entity IN (".getEntity('propal').")";
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -100,9 +100,10 @@ class PropaleStats extends Stats
 	 * Return propals number by month for a year
 	 *
 	 * @param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -114,7 +115,7 @@ class PropaleStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql);
+		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -141,10 +142,11 @@ class PropaleStats extends Stats
 	/**
 	 * Return the propals amount by month for a year
 	 *
-	 * @param	int		$year	Year to scan
-	 * @return	array			Array with amount by month
+	 * @param	int		$year		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format)
 	{
 		global $user;
 
@@ -156,7 +158,7 @@ class PropaleStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getAmountByMonth($year, $sql);
+		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
 	}
 

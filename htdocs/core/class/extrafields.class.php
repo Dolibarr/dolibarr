@@ -141,11 +141,11 @@ class ExtraFields
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
 	 *  @param	int				$list				Visibilty
-	 *  @param	int				$ishidden			Deprecated. Us visibility instead.
+	 *  @param	int				$ishidden			Deprecated. Use visibility instead.
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields
 	 *  @param  string  		$langfile  		 	Language file
-	 *  @return int      					<=0 if KO, >0 if OK
+	 *  @return int      							<=0 if KO, >0 if OK
 	 */
 	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='')
 	{
@@ -234,6 +234,7 @@ class ExtraFields
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
+				if ($type == 'varchar' && empty($lengthdb)) $lengthdb='255';
 			}
 			$field_desc = array(
 			'type'=>$typedb,
@@ -742,7 +743,7 @@ class ExtraFields
 					$this->attribute_param[$tab->name]=($tab->param ? unserialize($tab->param) : '');
 					$this->attribute_pos[$tab->name]=$tab->pos;
 					$this->attribute_alwayseditable[$tab->name]=$tab->alwayseditable;
-					$this->attribute_perms[$tab->name]=$tab->perms;
+					$this->attribute_perms[$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attribute_langfile[$tab->name]=$tab->langs;
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
@@ -759,7 +760,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['param'][$tab->name]=($tab->param ? unserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name]=$tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name]=$tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name]=$tab->perms;
+					$this->attributes[$tab->elementtype]['perms'][$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name]=$tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
@@ -816,6 +817,8 @@ class ExtraFields
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form=new Form($this->db);
 		}
+
+		$out='';
 
 		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
 
@@ -892,13 +895,13 @@ class ExtraFields
 			if (!$required && $value == '') $value = '-1';
 
 			// TODO Must also support $moreparam
-			$out = $form->select_date($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, ($keyprefix != 'search_' ? 1 : 0), 1, 0, 1);
+			$out = $form->select_date($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 1, 0, 1);
 		}
 		elseif (in_array($type,array('int','integer')))
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif (preg_match('/varchar/', $type))
 		{
@@ -906,13 +909,20 @@ class ExtraFields
 		}
 		elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
-			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
-			$out=$doleditor->Create(1);
+			if (! preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
+				$out=$doleditor->Create(1);
+			}
+			else
+			{
+				$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
+			}
 		}
 		elseif ($type == 'boolean')
 		{
@@ -975,6 +985,7 @@ class ExtraFields
 				$param_list=array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
 				$parentName='';
+				$parentField='';
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
@@ -1106,7 +1117,7 @@ class ExtraFields
 								$out.='<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 							}
 
-							if (!empty($InfoFieldList[3]))
+							if (!empty($InfoFieldList[3]) && $parentField)
 							{
 								$parent = $parentName.':'.$obj->{$parentField};
 							}
@@ -1156,6 +1167,8 @@ class ExtraFields
 			if (is_array($param['options'])) {
 				$param_list = array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
+				$parentName='';
+				$parentField='';
 				// 0 : tableName
 				// 1 : label field name
 				// 2 : key fields name (if differ of rowid)
@@ -1229,6 +1242,7 @@ class ExtraFields
 						$labeltoshow = '';
 						$obj = $this->db->fetch_object($resql);
 
+						$notrans = false;
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($fields_label)) {
@@ -1269,7 +1283,7 @@ class ExtraFields
 									$data[$obj->rowid]=$labeltoshow;
 								}
 
-								if (! empty($InfoFieldList[3])) {
+								if (! empty($InfoFieldList[3]) && $parentField) {
 									$parent = $parentName . ':' . $obj->{$parentField};
 								}
 
@@ -1286,12 +1300,11 @@ class ExtraFields
 					print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 				}
 			}
-			$out .= '</select>';
 		}
 		elseif ($type == 'link')
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
-			$showempty=(($val['notnull'] == 1 && $val['default'] != '')?0:1);
+			$showempty=(($required && $default != '')?0:1);
 			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
 		}
 		elseif ($type == 'password')
@@ -1334,7 +1347,7 @@ class ExtraFields
 		$perms=$this->attribute_perms[$key];
 		$langfile=$this->attribute_langfile[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=(($list != 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
@@ -1350,12 +1363,12 @@ class ExtraFields
 		if ($type == 'date')
 		{
 			$showsize=10;
-			$value=dol_print_date($value,'day');
+			$value=dol_print_date($value, 'day', 'tzuser');
 		}
 		elseif ($type == 'datetime')
 		{
 			$showsize=19;
-			$value=dol_print_date($value,'dayhour');
+			$value=dol_print_date($value, 'dayhour', 'tzuser');
 		}
 		elseif ($type == 'int')
 		{
@@ -1377,7 +1390,7 @@ class ExtraFields
 		}
 		elseif ($type == 'mail')
 		{
-			$value=dol_print_email($value,0,0,0,64,1,1);
+			$value=dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		}
 		elseif ($type == 'url')
 		{
@@ -1389,7 +1402,7 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$value=price($value,0,$langs,0,0,-1,$conf->currency);
+			$value=price($value, 0, $langs, 0, 0, -1, $conf->currency);
 		}
 		elseif ($type == 'select')
 		{
@@ -1480,6 +1493,7 @@ class ExtraFields
 		{
 			$value_arr=explode(',',$value);
 			$value='';
+			$toprint=array();
 			if (is_array($value_arr))
 			{
 				foreach ($value_arr as $keyval=>$valueval) {

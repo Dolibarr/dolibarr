@@ -28,7 +28,6 @@ InterventionClassifyBilled=&quot;銘打たれた&quot;分類
 InterventionClassifyUnBilled=Classify "Unbilled"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=請求
-ShowIntervention=介入を示す
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by Email
 InterventionCreatedInDolibarr=Intervention %s created

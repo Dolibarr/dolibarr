@@ -276,7 +276,7 @@ if ($mode != 'focus')
         {
             $texthelp.=$key.' -> '.$val.'<br>';
         }
-        $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, '');    // No tooltip on click, this also triggers the sort click
+        $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, 'subsitutiontooltip');
     }
     else
     {

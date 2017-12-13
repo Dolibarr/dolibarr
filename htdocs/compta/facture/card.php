@@ -64,15 +64,9 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('compta');
-$langs->load('products');
-$langs->load('banks');
-$langs->load('main');
-if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
-if (! empty($conf->margin->enabled))
-	$langs->load('margins');
+$langs->loadLangs(array('bills','companies','compta','products','banks','main'));
+if (! empty($conf->incoterm->enabled)) $langs->load('incoterm');
+if (! empty($conf->margin->enabled)) $langs->load('margins');
 
 $projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : 0);
 
@@ -677,7 +671,7 @@ if (empty($reshook))
 		$result=$discountcheck->fetch(0,$object->id);
 
 		$canconvert=0;
-		if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
+		if ($object->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
 		if (($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
 		if ($canconvert)
 		{
@@ -719,10 +713,11 @@ if (empty($reshook))
 				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement') . ')';
 				$sql.= ' WHERE pf.fk_facture = '.$object->id;
-				$sql.= ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-				$sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
+				$sql.= ' AND pf.fk_paiement = p.rowid';
+				$sql.= ' AND p.entity IN (' . getEntity('facture').')';
 				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
@@ -763,22 +758,44 @@ if (empty($reshook))
 
 			if (empty($error))
 			{
-				// Classe facture
-				$result = $object->set_paid($user);
-				if ($result >= 0)
-				{
+				if($object->type != Facture::TYPE_DEPOSIT) {
+					// Classe facture
+					$result = $object->set_paid($user);
+					if ($result >= 0)
+					{
+						$db->commit();
+					}
+					else
+					{
+						setEventMessages($object->error, $object->errors, 'errors');
+						$db->rollback();
+					}
+				} else {
 					$db->commit();
-				}
-				else
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$db->rollback();
 				}
 			}
 			else
 			{
 				setEventMessages($discount->error, $discount->errors, 'errors');
 				$db->rollback();
+			}
+		}
+	}
+
+	// Delete payment
+	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $user->rights->facture->creer)
+	{
+		$object->fetch($id);
+		if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0)
+		{
+			$paiement = new Paiement($db);
+			$result=$paiement->fetch(GETPOST('paiement_id'));
+			if ($result > 0) {
+				$result=$paiement->delete(); // If fetch ok and found
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			}
+			if ($result < 0) {
+				setEventMessages($paiement->error, $paiement->errors, 'errors');
 			}
 		}
 	}
@@ -1093,7 +1110,7 @@ if (empty($reshook))
 						$exp = new Expedition($db);
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
-						if (count($exp->linkedObjectsIds['commande']) > 0) {
+						if (is_array($exp->linkedObjectsIds['commande']) && count($exp->linkedObjectsIds['commande']) > 0) {
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value){
 								$object->linked_objects['commande'] = $value;
 							}
@@ -1132,6 +1149,7 @@ if (empty($reshook))
 								$TTotalByTva = array();
 								foreach ($srcobject->lines as &$line)
 								{
+									if(! empty($line->special_code)) continue;
 									$TTotalByTva[$line->tva_tx] += $line->total_ttc ;
 								}
 
@@ -1654,6 +1672,9 @@ if (empty($reshook))
 							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 							$price_base_type = $prodcustprice->lines[0]->price_base_type;
 							$tva_tx = $prodcustprice->lines[0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 				}
@@ -1706,12 +1727,32 @@ if (empty($reshook))
 				// Add custom code and origin country into description
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code))) {
 					$tmptxt = '(';
-					if (! empty($prod->customcode))
-						$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
-					if (! empty($prod->customcode) && ! empty($prod->country_code))
-						$tmptxt .= ' - ';
-					if (! empty($prod->country_code))
-						$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					// Define output language
+					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (empty($newlang) && GETPOST('lang_id','alpha'))
+							$newlang = GETPOST('lang_id','alpha');
+						if (empty($newlang))
+							$newlang = $object->thirdparty->default_lang;
+						if (! empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+						if (! empty($prod->customcode))
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))
+							$tmptxt .= ' - ';
+						if (! empty($prod->country_code))
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+					} else {
+						if (! empty($prod->customcode))
+							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))
+							$tmptxt .= ' - ';
+						if (! empty($prod->country_code))
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					}
 					$tmptxt .= ')';
 					$desc = dol_concatdesc($desc, $tmptxt);
 				}
@@ -2664,11 +2705,11 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Project
-	if (! empty($conf->projet->enabled) && $socid > 0)
+	if (! empty($conf->projet->enabled))
 	{
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
-		$numprojet = $formproject->select_projects($socid, $projectid, 'projectid', 0);
+		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1);
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td></tr>';
 	}
@@ -2904,7 +2945,9 @@ else if ($id > 0 || ! empty($ref))
 	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
 	if ($object->paye)
+	{
 		$resteapayer = 0;
+	}
 	$resteapayeraffiche = $resteapayer;
 
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
@@ -3080,7 +3123,7 @@ else if ($id > 0 || ! empty($ref))
 	if ($action == 'paid' && $resteapayer > 0) {
 		// Code
 		$i = 0;
-		$close [$i] ['code'] = 'discount_vat';
+		$close [$i] ['code'] = 'discount_vat';	// escompte
 		$i ++;
 		$close [$i] ['code'] = 'badcustomer';
 		$i ++;
@@ -3137,6 +3180,13 @@ else if ($id > 0 || ! empty($ref))
 
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes");
 		}
+	}
+
+	if ($action == 'deletepaiement')
+	{
+		$payment_id = GETPOST('paiement_id');
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 1);
+
 	}
 
 	// Confirmation de la suppression d'une ligne produit
@@ -3783,6 +3833,7 @@ else if ($id > 0 || ! empty($ref))
 
 	// List of payments already done
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder paymenttable" width="100%">';
 
 	print '<tr class="liste_titre">';
@@ -3801,11 +3852,12 @@ else if ($id > 0 || ! empty($ref))
 	$sql .= ' c.code as payment_code, c.libelle as payment_label,';
 	$sql .= ' pf.amount,';
 	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
-	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_paiement as c, ' . MAIN_DB_PREFIX . 'paiement_facture as pf, ' . MAIN_DB_PREFIX . 'paiement as p';
+	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'paiement_facture as pf, ' . MAIN_DB_PREFIX . 'paiement as p';
+	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_paiement as c ON p.fk_paiement = c.id' ;
 	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
-	$sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-	$sql .= ' AND c.entity IN (' . getEntity('c_paiement').')';
+	$sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND pf.fk_paiement = p.rowid';
+	$sql .= ' AND p.entity IN (' . getEntity('facture').')';
 	$sql .= ' ORDER BY p.datep, p.tms';
 
 	$result = $db->query($sql);
@@ -3852,7 +3904,14 @@ else if ($id > 0 || ! empty($ref))
 					print '</td>';
 				}
 				print '<td align="right">' . price($sign * $objp->amount) . '</td>';
-				print '<td>&nbsp;</td>';
+				print '<td align="center">';
+				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
+				{
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
+					print img_delete();
+					print '</a>';
+				}
+				print '</td>';
 				print '</tr>';
 				$i ++;
 			}
@@ -3992,6 +4051,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print '</table>';
+	print '</div>';
 
 	// Margin Infos
 	if (! empty($conf->margin->enabled)) {
@@ -4258,7 +4318,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id))
+				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
@@ -4335,23 +4395,38 @@ else if ($id > 0 || ! empty($ref))
 			// Delete
 			if ($user->rights->facture->supprimer)
 			{
-				if ($object->is_erasable() <= 0) {
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
-				} else if ($objectidnext) {
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
-				} elseif ($object->getSommePaiement()) {
+				$isErasable = $object->is_erasable();
+				//var_dump($isErasable);
+				if ($isErasable == -4) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
-				} else {
+				}
+				elseif ($isErasable == -3) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($isErasable == -2) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($isErasable == -1) {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($isErasable <= 0)	// Any other cases
+				{
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				elseif ($objectidnext)
+				{
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+				}
+				else
+				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a></div>';
 				}
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("NotAllowed") . '">' . $langs->trans('Delete') . '</a></div>';
 			}
-
-			print '</div>';
 		}
+		print '</div>';
 	}
-	print '<br>';
 
 	// Select mail models is same action as presend
 	if (GETPOST('modelselected','alpha')) {
@@ -4382,9 +4457,15 @@ else if ($id > 0 || ! empty($ref))
 
 		if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment)
 		{
-			print '<br>';
+			print '<br><!-- Link to pay -->'."\n";
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('invoice', $object->ref);
+			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
+		}
+
+		if ($object->statut != Facture::STATUS_DRAFT && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))
+		{
+			print '<br><!-- Link to download main doc -->'."\n";
+			print showDirectDownloadLink($object).'<br>';
 		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

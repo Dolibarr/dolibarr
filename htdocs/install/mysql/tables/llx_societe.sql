@@ -25,11 +25,11 @@ create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
   nom                      varchar(128),                                -- company reference name (should be same length than adherent.societe)
-  name_alias          varchar(128) NULL,
-  entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
+  name_alias               varchar(128) NULL,
+  entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 
-  ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(60),                                -- reference into an internal system (deprecated)
+  ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
+  ref_int                  varchar(255),                                -- reference into an internal system (deprecated)
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,

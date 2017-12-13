@@ -28,7 +28,6 @@ InterventionClassifyBilled=Класифицирай като "Таксувани
 InterventionClassifyUnBilled=Класифицирай като "Нетаксувани"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Таксува
-ShowIntervention=Покажи намеса
 SendInterventionRef=Подаване на намеса %s
 SendInterventionByMail=Изпращане на намеса по електронна поща
 InterventionCreatedInDolibarr=Намеса %s създадена

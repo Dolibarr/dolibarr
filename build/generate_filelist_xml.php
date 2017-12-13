@@ -131,7 +131,7 @@ $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 */
 $regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install)$';  // Exclude dirs
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;

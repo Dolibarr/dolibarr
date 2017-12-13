@@ -410,12 +410,13 @@ class Form
 	 *	@param	int			$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
 	 *	@param	string		$incbefore			Include code before the text
 	 *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
-	 *  @param  string      $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
+	 *  @param  string      $tooltiptrigger		''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
+	 *  @param	int			$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 *	@return	string							Code html du tooltip (texte+picto)
 	 *	@see	Use function textwithpicto if you can.
 	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
-	function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger='')
+	function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger='', $forcenowrap=0)
 	{
 		global $conf;
 
@@ -462,7 +463,7 @@ class Form
 		}
 		else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':'').($extrastyle?' style="'.$extrastyle.'"':''); // Attribut to put on td text tag
 		if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr style="height: auto;">';
-		elseif ($notabs == 2) $s.='<div class="inline-block">';
+		elseif ($notabs == 2) $s.='<div class="inline-block'.($forcenowrap?' nowrap':'').'">';
 		// Define value if value is before
 		if ($direction < 0) {
 			$s.='<'.$tag.$paramfortooltipimg;
@@ -497,9 +498,10 @@ class Form
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
 	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key)
+	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */
-	function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger='')
+	function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger='', $forcenowrap=0)
 	{
 		global $conf, $langs;
 
@@ -534,7 +536,7 @@ class Form
 		elseif ($type == 'warning') $img = img_warning($alt);
 		else $img = img_picto($alt, $type);
 
-		return $this->textwithtooltip($text, $htmltext, ($tooltiptrigger?3:2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger);
+		return $this->textwithtooltip($text, $htmltext, (($tooltiptrigger && ! $img)?3:2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
 	}
 
 	/**
@@ -569,26 +571,28 @@ class Form
 		$ret.=$hookmanager->resPrint;
 
 		$ret.='</select>';
-		// Warning: if you set submit button to disabled, post using 'Enter' will no more work.
-		$ret.='<input type="submit" name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
+		$ret.='<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">';	// Hidden button BEFORE so it is the one used when we submit with ENTER.
+		$ret.='<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax)?'':' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret.='</div>';
 
 		if (! empty($conf->use_javascript_ajax))
 		{
 			$ret.='<!-- JS CODE TO ENABLE mass action select -->
     		<script type="text/javascript">
-        		function initCheckForSelect()
+        		function initCheckForSelect(mode)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkbox */
         		{
         			atleastoneselected=0;
     	    		jQuery(".checkforselect").each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
+					console.log("initCheckForSelect mode="+mode+" atleastoneselected="+atleastoneselected);
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
     	  				jQuery(".massaction").show();
-        			    '.($selected ? 'if (atleastoneselected) jQuery(".massactionselect").val("'.$selected.'");' : '').'
-        			    '.($selected ? 'if (! atleastoneselected) jQuery(".massactionselect").val("0");' : '').'
+        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'"); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0"); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
     	  			}
     	  			else
     	  			{
@@ -597,9 +601,9 @@ class Form
         		}
 
         	jQuery(document).ready(function () {
-        		initCheckForSelect();
+        		initCheckForSelect(0);
         		jQuery(".checkforselect").click(function() {
-        			initCheckForSelect();
+        			initCheckForSelect(1);
     	  		});
     	  		jQuery(".massactionselect").change(function() {
         			var massaction = $( this ).val();
@@ -610,7 +614,7 @@ class Form
     	            }
         			$( this ).closest("form").attr("action", urlform);
                     console.log("we select a mass action "+massaction+" - "+urlform);
-        	        /* Warning: if you set submit button to disabled, post using Enter will no more work
+        	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
         			if ($(this).val() != \'0\')
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
@@ -619,7 +623,6 @@ class Form
     	  			{
     	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
     	  			}
-        	        */
     	        });
         	});
     		</script>
@@ -689,18 +692,19 @@ class Form
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
+						$out.= '<option a value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
 					}
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
 					{
 						$foundselected=true;
-						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
+						$out.= '<option b value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
 					}
 					else
 					{
-						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
+						$out.= '<option c value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
 					}
-					$out.= dol_trunc($row['label'],$maxlength,'middle');
+					if ($row['label']) $out.= dol_trunc($row['label'],$maxlength,'middle');
+					else $out.= '&nbsp;';
 					if ($row['code_iso']) $out.= ' ('.$row['code_iso'] . ')';
 					$out.= '</option>';
 				}
@@ -762,7 +766,7 @@ class Form
 				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			}
 
-			$out.= '<select id="'.$htmlname.'" class="flat selectincoterm noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+			$out.= '<select id="'.$htmlname.'" class="flat selectincoterm minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
 			$out.= '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1093,11 +1097,10 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-		   	if ($conf->use_javascript_ajax && ! $forcecombo)
+		   	if (! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
 			// Construct $out and $outarray
@@ -1271,12 +1274,14 @@ class Form
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	bool	$options_only	Return options only (for ajax treatment)
+	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 *  @param	string	$htmlid			Html id to use instead of htmlname
 	 *	@return	int						<0 if KO, Nb of contact in list if OK
 	 *  @deprected						You can use selectcontacts directly (warning order of param was changed)
 	 */
-	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false)
+	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false, $moreparam='', $htmlid='')
 	{
-		print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events);
+		print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
 		return $this->num;
 	}
 
@@ -1284,27 +1289,30 @@ class Form
 	 *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 *  This also set the number of contacts found into $this->num
 	 *
-	 *	@param	int		$socid      	Id ot third party or 0 for all
-	 *	@param  string	$selected   	Id contact pre-selectionne
-	 *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-	 *	@param  int		$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit)
-	 *	@param  string	$exclude        List of contacts id to exclude
-	 *	@param	string	$limitto		Disable answers that are not id in this array list
-	 *	@param	integer	$showfunction   Add function into label
-	 *	@param	string	$moreclass		Add more class to class style
-	 *	@param	bool	$options_only	Return options only (for ajax treatment)
-	 *	@param	integer	$showsoc	    Add company into label
-	 * 	@param	int		$forcecombo		Force to use combo box
-	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *	@return	 int					<0 if KO, Nb of contact in list if OK
+	 *	@param	int			$socid      	Id ot third party or 0 for all
+	 *	@param  array|int	$selected   	Array of ID of pre-selected contact id
+	 *	@param  string		$htmlname  	    Name of HTML field ('none' for a not editable field)
+	 *	@param  int			$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit)
+	 *	@param  string		$exclude        List of contacts id to exclude
+	 *	@param	string		$limitto		Disable answers that are not id in this array list
+	 *	@param	integer		$showfunction   Add function into label
+	 *	@param	string		$moreclass		Add more class to class style
+	 *	@param	bool		$options_only	Return options only (for ajax treatment)
+	 *	@param	integer		$showsoc	    Add company into label
+	 * 	@param	int			$forcecombo		Force to use combo box
+	 *  @param	array		$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param	string		$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 *  @param	string		$htmlid			Html id to use instead of htmlname
+	 *	@return	 int						<0 if KO, Nb of contact in list if OK
 	 */
-	function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $events=array())
+	function selectcontacts($socid, $selected='', $htmlname='contactid', $showempty=0, $exclude='', $limitto='', $showfunction=0, $moreclass='', $options_only=false, $showsoc=0, $forcecombo=0, $events=array(), $moreparam='', $htmlid='')
 	{
 		global $conf,$langs;
 
 		$langs->load('companies');
 
-		$out='';
+		if (empty($htmlid)) $htmlid = $htmlname;
+        $out='';
 
 		// On recherche les societes
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste";
@@ -1325,12 +1333,11 @@ class Form
 			if ($conf->use_javascript_ajax && ! $forcecombo && ! $options_only)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 			}
 
-			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-			if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected':'').'></option>';
+			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlid.'" name="'.$htmlname.'" '.(!empty($moreparam) ? $moreparam : '').'>';
+			if ($showempty == 1) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>&nbsp;</option>';
 			if ($showempty == 2) $out.= '<option value="0"'.($selected=='0'?' selected':'').'>'.$langs->trans("Internal").'</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1339,6 +1346,7 @@ class Form
 				include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactstatic=new Contact($this->db);
 
+				if (!is_array($selected)) $selected = array($selected);
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -1352,7 +1360,7 @@ class Form
 						$disabled=0;
 						if (is_array($exclude) && count($exclude) && in_array($obj->rowid,$exclude)) $disabled=1;
 						if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
-						if ($selected && $selected == $obj->rowid)
+						if (!empty($selected) && in_array($obj->rowid, $selected))
 						{
 							$out.= '<option value="'.$obj->rowid.'"';
 							if ($disabled) $out.= ' disabled';
@@ -1375,7 +1383,7 @@ class Form
 					}
 					else
 					{
-						if ($selected == $obj->rowid)
+						if (in_array($obj->rowid, $selected))
 						{
 							$out.= $contactstatic->getFullName($langs);
 							if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
@@ -1521,12 +1529,8 @@ class Form
 			if ($num)
 			{
 		   		// Enhance with select2
-				if ($conf->use_javascript_ajax)
-				{
-					include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-					$comboenhancement = ajax_combobox($htmlname);
-					$out.=$comboenhancement;
-				}
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname);
 
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
 				$out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
@@ -1630,7 +1634,7 @@ class Form
 	 *
 	 *  @param  string	$action         Value for $action
 	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  int		$show_empty     0=list without the empty value, 1=add empty value
 	 *  @param  array	$exclude        Array list of users id to exclude
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
@@ -1639,12 +1643,16 @@ class Form
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 *  @param	string	$morefilter		Add more filters into sql request
+	 *  @param	int		$showproperties		Show properties of each attendees
+	 *  @param	array	$listofuserid		Array with properties of each user
+	 *  @param	array	$listofcontactid	Array with properties of each contact
+	 *  @param	array	$listofotherid		Array with properties of each other contact
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
+	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $showproperties=0, $listofuserid=array(), $listofcontactid=array(), $listofotherid=array())
 	{
-		global $conf,$user,$langs;
+		global $conf, $user, $langs;
 
 		$userstatic=new User($this->db);
 		$out='';
@@ -1661,6 +1669,7 @@ class Form
 			$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
 			$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
 			$out.=' <input type="submit" class="button valignmiddle" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out.='<br>';
 		}
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser']))
@@ -1670,21 +1679,34 @@ class Form
 		$nbassignetouser=count($assignedtouser);
 
 		if ($nbassignetouser && $action != 'view') $out.='<br>';
-		if ($nbassignetouser) $out.='<div class="myavailability">';
+		if ($nbassignetouser) $out.='<ul class="attendees">';
 		$i=0; $ownerid=0;
 		foreach($assignedtouser as $key => $value)
 		{
 			if ($value['id'] == $ownerid) continue;
+
+			$out.='<li>';
 			$userstatic->fetch($value['id']);
-			$out.=$userstatic->getNomUrl(-1);
+			$out.= $userstatic->getNomUrl(-1);
 			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
 			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			// Show my availability
+			if ($showproperties)
+			{
+				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid)))
+				{
+					$out.='<div class="myavailability inline-block">';
+					$out.='&nbsp;-&nbsp;<span class="opacitymedium">'.$langs->trans("Availability").':</span>  <input id="transparency" class="marginleftonly marginrightonly" '.($action == 'view'?'disabled':'').' type="checkbox" name="transparency"'.($listofuserid[$ownerid]['transparency']?' checked':'').'>'.$langs->trans("Busy");
+					$out.='</div>';
+				}
+			}
 			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
 			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
-			$out.='<br>';
+
+			$out.='</li>';
 			$i++;
 		}
-		if ($nbassignetouser) $out.='</div>';
+		if ($nbassignetouser) $out.='</ul>';
 
 		//$out.='</form>';
 		return $out;
@@ -1930,7 +1952,7 @@ class Form
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
-			$sql .= " LEFT JOIN llx_product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 		}
 
 		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -1996,11 +2018,10 @@ class Form
 
 			$events=null;
 
-			if ($conf->use_javascript_ajax && ! $forcecombo)
+			if (! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement =ajax_combobox($htmlname, $events, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlname, $events, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 			}
 
 			$out.='<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
@@ -2564,6 +2585,7 @@ class Form
 
 			$this->db->free($result);
 
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$out.=ajax_combobox($htmlname);
 
 			if (empty($outputmode)) return $out;
@@ -2969,7 +2991,7 @@ class Form
 
 		$sql = "SELECT id, code, libelle as label, type, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-		$sql.= " WHERE entity = " . getEntity('c_paiement');
+		$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
@@ -3541,7 +3563,7 @@ class Form
 	 *       print '});'."\n";
 	 *       print '</script>'."\n";
 	 *
-	 *     @param  	string		$page        	   	Url of page to call if confirmation is OK
+	 *     @param  	string		$page        	   	Url of page to call if confirmation is OK. Can contains paramaters (param 'action' and 'confirm' will be reformated)
 	 *     @param	string		$title       	   	Title
 	 *     @param	string		$question    	   	Question
 	 *     @param 	string		$action      	   	Action
@@ -3551,9 +3573,10 @@ class Form
 	 * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int			$height          	Force height of box
 	 *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
+	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=200, $width=500)
+	function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice='', $useajax=0, $height=200, $width=500, $disableformtag=0)
 	{
 		global $langs,$conf;
 		global $useglobalvars;
@@ -3782,9 +3805,10 @@ class Form
 		{
 			$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
-			$formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
+			if (empty($disableformtag)) $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
+
 			$formconfirm.= '<input type="hidden" name="action" value="'.$action.'">'."\n";
-			$formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+			if (empty($disableformtag)) $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 
 			$formconfirm.= '<table width="100%" class="valid">'."\n";
 
@@ -3810,7 +3834,7 @@ class Form
 
 			$formconfirm.= '</table>'."\n";
 
-			$formconfirm.= "</form>\n";
+			if (empty($disableformtag)) $formconfirm.= "</form>\n";
 			$formconfirm.= '<br>';
 
 			$formconfirm.= "<!-- end form_confirm -->\n";
@@ -4394,7 +4418,7 @@ class Form
 		$TCurrency = array();
 
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
-		$sql.= " WHERE entity IN ('".getEntity('mutlicurrency', 0)."')";
+		$sql.= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -4816,21 +4840,33 @@ class Form
 				{
 					if (! $disabled)
 					{
+						// Output javascript for datepicker
 						$retstring.="<script type='text/javascript'>";
 						$retstring.="$(function(){ $('#".$prefix."').datepicker({
-            				dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
+							dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
 							autoclose: true,
-                			todayHighlight: true,";
+							todayHighlight: true,";
+							if (! empty($conf->dol_use_jmobile))
+							{
+								$retstring.="
+								beforeShow: function (input, datePicker) {
+									input.disabled = true;
+								},
+								onClose: function (dateText, datePicker) {
+									this.disabled = false;
+								},
+								";
+							}
 							// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
-						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
-						{
-						$retstring.="
-                			showOn: 'button',
-							buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
-							buttonImageOnly: true";
-						}
-						$retstring.="
-                			}) });";
+							if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
+							{
+							$retstring.="
+								showOn: 'button',
+								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
+								buttonImageOnly: true";
+							}
+							$retstring.="
+							}) });";
 						$retstring.="</script>";
 					}
 
@@ -5255,11 +5291,10 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			if ($conf->use_javascript_ajax && ! $forcecombo)
+			if (! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement =ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
-				$out.= $comboenhancement;
+				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
 			}
 
 			// Construct $out and $outarray
@@ -5362,18 +5397,14 @@ class Form
 		$out='';
 
 		// Add code for jquery to use multiselect
-		if ($addjscombo && empty($conf->dol_use_jmobile) && $jsbeautify)
+		if ($addjscombo && $jsbeautify)
 		{
 			$minLengthToAutocomplete=0;
 			$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?(constant('REQUIRE_JQUERY_MULTISELECT')?constant('REQUIRE_JQUERY_MULTISELECT'):'select2'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
 
 			// Enhance with select2
-			if ($conf->use_javascript_ajax)
-			{
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlname);
-				$out.=$comboenhancement;
-			}
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
 		}
 
 		$out.='<select id="'.preg_replace('/^\./','',$htmlname).'" '.($disabled?'disabled ':'').'class="flat '.(preg_replace('/^\./','',$htmlname)).($morecss?' '.$morecss:'').'"';
@@ -5431,7 +5462,7 @@ class Form
 				$out.='<option value="'.$key.'"';
 				$out.=$style.$disabled;
 				if ($id != '' && $id == $key && ! $disabled) $out.=' selected';		// To preselect a value
-				if ($nohtmlescape) $out.=' html="'.dol_escape_htmltag($selectOptionValue).'"';
+				if ($nohtmlescape) $out.=' data-html="'.dol_escape_htmltag($selectOptionValue).'"';
 				$out.='>';
 				//var_dump($selectOptionValue);
 				$out.=$selectOptionValue;
@@ -5508,7 +5539,7 @@ class Form
 			    		cache: true
 			    	},
 	 				language: select2arrayoflanguage,
-					containerCssClass: \':all:\',					/* Line to add class or origin SELECT propagated to the new <span class="select2-selection...> tag */
+					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
@@ -6520,12 +6551,8 @@ class Form
 		if ($resql)
 		{
 			// Enhance with select2
-			if ($conf->use_javascript_ajax)
-			{
-				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-			   	$comboenhancement = ajax_combobox($htmlname);
-				$out.= $comboenhancement;
-			}
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+		   	$out .= ajax_combobox($htmlname);
 
 			$out.= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').'>';
 
@@ -6617,7 +6644,7 @@ class Form
                         console.log("We uncheck all");
                 		$(".'.$cssclass.'").prop(\'checked\', false);
                     }'."\n";
-		if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
+		if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out.='         });
                 });
             </script>';

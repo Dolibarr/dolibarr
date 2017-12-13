@@ -113,7 +113,8 @@ if ($action == 'addline')
 			if (empty($batch))
 			{
 				$error++;
-				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), null, 'errors');
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $producttmp->ref), null, 'errors');
 			}
 		}
 	}
@@ -342,7 +343,7 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
 
-print '<div class="div-table-responsive-no-max">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
 

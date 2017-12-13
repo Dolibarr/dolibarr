@@ -66,6 +66,7 @@ ActionAC_OTH=Altres
 ActionAC_OTH_AUTO=Esdeveniments creats automàticament
 ActionAC_MANUAL=Esdeveniments creats manualment
 ActionAC_AUTO=Esdeveniments creats automàticament
+ActionAC_OTH_AUTOShort=Auto
 Stats=Estadístiques de venda
 StatusProsp=Estat del pressupost
 DraftPropals=Pressupostos esborrany

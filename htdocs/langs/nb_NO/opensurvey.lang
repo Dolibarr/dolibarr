@@ -57,3 +57,4 @@ ErrorInsertingComment=Det oppsto en feil ved opprettelse av kommentaren
 MoreChoices=Legg til flere valg for stemmeavgivere
 SurveyExpiredInfo=Avstemningen er blitt stengt eller utløpt
 EmailSomeoneVoted=%s har fylt ut en linje\nDu kan finne undersøkelsen din med lenken:\n%s
+ShowSurvey=Vis undersøkelse

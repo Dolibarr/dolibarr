@@ -2,7 +2,7 @@
 Bank=Banque
 MenuBankCash=Banques/Caisses
 MenuVariousPayment=Opérations diverses
-MenuNewVariousPayment=New Miscellaneous payment
+MenuNewVariousPayment=Nouveau paiement divers
 BankName=Nom de la banque
 FinancialAccount=Compte
 BankAccount=Compte bancaire
@@ -157,6 +157,6 @@ NewVariousPayment=Nouvelle opération diverse
 VariousPayment=Opérations diverses
 VariousPayments=Opérations diverses
 ShowVariousPayment=Afficher les opérations diverses
-AddVariousPayment=Add miscellaneous payments
+AddVariousPayment=Ajouter paiements divers
 YourSEPAMandate=Votre mandat SEPA
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

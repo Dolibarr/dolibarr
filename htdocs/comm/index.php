@@ -109,7 +109,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
         $listofsearchfields['search_contract']=array('text'=>'Contract');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -125,7 +125,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -155,7 +155,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		$total = 0;
 		$num = $db->num_rows($resql);
-	    
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -167,7 +167,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven"><td  class="nowrap">';
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
@@ -192,13 +192,13 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			}
 			if ($total>0)
 			{
-				
+
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
 		{
-			
+
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
@@ -236,7 +236,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
     {
         $total = 0;
         $num = $db->num_rows($resql);
-         
+
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -248,7 +248,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
-                
+
                 print '<tr class="oddeven"><td  class="nowrap">';
                 $supplierproposalstatic->id=$obj->rowid;
                 $supplierproposalstatic->ref=$obj->ref;
@@ -272,13 +272,13 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
             }
             if ($total>0)
             {
-                
+
                 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
             }
         }
         else
         {
-            
+
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table><br>";
@@ -315,7 +315,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$total = 0;
 		$num = $db->num_rows($resql);
-	    
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -326,7 +326,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			$i = 0;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td class="nowrap">';
                 $orderstatic->id=$obj->rowid;
@@ -352,13 +352,13 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			}
 			if ($total>0)
 			{
-				
+
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
 		}
 		else
 		{
-			
+
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
@@ -407,7 +407,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
             $i = 0;
             while ($i < $num)
             {
-                
+
                 $obj = $db->fetch_object($resql);
                 print '<tr class="oddeven"><td class="nowrap">';
                 $supplierorderstatic->id=$obj->rowid;
@@ -433,13 +433,13 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
             }
             if ($total>0)
             {
-                
+
                 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
             }
         }
         else
         {
-			
+
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";
@@ -489,7 +489,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
         else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
 		print '</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=p,c">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -510,7 +510,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
-				
+
 
 			}
 
@@ -547,8 +547,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><th>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<tr class="liste_titre">';
+		print '<th>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</th>';
+		print '<th align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -564,7 +565,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'supplier',44).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
 				print '</tr>';
-				
+
 				$i++;
 			}
 
@@ -644,7 +645,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
                 print $companystatic->getNomUrl(1,'customer',44);
 				print '</td>'."\n";
 				print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
-				
+
 				$i++;
 			}
 			print "</table><br>";
@@ -690,7 +691,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref
@@ -787,7 +788,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref

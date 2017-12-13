@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuration module PayPal
 PaypalDesc=Ce module permet d'offrir une page de paiement via le prestataire <a href="http://www.paypal.com" target="_blank">Paypal</a> pour réaliser un paiement quelconque ou un paiement par rapport à un objet Dolibarr (facture, commande…)
-PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalOrCBDoPayment=Payer avec Paypal (Carte de crédit ou Paypal)
 PaypalDoPayment=Payer par PayPal
 PAYPAL_API_SANDBOX=Mode test/bac à sable (sandbox)
 PAYPAL_API_USER=Nom utilisateur API

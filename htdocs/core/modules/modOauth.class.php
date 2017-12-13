@@ -139,6 +139,8 @@ class modOauth extends DolibarrModules
         // Clean before activation
         $this->remove($options);
 
-        return $this->_init($sql,$options);
+        $sql = array();
+
+        return $this->_init($sql, $options);
     }
 }

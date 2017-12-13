@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Contract reference
 DateContract=契約日
 DateServiceActivate=サービスのアクティブ化の日付
-ShowContract=契約を表示する
 ListOfServices=サービスのリスト
 ListOfInactiveServices=アクティブでないサービスのリスト
 ListOfExpiredServices=期限切れのアクティブなサービスのリスト

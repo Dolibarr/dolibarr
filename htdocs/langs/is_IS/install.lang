@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Þú notar Dolibarr skipulag töframaður frá Ubuntu eða 
 KeepDefaultValuesMamp=Þú notar Dolibarr skipulag töframaður frá DoliMamp, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
 KeepDefaultValuesProxmox=Þú notar Dolibarr uppsetningarhjálpina frá Proxmox raunverulegur tæki, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Festa fyrir denormalized gögn
@@ -191,6 +192,7 @@ MigrationActioncommElement=Uppfæra upplýsingar um aðgerðir
 MigrationPaymentMode=Gögn fólksflutninga í ham greiðslu
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s

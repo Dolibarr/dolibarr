@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Contract reference
 DateContract=Sopimuspäivä
 DateServiceActivate=Tiedoksiantopäivä aktivointi
-ShowContract=Näytä sopimus
 ListOfServices=Luettelo palveluista
 ListOfInactiveServices=Luettelo ei ole aktiivinen palvelut
 ListOfExpiredServices=Luettelo lakkaa aktiivinen palvelut

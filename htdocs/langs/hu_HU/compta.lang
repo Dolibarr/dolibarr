@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Számviteli / Treasury területén
 NewPayment=Új fizetési
 Payments=Kifizetések
 PaymentCustomerInvoice=Ügyfél számla fizetési
+PaymentSupplierInvoice=Szállító számla fizetési
 PaymentSocialContribution=Szociális/költségvetési adó fizetés
 PaymentVat=ÁFA-fizetés
 ListPayment=A fizetési lista

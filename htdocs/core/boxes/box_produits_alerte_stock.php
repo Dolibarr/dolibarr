@@ -55,11 +55,14 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 */
 	function __construct($db,$param='')
 	{
-	    global $user;
+	    global $conf,$user;
 
 	    $this->db = $db;
 
-		$this->hidden = ! (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire);
+	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
+	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden=($showmode != 1);
 	}
 
 	/**

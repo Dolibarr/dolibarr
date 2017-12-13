@@ -118,7 +118,7 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable nohover" width="100%">';
+    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
     $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     $boxstat.='</tr>';
@@ -368,7 +368,7 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $dashboardlines=array();
 
 // Do not include sections without management permission
-require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
@@ -500,6 +500,14 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
+$object=new stdClass();
+$parameters=array();
+$action='';
+$reshook=$hookmanager->executeHooks('addOpenElementsDashboardLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook == 0) {
+	$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
+}
+
 // Calculate total nb of late
 $totallate=$totaltodo=0;
 $var=true;
@@ -525,7 +533,7 @@ if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($to
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
-$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
+$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard" width="100%">'."\n";
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre">'.$langs->trans("DolibarrWorkBoard").'</th>';
 $boxwork.='</tr>'."\n";
@@ -551,7 +559,7 @@ if (! empty($valid_dashboardlines))
 	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
     foreach($valid_dashboardlines as $board)
     {
-        if (empty($boad->nbtodo)) $nbworkboardempty++;
+        if (empty($board->nbtodo)) $nbworkboardempty++;
 
         $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
         $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';

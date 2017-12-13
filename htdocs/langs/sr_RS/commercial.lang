@@ -66,6 +66,7 @@ ActionAC_OTH=Drugo
 ActionAC_OTH_AUTO=Automatski uneti događaji
 ActionAC_MANUAL=Ručno uneti događaji
 ActionAC_AUTO=Automatski uneti događaji
+ActionAC_OTH_AUTOShort=Auto
 Stats=Statistika prodaje
 StatusProsp=Status prospekta
 DraftPropals=Nacrt komercijalne ponude

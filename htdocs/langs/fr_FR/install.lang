@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Vous utilisez l'assistant d'installation depuis un environn
 KeepDefaultValuesMamp=Vous utilisez l'assistant d'installation DoliMamp. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 KeepDefaultValuesProxmox=Vous utilisez l'assistant d'installation depuis une application Proxmox. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 UpgradeExternalModule=Lancer le processus de mise à jour d'un module externe
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Correction de données dé-normalisées
@@ -191,6 +192,7 @@ MigrationActioncommElement=Mise à jour des données des actions des éléments
 MigrationPaymentMode=Migration des modes de paiement
 MigrationCategorieAssociation=Migration des categories
 MigrationEvents=Migration des évènements pour ajouter les propriétaires dans la table des utilisateurs assignés
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise
 MigrationRemiseExceptEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise_except"
 MigrationReloadModule=Rechargement du module %s

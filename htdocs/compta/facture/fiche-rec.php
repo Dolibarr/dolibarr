@@ -8,6 +8,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2016      Meziane Sof		<virtualsof@yahoo.fr>
+ * Copyright (C) 2017       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,21 +211,22 @@ if (empty($reshook))
 		{
 			$object->titre = GETPOST('titre', 'alpha');
 			$object->note_private = GETPOST('note_private','none');
-			$object->note_public  = GETPOST('note_public','none');
+            $object->note_public  = GETPOST('note_public','none');
+            $object->modelpdf = GETPOST('modelpdf', 'alpha');
 			$object->usenewprice = GETPOST('usenewprice');
 
 			$object->frequency = $frequency;
 			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
 			$object->nb_gen_max = $nb_gen_max;
 			$object->auto_validate = GETPOST('auto_validate', 'int');
-
+            $object->generate_pdf = GETPOST('generate_pdf', 'int');
 			$object->fk_project = $projectid;
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
 
-			// Get first contract linked to invoice used to generate template
-			if ($id > 0)
+			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
+			if (GETPOST('facid','int') > 0)
 			{
 				$srcObject = new Facture($db);
 				$srcObject->fetch(GETPOST('facid','int'));
@@ -244,7 +246,7 @@ if (empty($reshook))
 			$db->begin();
 
 			$oldinvoice = new Facture($db);
-			$oldinvoice->fetch($id);
+			$oldinvoice->fetch(GETPOST('facid','int'));
 
 			$result = $object->create($user, $oldinvoice->id);
 			if ($result > 0)
@@ -286,7 +288,8 @@ if (empty($reshook))
 	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $user->rights->facture->supprimer)
 	{
 		$object->delete($user);
-		header("Location: " . $_SERVER['PHP_SELF'] );
+
+		header("Location: " . DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
 		exit;
 	}
 
@@ -345,6 +348,64 @@ if (empty($reshook))
 	elseif ($action == 'setauto_validate' && $user->rights->facture->creer)
 	{
 		$object->setAutoValidate(GETPOST('auto_validate', 'int'));
+    }
+    // Set generate pdf
+	elseif ($action == 'setgenerate_pdf' && $user->rights->facture->creer)
+	{
+		$object->setGeneratepdf(GETPOST('generate_pdf', 'int'));
+	}
+    // Set model pdf
+	elseif ($action == 'setmodelpdf' && $user->rights->facture->creer)
+	{
+		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
+	}
+
+	// Set status disabled
+	elseif ($action == 'disable' && $user->rights->facture->creer)
+	{
+		$db->begin();
+
+		$object->fetch($id);
+
+		$res = $object->setValueFrom('suspended', 1);
+		if ($res <= 0)
+		{
+			$error++;
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// Set status enabled
+	elseif ($action == 'enable' && $user->rights->facture->creer)
+	{
+		$db->begin();
+
+		$object->fetch($id);
+
+		$res = $object->setValueFrom('suspended', 0);
+		if ($res <= 0)
+		{
+			$error++;
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Delete line
@@ -533,6 +594,9 @@ if (empty($reshook))
 						$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 						$price_base_type = $prodcustprice->lines[0]->price_base_type;
 						$tva_tx = $prodcustprice->lines[0]->tva_tx;
+						if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+						$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+						if (empty($tva_tx)) $tva_npr=0;
 					}
 				}
 			}
@@ -721,6 +785,7 @@ if (empty($reshook))
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
+		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -816,30 +881,31 @@ if (empty($reshook))
 
 			// Update line
 			if (! $error)
-		{
-			$result = $object->updateline(
-				GETPOST('lineid'),
-				$description,
-				$pu_ht,
-				$qty,
-				$vat_rate,
-				$localtax1_rate,
-				$localtax1_rate,
-				GETPOST('productid'),
-				GETPOST('remise_percent'),
-				'HT',
-				$info_bits,
-				0,
-				0,
-				$type,
-				0,
-				$special_code,
-				$label,
-				GETPOST('units')
-			);
-
-			if ($result >= 0)
 			{
+				$result = $object->updateline(
+					GETPOST('lineid'),
+					$description,
+					$pu_ht,
+					$qty,
+					$vat_rate,
+					$localtax1_rate,
+					$localtax1_rate,
+					GETPOST('productid'),
+					GETPOST('remise_percent'),
+					'HT',
+					$info_bits,
+					0,
+					0,
+					$type,
+					0,
+					$special_code,
+					$label,
+					GETPOST('units'),
+					$pu_ht_devise
+				);
+
+				if ($result >= 0)
+				{
 					/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
                         // Define output language
                         $outputlangs = $langs;
@@ -1040,6 +1106,13 @@ if ($action == 'create')
 			print "</td></tr>";
 		}
 
+        // Model pdf
+        print "<tr><td>".$langs->trans('Model')."</td><td>";
+        include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
+        $list = ModelePDFFactures::liste_modeles($db);
+        print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
+        print "</td></tr>";
+
 		print "</table>";
 
 		dol_fiche_end();
@@ -1074,6 +1147,19 @@ if ($action == 'create')
 		$select = array('0'=>$langs->trans('BillStatusDraft'),'1'=>$langs->trans('BillStatusValidated'));
 		print $form->selectarray('auto_validate', $select, GETPOST('auto_validate'));
 		print "</td></tr>";
+
+		// Auto generate document
+		if (! empty($conf->global->INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION))
+		{
+			print "<tr><td>".$langs->trans("StatusOfGeneratedDocuments")."</td><td>";
+			$select = array('0'=>$langs->trans('DoNotGenerateDoc'),'1'=>$langs->trans('AutoGenerateDoc'));
+			print $form->selectarray('generate_pdf', $select, GETPOST('generate_pdf'));
+			print "</td></tr>";
+		}
+		else
+		{
+			print '<input type="hidden" name="generate_pdf" value="1">';
+		}
 
 		print "</table>";
 
@@ -1297,8 +1383,8 @@ else
 		$substitutionarray['__INVOICE_YEAR__'] =  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample,'%Y').')';
 		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'),'%Y').')';
 		// Only on template invoices
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')';
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency),'dayhour').')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date(($object->date_when?$object->date_when:dol_now()), 'dayhour').')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree(($object->date_when?$object->date_when:dol_now()), $object->frequency, $object->unit_frequency),'dayhour').')';
 
 		$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
 		foreach($substitutionarray as $key => $val)
@@ -1345,6 +1431,34 @@ else
 		print "</td>";
 		print '</tr>';
 
+        // Model pdf
+        $langs->load('banks');
+
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('Model');
+        print '<td>';
+        if (($action != 'editmodelpdf') && $user->rights->facture->creer && ! empty($object->brouillon))
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editmodelpdf')
+        {
+            include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
+            $list = array();
+            $models = ModelePDFFactures::liste_modeles($db);
+            foreach ($models as $model) {
+                $list[] = $model . ':' . $model;
+            }
+            $select = 'select;'.implode(',', $list);
+            print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
+        }
+        else
+        {
+            print $object->modelpdf;
+        }
+        print "</td>";
+        print '</tr>';
 
 		// Other attributes
 		$cols = 2;
@@ -1449,13 +1563,35 @@ else
 		else
 			print $langs->trans("StatusOfGeneratedInvoices");
 		print '</td><td>';
-			$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
+		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
 		if ($action == 'auto_validate' || $object->frequency > 0)
 		{
 			print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
 		}
 		print '</td>';
-		print '</tr>';
+		// Auto generate documents
+		if (! empty($conf->global->INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION))
+		{
+			print '<tr>';
+			print '<td>';
+			if ($action == 'generate_pdf' || $object->frequency > 0)
+				print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->rights->facture->creer);
+			else
+				print $langs->trans("StatusOfGeneratedDocuments");
+			print '</td>';
+			print '<td>';
+			$select = 'select;0:'.$langs->trans('DoNotGenerateDoc').',1:'.$langs->trans('AutogenerateDoc');
+			if ($action == 'generate_pdf' || $object->frequency > 0)
+			{
+				print $form->editfieldval($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->rights->facture->creer, $select);
+			}
+			print '</td>';
+			print '</tr>';
+		}
+		else
+		{
+			print '<input type="hidden" name="generate_pdf" value="1">';
+		}
 
 		print '</table>';
 
@@ -1547,10 +1683,10 @@ else
 		 */
 		print '<div class="tabsAction">';
 
-		//if ($object->statut == Facture::STATUS_DRAFT)   // there is no draft status on templates.
-		//{
-		if ($user->rights->facture->creer)
+		if (empty($object->suspended))
 		{
+			if ($user->rights->facture->creer)
+			{
 				if (! empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max))
 				{
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
@@ -1559,19 +1695,31 @@ else
 				{
 					if (empty($object->frequency) || $object->date_when <= $today)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->thirdparty->id.'&fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
 					else
 					{
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
-							}
 					}
+				}
 			}
 			else
 			{
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateBill").'</a></div>';
-				}
-		//}
+			}
+		}
+
+		if ($user->rights->facture->creer)
+		{
+			if (empty($object->suspended))
+			{
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?action=disable&id='.$object->id.'">'.$langs->trans("Disable").'</a></div>';
+			}
+			else
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?action=enable&id='.$object->id.'">'.$langs->trans("Enable").'</a></div>';
+			}
+		}
 
 		//if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
 		if ($user->rights->facture->supprimer)

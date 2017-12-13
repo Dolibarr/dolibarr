@@ -59,6 +59,7 @@ $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel     = GETPOST('cancel','alpha');
 $backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
+
 $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
@@ -146,15 +147,16 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-				    'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-				    'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-				    'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
-				    'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				    'model_pdf', 'fk_projet'
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+					'model_pdf', 'fk_projet'
 				);
 				foreach ($listofproperties as $property)
 				{
-				    if (empty($object->$property)) $object->$property = $soc_origin->$property;
+					if (empty($object->$property)) $object->$property = $soc_origin->$property;
 				}
 
 				// Concat some data
@@ -175,10 +177,15 @@ if (empty($reshook))
 					}
 				}
 
-				// TODO Merge categories
+				// Merge categories
+				$static_cat = new Categorie($db);
+				$custcats = $static_cat->containing($soc_origin->id, 'customer', 'id');
+				$object->setCategories($custcats, 'customer');
+				$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+				$object->setCategories($suppcats, 'supplier');
 
-
-				$object->update($object->id, $user);
+				// Update
+				$object->update($object->id, $user, 0);
 
 				// Move links
 				$objects = array(
@@ -230,6 +237,21 @@ if (empty($reshook))
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$errors++;
 					}
+				}
+
+
+				if (! $error)
+				{
+					$object->context=array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+
+					// Call trigger
+					$result=$object->call_trigger('COMPANY_MODIFY',$user);
+					if ($result < 0)
+					{
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+					}
+					// End call triggers
 				}
 
 				if (!$errors)
@@ -1973,7 +1995,7 @@ else
 			    )
 		    );
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 200);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
 	    }
 
         dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
@@ -2435,82 +2457,6 @@ else
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
 		}
-		/*if ($action == 'presend')
-		{
-			// By default if $action=='presend'
-			$titreform='SendMail';
-			$topicmail='';
-			$action='send';
-			$modelmail='thirdparty';
-
-    		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-    		print '<div class="clearboth"></div>';
-    		print '<br>';
-			print load_fiche_titre($langs->trans($titreform));
-
-			dol_fiche_head();
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->default_lang;
-
-			// Cree l'objet formulaire mail
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-            if($formmail->fromtype === 'user'){
-                $formmail->fromid = $user->id;
-
-            }
-			$formmail->trackid='thi'.$object->id;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-			{
-				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
-			}
-			$formmail->withfrom=1;
-			$formmail->withtopic=1;
-			$liste=array();
-			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
-			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-			$formmail->withtofree=1;
-			$formmail->withtocc=$liste;
-			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withfile=2;
-			$formmail->withbody=1;
-			$formmail->withdeliveryreceipt=1;
-			$formmail->withcancel=1;
-			// Array of substitutions
-			$formmail->setSubstitFromObject($object, $outputlangs);
-			$formmail->substit['__THIRDPARTY_ID__']=$object->id;		// substit in setSubstitFromObject was wrong for this one
-			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;	// substit in setSubstitFromObject was wrong for this one
-			$formmail->substit['__PERSONALIZED__']='';					// deprecated
-			$formmail->substit['__CONTACTCIVNAME__']='';
-
-
-			// Tableau des parametres complementaires du post
-			$formmail->param['action']=$action;
-			$formmail->param['models']=$modelmail;
-			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['socid']=$object->id;
-			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
-
-			// Init list of files
-			if (GETPOST("mode")=='init')
-			{
-				$formmail->clear_attached_files();
-				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-			}
-			print $formmail->get_form();
-
-			dol_fiche_end();
-		}*/
 
 		if ($action != 'presend')
 		{
@@ -2528,8 +2474,6 @@ else
 	            $genallowed=$user->rights->societe->lire;
 	            $delallowed=$user->rights->societe->creer;
 
-	            $var=true;
-
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 	        }
 
@@ -2541,7 +2485,7 @@ else
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			$MAX = 10;
+			$MAXEVENT = 10;
 
 			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id.'">';
 			$morehtmlright.= $langs->trans("SeeAll");
@@ -2550,7 +2494,7 @@ else
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAX, '', $morehtmlright);		// Show all action for thirdparty
+			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for thirdparty
 
 			print '</div></div></div>';
 		}

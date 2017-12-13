@@ -66,6 +66,7 @@ ActionAC_OTH=دیگر
 ActionAC_OTH_AUTO=رویدادی به صورت خودکار قرار داده
 ActionAC_MANUAL=رویدادهای دستی قرار داده
 ActionAC_AUTO=رویدادی به صورت خودکار قرار داده
+ActionAC_OTH_AUTOShort=Auto
 Stats=آمار فروش
 StatusProsp=وضعیت چشم انداز
 DraftPropals=طرح تجاری پیش نویس

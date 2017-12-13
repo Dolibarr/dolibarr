@@ -28,7 +28,6 @@ InterventionClassifyBilled=تصنيف "المفوتر"
 InterventionClassifyUnBilled=تصنيف "فواتير"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=فواتير
-ShowIntervention=عرض التدخل
 SendInterventionRef=تقديم التدخل٪ الصورة
 SendInterventionByMail=إرسال تدخل عن طريق البريد الإلكتروني
 InterventionCreatedInDolibarr=التدخل٪ الصورة خلقت

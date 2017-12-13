@@ -774,7 +774,7 @@ if ($id > 0 || ! empty($ref))
 					$product->load_stock('warehouseopen');
 				}
 
-				if ($objp->fk_product > 0 && $type == 0 && ! empty($conf->stock->enabled))
+				if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && ! empty($conf->stock->enabled))
 				{
 					print '<td align="center">';
 					print $product->stock_reel;

@@ -66,6 +66,7 @@ ActionAC_OTH=Ostalo
 ActionAC_OTH_AUTO=Avtomatsko vnešeni dogodki
 ActionAC_MANUAL=Ročno vnešeni dogodki
 ActionAC_AUTO=Avtomatsko vnešeni dogodki
+ActionAC_OTH_AUTOShort=Auto
 Stats=Statistika prodaje
 StatusProsp=Status možne stranke
 DraftPropals=Osnutek komercialne ponudbe

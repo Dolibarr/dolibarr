@@ -15,7 +15,7 @@ CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser l'entrée
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tache pour lancer cette commande toute les 5 minutes.
 CronMethodDoesNotExists=La classe %s ne contient aucune méthode %s
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+CronJobProfiles=Liste des profils de travaux planifiés prédéfinis
 # Menu
 EnabledAndDisabled=Activés et désactivés
 # Page list

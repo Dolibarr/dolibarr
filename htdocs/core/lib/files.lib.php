@@ -46,7 +46,7 @@ function dol_basename($pathfile)
  *  @param	int			$recursive		Determines whether subdirectories are searched
  *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
  *                                      but must not contains the start and end '/'. Filter is checked into basename only.
- *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked into fullpath.
+ *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  *  @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -55,7 +55,7 @@ function dol_basename($pathfile)
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_indatabase
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0, $relativename="")
+function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0, $relativename="")
 {
 	global $db, $hookmanager;
 	global $object;
@@ -107,6 +107,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			while (false !== ($file = readdir($dir)))        // $file is always a basename (into directory $newpath)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in utf8 in memory
+				$fullpathfile=($newpath?$newpath.'/':'').$file;
 
 				$qualified=1;
 
@@ -120,10 +121,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 				// Check if file is qualified
 				foreach($excludefilterarray as $filt)
 				{
-					if (preg_match('/'.$filt.'/i',$file)) {
+					if (preg_match('/'.$filt.'/i', $file) || preg_match('/'.$filt.'/i', $fullpathfile)) {
 						$qualified=0; break;
 					}
 				}
+				//print $fullpathfile.' '.$file.' '.$qualified.'<br>';
 
 				if ($qualified)
 				{
@@ -538,7 +540,7 @@ function dol_filemtime($pathoffile)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dolCopyr dolReplaceRegExInFile
+ * @see		dol_copy dolReplaceRegExInFile
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
@@ -608,7 +610,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dolCopyr dolReplaceInFile
+ * @see		dol_copy dolReplaceInFile
  */
 function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
@@ -624,7 +626,7 @@ function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newma
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
- * @see		dolCopyr
+ * @see		dol_delete_file
  */
 function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -1052,7 +1054,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		$file_name_osencoded=dol_osencode($file_name);
 
 		// Check if destination dir is writable
-		// TODO
+		if (! is_writable(dirname($file_name_osencoded)))
+		{
+			dol_syslog("Files.lib::dol_move_uploaded_file Dir ".dirname($file_name_osencoded)." is not writable. Return 'ErrorDirNotWritable'", LOG_WARNING);
+			return 'ErrorDirNotWritable';
+		}
 
 		// Check if destination file already exists
 		if (! $allowoverwrite)
@@ -1199,7 +1205,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
  *  @param	string	$dir            Directory to delete
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @return boolean         		True if success, false if error
- *  @see dol_delete_file
+ *  @see dol_delete_file dol_copy
  */
 function dol_delete_dir($dir,$nophperrors=0)
 {
@@ -1468,7 +1474,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 			}
 
 			$nbfile = count($TFile['name']);
-
+			$nbok = 0;
 			for ($i = 0; $i < $nbfile; $i++)
 			{
 				// Define $destfull (path to file including filename) and $destfile (only filename)
@@ -1548,8 +1554,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 						}
 					}
 
-					$res = 1;
-					setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
+					$nbok++;
 				}
 				else
 				{
@@ -1568,7 +1573,11 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					}
 				}
 			}
-
+			if ($nbok > 0)
+			{
+				$res = 1;
+				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
+			}
 		}
 	} elseif ($link) {
 		require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';

@@ -517,6 +517,9 @@ if (empty($reshook))
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
 							$tva_tx = $prodcustprice->lines [0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 				}
@@ -1088,6 +1091,10 @@ if ($action == 'create')
 			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
 			$objectsrc->fetch_thirdparty();
 
+			// Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options = $objectsrc->array_options;
+
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
 			$soc = $objectsrc->thirdparty;
@@ -1186,10 +1193,13 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
+		$langs->load('projects');
+
 		$formproject=new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		$formproject->select_projects(($soc->id>0?$soc->id:-1),$projectid,"projectid",0,0,1,1);
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print "</td></tr>";
 	}
 

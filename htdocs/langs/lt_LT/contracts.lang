@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Sutarties nuoroda
 DateContract=Sutarties data
 DateServiceActivate=Paslaugos įjugimo data
-ShowContract=Rodyti sutartį
 ListOfServices=Paslaugų sąrašas
 ListOfInactiveServices=Neįjungtų paslaugų sąrašas
 ListOfExpiredServices=Pasibaigusių aktyvių paslaugų sąrašas

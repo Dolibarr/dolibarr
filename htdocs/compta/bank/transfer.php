@@ -82,9 +82,12 @@ if ($action == 'add')
 		$accountto=new Account($db);
 		$accountto->fetch(GETPOST('account_to','int'));
 
-		if ($accountto->currency_code == $accountfrom->currency_code) {
+		if ($accountto->currency_code == $accountfrom->currency_code)
+		{
 			$amountto=$amount;
-		} else {
+		}
+		else
+		{
 			if (! $amountto)
 			{
 				$error++;

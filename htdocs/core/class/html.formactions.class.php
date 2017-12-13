@@ -167,8 +167,8 @@ class FormActions
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $sortfield='a.datep';
-        $sortorder='DESC';
+        $sortfield='a.datep,a.id';
+        $sortorder='DESC,DESC';
 
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max?($max+1):0));
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
@@ -191,12 +191,15 @@ class FormActions
 
             $urlbacktopage=$_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage?'&'.$moreparambacktopage:'');
 
-        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($urlbacktopage).'">';
+            $projectid = $object->fk_project;
+            if ($typeelement == 'project') $projectid = $object->id;
+
+            $buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:'').($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">';
         	$buttontoaddnewevent.= $langs->trans("AddEvent");
         	$buttontoaddnewevent.= '</a>';
 
         	print '<!-- formactions->showactions -->'."\n";
-        	print load_fiche_titre($title, $morehtmlright, '', 0, 0, '', $buttontoaddnewevent);
+        	print load_fiche_titre($title, $buttontoaddnewevent, '', 0, 0, '', $morehtmlright);
 
         	$page=0; $param='';
 
@@ -205,12 +208,12 @@ class FormActions
         	print '<div class="div-table-responsive-no-min">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
-        	print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Action', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Ref',   0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('By',    0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Type',  0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, 'align="center"', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"', $sortfield, $sortorder, '', 1);
         	print '</tr>';
         	print "\n";
 
@@ -227,7 +230,9 @@ class FormActions
 	        		$label=$action->getNomUrl(0,38);
 
 	        		print '<tr class="oddeven">';
+	        		// Ref
 					print '<td>'.$ref.'</td>';
+					// Onwer
 	        		print '<td>';
 	        		if (! empty($action->userownerid))
 	        		{
@@ -235,20 +240,27 @@ class FormActions
 	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, '', '');
 	        		}
 	        		print '</td>';
-					print '<td>';
-	        		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	        		{
-	        		    if ($action->type_picto) print img_picto('', $action->type_picto);
-	        		    else {
-	        		        if ($action->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
-	        		        if ($action->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
-	        		        if ($action->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
-	        		        if ($action->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
-	        		    }
-	        		}
-	        		print $action->type;
+					// Type
+	        		print '<td>';
+					$imgpicto='';
+					if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+					{
+						if ($action->type_picto) $imgpicto=img_picto('', $action->type_picto);
+						else {
+							if ($action->type_code == 'AC_RDV')       $imgpicto=img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_TEL')   $imgpicto=img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_FAX')   $imgpicto=img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_EMAIL') $imgpicto=img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+							elseif ($action->type_code == 'AC_INT')   $imgpicto=img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+							elseif (! preg_match('/_AUTO/', $action->type_code)) $imgpicto=img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
+						}
+					}
+					print $imgpicto;
+	        		print $action->type_short ? $action->type_short : $action->type;
 	        		print '</td>';
+	        		// Label
 	        		print '<td>'.$label.'</td>';
+	        		// Date
 	        		print '<td align="center">'.dol_print_date($action->datep, 'dayhour', 'tzuserrel');
 	        		if ($action->datef)
 	        		{

@@ -4,8 +4,6 @@ AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Quotations
 Module20Desc=Management of quotations
-Module50000Desc=Module to offer an online payment page by credit card with PayBox
-Module50200Desc=Module to offer an online payment page by credit card with Paypal
 Permission21=Read quotations
 Permission22=Create/modify quotations
 Permission24=Validate quotations
@@ -19,5 +17,3 @@ ProposalsPDFModules=Quotation documents models
 FreeLegalTextOnProposal=Free text on quotations
 WatermarkOnDraftProposal=Watermark on draft quotations (none if empty)
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (quotations, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formating when building PDF files.</font>
-AGENDA_REMINDER_EMAIL=Enable event reminder by emails (defined on each event). Note: Module <strong>%s</strong> must be enabled and correctly setup to have reminder sent at the correct frequency.
-AGENDA_REMINDER_BROWSER=Enable event reminder on users browser (when event date is reached, each user is able to refuse this from the browser confirmation question)

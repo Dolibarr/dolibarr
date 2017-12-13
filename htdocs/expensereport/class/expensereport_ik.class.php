@@ -99,7 +99,7 @@ class ExpenseReportIk extends CoreObject
 
 		$sql = 'SELECT rowid, label, entity, active';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat';
-		$sql.= ' WHERE entity IN (0,'. getEntity('').')';
+		$sql.= ' WHERE entity IN ('. getEntity('c_exp_tax_cat').')';
 		if ($mode == 1) $sql.= ' AND active = 1';
 		elseif ($mode == 2) $sql.= 'AND active = 0';
 

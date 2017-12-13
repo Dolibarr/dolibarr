@@ -957,6 +957,7 @@ class CMailFile
 			$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol2;
 		}
 
+		if (! empty($_SERVER['REMOTE_ADDR'])) $out.= "X-RemoteAddr: " . $_SERVER['REMOTE_ADDR']. $this->eol2;
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol2;
 		$out.= "Mime-Version: 1.0".$this->eol2;
 

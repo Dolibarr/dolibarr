@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Export Eticheta
 ACCOUNTING_EXPORT_AMOUNT=Export valoare
 ACCOUNTING_EXPORT_DEVISE=Export moneda
 Selectformat=Select the format for the file
+ACCOUNTING_EXPORT_FORMAT=Select the format for the file
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specificati prefixul pentru numele fisierului
 ThisService=Acest serviciu
 ThisProduct=Acest produs
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=PAS %s: Adăugați sau modificați tranzacțiile exis
 AccountancyAreaDescClosePeriod=PASUL %s: Inchideți perioada, astfel încât să nu putem modifica în viitor.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Contabilitate
 Selectchartofaccounts=Selectați schema activă de conturi
 ChangeAndLoad=Schimbați și încărcați
 Addanaccount=Adauga un cont contabil
@@ -166,7 +168,7 @@ DeleteMvt=Ștergeți liniile din Cartea Mare
 DelYear=Anul pentru ștergere
 DelJournal=Jurnalul de șters
 ConfirmDeleteMvt=Aceasta va șterge toate liniile din Cartea Mare pentru anul și / sau dintr-un anumit jurnal. Este necesar cel puțin un criteriu.
-ConfirmDeleteMvtPartial=Aceasta va șterge linia (liniile) selectate ale Cărții Mari
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Ștergeți înregistrarea Cărții Mari
 FinanceJournal=Jurnal Bancă
 ExpenseReportsJournal=Jurnalul rapoartelor de cheltuieli
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Card asociat
 GeneralLedgerIsWritten=Tranzacțiile sunt scrise în Cartea Mare
 GeneralLedgerSomeRecordWasNotRecorded=Unele tranzacții nu au putut fi expediate. Dacă nu există niciun alt mesaj de eroare, probabil că acestea au fost expediate.
-NoNewRecordSaved=Nu s-au trimis noi înregistrări
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Lista produselor care nu sunt asociate unui cont contabil
 ChangeBinding=Schimbați asocierea
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Export către Quadratus QuadraCompta
 Modelcsv_ebp=Export către EBP
 Modelcsv_cogilog=Export către Cogilog
 Modelcsv_agiris=Export către Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Id-ul listei de conturi
 
 ## Tools - Init accounting account on product / service

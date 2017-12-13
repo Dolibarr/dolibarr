@@ -36,7 +36,7 @@ class Login
 	 *
 	 * Request the API token for a couple username / password.
 	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
-	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "api_key" into field at the top right of page (Note: "api_key" can be found/set on the user page).
+	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: Tha API key (DOLAPIKEY) can be found/set on the user page.
 	 *
 	 * @param   string  $login			User login
 	 * @param   string  $password		User password
@@ -57,11 +57,22 @@ class Login
 		if (empty($dolibarr_main_authentication))
 			$dolibarr_main_authentication = 'http,dolibarr';
 		// Authentication mode: forceuser
-		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user))
-			$dolibarr_auto_user = 'auto';
+		if ($dolibarr_main_authentication == 'forceuser')
+		{
+			if (empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+			if ($dolibarr_auto_user != $login)
+			{
+				dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
+				throw new RestException(403, "Your instance is set to use the automatic login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
+			}
+		}
 		// Set authmode
 		$authmode = explode(',', $dolibarr_main_authentication);
 
+		if ($entity != '' && ! is_numeric($entity))
+		{
+			throw new RestException(403, "Bad value for entity, must be the numeric ID of company.");
+		}
 		if ($entity == '') $entity=1;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';

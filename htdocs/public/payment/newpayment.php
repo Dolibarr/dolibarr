@@ -722,7 +722,7 @@ if ($source == 'order')
 	if ($directdownloadlink)
 	{
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($order->last_main_doc,'').' ';
+		print img_mime($order->last_main_doc,'');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
 	print '</td></tr>'."\n";
@@ -840,7 +840,7 @@ if ($source == 'invoice')
 	if ($directdownloadlink)
 	{
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($invoice->last_main_doc,'').' ';
+		print img_mime($invoice->last_main_doc,'');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
 	print '</td></tr>'."\n";
@@ -1029,7 +1029,7 @@ if ($source == 'contractline')
 	if ($directdownloadlink)
 	{
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($invoice->last_main_doc,'').' ';
+		print img_mime($contract->last_main_doc,'');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
 	print '</td></tr>'."\n";

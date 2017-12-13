@@ -78,16 +78,19 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
 function test_sql_and_script_inject($val, $type)
 {
 	$inj = 0;
-	// For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
-	if ($type != 2)
+	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
+	if ($type == 1)
 	{
 		$inj += preg_match('/delete\s+from/i',	 $val);
 		$inj += preg_match('/create\s+table/i',	 $val);
-		$inj += preg_match('/update.+set.+=/i',  $val);
 		$inj += preg_match('/insert\s+into/i', 	 $val);
-		$inj += preg_match('/select.+from/i', 	 $val);
-		$inj += preg_match('/union.+select/i', 	 $val);
+		$inj += preg_match('/select\s+from/i', 	 $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+	}
+	if ($type != 2)	// Not common, we can check on POST
+	{
+		$inj += preg_match('/update.+set.+=/i',  $val);
+		$inj += preg_match('/union.+select/i', 	 $val);
 		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
 	}
 	// For XSS Injection done by adding javascript with script
@@ -1087,6 +1090,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead))
 	{
+		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
+
 		print "<head>\n";
 		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
 		// Displays meta
@@ -1110,10 +1115,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		else print "<title>".dol_htmlentities($appli)."</title>";
 		print "\n";
 
-		//$ext='';
-		//if (! empty($conf->dol_use_jmobile)) $ext='version='.urlencode(DOL_VERSION);
-		$ext='version='.urlencode(DOL_VERSION);
-
 		if (GETPOST('version','int')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
 		if (GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext.='&testmenuhider='.(GETPOST('testmenuhider','int')?GETPOST('testmenuhider','int'):$conf->global->MAIN_TESTMENUHIDER);
 
@@ -1134,22 +1135,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext?'?'.$ext:'').'">'."\n";  // JQuery
 			else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui.css'.($ext?'?'.$ext:'').'">'."\n";    // JQuery
 			if (! defined('DISABLE_JQUERY_JNOTIFY')) print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css'.($ext?'?'.$ext:'').'">'."\n";          // JNotify
-			/* Removed a old hidden problematic feature never used in Dolibarr. If an external module need datatable, the module must provide all lib it needs and manage version problems with other dolibarr components
-            if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES) || (defined('REQUIRE_JQUERY_DATATABLES') && constant('REQUIRE_JQUERY_DATATABLES')))     // jQuery datatables
-            {
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/media/css/jquery.dataTables.min.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'.($ext?'?'.$ext:'').'"></script>'."\n";
-            }*/
 			if (! defined('DISABLE_SELECT2') && (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))     // jQuery plugin "mutiselect", "multiple-select", "select2"...
 			{
 				$tmpplugin=empty($conf->global->MAIN_USE_JQUERY_MULTISELECT)?constant('REQUIRE_JQUERY_MULTISELECT'):$conf->global->MAIN_USE_JQUERY_MULTISELECT;
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/css/'.$tmpplugin.'.css'.($ext?'?'.$ext:'').'">'."\n";
-			}
-			// jQuery Timepicker
-			if (! empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
-			{
-				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css'.($ext?'?'.$ext:'').'">'."\n";
 			}
 		}
 
@@ -1223,12 +1212,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 			if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-			if (! defined('DISABLE_JQUERY_TABLEDND')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+			if (! defined('DISABLE_JQUERY_TABLEDND')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			// jQuery jnotify
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY'))
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			}
 			// Flot
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && ! defined('DISABLE_JQUERY_FLOT'))
@@ -1328,7 +1316,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
 
             // JS forced by modules (relative url starting with /)
             if (! empty($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
@@ -1503,7 +1491,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			if (is_array($_POST))
 			{
 				foreach($_POST as $key=>$value) {
-					if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
+					if ($key!=='action' && $key!=='password' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
 				}
 			}
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
@@ -1538,7 +1526,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				$title=$appli.'<br>';
 				$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 				if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-				$text.='<a class="help" target="_blank" href="';
+				$text.='<a class="help" target="_blank" rel="noopener" href="';
 				if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 				else $text.=sprintf($helpbaseurl,$helppage);
 				$text.='">';
@@ -1603,9 +1591,9 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 		print "\n".'<!-- Begin side-nav id-left -->'."\n".'<div class="side-nav"><div id="id-left">'."\n";
 
-		print "\n";
+		if ($conf->browser->layout == 'phone') $conf->global->MAIN_USE_OLD_SEARCH_FORM=1;	// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
 
-		if ($conf->browser->layout == 'phone') $conf->global->MAIN_USE_OLD_SEARCH_FORM=1;	// Select into select2 is awfull on smartphone
+		print "\n";
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			if (! is_object($form)) $form=new Form($db);
@@ -1621,8 +1609,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 			foreach($arrayresult as $key => $val)
 			{
-				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleftt', img_picto('',$val['img']));
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleftt', img_picto('', $val['img'], '', false, 1, 1));
+				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleft', img_picto('',$val['img']));
+				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft', img_picto('', $val['img'], '', false, 1, 1));
 			}
 		}
 
@@ -1635,7 +1623,13 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		}
 		else $searchform=$hookmanager->resPrint;
 
-		if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
+		// Force special value for $searchform
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) || empty($conf->use_javascript_ajax))
+		{
+			$urltosearch=DOL_URL_ROOT.'/core/search_page.php?showtitlebefore=1';
+			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="'.$urltosearch.'" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div></div>';
+		}
+		elseif ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div><div id="divsearchforms2" style="display: none">'.$searchform.'</div>';
 			$searchform.='<script type="text/javascript">
@@ -1695,7 +1689,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			}
 			else $appli.=" ".DOL_VERSION;
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
-			if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+			if ($doliurl) print '<a class="help" target="_blank" rel="noopener" href="'.$doliurl.'">';
 			else print '<span class="help">';
 			print $appli;
 			if ($doliurl) print '</a>';
@@ -1725,7 +1719,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '<a class="help" target="_blank" rel="noopener" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';
 		}
 
@@ -1828,21 +1822,19 @@ function getHelpParamFor($helppagename,$langs)
  *  @param	string	$accesskey			Accesskey
  *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
  *  @param	string	$img				Image to use
+ *  @param	string	$showtitlebefore	Show title before input text instead of into placeholder. This can be set when output is dedicated for text browsers.
  *  @return	string
  */
-function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='')
+function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='', $showtitlebefore=0)
 {
 	global $conf,$langs,$user;
-
-	if (empty($htmlinputid)) {
-		$htmlinputid = $htmlinputname;
-	}
 
 	$ret='';
 	$ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
+	if ($showtitlebefore) $ret.=$title.' ';
 	$ret.='<input type="text" class="flat '.$htmlmorecss.'"';
 	$ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
@@ -1870,6 +1862,8 @@ if (! function_exists("llxFooter"))
 	{
 		global $conf, $langs, $user, $object;
 		global $delayedhtmlcontent;
+
+		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
@@ -1916,99 +1910,21 @@ if (! function_exists("llxFooter"))
 
 		print '</div> <!-- End div class="fiche" -->'."\n"; // End div fiche
 
-		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'; // End div id-right
+		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'."\n"; // End div id-right
+
+		if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '</div> <!-- End div id-container -->'."\n";	// End div container
 
 		print "\n";
 		if ($comment) print '<!-- '.$comment.' -->'."\n";
 
 		printCommonFooter($zone);
 
-		if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile)) print '</div> <!-- End div id-container -->'."\n";	// End div container
-
 		if (! empty($delayedhtmlcontent)) print $delayedhtmlcontent;
 
-		// TODO Move this in lib_head.js.php
-
-		// Wrapper to show tooltips (html or onclick popup)
-		if (! empty($conf->use_javascript_ajax) && empty($conf->dol_no_mouse_hover))
+		if (! empty($conf->use_javascript_ajax))
 		{
-			print "\n<!-- JS CODE TO ENABLE Tooltips on all object with class classfortooltip -->\n";
-			print '<script type="text/javascript">
-            	jQuery(document).ready(function () {
-					jQuery(".classfortooltip").tooltip({
-						show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-						hide: { effect:\'toggle\', delay: 50 },
-						tooltipClass: "mytooltip",
-						content: function () {
-              				return $(this).prop(\'title\');		/* To force to get title as is */
-          				}
-					});
-            		jQuery(".classfortooltiponclicktext").dialog({ closeOnEscape: true, classes: { "ui-dialog": "highlight" }, maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).', autoOpen: false }).css("z-index: 5000");
-            		jQuery(".classfortooltiponclick").click(function () {
-            		    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-            		    if ($(this).attr(\'dolid\'))
-            		    {
-                            obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-            		        obj.dialog("open");
-
-            		    }
-            		});
-                });
-            </script>' . "\n";
-		}
-
-		// Wrapper to manage document_preview
-		if (! empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone'))
-		{
-			print "\n<!-- JS CODE TO ENABLE document_preview -->\n";
-			print '<script type="text/javascript">
-                jQuery(document).ready(function () {
-			        jQuery(".documentpreview").click(function () {
-            		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
-                		return false;
-        			});
-        		});
-            </script>' . "\n";
-		}
-
-		// Wrapper to manage dropdown
-		if (! empty($conf->use_javascript_ajax) && ! defined('JS_JQUERY_DISABLE_DROPDOWN'))
-		{
-			print "\n<!-- JS CODE TO ENABLE dropdown -->\n";
-			print '<script type="text/javascript">
-                jQuery(document).ready(function () {
-                  $(".dropdown dt a").on(\'click\', function () {
-                      //console.log($(this).parent().parent().find(\'dd ul\'));
-                      $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
-                      // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
-                      heigthofcontent = 21 * $(this).parent().parent().find(\'dd div ul li\').length;
-                      if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
-                      posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
-                      //console.log(posbottom);
-                      var scrollBottom = $(window).scrollTop() + $(window).height();
-                      //console.log(scrollBottom);
-                      diffoutsidebottom = (posbottom - scrollBottom);
-                      console.log("heigthofcontent="+heigthofcontent+", diffoutsidebottom (posbottom="+posbottom+" - scrollBottom="+scrollBottom+") = "+diffoutsidebottom);
-                      if (diffoutsidebottom > 0)
-                      {
-                            pix = "-"+(diffoutsidebottom+8)+"px";
-                            console.log("We reposition top by "+pix);
-                            $(this).parent().parent().find(\'dd\').css("top", pix);
-                      }
-                      // $(".dropdown dd ul").slideToggle(\'fast\');
-                  });
-                  $(".dropdowncloseonclick").on(\'click\', function () {
-                     console.log("Link has class dropdowncloseonclick, so we close/hide the popup ul");
-                     $(this).parent().parent().hide();
-                  });
-
-                  $(document).bind(\'click\', function (e) {
-                      var $clicked = $(e.target);
-                      if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
-                  });
-                });
-                </script>';
+			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
 		}
 
 		// Wrapper to add log when clicking on download or preview
@@ -2043,7 +1959,6 @@ if (! function_exists("llxFooter"))
 				<?php
 			}
 	   	}
-
 
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";

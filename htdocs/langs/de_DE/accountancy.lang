@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Exportiere Beschriftung
 ACCOUNTING_EXPORT_AMOUNT=Exportiere Betrag
 ACCOUNTING_EXPORT_DEVISE=Exportiere Währung
 Selectformat=Wählen Sie das Format für die Datei
+ACCOUNTING_EXPORT_FORMAT=Wählen Sie das Format für die Datei
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Präfix für den Dateinamen angeben
 ThisService=Diese Leistung
 ThisProduct=Dieses Produkt
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=SCHRITT %s: Vorhandene Transaktionen hinzufügen oder
 AccountancyAreaDescClosePeriod=SCHRITT %s: Schließen Sie die Periode, damit wir in Zukunft keine Veränderungen vornehmen können.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Buchführung
 Selectchartofaccounts=Kontenplan wählen
 ChangeAndLoad=Ändere und Lade
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
@@ -166,7 +168,7 @@ DeleteMvt=Zeilen im Hauptbuch löschen
 DelYear=Jahr zu entfernen
 DelJournal=Journal zu entfernen
 ConfirmDeleteMvt=Es werden alle Zeilen des Hauptbuchs für Jahr und/oder eines bestimmten Journals gelöscht. Mindestens ein Kriterium ist erforderlich.
-ConfirmDeleteMvtPartial=Dadurch wird die ausgewählte(n) Zeile(n) aus dem Hauptbuch gelöscht
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Eintrag im Hauptbuch löschen
 FinanceJournal=Finanzjournal
 ExpenseReportsJournal=Spesenabrechnungsjournal
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Zuordnungs Karte
 GeneralLedgerIsWritten=Operationen werden ins Hauptbuch geschrieben
 GeneralLedgerSomeRecordWasNotRecorded=Einige der Buchungen konnten nicht übernommen werden. Es gab keine Fehler, vermutlich wurden diese Buchungen schon früher übernommen.
-NoNewRecordSaved=Keine neuen Einträge gespeichert
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Liste der Produkte, die nicht an ein Buchhaltungskonto gebunden sind
 ChangeBinding=Ändern der Zuordnung
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Export zu Quadratus QuadraCompta
 Modelcsv_ebp=Export zu EBP
 Modelcsv_cogilog=Export zu Cogilog
 Modelcsv_agiris=Nach Agiris exportieren (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Kontenplan ID
 
 ## Tools - Init accounting account on product / service

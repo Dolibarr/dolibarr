@@ -44,7 +44,6 @@ ConfirmActivateService=Tem a certeza que pretende ativar este serviço com a dat
 RefContract=Referência do contrato
 DateContract=Data do contrato
 DateServiceActivate=Data de ativação do serviço
-ShowContract=Mostrar contrato
 ListOfServices=Lista de serviços
 ListOfInactiveServices=Lista de serviços não activos
 ListOfExpiredServices=Lista de serviços ativos expirados

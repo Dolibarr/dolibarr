@@ -73,7 +73,7 @@ $object->getrights();
 $entity=$conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','globalcard');
+$contextpage=array('usercard','userperms','globalcard');
 $hookmanager->initHooks($contextpage);
 
 

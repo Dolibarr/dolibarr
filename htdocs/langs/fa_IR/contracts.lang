@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=قرارداد مرجع
 DateContract=تاریخ قرارداد
 DateServiceActivate=تاریخ فعال سازی سرویس
-ShowContract=نمایش قرارداد
 ListOfServices=فهرست خدمات
 ListOfInactiveServices=فهرست خدمات فعال است
 ListOfExpiredServices=فهرست خدمات فعال منقضی شده

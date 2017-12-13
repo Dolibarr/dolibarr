@@ -328,7 +328,7 @@ if ($result) {
 
 		print '<td>' . $codeCompta . '</td>';
 
-		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
+		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')). '">';
 		print img_edit();
 		print '</a></td>';
 

@@ -44,7 +44,6 @@ ConfirmActivateService=Bu hizmeti <b>%s</b>tarihli olarak etkinleştirmek istedi
 RefContract=Sözleşme referansı
 DateContract=Sözleşme tarihi
 DateServiceActivate=Hizmet etkinleştirme tarihi
-ShowContract=Sözleşmeye bakın
 ListOfServices=Hizmet listesi
 ListOfInactiveServices=Etkin olmayan hizmetler listesi
 ListOfExpiredServices=Süresi dolmuş etkin hizmetler listesi

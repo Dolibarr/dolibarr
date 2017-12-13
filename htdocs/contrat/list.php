@@ -56,7 +56,7 @@ $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_contract=GETPOST('search_contract');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_status=GETPOST('search_status');
 $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');
@@ -64,7 +64,7 @@ $search_sale=GETPOST('search_sale','int');
 $search_product_category=GETPOST('search_product_category','int');
 $search_dfmonth=GETPOST('search_dfmonth','int');
 $search_dfyear=GETPOST('search_dfyear','int');
-$search_op2df=GETPOST('search_op2df');
+$search_op2df=GETPOST('search_op2df','alpha');
 $day=GETPOST("day","int");
 $year=GETPOST("year","int");
 $month=GETPOST("month","int");
@@ -125,11 +125,11 @@ $arrayfields=array(
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	'sale_representative'=>array('label'=>$langs->trans("SalesRepresentative"), 'checked'=>1),
+	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
 	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
 	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'lower_planned_end_date'=>array('label'=>$langs->trans("LowerDateEndPlannedShort"), 'checked'=>1, 'position'=>900),
+	'lower_planned_end_date'=>array('label'=>$langs->trans("LowerDateEndPlannedShort"), 'checked'=>1, 'position'=>900, 'help'=>$langs->trans("LowerDateEndPlannedShort")),
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -268,47 +268,29 @@ if ($search_sale > 0)
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
-if ($search_dfyear > 0)
-{
-//	$sql.= " AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") ".$search_op2df."= '".$db->idate(($search_op2df == "<" ? dol_get_last_day($search_dfyear,$search_dfmonth,false) : dol_get_first_day($search_dfyear,$search_dfmonth,false)))."'";
-}
-
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code,";
 $sql.= " state.code_departement, state.nom";
-//$sql.= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").")";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-
-if ($search_dfyear > 0)
+if ($search_dfyear > 0 && $search_op2df)
 {
-	$sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") ".$search_op2df."= '".$db->idate(($search_op2df == "<" ? dol_get_last_day($search_dfyear,$search_dfmonth,false) : dol_get_first_day($search_dfyear,$search_dfmonth,false)))."'";
+	if ($search_op2df == '<=') $sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear,$search_dfmonth,false))."'";
+	elseif ($search_op2df == '>=') $sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear,$search_dfmonth,false))."'";
+	else $sql.= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear,$search_dfmonth,false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear,$search_dfmonth,false))."'";
 }
-
 $sql.= $db->order($sortfield,$sortorder);
+//print $sql;
 
 $totalnboflines=0;
 $result=$db->query($sql);
@@ -359,20 +341,15 @@ if ($resql)
 	if ($show_files)                $param.='&show_files=' .urlencode($show_files);
 	if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
-		if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	if ($user->rights->contrat->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	if ($massaction == 'presend') $arrayofmassactions=array();
+	if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -386,15 +363,11 @@ if ($resql)
 
 	print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
 
-	if ($massaction == 'presend')
-	{
-		$topicmail="SendContractRef";
-		$modelmail="contract";
-		$objecttmp=new Contrat($db);
-		$trackid='con'.$object->id;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-	}
+	$topicmail="SendContractRef";
+	$modelmail="contract";
+	$objecttmp=new Contrat($db);
+	$trackid='con'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
 	{
@@ -524,28 +497,8 @@ if ($resql)
 		print '</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				print '<td class="liste_titre'.($align?' '.$align:'').'">';
-				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-				{
-					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
-					$searchclass='';
-					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-				print '</td>';
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -566,7 +519,7 @@ if ($resql)
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))
 	{
 			print '<td class="liste_titre" align="center">';
-			$arrayofoperators=array('<'=>'<','>'=>'>');
+			$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
 			print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
 			print '</br>';
 			print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);
@@ -599,24 +552,12 @@ if ($resql)
 	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val)
-	   {
-		   if (! empty($arrayfields["ef.".$key]['checked']))
-		   {
-				$align=$extrafields->getAlignFlag($key);
-				$sortonfield = "ef.".$key;
-				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-		   }
-	   }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))       print_liste_field_titre($arrayfields['lower_planned_end_date']['label'],$_SERVER["PHP_SELF"],"lower_planned_end_date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['status']['checked']))
@@ -750,10 +691,16 @@ if ($resql)
 						$userstatic->id=$val['id'];
 						$userstatic->lastname=$val['lastname'];
 						$userstatic->firstname=$val['firstname'];
-						print '<div class="float">'.$userstatic->getNomUrl(1);
+						$userstatic->email=$val['email'];
+						$userstatic->statut=$val['statut'];
+						$userstatic->entity=$val['entity'];
+						$userstatic->photo=$val['photo'];
+
+						//print '<div class="float">':
+						print $userstatic->getNomUrl(-2);
 						$j++;
-						if ($j < $nbofsalesrepresentative) print ', ';
-						print '</div>';
+						if ($j < $nbofsalesrepresentative) print ' ';
+						//print '</div>';
 					}
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
@@ -767,26 +714,10 @@ if ($resql)
 		// Date
 		if (! empty($arrayfields['c.date_contrat']['checked']))
 		{
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day').'</td>';
+			print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
 		}
 		// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-			foreach($extrafields->attribute_label as $key => $val)
-			{
-				if (! empty($arrayfields["ef.".$key]['checked']))
-				{
-					print '<td';
-					$align=$extrafields->getAlignFlag($key);
-					if ($align) print ' align="'.$align.'"';
-					print '>';
-					$tmpkey='options_'.$key;
-					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-					print '</td>';
-					if (! $i) $totalarray['nbfield']++;
-				}
-			}
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
@@ -811,7 +742,7 @@ if ($resql)
 		if (! empty($arrayfields['lower_planned_end_date']['checked']))
 		{
 			print '<td align="center" class="nowrap">';
-			print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day');
+			print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}

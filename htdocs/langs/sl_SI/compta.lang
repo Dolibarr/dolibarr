@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Področje računovodstva/blagajne
 NewPayment=Novo plačilo
 Payments=Plačila
 PaymentCustomerInvoice=Plačilo računa kupca
+PaymentSupplierInvoice=Plačilo računa dobavitelju
 PaymentSocialContribution=Plačilo socialnega/fiskalnega davka
 PaymentVat=Plačilo DDV
 ListPayment=Seznam plačil

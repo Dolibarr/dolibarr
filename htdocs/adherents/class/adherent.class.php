@@ -1969,7 +1969,7 @@ class Adherent extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// For avoid ldap error when firstname and lastname are empty
-		if ($this->morphy == 'mor' && empty($this->fullname)) {
+		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->societe)) {
 			$this->fullname = $this->societe;
 			$this->lastname = $this->societe;
 		}

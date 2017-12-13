@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Contract reference
 DateContract=合同日期
 DateServiceActivate=服務激活日期
-ShowContract=查看合同
 ListOfServices=服務名單
 ListOfInactiveServices=名單不主動服務
 ListOfExpiredServices=名單過期的活動服務

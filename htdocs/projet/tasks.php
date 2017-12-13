@@ -116,7 +116,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 		}
 		else if (empty($_POST['task_parent']))
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfTask")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfProjectTask")), null, 'errors');
 			$action='create';
 			$error++;
 		}
@@ -366,11 +366,11 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-	print '<input type="text" name="label" autofocus class="flat minwidth300" value="'.$label.'">';
+	print '<input type="text" name="label" autofocus class="minwidth500" value="'.$label.'">';
 	print '</td></tr>';
 
 	// List of projects
-	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfTask").'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print $formother->selectProjectTasks(GETPOST('task_parent'),$projectid?$projectid:$object->id, 'task_parent', 0, 0, 1, 1);
 	print '</td></tr>';
 

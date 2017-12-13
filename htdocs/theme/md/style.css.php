@@ -119,14 +119,12 @@ if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTL
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
     // 90A4AE, 607D8B, 455A64, 37474F
-	$conf->global->THEME_ELDY_VERMENU_BACK1='255,255,255';    // vmenu
     $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
-
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
@@ -179,6 +177,7 @@ if ($colortexttitle == '')
 	if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
 	else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
 }
+else $colorshadowtitle='888888';
 
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbacktabcard1);
@@ -265,6 +264,9 @@ a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decor
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FDFDFD;
 }
+select.vmenusearchselectcombo {
+	background-color: unset;
+}
 
 textarea:focus, button:focus {
     /* v6 box-shadow: 0 0 4px #8091BF; */
@@ -286,7 +288,7 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-.liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
+.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_create] {
 	margin-right: 4px;
@@ -345,7 +347,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 290px;
+	min-width: 300px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -353,7 +355,8 @@ input.buttonpayment {
 	background: none;
 	padding-left: 30px;
 	text-align: <?php echo $left; ?>;
-	border: 2px solid #666666;
+	border: 2px solid #ccc;
+	background-color: #eee;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
@@ -404,9 +407,13 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
-
+td.actionbuttons a {
+    padding-left: 6px;
+}
 select.flat, form.flat select {
 	font-weight: normal;
+	font-size: unset;
+	height: 2em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -446,7 +453,6 @@ input[type=file ]    { background-color: transparent; border-top: none; border-l
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
-input[type=text]     { min-width: 20px; }
 input:-webkit-autofill {
 	background-color: #FBFFEA !important;
 	background-image:none !important;
@@ -484,45 +490,35 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
 	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 	border: 1px solid #bbbbbb;
 	border-bottom-color: #a2a2a2;
 	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
 	border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .button:focus, .buttonDelete:focus  {
-	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:hover, .buttonDelete:hover   {
-	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:disabled, .buttonDelete:disabled {
 	opacity: 0.4;
-    filter: alpha(opacity=40); /* For IE8 and earlier */
     box-shadow: none;
     -webkit-box-shadow: none;
-    -moz-box-shadow: none;
     cursor: auto;
 }
 .buttonRefused {
 	pointer-events: none;
    	cursor: default;
 	opacity: 0.4;
-    filter: alpha(opacity=40); /* For IE8 and earlier */
     box-shadow: none;
     -webkit-box-shadow: none;
-    -moz-box-shadow: none;
 }
 form {
     padding:0px;
@@ -542,10 +538,8 @@ div.floatright
 }
 
 th .button {
-    -moz-box-shadow: none !important;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-	-moz-border-radius:0px !important;
 	-webkit-border-radius:0px !important;
 	border-radius:0px !important;
 }
@@ -596,6 +590,9 @@ textarea.centpercent {
 .nowraponall {
 	white-space: nowrap;
 }
+.wordwrap {
+	word-wrap: break-word;
+}
 .nobold {
 	font-weight: normal !important;
 }
@@ -629,7 +626,7 @@ textarea.centpercent {
 	padding: 2px 5px;
 	font-size: 10px;
 	font-weight: 700;
-	line-height: 0.9em;
+	line-height: 1em;
 	color: #fff;
 	text-align: center;
 	white-space: nowrap;
@@ -663,8 +660,18 @@ div.divsearchfield {
 div.confirmmessage {
 	padding-top: 6px;
 }
-div.myavailability {
-	padding-top: 6px;
+ul.attendees {
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+ul.attendees li {
+	list-style-type: none;
+}
+input > ul.attendees {
+	margin-top: 6px;
 }
 .googlerefreshcal {
 	padding-top: 4px;
@@ -675,13 +682,15 @@ div.myavailability {
 	padding-bottom: 10px;
 }
 .checkallactions {
-	/*vertical-align: text-bottom;
-    margin-top: 6px;*/
     margin-left: 2px;		/* left must be same than right to keep checkbox centered */
     margin-right: 2px;		/* left must be same than right to keep checkbox centered */
+    vertical-align: middle;
 }
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;
+}
+.marginleftonly {
+	margin-left: 10px !important;
 }
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
@@ -702,14 +711,20 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.tdoverflowmax100 {
+.tdoverflowmax50 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.tdoverflowmax200 {			/* For tdoverflow, the max-midth become a minimum ! */
-    max-width: 200px;
+.tdoverflowmax150 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -720,7 +735,7 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.tdoverflowmax300 {
+.tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -765,7 +780,9 @@ div.myavailability {
     box-shadow: 1px 1px 25px #aaa;
     max-width: calc(100% - 56px);
 }
-
+.fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
+	color: #505;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
@@ -901,6 +918,9 @@ select.selectarrowonleft option {
 	body {
 		font-size: <?php print $fontsize+3; ?>px;
 	}
+	div.refidno {
+		font-size: <?php print $fontsize+3; ?>px !important;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -908,6 +928,9 @@ select.selectarrowonleft option {
 {
 	body {
 		font-size: <?php print $fontsize+3; ?>px;
+	}
+	div.refidno {
+		font-size: <?php print $fontsize+3; ?>px !important;
 	}
 
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
@@ -922,7 +945,8 @@ select.selectarrowonleft option {
 		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
 	}
 	div.titre {
-		line-height: 2em;
+		margin-top: 12px;
+		/* line-height: 2em; */
 	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr {
     	height: 40px !important;
@@ -978,7 +1002,6 @@ select.selectarrowonleft option {
 	}
     img.photoref, div.photoref {
     	border: none;
-    	-moz-box-shadow: none;
         -webkit-box-shadow: none;
         box-shadow: none;
         padding: 4px;
@@ -989,6 +1012,9 @@ select.selectarrowonleft option {
 
 	div.statusref {
     	padding-right: 10px;
+   	}
+	div.statusref img {
+    	padding-right: 3px !important;
    	}
 }
 .linkobject { cursor: pointer; }
@@ -1049,7 +1075,7 @@ td.showDragHandle {
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 	display: none;
 <?php } else { ?>
-	background: #FFF;
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.2);
 	box-shadow: 3px 0 6px -2px #eee;
 	bottom: 0;
@@ -1124,6 +1150,8 @@ div.login_block {
 
 div.backgroundsemitransparent {
 	background:rgba(255,255,255,0.6);
+	padding-left: 10px;
+	padding-right: 10px;
 }
 div.login_block {
 	/* position: initial !important;*/
@@ -1134,7 +1162,7 @@ div.login_block {
 }
 #id-left {
 	z-index: 91;
-	background: #FFF;
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.3);
 <?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
 	top: 50px ! important;
@@ -1149,8 +1177,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'12')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
@@ -1311,10 +1339,11 @@ div.statusref {
 }
 div.statusref img {
     padding-left: 8px;
+    padding-right: 9px;
+    vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
-	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
     padding: 4px;
@@ -1731,7 +1760,6 @@ form#login {
 
 	background-color: #FFFFFF;
 
-	-moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 
@@ -1790,10 +1818,11 @@ table.login_table_securitycode tr td {
 #img_securitycode {
 	border: 1px solid #f4f4f4;
 }
-#img_logo, .img-logo {
+#img_logo, .img_logo {
 	max-width: 170px;
 	max-height: 90px;
 }
+
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
@@ -1810,7 +1839,7 @@ div.login_block {
 	z-index: 10;
 	text-align: center;
 	vertical-align: middle;
-	background: #FFF;
+	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	width: 228px;
 	height: 43px;
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -1896,11 +1925,6 @@ img.userphotosmall {			/* size for user photo in lists */
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
 	background-repeat: no-repeat;
 }
-/*
-.span-icon-user input, .span-icon-password input {
-	margin-right: 30px;
-}
-*/
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
@@ -2112,7 +2136,6 @@ div.tabBar {
     padding-right: 16px;
 	padding-bottom: 16px;
     margin: 0px 0px 16px 0px;
-    -moz-border-radius:3px;
     -webkit-border-radius: 3px;
 	border-radius: 3px;
     border-right: 1px solid #BBB;
@@ -2133,6 +2156,13 @@ div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
 }
 
+/* ============================================================================== */
+/* Boutons actions                                                                */
+/* ============================================================================== */
+
+div.divButAction {
+	margin-bottom: 1.4em;
+}
 div.tabsAction {
     margin: 20px 0em 20px 0em;
     padding: 0em 0em;
@@ -2177,21 +2207,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-
-    /*-moz-border-radius:3px 3px 0px 0px;
-	-webkit-border-radius:3px 3px 0px 0px;
-	border-radius:3px 3px 0px 0px;
-
-	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-
-	border-bottom: none;
-	border-right: 1px solid #CCCCCC;
-	border-left: 1px solid #f4f4f4;
-	border-top: 1px solid #D8D8D8;
-    */
-
 	background-image: none !important;
 }
 
@@ -2208,15 +2223,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
 	border-top: 2px solid #111 !important;
-	/*
-	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-
-	-moz-border-radius:3px 3px 0px 0px;
-	-webkit-border-radius:3px 3px 0px 0px;
-	border-radius:3px 3px 0px 0px;
-	*/
 }
 a.tab:hover
 {
@@ -2245,7 +2251,6 @@ span.tabspan {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius:3px 3px 0px 0px;
 	-webkit-border-radius:3px 3px 0px 0px;
 	border-radius:3px 3px 0px 0px;
 
@@ -2261,6 +2266,9 @@ span.tabspan {
 div.divButAction {
 	margin-bottom: 1.4em;
 	vertical-align: top;
+}
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+	margin-bottom: 1.4em !important;
 }
 
 span.butAction, span.butActionDelete {
@@ -2288,17 +2296,13 @@ span.butAction, span.butActionDelete {
 	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
 	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 	border: 1px solid #bbbbbb;
 	border-bottom-color: #a2a2a2;
 	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
 	border-radius: 2px;
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -2312,10 +2316,8 @@ span.butAction, span.butActionDelete {
 	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
 	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
 	background-repeat: repeat-x;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
 	border-color: #0044cc #0044cc #002a80;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .button:disabled, .butAction:disabled {
     color: #666 !important;
@@ -2342,10 +2344,8 @@ span.butAction, span.butActionDelete {
 	background-image: -o-linear-gradient(top, #cc8800, #cc4400);
 	background-image: linear-gradient(to bottom, #cc8800, #cc4400);
 	background-repeat: repeat-x;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffcc8800', endColorstr='#ffcc4400', GradientType=0);
 	border-color: #cc4400 #cc4400 #802a00;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 	color: #FFFFFF;
@@ -2492,7 +2492,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 8px 0px;
 
-	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
@@ -2687,7 +2686,7 @@ div.pagination li .active span:focus {
   z-index: 2;
   color: #fff;
   cursor: default;
-  background-color: <?php $colorbackhmenu1 ?>;
+  background-color: rgb(<?php echo $colorbackhmenu1 ?>);
   border-color: #337ab7;
 }
 div.pagination .disabled span,
@@ -2955,13 +2954,11 @@ tr.liste_sub_total, tr.liste_sub_total td {
 
 /* Disable shadows */
 .noshadow {
-	-moz-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
 
 div.tabBar .noborder {
-	-moz-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
@@ -3056,7 +3053,7 @@ div .tdtop {
 }
 span.boxstatstext {
     line-height: 18px;
-    opacity: 0.7;
+    /* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
 }
 span.boxstatsindicator {
 	font-size: 110%;
@@ -3096,15 +3093,21 @@ span.dashboardlineko {
     border-bottom-width: 1px;
 }
 .boxtablenobottom {
-    border-bottom-width: 0 !important;
+    /* border-bottom-width: 0 !important; */
+}
+.boxtable .fichehalfright, .boxtable .fichehalfleft {
+    min-width: 300px;
 }
 .tdboxstats {
 	text-align: center;
 }
+.boxworkingboard .tdboxstats {
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
 }
-
 
 .box {
     padding-right: 0px;
@@ -3182,7 +3185,6 @@ div.warning {
   margin: 0.5em 0em 0.5em 0em;
   /* border: 1px solid #e0d0b0; */
   border: 2px solid #805000
-  -moz-border-radius:3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   /* background: #EFDF9A; */
@@ -3195,7 +3197,6 @@ div.error {
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DC9CAB;
-  -moz-border-radius:3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   background: #EFCFCF;
@@ -3206,7 +3207,6 @@ div.info {
   color: #fff;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
   background: #989;
@@ -3263,8 +3263,8 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 }
 .photointoolitp {
 	margin-top: 8px;
-	float: left;
-	/*text-align: center; */
+	margin-bottom: 6px;
+	text-align: center;
 }
 .photodelete {
 	margin-top: 6px !important;
@@ -3309,10 +3309,21 @@ div.titre {
 #divsubscribe { max-width: 900px; }
 #tablesubscribe { width: 100%; }
 
+div#card-element {
+    border: 1px solid #ccc;
+}
+div#card-errors {
+	color: #fa755a;
+    text-align: center;
+    padding-top: 3px;
+}
+
+
 
 /*
  * Effect Postit
  */
+
 .effectpostit
 {
   position: relative;
@@ -3329,7 +3340,6 @@ div.titre {
   max-width:300px;
   background: #777;
   -webkit-box-shadow: 0 15px 10px #777;
-  -moz-box-shadow: 0 15px 10px #777;
   box-shadow: 0 15px 10px #777;
   -webkit-transform: rotate(-3deg);
   -moz-transform: rotate(-3deg);
@@ -3424,7 +3434,6 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 }
 
 .bodyline {
-	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 	border-radius: 4px;
 	border: 1px #E4ECEC outset;
@@ -3527,8 +3536,13 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.nobordertransp {
+    border: 0px;
+    background-color: transparent;
+    background-image: none;
+}
 .websitebar {
-	border-bottom: 1px solid #888;
+	border-bottom: 1px solid #ccc;
 	background: #eee;
 }
 .websitebar .button, .websitebar .buttonDelete
@@ -3541,12 +3555,16 @@ tr.visible {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle;
-	line-height: 29px;
 }
 .websitetools {
 	float: right;
-	height: 28px;
 }
+.websiteselection, .websitetools {
+	margin-top: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
 .websiteinputurl {
     display: inline-block;
     vertical-align: top;
@@ -3608,7 +3626,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event_busy a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 100px; height: 22px; }
 
@@ -3830,7 +3848,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     display:block;
     padding:.2em .4em;
     line-height:1.5;
-    zoom:1;
     font-weight: normal;
     font-family:<?php echo $fontlist; ?>;
     font-size:1em;
@@ -3856,10 +3873,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .cke_dialog {
     border: 1px #bbb solid ! important;
 }
-.cke_editable
-{
-	margin: 5px !important;
-}
 /*.cke_editor table, .cke_editor tr, .cke_editor td
 {
     border: 0px solid #FF0000 !important;
@@ -3872,10 +3885,8 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #C0C0C0 !important;
-    -moz-border-radius:0px 2px 0px 2px !important;
 	-webkit-border-radius:0px 2px 0px 2px !important;
 	border-radius:0px 2px 0px 2px !important;
-    -moz-box-shadow: 3px 3px 4px #f4f4f4 !important;
     -webkit-box-shadow: 3px 3px 4px #f4f4f4 !important;
     box-shadow: 3px 3px 4px #f4f4f4 !important;
 }
@@ -3883,11 +3894,13 @@ a.cke_dialog_ui_button
 {
 	vertical-align: bottom ! important;
 }
+/*
 .cke_editable
 {
 	line-height: 1.4 !important;
 	margin: 6px !important;
 }
+*/
 a.cke_dialog_ui_button_ok span {
     text-shadow: none !important;
     color: #333 !important;
@@ -3904,11 +3917,13 @@ a.cke_dialog_ui_button_ok span {
 .aceeditorstatusbar {
         margin: 0;
         padding: 0;
+        padding-<?php echo $left; ?>: 10px;
         left: 0;
         right: 0;
         bottom: 0;
-        height: 20px;
         color: #666;
+        height: 28px;
+        line-height: 2.2em;
 }
 .ace_status-indicator {
         color: gray;
@@ -4101,7 +4116,6 @@ div#ecm-layout-center {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-    -moz-box-shadow: 2px 2px 4px #888 !important;
     -webkit-box-shadow: 2px 2px 4px #888 !important;
     box-shadow: 2px 2px 4px #888 !important;
 }
@@ -4129,9 +4143,6 @@ div.dolEventError h1, div.dolEventError h2 {
 /* ============================================================================== */
 
 .divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, google-visualization-geomap-embed-2 {
-/*    -moz-box-shadow: 0px 0px 10px #AAA;
-    -webkit-box-shadow: 0px 0px 10px #AAA;
-    box-shadow: 0px 0px 10px #AAA; */
 }
 
 
@@ -4198,7 +4209,6 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 
 .ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
 	opacity: .35;
-	filter: Alpha(Opacity=35);
 	background-image: none;
 }
 
@@ -4218,6 +4228,11 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.blockvmenusearch .select2-container--default .select2-selection--single,
+.blockvmenubookmarks .select2-container--default .select2-selection--single
+{
+    background-color: unset;
+}
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: unset;
 }
@@ -4378,12 +4393,14 @@ a span.select2-chosen
     max-height: 400px;
 }
 
-
-
 /* Special case for the select2 add widget */
 #addbox .select2-container .select2-choice > .select2-chosen, #actionbookmark .select2-container .select2-choice > .select2-chosen {
     text-align: <?php echo $left; ?>;;
     opacity: 0.3;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: unset;
+	opacity: 0.5;
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
@@ -4422,7 +4439,6 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
   -ms-user-select: none;
   user-select: none;
   background-color: #e4e4e4;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eee));
   background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
@@ -4600,12 +4616,10 @@ div.ui-controlgroup-controls div.tabsElem
 }
 div.ui-controlgroup-controls div.tabsElem a
 {
-	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 }
 div.ui-controlgroup-controls div.tabsElem a#active {
-	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 }
@@ -4680,7 +4694,6 @@ ul.ulmenu {
 	font-weight: normal;
 }
 .ui-focus, .ui-btn:focus {
-    -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
@@ -4765,7 +4778,17 @@ border-top-right-radius: 6px;
 }
 .lilevel3
 {
-	padding-left: 54px;
+	padding-left: 44px;
+    background: #fff ! important;
+}
+.lilevel4
+{
+	padding-left: 66px;
+    background: #fff ! important;
+}
+.lilevel5
+{
+	padding-left: 88px;
     background: #fff ! important;
 }
 
@@ -4880,7 +4903,6 @@ border-top-right-radius: 6px;
     div.tabBar {
         padding-left: 8px;
         padding-right: 8px;
-        -moz-border-radius: 0;
         -webkit-border-radius: 0;
     	border-radius: 0px;
         border-right: none;
@@ -4984,8 +5006,7 @@ border-top-right-radius: 6px;
 	}
     img.photoref, div.photoref {
     	border: none;
-    	-moz-box-shadow: none;
-        -webkit-box-shadow: none;
+    	-webkit-box-shadow: none;
         box-shadow: none;
         padding: 4px;
     	height: 20px;
@@ -4993,6 +5014,12 @@ border-top-right-radius: 6px;
         object-fit: contain;
     }
 
+	.titlefield {
+		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
+	}
+	.tableforfield>tr>td:first-child {
+		max-width: 100px;			/* but no more than 100px */
+	}
 }
 
 

@@ -28,7 +28,6 @@ InterventionClassifyBilled=Classify &quot;számlázott&quot;
 InterventionClassifyUnBilled=Classify "Unbilled"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Számlázott
-ShowIntervention=Mutasd beavatkozás
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by Email
 InterventionCreatedInDolibarr=Intervention %s created
