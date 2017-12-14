@@ -2689,7 +2689,9 @@ div.pagination li.paginationafterarrows {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
 <?php } ?>
 }
-
+.nohover:hover {
+	background: unset;
+}
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {
 	font-family: <?php print $fontlist ?>;
