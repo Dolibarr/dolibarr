@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -922,7 +923,7 @@ class Cronjob extends CommonObject
 			// load classes
 			if (! $error)
 			{
-				$ret=dol_include_once($this->classesname);
+				$ret=dol_include_once($this->module_name."/class/".$this->classesname);
 				if ($ret===false || (! class_exists($this->objectname)))
 				{
 					$this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
