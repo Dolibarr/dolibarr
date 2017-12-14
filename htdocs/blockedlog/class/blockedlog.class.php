@@ -582,9 +582,11 @@ class BlockedLog
 	 *	@param	string 	$sortorder     	sort order
 	 *	@param	int 	$search_start   start time limit
 	 *	@param	int 	$search_end     end time limit
+	 *  @param	string	$search_ref		search ref
+	 *  @param	string	$search_amount	search amount
 	 *	@return	array					array of object log
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_start = -1, $search_end = -1)
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_start = -1, $search_end = -1, $search_ref='', $search_amount='')
 	{
 		global $conf, $cachedlogs;
 
@@ -612,8 +614,10 @@ class BlockedLog
 	         WHERE element='".$element."' AND fk_object=".(int) $fk_object;
 		}
 
-		if($search_start > 0) $sql.=" AND date_creation >= '".$this->db->idate($search_start)."'";
-		if($search_end > 0) $sql.=" AND date_creation <= '".$this->db->idate($search_end)."'";
+		if ($search_start > 0) $sql.=" AND date_creation >= '".$this->db->idate($search_start)."'";
+		if ($search_end > 0) $sql.=" AND date_creation <= '".$this->db->idate($search_end)."'";
+		if ($search_ref != '') $sql.=natural_search("ref_object", $search_ref);
+		if ($search_amount != '') $sql.=natural_search("amounts", $search_amount, 1);
 
 		$sql.=$this->db->order($sortfield, $sortorder);
 

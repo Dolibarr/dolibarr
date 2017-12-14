@@ -38,9 +38,15 @@ $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectl
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
-$search=array();
-
 $showonlyerrors = GETPOST('showonlyerrors','int');
+
+$search_start = -1;
+if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
+$search_end = -1;
+if(GETPOST('search_endyear')!='') $search_end= dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -55,11 +61,6 @@ $pagenext = $page + 1;
 if (empty($sortfield)) $sortfield='rowid';
 if (empty($sortorder)) $sortorder='DESC';
 
-$search_start = -1;
-if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
-
-$search_end = -1;
-if(GETPOST('search_endyear')!='') $search_end= dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
 
 
 
@@ -75,6 +76,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
 	$search_start = -1;
 	$search_end = -1;
+	$search_ref = '';
+	$search_amount = '';
 	$toselect='';
 	$search_array_options=array();
 }
@@ -153,9 +156,14 @@ else if($action === 'downloadcsv') {
 
 $form=new Form($db);
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_start, $search_end);
-
 llxHeader('',$langs->trans("BlockedLogSetup"));
+
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_start, $search_end, $search_ref, $search_amount);
+if (! is_array($blocks))
+{
+	dol_print_error($block_static->db);
+	exit;
+}
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
@@ -173,10 +181,6 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($search_start > 0) $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int')).'&search_startmonth='.urlencode(GETPOST('search_startmonth','int')).'&search_startday='.urlencode(GETPOST('search_startday','int'));
 if ($search_end > 0)   $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int')).'&search_endmonth='.urlencode(GETPOST('search_endmonth','int')).'&search_endday='.urlencode(GETPOST('search_endday','int'));
-foreach($search as $key => $val)
-{
-	$param.= '&search_'.$key.'='.urlencode($search[$key]);
-}
 if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -196,6 +200,7 @@ print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'"
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre_filter">';
+
 print '<td class="liste_titre">&nbsp;</td>';
 
 print '<td class="liste_titre">';
@@ -203,7 +208,19 @@ print $form->select_date($search_start,'search_start');
 print $form->select_date($search_end,'search_end');
 print '</td>';
 
-print '<td class="liste_titre" colspan="7">&nbsp;</td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+
+// Ref
+print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+
+print '<td class="liste_titre"></td>';
+
+// Amount
+print '<td class="liste_titre right"><input type="text" class="maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
+
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 
 // Action column
 print '<td class="liste_titre" align="middle">';
@@ -223,7 +240,7 @@ print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print '</tr>';
 
 $loweridinerror=0;
@@ -261,7 +278,7 @@ foreach($blocks as &$block) {
 	   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature);
 	   	print '</td>';
 
-	   	print '<td>';
+	   	print '<td class="center">';
 	   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
 	   	{
 	   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');

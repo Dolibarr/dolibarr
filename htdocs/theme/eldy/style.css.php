@@ -2731,10 +2731,10 @@ td.evenodd, tr.nohoverpair td {
 }
 
 table.dataTable td {
-    padding: 5px 2px 5px 3px !important;
+    padding: 5px 8px 5px 8px !important;
 }
 tr.pair td, tr.impair td, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
-    padding: 7px 2px 7px 3px;
+    padding: 7px 8px 7px 8px;
     border-bottom: 1px solid #ddd;
 }
 form.pair, form.impair {
