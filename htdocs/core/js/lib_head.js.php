@@ -19,8 +19,9 @@
  */
 
 /**
- * \file       htdocs/core/js/lib_head.js.php
- * \brief      File that include javascript functions (included if option use_javascript activated)
+ * \file		htdocs/core/js/lib_head.js.php
+ * \brief		File that include javascript functions (included if option use_javascript activated)
+ * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
