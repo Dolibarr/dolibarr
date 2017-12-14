@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -943,6 +944,46 @@ if (! $error && $massaction == 'validate' && $permtocreate)
 		}
 		//var_dump($listofobjectthirdparties);exit;
 	}
+}
+// Closed records
+if (! $error && $massaction == 'closed' && $objectclass=="Propal" && $permtoclose)
+{
+    $db->begin();
+
+    $objecttmp=new $objectclass($db);
+    $nbok = 0;
+    foreach($toselect as $toselectid)
+    {
+        $result=$objecttmp->fetch($toselectid);
+        if ($result > 0)
+        {
+            $result = $objecttmp->cloture($user,3);
+            if ($result <= 0)
+            {
+                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                $error++;
+                break;
+            }
+            else $nbok++;
+        }
+        else
+        {
+            setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+            $error++;
+            break;
+        }
+    }
+
+    if (! $error)
+    {
+        if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+        else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+        $db->commit();
+    }
+    else
+    {
+        $db->rollback();
+    }
 }
 
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
