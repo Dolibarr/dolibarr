@@ -27,9 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("blockedlog");
+$langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if (! $user->admin) accessforbidden();
 
