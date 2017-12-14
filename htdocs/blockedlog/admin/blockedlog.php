@@ -34,6 +34,7 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
+
 /*
  * Actions
  */
@@ -43,7 +44,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	$code=$reg[1];
 	$values = GETPOST($code);
 	if(is_array($values))$values = implode(',', $values);
-	
+
 	if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
@@ -118,10 +119,9 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	print '</td></tr>';
 }
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';
-print '<td align="right" width="300">';
+print '<td>';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
