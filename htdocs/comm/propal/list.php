@@ -11,6 +11,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet	     <fmarcet@2byte.es>
+ * Copyright (C) 2017      Nicolas ZABOURI	 <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,6 +215,7 @@ if (empty($reshook))
 	$objectlabel='Proposals';
 	$permtoread = $user->rights->propal->lire;
 	$permtodelete = $user->rights->propal->supprimer;
+        $permtoclose = $user->rights->propal->cloturer;
 	$uploaddir = $conf->propal->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -384,8 +386,9 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
+        if ($user->rights->propal->cloturer) $arrayofmassactions['closed']=$langs->trans("Closed");
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+	if (in_array($massaction, array('presend','predelete', 'closed'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lignes des champs de filtre
