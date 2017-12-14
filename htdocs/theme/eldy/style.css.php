@@ -2484,10 +2484,10 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 7px 2px 7px 3px;			/* t r b l */
+	padding: 7px 8px 7px 8px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 7px 2px 7px 3px;			/* t r b l */
+	padding: 7px 8px 7px 8px;			/* t r b l */
 	line-height: 1.2em;
 }
 div.liste_titre_bydiv .divsearchfield {
@@ -2943,7 +2943,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats {
     padding: 3px;
-    width: 103px;
+    width: 104px;
 }
 .boxstats130 {
     width: 158px;

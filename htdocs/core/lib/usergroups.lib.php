@@ -599,6 +599,33 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print '</td>';
 	}
 
+	// TextTitleColor
+	if ($foruserprofile)
+	{
+
+
+	}
+	else
+	{
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("TextTitleColor").'</td>';
+		print '<td colspan="'.($colspan-1).'">';
+		if ($edit)
+		{
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLENOTAB,array()),''),'THEME_ELDY_TEXTTITLENOTAB','formcolor',1).' ';
+		}
+		else
+		{
+			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
+		}
+		print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #643c14">643c14</span></strong>) ';
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+
+		print '</td>';
+
+		print '</tr>';
+	}
+
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
 	{
@@ -679,33 +706,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</td>';
-	}
-
-	// TextTitleColor
-	if ($foruserprofile)
-	{
-
-
-	}
-	else
-	{
-		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans("TextTitleColor").'</td>';
-		print '<td colspan="'.($colspan-1).'">';
-		if ($edit)
-		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLENOTAB,array()),''),'THEME_ELDY_TEXTTITLENOTAB','formcolor',1).' ';
-		}
-		else
-		{
-			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
-		}
-		print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #643c14">643c14</span></strong>) ';
-		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-
-		print '</td>';
-
-		print '</tr>';
 	}
 
 	// Text LinkColor

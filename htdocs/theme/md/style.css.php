@@ -2538,14 +2538,14 @@ tr.liste_titre_filter td.liste_titre {
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
-	padding: 8px 2px 8px 3px;			/* t r b l */
+	padding: 8px 6px 8px 6px;			/* t r b l */
 }
 table.noborder td, div.noborder form, div.noborder form div {
-	padding: 4px 2px 4px 3px;			/* t r b l */
+	padding: 4px 6px 4px 6px;			/* t r b l */
 }
 
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 8px 2px 8px 3px;			/* t r b l */
+	padding: 8px 6px 8px 6px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 0px;			/* t r b l */
