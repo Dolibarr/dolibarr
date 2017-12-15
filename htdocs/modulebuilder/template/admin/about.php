@@ -53,6 +53,7 @@ if (! $user->admin) {
 
 // Parameters
 $action = GETPOST('action', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 
 /*

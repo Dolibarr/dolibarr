@@ -51,6 +51,7 @@ if (! $user->admin) accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters=array('MYMODULE_MYPARAM1'=>array('css'=>'minwidth200'), 'MYMODULE_MYPARAM2'=>array('css'=>'minwidth500'));
 
