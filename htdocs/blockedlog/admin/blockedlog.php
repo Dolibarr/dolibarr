@@ -33,6 +33,7 @@ $langs->load("blockedlog");
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 
 /*
@@ -81,7 +82,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
 
 $head=blockedlogadmin_prepare_head();
