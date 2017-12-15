@@ -35,7 +35,7 @@ class Task extends CommonObject
 	public $table_element='projet_task';	//!< Name of table without prefix where object is stored
 	public $fk_element='fk_task';
 	public $picto = 'task';
-	protected $childtables=array('projet_task_time','projet_task_comment');    // To test if we can delete object
+	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
 	var $fk_task_parent;
 	var $label;
