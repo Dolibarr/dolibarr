@@ -472,6 +472,11 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/lines
      *
      * @return int
+     *
+     * @throws 200
+     * @throws 401
+     * @throws 404
+     * @throws 400
      */
     function postLine($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->facture->creer) {
@@ -528,11 +533,11 @@ class Invoices extends DolibarrApi
                               $request_data->fk_unit
       );
 
-      if ($updateRes > 0) {
-        return $updateRes;
-
+      if ($updateRes < 0) {
+	throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
       }
-      throw new RestException(400, 'Unable to insert the new line. Check your inputs.');
+
+      return $updateRes;
     }
 
     /**
