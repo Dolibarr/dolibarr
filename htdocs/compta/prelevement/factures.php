@@ -71,7 +71,7 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id > 0 || $ref)
 {
-  	if ($object->fetch($prev_id, $ref) == 0)
+  	if ($object->fetch($prev_id, $ref) >= 0)
     {
     	$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');

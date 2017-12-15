@@ -58,9 +58,9 @@ $object = new BonPrelevement($db,"");
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id)
+if ($prev_id > 0 || $ref)
 {
-	if ($object->fetch($prev_id) == 0)
+	if ($object->fetch($prev_id, $ref) >= 0)
 	{
 		$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
@@ -144,7 +144,7 @@ if ($prev_id)
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql.= " WHERE pl.fk_prelevement_bons = ".$prev_id;
+	$sql.= " WHERE pl.fk_prelevement_bons = ".$object->id;
 	$sql.= " GROUP BY pl.statut";
 
 	$resql=$db->query($sql);

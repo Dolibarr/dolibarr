@@ -313,7 +313,7 @@ class BonPrelevement extends CommonObject
 
 				$this->_fetched = 1;
 
-				return 0;
+				return 1;
 			}
 			else
 			{
@@ -1110,9 +1110,10 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get object and lines from database
 	 *
+	 *  @param	User	$user		Object user that delete
 	 *	@return	int					>0 if OK, <0 if KO
 	 */
-	function delete()
+	function delete($user=null)
 	{
 		$this->db->begin();
 
