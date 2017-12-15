@@ -615,3 +615,15 @@ ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
 ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
 
+
+
+CREATE TABLE llx_projet_task_comment (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    datec datetime  DEFAULT NULL,
+    tms timestamp,
+    description text NOT NULL,
+    fk_user integer DEFAULT NULL,
+    fk_task integer DEFAULT NULL,
+    entity integer DEFAULT 1,
+    import_key varchar(125) DEFAULT NULL
+) ENGINE=innodb;

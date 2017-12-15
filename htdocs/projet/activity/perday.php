@@ -568,7 +568,7 @@ if (count($tasksarray) > 0)
 }
 else
 {
-	print '<tr><td colspan="14">'.$langs->trans("NoTasks").'</td></tr>';
+	print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
 }
 print "</table>";
 print '</div>';
