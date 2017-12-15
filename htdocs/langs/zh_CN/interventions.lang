@@ -28,7 +28,6 @@ InterventionClassifyBilled=分类“帐单”
 InterventionClassifyUnBilled=归类 'Unbilled'
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=帐单
-ShowIntervention=显示干预
 SendInterventionRef=提交的干预 %s
 SendInterventionByMail=通过邮件发送干预
 InterventionCreatedInDolibarr=干预 %s 已创建

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 MenuBankCash=Bank/Kassa
-MenuVariousPayment=Miscellaneous payments
-MenuNewVariousPayment=New Miscellaneous payment
+MenuVariousPayment=Sonstige Zahlungen
+MenuNewVariousPayment=Neue sonstige Zahlung
 BankName=Name der Bank
 FinancialAccount=Konto
 BankAccount=Bankkonto
@@ -153,10 +153,10 @@ CheckRejectedAndInvoicesReopened=Scheck zurückgewiesen und Rechnungen wieder ge
 BankAccountModelModule=Dokumentvorlagen für Bankkonten
 DocumentModelSepaMandate=Vorlage für SEPA Mandate. Nur sinnvoll in Ländern der EU.
 DocumentModelBan=Template für den Druck von Seiten mit Bankkonto-Nummern Eintrag.
-NewVariousPayment=New miscellaneous payments
-VariousPayment=Miscellaneous payments
-VariousPayments=Miscellaneous payments
-ShowVariousPayment=Show miscellaneous payments
-AddVariousPayment=Add miscellaneous payments
-YourSEPAMandate=Your SEPA mandate
+NewVariousPayment=Neue sonstige Zahlungen
+VariousPayment=Sonstige Zahlungen
+VariousPayments=Sonstige Zahlungen
+ShowVariousPayment=Zeige sonstige Zahlungen
+AddVariousPayment=Sonstige Zahlung hinzufügen
+YourSEPAMandate=Ihr SEPA-Mandat
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

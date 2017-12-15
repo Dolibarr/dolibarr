@@ -106,39 +106,41 @@ class ProductAttribute
 		if ($query)
 		{
     		while ($result = $this->db->fetch_object($query)) {
-    
+
     			$tmp = new ProductAttribute($this->db);
     			$tmp->id = $result->rowid;
     			$tmp->ref = $result->ref;
     			$tmp->label = $result->label;
     			$tmp->rang = $result->rang;
-    
+
     			$return[] = $tmp;
     		}
 		}
 		else dol_print_error($this->db);
-		
+
 		return $return;
 	}
 
 	/**
 	 * Creates a product attribute
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @param	User	$user	Object user that create
+	 * @return 					int <0 KO, Id of new variant if OK
 	 */
-	public function create()
+	public function create(User $user)
 	{
 		//Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, label, entity, rang) 
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, label, entity, rang)
 		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
-		$query = $this->db->query($sql);
 
-		if ($query) {
+		$query = $this->db->query($sql);
+		if ($query)
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute');
 
-			return 1;
+			return $this->id;
 		}
 
 		return -1;
@@ -147,12 +149,14 @@ class ProductAttribute
 	/**
 	 * Updates a product attribute
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function update()
+	public function update(User $user)
 	{
 		//Ref must be uppercase
-		$this->ref = strtoupper($this->ref);
+		$this->ref = trim(strtoupper($this->ref));
+		$this->label = trim($this->label);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute SET ref = '".$this->db->escape($this->ref)."', label = '".$this->db->escape($this->label)."', rang = ".(int) $this->rang." WHERE rowid = ".(int) $this->id;
 
@@ -193,7 +197,7 @@ class ProductAttribute
 
 		return $result->count;
 	}
-	
+
 	/**
 	 * Returns the number of products that are using this attribute
 	 *
@@ -211,7 +215,7 @@ class ProductAttribute
 		return $result->count;
 	}
 
-	
+
 	/**
 	 * Reorders the order of the variants.
 	 * This is an internal function used by moveLine function
@@ -220,6 +224,8 @@ class ProductAttribute
 	 */
 	protected function reorderLines()
 	{
+		global $user;
+
 		$tmp_order = array();
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'product_attribute WHERE rang = 0';
@@ -240,7 +246,7 @@ class ProductAttribute
 			$tmp->fetch($rowid);
 			$tmp->rang = $order+1;
 
-			if ($tmp->update() < 0) {
+			if ($tmp->update($user) < 0) {
 				return -1;
 			}
 		}
@@ -256,6 +262,8 @@ class ProductAttribute
 	 */
 	private function moveLine($type)
 	{
+		global $user;
+
 		if ($this->reorderLines() < 0) {
 			return -1;
 		}
@@ -277,7 +285,7 @@ class ProductAttribute
 
 		$this->rang = $newrang;
 
-		if ($this->update() < 0) {
+		if ($this->update($user) < 0) {
 			$this->db->rollback();
 			return -1;
 		}
@@ -298,7 +306,7 @@ class ProductAttribute
 
 	/**
 	 * Shows this attribute after others
-	 * 
+	 *
 	 * @return int <0 KO >0 OK
 	 */
 	public function moveDown()
@@ -315,6 +323,8 @@ class ProductAttribute
 	 */
 	public static function bulkUpdateOrder(DoliDB $db, array $order)
 	{
+		global $user;
+
 		$tmp = new ProductAttribute($db);
 
 		foreach ($order as $key => $attrid) {
@@ -324,7 +334,7 @@ class ProductAttribute
 
 			$tmp->rang = $key;
 
-			if ($tmp->update() < 0) {
+			if ($tmp->update($user) < 0) {
 				return -1;
 			}
 		}

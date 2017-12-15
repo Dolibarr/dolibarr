@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Regnskap/kapital-område
 NewPayment=Ny betaling
 Payments=Betalinger
 PaymentCustomerInvoice=Kundefaktura-betaling
+PaymentSupplierInvoice=Leverandørfaktura-betaling
 PaymentSocialContribution=Skatter- og avgiftsbetaling
 PaymentVat=MVA betaling
 ListPayment=Liste over betalinger

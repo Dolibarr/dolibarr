@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Contract reference
 DateContract=Contract date
 DateServiceActivate=Service activation date
-ShowContract=Show contract
 ListOfServices=List of services
 ListOfInactiveServices=List of not active services
 ListOfExpiredServices=List of expired active services

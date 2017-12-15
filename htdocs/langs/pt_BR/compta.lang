@@ -41,6 +41,7 @@ NewSocialContribution=Nova contribuição fiscal/social
 ContributionsToPay=Encargos sociais / fiscais para pagar
 NewPayment=Novo pagamento
 PaymentCustomerInvoice=Pagamento de fatura de cliente
+PaymentSupplierInvoice=Pagamento de fatura de fornecedor
 PaymentSocialContribution=Pagamento de imposto social / fiscal
 PaymentVat=Pagamento de ICMS
 DateStartPeriod=Período de início e data

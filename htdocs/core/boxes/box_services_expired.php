@@ -145,7 +145,7 @@ class box_services_expired extends ModeleBoxes
     			if ($num==0)
     			{
     			    $langs->load("contracts");
-    			    $this->info_box_contents[$i][] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
+    			    $this->info_box_contents[$i][] = array('td' => 'align="center" class="nohover opacitymedium"','text'=>$langs->trans("NoExpiredServices"));
     			}
 
 				$db->free($resql);

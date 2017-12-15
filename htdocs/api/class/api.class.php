@@ -101,7 +101,7 @@ class DolibarrApi
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
 
-        unset($object->lines); // should be ->lines
+        unset($object->lignes); // we don't want lignes, we want only ->lines
 
         unset($object->fields);
 

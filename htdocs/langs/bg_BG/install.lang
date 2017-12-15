@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Вие използвате помощника за нас�
 KeepDefaultValuesMamp=Вие използвате помощника за настройка на Dolibarr от DoliMamp, така че стойностите, предложени тук вече са оптимизирани. Променете ги само ако знаете какво правите.
 KeepDefaultValuesProxmox=Вие използвате помощника за настройка на Dolibarr от Proxmox виртуална машина, така че стойностите, предложени тук вече са оптимизирани. Променете ги само ако знаете какво правите.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Корекция на denormalized данни
@@ -191,6 +192,7 @@ MigrationActioncommElement=Актуализиране на данните за �
 MigrationPaymentMode=Миграция на данни за начин на плащане
 MigrationCategorieAssociation=Миграция на категории
 MigrationEvents=Миграция на събития за добавяне на собственик на събитие в таблицата за възлагане
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Презареждане на модула %s

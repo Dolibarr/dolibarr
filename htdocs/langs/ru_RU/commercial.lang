@@ -66,6 +66,7 @@ ActionAC_OTH=Другой
 ActionAC_OTH_AUTO=Мероприятия созданные автоматически
 ActionAC_MANUAL=Мероприятия, созданные вручную
 ActionAC_AUTO=Мероприятия созданные автоматически
+ActionAC_OTH_AUTOShort=Auto
 Stats=Статистика продаж
 StatusProsp=Проспект статус
 DraftPropals=Проект коммерческих предложений

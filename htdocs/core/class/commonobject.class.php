@@ -50,7 +50,6 @@ abstract class CommonObject
 	public $id;
 	/**
 	 * @var string 		Error string
-	 * @deprecated		Use instead the array of error strings
 	 * @see             errors
 	 */
 	public $error;
@@ -150,13 +149,13 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var CommonObject An originating object?
+	 * @var string 	The type of originating object ('commande', 'facture', ...)
 	 * @see fetch_origin()
 	 */
 	public $origin;
 	/**
-	 * @var int The originating object?
-	 * @see fetch_origin(), origin
+	 * @var int 	The id of originating object
+	 * @see fetch_origin()
 	 */
 	public $origin_id;
 
@@ -392,7 +391,7 @@ abstract class CommonObject
 	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
-	 *	@param	Translate	$langs			Language object for translation of civility
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option, 1=Add civility
 	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
 	 * 	@param	int			$maxlen			Maximum length
@@ -612,15 +611,16 @@ abstract class CommonObject
 		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-		$forcedownload=1;
-		$rellink='/document.php?modulepart='.$modulepart;
-		if ($forcedownload) $rellink.='&attachment=1';
-		if (! empty($ecmfile->entity)) $rellink.='&entity='.$ecmfile->entity;
-		//$rellink.='&file='.urlencode($filepath);		// No need of name of file for public link, we will use the hash
-		$fulllink=$urlwithroot.$rellink;
-		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;			// Hash of file path
-		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
-		if (! empty($ecmfile->share))  $fulllink.='&hashp='.$ecmfile->share;			// Hash for public share
+		$forcedownload=0;
+
+		$paramlink='';
+		//if (! empty($modulepart)) $paramlink.=($paramlink?'&':'').'modulepart='.$modulepart;		// For sharing with hash (so public files), modulepart is not required.
+		//if (! empty($ecmfile->entity)) $paramlink.='&entity='.$ecmfile->entity; 					// For sharing with hash (so public files), entity is not required.
+		//$paramlink.=($paramlink?'&':'').'file='.urlencode($filepath);								// No need of name of file for public link, we will use the hash
+		if (! empty($ecmfile->share)) $paramlink.=($paramlink?'&':'').'hashp='.$ecmfile->share;			// Hash for public share
+		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
+
+		$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
 
 		// Here $ecmfile->share is defined
 		return $fulllink;
@@ -3025,7 +3025,7 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, canvas";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+		$sql.= " WHERE entity IN (".getEntity($this->element).")";
 		if (! empty($id))  $sql.= " AND rowid = ".$id;
 		if (! empty($ref)) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 
@@ -4167,7 +4167,12 @@ abstract class CommonObject
 
 						// Set the public "share" key
 						$setsharekey = false;
-						if ($this->element == 'propal'   && ! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						if ($this->element == 'propal')
+						{
+							$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok
+							if ($useonlinesignature) $setsharekey=true;
+							if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						}
 						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))    $setsharekey=true;
 						if ($this->element == 'facture'  && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))  $setsharekey=true;
 						if ($setsharekey)
@@ -4212,8 +4217,9 @@ abstract class CommonObject
 						/*$this->result['fullname']=$destfull;
 						$this->result['filepath']=$ecmfile->filepath;
 						$this->result['filename']=$ecmfile->filename;*/
+						//var_dump($obj->update_main_doc_field);exit;
 
-						// Update the last_main_doc field into main object
+						// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
 						$update_main_doc_field=0;
 						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
 						if ($update_main_doc_field && ! empty($this->table_element))
@@ -4360,7 +4366,7 @@ abstract class CommonObject
 
 
 	/**
-	 *  Function to get extra fields of a member into $this->array_options
+	 *  Function to get extra fields of an object into $this->array_options
 	 *  This method is in most cases called by method fetch of objects but you can call it separately.
 	 *
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
@@ -4504,8 +4510,10 @@ abstract class CommonObject
 			//Eliminate copied source object extra_fields that do not exist in target object
 			$new_array_options=array();
 			foreach ($this->array_options as $key => $value) {
-				if (in_array(substr($key,8), array_keys($target_extrafields)))	// We remove the 'options_' from $key
+				if (in_array(substr($key,8), array_keys($target_extrafields)))	// We remove the 'options_' from $key for test
 					$new_array_options[$key] = $value;
+				elseif (in_array($key, array_keys($target_extrafields)))		// We test on $key that does not contains the 'options_' prefix
+					$new_array_options['options_'.$key] = $value;
 			}
 
 			foreach($new_array_options as $key => $value)
@@ -4758,12 +4766,17 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-		$label=$val['label'];
-		$type =$val['type'];
-		$size =$val['css'];
+		$label= $val['label'];
+		$type = $val['type'];
+		$size = $val['css'];
 
 		// Convert var to be able to share same code than showInputField of extrafields
-		if (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
+		{
+			$type = 'varchar';		// convert varchar(xx) int varchar
+			$size = $reg[1];
+		}
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -4832,6 +4845,7 @@ abstract class CommonObject
 				}
 			}
 		}
+		//var_dump($showsize.' '.$size);
 
 		if (in_array($type,array('date','datetime')))
 		{
@@ -4861,6 +4875,12 @@ abstract class CommonObject
 			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,0,ROWS_5,'90%');
+			$out=$doleditor->Create(1);
+		}
+		elseif ($type == 'html')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
@@ -5284,12 +5304,17 @@ abstract class CommonObject
 		}
 
 		$objectid = $this->id;
-		$label=$val['label'];
-		$type =$val['type'];
-		$size =$val['css'];
+		$label = $val['label'];
+		$type  = $val['type'];
+		$size  = $val['css'];
 
 		// Convert var to be able to share same code than showOutputField of extrafields
-		if (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
+		{
+			$type = 'varchar';		// convert varchar(xx) int varchar
+			$size = $reg[1];
+		}
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -5324,20 +5349,42 @@ abstract class CommonObject
 		{
 			if ($type == 'date')
 			{
-				$showsize=10;
+				//$showsize=10;
+				$showsize = 'minwidth100imp';
 			}
 			elseif ($type == 'datetime')
 			{
-				$showsize=19;
+				//$showsize=19;
+				$showsize = 'minwidth200imp';
 			}
-			elseif ($type == 'int' || $type == 'integer')
+			elseif (in_array($type,array('int','double','price')))
 			{
-				$showsize=10;
+				//$showsize=10;
+				$showsize = 'maxwidth75';
+			}
+			elseif ($type == 'url')
+			{
+				$showsize='minwidth400';
+			}
+			elseif ($type == 'boolean')
+			{
+				$showsize='';
 			}
 			else
 			{
-				$showsize=round($size);
-				if ($showsize > 48) $showsize=48;
+				if (round($size) < 12)
+				{
+					$showsize = 'minwidth100';
+				}
+				else if (round($size) <= 48)
+				{
+					$showsize = 'minwidth200';
+				}
+				else
+				{
+					//$showsize=48;
+					$showsize = 'minwidth400';
+				}
 			}
 		}
 
@@ -5578,7 +5625,7 @@ abstract class CommonObject
 				}
 			}
 		}
-		elseif ($type == 'text')
+		elseif ($type == 'text' || $type == 'html')
 		{
 			$value=dol_htmlentitiesbr($value);
 		}
@@ -6146,8 +6193,9 @@ abstract class CommonObject
 		// Clean and check mandatory
 		foreach($keys as $key)
 		{
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
-			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';
+			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
 			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
@@ -6155,6 +6203,10 @@ abstract class CommonObject
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
+
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key]='null';
+			if (! empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key]='null';
 		}
 
 		if ($error) return -1;

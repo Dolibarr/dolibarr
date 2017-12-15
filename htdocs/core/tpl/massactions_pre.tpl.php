@@ -116,7 +116,7 @@ if ($massaction == 'presend')
 	// $formmail->withfile = 2; Not yet supported in mass action
 	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
 	if ($objecttmp->element != 'societe') {
-		$formmail->withfile = $langs->trans("OnlyPDFattachmentSupported");
+		$formmail->withfile = '<span class="hideonsmartphone">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
 		$formmail->withmaindocfile = - 1; // Add a checkbox "Attach also main document" but not checked by default
 	}
 	$formmail->withbody = 1;

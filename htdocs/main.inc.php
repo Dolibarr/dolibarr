@@ -78,16 +78,19 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
 function test_sql_and_script_inject($val, $type)
 {
 	$inj = 0;
-	// For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
-	if ($type != 2)
+	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
+	if ($type == 1)
 	{
 		$inj += preg_match('/delete\s+from/i',	 $val);
 		$inj += preg_match('/create\s+table/i',	 $val);
-		$inj += preg_match('/update.+set.+=/i',  $val);
 		$inj += preg_match('/insert\s+into/i', 	 $val);
-		$inj += preg_match('/select.+from/i', 	 $val);
-		$inj += preg_match('/union.+select/i', 	 $val);
+		$inj += preg_match('/select\s+from/i', 	 $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+	}
+	if ($type != 2)	// Not common, we can check on POST
+	{
+		$inj += preg_match('/update.+set.+=/i',  $val);
+		$inj += preg_match('/union.+select/i', 	 $val);
 		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
 	}
 	// For XSS Injection done by adding javascript with script
@@ -1087,7 +1090,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead))
 	{
-		$ext='version='.urlencode(DOL_VERSION);
+		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
 		print "<head>\n";
 		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
@@ -1209,12 +1212,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 			if (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) print '<script type="text/javascript" src="'.JS_JQUERY_UI.'jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-			if (! defined('DISABLE_JQUERY_TABLEDND')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+			if (! defined('DISABLE_JQUERY_TABLEDND')) print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			// jQuery jnotify
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY'))
 			{
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 			}
 			// Flot
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && ! defined('DISABLE_JQUERY_FLOT'))
@@ -1314,7 +1316,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
+            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
 
             // JS forced by modules (relative url starting with /)
             if (! empty($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
@@ -1489,7 +1491,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			if (is_array($_POST))
 			{
 				foreach($_POST as $key=>$value) {
-					if ($key!=='action' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
+					if ($key!=='action' && $key!=='password' && !is_array($value)) $qs.='&'.$key.'='.urlencode($value);
 				}
 			}
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
@@ -1524,7 +1526,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				$title=$appli.'<br>';
 				$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 				if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-				$text.='<a class="help" target="_blank" href="';
+				$text.='<a class="help" target="_blank" rel="noopener" href="';
 				if ($mode == 'wiki') $text.=sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
 				else $text.=sprintf($helpbaseurl,$helppage);
 				$text.='">';
@@ -1607,8 +1609,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 			foreach($arrayresult as $key => $val)
 			{
-				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleftt', img_picto('',$val['img']));
-				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleftt', img_picto('', $val['img'], '', false, 1, 1));
+				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleft', img_picto('',$val['img']));
+				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft', img_picto('', $val['img'], '', false, 1, 1));
 			}
 		}
 
@@ -1687,7 +1689,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			}
 			else $appli.=" ".DOL_VERSION;
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
-			if ($doliurl) print '<a class="help" target="_blank" href="'.$doliurl.'">';
+			if ($doliurl) print '<a class="help" target="_blank" rel="noopener" href="'.$doliurl.'">';
 			else print '<span class="help">';
 			print $appli;
 			if ($doliurl) print '</a>';
@@ -1717,7 +1719,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= urlencode("\n");
 			$bugbaseurl.= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '<a class="help" target="_blank" rel="noopener" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';
 		}
 
@@ -1827,10 +1829,6 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 {
 	global $conf,$langs,$user;
 
-	if (empty($htmlinputid)) {
-		$htmlinputid = $htmlinputname;
-	}
-
 	$ret='';
 	$ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1865,7 +1863,7 @@ if (! function_exists("llxFooter"))
 		global $conf, $langs, $user, $object;
 		global $delayedhtmlcontent;
 
-		$ext='version='.urlencode(DOL_VERSION);
+		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
@@ -1926,7 +1924,7 @@ if (! function_exists("llxFooter"))
 		if (! empty($conf->use_javascript_ajax))
 		{
 			print "\n".'<!-- Includes JS Footer of Dolibarr -->'."\n";
-			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&amp;'.$ext:'').'"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_foot.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
 		}
 
 		// Wrapper to add log when clicking on download or preview

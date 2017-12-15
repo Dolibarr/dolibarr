@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Raamatupidamise/vara ala
 NewPayment=Uus makse
 Payments=Maksed
 PaymentCustomerInvoice=Müügiarve makse
+PaymentSupplierInvoice=Ostuarve makse
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=KM makse
 ListPayment=Maksete nimekiri

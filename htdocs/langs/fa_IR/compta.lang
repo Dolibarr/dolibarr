@@ -79,6 +79,7 @@ AccountancyTreasuryArea=منطقه حسابداری / خزانه داری
 NewPayment=پرداخت جدید
 Payments=پرداخت
 PaymentCustomerInvoice=پرداخت صورت حساب به مشتری
+PaymentSupplierInvoice=پرداخت صورتحساب تامین کننده
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=پرداخت مالیات بر ارزش افزوده
 ListPayment=فهرست پرداخت

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
+/* Copyright (C) 2013-2014  Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014  Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/class/accountingaccount.class.php
- * \ingroup		Advanced accountancy
- * \brief		File of class to manage accounting accounts
+ *  \file       htdocs/accountancy/class/accountingaccount.class.php
+ *  \ingroup    Advanced accountancy
+ *  \brief      File of class to manage accounting accounts
  */
 
 /**
@@ -152,11 +152,11 @@ class AccountingAccount extends CommonObject
 
 		if (empty($this->pcg_type) || $this->pcg_type == '-1')
 		{
-		    $this->pcg_type = 'XXXXXX';
+			$this->pcg_type = 'XXXXXX';
 		}
 		if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
 		{
-		    $this->pcg_subtype = 'XXXXXX';
+			$this->pcg_subtype = 'XXXXXX';
 		}
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -235,17 +235,17 @@ class AccountingAccount extends CommonObject
 	 */
 	function update($user)
 	{
-	    // Check parameters
-	    if (empty($this->pcg_type) || $this->pcg_type == '-1')
-	    {
-	        $this->pcg_type = 'XXXXXX';
-	    }
-	    if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
-	    {
-	        $this->pcg_subtype = 'XXXXXX';
-	    }
+		// Check parameters
+		if (empty($this->pcg_type) || $this->pcg_type == '-1')
+		{
+			$this->pcg_type = 'XXXXXX';
+		}
+		if (empty($this->pcg_subtype) || $this->pcg_subtype == '-1')
+		{
+			$this->pcg_subtype = 'XXXXXX';
+		}
 
-	    $this->db->begin();
+		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
@@ -395,17 +395,17 @@ class AccountingAccount extends CommonObject
 		$linkclose='';
 		if (empty($notooltip))
 		{
-		    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-		    {
-		        $label=$langs->trans("ShowAccoutingAccount");
-		        $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-		    }
-		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-		    $linkclose.=' class="classfortooltip"';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowAccoutingAccount");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip"';
 		}
 
-        $linkstart='<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
+		$linkstart='<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
 		if ($nourl)
@@ -462,10 +462,10 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Account desactivate
+	 * Account deactivated
 	 *
-	 * @param int $id Id
-	 * @return int <0 if KO, >0 if OK
+	 * @param  int  $id         Id
+	 * @return int              <0 if KO, >0 if OK
 	 */
 	function account_desactivate($id) {
 		$result = $this->checkUsage();
@@ -494,10 +494,10 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Account activate
+	 * Account activated
 	 *
-	 * @param int $id Id
-	 * @return int <0 if KO, >0 if OK
+	 * @param  int  $id         Id
+	 * @return int              <0 if KO, >0 if OK
 	 */
 	function account_activate($id) {
 		$this->db->begin();
@@ -522,56 +522,56 @@ class AccountingAccount extends CommonObject
 	/**
 	 *  Retourne le libelle du statut d'un user (actif, inactif)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return	string 			       Label of status
+	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string              Label of status
 	 */
 	function getLibStatut($mode=0)
 	{
-	    return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status,$mode);
 	}
 
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int		$statut        	Id statut
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param  int     $statut     Id statut
+	 *  @param  int     $mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string              Label of status
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-	    global $langs;
-	    $langs->load('users');
+		global $langs;
+		$langs->load('users');
 
-	    if ($mode == 0)
-	    {
-	        $prefix='';
-	        if ($statut == 1) return $langs->trans('Enabled');
-	        if ($statut == 0) return $langs->trans('Disabled');
-	    }
-	    if ($mode == 1)
-	    {
-	        if ($statut == 1) return $langs->trans('Enabled');
-	        if ($statut == 0) return $langs->trans('Disabled');
-	    }
-	    if ($mode == 2)
-	    {
-	        if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-	        if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-	    }
-	    if ($mode == 3)
-	    {
-	        if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4');
-	        if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5');
-	    }
-	    if ($mode == 4)
-	    {
-	        if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-	        if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-	    }
-	    if ($mode == 5)
-	    {
-	        if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-	        if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
-	    }
+		if ($mode == 0)
+		{
+			$prefix='';
+			if ($statut == 1) return $langs->trans('Enabled');
+			if ($statut == 0) return $langs->trans('Disabled');
+		}
+		if ($mode == 1)
+		{
+			if ($statut == 1) return $langs->trans('Enabled');
+			if ($statut == 0) return $langs->trans('Disabled');
+		}
+		if ($mode == 2)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+		}
+		if ($mode == 3)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5');
+		}
+		if ($mode == 4)
+		{
+			if ($statut == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($statut == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+		}
+		if ($mode == 5)
+		{
+			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
+			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+		}
 	}
 }

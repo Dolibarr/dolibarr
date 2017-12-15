@@ -19,8 +19,9 @@
  */
 
 /**
- * \file       htdocs/core/js/lib_head.js.php
- * \brief      File that include javascript functions (included if option use_javascript activated)
+ * \file		htdocs/core/js/lib_head.js.php
+ * \brief		File that include javascript functions (included if option use_javascript activated)
+ * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -919,8 +920,8 @@ function document_preview(file, type, title)
 		if (mode == 'image' && showOriginalSizeButton)
 		{
 			optionsbuttons = {
-			    "<?php echo dol_escape_js($langs->trans("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->trans("Close")); ?>": function() { $( this ).dialog( "close" ); }
+			    "<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("Close")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
 
@@ -1062,3 +1063,31 @@ function price2numjs(amount) {
 }
 
 
+<?php
+if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY')) {
+?>
+// Defined properties for JNotify
+$(document).ready(function() {
+	if (typeof $.jnotify == 'function')
+	{
+		$.jnotify.setup({
+			delay: 3000									// the default time to show each notification (in milliseconds)
+			, sticky: false								// determines if the message should be considered "sticky" (user must manually close notification)
+			, closeLabel: "&times;"						// the HTML to use for the "Close" link
+			, showClose: true							// determines if the "Close" link should be shown if notification is also sticky
+			, fadeSpeed: 1000							// the speed to fade messages out (in milliseconds)
+			, slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
+			, classContainer: "jnotify-container"
+				, classNotification: "jnotify-notification"
+					, classBackground: "jnotify-background"
+						, classClose: "jnotify-close"
+							, classMessage: "jnotify-message"
+								, init: null                                // callback that occurs when the main jnotify container is created
+								, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
+								, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
+		});
+	}
+});
+<?php } ?>
+
+// End of lib_head.js.php

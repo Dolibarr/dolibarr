@@ -66,6 +66,7 @@ ActionAC_OTH=Diğer
 ActionAC_OTH_AUTO=Otomatikman eklenen etkinlikler
 ActionAC_MANUAL=Elle eklenen etkinlikler
 ActionAC_AUTO=Otomatikman eklenen etkinlikler
+ActionAC_OTH_AUTOShort=Auto
 Stats=Satış istatistikleri
 StatusProsp=Aday durumu
 DraftPropals=Taslak teklifler

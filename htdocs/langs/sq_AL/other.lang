@@ -11,7 +11,7 @@ BirthdayAlertOn=birthday alert active
 BirthdayAlertOff=birthday alert inactive
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=Start upload
 CancelUpload=Cancel upload
 FileIsTooBig=Files is too big
 PleaseBePatient=Please be patient...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
 NewKeyIs=This is your new keys to login
 NewKeyWillBe=Your new key to login to software will be
@@ -223,6 +224,7 @@ ForgetIfNothing=If you didn't request this change, just forget this email. Your 
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Exports area

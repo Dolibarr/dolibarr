@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,24 +55,25 @@ class FormFile
 
 
 	/**
-	 *  Show form to upload a new file
+	 *  Show form to upload a new file.
 	 *
 	 *  @param  string		$url			Url
 	 *  @param  string		$title			Title zone (Title or '' or 'none')
-	 *  @param  int		$addcancel		1=Add 'Cancel' button
-	 *	@param	int		$sectionid		If upload must be done inside a particular ECM section
-	 * 	@param	int		$perm			Value of permission to allow upload
-	 *  @param  int		$size          		Length of input file area. Deprecated.
+	 *  @param  int			$addcancel		1=Add 'Cancel' button
+	 *	@param	int			$sectionid		If upload must be done inside a particular ECM section (is sectionid defined, sectiondir must not be)
+	 * 	@param	int			$perm			Value of permission to allow upload
+	 *  @param  int			$size          		Length of input file area. Deprecated.
 	 *  @param	Object		$object			Object to use (when attachment is done on an element)
 	 *  @param	string		$options		Add an option column
-	 *  @param	integer		$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
+	 *  @param	integer		$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). @deprecated 2 should never be used and if 1 is used, option should no be enabled.
 	 *  @param	string		$savingdocmask		Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
 	 *  @param	string		$accept			Specifies the types of files accepted (This is not a security check but an user interface facility. eg '.pdf,image/*' or '.png,.jpg' or 'video/*')
-	 * 	@return	int						<0 if KO, >0 if OK
+	 *	@param	string		$sectiondir		If upload must be done inside a particular directory (is sectiondir defined, sectionid must not be)
+	 * 	@return	int							<0 if KO, >0 if OK
 	 */
-	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile', $accept='')
+	function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='', $useajax=1, $savingdocmask='', $linkfiles=1, $htmlname='formuserfile', $accept='', $sectiondir='')
 	{
 		global $conf,$langs, $hookmanager;
 		$hookmanager->initHooks(array('formfile'));
@@ -103,7 +104,7 @@ class FormFile
 			if ($title != 'none') $out.=load_fiche_titre($title, null, null);
 
 			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="">';
+			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
 			$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
 			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -957,10 +958,10 @@ class FormFile
 			if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
 			if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 		}
-		// For backward compatiblity, we detect file is stored into an old path
-		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
+		// For backward compatiblity, we detect file stored into an old path
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos')
 		{
-			$relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
+		    $relativepath=preg_replace('/^.*\/produit\//','',$filearray[0]['path']).'/';
 		}
 		// Defined relative dir to DOL_DATA_ROOT
 		$relativedir = '';
@@ -1067,7 +1068,7 @@ class FormFile
 			$nboffiles=count($filearray);
 			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-			$var=true; $i=0; $nboflines = 0; $lastrowid=0;
+			$i=0; $nboflines = 0; $lastrowid=0;
 			foreach($filearray as $key => $file)      // filearray must be only files here
 			{
 				if ($file['name'] != '.'
@@ -1082,7 +1083,9 @@ class FormFile
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
 					print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'" '.$bcdd[$var].'>';
+					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'">';
+
+					// File name
 					print '<td class="tdoverflowmax300">';
 
 					// Show file name with link to download
@@ -1095,9 +1098,11 @@ class FormFile
 					print img_mime($file['name'], $file['name'].' ('.dol_print_size($file['size'],0,0).')', 'inline-block valignbottom paddingright');
 					if ($showrelpart == 1) print $relativepath;
 					//print dol_trunc($file['name'],$maxlength,'middle');
-					if (GETPOST('action','aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile')))
+					if (GETPOST('action','aZ09') == 'editfile' && $file['name'] == basename(GETPOST('urlfile','alpha')))
 					{
 						print '</a>';
+						$section_dir=dirname(GETPOST('urlfile','alpha'));
+						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
 						$editline=1;
@@ -1107,12 +1112,17 @@ class FormFile
 						print $file['name'];
 						print '</a>';
 					}
+					// Preview link
 					if (! $editline) print $this->showPreview($file, $modulepart, $filepath);
+					// Public share link
+					if (! $editline && ! empty($filearray[$key]['hashp'])) print 'ee';
 
 					print "</td>\n";
 
+					// Size
 					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
 
+					// Date
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
 
 					// Preview
@@ -1142,7 +1152,7 @@ class FormFile
 						print '<td class="valignmiddle right actionbuttons"><!-- action on files -->';
 						if ($useinecm == 1)
 						{
-							print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
+							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 						if (! $useinecm || $useinecm == 2)
 						{
@@ -1260,7 +1270,7 @@ class FormFile
 	 *  @param	int		$addfilterfields	Add line with filters
 	 *  @return int                 		<0 if KO, nb of files shown if OK
 	 */
-	function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='',$addfilterfields=0)
+	function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload=0, $relativepath='', $permtodelete=1, $useinecm=0, $textifempty='', $maxlength=0, $url='', $addfilterfields=0)
 	{
 		global $user, $conf, $langs, $form;
 		global $bc;
@@ -1379,7 +1389,6 @@ class FormFile
 			$object_instance=new ExpenseReport($this->db);
 		}
 
-		$var=true;
 		foreach($filearray as $key => $file)
 		{
 			if (!is_dir($file['name'])
@@ -1607,11 +1616,9 @@ class FormFile
 		$nboflinks = count($links);
 		if ($nboflinks > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-		$var = true;
 		foreach ($links as $link)
 		{
-			$var =! $var;
-			print '<tr ' . $bc[$var] . '>';
+			print '<tr class="oddeven">';
 			//edit mode
 			if ($action == 'update' && $selected === $link->id)
 			{
@@ -1673,7 +1680,7 @@ class FormFile
 	 * @param   array     $file           File
 	 * @param   string    $modulepart     propal, facture, facture_fourn, ...
 	 * @param   string    $relativepath   Relative path of docs
-	 * @param   string    $ruleforpicto   Rule for picto: 0=Preview picto, 1=Use picto of mime type of file)
+	 * @param   string    $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file)
 	 * @param	string	  $param		  More param on http links
 	 * @return  string    $out            Output string with HTML
 	 */

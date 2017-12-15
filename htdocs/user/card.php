@@ -9,7 +9,7 @@
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -412,8 +412,8 @@ if (empty($reshook)) {
 					}
 				}
 
-				if (!$error && GETPOST('contactid', 'int')) {
-					$contactid = GETPOST('contactid', 'int');
+				if (!$error && GETPOSTISSET('contactid')) {
+					$contactid = GETPOST('contactid', 'int');				
 
 					if ($contactid > 0) {
 						$contact = new Contact($db);

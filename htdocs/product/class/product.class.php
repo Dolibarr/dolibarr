@@ -656,21 +656,23 @@ class Product extends CommonObject
             $result = -2;
         }
 
-        $rescode = $this->check_barcode($this->barcode,$this->barcode_type_code);
-        if ($rescode <> 0)
+        $rescode = $this->check_barcode($this->barcode, $this->barcode_type_code);
+        if ($rescode)
         {
         	if ($rescode == -1)
         	{
         		$this->errors[] = 'ErrorBadBarCodeSyntax';
         	}
-        	if ($rescode == -2)
+        	elseif ($rescode == -2)
         	{
         		$this->errors[] = 'ErrorBarCodeRequired';
         	}
-        	if ($rescode == -3)
+        	elseif ($rescode == -3)
         	{
+        		// Note: Common usage is to have barcode unique. For variants, we should have a different barcode.
         		$this->errors[] = 'ErrorBarCodeAlreadyUsed';
         	}
+
         	$result = -3;
         }
 
@@ -997,6 +999,7 @@ class Product extends CommonObject
 			{
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
+					$langs->load("errors");
 					if (empty($conf->barcode->enabled)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
 					else $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductBarCodeAlreadyExists",$this->barcode);
 					$this->errors[]=$this->error;
@@ -1119,7 +1122,7 @@ class Product extends CommonObject
 				}
 
 				//We also check if it is a child product
-				if (!$error && ($prodcomb->fetchByFkProductChild($id) > 0) && ($prodcomb->delete() < 0)) {
+				if (!$error && ($prodcomb->fetchByFkProductChild($id) > 0) && ($prodcomb->delete($user) < 0)) {
 					$error++;
 					$this->errors[] = 'Error deleting child combination';
 				}
@@ -1520,6 +1523,7 @@ class Product extends CommonObject
 		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
+		$sql.= " ,pfp.default_vat_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
@@ -1555,6 +1559,7 @@ class Product extends CommonObject
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
+				$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
 				$result=$obj->fk_product;
 				return $result;
 			}
@@ -1563,6 +1568,7 @@ class Product extends CommonObject
 				// We do a second search by doing a select again but searching with less reliable criteria: couple qty/id product, and if set fourn_ref or fk_soc.
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
 				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
+				$sql.= " ,pfp.default_vat_code";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.fk_product = ".$product_id;
 				if ($fourn_ref != 'none') $sql.= " AND pfp.ref_fourn = '".$fourn_ref."'";
@@ -1602,6 +1608,7 @@ class Product extends CommonObject
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
+						$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
 						$result=$obj->fk_product;
 						return $result;
 					}
@@ -1854,7 +1861,7 @@ class Product extends CommonObject
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
 		{
-			$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+			$sql.= " WHERE entity IN (".getEntity($this->element).")";
 			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
@@ -3310,6 +3317,32 @@ class Product extends CommonObject
 	/**
 	 *  Return all parent products for current product (first level only)
 	 *
+	 *  @return 	int			Nb of father + child
+	 */
+	function hasFatherOrChild()
+	{
+		$nb = 0;
+
+		$sql = "SELECT COUNT(pa.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa";
+		$sql.= " WHERE pa.fk_product_fils = ".$this->id." OR pa.fk_product_pere = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) $nb = $obj->nb;
+		}
+		else
+		{
+			return -1;
+		}
+
+		return $nb;
+	}
+
+	/**
+	 *  Return all parent products for current product (first level only)
+	 *
 	 *  @return 	array 		Array of product
 	 */
 	function getFather()
@@ -3461,7 +3494,11 @@ class Product extends CommonObject
     		if ($this->length)  $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units,'length');
     		if ($this->surface) $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units,'surface');
     		if ($this->volume)  $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units,'volume');
-            if (! empty($conf->productbatch->enabled))
+        }
+
+        if ($this->type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+        {
+    		if (! empty($conf->productbatch->enabled))
             {
             	$langs->load("productbatch");
                 $label.="<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0,2);
@@ -3578,15 +3615,15 @@ class Product extends CommonObject
 	{
 		switch ($type)
 		{
-		case 0:
-			return $this->LibStatut($this->status,$mode,$type);
-		case 1:
-			return $this->LibStatut($this->status_buy,$mode,$type);
-		case 2:
-			return $this->LibStatut($this->status_batch,$mode,$type);
-		default:
-			//Simulate previous behavior but should return an error string
-			return $this->LibStatut($this->status_buy,$mode,$type);
+			case 0:
+				return $this->LibStatut($this->status,$mode,$type);
+			case 1:
+				return $this->LibStatut($this->status_buy,$mode,$type);
+			case 2:
+				return $this->LibStatut($this->status_batch,$mode,$type);
+			default:
+				//Simulate previous behavior but should return an error string
+				return $this->LibStatut($this->status_buy,$mode,$type);
 		}
 	}
 
@@ -3836,7 +3873,7 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
-					if ((! preg_match('/nobatch/', $option)) && $this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
+					if ((! preg_match('/nobatch/', $option)) && $this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db, $row->rowid, 1, $this->id);
 					$this->stock_reel+=$row->reel;
 					$i++;
 				}
@@ -4065,8 +4102,8 @@ class Product extends CommonObject
 
 		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 		{
-			$dirold .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
-			$pdirold .= get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
+			$dir = $sdir . '/'. get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
+			$pdir = '/' . get_exdir($this->id,2,0,0,$this,'product') . $this->id ."/photos/";
 		}
 
 		// Defined relative dir to DOL_DATA_ROOT
@@ -4086,11 +4123,11 @@ class Product extends CommonObject
 
 		$filearray=dol_dir_list($dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+		/*if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 		{
 		    $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		    $filearray=array_merge($filearray, $filearrayold);
-		}
+		}*/
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 

@@ -44,7 +44,6 @@ ConfirmActivateService=Er du sikker på at du vil aktivere denne tjenesten med d
 RefContract=Kontraktsreferanse
 DateContract=Kontraktsdato
 DateServiceActivate=Dato for aktivering av tjenste
-ShowContract=Vis kontrakt
 ListOfServices=Oversikt over tjenester
 ListOfInactiveServices=Liste over ikke aktive tjenester
 ListOfExpiredServices=Liste over utløpte, aktive tjenester

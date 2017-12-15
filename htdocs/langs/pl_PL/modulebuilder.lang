@@ -60,6 +60,7 @@ ReadmeFile=Readme file
 ChangeLog=ChangeLog file
 TestClassFile=File for PHP Unit Test class
 SqlFile=Plik SQL
+PageForLib=File for PHP libraries
 SqlFileExtraFields=Sql file for complementary attributes
 SqlFileKey=Sql file for keys
 AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this name and a different case
@@ -69,6 +70,7 @@ DirScanned=Directory scanned
 NoTrigger=No trigger
 NoWidget=No widget
 GoToApiExplorer=Go to API explorer
+ListOfMenusEntries=List of menu entries
 ListOfPermissionsDefined=List of defined permissions
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only. Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -83,3 +85,10 @@ TriggerDefDesc=Define in the trigger file the code you want to execute for each 
 SeeIDsInUse=See IDs in use in your installation
 SeeReservedIDsRangeHere=See range of reserved IDs
 ToolkitForDevelopers=Toolkit for Dolibarr developers
+TryToUseTheModuleBuilder=If you have knowledge in SQL and PHP, you can try to use the native module builder wizard. Just enable the module and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu. Warning: This is a developer feature, bad use may breaks your application.
+SeeTopRightMenu=See <span class="fa fa-bug"></span> on the top right menu
+AddLanguageFile=Add language file
+YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")
+DropTableIfEmpty=(Delete table if empty)
+TableDoesNotExists=The table %s does not exists
+TableDropped=Table %s deleted

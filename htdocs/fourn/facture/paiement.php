@@ -745,7 +745,7 @@ if (empty($action))
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement').')';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -773,8 +773,11 @@ if (empty($action))
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
     if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
     $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label";
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+    // Add where from extra fields
+
     $sql.= $db->order($sortfield,$sortorder);
 
     $nbtotalofrecords = '';
@@ -805,12 +808,7 @@ if (empty($action))
         if ($search_payment_num)    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
     	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
     	// Add $param from extra fields
-    	foreach ($search_array_options as $key => $val)
-    	{
-    	    $crit=$val;
-    	    $tmpkey=preg_replace('/search_options_/','',$key);
-    	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-    	}
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
     	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 

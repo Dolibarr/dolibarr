@@ -39,13 +39,9 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("categories");
-$langs->load("companies");
-$langs->load("compta");
+$langs->loadLangs(array("banks","bills","categories","companies","compta"));
 
-$action=GETPOST('action','aZ09');
+$action = GETPOST('action','aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
@@ -950,7 +946,7 @@ else
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
 		{
-			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
 			print '</td></tr>';

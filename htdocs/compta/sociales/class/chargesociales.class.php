@@ -83,9 +83,10 @@ class ChargeSociales extends CommonObject
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id AND p.entity IN (' . getEntity('c_paiement').')';
-        if ($ref) $sql.= " WHERE cs.rowid = ".$ref;
-        else $sql.= " WHERE cs.rowid = ".$id;
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
+        $sql.= ' WHERE cs.entity IN ('.getEntity('tax').')';
+        if ($ref) $sql.= " AND cs.rowid = ".$ref;
+        else $sql.= " AND cs.rowid = ".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

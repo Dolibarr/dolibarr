@@ -611,17 +611,17 @@ class Don extends CommonObject
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment AND cp.entity = " . getEntity('c_paiement');
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment AND cp.entity IN (".getEntity('c_paiement').")";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
-		if (! empty($id))
+        $sql.= " WHERE d.entity IN (".getEntity('donation').")";
+        if (! empty($id))
         {
-        	$sql.= " WHERE d.rowid=".$id;
+        	$sql.= " AND d.rowid=".$id;
         }
         else if (! empty($ref))
         {
-        	$sql.= " WHERE ref='".$this->db->escape($ref)."'";
+        	$sql.= " AND ref='".$this->db->escape($ref)."'";
         }
-        $sql.= " AND d.entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -842,9 +842,10 @@ class Don extends CommonObject
      *	Return clicable name (with picto eventually)
      *
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param	int  	$notooltip		1=Disable tooltip
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0)
+    function getNomUrl($withpicto=0, $notooltip=0)
     {
         global $langs;
 

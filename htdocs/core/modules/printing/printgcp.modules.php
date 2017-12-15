@@ -318,7 +318,7 @@ class printing_printgcp extends PrintingDriver
         else dol_print_error($this->db);
 
         $ret = $this->sendPrintToPrinter($printer_id, $file, $fileprint, $mimetype);
-        $this->errors = 'PRINTGCP: '.mb_convert_encoding($ret['errormessage'], "UTF-8");
+        $this->error = 'PRINTGCP: '.$ret['errormessage'];
         if ($ret['status']!=1) $error++;
         return $error;
     }

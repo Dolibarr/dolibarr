@@ -66,6 +66,7 @@ ActionAC_OTH=Más
 ActionAC_OTH_AUTO=Automatikusan generált események
 ActionAC_MANUAL=Kézzel hozzáadott események
 ActionAC_AUTO=Automatikusan generált események
+ActionAC_OTH_AUTOShort=Auto
 Stats=Eladási statisztikák
 StatusProsp=Prospect állapot
 DraftPropals=Készítsen üzleti ajánlatot

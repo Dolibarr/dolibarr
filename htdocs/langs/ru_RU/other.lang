@@ -11,7 +11,7 @@ BirthdayAlertOn=рождения активного оповещения
 BirthdayAlertOff=рождения оповещения неактивные
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=Начать загрузку
 CancelUpload=Отмена загрузки
 FileIsTooBig=Файлы слишком велик
 PleaseBePatient=Пожалуйста, будьте терпеливы ...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=Получен запрос на изменение вашего пароля в системе Dolibarr
 NewKeyIs=Ваши новые ключи для доступа
 NewKeyWillBe=Ваш новый ключ для доступа к ПО будет
@@ -223,6 +224,7 @@ ForgetIfNothing=Если вы не запрашивали эти изменен�
 IfAmountHigherThan=Если количество более чем <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Экспорт области

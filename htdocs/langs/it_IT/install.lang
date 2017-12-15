@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Si sta utilizzando la configurazione guidata di un pacchett
 KeepDefaultValuesMamp=Si sta utilizzando la configurazione guidata DoliMamp, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
 KeepDefaultValuesProxmox=Si sta utilizzando la configurazione guidata di una virtual appliance Proxmox, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Fix per i dati denormalizzati
@@ -191,6 +192,7 @@ MigrationActioncommElement=Aggiornare i dati sulle azioni
 MigrationPaymentMode=Migrazione dei dati delle modalità di pagamento
 MigrationCategorieAssociation=Migrazione delle categorie
 MigrationEvents=Migrazione degli eventi per aggiungere i proprietari nella tabella degli utilizzatori assegnati
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Ricarica modulo %s

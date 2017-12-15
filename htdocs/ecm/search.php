@@ -30,14 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("users");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("contracts");
+$langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -51,6 +44,11 @@ $socid = GETPOST('socid','int');
 $action = GETPOST('action','alpha');
 $section=GETPOST('section');
 if (! $section) $section=0;
+
+$module  = GETPOST('module', 'alpha');
+$website = GETPOST('website', 'alpha');
+$pageid  = GETPOST('pageid', 'int');
+if (empty($module)) $module='ecm';
 
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
@@ -123,7 +121,7 @@ print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
 // Tool bar
-$head = ecm_prepare_head_fm($ecmdir);
+$head = ecm_prepare_head_fm($ecmdir, $module, $section);
 //dol_fiche_head($head, 'search_form', '', 1);
 
 

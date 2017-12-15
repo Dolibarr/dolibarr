@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Etiket dışa aktar
 ACCOUNTING_EXPORT_AMOUNT=Tutarı dışa aktar
 ACCOUNTING_EXPORT_DEVISE=Para birimi dışa aktar
 Selectformat=Dosya için biçimi seçin
+ACCOUNTING_EXPORT_FORMAT=Dosya için biçimi seçin
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Dosya adı için öneki belirtin
 ThisService=Bu hizmet
 ThisProduct=Bu ürün
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=STEP %s: Add or edit existing transactions and genera
 AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't make modification in a future.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Muhasebe
 Selectchartofaccounts=Etkin hesap planı seç
 ChangeAndLoad=Change and load
 Addanaccount=Muhasebe hesabı ekle
@@ -166,7 +168,7 @@ DeleteMvt=Delete Ledger lines
 DelYear=Silinecek yıl
 DelJournal=Silinecek günlük
 ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criteria is required.
-ConfirmDeleteMvtPartial=This will delete the selected line(s) of the Ledger
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Büyük defter kaydını sil
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Gider raporları günlüğü
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
-NoNewRecordSaved=No new record dispatched
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Quadratus QuadraCompta'ya doğru dışaaktar
 Modelcsv_ebp=EBP'ye yönelik dışaaktarım
 Modelcsv_cogilog=Cogilog'a dışaaktar
 Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Hesap planı Id
 
 ## Tools - Init accounting account on product / service

@@ -440,7 +440,7 @@ class Tasks extends DolibarrApi
             $this->task->$field = $value;
         }
 
-        if($this->task->update(DolibarrApiAccess::$user, 0) > 0)
+        if ($this->task->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
         }

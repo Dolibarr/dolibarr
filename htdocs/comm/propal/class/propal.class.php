@@ -683,6 +683,7 @@ class Propal extends CommonObject
 
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
+			$remise = 0;
 			if ($remise_percent > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
@@ -790,6 +791,8 @@ class Propal extends CommonObject
 	 */
 	function deleteline($lineid)
 	{
+		global $user;
+
 		if ($this->statut == self::STATUS_DRAFT)
 		{
 			$line=new PropaleLigne($this->db);
@@ -797,7 +800,7 @@ class Propal extends CommonObject
 			// For triggers
 			$line->fetch($lineid);
 
-			if ($line->delete() > 0)
+			if ($line->delete($user) > 0)
 			{
 				$this->update_price(1);
 
@@ -1005,6 +1008,7 @@ class Propal extends CommonObject
 
                 /*
                  *  Insertion du detail des produits dans la base
+                 *  Insert products detail in database
                  */
                 if (! $error)
                 {
@@ -1013,40 +1017,47 @@ class Propal extends CommonObject
 
 					for ($i=0;$i<$num;$i++)
 					{
+                        if (! is_object($this->lines[$i]))	// If this->lines is not array of objects, coming from REST API
+                            {   // Convert into object this->lines[$i].
+                                $line = (object) $this->lines[$i];
+                            }
+                            else
+                            {
+                                    $line = $this->lines[$i];
+                            }
 						// Reset fk_parent_line for line that are not child lines or special product
-						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
 						}
-
                         // Complete vat rate with code
-						$vatrate = $this->lines[$i]->tva_tx;
-						if ($this->lines[$i]->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$this->lines[$i]->vat_src_code.')';
+						$vatrate = $line->tva_tx;
+						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
 						$result = $this->addline(
-							$this->lines[$i]->desc,
-							$this->lines[$i]->subprice,
-							$this->lines[$i]->qty,
+							$line->desc,
+							$line->subprice,
+							$line->qty,
 							$vatrate,
-							$this->lines[$i]->localtax1_tx,
-							$this->lines[$i]->localtax2_tx,
-							$this->lines[$i]->fk_product,
-							$this->lines[$i]->remise_percent,
+							$line->localtax1_tx,
+							$line->localtax2_tx,
+							$line->fk_product,
+							$line->remise_percent,
 							'HT',
 							0,
-							$this->lines[$i]->info_bits,
-							$this->lines[$i]->product_type,
-							$this->lines[$i]->rang,
-							$this->lines[$i]->special_code,
+							$line->info_bits,
+							$line->product_type,
+							$line->rang,
+							$line->special_code,
 							$fk_parent_line,
-							$this->lines[$i]->fk_fournprice,
-							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label,
-							$this->lines[$i]->date_start,
-							$this->lines[$i]->date_end,
-							$this->lines[$i]->array_options,
-							$this->lines[$i]->fk_unit,
+							$line->fk_fournprice,
+							$line->pa_ht,
+							$line->label,
+							$line->date_start,
+							$line->date_end,
+							$line->array_options,
+							$line->fk_unit,
 							$this->element,
-							$this->lines[$i]->id
+							$line->id
 						);
 
 						if ($result < 0)
@@ -1057,7 +1068,7 @@ class Propal extends CommonObject
 							break;
 						}
 						// Defined the new fk_parent_line
-						if ($result > 0 && $this->lines[$i]->product_type == 9) {
+						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
 						}
 					}
@@ -1323,8 +1334,8 @@ class Propal extends CommonObject
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN (' . getEntity('c_paiement').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN (' . getEntity('c_payment_term').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
@@ -1446,6 +1457,93 @@ class Propal extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *      Update database
+	 *
+	 *      @param      User	$user        	User that modify
+	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *      @return     int      			   	<0 if KO, >0 if OK
+	 */
+	function update(User $user, $notrigger=0)
+	{
+		$error=0;
+
+		// Clean parameters
+		if (isset($this->ref)) $this->ref=trim($this->ref);
+		if (isset($this->ref_client)) $this->ref_client=trim($this->ref_client);
+		if (isset($this->note) || isset($this->note_private)) $this->note_private=(isset($this->note_private) ? trim($this->note_private) : trim($this->note));
+		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
+		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
+		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
+
+		// Check parameters
+		// Put here code to add control on parameters values
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
+
+		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
+		$sql.= " ref_client=".(isset($this->ref_client)?"'".$this->db->escape($this->ref_client)."'":"null").",";
+		$sql.= " ref_ext=".(isset($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null").",";
+		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
+		$sql.= " datep=".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql.= " date_valid=".(strval($this->date_validation)!='' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+		$sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
+		$sql.= " localtax1=".(isset($this->total_localtax1)?$this->total_localtax1:"null").",";
+		$sql.= " localtax2=".(isset($this->total_localtax2)?$this->total_localtax2:"null").",";
+		$sql.= " total_ht=".(isset($this->total_ht)?$this->total_ht:"null").",";
+		$sql.= " total=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
+		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " fk_user_author=".(isset($this->user_author_id)?$this->user_author_id:"null").",";
+		$sql.= " fk_user_valid=".(isset($this->user_valid)?$this->user_valid:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
+		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
+		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
+		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
+		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
+		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
+
+		$sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('PROPAL_MODIFY', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
 
 	/**
 	 * Load array lines
@@ -1886,7 +1984,7 @@ class Propal extends CommonObject
 			$sql.= " SET fk_availability = '".$id."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(__METHOD__.' availability('.$availability_id.')', LOG_DEBUG);
+			dol_syslog(__METHOD__.' availability('.$id.')', LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (!$resql)
 			{
@@ -2864,6 +2962,8 @@ class Propal extends CommonObject
 	 */
 	function demand_reason($demand_reason_id, $notrigger=0)
 	{
+		global $user;
+
 		if ($this->statut >= self::STATUS_DRAFT)
 		{
 			$error=0;
@@ -2984,7 +3084,7 @@ class Propal extends CommonObject
 	/**
 	 *    	Return label of status of proposal (draft, validated, ...)
 	 *
-	 *    	@param      int			$mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
+	 *    	@param      int			$mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
 	function getLibStatut($mode=0)
@@ -3004,6 +3104,7 @@ class Propal extends CommonObject
 		global $langs;
 		$langs->load("propal");
 
+		$statuttrans='';
 		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
 		if ($statut==self::STATUS_VALIDATED) $statuttrans='statut1';
 		if ($statut==self::STATUS_SIGNED) $statuttrans='statut3';
@@ -3052,6 +3153,9 @@ class Propal extends CommonObject
 			$langs->load("propal");
 			$now=dol_now();
 
+			$delay_warning = 0;
+			$statut = 0;
+			$label = '';
 			if ($mode == 'opened') {
 				$delay_warning=$conf->propal->cloture->warning_delay;
 				$statut = self::STATUS_VALIDATED;
@@ -3878,12 +3982,13 @@ class PropaleLigne extends CommonObjectLine
 	/**
 	 * 	Delete line in database
 	 *
+	 *  @param	User	$user		Object user
 	 *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	 int  <0 if ko, >0 if ok
+	 *	@return	 int  				<0 if ko, >0 if ok
 	 */
-	function delete($notrigger=0)
+	function delete(User $user, $notrigger=0)
 	{
-		global $conf,$user;
+		global $conf;
 
 		$error=0;
 		$this->db->begin();

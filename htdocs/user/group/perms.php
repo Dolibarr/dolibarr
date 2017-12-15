@@ -68,6 +68,7 @@ $hookmanager->initHooks($contextpage);
 /**
  * Actions
  */
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -207,7 +208,7 @@ if ($object->id)
     }
 
     // Note
-    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+    print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
     print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'</td>';
     print "</tr>\n";
 

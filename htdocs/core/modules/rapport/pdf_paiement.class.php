@@ -187,8 +187,9 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= ", ba.ref as bankaccount";
 				$sql.= ", p.rowid as prowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
-				$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (" . getEntity('c_paiement').")";
+				$sql.= ", ".MAIN_DB_PREFIX."facture as f,";
+				$sql.= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
 				if (! empty($conf->banque->enabled))
 					$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				$sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -200,8 +201,6 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				$sql.= " AND f.entity = ".$conf->entity;
-				$sql.= " AND p.fk_paiement = c.id ";
-				$sql.= " AND c.entity = " . getEntity('c_paiement');
 				$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
 				if (! $user->rights->societe->client->voir && ! $socid)
 				{
@@ -219,8 +218,9 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= ", ba.ref as bankaccount";
 				$sql.= ", p.rowid as prowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."facture_fourn as f,";
-				$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ON ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f,";
+				$sql.= " ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
 				if (! empty($conf->banque->enabled))
 					$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				$sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -232,8 +232,6 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				$sql.= " AND f.entity = ".$conf->entity;
-				$sql.= " AND p.fk_paiement = c.id ";
-				$sql.= " AND c.entity = " . getEntity('c_paiement');
 				$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
 				if (! $user->rights->societe->client->voir && ! $socid)
 				{

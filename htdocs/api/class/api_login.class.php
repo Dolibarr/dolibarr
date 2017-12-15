@@ -57,11 +57,22 @@ class Login
 		if (empty($dolibarr_main_authentication))
 			$dolibarr_main_authentication = 'http,dolibarr';
 		// Authentication mode: forceuser
-		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user))
-			$dolibarr_auto_user = 'auto';
+		if ($dolibarr_main_authentication == 'forceuser')
+		{
+			if (empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+			if ($dolibarr_auto_user != $login)
+			{
+				dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
+				throw new RestException(403, "Your instance is set to use the automatic login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
+			}
+		}
 		// Set authmode
 		$authmode = explode(',', $dolibarr_main_authentication);
 
+		if ($entity != '' && ! is_numeric($entity))
+		{
+			throw new RestException(403, "Bad value for entity, must be the numeric ID of company.");
+		}
 		if ($entity == '') $entity=1;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';

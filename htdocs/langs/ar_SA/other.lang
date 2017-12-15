@@ -11,7 +11,7 @@ BirthdayAlertOn=عيد ميلاد النشطة في حالة تأهب
 BirthdayAlertOff=عيد الميلاد فى حالة تأهب الخاملة
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=بدء التحميل
 CancelUpload=إلغاء التحميل
 FileIsTooBig=ملفات كبيرة جدا
 PleaseBePatient=يرجى التحلي بالصبر...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=وقد وردت طلب لتغيير كلمة المرور الخاصة بك Dolibarr
 NewKeyIs=هذا هو مفاتيح جديدة لتسجيل الدخول
 NewKeyWillBe=والمفتاح الجديد الخاص بك للدخول إلى برنامج يكون
@@ -223,6 +224,7 @@ ForgetIfNothing=إذا كنت لم تطلب هذا التغيير، أن ينس�
 IfAmountHigherThan=إذا قدر أعلى <strong>من٪ الصورة</strong>
 SourcesRepository=مستودع للمصادر
 Chart=Chart
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=صادرات المنطقة

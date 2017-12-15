@@ -92,13 +92,13 @@ class FormProjets
 		else
 		{
 			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid);
-			if ($discard_closed)
+		}
+		if ($discard_closed)
+		{
+			if (class_exists('Form'))
 			{
-			    if (class_exists('Form'))
-			    {
-    			    if (empty($form)) $form=new Form($this->db);
-                    $out.=$form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
-			    }
+				if (empty($form)) $form=new Form($this->db);
+				$out.=$form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
 			}
 		}
 

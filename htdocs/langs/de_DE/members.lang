@@ -176,4 +176,4 @@ VATToUseForSubscriptions=Mehrwertsteuersatz für Mitgliedschaften
 NoVatOnSubscription=Kein USt. auf Mitgliedschaft.
 MEMBER_PAYONLINE_SENDEMAIL=E-Mail-Adresse, die E-Mail-Benachrichtungen verwendet werden soll, wenn Dolibarr die Bestätigung einer freigegebenen Zahlung für eine Mitgliedschaft erhält (Beispiel: paymentdone@example.com)
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Produkt/Leistung verwendet für den Beitrag in der Rechnungszeile: %s
-NameOrCompany=Name or company
+NameOrCompany=Name oder Firma

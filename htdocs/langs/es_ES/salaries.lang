@@ -13,5 +13,5 @@ TJM=Tasa media por día
 CurrentSalary=Salario actual
 THMDescription=Este valor puede ser usado para calcular los costos de tiempo consumidos en un proyecto indicados por los usuarios si se utiliza el módulo proyectos
 TJMDescription=Este valor actualmente es informativo y no se utiliza para realizar cualquier tipo de cálculo
-LastSalaries=Latest %s salary payments
-AllSalaries=All salary payments
+LastSalaries=Últimos %s pagos salariales
+AllSalaries=Todos los pagos salariales

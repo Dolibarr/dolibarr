@@ -45,10 +45,10 @@ class Translate
 	/**
 	 *	Constructor
 	 *
-	 *  @param	string	$dir            Force directory that contains /langs subdirectory (value is sometine '..' like into install/* pages or support/* pages).
+	 *  @param	string	$dir            Force directory that contains /langs subdirectory (value is sometimes '..' like into install/* pages or support/* pages). Use '' by default.
 	 *  @param  Conf	$conf			Object with Dolibarr configuration
 	 */
-	function __construct($dir,$conf)
+	function __construct($dir, $conf)
 	{
 		if (! empty($conf->file->character_set_client)) $this->charset_output=$conf->file->character_set_client;	// If charset output is forced
 		if ($dir) $this->dir=array($dir);
@@ -98,12 +98,13 @@ class Translate
 
 		// We redefine $srclang
 		$langpart=explode("_",$codetouse);
-		//print "Short before _ : ".$langpart[0].'/ Short after _ : '.$langpart[1].'<br>';
+		//print "Short code before _ : ".$langpart[0].' / Short code after _ : '.$langpart[1].'<br>';
 		if (! empty($langpart[1]))	// If it's for a codetouse that is a long code xx_YY
 		{
 			// Array force long code from first part, even if long code is defined
 			$longforshort=array('ar'=>'ar_SA');
-			if (isset($longforshort[strtolower($langpart[0])])) $srclang=$longforshort[strtolower($langpart[0])];
+			$longforshortexcep=array('ar_EG');
+			if (isset($longforshort[strtolower($langpart[0])]) && ! in_array($codetouse, $longforshortexcep)) $srclang=$longforshort[strtolower($langpart[0])];
 			else if (! is_numeric($langpart[1])) {		// Second part YY may be a numeric with some Chrome browser
 				$srclang=strtolower($langpart[0])."_".strtoupper($langpart[1]);
 				$longforlong=array('no_nb'=>'nb_NO');
@@ -339,7 +340,8 @@ class Translate
 			// This function MUST NOT contains call to syslog
 			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
 			$langofdir=strtolower($langarray[0]).'_'.strtoupper($langarray[0]);
-			if ($langofdir == 'el_EL') $langofdir = 'el_GR';                     // main parent for el_CY is not el_EL but el_GR
+			if ($langofdir == 'el_EL') $langofdir = 'el_GR';                     // main parent for el_CY is not 'el_EL' but 'el_GR'
+			if ($langofdir == 'ar_AR') $langofdir = 'ar_SA';                     // main parent for ar_EG is not 'ar_AR' but 'ar_SA'
 			$this->load($domain,$alt+1,$stopafterdirection,$langofdir);
 		}
 
@@ -633,7 +635,7 @@ class Translate
 		}
 		else								// Translation is not available
 		{
-		    if ($key[0] == '$') { return dol_eval($key,1); }
+		    //if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
 		}
 	}

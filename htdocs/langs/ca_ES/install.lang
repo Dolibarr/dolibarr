@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Estàs utilitzant l'assistent d'instal·lació Dolibarr d'u
 KeepDefaultValuesMamp=Estàs utilitzant l'assistent d'instal·lació de DoliMamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesProxmox=Estàs utilitzant l'assistent d'instal·lació de Dolibarr des d'una màquina virtual Proxmox amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 UpgradeExternalModule=Executa el procés d'actualització dedicat de mòduls externs
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Correcció de dades desnormalitzades
@@ -191,6 +192,7 @@ MigrationActioncommElement=Actualització de les dades de accions sobre elements
 MigrationPaymentMode=Actualització de les formes de pagament
 MigrationCategorieAssociation=Actualització de les categories
 MigrationEvents=Migració d'esdeveniments per afegir propietari a la taula d'asignació
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Actualitza el valor del camp entity de llx_societe_remise
 MigrationRemiseExceptEntity=Actualitza el valor del camp entity de llx_societe_remise_except
 MigrationReloadModule=Recarrega el mòdul %s

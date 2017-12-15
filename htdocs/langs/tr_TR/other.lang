@@ -11,7 +11,7 @@ BirthdayAlertOn=doğum günü uyarısı etkin
 BirthdayAlertOff=doğumgünü uyarısı etkin değil
 TransKey=TransKey anahtarının çevirisi
 MonthOfInvoice=Fatura tarihi ayı (sayı 1-12)
-TextMonthOfInvoice=Fatura tarihi ayı (metin)
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Fatura tarihinden önceki ay (sayı 1-12)
 TextPreviousMonthOfInvoice=Fatura tarihinden önceki ay (metin)
 NextMonthOfInvoice=Fatura tarihinden sonraki ay (sayı 1-12)
@@ -214,6 +214,7 @@ StartUpload=Yüklemeyi başlat
 CancelUpload=Yüklemeyi iptal et
 FileIsTooBig=Dosyalar çok büyük
 PleaseBePatient=Lütfen sabırlı olun...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=Dolibarr parolanızı değiştirmek için bir istek alınmıştır
 NewKeyIs=Oturum açmak için yeni anahtarınız
 NewKeyWillBe=Yazılımda oturum açmak için yeni anahtarınız bu olacaktır
@@ -223,6 +224,7 @@ ForgetIfNothing=Bu değiştirmeyi istemediyseniz, bu epostayı unutun. Kimlik bi
 IfAmountHigherThan=Eğer tutar <strong>%s</strong> den büyükse
 SourcesRepository=Kaynaklar için havuz
 Chart=Çizelge
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Dışaaktar alanı

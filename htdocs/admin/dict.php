@@ -805,7 +805,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             $i++;
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
-        $sql.= " AND entity = '".getEntity($tabname[$id])."'";
+        if (in_array('entity', $listfieldmodify)) $sql.= " AND entity = '".getEntity($tabname[$id])."'";
 
         dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;

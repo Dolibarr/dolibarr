@@ -138,7 +138,6 @@ $form = new Form($db);
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
 
-
 print "\n".'<script type="text/javascript" language="javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
 print '    function initfields()'."\n";
@@ -186,7 +185,6 @@ print '</script>'."\n";
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="update">';
-
 
 /*
  * Main Options

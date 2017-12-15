@@ -23,8 +23,6 @@ use Luracast\Restler\Format\UploadFormat;
 
 require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 /**
  * API class for receive files
@@ -177,6 +175,8 @@ class Documents extends DolibarrApi
 
 		if ($modulepart == 'societe' || $modulepart == 'thirdparty')
 		{
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 			if (!DolibarrApiAccess::$user->rights->societe->lire) {
 				throw new RestException(401);
 			}
@@ -239,7 +239,7 @@ class Documents extends DolibarrApi
 	 * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "mysubdir1/mysubdir2", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 *
-	 * @param   string  $filename           Name of file to create ('FA1705-0123')
+	 * @param   string  $filename           Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
 	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
 	 * @param   string  $subdir             Subdirectory (Only if ref not provided)
@@ -285,15 +285,20 @@ class Documents extends DolibarrApi
 			if ($modulepart == 'facture' || $modulepart == 'invoice')
 			{
 				$modulepart='facture';
+
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$object = new Facture($this->db);
 			}
 			elseif ($modulepart == 'project')
 			{
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
 			}
 			elseif ($modulepart == 'task' || $modulepart == 'project_task')
 			{
 				$modulepart = 'project_task';
+
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$object = new Task($this->db);
 
 				$task_result = $object->fetch('', $ref);

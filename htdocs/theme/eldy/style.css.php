@@ -37,7 +37,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 // Colors
 $colorbackhmenu1='80,90,120';      // topmenu
-$colorbackvmenu1='255,255,255';      // vmenu
+$colorbackvmenu1='248,248,248';      // vmenu
 $colortopbordertitle1='120,120,120';    // top border of title
 $colorbacktitle1='230,230,233';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
@@ -174,6 +174,7 @@ if ($colortexttitle == '')
 	if ($tmpval <= 460) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
 	else { $colortexttitle='000000'; $colorshadowtitle='FFFFFF'; }
 }
+else $colorshadowtitle='888888';
 
 $colorbacktabcard1=join(',',colorStringToArray($colorbacktabcard1));    // Normalize value to 'x,y,z'
 $tmppart=explode(',',$colorbacktabcard1);
@@ -260,7 +261,10 @@ a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>)
 a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
-    background-color: #FFF;
+	background-color: #FFF;
+}
+select.vmenusearchselectcombo {
+	background-color: unset;
 }
 
 input.select2-input {
@@ -271,7 +275,7 @@ input.select2-input {
 	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 
-.liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
+.liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_create] {
 	margin-right: 4px;
@@ -402,7 +406,8 @@ td.actionbuttons a {
 }
 select.flat, form.flat select {
 	font-weight: normal;
-    height: 2.1em;
+	font-size: unset;
+    height: 2em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -447,16 +452,16 @@ input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 50px #FDFFF0 inset;
 }
 ::-webkit-input-placeholder { color:#ccc; }
-:-moz-placeholder { color:#bbb; } 			/* firefox 18- */
-::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
-:-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
-input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
+input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
 input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 .trextrafieldseparator td {
     border-bottom: 2px solid rgb(120,120,120) !important;
+}
+input#onlinepaymenturl, input#directdownloadlink {
+	opacity: 0.7;
 }
 
 hr { border: 0; border-top: 1px solid #ccc; }
@@ -474,7 +479,6 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
-	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
@@ -482,43 +486,34 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
 	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 	border: 1px solid #bbbbbb;
 	border-bottom-color: #a2a2a2;
 	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
 	border-radius: 2px;
 }
 .button:focus, .buttonDelete:focus  {
-	-moz-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	-webkit-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:hover, .buttonDelete:hover   {
 	/* warning: having a larger shadow has side effect when button is completely on left of a table */
-	-moz-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:disabled, .buttonDelete:disabled {
 	opacity: 0.4;
-    filter: alpha(opacity=40); /* For IE8 and earlier */
     box-shadow: none;
     -webkit-box-shadow: none;
-    -moz-box-shadow: none;
     cursor: auto;
 }
 .buttonRefused {
 	pointer-events: none;
    	cursor: default;
 	opacity: 0.4;
-    filter: alpha(opacity=40); /* For IE8 and earlier */
     box-shadow: none;
     -webkit-box-shadow: none;
-    -moz-box-shadow: none;
 }
 form {
     padding:0px;
@@ -541,10 +536,8 @@ div.floatright
 }
 
 th .button {
-    -moz-box-shadow: none !important;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-	-moz-border-radius:0px !important;
 	-webkit-border-radius:0px !important;
 	border-radius:0px !important;
 }
@@ -594,6 +587,9 @@ textarea.centpercent {
 .nowraponall {
 	white-space: nowrap;
 }
+.wordwrap {
+	word-wrap: break-word;
+}
 .nobold {
 	font-weight: normal !important;
 }
@@ -627,12 +623,12 @@ textarea.centpercent {
 	padding: 2px 5px;
 	font-size: 10px;
 	font-weight: 700;
-	line-height: 0.9em;
+	line-height: 1em;
 	color: #fff;
 	text-align: center;
 	white-space: nowrap;
-	vertical-align: baseline;
-	background-color: #777;
+	vertical-align: text-bottom;
+	background-color: #aaa;
 	border-radius: 10px;
 }
 .borderrightlight
@@ -660,8 +656,17 @@ div.divsearchfield {
 div.confirmmessage {
 	padding-top: 6px;
 }
-div.myavailability {
-	padding-top: 6px;
+ul.attendees {
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+ul.attendees li {
+	list-style-type: none;
+	padding-top:1px;
+	padding-bottom:1px;
 }
 .googlerefreshcal {
 	padding-top: 4px;
@@ -679,6 +684,9 @@ div.myavailability {
 .selectlimit, .marginrightonly {
 	margin-right: 10px !important;
 }
+.marginleftonly {
+	margin-left: 10px !important;
+}
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -694,6 +702,12 @@ div.myavailability {
 /* using a tdoverflowxxx make the min-width not working */
 .tdoverflow {
     max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax50 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -867,6 +881,7 @@ select.selectarrowonleft option {
 .titlefield       { width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
+.imgmaxheight50 { max-height: 50px; }
 
 .width20p { width:20%; }
 .width25p { width:25%; }
@@ -911,6 +926,9 @@ select.selectarrowonleft option {
 	body {
 		font-size: <?php print $fontsize+3; ?>px;
 	}
+	div.refidno {
+		font-size: <?php print $fontsize+3; ?>px !important;
+	}
 }
 
 /* Force values for small screen 570 */
@@ -918,6 +936,9 @@ select.selectarrowonleft option {
 {
 	body {
 		font-size: <?php print $fontsize+3; ?>px;
+	}
+	div.refidno {
+		font-size: <?php print $fontsize+3; ?>px !important;
 	}
 
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
@@ -932,7 +953,8 @@ select.selectarrowonleft option {
 		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
 	}
 	div.titre {
-		line-height: 2em;
+		margin-top: 12px;
+		/* line-height: 2em; */
 	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
     	height: 40px !important;
@@ -989,7 +1011,6 @@ select.selectarrowonleft option {
 	}
     img.photoref, div.photoref {
     	border: none;
-    	-moz-box-shadow: none;
         -webkit-box-shadow: none;
         box-shadow: none;
         padding: 4px;
@@ -1000,6 +1021,9 @@ select.selectarrowonleft option {
 
 	div.statusref {
     	padding-right: 10px;
+   	}
+	div.statusref img {
+    	padding-right: 3px !important;
    	}
 }
 .linkobject { cursor: pointer; }
@@ -1082,6 +1106,10 @@ div.blockvmenuend, div.blockvmenubookmarks {
 div.vmenu, td.vmenu {
 	padding-right: 10px !important;
 }
+.blockvmenu .menu_titre {
+    margin-top: 4px;
+    margin-bottom: 3px;
+}
 
 /* Try responsive even not on smartphone
 #id-container {
@@ -1127,16 +1155,16 @@ div.vmenu, td.vmenu {
 	padding-right: 6px !important;
 }
 div.fiche {
-	margin-<?php print $left; ?>: 6px !important;
-	margin-<?php print $right; ?>: 6px !important;
+	margin-<?php print $left; ?>: 9px !important;
+	margin-<?php print $right; ?>: 10px !important;
 }
 <?php } ?>
 
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'6':'26')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'20':'12')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -1294,10 +1322,11 @@ div.statusref {
 }
 div.statusref img {
     padding-left: 8px;
+   	padding-right: 9px;
+   	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
-	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
     padding: 4px;
@@ -1702,7 +1731,6 @@ form#login {
 
 	background-color: #FFFFFF;
 
-	-moz-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 
@@ -1769,12 +1797,14 @@ table.login_table_securitycode tr td {
 
 div.backgroundsemitransparent {
 	background:rgba(255,255,255,0.6);
+	padding-left: 10px;
+	padding-right: 10px;
 }
 div.login_block {
 	position: absolute;
 	text-align: <?php print $right; ?>;
 	<?php print $right; ?>: 0;
-	top: 0;
+	top: <?php print $disableimages?'4px':'0'; ?>;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -1870,11 +1900,6 @@ img.userphotosmall {			/* size for user photo in lists */
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/lock.png',1); ?>);
 	background-repeat: no-repeat;
 }
-/*
-.span-icon-user input, .span-icon-password input {
-	/* margin-left: 18px; */
-	margin-left: 0px;
-}*/
 
 /* ============================================================================== */
 /* Menu gauche                                                                    */
@@ -2186,14 +2211,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
 	border-top: 2px solid rgb(<?php echo $colortopbordertitle1; ?>) !important;
-	/*
-	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	-moz-border-radius:4px 4px 0 0;
-    -webkit-border-radius: 4px 4px 0 0;
-	border-radius: 4px 4px 0 0;
-	*/
 }
 a.tab:hover
 {
@@ -2222,7 +2239,6 @@ span.tabspan {
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
-    -moz-border-radius:4px 4px 0px 0px;
 	-webkit-border-radius:4px 4px 0px 0px;
 	border-radius:4px 4px 0px 0px;
 
@@ -2237,6 +2253,12 @@ span.tabspan {
 
 div.divButAction {
 	margin-bottom: 1.4em;
+}
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+	margin-bottom: 1.4em !important;
+}
+div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
+	margin-bottom: 0 !important;
 }
 
 span.butAction, span.butActionDelete {
@@ -2257,10 +2279,14 @@ span.butAction, span.butActionDelete {
     color: #fff;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
     border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
+
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
 
 .butAction:hover   {
-  -moz-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -2272,7 +2298,6 @@ span.butAction, span.butActionDelete {
 }
 
 .butActionDelete:hover {
-  -moz-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -2458,10 +2483,10 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 7px 2px 7px 3px;			/* t r b l */
+	padding: 7px 8px 7px 8px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 7px 2px 7px 3px;			/* t r b l */
+	padding: 7px 8px 7px 8px;			/* t r b l */
 	line-height: 1.2em;
 }
 div.liste_titre_bydiv .divsearchfield {
@@ -2567,7 +2592,6 @@ div.pagination li.pagination span.inactive {
 li.noborder.litext, li.noborder.litext a,
 div.pagination li a.inactive:hover,
 div.pagination li span.inactive:hover {
-	-moz-box-shadow: none !important;
   	-webkit-box-shadow: none !important;
   	box-shadow: none !important;
 }
@@ -2612,7 +2636,6 @@ div.pagination li a:hover,
 div.pagination li span:hover,
 div.pagination li a:focus,
 div.pagination li span:focus {
-  -moz-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 	padding-top: 8px;
@@ -2626,7 +2649,7 @@ div.pagination li .active span:focus {
   z-index: 2;
   color: #fff;
   cursor: default;
-  background-color: <?php $colorbackhmenu1 ?>;
+  background-color: rgb(<?php echo $colorbackhmenu1 ?>);
   border-color: #337ab7;
 }
 div.pagination .disabled span,
@@ -2665,7 +2688,9 @@ div.pagination li.paginationafterarrows {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;		/* Must be background to be stronger than background of odd or even */
 <?php } ?>
 }
-
+.nohover:hover {
+	background: unset;
+}
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {
 	font-family: <?php print $fontlist ?>;
@@ -2707,10 +2732,10 @@ td.evenodd, tr.nohoverpair td {
 }
 
 table.dataTable td {
-    padding: 5px 2px 5px 3px !important;
+    padding: 5px 8px 5px 8px !important;
 }
 tr.pair td, tr.impair td, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
-    padding: 7px 2px 7px 3px;
+    padding: 7px 8px 7px 8px;
     border-bottom: 1px solid #ddd;
 }
 form.pair, form.impair {
@@ -2811,7 +2836,6 @@ input.liste_titre {
 .listactionlargetitle .liste_titre {
 	line-height: 24px;
 }
-
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #551188;
     font-weight: normal;
@@ -2849,13 +2873,11 @@ tr.liste_sub_total, tr.liste_sub_total td {
 
 /* Disable shadows */
 .noshadow {
-	-moz-box-shadow: 0px 0px 0px #DDD !important;
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 
 div.tabBar .noborder {
-	-moz-box-shadow: 0px 0px 0px #DDD !important;
 	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
 }
@@ -2922,7 +2944,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats {
     padding: 3px;
-    width: 103px;
+    width: 104px;
 }
 .boxstats130 {
     width: 158px;
@@ -3021,6 +3043,10 @@ span.dashboardlineko {
 .tdboxstats {
 	text-align: center;
 }
+.boxworkingboard .tdboxstats {
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
 }
@@ -3097,12 +3123,9 @@ div.warning {
   color: #302020;
   padding: 0.3em 0.3em 0.3em 0.3em;
   margin: 0.5em 0em 0.5em 0em;
-  /* border: 1px solid #e0d0b0; */
   border: 2px solid #805000;
-  -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* background: #EFDF9A; */
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -3116,8 +3139,6 @@ div.info {
   color: #fff;
   padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
-  /* border: 1px solid #e0e0e0; */
-  -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
   background: #798080;
@@ -3176,9 +3197,6 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 	margin-top: 6px;
 	margin-bottom: 6px;
 	text-align: center;
-	/*-moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;*/
 }
 .photodelete {
 	margin-top: 6px !important;
@@ -3221,6 +3239,15 @@ div.titre {
 #divsubscribe { max-width: 900px; }
 #tablesubscribe { width: 100%; }
 
+div#card-element {
+    border: 1px solid #ccc;
+}
+div#card-errors {
+	color: #fa755a;
+    text-align: center;
+    padding-top: 3px;
+}
+
 
 /*
  * Effect Postit
@@ -3241,7 +3268,6 @@ div.titre {
   max-width:300px;
   background: #777;
   -webkit-box-shadow: 0 15px 10px #777;
-  -moz-box-shadow: 0 15px 10px #777;
   box-shadow: 0 15px 10px #777;
   -webkit-transform: rotate(-3deg);
   -moz-transform: rotate(-3deg);
@@ -3349,7 +3375,6 @@ img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 }
 
 .bodyline {
-	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
 	border-radius: 8px;
 	border: 1px #E4ECEC outset;
@@ -3445,10 +3470,18 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.nobordertransp {
+    border: 0px;
+    background-color: transparent;
+    background-image: none;
+}
 .websitebar {
-	border-bottom: 1px solid #888;
+	border-bottom: 1px solid #ccc;
 	background: #eee;
 	display: inline-block;
+}
+.websitebar .buttonDelete, .websitebar .button {
+	text-shadow: none;
 }
 .websitebar .button, .websitebar .buttonDelete
 {
@@ -3460,13 +3493,12 @@ tr.visible {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle;
-	/* line-height: 29px; */
 }
 .websitetools {
 	float: right;
-	/* height: 28px; */
 }
 .websiteselection, .websitetools {
+	margin-top: 3px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
@@ -3524,8 +3556,8 @@ table.cal_month td:last-child   { border-right: 0px; }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 1px !important; padding-<?php print $right; ?>: 1px !important; }
 .cal_impair        { background: #F8F8F8; }
 .cal_today_peruser_impair { background: #F8F8F0; }
-.peruser_busy      { background: #CC8888; }
-.peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
+.peruser_busy      { }
+.peruser_notbusy   { opacity: 0.5; }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; }
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
@@ -3533,7 +3565,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event_busy a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 100px; height: 22px; }
 
@@ -3604,8 +3636,8 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-top: 0; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 20px; }
+.treeview ul { background-color: transparent !important; margin-top: 4px; padding-top: 4px !important; }
+.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 26px; }
 .treeview .hover { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: underline !important; }
 
 
@@ -3742,7 +3774,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     display:block;
     padding:.2em .4em;
     line-height:1.5;
-    zoom:1;
     font-weight: normal;
     font-family:<?php echo $fontlist; ?>;
     font-size:1em;
@@ -3768,10 +3799,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .cke_dialog {
     border: 1px #bbb solid ! important;
 }
-.cke_editable
-{
-	margin: 5px !important;
-}
 /*.cke_editor table, .cke_editor tr, .cke_editor td
 {
     border: 0px solid #FF0000 !important;
@@ -3784,10 +3811,8 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #C0C0C0 !important;
-    -moz-border-radius:0px 5px 0px 5px !important;
 	-webkit-border-radius:0px 5px 0px 5px !important;
 	border-radius:0px 5px 0px 5px !important;
-    -moz-box-shadow: 3px 3px 4px #DDD !important;
     -webkit-box-shadow: 3px 3px 4px #DDD !important;
     box-shadow: 3px 3px 4px #DDD !important;
 }
@@ -3795,11 +3820,13 @@ a.cke_dialog_ui_button
 {
 	vertical-align: bottom ! important;
 }
+/*
 .cke_editable
 {
 	line-height: 1.4 !important;
 	margin: 6px !important;
 }
+*/
 a.cke_dialog_ui_button_ok span {
     text-shadow: none !important;
     color: #333 !important;
@@ -3816,12 +3843,13 @@ a.cke_dialog_ui_button_ok span {
 .aceeditorstatusbar {
         margin: 0;
         padding: 0;
+        padding-<?php echo $left; ?>: 10px;
         left: 0;
         right: 0;
         bottom: 0;
-        height: 20px;
         background-color: #ebebeb;
-        color: #666;
+        height: 28px;
+        line-height: 2.2em;
 }
 .ace_status-indicator {
         color: gray;
@@ -4089,6 +4117,7 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+	word-wrap: break-word;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -4100,7 +4129,6 @@ div#ecm-layout-center {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-    -moz-box-shadow: 2px 2px 4px #888 !important;
     -webkit-box-shadow: 2px 2px 4px #888 !important;
     box-shadow: 2px 2px 4px #888 !important;
 }
@@ -4128,9 +4156,6 @@ div.dolEventError h1, div.dolEventError h2 {
 /* ============================================================================== */
 
 .divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, #google-visualization-geomap-embed-2 {
-/*    -moz-box-shadow: 0px 0px 10px #AAA;
-    -webkit-box-shadow: 0px 0px 10px #AAA;
-    box-shadow: 0px 0px 10px #AAA; */
 }
 
 
@@ -4197,7 +4222,6 @@ table.dataTable tr.odd td.sorting_1, table.dataTable tr.even td.sorting_1 {
 
 .ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
 	opacity: .35;
-	filter: Alpha(Opacity=35);
 	background-image: none;
 }
 
@@ -4216,6 +4240,11 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.blockvmenusearch .select2-container--default .select2-selection--single,
+.blockvmenubookmarks .select2-container--default .select2-selection--single
+{
+    background-color: unset;
+}
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: unset;
 }
@@ -4385,6 +4414,10 @@ a span.select2-chosen
     text-align: <?php echo $left; ?>;
     opacity: 0.4;
 }
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: unset;
+	opacity: 0.5;
+}
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
     opacity: 0.5;
@@ -4422,7 +4455,6 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
   -ms-user-select: none;
   user-select: none;
   background-color: #e4e4e4;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eee));
   background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
@@ -4601,12 +4633,10 @@ div.ui-controlgroup-controls div.tabsElem
 }
 div.ui-controlgroup-controls div.tabsElem a
 {
-	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 }
 div.ui-controlgroup-controls div.tabsElem a#active {
-	-moz-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 }
@@ -4681,7 +4711,6 @@ ul.ulmenu {
 	font-weight: normal;
 }
 .ui-focus, .ui-btn:focus {
-    -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
@@ -4752,8 +4781,18 @@ div.tabsElem a.tab {
 }
 .lilevel3
 {
-	padding-left: 54px;
+	padding-left: 44px;
 	background: #fff ! important;
+}
+.lilevel4
+{
+	padding-left: 66px;
+    background: #fff ! important;
+}
+.lilevel5
+{
+	padding-left: 88px;
+    background: #fff ! important;
 }
 
 
@@ -4853,7 +4892,6 @@ div.tabsElem a.tab {
     div.tabBar {
         padding-left: 0px;
         padding-right: 0px;
-        -moz-border-radius: 0;
         -webkit-border-radius: 0;
     	border-radius: 0px;
         border-right: none;
@@ -4900,6 +4938,10 @@ div.tabsElem a.tab {
     }
 	div.tmenuleft {
 		display: none;
+	}
+
+	.dropdown dd ul {
+		max-width: 300px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
@@ -5011,6 +5053,18 @@ div.tabsElem a.tab {
 	div.mainmenu {
     	min-width: 20px;
     }
+
+	.titlefield {
+	    width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
+	}
+	.tableforfield>tr>td:first-child {
+	    max-width: 100px;			/* but no more than 100px */
+	}
+	.badge {
+		line-height: 1.2em;
+		min-width: auto;
+		font-size: 12px;
+	}
 }
 
 <?php

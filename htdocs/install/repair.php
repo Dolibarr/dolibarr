@@ -47,9 +47,7 @@ $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+$langs->loadLangs(array("admin","install","other"));
 
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
@@ -71,8 +69,10 @@ $actiondone=1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
-print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos','alpha')?GETPOST('restore_thirdparties_logos','alpha'):'0').'<br>'."\n";
-print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements','alpha')?GETPOST('clean_linked_elements','alpha'):'0').'<br>'."\n";
+print 'Option standard (0 or \'confirmed\') is '.(GETPOST('standard','alpha')?GETPOST('standard','alpha'):'0').'<br>'."\n";
+print 'Option restore_thirdparties_logos (0 or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos','alpha')?GETPOST('restore_thirdparties_logos','alpha'):'0').'<br>'."\n";
+print 'Option clean_linked_elements (0 or \'confirmed\') is '.(GETPOST('clean_linked_elements','alpha')?GETPOST('clean_linked_elements','alpha'):'0').'<br>'."\n";
+print 'Option clean_menus (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_menus','alpha')?GETPOST('clean_menus','alpha'):'0').'<br>'."\n";
 print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir','alpha')?GETPOST('clean_orphelin_dir','alpha'):'0').'<br>'."\n";
 print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch','alpha')?GETPOST('clean_product_stock_batch','alpha'):'0').'<br>'."\n";
 print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
@@ -153,18 +153,28 @@ if ($ok)
     //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 }
 
-// Show wait message
-print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'<br><br></td></tr>';
-flush();
+$conf->setValues($db);
+
 
 
 /* Start action here */
+$oneoptionset=0;
+$oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos','alpha') || GETPOST('clean_linked_elements','alpha') || GETPOST('clean_menus','alpha')
+	|| GETPOST('clean_orphelin_dir','alpha') || GETPOST('clean_product_stock_batch','alpha') || GETPOST('set_empty_time_spent_amount','alpha') || GETPOST('rebuild_product_thumbs','alpha')
+	|| GETPOST('force_disable_of_modules_not_found','alpha') || GETPOST('force_utf8_on_tables','alpha'));
+
+if ($ok && $oneoptionset)
+{
+	// Show wait message
+	print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'<br><br></td></tr>';
+	flush();
+}
 
 
 // run_sql: Run repair SQL file
-if ($ok)
+if ($ok && GETPOST('standard', 'alpha'))
 {
-    $dir = "mysql/migration/";
+	$dir = "mysql/migration/";
 
     $filelist=array();
     $i = 0;
@@ -206,7 +216,7 @@ if ($ok)
 
 // sync_extrafields: Search list of fields declared and list of fields created into databases, then create fields missing
 
-if ($ok)
+if ($ok && GETPOST('standard', 'alpha'))
 {
 	$extrafields=new ExtraFields($db);
 	$listofmodulesextra=array('societe'=>'societe','adherent'=>'adherent','product'=>'product',
@@ -314,7 +324,7 @@ if ($ok)
 
 
 // clean_data_ecm_dir: Clean data into ecm_directories table
-if ($ok)
+if ($ok && GETPOST('standard', 'alpha'))
 {
 	clean_data_ecm_directories();
 }
@@ -481,6 +491,96 @@ if ($ok && GETPOST('clean_linked_elements','alpha'))
 	// order_supplier => invoice_supplier
 	print '<tr><td colspan="2">'.checkLinkedElements('order_supplier', 'invoice_supplier')."</td></tr>\n";
 }
+
+
+// clean_menus: Check orphelins menus
+if ($ok && GETPOST('clean_menus','alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean menu entries coming from disabled modules</td></tr>';
+
+	$sql ="SELECT rowid, module";
+	$sql.=" FROM ".MAIN_DB_PREFIX."menu as c";
+	$sql.=" WHERE module IS NOT NULL AND module <> ''";
+	$sql.=" ORDER BY module";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$modulecond=$obj->module;
+				$modulecondarray = explode('|',$obj->module);				// Name of module
+
+				print '<tr><td>';
+				print $modulecond;
+
+				$db->begin();
+
+				if ($modulecond)		// And menu entry for module $modulecond was found in database.
+				{
+					$moduleok=0;
+					foreach($modulecondarray as $tmpname)
+					{
+						if ($tmpname == 'margins') $tmpname='margin';		// TODO Remove this when normalized
+
+						$result = 0;
+						if (! empty($conf->$tmpname)) $result = $conf->$tmpname->enabled;
+						if ($result) $moduleok++;
+					}
+
+					if (! $moduleok && $modulecond)
+					{
+						print ' - Module condition '.$modulecond.' seems ko, we delete menu entry.';
+						if (GETPOST('clean_menus') == 'confirmed')
+						{
+							$sql2 ="DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$modulecond."'";
+							$resql2=$db->query($sql2);
+							if (! $resql2)
+							{
+								$error++;
+								dol_print_error($db);
+							}
+							else
+								print ' - <font class="warning">Cleaned</font>';
+						}
+						else
+						{
+							print ' - <font class="warning">Canceled (test mode)</font>';
+						}
+					}
+					else
+					{
+						print ' - Module condition '.$modulecond.' is ok, we do nothing.';
+					}
+				}
+
+				if (!$error) $db->commit();
+				else $db->rollback();
+
+				print'</td></tr>';
+
+				if ($error) break;
+
+				$i++;
+			}
+		}
+		else
+		{
+			print '<tr><td>No menu entries of disabled menus found</td></tr>';
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
 
 
 // clean_orphelin_dir: Run purge of directory
@@ -802,7 +902,6 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 
 
 // clean_old_module_entries: Clean data into const when files of module were removed without being
-// clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force modules not found to be disabled</td></tr>';
@@ -851,10 +950,19 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 	                    	{
 		                    	$value=$obj->value;
 		                    	$valuearray=json_decode($value);
+		                    	if ($value && count($valuearray)==0) $valuearray[0]=$value;	// If value was not a json array but a string
 	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
 	                    	}
 
-	                        $result = dol_include_once($reloffile);
+	                    	//var_dump($key.' - '.$value.' - '.$reloffile);
+	                    	try {
+	                        	$result = dol_buildpath($reloffile, 0, 2);
+	                    	}
+	                    	catch(Exception $e)
+	                    	{
+								// No catch yet
+	                    	}
+
 	                        if (! $result)
 	                        {
 	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
@@ -875,11 +983,11 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 	                                    dol_print_error($db);
 	                                }
 	                                else
-	                                    print " - Cleaned";
+	                                    print ' - <font class="warning">Cleaned</font>';
 	                            }
 	                            else
 	                            {
-	                                print ' - Canceled (test mode)';
+	                                print ' - <font class="warning">Canceled (test mode)</font>';
 	                            }
 	                        }
 	                        else
@@ -914,7 +1022,6 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 
 
 
-// clean_old_module_entries: Clean data into const when files of module were removed without being
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 {
@@ -952,10 +1059,18 @@ if (empty($actiondone))
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
-
-print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-print $langs->trans("GoToDolibarr");
-print '</a></div>';
+if ($oneoptionset)
+{
+	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	print $langs->trans("GoToDolibarr");
+	print '</a></div>';
+}
+else
+{
+	print '<div class="center warning" style="padding-top: 10px">';
+	print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
+	print '</div>';
+}
 
 dolibarr_install_syslog("--- repair: end");
 pFooter(1,$setuplang);

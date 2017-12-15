@@ -34,13 +34,14 @@ foreach($object->fields as $key => $val)
 	print '<tr><td';
 	print ' class="titlefieldcreate';
 	if ($val['notnull'] > 0) print ' fieldrequired';
-	if ($val['type'] == 'text') print ' tdtop';
+	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>'.$langs->trans($val['label']).'</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key)?GETPOST($key, 'int'):$object->$key;
-	elseif ($val['type'] == 'text') $value = GETPOSTISSET($key)?GETPOST($key,'none'):$object->$key;
+	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key,'none'):$object->$key;
 	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
+	//var_dump($val.' '.$key.' '.$value);
 	print $object->showInputField($val, $key, $value, '', '', '', 0);
 	print '</td>';
 	print '</tr>';

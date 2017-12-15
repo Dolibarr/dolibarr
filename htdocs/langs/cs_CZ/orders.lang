@@ -152,5 +152,7 @@ OrderCreated=Vaše objednávky byly vytvořeny
 OrderFail=Došlo k chybě během vytváření objednávky
 CreateOrders=Vytvoření objednávky
 ToBillSeveralOrderSelectCustomer=Chcete-li vytvořit fakturu z několika řádů, klikněte nejprve na zákazníka, pak zvolte "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=V blízkosti, aby se „%s“ automaticky, pokud jsou přijaty všechny výrobky.
 SetShippingMode=Nastavení režimu dopravy

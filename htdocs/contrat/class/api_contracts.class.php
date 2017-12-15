@@ -352,7 +352,7 @@ class Contracts extends DolibarrApi
      * @param int   	$id             Id of contract to activate
      * @param int   	$lineid         Id of line to activate
      * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
-     * @param string    $datend			{@from body}  Date end          {@type timestamp}
+     * @param string    $dateend		{@from body}  Date end          {@type timestamp}
      * @param string    $comment  		{@from body}  Comment
      *
      * @url	PUT {id}/lines/{lineid}/activate
@@ -450,7 +450,6 @@ class Contracts extends DolibarrApi
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
-      $request_data = (object) $request_data;
       $updateRes = $this->contract->deleteline($lineid, DolibarrApiAccess::$user);
       if ($updateRes > 0) {
         return $this->get($id);
@@ -484,10 +483,14 @@ class Contracts extends DolibarrApi
             $this->contract->$field = $value;
         }
 
-        if($this->contract->update(DolibarrApiAccess::$user, 0))
+        if ($this->contract->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $this->task->error);
+        }
     }
 
     /**

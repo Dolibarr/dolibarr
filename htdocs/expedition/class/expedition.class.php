@@ -644,7 +644,6 @@ class Expedition extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			// TODO in future, shipment lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
@@ -1296,8 +1295,7 @@ class Expedition extends CommonObject
 		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
 		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
-		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
-		$sql.= " ".MAIN_DB_PREFIX."commandedet as cd)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
 		$sql.= " AND ed.fk_origin_line = cd.rowid";
@@ -1412,12 +1410,13 @@ class Expedition extends CommonObject
 				{
 					$line->detail_batch = array();
 				}
-				// Eat-by date
-				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0)
+
+				// Detail of batch
+				if (! empty($conf->productbatch->enabled) && $obj->line_id > 0 && $obj->product_tobatch > 0)
 				{
 					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 
-					$newdetailbatch = ExpeditionLineBatch::fetchAll($this->db,$obj->line_id);
+					$newdetailbatch = ExpeditionLineBatch::fetchAll($this->db, $obj->line_id, $obj->fk_product);
 					if (is_array($newdetailbatch))
 					{
 						if ($originline != $obj->fk_origin_line)
@@ -2544,8 +2543,8 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (! empty($batch) && $conf->productbatch->enabled)
 		{
-			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");			
-			
+			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");
+
 			if (empty($batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
 				$this->errors[]='ErrorMandatoryParametersNotProvided';
@@ -2594,10 +2593,10 @@ class ExpeditionLigne extends CommonObjectLine
 						$error++;
 					}
 				}
-				if (! $error && $this->detail_batch->dluo_qty > 0) 
+				if (! $error && $this->detail_batch->dluo_qty > 0)
 				{
 					// create lot expedition line
-					if (isset($lot->id)) 
+					if (isset($lot->id))
 					{
 						$shipmentLot = new ExpeditionLineBatch($this->db);
 						$shipmentLot->batch = $lot->batch;
@@ -2606,7 +2605,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
 						$shipmentLot->dluo_qty = $this->detail_batch->dluo_qty;
 						$shipmentLot->fk_origin_stock = $batch_id;
-						if ($shipmentLot->create($this->id) < 0) 
+						if ($shipmentLot->create($this->id) < 0)
 						{
 							$this->errors[]=$shipmentLot->errors;
 							$error++;
@@ -2619,7 +2618,7 @@ class ExpeditionLigne extends CommonObjectLine
 		{
 			// update line
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql.= " fk_entrepot = ".$this->entrepot_id;
+			$sql.= " fk_entrepot = ".($this->entrepot_id > 0 ? $this->entrepot_id : 'null');
 			$sql.= " , qty = ".$qty;
 			$sql.= " WHERE rowid = ".$this->id;
 

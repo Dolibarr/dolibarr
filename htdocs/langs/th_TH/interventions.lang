@@ -28,7 +28,6 @@ InterventionClassifyBilled=จำแนก "เรียกเก็บเงิ
 InterventionClassifyUnBilled=แยกประเภท "ยังไม่เรียกเก็บ"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=การเรียกเก็บเงิน
-ShowIntervention=การแทรกแซงการแสดง
 SendInterventionRef=การส่งของการแทรกแซง% s
 SendInterventionByMail=ส่งการแทรกแซงทางอีเมล
 InterventionCreatedInDolibarr=s แทรกแซง% สร้าง

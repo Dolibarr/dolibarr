@@ -1163,7 +1163,7 @@ function get_string_between($string, $start, $end){
  *
  * @param 	string	$mask		Mask to use
  * @param 	string	$value		Value
- * @return	int     		    <0 if KO, 0 if OK
+ * @return	int|string		    <0 or error string if KO, 0 if OK
  */
 function check_value($mask,$value)
 {
@@ -1249,6 +1249,7 @@ function check_value($mask,$value)
     if (dol_strlen($value) != $len) $result=-1;
 
     // Define $maskLike
+    /* seems not used
     $maskLike = dol_string_nospecial($mask);
     $maskLike = str_replace("%","_",$maskLike);
     // Replace protected special codes with matching number of _ as wild card caracter
@@ -1259,7 +1260,7 @@ function check_value($mask,$value)
     $maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
     $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
-
+	*/
 
     dol_syslog("functions2::check_value result=".$result,LOG_DEBUG);
     return $result;
@@ -2198,7 +2199,7 @@ function getModuleDirForApiClass($module)
     if ($module == 'contracts') {
     	$moduledirforclass = 'contrat';
     }
-    elseif (in_array($module, array('login', 'setup', 'access', 'status', 'documents'))) {
+    elseif (in_array($module, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents'))) {
         $moduledirforclass = 'api';
     }
     elseif ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {

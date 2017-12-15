@@ -28,7 +28,6 @@ InterventionClassifyBilled=Phân loại "Quảng cáo tại"
 InterventionClassifyUnBilled=Phân loại "chưa lập hoá đơn"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Hóa đơn
-ShowIntervention=Hiện can thiệp
 SendInterventionRef=Nộp can thiệp% s
 SendInterventionByMail=Send intervention by Email
 InterventionCreatedInDolibarr=Intervention %s created

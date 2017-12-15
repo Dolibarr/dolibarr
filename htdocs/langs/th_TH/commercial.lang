@@ -66,6 +66,7 @@ ActionAC_OTH=อื่น ๆ
 ActionAC_OTH_AUTO=เหตุการณ์แทรกโดยอัตโนมัติ
 ActionAC_MANUAL=เหตุการณ์แทรกด้วยตนเอง
 ActionAC_AUTO=เหตุการณ์แทรกโดยอัตโนมัติ
+ActionAC_OTH_AUTOShort=Auto
 Stats=สถิติการขาย
 StatusProsp=สถานะ Prospect
 DraftPropals=ข้อเสนอในเชิงพาณิชย์ร่าง
