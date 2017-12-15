@@ -26,8 +26,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT . '/compta/deplacement/class/deplacement.class.php';
 
 /**
- *       \class      DeplacementStats
- *       \brief      Classe permettant la gestion des stats des deplacements et notes de frais
+ *	Classe permettant la gestion des stats des deplacements et notes de frais
  */
 class DeplacementStats extends Stats
 {

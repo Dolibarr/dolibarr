@@ -3885,6 +3885,8 @@ function migrate_event_assignement_contact($db,$langs,$conf)
  */
 function migrate_reset_blocked_log($db,$langs,$conf)
 {
+	global $user;
+
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
 	print '<tr><td colspan="4">';
@@ -3945,7 +3947,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
 							$object->entity = $obj->entity;
 							$object->date = dol_now();
 
-							$b=new BlockedLog($this->db);
+							$b=new BlockedLog($db);
 							$b->setObjectData($object, 'MODULE_SET', 0);
 
 							$res = $b->create($user);

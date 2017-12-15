@@ -57,6 +57,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		// Event/record is qualified
 		$qualified = 0;
+		$amounts = 0;
 		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
 			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
 		)

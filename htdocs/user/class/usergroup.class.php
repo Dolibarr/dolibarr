@@ -50,7 +50,7 @@ class UserGroup extends CommonObject
 	public $datem;			// Modification date of group
 	public $members=array();	// Array of users
 
-	public $nb_rights;			           // Number of rights granted to the user
+	public $nb_rights;					// Number of rights granted to the user
 
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
@@ -66,8 +66,6 @@ class UserGroup extends CommonObject
 	{
 		$this->db = $db;
 		$this->nb_rights = 0;
-
-		return 0;
 	}
 
 
