@@ -166,7 +166,9 @@ if ($id > 0 || $ref)
 
 	}*/
 
-	dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
