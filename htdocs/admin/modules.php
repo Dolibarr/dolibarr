@@ -79,9 +79,9 @@ $familyinfo=array(
 
 $param='';
 if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status)  $param.='&search_status='.urlencode($search_status);
-if ($search_nature)  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version) $param.='&search_version='.urlencode($search_version);
+if ($search_status > -1)  $param.='&search_status='.urlencode($search_status);
+if ($search_nature > -1)  $param.='&search_nature='.urlencode($search_nature);
+if ($search_version > -1) $param.='&search_version='.urlencode($search_version);
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
@@ -691,7 +691,8 @@ if ($mode == 'common')
         	}
         	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
-        		print $langs->trans("Required");
+        		if ($objMod->alreadyUsed()) print $langs->trans("Used");
+        		else print $langs->trans("Required");
         		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
         	}
         	else

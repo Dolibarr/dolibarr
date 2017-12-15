@@ -30,7 +30,7 @@ $langs->load("admin");
 $langs->load("other");
 $langs->load("blockedlog");
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -76,9 +76,8 @@ if (preg_match('/del_(.*)/',$action,$reg))
  *	View
  */
 
-$block_static = new BlockedLog($db);
-
 $form=new Form($db);
+$block_static = new BlockedLog($db);
 
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
@@ -107,8 +106,7 @@ print '</td></tr>';
 
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	// Example with a yes / no select
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
 	print '<td align="right" width="300">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';

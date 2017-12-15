@@ -56,7 +56,6 @@ if (! $canreadperms) accessforbidden();
 
 $object = new Usergroup($db);
 $object->fetch($id);
-$object->getrights();
 
 $entity=$conf->entity;
 
@@ -73,19 +72,26 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
+if (empty($reshook))
+{
 	if ($action == 'addrights' && $caneditperms)
 	{
 		$editgroup = new Usergroup($db);
 		$result=$editgroup->fetch($id);
-		if ($result > 0) $editgroup->addrights($rights, $module, '', $entity);
+		if ($result > 0)
+		{
+			$editgroup->addrights($rights, $module, '', $entity);
+		}
 	}
 
 	if ($action == 'delrights' && $caneditperms)
 	{
 		$editgroup = new Usergroup($db);
 		$result=$editgroup->fetch($id);
-		if ($result > 0) $editgroup->delrights($rights, $module, '', $entity);
+		if ($result > 0)
+		{
+			$editgroup->delrights($rights, $module, '', $entity);
+		}
 	}
 }
 
@@ -98,11 +104,13 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Permissions"));
 
-if ($object->id)
+if ($object->id > 0)
 {
-    /*
+	/*
      * Affichage onglets
      */
+	$object->getrights();	// Reload permission
+
     $head = group_prepare_head($object);
     $title = $langs->trans("Group");
     dol_fiche_head($head, 'rights', $title, -1, 'group');
@@ -239,7 +247,6 @@ if ($object->id)
     if ($result)
     {
         $i = 0;
-        $var = true;
         $oldmod = '';
 
         $num = $db->num_rows($result);
@@ -258,31 +265,30 @@ if ($object->id)
             if ($oldmod <> $obj->module)
             {
                 $oldmod = $obj->module;
-                $var = !$var;
 
                 // Rupture detectee, on recupere objMod
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
 
+                print '<tr class="oddeven trforbreak">';
+                print '<td class="nowrap">'.img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
+                print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
+                print '<td align="center" class="nowrap">';
                 if ($caneditperms)
                 {
-                    print '<tr '. $bc[$var].'>';
-                    print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-                    print '<td align="center" class="nowrap">';
-                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+                	print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                     print '/';
                     print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
-                    print '</td>';
-                    print '<td colspan="2">&nbsp;</td>';
-                    print '</tr>';
                 }
+                print '</td>';
+                print '<td colspan="2">&nbsp;</td>';
+                print '</tr>';
             }
 
-            print '<tr '. $bc[$var].'>';
+            print '<tr class="oddeven">';
 
             // Module
-            print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
+            print '<td class="nowrap">'.img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName().'</td>';
 
             if (is_array($permsgroupbyentity[$entity]))
             {

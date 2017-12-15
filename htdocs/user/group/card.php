@@ -60,6 +60,11 @@ if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global-
 }
 
 $object = new Usergroup($db);
+if ($id > 0)
+{
+	$object->fetch($id);
+	$object->getrights();
+}
 
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels

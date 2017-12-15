@@ -59,10 +59,10 @@ $pagenext = $page + 1;
 if (empty($sortfield)) $sortfield='rowid';
 if (empty($sortorder)) $sortorder='DESC';
 
-
-
-
 $block_static = new BlockedLog($db);
+
+
+$result = restrictedArea($user, 'blockedlog', 0, '');
 
 
 /*
@@ -335,8 +335,10 @@ jQuery(document).ready(function () {
 		for(x in data) {
 			value = data[x];
 
-			$("#pop-info table tbody").append("<tr><td>"+prefix+x+"</td><td class=\"wordwrap\">"+value+"</td></tr>");
-			if( (typeof value === "object") && (value !== null) ) {
+			if (typeof value != "object") {
+				$("#pop-info table tbody").append("<tr><td>"+prefix+x+"</td><td class=\"wordwrap\">"+value+"</td></tr>");
+			}
+			if ((typeof value === "object") && (value !== null)) {
 				drawData(value, prefix+x+" &gt;&gt; ");
 			}
 		}

@@ -28,7 +28,7 @@
  */
 function blockedlogadmin_prepare_head()
 {
-	global $langs, $conf;
+	global $db, $langs, $conf;
 
 	$h = 0;
 	$head = array();
@@ -40,6 +40,13 @@ function blockedlogadmin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog_list.php";
 	$head[$h][1] = $langs->trans("Fingerprints");
+
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+	$b=new BlockedLog($db);
+	if ($b->alreadyUsed())
+	{
+		$head[$h][1].=' <span class="badge">...</span>';
+	}
 	$head[$h][2] = 'fingerprints';
 	$h++;
 

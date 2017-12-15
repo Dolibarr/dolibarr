@@ -56,15 +56,24 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 		// Event/record is qualified
-		if ($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED' || $action==='BILL_DELETE'
-			|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW'
-			|| $action === 'BILL_SUPPLIER_PAYED')
+		$qualified = 0;
+		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
+			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
+		)
 		{
+			$qualified++;
 			$amounts=  (double) $object->total_ttc;
 		}
-		else if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE'
+		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
+		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
+		{
+			$qualified++;
+			$amounts=  (double) $object->total_ttc;
+		}*/
+		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE'
 			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE')			// 'PAYMENT_ADD_TO_BANK'
 		{
+			$qualified++;
 			$amounts = 0;
 			if(!empty($object->amounts)) {
 				foreach($object->amounts as $amount) {
@@ -72,22 +81,32 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				}
 			}
 		}
-		else if (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK'))) {
+		if (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
+		{
+			$qualified++;
 			$amounts= (double) $object->amount;
 		}
-		else {
+
+		if (! $qualified)
+		{
 			return 0; // not implemented action log
 		}
 
 
 		$b=new BlockedLog($this->db);
-		$b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
+		$result = $b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
+		if ($result < 0)
+		{
+			$this->error = $b->error;
+			$this->errors = $b->erros;
+			return -1;
+		}
 
 		$res = $b->create($user);
 
 		if ($res<0)
 		{
-			setEventMessage($b->error,'errors');
+			setEventMessages($b->error, $b->errors, 'errors');
 			return -1;
 		}
 		else

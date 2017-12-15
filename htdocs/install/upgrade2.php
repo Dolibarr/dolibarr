@@ -380,7 +380,9 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
             // Migrate contact association
-            migrate_event_assignement_contact($db,$langs,$conf);
+        	migrate_event_assignement_contact($db,$langs,$conf);
+
+        	migrate_reset_blocked_log($db,$langs,$conf);
         }
     }
 
@@ -3872,6 +3874,125 @@ function migrate_event_assignement_contact($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+
+/**
+ * Migrate to reset the blocked log for V7+ algorithm
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_reset_blocked_log($db,$langs,$conf)
+{
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationResetBlockedLog')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_reset_blocked_log");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT DISTINCT entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."blockedlog";
+
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				print 'Process entity '.$obj->entity;
+
+				$sqlSearch = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog WHERE action = 'MODULE_SET' and entity = ".$obj->entity;
+				$resqlSearch = $db->query($sqlSearch);
+				if ($resqlSearch)
+				{
+					$objSearch = $db->fetch_object($resqlSearch);
+					//var_dump($objSearch);
+					if ($objSearch && $objSearch->nb == 0)
+					{
+						print ' - Record for entity must be reset...';
+
+						$sqlUpdate = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
+						$sqlUpdate.= " WHERE entity = " . $obj->entity;
+						$resqlUpdate=$db->query($sqlUpdate);
+						if (! $resqlUpdate)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+						else
+						{
+							// Add set line
+							$object=new stdClass;
+							$object->id = 1;
+							$object->element = 'module';
+							$object->ref = 'systemevent';
+							$object->entity = $obj->entity;
+							$object->date = dol_now();
+
+							$b=new BlockedLog($this->db);
+							$b->setObjectData($object, 'MODULE_SET', 0);
+
+							$res = $b->create($user);
+							if ($res<=0) {
+								$this->error = $b->error;
+								$this->errors = $b->errors;
+								$error++;
+							}
+						}
+					}
+					else
+					{
+						print ' - '.$langs->trans('AlreadyInV7');
+					}
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('NothingToDo')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+
 /**
  * Migrate to add entity value into llx_societe_remise
  *
@@ -3945,7 +4066,6 @@ function migrate_remise_entity($db,$langs,$conf)
 		dol_print_error($db);
 		$db->rollback();
 	}
-
 
 	print '</td></tr>';
 }

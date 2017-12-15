@@ -6127,15 +6127,15 @@ function dol_osencode($str)
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
  * 		@param	DoliDB	$db				Database handler
- * 		@param	string	$key				Code or Id to get Id or Code
+ * 		@param	string	$key			Code or Id to get Id or Code
  * 		@param	string	$tablename		Table name without prefix
- * 		@param	string	$fieldkey		Field for code
- * 		@param	string	$fieldid			Field for id
+ * 		@param	string	$fieldkey		Field to search the key into
+ * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$entityfilter=0)
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id', $entityfilter=0)
 {
 	global $cache_codes;
 

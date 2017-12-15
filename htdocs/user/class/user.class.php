@@ -727,19 +727,21 @@ class User extends CommonObject
 				if ($perms)
 				{
 					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = new stdClass(); // For avoid error
-					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-					if ($subperms)
+					if ($module)
 					{
-						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
-						$this->rights->$module->$perms->$subperms = 1;
+						if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
+						if ($subperms)
+						{
+							if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+							if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+							$this->rights->$module->$perms->$subperms = 1;
+						}
+						else
+						{
+							if(empty($this->rights->$module->$perms)) $this->nb_rights++;
+							$this->rights->$module->$perms = 1;
+						}
 					}
-					else
-					{
-						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
-					}
-
 				}
 				$i++;
 			}

@@ -50,6 +50,8 @@ class UserGroup extends CommonObject
 	public $datem;			// Modification date of group
 	public $members=array();	// Array of users
 
+	public $nb_rights;			           // Number of rights granted to the user
+
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
 	public $oldcopy;		// To contains a clone of this when we need to save old properties of object
@@ -63,6 +65,7 @@ class UserGroup extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
+		$this->nb_rights = 0;
 
 		return 0;
 	}
@@ -536,10 +539,12 @@ class UserGroup extends CommonObject
 					if ($subperms)
 					{
 						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
+						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
 						$this->rights->$module->$perms = 1;
 					}
 				}
