@@ -479,7 +479,6 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	text-align: center;
 	cursor: pointer;
 	text-decoration: none !important;
-	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
