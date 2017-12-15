@@ -467,6 +467,51 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
+	* Set a proposal to draft
+	*
+	* @param   int     $id             Order ID
+	*
+	* @url POST    {id}/settodraft
+	*
+	* @return  array
+	*/
+	function settodraft($id)
+	{
+		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+			throw new RestException(401);
+		}
+		$result = $this->propal->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Proposal not found');
+		}
+
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->propal->set_draft(DolibarrApiAccess::$user);
+		if ($result == 0) {
+			throw new RestException(304, 'Nothing done. May be object is already draft');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error : '.$this->propal->error);
+		}
+
+                $result = $this->propal->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Proposal not found');
+		}
+
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->propal->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->propal);
+	}
+
+
+	/**
 	 * Validate a commercial proposal
 	 *
 	 * @param   int     $id             Commercial proposal ID
