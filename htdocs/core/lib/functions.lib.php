@@ -3762,8 +3762,8 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle" align="right">';
-	if ($sortfield) $options .= "&sortfield=".$sortfield;
-	if ($sortorder) $options .= "&sortorder=".$sortorder;
+	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
+	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
 	$pagelist = '';
 	if ($savlimit != 0 && ($page > 0 || $num > $limit))
