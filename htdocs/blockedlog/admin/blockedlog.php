@@ -96,7 +96,7 @@ if (GETPOST('withtab','alpha'))
 }
 
 
-print $langs->trans("BlockedLogDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
 print '<br>';
 
@@ -152,7 +152,22 @@ $seledted = empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) ? a
 print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $seledted);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
+
+print '</td>';
+
+
+print '<tr class="oddeven">';
+print '<td class="titlefield">';
+print $langs->trans("ListOfTrackedEvents").'</td><td>';
+$arrayoftrackedevents=$block_static->trackedevents;
+foreach($arrayoftrackedevents as $key => $val)
+{
+	print $key.'-'.$val.'<br>';
+}
+
 print '</td></tr>';
+
+print '</tr>';
 
 print '</table>';
 

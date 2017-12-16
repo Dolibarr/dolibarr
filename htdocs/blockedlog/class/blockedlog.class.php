@@ -88,6 +88,12 @@ class BlockedLog
 
 	public $object_data = null;
 
+	/**
+	 * Array of tracked event codes
+	 * @var string[]
+	 */
+	public $trackedevents = array();
+
 
 
 	/**
@@ -97,8 +103,49 @@ class BlockedLog
 	 */
 	public function __construct(DoliDB $db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
+		$this->trackedevents = array();
+
+		if ($conf->facture->enabled) $this->trackedevents['BILL_VALIDATE']='BillValidate';
+		if ($conf->facture->enabled) $this->trackedevents['BILL_DELETE']='BillDelete';
+		if ($conf->facture->enabled) $this->trackedevents['BILL_SENTBYMAIL']='BillSentByEmail';
+		if ($conf->facture->enabled) $this->trackedevents['DOC_DOWNLOAD']='BillDownload';
+		if ($conf->facture->enabled) $this->trackedevents['DOC_PREVIEW']='BillPreview';
+
+		if ($conf->facture->enabled) $this->trackedevents['PAYMENT_CUSTOMER_CREATE']='BillPaymentCreate';
+		if ($conf->facture->enabled) $this->trackedevents['PAYMENT_CUSTOMER_DELETE']='BillPaymentDelete';
+
+		/* Supplier
+		if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_VALIDATE']='SupplierBillValidate';
+		if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_DELETE']='SupplierBillDelete';
+		if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='SupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
+		if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='SupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
+		if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_PREVIEW']='SupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
+
+		if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_CREATE']='SupplierBillPaymentCreate';
+		if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='supplierBillPaymentCreate';
+		*/
+
+		if ($conf->don->enabled) $this->trackedevents['DON_CREATE']='DonationCreate';
+		if ($conf->don->enabled) $this->trackedevents['DON_MODIFY']='DonationModify';
+		if ($conf->don->enabled) $this->trackedevents['DON_DELETE']='DonationDelete';
+
+		/*
+		if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_CREATE']='SalaryPaymentCreate';
+		if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_MODIFY']='SalaryPaymentCreate';
+		if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_DELETE']='SalaryPaymentCreate';
+		*/
+
+		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION']='MemberSubscription';
+
+		/*
+		 $trackedevents['PAYMENT_VARIOUS_CREATE']='VariousPaymentCreate';
+		 $trackedevents['PAYMENT_VARIOUS_MODIFY']='VariousPaymentModify';
+		 $trackedevents['PAYMENT_VARIOUS_DELETE']='VariousPaymentDelete';
+		*/
 	}
 
 	/**

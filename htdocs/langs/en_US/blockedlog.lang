@@ -25,6 +25,7 @@ logBILL_DELETE=Customer bill deleted
 logMODULE_RESET=Module BlockedLog was disabled
 logMODULE_SET=Module BlockedLog was enabled
 BlockedlogInfoDialog=Log Details
+ListOfTrackedEvents=List of tracked events
 Fingerprint=Fingerprint
 DownloadLogCSV=Download archive logs (CSV)
 logDOC_PREVIEW=Preview of a validated document in order to print or download

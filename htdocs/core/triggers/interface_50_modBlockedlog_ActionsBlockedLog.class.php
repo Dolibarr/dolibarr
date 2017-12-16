@@ -55,10 +55,19 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+		$b=new BlockedLog($this->db);
+
+		// Tracked events
+		if (! in_array($action, array_keys($b->trackedevents)))
+		{
+			return 0;
+		}
+
 		// Event/record is qualified
 		$qualified = 0;
 		$amounts = 0;
 		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
+			|| $action==='BILL_SUPPLIER_VALIDATE' || $action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL'
 			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
 		)
 		{
@@ -88,13 +97,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$amounts= (double) $object->amount;
 		}
 
+		// Another protection.
+		// May be used when event is DOC_DOWNLOAD or DOC_PREVIEW and element is not an invoice
 		if (! $qualified)
 		{
 			return 0; // not implemented action log
 		}
 
 
-		$b=new BlockedLog($this->db);
 		$result = $b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
 		if ($result < 0)
 		{
