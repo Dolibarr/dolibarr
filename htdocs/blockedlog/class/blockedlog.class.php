@@ -353,9 +353,15 @@ class BlockedLog
 			$this->object_data->note = $object->note;
 			//var_dump($this->object_data);exit;
 
+			$totalamount=0;
+
 			$paymentpartnumber=0;
 			foreach($object->amounts as $invoiceid => $amount)
 			{
+				if (empty($amount)) continue;
+
+				$totalamount += $amount;
+
 				if ($this->element == 'payment_supplier')
 				{
 					$tmpinvoice = new FactureFournisseur($this->db);
@@ -406,6 +412,8 @@ class BlockedLog
 				$paymentpartnumber++;
 				$this->object_data->payment_part[$paymentpartnumber] = $paymentpart;
 			}
+
+			$this->object_data->amount = $totalamount;
 		}
 		elseif($this->element == 'payment_salary')
 		{
