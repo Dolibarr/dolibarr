@@ -297,7 +297,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
     border: none;
-    border-bottom: solid 1px rgba(0,0,0,.1);
+    border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)?'-bottom':''; ?>: solid 1px rgba(0,0,0,.2);
     outline: none;
     margin: 0px 0px 0px 0px;
 }
@@ -317,9 +317,6 @@ input, select {
 	margin-top:1px;
 }
 
-input, select {
-	border-bottom: solid 1px rgba(0,0,0,.1);
-}
 
 textarea {
 	border-radius: 0;
