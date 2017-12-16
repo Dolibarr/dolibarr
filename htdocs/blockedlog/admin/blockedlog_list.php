@@ -38,6 +38,7 @@ $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output
 
 $showonlyerrors = GETPOST('showonlyerrors','int');
 
+$search_fk_user=GETPOST('search_fk_user','intcomma');
 $search_start = -1;
 if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
 $search_end = -1;
@@ -72,6 +73,7 @@ $result = restrictedArea($user, 'blockedlog', 0, '');
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
+	$search_fk_user = '';
 	$search_start = -1;
 	$search_end = -1;
 	$search_ref = '';
@@ -156,45 +158,56 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_start, $search_end, $search_ref, $search_amount);
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount);
 if (! is_array($blocks))
 {
 	dol_print_error($block_static->db);
 	exit;
 }
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='';
+if (GETPOST('withtab','alpha'))
+{
+	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+}
+
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
 
-$head=blockedlogadmin_prepare_head();
+if (GETPOST('withtab','alpha'))
+{
+	$head=blockedlogadmin_prepare_head();
+	dol_fiche_head($head, 'fingerprints', '', -1);
+}
 
-dol_fiche_head($head, 'fingerprints', '', -1);
-
-print $langs->trans("FingerprintsDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("FingerprintsDesc")."</span><br>\n";
 
 print '<br>';
 
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-if ($search_start > 0) $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int')).'&search_startmonth='.urlencode(GETPOST('search_startmonth','int')).'&search_startday='.urlencode(GETPOST('search_startday','int'));
-if ($search_end > 0)   $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int')).'&search_endmonth='.urlencode(GETPOST('search_endmonth','int')).'&search_endday='.urlencode(GETPOST('search_endday','int'));
-if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
+if ($search_fk_user > 0) $param.='&search_fk_user='.urlencode($search_fk_user);
+if ($search_start > 0)   $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int')).'&search_startmonth='.urlencode(GETPOST('search_startmonth','int')).'&search_startday='.urlencode(GETPOST('search_startday','int'));
+if ($search_end > 0)     $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int')).'&search_endmonth='.urlencode(GETPOST('search_endmonth','int')).'&search_endday='.urlencode(GETPOST('search_endday','int'));
+if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab','alpha'));
+
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 
 print '<div align="right">';
-print ' <a href="?all=1">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a>';
-print ' | <a href="?all=1&showonlyerrors=1">'.$langs->trans('ShowAllFingerPrintsErrorsMightBeTooLong').'</a>';
-print ' | <a href="?action=downloadblockchain">'.$langs->trans('DownloadBlockChain').'</a>';
-print ' | <a href="?action=downloadcsv">'.$langs->trans('DownloadLogCSV').'</a>';
+print ' <a href="?all=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a>';
+print ' | <a href="?all=1&showonlyerrors=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsErrorsMightBeTooLong').'</a>';
+print ' | <a href="?action=downloadcsv'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadLogCSV').'</a>';
+if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
 print ' </div>';
 
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre_filter">';
@@ -206,7 +219,11 @@ print $form->select_date($search_start,'search_start');
 print $form->select_date($search_end,'search_end');
 print '</td>';
 
-print '<td class="liste_titre"></td>';
+// User
+print '<td class="liste_titre">';
+print $form->select_users($search_fk_user, 'search_fk_user', 1);
+print '</td>';
+
 print '<td class="liste_titre"></td>';
 
 // Ref
@@ -373,7 +390,10 @@ if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->globa
 
 }
 
-dol_fiche_end();
+if (GETPOST('withtab','alpha'))
+{
+	dol_fiche_end();
+}
 
 print '<br><br>';
 

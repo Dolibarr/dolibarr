@@ -110,6 +110,7 @@ class modBlockedLog extends DolibarrModules
         $this->boxes = array();
 
         // Permissions
+        // -----------------
         $this->rights = array();		// Permission array used by this module
 
         $r=0;
@@ -120,8 +121,22 @@ class modBlockedLog extends DolibarrModules
         $this->rights[$r][5] = '';
 
         // Main menu entries
-        //------------------
-        $this->menu = array();
+        // -----------------
+        $r=0;
+        $this->menu[$r]=array(
+        'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        'mainmenu'=>'tools',
+        'leftmenu'=>'blockedlogbrowser',
+        'type'=>'left',			                // This is a Left menu entry
+        'titre'=>'BrowseBlockedLog',
+        'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
+        'langs'=>'blockedlog',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+        'position'=>200,
+        'enabled'=>'$conf->blockedlog->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+        'perms'=>'$user->rights->blockedlog->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+        'target'=>'',
+        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
     }
 
 
