@@ -641,6 +641,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			if ((float) DOL_VERSION >= 6.0)
 			{
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
 				$content = dolMd2Html($content, 'parsedown',
 					array(
 						'doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1),

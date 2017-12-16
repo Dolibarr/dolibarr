@@ -134,6 +134,27 @@ Change also file Luracast/Restler/explorer/index.html
 PARSEDOWN
 ---------
 
+* Add support of css by adding in Parsedown.php:
+
+	// @CHANGE LDR
+	'class' => $Link['element']['attributes']['class'] 
+
+	...
+	
+	// @CHANGE LDR
+    if (preg_match('/{([^}]+)}/', $remainder, $matches2))
+    {
+        $Element['attributes']['class'] = $matches2[1];
+       	$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+    }
+
+
+	// @CHANGE LDR
+	//$markup .= $this->{$Element['handler']}($Element['text']);
+	$markup .= preg_replace('/>{[^}]+}/', '>', $this->{$Element['handler']}($Element['text']));
+
+
+
 * Fix to avoid fatal error when mb_strlen not available:
 
 	// @CHANGE LDR Fix when mb_strlen is not available

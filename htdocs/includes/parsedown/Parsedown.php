@@ -1180,7 +1180,9 @@ class Parsedown
                 'name' => 'img',
                 'attributes' => array(
                     'src' => $Link['element']['attributes']['href'],
-                    'alt' => $Link['element']['text'],
+                	'alt' => $Link['element']['text'],
+                	// @CHANGE LDR
+                	'class' => $Link['element']['attributes']['class']
                 ),
             ),
         );
@@ -1231,6 +1233,13 @@ class Parsedown
             }
 
             $extent += strlen($matches[0]);
+
+            // @CHANGE LDR
+            if (preg_match('/{([^}]+)}/', $remainder, $matches2))
+            {
+            	$Element['attributes']['class'] = $matches2[1];
+            	$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+            }
         }
         else
         {
@@ -1426,7 +1435,9 @@ class Parsedown
 
             if (isset($Element['handler']))
             {
-                $markup .= $this->{$Element['handler']}($Element['text']);
+            	// @CHANGE LDR
+            	//$markup .= $this->{$Element['handler']}($Element['text']);
+            	$markup .= preg_replace('/>{[^}]+}/', '>', $this->{$Element['handler']}($Element['text']));
             }
             else
             {
