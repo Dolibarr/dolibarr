@@ -63,7 +63,7 @@ class modBlockedLog extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array('blockedlog.php@blockedlog');
+        $this->config_page_url = array('blockedlog.php?withtab=1@blockedlog');
 
         // Dependancies
         //-------------
