@@ -2040,12 +2040,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 			$i++;
 			if ($i % 2 == 0) $tmpstyleinheader.=$valtmp."\n";
 		}
-		//$tmpstyleinheader.='</style>';
-		//$pos=strpos($tmpstyleinheader, '<style');
-		//if ($pos) $tmpstyleinheader = substr($tmpstyleinheader, $pos);
-		//$tmpstyleinheader = preg_replace('/^.*(<style[^>]*>)+/ims','aaa', $tmpstyleinheader);
-		//$tmpstyleinheader = preg_replace('/(</style>).*$/ims','$1', $tmpstyleinheader);
-		//$tmpstyleinheader = preg_replace('/</style>.*<style[^>]*>/ims','', $tmpstyleinheader);
 		$tmpout.= $tmpstyleinheader."\n";
 		// Clean style that may affect global style of Dolibarr
 		$tmpout=preg_replace('/}[\s\n]*body\s*{[^}]+}/ims','}',$tmpout);
