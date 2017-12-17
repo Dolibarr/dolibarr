@@ -853,30 +853,23 @@ class FormMail extends Form
 
 				// Complete substitution array
 				$paymenturl='';
-				if (! empty($conf->global->PAYMENT_ADD_PAYMENT_URL)		// Option to enable to add online link into __PERSONALIZED__
-					|| (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
-				)
+				if (empty($this->substit['__REF__']))
 				{
-					if (empty($this->substit['__REF__']))
-					{
-						//$paymenturl='LinkToPayOnlineNotAvailableInThisContext';
-						$paymenturl='';
-					}
-					else
-					{
-						// Set the online payment message and url link into __PERSONALIZED__ key
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-						$langs->load('paypal');
-						$typeforonlinepayment='free';
-						if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
-						if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
-						if ($this->param["models"]=='member_send')  $typeforonlinepayment='member';		// TODO use detection on something else than template
-						$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
-		   				//$paymenturl=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
-		   				$paymenturl=$url;
-					}
+					$paymenturl='';
 				}
-				$this->substit['__PERSONALIZED__']=$paymenturl;			// deprecated
+				else
+				{
+					// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+					$langs->load('paypal');
+					$typeforonlinepayment='free';
+					if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
+					if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
+					if ($this->param["models"]=='member_send')  $typeforonlinepayment='member';		// TODO use detection on something else than template
+					$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
+		   			$paymenturl=$url;
+				}
+
 				$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
 
 				//Add lines substitution key from each line
