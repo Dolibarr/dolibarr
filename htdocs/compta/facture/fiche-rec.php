@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load('bills');
 $langs->load('compta');
 $langs->load('admin');
+$langs->load('products');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -565,7 +566,7 @@ if ($action == 'addline' && $user->rights->facture->creer)
             setEventMessages($mesg, null, 'errors');
         } else {
             // Insert line
-            $result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
+            $result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
 
             if ($result > 0)
             {
@@ -1047,6 +1048,15 @@ else
 
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 		// Localtax1
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' .price($object->total_localtax1, '', $langs, -1, -1, -1, $conf->currency) . "</td></tr>";
+		}
+
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) 		// Localtax2
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($object->total_localtax2, '', $langs, -1, -1, -1, $conf->currency) . "</td></tr>";
+		}
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
 

@@ -902,6 +902,8 @@ if (empty($reshook))
 				// Source facture
 				$object->fac_rec = GETPOST('fac_rec');
 
+				$object->fetch_thirdparty();
+
 				$id = $object->create($user);
 			}
 		}

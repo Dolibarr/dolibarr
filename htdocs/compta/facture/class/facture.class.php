@@ -479,7 +479,7 @@ class Facture extends CommonInvoice
 			{
 				$fk_parent_line = 0;
 
-				dol_syslog("There is ".count($this->lines)." lines that are array lines");
+				dol_syslog("There is ".count($this->lines)." lines that are array lines", LOG_DEBUG);
 				foreach ($this->lines as $i => $val)
 				{
 					if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
