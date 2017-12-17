@@ -1698,7 +1698,11 @@ if ($action == 'editcss')
 
 	// Common HTML header
 	print '<tr><td class="tdtop">';
-	print $langs->trans('WEBSITE_HTML_HEADER');
+	$htmlhelp=$langs->trans("Example").' :<br>';
+	$htmlhelp.='&lt;script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='&lt;script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='&lt;link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /&gt;<br>';
+	print $form->textwithpicto($langs->trans('WEBSITE_HTML_HEADER'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 
 	$doleditor=new DolEditor('WEBSITE_HTML_HEADER', $htmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
