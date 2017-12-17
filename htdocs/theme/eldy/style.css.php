@@ -3468,6 +3468,10 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.phptag {
+	background: #ddd; border: 1px solid #ccc; border-radius: 4px;
+}
+
 .nobordertransp {
     border: 0px;
     background-color: transparent;

@@ -110,6 +110,15 @@ if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+	// Check if pageid is inside the new website, if not we reset param pageid
+	if ($object->id > 0 && ($objectpage->fk_website != $object->id))
+	{
+		$res = $objectpage->fetch(0, $object->id, '');;
+		if ($res == 0)	// Page was not found, we reset it
+		{
+			$objectpage=new WebsitePage($db);
+		}
+	}
 	$pageid = $objectpage->id;
 }
 
@@ -1202,6 +1211,7 @@ $arrayofjs = array(
 	'/includes/ace/ext-statusbar.js',
 	'/includes/ace/ext-language_tools.js',
 	//'/includes/ace/ext-chromevox.js'
+	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
 );
 $arrayofcss = array();
 
@@ -2016,11 +2026,30 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		// REPLACEMENT OF LINKS When page called by website editor
 
-		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-		$out.= '/* Include website CSS file */'."\n";
-		$out.=dolWebsiteReplacementOfLinks($object, $csscontent, 1);
-		$out.= '/* Include HTML header from the inline block */'."\n";
-		$out.= $objectpage->htmlheader."\n";
+		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". No more supported by browsers, snif !
+		$tmpout='';
+		$tmpout.= '/* Include website CSS file */'."\n";
+		$tmpout.= dolWebsiteReplacementOfLinks($object, $csscontent, 1);
+		$tmpout.= '/* Include style from the HTML header of page */'."\n";
+		// Clean the html header of page to get only <style> content
+		$tmp = preg_split('(<style[^>]*>|</style>)', $objectpage->htmlheader);
+		$tmpstyleinheader ='';
+		$i=0;
+		foreach($tmp as $valtmp)
+		{
+			$i++;
+			if ($i % 2 == 0) $tmpstyleinheader.=$valtmp."\n";
+		}
+		//$tmpstyleinheader.='</style>';
+		//$pos=strpos($tmpstyleinheader, '<style');
+		//if ($pos) $tmpstyleinheader = substr($tmpstyleinheader, $pos);
+		//$tmpstyleinheader = preg_replace('/^.*(<style[^>]*>)+/ims','aaa', $tmpstyleinheader);
+		//$tmpstyleinheader = preg_replace('/(</style>).*$/ims','$1', $tmpstyleinheader);
+		//$tmpstyleinheader = preg_replace('/</style>.*<style[^>]*>/ims','', $tmpstyleinheader);
+		$tmpout.= $tmpstyleinheader."\n";
+		// Clean style that may affect global style of Dolibarr
+		$tmpout=preg_replace('/}[\s\n]*body\s*{[^}]+}/ims','}',$tmpout);
+		$out.=$tmpout;
 		$out.='</style>'."\n";
 
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
@@ -2032,9 +2061,12 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		$out.='</div>';
 
-		$out.='</div>';
+		$out.='</div> <!-- End div id=websitecontentundertopmenu -->';
 
 		$out.= "\n".'<!-- End page content '.$filetpl.' -->'."\n\n";
+
+		// For jqueryscoped (does not work as expected)
+		//$out.="<script>$.scoped();</script>";
 
 		print $out;
 
