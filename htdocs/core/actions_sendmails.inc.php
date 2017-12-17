@@ -105,7 +105,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 	$trackid = GETPOST('trackid','aZ09');
 	$subject='';$actionmsg='';$actionmsg2='';
 
-	if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
 
 	if (is_object($object))
@@ -129,36 +128,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
-			elseif (! empty($conf->dolimail->enabled))
-			{
-				$dolimail = new Dolimail($db);
-				$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
-				$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
-				if (!$possibleaccounts && !$possibleuser)
-				{
-					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
-				}
-				elseif (count($possibleaccounts)>1)
-				{
-					$sendtosocid=$possibleaccounts[1]['id'];
-					$result=$object->fetch($sendtosocid);
-
-					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
-				}
-				else
-				{
-					if($possibleaccounts){
-						$sendtosocid=$possibleaccounts[1]['id'];
-						$result=$object->fetch($sendtosocid);
-					}elseif($possibleuser){
-						$sendtosocid=$possibleuser[0]['id'];
-
-						$result=$uobject->fetch($sendtosocid);
-						$object=$uobject;
-					}
-
-				}
-			}
 		}
 		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
 	}
@@ -318,49 +287,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
-
-			// Feature to push mail sent into Sent folder
-			if (! empty($conf->dolimail->enabled))
-			{
-				$mailfromid = explode("#", $_POST['frommail'],3);	// $_POST['frommail'] = 'aaa#Sent# <aaa@aaa.com>'	// TODO Use a better way to define Sent dir.
-				if (count($mailfromid)==0) $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-				else
-				{
-					$mbid = $mailfromid[1];
-
-					/*IMAP Postbox*/
-					$mailboxconfig = new IMAP($db);
-					$mailboxconfig->fetch($mbid);
-					if ($mailboxconfig->mailbox_imap_host) $ref=$mailboxconfig->get_ref();
-
-					$mailboxconfig->folder_id=$mailboxconfig->mailbox_imap_outbox;
-					$mailboxconfig->userfolder_fetch();
-
-					if ($mailboxconfig->mailbox_save_sent_mails == 1)
-					{
-
-						$folder=str_replace($ref, '', $mailboxconfig->folder_cache_key);
-						if (!$folder) $folder = "Sent";	// Default Sent folder
-
-						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
-						if (FALSE === $mailboxconfig->mbox)
-						{
-							$info = FALSE;
-							$err = $langs->trans('Error3_Imap_Connection_Error');
-							setEventMessages($err,$mailboxconfig->element, null, 'errors');
-						}
-						else
-						{
-							$mailboxconfig->mailboxid=$_POST['frommail'];
-							$mailboxconfig->foldername=$folder;
-							$from = $mailfromid[0] . $mailfromid[2];
-							$imap=1;
-						}
-
-					}
-				}
-			}
-
 			// Make substitution in email content
 			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
 			$substitutionarray['__EMAIL__'] = $sendto;
@@ -393,26 +319,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($result)
 				{
 					$error=0;
-
-					// FIXME This must be moved into the trigger for action $trigger_name
-					if (! empty($conf->dolimail->enabled))
-					{
-						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
-						if ($mid)
-						{
-							// set imap flag answered if it is an answered mail
-							$dolimail=new DoliMail($db);
-							$dolimail->id = $mid;
-							$res=$dolimail->set_prop($user, 'answered',1);
-						}
-						if ($imap==1)
-						{
-							// write mail to IMAP Server
-							$movemail = $mailboxconfig->putMail($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$folder,$deliveryreceipt,$mailfile);
-							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
-							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings');
-						}
-					}
 
 					// Initialisation of datas
 					if (is_object($object))
@@ -453,11 +359,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessages($mesg, null, 'mesgs');
-						if ($conf->dolimail->enabled)
-						{
-						    header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						    exit;
-						}
 						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
 						exit;
 					}
