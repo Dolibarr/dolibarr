@@ -503,7 +503,7 @@ class Conf
 		if (! isset($this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE)) $this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=1;
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
-		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Enable select2
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';
@@ -580,6 +580,8 @@ class Conf
 		if (! empty($this->global->MAIN_HIDE_LEFT_MENU)) $this->dol_hide_leftmenu=$this->global->MAIN_HIDE_LEFT_MENU;
 
 		if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) $this->global->MAIN_SIZE_SHORTLIST_LIMIT=3;
+
+		if (! isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) $this->global->THEME_HIDE_BORDER_ON_INPUT=0;
 
 		// Save inconsistent option
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && (! isset($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO'))

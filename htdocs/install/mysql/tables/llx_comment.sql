@@ -16,13 +16,15 @@
 --
 -- ===========================================================================
 
-CREATE TABLE llx_projet_task_comment (
+CREATE TABLE llx_comment (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
     datec datetime  DEFAULT NULL,
     tms timestamp,
     description text NOT NULL,
-    fk_user integer DEFAULT NULL,
-    fk_task integer DEFAULT NULL,
+    fk_user_author integer DEFAULT NULL,
+    fk_element integer DEFAULT NULL,
+    element_type varchar(50) DEFAULT NULL,
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
-) ENGINE=innodb;
+)ENGINE=innodb;
+

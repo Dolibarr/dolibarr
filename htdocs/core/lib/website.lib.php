@@ -39,7 +39,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/value="<\?php((?!\?>).)*\?>\n*/ims', 'value="'.$replacewith.'"', $content);
 
-	$replacewith='<span style="background: #ddd; border: 1px solid #ccc; border-radius: 4px;">...php...</span>';
+	$replacewith='<span class="phptag">...php...</span>';
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 

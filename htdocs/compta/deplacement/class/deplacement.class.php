@@ -60,8 +60,6 @@ class Deplacement extends CommonObject
 
         $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
         $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-
-		return 1;
 	}
 
 	/**

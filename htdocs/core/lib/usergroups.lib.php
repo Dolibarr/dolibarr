@@ -224,7 +224,7 @@ function group_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("GroupRights");
+		$head[$h][1] = $langs->trans("GroupRights"). ' <span class="badge">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}
@@ -267,7 +267,7 @@ function user_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-   $head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." ".$langs->trans("Groups");
 	$head[$h][2] = 'attributes_group';
 	$h++;

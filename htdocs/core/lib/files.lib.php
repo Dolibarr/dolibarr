@@ -2723,3 +2723,44 @@ function dol_readcachefile($directory, $filename)
 	$object = unserialize(file_get_contents($cachefile));
 	return $object;
 }
+
+
+/**
+ * Function to get list of updated or modified files.
+ * $file_list is used as global variable
+ *
+ * @param	array				$file_list	        Array for response
+ * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
+ * @param   string   			$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
+ * @param   string              $pathref            Path ref (DOL_DOCUMENT_ROOT)
+ * @param   array               $checksumconcat     Array of checksum
+ * @return  array               			        Array of filenames
+ */
+function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
+{
+	$exclude = 'install';
+
+	foreach ($dir->md5file as $file)    // $file is a simpleXMLElement
+	{
+		$filename = $path.$file['name'];
+		$file_list['insignature'][] = $filename;
+
+		//if (preg_match('#'.$exclude.'#', $filename)) continue;
+
+		if (!file_exists($pathref.'/'.$filename))
+		{
+			$file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file);
+		}
+		else
+		{
+			$md5_local = md5_file($pathref.'/'.$filename);
+			if ($md5_local != (string) $file) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file, 'md5'=>(string) $md5_local);
+			$checksumconcat[] = $md5_local;
+		}
+	}
+
+	foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
+
+	return $file_list;
+}
+

@@ -284,15 +284,13 @@ input[type=submit] {
 	margin-left: 5px;
 }
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
-	<?php if (empty($conf->global->THEME_ELDY_SHOW_BORDER_INPUT))
-	print "border: none;"
-	?>
+	border: none;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     font-family: <?php print $fontlist ?>;
     outline: none;
     margin: 0px 0px 0px 0px;
-    border-bottom: solid 1px rgba(0,0,0,.2);
+    border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT)?'-bottom':''; ?>: solid 1px rgba(0,0,0,.2);
 }
 
 input {
@@ -3470,6 +3468,10 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.phptag {
+	background: #ddd; border: 1px solid #ccc; border-radius: 4px;
+}
+
 .nobordertransp {
     border: 0px;
     background-color: transparent;
@@ -4572,6 +4574,19 @@ dl.dropdown {
 }
 .dropdown dd ul li a:hover {
     background-color:#fff;
+}
+
+
+/* ============================================================================== */
+/*  Markdown rendering                                                             */
+/* ============================================================================== */
+
+.imgmd {
+	width: 90%;
+}
+.moduledesclong h1 {
+	padding-top: 10px;
+	padding-bottom: 20px;
 }
 
 

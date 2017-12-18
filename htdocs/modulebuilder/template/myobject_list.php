@@ -102,6 +102,7 @@ if ($user->societe_id > 0)
 	//$socid = $user->societe_id;
 	accessforbidden();
 }
+//$result = restrictedArea($user, 'mymodule', $id,'');
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));

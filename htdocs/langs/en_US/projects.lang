@@ -215,6 +215,7 @@ AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>S
 LatestProjects=Latest %s projects
 LatestModifiedProjects=Latest %s modified projects
 OtherFilteredTasks=Other filtered tasks
+NoAssignedTasks=No assigned tasks (assign yourself project/tasks from the top select box to enter time on it)
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects

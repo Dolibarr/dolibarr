@@ -641,6 +641,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			if ((float) DOL_VERSION >= 6.0)
 			{
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
 				$content = dolMd2Html($content, 'parsedown',
 					array(
 						'doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1),
@@ -1666,7 +1667,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$r_def      = $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
-					$r_modul    = $this->rights_class;
+					$r_modul    = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
 					if (empty($r_type)) $r_type='w';
 

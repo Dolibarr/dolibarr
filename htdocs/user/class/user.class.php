@@ -44,6 +44,7 @@ class User extends CommonObject
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	public $id=0;
+	public $statut;
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -56,7 +57,7 @@ class User extends CommonObject
 	public $address;
 	public $zip;
 	public $town;
-	public $state_id;
+	public $state_id;		// The state/department
 	public $state_code;
 	public $state;
 	public $office_phone;
@@ -101,7 +102,6 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
-	public $statut;
 	public $photo;
 	public $lang;
 
@@ -727,19 +727,21 @@ class User extends CommonObject
 				if ($perms)
 				{
 					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = new stdClass(); // For avoid error
-					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-					if ($subperms)
+					if ($module)
 					{
-						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
-						$this->rights->$module->$perms->$subperms = 1;
+						if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
+						if ($subperms)
+						{
+							if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+							if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+							$this->rights->$module->$perms->$subperms = 1;
+						}
+						else
+						{
+							if(empty($this->rights->$module->$perms)) $this->nb_rights++;
+							$this->rights->$module->$perms = 1;
+						}
 					}
-					else
-					{
-						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
-					}
-
 				}
 				$i++;
 			}
@@ -2100,6 +2102,7 @@ class User extends CommonObject
 		}
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
 
 		// Info Login

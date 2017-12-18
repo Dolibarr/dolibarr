@@ -30,7 +30,7 @@ $langs->load("admin");
 $langs->load("other");
 $langs->load("blockedlog");
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -76,20 +76,27 @@ if (preg_match('/del_(.*)/',$action,$reg))
  *	View
  */
 
-$block_static = new BlockedLog($db);
-
 $form=new Form($db);
+$block_static = new BlockedLog($db);
 
 llxHeader('',$langs->trans("BlockedLogSetup"));
 
-$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='';
+if (GETPOST('withtab','alpha'))
+{
+	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+}
+
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
 
-$head=blockedlogadmin_prepare_head();
+if (GETPOST('withtab','alpha'))
+{
+	$head=blockedlogadmin_prepare_head();
+	dol_fiche_head($head, 'blockedlog', '', -1);
+}
 
-dol_fiche_head($head, 'blockedlog', '', -1);
 
-print $langs->trans("BlockedLogDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
 print '<br>';
 
@@ -107,8 +114,7 @@ print '</td></tr>';
 
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) {
 	// Example with a yes / no select
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
 	print '<td align="right" width="300">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -146,11 +152,29 @@ $seledted = empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) ? a
 print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $seledted);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
+
+print '</td>';
+
+
+print '<tr class="oddeven">';
+print '<td class="titlefield">';
+print $langs->trans("ListOfTrackedEvents").'</td><td>';
+$arrayoftrackedevents=$block_static->trackedevents;
+foreach($arrayoftrackedevents as $key => $val)
+{
+	print $key.'-'.$val.'<br>';
+}
+
 print '</td></tr>';
+
+print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+if (GETPOST('withtab','alpha'))
+{
+	dol_fiche_end();
+}
 
 print '<br><br>';
 

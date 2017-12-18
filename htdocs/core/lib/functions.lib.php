@@ -516,7 +516,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_numeric($out)) { $out=''; }
 			break;
 		case 'intcomma':
-			if (preg_match('/[^0-9,]+/i',$out)) $out='';
+			if (preg_match('/[^0-9,-]+/i',$out)) $out='';
 			break;
 		case 'alpha':
 			if (! is_array($out))
@@ -4026,7 +4026,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else
 		{
@@ -6127,15 +6127,15 @@ function dol_osencode($str)
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
  * 		@param	DoliDB	$db				Database handler
- * 		@param	string	$key				Code or Id to get Id or Code
+ * 		@param	string	$key			Code or Id to get Id or Code
  * 		@param	string	$tablename		Table name without prefix
- * 		@param	string	$fieldkey		Field for code
- * 		@param	string	$fieldid			Field for id
+ * 		@param	string	$fieldkey		Field to search the key into
+ * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$entityfilter=0)
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id', $entityfilter=0)
 {
 	global $cache_codes;
 
