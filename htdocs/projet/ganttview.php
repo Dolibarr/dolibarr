@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$id=GETPOST('id','int');
+$id=GETPOST('id','intcomma');
 $ref=GETPOST('ref','alpha');
 
 $mode = GETPOST('mode', 'alpha');
@@ -46,7 +46,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Security check
 $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'projet', $id,'projet&project');
+$result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $langs->load("users");
 $langs->load("projects");
