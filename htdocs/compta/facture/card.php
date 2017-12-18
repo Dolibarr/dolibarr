@@ -3730,7 +3730,7 @@ else if ($id > 0 || ! empty($ref))
 					else
 					{
 	                    var revenue_type = parseFloat(valselected);
-	                    var amount_net = ".round($object->total_ht , 2).";
+	                    var amount_net = ".round($object->total_ht, 2).";
 	                    revenue = revenue_type * amount_net / 100;
 	                    revenue = revenue.toFixed(2);
 					}
