@@ -365,7 +365,6 @@ if (! empty($_SESSION["disablemodules"]))
 	}
 }
 
-
 /*
  * Phase authentication / login
  */
