@@ -37,6 +37,7 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
 
+
 /**
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
@@ -595,30 +596,34 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 
 /**
  *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
- *  This prefix is unique for instance and avoid conflict between multi-instances,
- *  even when having two instances with one root dir or two instances in virtual servers.
+ *  This prefix is valid in a web context only and is unique for instance and avoid conflict
+ *  between multi-instances, even when having two instances with one root dir or two instances
+ *  in virtual servers.
  *
- *  @param  string  $mode       '' (prefix for session name) or 'email' (prefix for email id)
- *  @return	string      		A calculated prefix
+ *  @param  string  $mode       			'' (prefix for session name) or 'email' (prefix for email id)
+ *  @return	string      					A calculated prefix
  */
-function dol_getprefix($mode='')
+if (! function_exists('dol_getprefix'))
 {
-	global $conf;
-
-	// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
-	if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+	function dol_getprefix($mode='')
 	{
-		if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
-		else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
-	}
+		global $conf;
 
-	if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
-	{
-		return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
-		// Use this for a "clear" cookie name
-		//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
+		if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+		{
+			if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
+			else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+		}
+
+		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
+		{
+			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+			// Use this for a "readable" cookie name
+			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		}
+		else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 	}
-	else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 }
 
 /**
