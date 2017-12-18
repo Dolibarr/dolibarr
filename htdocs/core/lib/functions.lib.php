@@ -516,7 +516,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_numeric($out)) { $out=''; }
 			break;
 		case 'intcomma':
-			if (preg_match('/[^0-9,]+/i',$out)) $out='';
+			if (preg_match('/[^0-9,-]+/i',$out)) $out='';
 			break;
 		case 'alpha':
 			if (! is_array($out))
