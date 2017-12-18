@@ -904,6 +904,7 @@ SetupSaved=Setup saved
 SetupNotSaved=Setup not saved
 BackToModuleList=Back to modules list
 BackToDictionaryList=Back to dictionaries list
+TypeOfRevenueStamp=Type of revenue stamp
 VATManagement=VAT Management
 VATIsUsedDesc=By default when creating prospects, invoices, orders etc the VAT rate follows the active standard rule:<br>If the seller is not subjected to VAT, then VAT defaults to 0. End of rule.<br>If the (selling country= buying country), then the VAT by default equals the VAT of the product in the selling country. End of rule. <br>If seller and buyer are both in the European Community and goods are transport products (car, ship, plane), the default VAT is 0 ( The VAT should be paid by the buyer to the customoffice of his country and not to the seller). End of rule.<br>If seller and buyer are both in the European Community and the buyer is not a company, then the VAT by defaults to the VAT of the product sold.  End of rule.<br>If seller and buyer are both in the European Community and the buyer is a company, then the VAT is 0 by default . End of rule.<br>In any othe case the proposed default is VAT=0. End of rule.
 VATIsNotUsedDesc=By default the proposed VAT is 0 which can be used for cases like associations, individuals ou small companies.

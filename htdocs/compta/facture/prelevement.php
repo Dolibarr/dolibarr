@@ -120,6 +120,8 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
+	$selleruserevenustamp = $mysoc->useRevenueStamp();
+
 	$totalpaye  = $object->getSommePaiement();
 	$totalcreditnotes = $object->getSumCreditNotesUsed();
 	$totaldeposits = $object->getSumDepositsUsed();
@@ -486,17 +488,7 @@ if ($object->id > 0)
 	    }
         print '</tr></table>';
         print '</td><td>';
-        if ($action == 'editrevenuestamp') {
-            print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-            print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-            print '<input type="hidden" name="action" value="setrevenuestamp">';
-            print $formother->select_revenue_stamp(GETPOST('revenuestamp'), 'revenuestamp', $mysoc->country_code);
-            // print '<input type="text" class="flat" size="4" name="revenuestamp" value="'.price2num($object->revenuestamp).'">';
-            print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-            print '</form>';
-        } else {
-            print price($object->revenuestamp, 1, '', 1, - 1, - 1, $conf->currency);
-        }
+       	print price($object->revenuestamp, 1, '', 1, - 1, - 1, $conf->currency);
         print '</td></tr>';
 	}
 
