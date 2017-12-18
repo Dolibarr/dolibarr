@@ -290,8 +290,9 @@ class Proposals extends DolibarrApi
       if ($updateRes > 0) {
         return $updateRes;
 	  }
-
-	  return false;
+		else {
+			throw new RestException(400, $this->propal->error);
+		}
 	}
 
 	/**
