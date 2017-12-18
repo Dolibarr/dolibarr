@@ -6568,7 +6568,7 @@ function dol_getmypid()
 /**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
- * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR)
+ * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
  * @param 	string 			$value 		The value to look for.
  *                          		    If param $mode is 0, can contains several keywords separated with a space or |
  *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
