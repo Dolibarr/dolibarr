@@ -255,7 +255,8 @@ if ($action == 'create')
 	// Employee
 	print '<tr><td>';
 	print fieldLabel('Employee','fk_user',1).'</td><td>';
-	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$noactive=0;	// We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label

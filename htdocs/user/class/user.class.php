@@ -44,6 +44,7 @@ class User extends CommonObject
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	public $id=0;
+	public $statut;
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -56,7 +57,7 @@ class User extends CommonObject
 	public $address;
 	public $zip;
 	public $town;
-	public $state_id;
+	public $state_id;		// The state/department
 	public $state_code;
 	public $state;
 	public $office_phone;
@@ -101,7 +102,6 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
-	public $statut;
 	public $photo;
 	public $lang;
 
@@ -2102,6 +2102,7 @@ class User extends CommonObject
 		}
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
 
 		// Info Login

@@ -1442,7 +1442,7 @@ class Form
 	 *  @param  array	$exclude        Array list of users id to exclude
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that other must be disabled
+	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
 	 *  @param	int		$force_entity	0 or Id of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
@@ -1481,7 +1481,7 @@ class Form
 
 		$out='';
 
-		// On recherche les utilisateurs
+		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
