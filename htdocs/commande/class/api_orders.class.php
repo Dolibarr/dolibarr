@@ -676,6 +676,49 @@ class Orders extends DolibarrApi
     }
 
 
+     /**
+     * Create an order using an existing proposal.
+     *
+     *
+     * @param int   $proposalid       Id of the proposal
+     *
+     * @url     POST /createfromproposal/{proposalid}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function createOrderFromProposal($proposalid) {
+
+        require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+
+        if(! DolibarrApiAccess::$user->rights->propal->lire) {
+                throw new RestException(401);
+        }
+        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+                throw new RestException(401);
+        }
+        if(empty($proposalid)) {
+                throw new RestException(400, 'Proposal ID is mandatory');
+        }
+
+        $propal = new Propal($this->db);
+        $result = $propal->fetch($proposalid);
+        if( ! $result ) {
+                throw new RestException(404, 'Proposal not found');
+        }
+
+        $result = $this->commande->createFromProposal($propal, DolibarrApiAccess::$user);
+        if( $result < 0) {
+                throw new RestException(405, $this->commande->error);
+        }
+        $this->commande->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->commande);
+    }
+
+
     /**
      * Clean sensible object datas
      *
