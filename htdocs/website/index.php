@@ -1622,7 +1622,7 @@ $head = array();
 
 
 /*
- * Edit Site HTML header of CSS
+ * Edit Site HTML header and CSS
  */
 
 if ($action == 'editcss')
@@ -1672,7 +1672,12 @@ if ($action == 'editcss')
 		$htmlheadercontent.='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />'."\n";
 		$htmlheadercontent.="</html>";
 	}
-	else $htmlheadercontent='<html>'."\n".trim($htmlheadercontent)."\n".'</html>';
+	else
+	{
+		$htmlheadercontent = preg_replace('/^\s*<html>/ims', '', $htmlheadercontent);
+		$htmlheadercontent = preg_replace('/<\/html>\s*$/ims', '', $htmlheadercontent);
+		$htmlheadercontent='<html>'."\n".trim($htmlheadercontent)."\n".'</html>';
+	}
 
 	if (GETPOST('editcss','alpha') || GETPOST('refreshpage','alpha'))
 	{
