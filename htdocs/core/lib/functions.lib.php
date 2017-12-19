@@ -3492,9 +3492,10 @@ function dol_print_error($db='',$error='',$errors=null)
  *
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
+ * @param	array	$errormessages	Array of error messages
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='')
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
 {
 	global $langs,$conf;
 
@@ -3503,6 +3504,13 @@ function dol_print_error_email($prefixcode, $errormessage='')
 	print '<br><div class="center login_main_message"><div class="error">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
+	if (is_array($errormessages) && count($errormessages))
+	{
+		foreach($errormessages as $mesgtoshow)
+		{
+			print '<br><br>'.$mesgtoshow;
+		}
+	}
 	print '</div></div>';
 }
 

@@ -755,7 +755,7 @@ class FormMail extends Form
 				$defaulttopic=GETPOST('subject','none');
 				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
 				{
-					if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
+					if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
 					elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
 				}
 
