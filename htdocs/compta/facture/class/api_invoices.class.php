@@ -422,6 +422,15 @@ class Invoices extends DolibarrApi
             $this->invoice->$field = $value;
         }
 
+	// update bank account
+	if(!empty($this->invoice->fk_account))
+	{
+		if($this->invoice->setBankAccount($this->invoice->fk_account) == 0)
+		{
+			throw new RestException(400,$this->invoice->error);
+		}
+	}
+
         if($this->invoice->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
 
