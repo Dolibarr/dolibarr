@@ -36,8 +36,17 @@ class ActionComm extends CommonObject
     public $element='action';
     public $table_element = 'actioncomm';
     public $table_rowid = 'id';
-    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='action';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user, 2=Same than 1 but accept record if fksoc is empty
+     * @var integer
+     */
+    public $restrictiononfksoc = 2;
 
     /**
      * Id of the event

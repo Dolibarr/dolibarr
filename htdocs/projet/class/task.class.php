@@ -754,8 +754,8 @@ class Task extends CommonObject
 		}
 		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 		if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
-		if ($filteronproj) $sql.= " AND (p.ref LIKE '%".$this->db->escape($filteronproj)."%' OR p.title LIKE '%".$this->db->escape($filteronproj)."%')";
-		if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
+		if ($filteronproj) $sql.= natural_search(array("p.ref", "p.title"), $filteronproj);
+		if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql.=$morewherefilter;
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
