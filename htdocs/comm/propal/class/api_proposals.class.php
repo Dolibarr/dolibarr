@@ -423,6 +423,19 @@ class Proposals extends DolibarrApi
 			$this->propal->$field = $value;
 		}
 
+		// update end of validity date
+		if(!empty($this->propal->duree_validite) && !empty($this->propal->date_creation) )
+		{
+			$this->propal->fin_validite = $this->propal->date_creation + ($this->propal->duree_validite * 24 * 3600);
+		}
+		if(!empty($this->propal->fin_validite))
+		{
+			if($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite)<0)
+			{
+				throw new RestException(500, $this->propal->error);
+			}
+		}
+
 		if ($this->propal->update(DolibarrApiAccess::$user) > 0)
 		{
 			return $this->get($id);
