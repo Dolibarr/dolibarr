@@ -1156,7 +1156,7 @@ class Societe extends CommonObject
 		if ($idprof4) $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
 		if ($idprof5) $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
 		if ($idprof6) $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
-		if ($email)   $sql .= " AND email = '".$this->db->escape($email)."'";
+		if ($email)   $sql .= " AND s.email = '".$this->db->escape($email)."'";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
