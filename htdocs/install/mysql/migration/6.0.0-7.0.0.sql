@@ -71,6 +71,8 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 
 -- For 7.0
 
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_doc (fk_doc);
+
 ALTER TABLE llx_c_revenuestamp ADD COLUMN revenuestamp_type  varchar(16) DEFAULT 'fixed' NOT NULL;
 
 UPDATE llx_contrat SET ref = rowid WHERE ref IS NULL OR ref = '';
