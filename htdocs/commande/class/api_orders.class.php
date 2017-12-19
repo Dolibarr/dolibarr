@@ -559,7 +559,6 @@ class Orders extends DolibarrApi
      *  Classify the order as invoiced
      *
      * @param int   $id           Id of the order
-     * @param int   $notrigger    {@from body}  1=Does not execute triggers, 0= execute triggers        {@choice 0,1}
      *
      * @url     POST {id}/setinvoiced
      *
@@ -570,7 +569,7 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function setinvoiced($id,$notrigger=0) {
+    function setinvoiced($id) {
 
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
                 throw new RestException(401);
@@ -583,7 +582,7 @@ class Orders extends DolibarrApi
                 throw new RestException(404, 'Order not found');
         }
 
-        $result = $this->commande->classifyBilled(DolibarrApiAccess::$user,$notrigger);
+        $result = $this->commande->classifyBilled(DolibarrApiAccess::$user);
         if( $result < 0) {
                 throw new RestException(400, $this->commande->error);
         }
