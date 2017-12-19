@@ -62,3 +62,5 @@ WebsiteAccounts=Web site accounts
 AddWebsiteAccount=Create web site account
 BackToListOfThirdParty=Back to list for Third Party
 DisableSiteFirst=Disable website first
+MyContainerTitle=My web site title
+AnotherContainer=Another container

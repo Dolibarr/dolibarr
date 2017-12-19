@@ -514,7 +514,9 @@ if ($action == 'addcontainer')
 		$objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
 		$objectpage->htmlheader = GETPOST('htmlheader','none');
 
-		$objectpage->content = '<div class="dolcontenteditable" contenteditable="true"><div class="center"><h1>'.$langs->trans("MyContainerTitle").'</h1>'.$langs->trans("MyContainerContent").'</div><br><br></div>';
+		$substitutionarray=array();
+		$substitutionarray['__WEBSITE_CREATE_BY__']=$user->getFullName($langs);
+		$objectpage->content = make_substitutions(file_get_contents(DOL_DOCUMENT_ROOT.'/website/pagetemplate.html'), $substitutionarray);
 	}
 
 	if (! $error)
@@ -605,13 +607,17 @@ if ($action == 'addcontainer')
 
 		if (! dol_is_file($filehtmlheader))
 		{
-			$htmlheadercontent = "<html>\n<!-- HTML header content (common for all pages) -->\n</html>";
+			$htmlheadercontent ="<html>\n";
+			$htmlheadercontent.='<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>'."\n";
+			$htmlheadercontent.='<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>'."\n";
+			$htmlheadercontent.='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />'."\n";
+			$htmlheadercontent.="</html>";
 			$result=dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 		}
 
 		if (! dol_is_file($filecss))
 		{
-			$csscontent = "/* CSS content (all pages) */\nbody.bodywebsite { margin: 0; }";
+			$csscontent = "/* CSS content (all pages) */\nbody.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
 			$result=dolSaveCssFile($filecss, $csscontent);
 		}
 
@@ -1634,7 +1640,7 @@ if ($action == 'editcss')
 	{
 		$csscontent = GETPOST('WEBSITE_CSS_INLINE');
 	}
-	if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n".'body.bodywebsite { margin: 0; }';
+	if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n"."body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
 
 	if (GETPOST('editcss','alpha') || GETPOST('refreshpage','alpha'))
 	{
@@ -1650,16 +1656,23 @@ if ($action == 'editcss')
 
 	if (GETPOST('editcss','alpha') || GETPOST('refreshpage','alpha'))
 	{
-		$htmlheader = @file_get_contents($filehtmlheader);
+		$htmlheadercontent = @file_get_contents($filehtmlheader);
 		// Clean the php htmlheader file to remove php code and get only html part
-		$htmlheader = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htmlheader);
+		$htmlheadercontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htmlheadercontent);
 	}
 	else
 	{
-		$htmlheader = GETPOST('WEBSITE_HTML_HEADER');
+		$htmlheadercontent = GETPOST('WEBSITE_HTML_HEADER');
 	}
-	if (! trim($htmlheader)) $htmlheader="<html>\n<!-- HTML header content (common for all pages) -->\n</html>";
-	else $htmlheader='<html>'."\n".trim($htmlheader)."\n".'</html>';
+	if (! trim($htmlheadercontent))
+	{
+		$htmlheadercontent ="<html>\n";
+		$htmlheadercontent.='<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>'."\n";
+		$htmlheadercontent.='<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>'."\n";
+		$htmlheadercontent.='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />'."\n";
+		$htmlheadercontent.="</html>";
+	}
+	else $htmlheadercontent='<html>'."\n".trim($htmlheadercontent)."\n".'</html>';
 
 	if (GETPOST('editcss','alpha') || GETPOST('refreshpage','alpha'))
 	{
@@ -1737,7 +1750,7 @@ if ($action == 'editcss')
 	print $form->textwithpicto($langs->trans('WEBSITE_HTML_HEADER'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 
-	$doleditor=new DolEditor('WEBSITE_HTML_HEADER', $htmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$doleditor=new DolEditor('WEBSITE_HTML_HEADER', $htmlheadercontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 
 	print '</td></tr>';
