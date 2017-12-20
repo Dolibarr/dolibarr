@@ -94,10 +94,21 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	}
 	else $newelement = $element;
 
-	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->create) || ! empty($user->rights->$newelement->write)
-	|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
-	|| ($element == 'payment' && $user->rights->facture->paiement)
-	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
+	$_POST['action']='update';	// Hack so restrictarea can test permission on write too
+	$feature = $newelement;
+	$object_id = $fk_element;
+	if ($feature == 'expedition' || $feature == 'shipping')
+	{
+		$feature = 'commande';
+		$object_id = 0;
+	}
+	if ($feature == 'shipping') $feature = 'commande';
+	//var_dump(GETPOST('action','aZ09'));
+	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
+	$check_access = restrictedArea($user, $feature, $object_id, '', $subelement);
+	//var_dump($user->rights);
+
+	if ($check_access)
 	{
 		// Clean parameters
 		$newvalue = trim($value);
