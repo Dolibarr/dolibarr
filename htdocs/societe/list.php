@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
+ * Copyright (C) 2017       Juanjo Menent      		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -974,6 +975,8 @@ while ($i < min($num, $limit))
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
 
    	$companystatic->fk_prospectlevel=$obj->fk_prospectlevel;
+
+	$companystatic->name_alias=$obj->name_alias ='';
 
 	print '<tr class="oddeven">';
 	if (! empty($arrayfields['s.nom']['checked']))
