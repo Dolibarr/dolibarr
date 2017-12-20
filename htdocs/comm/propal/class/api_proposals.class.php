@@ -562,12 +562,25 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->error);
 		}
 
+	       $result = $this->propal->fetch($id);
+               if( ! $result ) {
+                       throw new RestException(404, 'Proposal not found');
+               }
+
+               if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+                       throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+               }
+
+               $this->propal->fetchObjectLinked();
+               return $this->_cleanObjectDatas($this->propal);
+/*
 		return array(
 			'success' => array(
 				'code' => 200,
 				'message' => 'Commercial Proposal validated (Ref='.$this->propal->ref.')'
 			)
 		);
+*/
 	}
 
 	/**
