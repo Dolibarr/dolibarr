@@ -445,7 +445,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 					if ($error)
 					{
-						dol_print_error($db);
+						// error message event set by trigger interface
 					}
 					else
 					{
