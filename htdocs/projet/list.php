@@ -407,12 +407,14 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
 
 // Show description of content
+print '<div class="opacitymedium">';
 if ($search_project_user == $user->id) print $langs->trans("MyProjectsDesc").'<br><br>';
 else
 {
 	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
+print '</div>';
 
 $topicmail="Information";
 $modelmail="project";

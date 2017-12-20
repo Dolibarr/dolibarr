@@ -790,7 +790,7 @@ ul.attendees li {
     min-height: 0.01%;
 }
 .div-table-responsive {
-    line-height: 100%;
+    line-height: 120%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
