@@ -79,7 +79,7 @@ $search_year=GETPOST("search_year","int");
 
 $viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$object_statut=GETPOST('propal_statut','alpha');
+$object_statut=GETPOST('search_statut','alpha');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -572,7 +572,7 @@ if ($resql)
 	if (! empty($arrayfields['p.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-		$formpropal->selectProposalStatus($viewstatut,1);
+		$formpropal->selectProposalStatus($viewstatut, 1, 0, 1, 'customer', 'search_statut');
 		print '</td>';
 	}
 	// Action column
