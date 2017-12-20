@@ -529,7 +529,6 @@ class Proposals extends DolibarrApi
 	 * Validate a commercial proposal
 	 *
 	 * @param   int     $id             Commercial proposal ID
-	 * @param   int     $notrigger      Use {}
 	 *
 	 * @url POST    {id}/validate
 	 *
@@ -541,7 +540,7 @@ class Proposals extends DolibarrApi
 	 * "notrigger": 0
 	 * }
 	 */
-	function validate($id, $notrigger=0)
+	function validate($id)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
@@ -555,7 +554,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->valid(DolibarrApiAccess::$user, $notrigger);
+		$result = $this->propal->valid(DolibarrApiAccess::$user );
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
