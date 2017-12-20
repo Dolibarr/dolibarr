@@ -186,9 +186,6 @@ if (! empty($conf->modules_parts['theme']))	// This slow down
 $conf_css = $themepath."?lang=".$langs->defaultlang;
 */
 
-$jquerytheme = 'smoothness';
-if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
-
 if (! $username) $focus_element = 'username';
 else $focus_element = 'password';
 
