@@ -621,3 +621,5 @@ ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
 ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
 
+ALTER TABLE llx_societe ADD COLUMN fk_entrepot int DEFAULT 0;
+
