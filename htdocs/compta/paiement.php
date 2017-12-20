@@ -257,20 +257,20 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));    // This include closing invoices
-	    	if ($paiement_id < 0)
+	    	$label='(CustomerInvoicePayment)';
+	    	if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) $label='(CustomerInvoicePaymentBack)';  // Refund of a credit note
+	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
+	        if ($result < 0)
 	        {
 	            setEventMessages($paiement->error, $paiement->errors, 'errors');
 	            $error++;
 	        }
 	    }
-
+		
 	    if (! $error)
 	    {
-	    	$label='(CustomerInvoicePayment)';
-	    	if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) $label='(CustomerInvoicePaymentBack)';  // Refund of a credit note
-	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),GETPOST('chqemetteur'),GETPOST('chqbank'));
-	        if ($result < 0)
+	    	$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices')=='on'?1:0));    // This include closing invoices
+	    	if ($paiement_id < 0)
 	        {
 	            setEventMessages($paiement->error, $paiement->errors, 'errors');
 	            $error++;
