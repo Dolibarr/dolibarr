@@ -1244,7 +1244,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! defined('DISABLE_JQUERY_JEDITABLE'))
             {
             	print '<!-- JS to manage editInPlace feature -->'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript">'."\n";
