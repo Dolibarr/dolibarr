@@ -25,6 +25,13 @@
  * $elementtype
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
@@ -54,11 +61,11 @@
     		?>
 
     		// Case of computed field
-    		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') { 
-    			jQuery("tr.extra_computed_value").show(); 
+    		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
+    			jQuery("tr.extra_computed_value").show();
     		} else {
     			computed_value.val(''); jQuery("tr.extra_computed_value").hide();
-    		} 
+    		}
     		if (computed_value.val())
     		{
         		console.log("We enter a computed formula");
@@ -73,7 +80,7 @@
         		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', false);
         		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").show();
     		}
-    		
+
 			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
 			else if (type == 'datetime') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
     		else if (type == 'double')   { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
@@ -91,19 +98,19 @@
 			else if (type == 'separate') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true); default_value.val('').prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
 			else {	// type = string
 				size.val('').prop('disabled', true);
-				unique.removeAttr('disabled');		
+				unique.removeAttr('disabled');
 			}
 
 			if (type == 'separate')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true); 
-				jQuery('#size, #default_value').val('').prop('disabled', true); 
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true);
+				jQuery('#size, #default_value').val('').prop('disabled', true);
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled'); 
-			}			
+				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled');
+			}
     	}
     	init_typeoffields(jQuery("#type").val());
     	jQuery("#type").change(function() {
@@ -113,7 +120,7 @@
     	// If we enter a formula, we disable other fields
     	jQuery("#computed_value").keyup(function() {
     		init_typeoffields(jQuery('#type').val());
-    	});    	
+    	});
     });
 </script>
 
