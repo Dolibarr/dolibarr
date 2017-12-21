@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Cet outil est réservé aux utilisateurs avancés ou développeurs. Il donne accès aux outil de création ou d'édition de modules additionnels (Cliquez <a href="%s" target="_blank">ici</a> pour plus d'information).
-EnterNameOfModuleDesc=Saisissez le nom du module (sans espace) pour le créer. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
+EnterNameOfModuleDesc=Saisissez le nom du module/application à créer, sans espaces. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
 EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espaces. Utilisez les majuscules pour séparer des mots (par exemple: MyObject, Student, Teacher ...). Le fichier de classe CRUD, mais aussi le fichier API, les pages à afficher / ajouter / éditer / supprimer des objets et des fichiers SQL seront générés.
 ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés ( premier répertoire alternatif défini dans %s):<strong>%s</strong>
 ModuleBuilderDesc3=Modules générés/éditables trouvés : <strong>%s</strong> 
@@ -58,7 +58,7 @@ ArrayOfKeyValuesDesc=Tableau des clés et valeurs si le champ est une liste à c
 WidgetFile=Fichier Widget
 ReadmeFile=Fichier Readme
 ChangeLog=Fichier ChangeLog
-TestClassFile=File for PHP Unit Test class
+TestClassFile=Fichier de tests unitaires PHP
 SqlFile=Fichier SQL
 PageForLib=Fichier pour les librairies PHP
 SqlFileExtraFields=Fichier SQL pour les attributs complémentaires
@@ -86,9 +86,9 @@ SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
 ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
 TryToUseTheModuleBuilder=If you have knowledge in SQL and PHP, you can try to use the native module builder wizard. Just enable the module and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu. Warning: This is a developer feature, bad use may breaks your application.
-SeeTopRightMenu=See <span class="fa fa-bug"></span> on the top right menu
+SeeTopRightMenu=Voir<span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
 YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")
 DropTableIfEmpty=(Delete table if empty)
-TableDoesNotExists=The table %s does not exists
-TableDropped=Table %s deleted
+TableDoesNotExists=La table %s n'existe pas
+TableDropped=La table %s a été supprimée
