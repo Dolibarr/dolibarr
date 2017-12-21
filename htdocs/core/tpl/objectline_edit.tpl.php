@@ -30,6 +30,13 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;

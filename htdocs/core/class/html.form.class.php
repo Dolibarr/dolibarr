@@ -190,7 +190,7 @@ class Form
 						$morealt=' style="width: '.$cols.'"';
 						$cols='';
 					}
-					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'').$morealt.'">'.($editvalue?$editvalue:$value).'</textarea>';
+					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'class="quatrevingtpercent"').$morealt.'">'.($editvalue?$editvalue:$value).'</textarea>';
 				}
 				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
 				{

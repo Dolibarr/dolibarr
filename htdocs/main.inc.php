@@ -81,6 +81,7 @@ function test_sql_and_script_inject($val, $type)
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
 	if ($type == 1)
 	{
+		$inj += preg_match('/updatexml\(/i',	 $val);
 		$inj += preg_match('/delete\s+from/i',	 $val);
 		$inj += preg_match('/create\s+table/i',	 $val);
 		$inj += preg_match('/insert\s+into/i', 	 $val);

@@ -3613,6 +3613,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editkey_datepicker {
@@ -3620,6 +3621,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	margin-right: 3px;
 	cursor: pointer;
 	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {

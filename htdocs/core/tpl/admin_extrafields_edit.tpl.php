@@ -25,6 +25,14 @@
  * $elementtype
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $langs->load("modulebuilder");
 
 ?>
@@ -101,7 +109,7 @@ $langs->load("modulebuilder");
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
-				jQuery('#list').val(3);
+				jQuery('#list').val(3);	// visible on create/update/view form only
 			}
 			else
 			{
