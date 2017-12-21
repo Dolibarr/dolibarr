@@ -2616,12 +2616,12 @@ if ($action == 'create')
 				print $desc;
 
 				print '<div id="credit_note_options" class="clearboth">';
-				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="$(\'#credit_note_options input[type=checkbox]\').not(this).prop(\'checked\', false);" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 				print '</div>';
 
-				print '</div></div>';
-			}
+    			print '</div></div>';
+    		}
 		}
 		else
 		{
@@ -3707,10 +3707,37 @@ else if ($id > 0 || ! empty($ref))
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setrevenuestamp">';
-			print $formother->select_revenue_stamp(GETPOST('revenuestamp'), 'revenuestamp', $mysoc->country_code);
-			// print '<input type="text" class="flat" size="4" name="revenuestamp" value="'.price2num($object->revenuestamp).'">';
+			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
+			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
+			print ' &rarr; <span id="revenuestamp_span"></span>';
 			print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
+			print " <script>
+                $(document).ready(function(){
+                    js_recalculate_revenuestamp();
+                    $('select[name=revenuestamp_type]').on('change',function(){
+                        js_recalculate_revenuestamp();
+                    });
+                });
+                function js_recalculate_revenuestamp(){
+					var valselected = $('select[name=revenuestamp_type]').val();
+					console.log('Calculate revenue stamp from '+valselected);
+					var revenue = 0;
+					if (valselected.indexOf('%') == -1)
+					{
+						revenue = valselected;
+					}
+					else
+					{
+	                    var revenue_type = parseFloat(valselected);
+	                    var amount_net = ".round($object->total_ht, 2).";
+	                    revenue = revenue_type * amount_net / 100;
+	                    revenue = revenue.toFixed(2);
+					}
+                    $('#revenuestamp_val').val(revenue);
+                    $('#revenuestamp_span').html(revenue);
+                }
+            </script>";
 		} else {
 			print price($object->revenuestamp, 1, '', 1, - 1, - 1, $conf->currency);
 		}

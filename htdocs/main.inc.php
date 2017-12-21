@@ -153,7 +153,11 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 
 
 // Check consistency of NOREQUIREXXX DEFINES
-if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && ! defined('NOREQUIREMENU')) dol_print_error('','If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not use them');
+if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && ! defined('NOREQUIREMENU'))
+{
+	print 'If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not set them';
+	exit;
+}
 
 // Sanity check on URL
 if (! empty($_SERVER["PHP_SELF"]))
@@ -204,7 +208,7 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 }
 
 // Init session. Name of session is specific to Dolibarr instance.
-$prefix=dol_getprefix();
+$prefix=dol_getprefix('');
 $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
@@ -361,7 +365,6 @@ if (! empty($_SESSION["disablemodules"]))
 	}
 }
 
-
 /*
  * Phase authentication / login
  */
@@ -479,6 +482,7 @@ if (! defined('NOLOGIN'))
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs=new Translate("",$conf);
 			$langcode=(GETPOST('lang','aZ09',1)?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+			if (defined('MAIN_LANG_DEFAULT')) $langcode=constant('MAIN_LANG_DEFAULT');
 			$langs->setDefaultLang($langcode);
 		}
 
@@ -1130,7 +1134,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
 		{
 			print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
-			$jquerytheme = 'smoothness';
+			$jquerytheme = 'base';
 			if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 			if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css'.($ext?'?'.$ext:'').'">'."\n";  // JQuery
 			else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui.css'.($ext?'?'.$ext:'').'">'."\n";    // JQuery
@@ -1164,6 +1168,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				}
 			}
 		}
+
 		//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
 		print '<link rel="stylesheet" type="text/css" href="'.$themepath.$themeparam.'">'."\n";
 		if (! empty($conf->global->MAIN_FIX_FLASH_ON_CHROME)) print '<!-- Includes CSS that does not exists as a workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";
@@ -1238,7 +1243,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! defined('DISABLE_JQUERY_JEDITABLE'))
 			{
 				print '<!-- JS to manage editInPlace feature -->'."\n";
-				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js'.($ext?'?'.$ext:'').'"></script>'."\n";
 				print '<script type="text/javascript">'."\n";

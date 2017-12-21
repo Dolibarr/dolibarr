@@ -222,7 +222,7 @@ class FormOther
 
     	$out='';
 
-    	$sql = "SELECT r.taux";
+    	$sql = "SELECT r.taux, r.revenuestamp_type";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
     	$sql.= " AND c.code = '".$country_code."'";
@@ -242,14 +242,14 @@ class FormOther
     				$obj = $this->db->fetch_object($resql);
     				if (($selected && $selected == $obj->taux) || $num == 1)
     				{
-    					$out.='<option value="'.$obj->taux.'" selected>';
+    					$out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
     				}
     				else
     				{
-    					$out.='<option value="'.$obj->taux.'">';
+    					$out.='<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
     					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
     				}
-    				$out.=$obj->taux;
+    				$out.=$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '');
     				$out.='</option>';
     				$i++;
     			}

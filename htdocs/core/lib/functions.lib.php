@@ -37,6 +37,7 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
 
+
 /**
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
@@ -516,7 +517,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_numeric($out)) { $out=''; }
 			break;
 		case 'intcomma':
-			if (preg_match('/[^0-9,]+/i',$out)) $out='';
+			if (preg_match('/[^0-9,-]+/i',$out)) $out='';
 			break;
 		case 'alpha':
 			if (! is_array($out))
@@ -595,30 +596,34 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 
 /**
  *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
- *  This prefix is unique for instance and avoid conflict between multi-instances,
- *  even when having two instances with one root dir or two instances in virtual servers.
+ *  This prefix is valid in a web context only and is unique for instance and avoid conflict
+ *  between multi-instances, even when having two instances with one root dir or two instances
+ *  in virtual servers.
  *
- *  @param  string  $mode       '' (prefix for session name) or 'email' (prefix for email id)
- *  @return	string      		A calculated prefix
+ *  @param  string  $mode       			'' (prefix for session name) or 'email' (prefix for email id)
+ *  @return	string      					A calculated prefix
  */
-function dol_getprefix($mode='')
+if (! function_exists('dol_getprefix'))
 {
-	global $conf;
-
-	// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
-	if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+	function dol_getprefix($mode='')
 	{
-		if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
-		else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
-	}
+		global $conf;
 
-	if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
-	{
-		return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
-		// Use this for a "clear" cookie name
-		//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
+		if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+		{
+			if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
+			else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+		}
+
+		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
+		{
+			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+			// Use this for a "readable" cookie name
+			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		}
+		else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 	}
-	else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 }
 
 /**
@@ -3487,9 +3492,10 @@ function dol_print_error($db='',$error='',$errors=null)
  *
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
+ * @param	array	$errormessages	Array of error messages
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='')
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
 {
 	global $langs,$conf;
 
@@ -3498,6 +3504,13 @@ function dol_print_error_email($prefixcode, $errormessage='')
 	print '<br><div class="center login_main_message"><div class="error">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
+	if (is_array($errormessages) && count($errormessages))
+	{
+		foreach($errormessages as $mesgtoshow)
+		{
+			print '<br><br>'.$mesgtoshow;
+		}
+	}
 	print '</div></div>';
 }
 
@@ -5590,7 +5603,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
  *  Make substition into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
  *
  *  @param	string		$text	      			Source string in which we must do substitution
- *  @param  array		$substitutionarray		Array with key->val to substitute
+ *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal')
  *  @param	Translate	$outputlangs			Output language
  * 	@return string  		    				Output string after substitutions
  *  @see	complete_substitutions_array
@@ -6568,7 +6581,7 @@ function dol_getmypid()
 /**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
- * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR)
+ * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
  * @param 	string 			$value 		The value to look for.
  *                          		    If param $mode is 0, can contains several keywords separated with a space or |
  *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2

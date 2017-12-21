@@ -1288,7 +1288,6 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-
 	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer)
 	{
 		if ($action == 'addcontact')
@@ -1593,7 +1592,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 
 	// What trigger creation
-	print '<tr><td>' . $langs->trans('Source') . '</td><td>';
+	print '<tr><td>' . $langs->trans('Channel') . '</td><td>';
 	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1);
 	print '</td></tr>';
 
@@ -1605,7 +1604,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td>';
-		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0);
+		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0);
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td>';
 		print '</tr>';
@@ -2235,7 +2234,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// Source reason (why we have an ordrer)
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Source');
+		print $langs->trans('Channel');
 		print '</td>';
 		if ($action != 'editdemandreason')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';

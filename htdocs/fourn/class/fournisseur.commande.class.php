@@ -43,8 +43,17 @@ class CommandeFournisseur extends CommonOrder
     public $table_element='commande_fournisseur';
     public $table_element_line = 'commande_fournisseurdet';
     public $fk_element = 'fk_commande';
-    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='order';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     * @var integer
+     */
+    public $restrictiononfksoc = 1;
 
     /**
      * {@inheritdoc}

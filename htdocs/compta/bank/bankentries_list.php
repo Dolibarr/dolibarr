@@ -415,30 +415,6 @@ if ($id > 0 || ! empty($ref))
     {
         print '<div class="tabsAction">';
 
-		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
-		{
-			if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
-			{
-				if ($user->rights->banque->modifier) {
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$account).'">'.$langs->trans("AddBankRecord").'</a>';
-				} else {
-					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-				}
-			}
-			else													// If direct entries is not done using miscellaneous payments
-			{
-				if ($user->rights->banque->modifier) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
-				} else {
-					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-				}
-			}
-		}
-		else
-		{
-			print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-		}
-
         if ($object->canBeConciliated() > 0) {
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
@@ -727,11 +703,37 @@ if ($resql)
 
 	// Title
 	$bankcateg=new BankCateg($db);
-	$morehtml='<div>';
+	$morehtml='<div class="inline-block">';
 	$morehtml.= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
-	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" size="1" class="flat" value="'.($page+1).'">';
+	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" class="flat right width25" value="'.($page+1).'">';
 	$morehtml.='/'.$nbtotalofpages.' ';
 	$morehtml.='</div>';
+
+	$addbutton = '';
+	if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
+	{
+		if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
+		{
+			if ($user->rights->banque->modifier) {
+				$addbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$account).'">'.$langs->trans("AddBankRecord").'</a>';
+			} else {
+				$addbutton = '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+			}
+		}
+		else													// If direct entries is not done using miscellaneous payments
+		{
+			if ($user->rights->banque->modifier) {
+				$addbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
+			} else {
+				$addbutton = '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+			}
+		}
+	}
+	else
+	{
+		$addbutton = '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+	}
+	$morehtml.=$addbutton;
 
 	$picto='title_bank';
 	if ($id > 0 || ! empty($ref)) $picto='';

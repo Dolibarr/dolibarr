@@ -413,7 +413,7 @@ if (empty($reshook)) {
 				}
 
 				if (!$error && GETPOSTISSET('contactid')) {
-					$contactid = GETPOST('contactid', 'int');				
+					$contactid = GETPOST('contactid', 'int');
 
 					if ($contactid > 0) {
 						$contact = new Contact($db);
@@ -765,33 +765,6 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 	print '</td></tr>';
 
-	// Employee
-	$defaultemployee=1;
-	print '<tr>';
-	print '<td>'.$langs->trans('Employee').'</td><td>';
-	print $form->selectyesno("employee",(GETPOST('employee')!=''?GETPOST('employee'):$defaultemployee),1);
-	print '</td></tr>';
-
-	// Position/Job
-	print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
-	print '</td></tr>';
-
-	// Gender
-	print '<tr><td>'.$langs->trans("Gender").'</td>';
-	print '<td>';
-	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-	print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
-	print '</td></tr>';
-
-	// Date employment
-	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
-	print '<td>';
-	echo $form->select_date(GETPOST('birth'),'birth',0,0,1,'createuser',1,0,1);
-	print '</td>';
-	print "</tr>\n";
-
 	// Login
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
 	print '<td>';
@@ -912,8 +885,33 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
 	print '</td></tr>';
 
+	// Gender
+	print '<tr><td>'.$langs->trans("Gender").'</td>';
+	print '<td>';
+	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+	print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
+	print '</td></tr>';
+
+	// Employee
+	$defaultemployee=1;
+	print '<tr>';
+	print '<td>'.$langs->trans('Employee').'</td><td>';
+	print $form->selectyesno("employee",(GETPOST('employee')!=''?GETPOST('employee'):$defaultemployee),1);
+	print '</td></tr>';
+
+	// Hierarchy
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
+	print '<td>';
+	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+	print '</td>';
+	print "</tr>\n";
+
+
+	print '</table><hr><table class="border centpercent">';
+
+
 	// Address
-	print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+	print '<tr><td class="tdtop titlefieldcreate">'.fieldLabel('Address','address').'</td>';
 	print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print $object->address;
 	print '</textarea></td></tr>';
@@ -1024,62 +1022,6 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '</td></tr>';
 	}
 
-	// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
-
-	// Hierarchy
-	print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
-	print '<td>';
-	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
-	print '</td>';
-	print "</tr>\n";
-
-	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
-	   || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
-	{
-		$langs->load("salaries");
-
-		// THM
-		print '<tr><td>';
-		$text=$langs->trans("THM");
-		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
-		print '</td>';
-		print '<td>';
-		print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
-		print '</td>';
-		print "</tr>\n";
-
-		// TJM
-		print '<tr><td>';
-		$text=$langs->trans("TJM");
-		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
-		print '</td>';
-		print '<td>';
-		print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
-		print '</td>';
-		print "</tr>\n";
-
-		// Salary
-		print '<tr><td>'.$langs->trans("Salary").'</td>';
-		print '<td>';
-		print '<input size="8" type="text" name="salary" value="'.GETPOST('salary').'">';
-		print '</td>';
-		print "</tr>\n";
-	}
-
-	// Weeklyhours
-	print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
-	print '<td>';
-	print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
-	print '</td>';
-	print "</tr>\n";
-
-	// Date employment
-	print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
-	print '<td>';
-	echo $form->select_date(GETPOST('dateemployment'),'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
-	print '</td>';
-	print "</tr>\n";
-
 	// User color
 	if (! empty($conf->agenda->enabled))
 	{
@@ -1139,9 +1081,76 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
 	print '<td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
+	$doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_notes','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
+
+
+	print '</table><hr><table class="border centpercent">';
+
+
+	// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
+
+	// Position/Job
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
+	print '<td>';
+	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
+	print '</td></tr>';
+
+
+	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
+	{
+		$langs->load("salaries");
+
+		// THM
+		print '<tr><td>';
+		$text=$langs->trans("THM");
+		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+		print '</td>';
+		print '<td>';
+		print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
+		print '</td>';
+		print "</tr>\n";
+
+		// TJM
+		print '<tr><td>';
+		$text=$langs->trans("TJM");
+		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
+		print '</td>';
+		print '<td>';
+		print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
+		print '</td>';
+		print "</tr>\n";
+
+		// Salary
+		print '<tr><td>'.$langs->trans("Salary").'</td>';
+		print '<td>';
+		print '<input size="8" type="text" name="salary" value="'.GETPOST('salary').'">';
+		print '</td>';
+		print "</tr>\n";
+	}
+
+	// Weeklyhours
+	print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
+	print '<td>';
+	print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
+	print '</td>';
+	print "</tr>\n";
+
+	// Date employment
+	print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+	print '<td>';
+	echo $form->select_date(GETPOST('dateemployment'),'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+	print '</td>';
+	print "</tr>\n";
+
+	// Date birth
+	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+	print '<td>';
+	echo $form->select_date(GETPOST('birth'),'birth',0,0,1,'createuser',1,0,1);
+	print '</td>';
+	print "</tr>\n";
 
 	print "</table>\n";
 
@@ -1337,31 +1346,8 @@ else
 			}
 			print '</tr>'."\n";
 
-			// Employee
-			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
-			print yn($object->employee);
-			print '</td></tr>'."\n";
-
-			// Position/Job
-			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>'.$object->job.'</td>';
-			print '</tr>'."\n";
-
-			// Gender
-			print '<tr><td>'.$langs->trans("Gender").'</td>';
-			print '<td>';
-			if ($object->gender) print $langs->trans("Gender".$object->gender);
-			print '</td></tr>';
-
-			// Date of birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
-			print '<td>';
-			print dol_print_date($object->birth, 'day');
-			print '</td>';
-			print "</tr>\n";
-
 			// API key
-			if(! empty($conf->api->enabled) && $user->admin) {
+			if (! empty($conf->api->enabled) && $user->admin) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (! empty($object->api_key)) print preg_replace('/./','*',$object->api_key);
@@ -1403,12 +1389,16 @@ else
 				print '</td></tr>'."\n";
 			}
 
-			// Accountancy code
-			if ($conf->accounting->enabled)
-			{
-				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>'.$object->accountancy_code.'</td></tr>';
-			}
+			// Gender
+			print '<tr><td>'.$langs->trans("Gender").'</td>';
+			print '<td>';
+			if ($object->gender) print $langs->trans("Gender".$object->gender);
+			print '</td></tr>';
+
+			// Employee
+			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
+			print yn($object->employee);
+			print '</td></tr>'."\n";
 
 			// TODO Move this into tab RH, visible when salarie or RH is visible (HierarchicalResponsible must be on both tab)
 
@@ -1423,6 +1413,11 @@ else
 			}
 			print '</td>';
 			print "</tr>\n";
+
+			// Position/Job
+			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>'.$object->job.'</td>';
+			print '</tr>'."\n";
 
 			//$childids = $user->getAllChildIds(1);
 
@@ -1474,6 +1469,20 @@ else
 			print dol_print_date($object->dateemployment);
 			print '</td>';
 			print "</tr>\n";
+
+			// Date of birth
+			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			print '<td>';
+			print dol_print_date($object->birth, 'day');
+			print '</td>';
+			print "</tr>\n";
+
+			// Accountancy code
+			if ($conf->accounting->enabled)
+			{
+				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+				print '<td>'.$object->accountancy_code.'</td></tr>';
+			}
 
 			print '</table>';
 
@@ -1818,7 +1827,7 @@ else
 			// Ref/ID
 			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 			{
-				print '<tr><td>'.$langs->trans("Ref").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 				print '<td>';
 				print $object->id;
 				print '</td>';
@@ -1827,7 +1836,7 @@ else
 
 			// Lastname
 			print "<tr>";
-			print '<td class="fieldrequired">'.$langs->trans("Lastname").'</td>';
+			print '<td class="titlefield fieldrequired">'.$langs->trans("Lastname").'</td>';
 			print '<td>';
 			if ($caneditfield && !$object->ldap_sid)
 			{
@@ -1854,40 +1863,6 @@ else
 				print $object->firstname;
 			}
 			print '</td></tr>';
-
-			// Employee
-			print '<tr>';
-			print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-			print $form->selectyesno("employee",$object->employee,1);
-			print '</td></tr>';
-
-			// Position/Job
-			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="job" value="'.$object->job.'">';
-		  		print $object->job;
-			}
-			print '</td></tr>';
-
-			// Gender
-			print '<tr><td>'.$langs->trans("Gender").'</td>';
-			print '<td>';
-			$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-			print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
-			print '</td></tr>';
-
-			// Date birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
-			print '<td>';
-			echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
-			print '</td>';
-			print "</tr>\n";
 
 			// Login
 			print "<tr>".'<td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
@@ -2039,8 +2014,42 @@ else
 			}
 		   	print '</td></tr>';
 
+		   	// Gender
+		   	print '<tr><td>'.$langs->trans("Gender").'</td>';
+		   	print '<td>';
+		   	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+		   	print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
+		   	print '</td></tr>';
+
+		   	// Employee
+		   	print '<tr>';
+		   	print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
+		   	print $form->selectyesno("employee",$object->employee,1);
+		   	print '</td></tr>';
+
+		   	// Hierarchy
+		   	print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';
+		   	print '<td>';
+		   	if ($caneditfield)
+		   	{
+		   		print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+		   	}
+		   	else
+		   	{
+		   		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
+		   		$huser=new User($db);
+		   		$huser->fetch($object->fk_user);
+		   		print $huser->getNomUrl(1);
+		   	}
+		   	print '</td>';
+		   	print "</tr>\n";
+
+
+		   	print '</table><hr><table class="border centpercent">';
+
+
 			// Address
-			print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+			print '<tr><td class="tdtop titlefield">'.fieldLabel('Address','address').'</td>';
 			print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
@@ -2159,6 +2168,8 @@ else
 				print '</td></tr>';
 			}
 
+			print '</table><hr><table class="border centpercent">';
+
 			// Accountancy code
 			if ($conf->accounting->enabled)
 			{
@@ -2177,72 +2188,6 @@ else
 				print '</td>';
 				print "</tr>";
 			}
-
-			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
-
-			// Hierarchy
-			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
-			}
-			else
-			{
-		  		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
-				$huser=new User($db);
-				$huser->fetch($object->fk_user);
-				print $huser->getNomUrl(1);
-			}
-			print '</td>';
-			print "</tr>\n";
-
-			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
-			   || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
-			{
-				$langs->load("salaries");
-
-				// THM
-				print '<tr><td>';
-				$text=$langs->trans("THM");
-				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
-				print '</td>';
-				print '<td>';
-				print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
-				print '</td>';
-				print "</tr>\n";
-
-				// TJM
-				print '<tr><td>';
-				$text=$langs->trans("TJM");
-				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
-				print '</td>';
-				print '<td>';
-				print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
-				print '</td>';
-				print "</tr>\n";
-
-				// Salary
-				print '<tr><td>'.$langs->trans("Salary").'</td>';
-				print '<td>';
-				print '<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary')?GETPOST('salary'):$object->salary).'">';
-				print '</td>';
-				print "</tr>\n";
-			}
-
-			// Weeklyhours
-			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
-			print '<td>';
-			print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
-			print '</td>';
-			print "</tr>\n";
-
-			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
-			print '<td>';
-			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
-			print '</td>';
-			print "</tr>\n";
 
 			// User color
 			if (! empty($conf->agenda->enabled))
@@ -2363,7 +2308,7 @@ else
 			if ($caneditfield)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_mailings','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
+				$doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_notes','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
 				print $doleditor->Create(1);
 			}
 			else
@@ -2371,6 +2316,80 @@ else
 				print dol_htmlentitiesbr($object->signature);
 			}
 			print '</td></tr>';
+
+
+			print '</table><hr><table class="border centpercent">';
+
+
+			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
+
+			// Position/Job
+			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="job" value="'.$object->job.'">';
+				print $object->job;
+			}
+			print '</td></tr>';
+
+			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
+			{
+				$langs->load("salaries");
+
+				// THM
+				print '<tr><td>';
+				$text=$langs->trans("THM");
+				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+				print '</td>';
+				print '<td>';
+				print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				print '</td>';
+				print "</tr>\n";
+
+				// TJM
+				print '<tr><td>';
+				$text=$langs->trans("TJM");
+				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
+				print '</td>';
+				print '<td>';
+				print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				print '</td>';
+				print "</tr>\n";
+
+				// Salary
+				print '<tr><td>'.$langs->trans("Salary").'</td>';
+				print '<td>';
+				print '<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary')?GETPOST('salary'):$object->salary).'">';
+				print '</td>';
+				print "</tr>\n";
+			}
+
+			// Weeklyhours
+			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
+			print '<td>';
+			print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			print '</td>';
+			print "</tr>\n";
+
+			// Date employment
+			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+			print '<td>';
+			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+			print '</td>';
+			print "</tr>\n";
+
+			// Date birth
+			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			print '<td>';
+			echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
+			print '</td>';
+			print "</tr>\n";
 
 			print '</table>';
 

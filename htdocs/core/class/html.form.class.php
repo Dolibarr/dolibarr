@@ -212,7 +212,7 @@ class Form
 				}
 				else if (preg_match('/^ckeditor/',$typeofdata))
 				{
-					$tmp=explode(':',$typeofdata);
+					$tmp=explode(':',$typeofdata);		// Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					$doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), true, true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
 					$ret.=$doleditor->Create(1);
@@ -1442,7 +1442,7 @@ class Form
 	 *  @param  array	$exclude        Array list of users id to exclude
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that other must be disabled
+	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
 	 *  @param	int		$force_entity	0 or Id of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
@@ -1481,7 +1481,7 @@ class Form
 
 		$out='';
 
-		// On recherche les utilisateurs
+		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
@@ -5281,7 +5281,11 @@ class Form
 		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE t.entity IN (".getEntity($objecttmp->table_element).")";
-		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->societe_id)) $sql.= " AND t.fk_soc = ".$user->societe_id;
+		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->societe_id))
+		{
+			if ($objecttmp->element == 'societe') $sql.= " AND t.rowid = ".$user->societe_id;
+				else $sql.= " AND t.fk_soc = ".$user->societe_id;
+		}
 		if ($searchkey != '') $sql.=natural_search(explode(',',$fieldstoshow), $searchkey);
 		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND t.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;

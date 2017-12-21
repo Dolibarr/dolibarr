@@ -790,7 +790,7 @@ ul.attendees li {
     min-height: 0.01%;
 }
 .div-table-responsive {
-    line-height: 100%;
+    line-height: 120%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -858,6 +858,7 @@ select.selectarrowonleft option {
     .minwidth400imp { min-width: 400px !important; }
     .minwidth500imp { min-width: 500px !important; }
 }
+.width25  { width: 25px; }
 .width50  { width: 50px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
@@ -2488,7 +2489,7 @@ table.liste td, table.noborder td, div.noborder form div {
 	line-height: 1.2em;
 }
 div.liste_titre_bydiv .divsearchfield {
-	padding: 2px 1px 2px 0px;			/* t r b l */
+	padding: 2px 1px 2px 7px;			/* t r b l */
 }
 
 tr.box_titre .nobordernopadding td {
@@ -3605,17 +3606,20 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 
 
 /* ============================================================================== */
-/*  jQuery - jeditable                                                            */
+/*  jQuery - jeditable for inline edit                                            */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
+	margin-right: 3px;
 }
 
 .editkey_datepicker {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
+	margin-right: 3px;
 	cursor: pointer;
+	margin-right: 3px;
 }
 
 .editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
@@ -3771,6 +3775,12 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 
 
 /* Style to overwrites JQuery styles */
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    border: 1px solid #888;
+    background: rgb(<?php echo $colorbacktitle1; ?>);
+    color: unset;
+}
+
 .ui-menu .ui-menu-item a {
     text-decoration:none;
     display:block;

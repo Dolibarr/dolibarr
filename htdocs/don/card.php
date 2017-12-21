@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
@@ -630,8 +630,8 @@ if (! empty($id) && $action != 'edit')
 	 * Payments
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-	$sql.= "c.code as type_code,c.libelle as paiement_type";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c AND c.entity IN (".getEntity('c_paiement').")";
+	$sql.= " c.code as type_code,c.libelle as paiement_type";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON c.entity IN (".getEntity('c_paiement').")";
 	$sql.= ", ".MAIN_DB_PREFIX."don as d";
 	$sql.= " WHERE d.rowid = '".$id."'";
 	$sql.= " AND p.fk_donation = d.rowid";
