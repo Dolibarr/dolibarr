@@ -869,7 +869,7 @@ class pdf_azur extends ModelePDFPropales
 			$posy=$pdf->GetY()+3;
 		}
 
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND))
+		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMMODE))
 		{
 			// Check a payment mode is defined
 			/* Not required on a proposal
