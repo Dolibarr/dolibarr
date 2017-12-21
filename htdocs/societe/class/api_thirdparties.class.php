@@ -500,6 +500,9 @@ class Thirdparties extends DolibarrApi
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
 
+	    unset($object->lines);
+	    unset($object->thirdparty);
+
 	    return $object;
 	}
 

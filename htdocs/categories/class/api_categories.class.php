@@ -223,7 +223,7 @@ class Categories extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $this->task->error);
+        	throw new RestException(500, $this->category->error);
         }
     }
 

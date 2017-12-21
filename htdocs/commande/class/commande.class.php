@@ -2074,7 +2074,6 @@ class Commande extends CommonOrder
      */
     function deleteline($user=null, $lineid=0)
     {
-
         if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
@@ -2137,7 +2136,8 @@ class Commande extends CommonOrder
         }
         else
         {
-            return -1;
+        	$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
+        	return -1;
         }
     }
 

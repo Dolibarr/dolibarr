@@ -3009,7 +3009,7 @@ class Facture extends CommonInvoice
 
 		if (! $this->brouillon)
 		{
-			$this->error='ErrorBadStatus';
+			$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
 			return -1;
 		}
 

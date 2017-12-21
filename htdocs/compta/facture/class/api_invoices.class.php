@@ -240,7 +240,7 @@ class Invoices extends DolibarrApi
         }
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
-        }        
+        }
         if(empty($orderid)) {
                 throw new RestException(400, 'Order ID is mandatory');
         }
@@ -380,18 +380,24 @@ class Invoices extends DolibarrApi
     		throw new RestException(404, 'Invoice not found');
     	}
 
-    	$result = $this->invoice->deleteline($lineid);
-    	if( $result < 0) {
+    	// TODO Check the lineid $lineid is a line of ojbect
+
+    	$updateRes = $this->invoice->deleteline($lineid);
+    	if ($updateRes > 0) {
+    		return $this->get($id);
+    	}
+    	else
+    	{
     		throw new RestException(405, $this->invoice->error);
     	}
 
-    	$result = $this->invoice->fetch($id);
+    	/*$result = $this->invoice->fetch($id);
 
     	$this->invoice->getLinesArray();
     	$result = array();
     	foreach ($this->invoice->lines as $line) {
     		array_push($result,$this->_cleanObjectDatas($line));
-    	}
+    	}*/
     	return $result;
     }
 
@@ -508,10 +514,10 @@ class Invoices extends DolibarrApi
               $request_data->fk_parent_line = 0;
       }
 
-      // calculate pa_ht  
+      // calculate pa_ht
       $marginInfos = getMarginInfos($request_data->subprice, $request_data->remise_percent, $request_data->tva_tx, $request_data->localtax1_tx, $request_data->localtax2_tx, $request_data->fk_fournprice, $request_data->pa_ht);
       $pa_ht = $marginInfos[0];
-	    
+
       $updateRes = $this->invoice->addline(
                               $request_data->desc,
                               $request_data->subprice,

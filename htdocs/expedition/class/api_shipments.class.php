@@ -18,28 +18,30 @@
 
  use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 /**
- * API class for orders
+ * API class for shipments
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Orders extends DolibarrApi
+class Shipments extends DolibarrApi
 {
 
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'socid'
+        'socid',
+    	'origin_id',
+    	'origin_type'
     );
 
     /**
-     * @var Commande $commande {@type Commande}
+     * @var Expedition $shipment {@type Expedition}
      */
-    public $commande;
+    public $shipment;
 
     /**
      * Constructor
@@ -48,52 +50,52 @@ class Orders extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->commande = new Commande($this->db);
+        $this->shipment = new Expedition($this->db);
     }
 
     /**
-     * Get properties of an order object
+     * Get properties of a shipment object
      *
-     * Return an array with order informations
+     * Return an array with shipment informations
      *
-     * @param       int         $id         ID of order
+     * @param       int         $id         ID of shipment
      * @return 	array|mixed data without useless information
 	 *
      * @throws 	RestException
      */
     function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->commande->lire) {
+		if(! DolibarrApiAccess::$user->rights->expedition->lire) {
 			throw new RestException(401);
 		}
 
-        $result = $this->commande->fetch($id);
+        $result = $this->shipment->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $this->commande->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->commande);
+        $this->shipment->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->shipment);
     }
 
 
 
     /**
-     * List orders
+     * List shipments
      *
-     * Get a list of orders
+     * Get a list of shipments
      *
      * @param string	       $sortfield	        Sort field
      * @param string	       $sortorder	        Sort order
      * @param int		       $limit		        Limit for list
      * @param int		       $page		        Page number
-     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	       $thirdparty_ids	    Thirdparty ids to filter shipments of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-     * @return  array                               Array of order objects
+     * @return  array                               Array of shipment objects
      *
 	 * @throws RestException
      */
@@ -111,11 +113,11 @@ class Orders extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX."expedition as t";
 
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE t.entity IN ('.getEntity('commande').')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('expedition').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -156,9 +158,9 @@ class Orders extends DolibarrApi
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
-                $commande_static = new Commande($db);
-                if($commande_static->fetch($obj->rowid)) {
-                    $obj_ret[] = $this->_cleanObjectDatas($commande_static);
+                $shipment_static = new Expedition($db);
+                if($shipment_static->fetch($obj->rowid)) {
+                    $obj_ret[] = $this->_cleanObjectDatas($shipment_static);
                 }
                 $i++;
             }
@@ -167,98 +169,101 @@ class Orders extends DolibarrApi
             throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No order found');
+            throw new RestException(404, 'No shipment found');
         }
 		return $obj_ret;
     }
 
     /**
-     * Create order object
+     * Create shipment object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of order
+     * @return  int     ID of shipment
      */
     function post($request_data = NULL)
     {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->expedition->creer) {
 			  throw new RestException(401, "Insuffisant rights");
 		  }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
         foreach($request_data as $field => $value) {
-            $this->commande->$field = $value;
+            $this->shipment->$field = $value;
         }
         /*if (isset($request_data["lines"])) {
           $lines = array();
           foreach ($request_data["lines"] as $line) {
             array_push($lines, (object) $line);
           }
-          $this->commande->lines = $lines;
+          $this->shipment->lines = $lines;
         }*/
 
-        if ($this->commande->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(500, "Error creating order", array_merge(array($this->commande->error), $this->commande->errors));
+        if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
+            throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));
         }
 
-        return $this->commande->id;
+        return $this->shipment->id;
     }
 
     /**
-     * Get lines of an order
+     * Get lines of an shipment
      *
-     * @param int   $id             Id of order
+     * @param int   $id             Id of shipment
      *
      * @url	GET {id}/lines
      *
      * @return int
      */
+    /*
     function getLines($id) {
-      if(! DolibarrApiAccess::$user->rights->commande->lire) {
+      if(! DolibarrApiAccess::$user->rights->expedition->lire) {
 		  	throw new RestException(401);
 		  }
 
-      $result = $this->commande->fetch($id);
+      $result = $this->shipment->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Order not found');
+         throw new RestException(404, 'Shipment not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-      $this->commande->getLinesArray();
+      $this->shipment->getLinesArray();
       $result = array();
-      foreach ($this->commande->lines as $line) {
+      foreach ($this->shipment->lines as $line) {
         array_push($result,$this->_cleanObjectDatas($line));
       }
       return $result;
     }
+	*/
 
     /**
-     * Add a line to given order
+     * Add a line to given shipment
      *
-     * @param int   $id             Id of order to update
-     * @param array $request_data   OrderLine data
+     * @param int   $id             Id of shipment to update
+     * @param array $request_data   ShipmentLine data
      *
      * @url	POST {id}/lines
      *
      * @return int
      */
+    /*
     function postLine($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->expedition->creer) {
 		  	throw new RestException(401);
 		  }
 
-      $result = $this->commande->fetch($id);
+      $result = $this->shipment->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Order not found');
+         throw new RestException(404, 'Shipment not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->addline(
+      $updateRes = $this->shipment->addline(
                         $request_data->desc,
                         $request_data->subprice,
                         $request_data->qty,
@@ -292,34 +297,35 @@ class Orders extends DolibarrApi
 
       }
       return false;
-    }
+    }*/
 
     /**
-     * Update a line to given order
+     * Update a line to given shipment
      *
-     * @param int   $id             Id of order to update
+     * @param int   $id             Id of shipment to update
      * @param int   $lineid         Id of line to update
-     * @param array $request_data   OrderLine data
+     * @param array $request_data   ShipmentLine data
      *
      * @url	PUT {id}/lines/{lineid}
      *
      * @return object
      */
+    /*
     function putLine($id, $lineid, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->expedition->creer) {
 		  	throw new RestException(401);
 		  }
 
-      $result = $this->commande->fetch($id);
+      $result = $this->shipment->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Order not found');
+         throw new RestException(404, 'Shipment not found');
       }
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->updateline(
+      $updateRes = $this->shipment->updateline(
                         $lineid,
                         $request_data->desc,
                         $request_data->subprice,
@@ -350,13 +356,13 @@ class Orders extends DolibarrApi
         return $this->_cleanObjectDatas($result);
       }
       return false;
-    }
+    }*/
 
     /**
-     * Delete a line to given order
+     * Delete a line to given shipment
      *
      *
-     * @param int   $id             Id of order to update
+     * @param int   $id             Id of shipment to update
      * @param int   $lineid         Id of line to delete
      *
      * @url	DELETE {id}/lines/{lineid}
@@ -366,121 +372,109 @@ class Orders extends DolibarrApi
      * @throws 404
      */
     function deleteLine($id, $lineid) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
-		  	throw new RestException(401);
-		  }
+    	if(! DolibarrApiAccess::$user->rights->expedition->creer) {
+    		throw new RestException(401);
+    	}
 
-      $result = $this->commande->fetch($id);
-      if( ! $result ) {
-         throw new RestException(404, 'Order not found');
-      }
+    	$result = $this->shipment->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Shipment not found');
+    	}
 
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
-			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
+    	if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
 
-      // TODO Check the lineid $lineid is a line of ojbect
+    	// TODO Check the lineid $lineid is a line of ojbect
 
-      $updateRes = $this->commande->deleteline(DolibarrApiAccess::$user,$lineid);
-      if ($updateRes > 0) {
-        return $this->get($id);
-      }
-      else
-      {
-      	throw new RestException(405, $this->commande->error);
-      }
+    	$request_data = (object) $request_data;
+    	$updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
+    	if ($updateRes > 0) {
+    		return $this->get($id);
+    	}
+    	else
+    	{
+    		throw new RestException(405, $this->shipment->error);
+    	}
     }
 
     /**
-     * Update order general fields (won't touch lines of order)
+     * Update shipment general fields (won't touch lines of shipment)
      *
-     * @param int   $id             Id of order to update
+     * @param int   $id             Id of shipment to update
      * @param array $request_data   Datas
      *
      * @return int
      */
     function put($id, $request_data = NULL) {
-      if (! DolibarrApiAccess::$user->rights->commande->creer) {
+      if (! DolibarrApiAccess::$user->rights->expedition->creer) {
 		  	throw new RestException(401);
 		  }
 
-        $result = $this->commande->fetch($id);
+        $result = $this->shipment->fetch($id);
         if (! $result) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Shipment not found');
         }
 
-		if (! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if (! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
-            $this->commande->$field = $value;
+            $this->shipment->$field = $value;
         }
 
-		// Update availability
-		if (!empty($this->commande->availability_id)) {
-		    if ($this->commande->availability($this->commande->availability_id) < 0)
-			throw new RestException(400, 'Error while updating availability');
-		}
-	// update bank account
-        if(!empty($this->commande->fk_account))
-        {
-                if($this->commande->setBankAccount($this->commande->fk_account) == 0)
-                {
-                        throw new RestException(400,$this->commande->error);
-                }
-        }
-
-
-        if ($this->commande->update(DolibarrApiAccess::$user) > 0)
+        if ($this->shipment->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
         }
         else
         {
-        	throw new RestException(500, $this->commande->error);
+        	throw new RestException(500, $this->shipment->error);
         }
     }
 
     /**
-     * Delete order
+     * Delete shipment
      *
-     * @param   int     $id         Order ID
+     * @param   int     $id         Shipment ID
      *
      * @return  array
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->commande->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->shipment->supprimer) {
 			throw new RestException(401);
 		}
-        $result = $this->commande->fetch($id);
+        $result = $this->shipment->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        if( ! $this->commande->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when delete order : '.$this->commande->error);
+        if( ! $this->shipment->delete(DolibarrApiAccess::$user)) {
+            throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->error);
         }
 
         return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Order deleted'
+                'message' => 'Shipment deleted'
             )
         );
 
     }
 
     /**
-     * Validate an order
+     * Validate a shipment
      *
-     * @param   int $id             Order ID
-     * @param   int $idwarehouse    Warehouse ID
+     * This may record stock movements if module stock is enabled and option to
+     * decrease stock on shipment is on.
+     *
+     * @param   int $id             Shipment ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
      * @url POST    {id}/validate
@@ -490,88 +484,48 @@ class Orders extends DolibarrApi
      * Error message: "Forbidden: Content type `text/plain` is not supported."
      * Workaround: send this in the body
      * {
-     *   "idwarehouse": 0,
      *   "notrigger": 0
      * }
      */
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $notrigger=0)
     {
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
 			throw new RestException(401);
 		}
-        $result = $this->commande->fetch($id);
+        $result = $this->shipment->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Shipment not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->commande->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+		$result = $this->shipment->valid(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 		    throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-		    throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
+		    throw new RestException(500, 'Error when validating Shipment: '.$this->shipment->error);
 		}
-	$result = $this->commande->fetch($id);
+	$result = $this->shipment->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Shipment not found');
         }
 
-	if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+	if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
        }
 
-        $this->commande->fetchObjectLinked();
-        return $this->_cleanObjectDatas($this->commande);
-    }
-
-     /**
-     *  Tag the order as validated (opened)
-     *
-     *  Function used when order is reopend after being closed.
-     *
-     * @param int   $id       Id of the order
-     *
-     * @url     POST {id}/reopen
-     *
-     * @return int
-     *
-     * @throws 304
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     */
-    function reopen($id) {
-
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
-                throw new RestException(401);
-        }
-        if(empty($id)) {
-                throw new RestException(400, 'Order ID is mandatory');
-        }
-        $result = $this->commande->fetch($id);
-        if( ! $result ) {
-                throw new RestException(404, 'Order not found');
-        }
-
-        $result = $this->commande->set_reopen(DolibarrApiAccess::$user);
-        if( $result < 0) {
-                throw new RestException(405, $this->commande->error);
-        }else if( $result == 0) {
-                throw new RestException(304);
-        }
-        return $result;
+        $this->shipment->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->shipment);
     }
 
 
     /**
-     *  Classify the order as invoiced
+     *  Classify the shipment as invoiced
      *
-     * @param int   $id           Id of the order
+     * @param int   $id           Id of the shipment
      *
      * @url     POST {id}/setinvoiced
      *
@@ -582,119 +536,34 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function setinvoiced($id) {
+/*    function setinvoiced($id) {
 
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
                 throw new RestException(401);
         }
         if(empty($id)) {
-                throw new RestException(400, 'Order ID is mandatory');
+                throw new RestException(400, 'Shipment ID is mandatory');
         }
-        $result = $this->commande->fetch($id);
+        $result = $this->shipment->fetch($id);
         if( ! $result ) {
-                throw new RestException(404, 'Order not found');
+                throw new RestException(404, 'Shipment not found');
         }
 
-        $result = $this->commande->classifyBilled(DolibarrApiAccess::$user);
+        $result = $this->shipment->classifyBilled(DolibarrApiAccess::$user);
         if( $result < 0) {
-                throw new RestException(400, $this->commande->error);
+                throw new RestException(400, $this->shipment->error);
         }
         return $result;
     }
-
-    /**
-     * Close an order (Classify it as "Delivered")
-     *
-     * @param   int     $id             Order ID
-     * @param   int     $notrigger      Disabled triggers
-     *
-     * @url POST    {id}/close
-     *
-     * @return  array
-     */
-    function close($id, $notrigger=0)
-    {
-    	if(! DolibarrApiAccess::$user->rights->commande->creer) {
-    		throw new RestException(401);
-    	}
-    	$result = $this->commande->fetch($id);
-    	if( ! $result ) {
-    		throw new RestException(404, 'Order not found');
-    	}
-
-    	if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
-    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-    	}
-
-    	$result = $this->commande->cloture(DolibarrApiAccess::$user, $notrigger);
-    	if ($result == 0) {
-    		throw new RestException(304, 'Error nothing done. May be object is already closed');
-    	}
-    	if ($result < 0) {
-    		throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
-    	}
-
-    	return array(
-    	'success' => array(
-	    	'code' => 200,
-	    	'message' => 'Order closed (Ref='.$this->commande->ref.')'
-	    	)
-    	);
-    }
-
-    /**
-     * Set an order to draft
-     *
-     * @param   int     $id             Order ID
-     * @param   int 	$idwarehouse    Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
-     *
-     * @url POST    {id}/settodraft
-     *
-     * @return  array
-     */
-    function settodraft($id, $idwarehouse=-1)
-    {
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
-                throw new RestException(401);
-        }
-        $result = $this->commande->fetch($id);
-        if( ! $result ) {
-                throw new RestException(404, 'Order not found');
-        }
-
-        if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
-                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        $result = $this->commande->set_draft(DolibarrApiAccess::$user, $idwarehouse);
-        if ($result == 0) {
-                throw new RestException(304, 'Nothing done. May be object is already closed');
-        }
-        if ($result < 0) {
-                throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
-        }
-
-		$result = $this->commande->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Order not found');
-        }
-
-        if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        $this->commande->fetchObjectLinked();
-        return $this->_cleanObjectDatas($this->commande);
-    }
+*/
 
 
      /**
-     * Create an order using an existing proposal.
+     * Create a shipment using an existing order.
      *
+     * @param int   $orderid       Id of the order
      *
-     * @param int   $proposalid       Id of the proposal
-     *
-     * @url     POST /createfromproposal/{proposalid}
+     * @url     POST /createfromorder/{orderid}
      *
      * @return int
      * @throws 400
@@ -702,34 +571,35 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function createOrderFromProposal($proposalid) {
+    /*
+    function createShipmentFromOrder($orderid) {
 
-        require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
-        if(! DolibarrApiAccess::$user->rights->propal->lire) {
+        if(! DolibarrApiAccess::$user->rights->expedition->lire) {
                 throw new RestException(401);
         }
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+        if(! DolibarrApiAccess::$user->rights->expedition->creer) {
                 throw new RestException(401);
         }
         if(empty($proposalid)) {
-                throw new RestException(400, 'Proposal ID is mandatory');
+                throw new RestException(400, 'Order ID is mandatory');
         }
 
-        $propal = new Propal($this->db);
-        $result = $propal->fetch($proposalid);
+        $order = new Commande($this->db);
+        $result = $order->fetch($proposalid);
         if( ! $result ) {
-                throw new RestException(404, 'Proposal not found');
+                throw new RestException(404, 'Order not found');
         }
 
-        $result = $this->commande->createFromProposal($propal, DolibarrApiAccess::$user);
+        $result = $this->shipment->createFromOrder($order, DolibarrApiAccess::$user);
         if( $result < 0) {
-                throw new RestException(405, $this->commande->error);
+                throw new RestException(405, $this->shipment->error);
         }
-        $this->commande->fetchObjectLinked();
-        return $this->_cleanObjectDatas($this->commande);
+        $this->shipment->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->shipment);
     }
-
+	*/
 
     /**
      * Clean sensible object datas
@@ -741,12 +611,29 @@ class Orders extends DolibarrApi
 
         $object = parent::_cleanObjectDatas($object);
 
+        unset($object->thirdparty);	// id already returned
+
         unset($object->note);
         unset($object->address);
         unset($object->barcode_type);
         unset($object->barcode_type_code);
         unset($object->barcode_type_label);
         unset($object->barcode_type_coder);
+
+        if (! empty($object->lines) && is_array($object->lines))
+        {
+        	foreach ($object->lines as $line)
+        	{
+        		unset($line->tva_tx);
+        		unset($line->vat_src_code);
+        		unset($line->total_ht);
+        		unset($line->total_ttc);
+        		unset($line->total_tva);
+        		unset($line->total_localtax1);
+        		unset($line->total_localtax2);
+        		unset($line->remise_percent);
+        	}
+        }
 
         return $object;
     }
@@ -760,13 +647,13 @@ class Orders extends DolibarrApi
      */
     function _validate($data)
     {
-        $commande = array();
-        foreach (Orders::$FIELDS as $field) {
+        $shipment = array();
+        foreach (Shipments::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
-            $commande[$field] = $data[$field];
+            $shipment[$field] = $data[$field];
 
         }
-        return $commande;
+        return $shipment;
     }
 }

@@ -1758,6 +1758,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 	}
