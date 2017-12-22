@@ -379,32 +379,35 @@ if (empty($reshook))
 
 	if ($action == 'delete' && $user->rights->produit->supprimer)
 	{
-		$result = $object->log_price_delete($user, $_GET ["lineid"]);
+		$result = $object->log_price_delete($user, GETPOST('lineid','int'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	/**
-	 * ***************************************************
-	 * Price by quantity
-	 * ***************************************************
-	 */
-	if ($action == 'activate_price_by_qty') { // Activating product price by quantity add a new price, specified as by quantity
-
-		$level = GETPOST('level');
-
+	// Set Price by quantity
+	if ($action == 'activate_price_by_qty')
+	{
+		// Activating product price by quantity add a new price line with price_by_qty set to 1
+		$level = GETPOST('level','int');
 		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+	}
+	// Unset Price by quantity
+	if ($action == 'disable_price_by_qty')
+	{
+		// Disabling product price by quantity add a new price line with price_by_qty set to 0
+		$level = GETPOST('level','int');
+		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
 	}
 
 	if ($action == 'edit_price_by_qty')
 	{ // Edition d'un prix par quantité
-		$rowid = GETPOST('rowid');
+		$rowid = GETPOST('rowid','int');
 	}
 
+	// Add or update price by quantity
 	if ($action == 'update_price_by_qty')
-	{ // Ajout / Mise à jour d'un prix par quantité
-
+	{
 		// Récupération des variables
 		$rowid = GETPOST('rowid');
 		$priceid = GETPOST('priceid');
@@ -415,11 +418,11 @@ if (empty($reshook))
 		$remise = 0; // TODO : allow discount by amount when available on documents
 
 		if (empty($quantity)) {
-			$error ++;
+			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), null, 'errors');
 		}
 		if (empty($newprice)) {
-			$error ++;
+			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
 		if (! $error) {
@@ -442,11 +445,13 @@ if (empty($reshook))
 				$sql .= " WHERE rowid = " . GETPOST('rowid');
 
 				$result = $db->query($sql);
+				if (! $result) dol_print_error($db);
 			} else {
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_price_by_qty (fk_product_price,price,unitprice,quantity,remise_percent,remise) values (";
 				$sql .= $priceid . ',' . $price . ',' . $unitPrice . ',' . $quantity . ',' . $remise_percent . ',' . $remise . ')';
 
 				$result = $db->query($sql);
+				if (! $result) dol_print_error($db);
 			}
 		}
 	}
@@ -920,8 +925,8 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 					if ($action != 'edit_price_by_qty' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 						print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 						print '<input type="hidden" name="action" value="update_price_by_qty">';
-						print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[$i] . '">';
-						print '<input type="hidden" value="0" name="rowid">';
+						print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[$i] . '">';	// id in product_price
+						print '<input type="hidden" value="0" name="rowid">';										// id in product_price
 						print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
 						print '<td><input size="5" type="text" value="1" name="quantity"></td>';
 						print '<td align="right" colspan="2"><input size="10" type="text" value="0" name="price">&nbsp;' . $object->price_base_type . '</td>';
@@ -935,7 +940,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 					print '</table>';
 				} else {
 					print $langs->trans("No");
-					print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=' . $i . '">(' . $langs->trans("Activate") . ')</a>';
+					print '&nbsp; <a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=' . $i . '">(' . $langs->trans("Activate") . ')</a>';
 				}
 				print '</td></tr>';
 			}
@@ -983,40 +988,66 @@ else
 	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))    // TODO Fix the form inside tr instead of td
 	{
 		print '<tr><td>' . $langs->trans("PriceByQuantity");
-		if ($object->prices_by_qty [0] == 0) {
-			print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=1">' . $langs->trans("Activate");
+		if ($object->prices_by_qty[0] == 0) {
+			print '&nbsp; <a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=1">(' . $langs->trans("Activate").')';
+		}
+		else
+		{
+			print '&nbsp; <a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable_price_by_qty&level=1">(' . $langs->trans("DisablePriceByQty").')';
 		}
 		print '</td><td>';
 
-		if ($object->prices_by_qty [0] == 1) {
+		if ($object->prices_by_qty [0] == 1)
+		{
 			print '<table width="50%" class="border" summary="List of quantities">';
 			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans("PriceByQuantityRange") . '</td>';
-			print '<td align="right">' . $langs->trans("HT") . '</td>';
+			//print '<td>' . $langs->trans("PriceByQuantityRange") . '</td>';
+			print '<td>' . $langs->trans("Quantity") . '</td>';
+			print '<td align="right">' . $langs->trans("Price") . '</td>';
+			print '<td align="right"></td>';
 			print '<td align="right">' . $langs->trans("UnitPrice") . '</td>';
 			print '<td align="right">' . $langs->trans("Discount") . '</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-			foreach ($object->prices_by_qty_list [0] as $ii => $prices)
+			if ($action != 'edit_price_by_qty') {
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';  // FIXME a form into a table is not allowed
+				print '<input type="hidden" name="action" value="update_price_by_qty">';
+				print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[0] . '">';	// id in product_price
+				print '<input type="hidden" value="0" name="rowid">';										// id in product_price_by_qty
+
+				print '<tr class="oddeven">';
+				print '<td><input size="5" type="text" value="1" name="quantity"></td>';
+				print '<td><input class="width50 right" type="text" value="0" name="price"></td>';
+				print '<td align="right">' . $object->price_base_type . '</td>';
+				print '<td align="right">&nbsp;</td>';
+				print '<td align="right"><input type="text" class="width50 right" value="0" name="remise_percent">&nbsp;%</td>';
+				print '<td align="center"><input type="submit" value="' . $langs->trans("Add") . '" class="button"></td>';
+				print '</tr>';
+
+				print '</form>';
+			}
+			foreach ($object->prices_by_qty_list[0] as $ii => $prices)
 			{
 				if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer))
 				{
 					print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 					print '<input type="hidden" name="action" value="update_price_by_qty">';
-					print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[0] . '">';
-					print '<input type="hidden" value="' . $prices['rowid'] . '" name="rowid">';
-					print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
+					print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id[0] . '">';	// id in product_price
+					print '<input type="hidden" value="' . $prices['rowid'] . '" name="rowid">';				// id in product_price_by_qty
+					print '<tr class="oddeven">';
 					print '<td><input size="5" type="text" value="' . $prices['quantity'] . '" name="quantity"></td>';
-					print '<td align="right" colspan="2"><input size="10" type="text" value="' . price2num($prices['price'], 'MU') . '" name="price">&nbsp;' . $object->price_base_type . '</td>';
-					// print '<td align="right">&nbsp;</td>';
+					print '<td align="right"><input size="10" type="text" value="' . price2num($prices['price'], 'MU') . '" name="price"></td>';
+					print '<td align="right">' . $object->price_base_type . '</td>';
+					print '<td align="right">&nbsp;</td>';
 					print '<td align="right"><input size="5" type="text" value="' . $prices['remise_percent'] . '" name="remise_percent">&nbsp;%</td>';
 					print '<td align="center"><input type="submit" value="' . $langs->trans("Modify") . '" class="button"></td>';
 					print '</tr>';
 					print '</form>';
 				} else {
-					print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
+					print '<tr class="oddeven">';
 					print '<td>' . $prices['quantity'] . '</td>';
 					print '<td align="right">' . price($prices['price']) . '</td>';
+					print '<td align="right"></td>';
 					print '<td align="right">' . price($prices['unitprice']) . '</td>';
 					print '<td align="right">' . price($prices['remise_percent']) . ' %</td>';
 					print '<td align="center">';
@@ -1032,21 +1063,6 @@ else
 					print '</tr>';
 				}
 			}
-			if ($action != 'edit_price_by_qty') {
-				print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';  // FIXME a form into a table is not allowed
-				print '<input type="hidden" name="action" value="update_price_by_qty">';
-				print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [0] . '">';
-				print '<input type="hidden" value="0" name="rowid">';
-				print '<tr class="' . ($ii % 2 == 0 ? 'pair' : 'impair') . '">';
-				print '<td><input size="5" type="text" value="1" name="quantity"></td>';
-				print '<td align="right" colspan="2"><input size="10" type="text" value="0" name="price">&nbsp;' . $object->price_base_type . '</td>';
-				// print '<td align="right">&nbsp;</td>';
-				print '<td align="right"><input size="5" type="text" value="0" name="remise_percent">&nbsp;%</td>';
-				print '<td align="center"><input type="submit" value="' . $langs->trans("Add") . '" class="button"></td>';
-				print '</tr>';
-				print '</form>';
-			}
-
 			print '</table>';
 		} else {
 			print $langs->trans("No");
@@ -1071,7 +1087,8 @@ dol_fiche_end();
 /*                                                                            */
 /* ************************************************************************** */
 
-if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price')
+if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price'
+	|| $action == 'activate_price_by_qty' || $action == 'disable_price_by_qty')
 {
 	print "\n" . '<div class="tabsAction">' . "\n";
 

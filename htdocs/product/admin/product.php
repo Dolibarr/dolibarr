@@ -36,8 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
-$langs->load("admin");
-$langs->load("products");
+$langs->loadLangs(array("admin","products"));
 
 // Security check
 if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
@@ -55,12 +54,10 @@ $select_pricing_rules=array(
 	'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),			// Several prices according to a customer level
 	'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer'),		// Different price for each customer
 );
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-    $langs->load("admin");
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
-}
+$keyforparam='PRODUIT_CUSTOMER_PRICES_BY_QTY';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2 || ! empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
+$keyforparam='PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2 || ! empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 
 // Clean param
 if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) {

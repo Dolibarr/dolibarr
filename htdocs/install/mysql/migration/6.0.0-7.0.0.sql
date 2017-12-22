@@ -71,6 +71,22 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 
 -- For 7.0
 
+ALTER TABLE llx_product_price_by_qty ADD COLUMN quantity double DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN unitprice double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN price_base_type	varchar(3) DEFAULT 'HT';
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price	double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price_ttc	double(24,8) DEFAULT NULL;
+
+-- VMYSQL4.0 DROP INDEX uk_product_price_by_qty_level on llx_product_price_by_qty;
+-- VPGSQL8.0 DROP INDEX uk_product_price_by_qty_level;
+
+ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, quantity);
+
+  
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_doc (fk_doc);
 
 ALTER TABLE llx_c_revenuestamp ADD COLUMN revenuestamp_type  varchar(16) DEFAULT 'fixed' NOT NULL;
