@@ -480,14 +480,15 @@ $sql.= $db->plimit($limit+1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-    if ($idproduct > 0)
+	$product = new Product($db);
+	$object = new Entrepot($db);
+
+	if ($idproduct > 0)
     {
-        $product = new Product($db);
         $product->fetch($idproduct);
     }
     if ($id > 0)
     {
-        $object = new Entrepot($db);
         $result = $object->fetch($id);
         if ($result < 0)
         {
