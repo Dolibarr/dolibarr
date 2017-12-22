@@ -12,7 +12,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FI8TNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -1329,8 +1329,8 @@ div.statusref img {
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    -webkit-box-shadow: 2px 2px 4px #ccc;
+    box-shadow: 2px 2px 4px #ccc;
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -2539,7 +2539,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #868;
+  	color: #625;
   	font-size: 160%;
 }
 div.refidno  {

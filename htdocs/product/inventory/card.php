@@ -155,6 +155,8 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
+
+	dol_set_focus('input[name="ref"]');
 }
 
 // Part to edit record

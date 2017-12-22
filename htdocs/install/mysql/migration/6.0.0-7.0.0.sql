@@ -96,6 +96,9 @@ ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '';
 
 INSERT INTO llx_c_type_contact(rowid, element, source, code, libelle, active ) values (42, 'propal',  'external', 'SHIPPING', 'Customer contact for delivery', 1);
 
+ALTER TABLE llx_inventory ADD date_validation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN datec date_creation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN fk_user_author fk_user_creat integer;
 ALTER TABLE llx_inventory ADD UNIQUE INDEX uk_inventory_ref (ref, entity);
 
 ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);
