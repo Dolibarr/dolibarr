@@ -1483,12 +1483,14 @@ class Product extends CommonObject
 	 * 	@param		int		$rowid	Line id to delete
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function log_price_delete($user,$rowid)
+	function log_price_delete($user, $rowid)
 	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+		$sql.= " WHERE fk_product_price=".$rowid;
+		$resql=$this->db->query($sql);
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
 		$sql.= " WHERE rowid=".$rowid;
-
-		dol_syslog(get_class($this)."::log_price_delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1499,7 +1501,6 @@ class Product extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 
@@ -1642,13 +1643,13 @@ class Product extends CommonObject
 	 *  @param		double	$newminprice	    New price min
 	 *  @param		int		$level			    0=standard, >0 = level if multilevel prices
 	 *  @param     	int		$newnpr             0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 *  @param     	int		$newpsq             1 if it has price by quantity
+	 *  @param     	int		$newpbq             1 if it has price by quantity
 	 *  @param 		int 	$ignore_autogen     Used to avoid infinite loops
      *	@param      array	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
      *  @param      string  $newdefaultvatcode  Default vat code
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpbq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
 	{
 		global $conf,$langs;
 
@@ -1667,7 +1668,7 @@ class Product extends CommonObject
 		// Price will be modified ONLY when the first one is the one that is being modified
 		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen && ($level == 1))
 		{
-			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpsq);
+			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpbq);
 		}
 
 		if (! empty($newminprice) && ($newminprice > $newprice))
@@ -1781,7 +1782,7 @@ class Product extends CommonObject
 				$this->localtax2_type = $localtaxtype2;
 
 				// Price by quantity
-				$this->price_by_qty = $newpsq;
+				$this->price_by_qty = $newpbq;
 
 				$this->_log_price($user,$level);	// Save price for level into table product_price
 
@@ -1994,7 +1995,7 @@ class Product extends CommonObject
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1)
 							{
-								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise";
+								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
 								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 								$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[$i];
 								$sql.= " ORDER BY quantity ASC";
@@ -2010,7 +2011,8 @@ class Product extends CommonObject
 										$resultat[$ii]["unitprice"]= $result["unitprice"];
 										$resultat[$ii]["quantity"]= $result["quantity"];
 										$resultat[$ii]["remise_percent"]= $result["remise_percent"];
-										$resultat[$ii]["remise"]= $result["remise"];
+										$resultat[$ii]["remise"]= $result["remise"];					// deprecated
+										$resultat[$ii]["price_base_type"]= $result["price_base_type"];
 										$ii++;
 									}
 									$this->prices_by_qty_list[$i]=$resultat;
@@ -2028,7 +2030,8 @@ class Product extends CommonObject
 							return -1;
 						}
 					}
-				} else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				}
+				else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 				{
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 					$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
@@ -2047,7 +2050,7 @@ class Product extends CommonObject
 						// Récuperation de la liste des prix selon qty si flag positionné
 						if ($this->prices_by_qty[0] == 1)
 						{
-							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise";
+							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 							$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[0];
 							$sql.= " ORDER BY quantity ASC";
@@ -2063,7 +2066,8 @@ class Product extends CommonObject
 									$resultat[$ii]["unitprice"]= $result["unitprice"];
 									$resultat[$ii]["quantity"]= $result["quantity"];
 									$resultat[$ii]["remise_percent"]= $result["remise_percent"];
-									$resultat[$ii]["remise"]= $result["remise"];
+									$resultat[$ii]["remise"]= $result["remise"];					// deprecated
+									$resultat[$ii]["price_base_type"]= $result["price_base_type"];
 									$ii++;
 								}
 								$this->prices_by_qty_list[0]=$resultat;

@@ -1909,8 +1909,9 @@ class Form
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
 		//Price by customer
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
-			$sql.=' ,pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
+		{
+			$sql.=', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
 			$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
 			$selectFields.= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
 		}
@@ -2045,7 +2046,7 @@ class Form
 
 				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
-					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
+					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 					$sql.= " WHERE fk_product_price=".$objp->price_rowid;
 					$sql.= " ORDER BY quantity ASC";
@@ -2059,12 +2060,17 @@ class Form
 						while ($nb_prices && $j < $nb_prices) {
 							$objp2 = $this->db->fetch_object($result2);
 
+							$objp->price_by_qty_rowid = $objp2->rowid;
+							$objp->price_by_qty_price_base_type = $objp2->price_base_type;
+							$objp->price_by_qty_quantity = $objp2->quantity;
+							$objp->price_by_qty_unitprice = $objp2->unitprice;
+							$objp->price_by_qty_remise_percent = $objp2->remise_percent;
+							// For backward compatibility
 							$objp->quantity = $objp2->quantity;
 							$objp->price = $objp2->price;
 							$objp->unitprice = $objp2->unitprice;
 							$objp->remise_percent = $objp2->remise_percent;
 							$objp->remise = $objp2->remise;
-							$objp->price_by_qty_rowid = $objp2->rowid;
 
 							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel);
 
@@ -2164,7 +2170,10 @@ class Form
 
 		$opt = '<option value="'.$objp->rowid.'"';
 		$opt.= ($objp->rowid == $selected)?' selected':'';
-		$opt.= (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)?' pbq="'.$objp->price_by_qty_rowid.'"':'';
+		if (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)
+		{
+			$opt.= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
+		}
 		if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
 		{
 			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
