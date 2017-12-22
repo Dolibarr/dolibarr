@@ -3235,7 +3235,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  */
 
 .product_line_stock_ok { color: #002200; }
-.product_line_stock_too_low { color: #664400; }
+.product_line_stock_too_low { color: #884400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
