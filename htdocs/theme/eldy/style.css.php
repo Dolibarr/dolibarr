@@ -1277,6 +1277,9 @@ div.nopadding {
 .pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
 }
+.fiche img.pictoedit {
+    opacity: 0.7;
+}
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
