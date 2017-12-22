@@ -148,7 +148,7 @@ class Documents extends DolibarrApi
 	/**
 	 * Return the list of documents of a dedicated element (from its ID or Ref)
 	 *
-	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'facture', 'project',  ...)
+	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'proposal', 'order', 'invoice', 'shipment', 'project',  ...)
 	 * @param	int		$id				ID of element
 	 * @param	string	$ref			Ref of element
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
@@ -205,6 +205,70 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 		}
+		else if ($modulepart == 'propal' || $modulepart == 'proposal')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->propal->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Propal($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Proposal not found');
+			}
+
+			$upload_dir = $conf->propal->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
+		}
+		else if ($modulepart == 'commande' || $modulepart == 'order')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->commande->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Commande($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Order not found');
+			}
+
+			$upload_dir = $conf->commande->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'commande');
+		}
+		else if ($modulepart == 'shipment' || $modulepart == 'expedition')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->expedition->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Expedition($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Shipment not found');
+			}
+
+			$upload_dir = $conf->expedition->dir_output . "/sending/" . get_exdir(0, 0, 0, 1, $object, 'shipment');
+		}
+		else if ($modulepart == 'facture' || $modulepart == 'invoice')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->facture->lire) {
+				throw new RestException(401);
+			}
+
+			$object = new Facture($this->db);
+			$result=$object->fetch($id, $ref);
+			if ( ! $result ) {
+				throw new RestException(404, 'Invoice not found');
+			}
+
+			$upload_dir = $conf->facture->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'invoice');
+		}
 		else
 		{
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -212,7 +276,7 @@ class Documents extends DolibarrApi
 
 		$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		if (empty($filearray)) {
-			throw new RestException(404, 'Modulepart '.$modulepart.' with Id '.$object->id.(! empty($object->Ref)?' and Ref '.$object->ref:'').' does not have any documents.');
+			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(! empty($object->Ref)?' or Ref '.$object->ref:'').' does not return any document.');
 		}
 
 		return $filearray;

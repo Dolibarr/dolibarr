@@ -4886,8 +4886,8 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	global $conf;
 
 	$path = '';
-
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing','supplier_payment');
+	
+	$arrayforoldpath=array('cheque','user','category','holiday','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
@@ -4904,7 +4904,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and object->modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member')))
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment')))
 		{
 			$path=$object->ref?$object->ref:$object->id;
 		}
