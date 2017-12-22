@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Open-DSI 	        <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,13 +227,15 @@ class modAccounting extends DolibarrModules
         $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='Chartofaccounts';
         $this->export_icon[$r]='accounting';
-		$this->export_permission[$r]=array(array("accounting","chartofaccount"));
-        $this->export_fields_array[$r]=array('ac.rowid'=>'ChartofaccountsId','ac.pcg_version'=>'Chartofaccounts','aa.rowid'=>'Id','aa.account_number'=>"AccountAccounting",'aa.label'=>"Label",'aa.account_parent'=>"Accountparent",'aa.pcg_type'=>"Pcgtype",'aa.pcg_subtype'=>'Pcgsubtype','aa.active'=>'Status');
-        $this->export_TypeFields_array[$r]=array('ac.rowid'=>'List:accounting_system:pcg_version','aa.account_number'=>"Text",'aa.label'=>"Text",'aa.pcg_type'=>'Text','aa.pcg_subtype'=>'Text','aa.active'=>'Status');
-        $this->export_entities_array[$r]=array('ac.rowid'=>"accounting",'ac.pcg_version'=>"accounting",'aa.rowid'=>'accounting','aa.account_number'=>"accounting",'aa.label'=>"accounting",'aa.accountparent'=>"accounting",'aa.pcg_type'=>"accounting",'aa.pcgsubtype'=>"accounting",'aa_active'=>"accounting");
+        $this->export_permission[$r]=array(array("accounting","chartofaccount"));
+        $this->export_fields_array[$r]=array('ac.rowid'=>'ChartofaccountsId','ac.pcg_version'=>'Chartofaccounts','aa.rowid'=>'Id','aa.account_number'=>"AccountAccounting",'aa.label'=>"Label",'aa.account_parent'=>"Accountparent","cac.code"=>"AccountingCategory",'aa.pcg_type'=>"Pcgtype",'aa.pcg_subtype'=>'Pcgsubtype','aa.active'=>'Status');
+        $this->export_TypeFields_array[$r]=array('ac.rowid'=>'List:accounting_system:pcg_version','aa.account_number'=>"Text",'aa.label'=>"Text",'cac.code'=>"Text",'aa.pcg_type'=>'Text','aa.pcg_subtype'=>'Text','aa.active'=>'Status');
+        $this->export_entities_array[$r]=array('ac.rowid'=>"accounting",'ac.pcg_version'=>"accounting",'aa.rowid'=>'accounting','aa.account_number'=>"accounting",'aa.label'=>"accounting",'aa.accountparent'=>"accounting",'cac.code'=>"accounting",'aa.pcg_type'=>"accounting",'aa.pcgsubtype'=>"accounting",'aa_active'=>"accounting");
 
         $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
+        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_accounting_category as cac ON cac.rowid = aa.fk_accounting_category';
+        $this->export_sql_end[$r] .=' ,'.MAIN_DB_PREFIX.'accounting_system as ac';
         $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
 
 	}
