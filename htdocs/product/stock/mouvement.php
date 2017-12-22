@@ -865,6 +865,12 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
 
+        $userstatic->id=$objp->fk_user_author;
+        $userstatic->login=$objp->login;
+        $userstatic->lastname=$objp->lastname;
+        $userstatic->firstname=$objp->firstname;
+        $userstatic->photo=$objp->photo;
+
         $productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->product_ref;
         $productstatic->label=$objp->produit;
@@ -942,11 +948,6 @@ if ($resql)
         if (! empty($arrayfields['m.fk_user_author']['checked']))
         {
 	        print '<td class="tdoverflowmax100">';
-	        $userstatic->id=$objp->fk_user_author;
-	        $userstatic->login=$objp->login;
-	        $userstatic->lastname=$objp->lastname;
-	        $userstatic->firstname=$objp->firstname;
-	        $userstatic->photo=$objp->photo;
 	        print $userstatic->getNomUrl(-1);
 	        print "</td>\n";
         }

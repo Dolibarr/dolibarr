@@ -390,15 +390,6 @@ class Invoices extends DolibarrApi
     	{
     		throw new RestException(405, $this->invoice->error);
     	}
-
-    	/*$result = $this->invoice->fetch($id);
-
-    	$this->invoice->getLinesArray();
-    	$result = array();
-    	foreach ($this->invoice->lines as $line) {
-    		array_push($result,$this->_cleanObjectDatas($line));
-    	}*/
-    	return $result;
     }
 
     /**
