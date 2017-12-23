@@ -10,7 +10,8 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016      Ferran Marcet	     <fmarcet@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet	 <fmarcet@2byte.es>
+ * Copyright (C) 2017      Charlene Benke	 <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +63,9 @@ $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
+
+$search_refproject=GETPOST('search_refproject','alpha');
+
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_vat=GETPOST('search_montant_vat','alpha');
@@ -137,6 +141,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
 	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'p.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
+        'pr.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
 	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
@@ -162,6 +167,10 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 	}
 }
 
+// no project enabled we suppress from array
+if (empty($conf->projet->enabled))
+	unset($arrayfields['pr.ref']);
+
 $object = new Propal($db);	// To be passed as parameter of executeHooks that need
 
 
@@ -186,6 +195,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_sale='';
 	$search_ref='';
 	$search_refcustomer='';
+	$search_refproject=''; 	
 	$search_societe='';
 	$search_montant_ht='';
 	$search_montant_vat='';
@@ -282,6 +292,8 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
 if ($search_ref)         $sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('p.ref_client', $search_refcustomer);
+if ($search_refproject) $sql .= natural_search('pr.ref', $search_refprojet);
+
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
 if ($search_login)       $sql .= natural_search("u.login", $search_login);
 if ($search_montant_ht != '')  $sql.= natural_search("p.total_ht", $search_montant_ht, 1);
@@ -366,6 +378,7 @@ if ($resql)
 	if ($search_year)        $param.='&search_year='.urlencode($search_year);
 	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
+        if ($search_refprojet)   $param.='&search_refprojet='.urlencode($search_refprojet);
 	if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
 	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
 	if ($search_sale > 0)    $param.='&search_sale='.urlencode($search_sale);
@@ -474,6 +487,12 @@ if ($resql)
 	{
 		print '<td class="liste_titre">';
 	   print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+	   print '</td>';
+	}
+	if (! empty($arrayfields['pr.ref']['checked']))
+	{
+    	print '<td class="liste_titre">';
+	   print '<input class="flat" size="6" type="text" name="search_refproject" value="'.$search_refproject.'">';
 	   print '</td>';
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
@@ -588,6 +607,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['p.ref']['checked']))            print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.ref_client']['checked']))     print_liste_field_titre($arrayfields['p.ref_client']['label'],$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['pr.ref']['checked']))     	print_liste_field_titre($arrayfields['pr.ref']['label'],$_SERVER["PHP_SELF"],'pr.ref','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
@@ -668,6 +688,18 @@ if ($resql)
 			print $obj->ref_client;
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+		}
+
+		if (! empty($arrayfields['pr.ref']['checked']))
+		{
+    		// Project ref
+    		print '<td class="nocellnopadd nowrap">';
+    		if ($obj->project_id) {
+				$projectstatic->fetch($obj->project_id);
+				print $projectstatic->getNomUrl(1);
+			}
+    		print '</td>';
+    		if (! $i) $totalarray['nbfield']++;
 		}
 
 		$companystatic->id=$obj->socid;
