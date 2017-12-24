@@ -495,7 +495,7 @@ class CMailFile
 
 		$res=false;
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) || !empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
@@ -556,6 +556,12 @@ class CMailFile
 				$keyforsmtppw    ='MAIN_MAIL_SMTPS_PW_EMAILING';
 				$keyfortls       ='MAIN_MAIL_EMAIL_TLS_EMAILING';
 				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
+			}
+			
+			if(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+				$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
+				$this->addr_cc = '';
+				$this->addr_bcc = '';
 			}
 
 			// Action according to choosed sending method
