@@ -36,7 +36,7 @@ class Login
 	 *
 	 * Request the API token for a couple username / password.
 	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
-	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: Tha API key (DOLAPIKEY) can be found/set on the user page.
+	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API key (DOLAPIKEY) can be found/set on the user page.
 	 *
 	 * @param   string  $login			User login
 	 * @param   string  $password		User password
@@ -86,10 +86,20 @@ class Login
 
 		$tmpuser=new User($this->db);
 		$tmpuser->fetch(0, $login, 0, 0, $entity);
+		if (empty($tmpuser->id))
+		{
+			throw new RestException(500, 'Failed to load user');
+		}
 
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset)
 		{
+			$tmpuser->getrights();
+			if (empty($tmpuser->rights->user->self->creer))
+			{
+				throw new RestException(403, 'User need write permission on itself to reset its API token');
+			}
+
     		// Generate token for user
     		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY,1);
 
