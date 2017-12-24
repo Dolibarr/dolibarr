@@ -48,6 +48,7 @@ if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 $result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
 $msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action','aZ09');
@@ -487,9 +488,9 @@ if ($resql)
     {
         $product->fetch($idproduct);
     }
-    if ($id > 0)
+    if ($id > 0 || $ref)
     {
-        $result = $object->fetch($id);
+        $result = $object->fetch($id, $ref);
         if ($result < 0)
         {
             dol_print_error($db);
@@ -514,7 +515,7 @@ if ($resql)
     /*
      * Show tab only if we ask a particular warehouse
      */
-    if ($id)
+    if ($object->id > 0)
     {
         $head = stock_prepare_head($object);
 
@@ -530,7 +531,7 @@ if ($resql)
         $shownav = 1;
         if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-        dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'libelle', $morehtmlref);
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
 
         print '<div class="fichecenter">';
