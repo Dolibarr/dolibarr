@@ -17,6 +17,14 @@
  * Output code for the filemanager
  * $module must be defined ('ecm', 'medias', ...)
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE core/tpl/filemanager.tpl.php -->

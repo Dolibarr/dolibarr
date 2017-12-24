@@ -1,4 +1,12 @@
 <?php
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
