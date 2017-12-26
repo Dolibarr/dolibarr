@@ -15,6 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $prefix = $conf->global->ACCOUNTING_EXPORT_PREFIX_SPEC;
 $format = $conf->global->ACCOUNTING_EXPORT_FORMAT;
 $nodateexport = $conf->global->ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME;
