@@ -1573,6 +1573,7 @@ class Propal extends CommonObject
 		$sql.= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql.= ' d.fk_unit,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
+		$sql.= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql.= ' d.date_start, d.date_end';
 		$sql.= ' ,d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as d';
@@ -1638,6 +1639,10 @@ class Propal extends CommonObject
 				$line->product_desc     = $objp->product_desc; 		// Description produit
 				$line->fk_product_type  = $objp->fk_product_type;
 				$line->fk_unit          = $objp->fk_unit;
+				$line->weight = $objp->weight;
+				$line->weight_units = $objp->weight_units;
+				$line->volume = $objp->volume;
+				$line->volume_units = $objp->volume_units;
 
 				$line->date_start  		= $this->db->jdate($objp->date_start);
 				$line->date_end  		= $this->db->jdate($objp->date_end);
