@@ -21,7 +21,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
 {
-	print "Error, template page can't be called as URL";
+	print "Error, template page filemanager.tpl.php can't be called as URL";
 	exit;
 }
 
@@ -204,7 +204,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 $mode='noajax';
 if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
-include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
+include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
 // End right panel

@@ -111,6 +111,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	$label = trim(GETPOST("label", 'alpha'));
 	$desc = trim(GETPOST("desc", 'alpha'));
 	$catParent = GETPOST("catParent", 'alpha');	// Can be an int (with ECM) or a string (with generic filemanager)
+	if ($catParent == '-1') $catParent=0;
 
 	$error=0;
 

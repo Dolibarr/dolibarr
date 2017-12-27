@@ -2020,6 +2020,7 @@ if ($action == 'editfile' || $action == 'file_manager')
 	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 	print '</div>';
+
 }
 
 if ($action == 'editmenu')
