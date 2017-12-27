@@ -1947,14 +1947,18 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
 {
-	global $user, $conf, $db;
+	global $conf, $db, $user;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
 
 	if (! is_object($fuser)) $fuser=$user;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
-	if (empty($entity)) $entity=0;
-	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file);
+	if (empty($entity))
+	{
+		if (empty($conf->multicompany->enabled)) $entity=1;
+		else $entity=0;
+	}
+	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
@@ -1975,6 +1979,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for miscellaneous medias files
 	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
 	{
+		if (empty($entity) || empty($conf->medias->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		$accessallowed=1;
 		$original_file=$conf->medias->multidir_output[$entity].'/'.$original_file;
 	}
@@ -2133,6 +2138,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for categories
 	elseif ($modulepart == 'category' && !empty($conf->categorie->dir_output))
 	{
+		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->categorie->{$lire}) $accessallowed=1;
 		$original_file=$conf->categorie->multidir_output[$entity].'/'.$original_file;
 	}
@@ -2202,6 +2208,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for third parties
 	else if (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
 	{
+		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -2213,6 +2220,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for contact
 	else if ($modulepart == 'contact' && !empty($conf->societe->dir_output))
 	{
+		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire})
 		{
 			$accessallowed=1;
@@ -2463,6 +2471,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping pour les produits et services
 	else if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
 	{
+		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;

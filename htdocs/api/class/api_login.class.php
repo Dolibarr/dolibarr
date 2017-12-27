@@ -44,7 +44,9 @@ class Login
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
      * @return  array                   Response status and user token
      *
-	 * @throws RestException
+	 * @throws 200
+	 * @throws 403
+	 * @throws 500
 	 *
 	 * @url GET /
 	 * @url POST /
