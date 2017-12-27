@@ -1183,7 +1183,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 }
 
 // Export site
-if (GETPOST('exportsite'))
+if (GETPOST('exportsite','alpha'))
 {
 	$fileofzip = $object->exportWebSite();
 

@@ -803,6 +803,12 @@ class Website extends CommonObject
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
 
+		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/'.$website->ref;
+
+		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+
 		// Build sql file
 		dol_syslog("Create containers dir");
 		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
