@@ -17,6 +17,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 // $cssclass must be defined by caller. For example cssclass='fieldtitle"
 $module = $object->element;
 $note_public = 'note_public';
