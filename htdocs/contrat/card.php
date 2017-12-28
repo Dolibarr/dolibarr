@@ -1842,7 +1842,7 @@ else
 						{
 							$tmpaction='unactivateline';
 							$tmpactionpicto='playstop';
-							$tmpactiontext=$langs->trans("Unactivate");
+							$tmpactiontext=$langs->trans("Disable");
 						}
 						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver))
 						{
@@ -1984,7 +1984,7 @@ else
 				print '<tr '.$bc[false].'>';
 				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
 				print '<td class="nohover right">';
-				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"> &nbsp; ';
+				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '</tr>';
