@@ -71,6 +71,10 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 
 -- For 7.0
 
+ALTER TABLE llx_product_attribute_value DROP INDEX unique_ref;
+ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
+
+
 ALTER TABLE llx_product_price_by_qty ADD COLUMN quantity double DEFAULT NULL;
 ALTER TABLE llx_product_price_by_qty ADD COLUMN unitprice double(24,8) DEFAULT 0;
 
