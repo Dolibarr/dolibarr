@@ -291,7 +291,9 @@ class Orders extends DolibarrApi
         return $updateRes;
 
       }
-      return false;
+      else {
+			throw new RestException(400, $this->commande->error);
+      }
     }
 
     /**
@@ -422,7 +424,7 @@ class Orders extends DolibarrApi
 		    if ($this->commande->availability($this->commande->availability_id) < 0)
 			throw new RestException(400, 'Error while updating availability');
 		}
-	// update bank account
+        // update bank account
         if(!empty($this->commande->fk_account))
         {
                 if($this->commande->setBankAccount($this->commande->fk_account) == 0)
@@ -430,7 +432,6 @@ class Orders extends DolibarrApi
                         throw new RestException(400,$this->commande->error);
                 }
         }
-
 
         if ($this->commande->update(DolibarrApiAccess::$user) > 0)
         {
@@ -446,7 +447,6 @@ class Orders extends DolibarrApi
      * Delete order
      *
      * @param   int     $id         Order ID
-     *
      * @return  array
      */
     function delete($id)
@@ -479,20 +479,24 @@ class Orders extends DolibarrApi
     /**
      * Validate an order
      *
+	 * If you get a bad value for param notrigger check that ou provide this in body
+     * {
+     *   "idwarehouse": 0,
+     *   "notrigger": 0
+     * }
+     *
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
      * @url POST    {id}/validate
      *
+	 * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     *
      * @return  array
-     * FIXME An error 403 is returned if the request has an empty body.
-     * Error message: "Forbidden: Content type `text/plain` is not supported."
-     * Workaround: send this in the body
-     * {
-     *   "idwarehouse": 0,
-     *   "notrigger": 0
-     * }
      */
     function validate($id, $idwarehouse=0, $notrigger=0)
     {
@@ -515,20 +519,21 @@ class Orders extends DolibarrApi
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
 		}
-	$result = $this->commande->fetch($id);
+        $result = $this->commande->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }
 
-	if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-       }
+        }
 
         $this->commande->fetchObjectLinked();
+
         return $this->_cleanObjectDatas($this->commande);
     }
 
-     /**
+    /**
      *  Tag the order as validated (opened)
      *
      *  Function used when order is reopend after being closed.
@@ -564,6 +569,7 @@ class Orders extends DolibarrApi
         }else if( $result == 0) {
                 throw new RestException(304);
         }
+
         return $result;
     }
 
@@ -599,6 +605,7 @@ class Orders extends DolibarrApi
         if( $result < 0) {
                 throw new RestException(400, $this->commande->error);
         }
+        
         return $result;
     }
 
@@ -610,7 +617,7 @@ class Orders extends DolibarrApi
      *
      * @url POST    {id}/close
      *
-     * @return  array
+     * @return  int
      */
     function close($id, $notrigger=0)
     {
@@ -634,12 +641,7 @@ class Orders extends DolibarrApi
     		throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
     	}
 
-    	return array(
-    	'success' => array(
-	    	'code' => 200,
-	    	'message' => 'Order closed (Ref='.$this->commande->ref.')'
-	    	)
-    	);
+    	return $result;
     }
 
     /**
@@ -684,25 +686,26 @@ class Orders extends DolibarrApi
         }
 
         $this->commande->fetchObjectLinked();
+
         return $this->_cleanObjectDatas($this->commande);
     }
 
 
      /**
-     * Create an order using an existing proposal.
-     *
-     *
-     * @param int   $proposalid       Id of the proposal
-     *
-     * @url     POST /createfromproposal/{proposalid}
-     *
-     * @return int
-     * @throws 400
-     * @throws 401
-     * @throws 404
-     * @throws 405
-     */
-    function createOrderFromProposal($proposalid) {
+      * Create an order using an existing proposal.
+      *
+      *
+      * @param int   $proposalid       Id of the proposal
+      *
+      * @url     POST /createfromproposal/{proposalid}
+      *
+      * @return int
+      * @throws 400
+      * @throws 401
+      * @throws 404
+      * @throws 405
+      */
+     function createOrderFromProposal($proposalid) {
 
         require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 
@@ -727,6 +730,7 @@ class Orders extends DolibarrApi
                 throw new RestException(405, $this->commande->error);
         }
         $this->commande->fetchObjectLinked();
+
         return $this->_cleanObjectDatas($this->commande);
     }
 

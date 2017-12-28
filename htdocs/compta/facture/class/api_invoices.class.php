@@ -71,8 +71,8 @@ class Invoices extends DolibarrApi
             throw new RestException(404, 'Invoice not found');
         }
 
-	// Get payment details
-	$this->invoice->totalpaye = $this->invoice->getSommePaiement();
+        // Get payment details
+        $this->invoice->totalpaye = $this->invoice->getSommePaiement();
         $this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
 	$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
         $this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
@@ -419,14 +419,14 @@ class Invoices extends DolibarrApi
             $this->invoice->$field = $value;
         }
 
-	// update bank account
-	if(!empty($this->invoice->fk_account))
-	{
-		if($this->invoice->setBankAccount($this->invoice->fk_account) == 0)
-		{
-			throw new RestException(400,$this->invoice->error);
-		}
-	}
+        // update bank account
+        if (!empty($this->invoice->fk_account))
+        {
+             if($this->invoice->setBankAccount($this->invoice->fk_account) == 0)
+             {
+                 throw new RestException(400,$this->invoice->error);
+             }
+        }
 
         if($this->invoice->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
@@ -438,7 +438,7 @@ class Invoices extends DolibarrApi
      * Delete invoice
      *
      * @param int   $id Invoice ID
-     * @return type
+     * @return array
      */
     function delete($id)
     {
@@ -541,7 +541,7 @@ class Invoices extends DolibarrApi
       );
 
       if ($updateRes < 0) {
-	throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
+            throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
       }
 
       return $updateRes;
@@ -602,6 +602,12 @@ class Invoices extends DolibarrApi
     /**
      * Validate an invoice
      *
+	 * If you get a bad value for param notrigger check that ou provide this in body
+     * {
+     *   "idwarehouse": 0,
+     *   "notrigger": 0
+     * }
+     *
      * @param   int $id             Invoice ID
      * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
@@ -609,13 +615,6 @@ class Invoices extends DolibarrApi
      * @url POST    {id}/validate
      *
      * @return  array
-     * FIXME An error 403 is returned if the request has an empty body.
-     * Error message: "Forbidden: Content type `text/plain` is not supported."
-     * Workaround: send this in the body
-     * {
-     *   "idwarehouse": 0,
-     *   "notrigger": 0
-     * }
      */
     function validate($id, $idwarehouse=0, $notrigger=0)
     {
@@ -639,7 +638,6 @@ class Invoices extends DolibarrApi
     		throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
     	}
 
-
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Invoice not found');
@@ -650,8 +648,6 @@ class Invoices extends DolibarrApi
         }
 
         return $this->_cleanObjectDatas($this->invoice);
-
-
     }
 
     /**
@@ -704,11 +700,59 @@ class Invoices extends DolibarrApi
         }
 
         return $this->_cleanObjectDatas($this->invoice);
-
-
     }
 
 
+    /**
+     * Sets an invoice as unpaid
+     *
+     * @param   int     $id            Order ID
+     *
+     * @url POST    {id}/settounpaid
+     *
+     * @return  array   An invoice object
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     */
+    function settounpaid($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->set_unpaid(DolibarrApiAccess::$user);
+        if ($result == 0) {
+                throw new RestException(304, 'Nothing done');
+        }
+        if ($result < 0) {
+                throw new RestException(500, 'Error : '.$this->invoice->error);
+        }
+
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+    }
+    
      /**
      * Add a discount line into an invoice (as an invoice line) using an existing absolute discount
      *
