@@ -158,6 +158,7 @@ class Orders extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
                 if($commande_static->fetch($obj->rowid)) {
+		    $commande_static->fetchObjectLinked();
                     $obj_ret[] = $this->_cleanObjectDatas($commande_static);
                 }
                 $i++;
