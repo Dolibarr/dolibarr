@@ -30,6 +30,13 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande')))
@@ -49,7 +56,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
-if (in_array($object->element,array('propal', 'supplier_proposal','facture','facturerec','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 ?>
 
@@ -201,7 +208,7 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			if ($conf->global->ENTREPOT_EXTRA_STATUS)
+			if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 			{
 				// hide products in closed warehouse, but show products for internal transfer
 				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id, '1', 0, '', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
@@ -231,6 +238,7 @@ else {
 
 			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice);
 		}
+		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';
 	}
 
@@ -701,6 +709,28 @@ jQuery(document).ready(function() {
   		<?php
         }
         ?>
+
+        /* To process customer price per quantity */
+        var pbq = $('option:selected', this).attr('data-pbq');
+        var pbqqty = $('option:selected', this).attr('data-pbqqty');
+        var pbqpercent = $('option:selected', this).attr('data-pbqpercent');
+        if (jQuery('#idprod').val() > 0 && typeof pbq !== "undefined")
+        {
+            console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
+            jQuery("#pbq").val(pbq);
+            if (jQuery("#qty").val() < pbqqty)
+            {
+                    jQuery("#qty").val(pbqqty);
+            }
+            if (jQuery("#remise_percent").val() < pbqpercent)
+            {
+                    jQuery("#remise_percent").val(pbqpercent);
+            }
+        }
+        else
+        {
+            jQuery("#pbq").val('');
+        }
 
   		/* To set focus */
   		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)

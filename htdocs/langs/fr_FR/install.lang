@@ -140,7 +140,8 @@ KeepDefaultValuesMamp=Vous utilisez l'assistant d'installation DoliMamp. Les val
 KeepDefaultValuesProxmox=Vous utilisez l'assistant d'installation depuis une application Proxmox. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 UpgradeExternalModule=Lancer le processus de mise à jour d'un module externe
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
-NothingToDelete=Nothing to clean/delete
+NothingToDelete=Rien a supprimer
+NothingToDo=Rien à faire
 #########
 # upgrade
 MigrationFixData=Correction de données dé-normalisées
@@ -196,6 +197,7 @@ MigrationEventsContact=Migration of events to add event contact into assignement
 MigrationRemiseEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise
 MigrationRemiseExceptEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise_except"
 MigrationReloadModule=Rechargement du module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Afficher les choix non disponibles
 HideNotAvailableOptions=Cacher les choix non disponibles
 ErrorFoundDuringMigration=Une erreur est survenu lors du processus de migration, aussi l'étape suivante ne peut pas être réalisée. Pour ignorer les erreurs, vous pouvez <a href="%s">cliquer ici</a>, mais l'application ou certaines fonctionnalités risquent de présenter des dysfonctionnements jusqu'à la résolution de la ou des erreurs

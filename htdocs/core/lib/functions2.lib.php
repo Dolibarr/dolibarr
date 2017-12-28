@@ -2223,6 +2223,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'order' || $module == 'orders') {
         $moduledirforclass = 'commande';
     }
+    elseif ($module == 'shipments') {
+    	$moduledirforclass = 'expedition';
+    }
     elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
         $moduledirforclass = 'compta/facture';
     }

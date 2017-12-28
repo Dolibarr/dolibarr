@@ -198,7 +198,7 @@ class Subscriptions extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $this->task->error);
+        	throw new RestException(500, $subscription->error);
         }
     }
 

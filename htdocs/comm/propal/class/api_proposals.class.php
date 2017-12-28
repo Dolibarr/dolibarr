@@ -389,12 +389,16 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// TODO Check the lineid $lineid is a line of ojbect
+
 		$updateRes = $this->propal->deleteline($lineid);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		}
-
-		return false;
+		else
+		{
+			throw new RestException(405, $this->propal->error);
+		}
 	}
 
 	/**
@@ -442,7 +446,7 @@ class Proposals extends DolibarrApi
 		}
 		else
 		{
-			throw new RestException(500, $this->task->error);
+			throw new RestException(500, $this->propal->error);
 		}
 	}
 

@@ -3952,8 +3952,6 @@ function migrate_reset_blocked_log($db,$langs,$conf)
 
 							$res = $b->create($user);
 							if ($res<=0) {
-								$this->error = $b->error;
-								$this->errors = $b->errors;
 								$error++;
 							}
 						}

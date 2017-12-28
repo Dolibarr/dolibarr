@@ -144,7 +144,7 @@ else
 
 // Onglets
 $head=bank_prepare_head($object);
-dol_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), -1, 'account');
+dol_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 $title=$langs->trans("FinancialAccount")." : ".$object->label;
 $link=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start-1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start+1)."'>".img_next('', 'class="valignbottom"')."</a>":"");

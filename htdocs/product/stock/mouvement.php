@@ -48,6 +48,7 @@ if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 $result=restrictedArea($user,'stock');
 
 $id=GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
 $msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action','aZ09');
@@ -480,15 +481,16 @@ $sql.= $db->plimit($limit+1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-    if ($idproduct > 0)
+	$product = new Product($db);
+	$object = new Entrepot($db);
+
+	if ($idproduct > 0)
     {
-        $product = new Product($db);
         $product->fetch($idproduct);
     }
-    if ($id > 0)
+    if ($id > 0 || $ref)
     {
-        $object = new Entrepot($db);
-        $result = $object->fetch($id);
+        $result = $object->fetch($id, $ref);
         if ($result < 0)
         {
             dol_print_error($db);
@@ -513,7 +515,7 @@ if ($resql)
     /*
      * Show tab only if we ask a particular warehouse
      */
-    if ($id)
+    if ($object->id > 0)
     {
         $head = stock_prepare_head($object);
 
@@ -529,7 +531,7 @@ if ($resql)
         $shownav = 1;
         if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-        dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'libelle', $morehtmlref);
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
 
         print '<div class="fichecenter">';
@@ -865,6 +867,12 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
 
+        $userstatic->id=$objp->fk_user_author;
+        $userstatic->login=$objp->login;
+        $userstatic->lastname=$objp->lastname;
+        $userstatic->firstname=$objp->firstname;
+        $userstatic->photo=$objp->photo;
+
         $productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->product_ref;
         $productstatic->label=$objp->produit;
@@ -942,11 +950,6 @@ if ($resql)
         if (! empty($arrayfields['m.fk_user_author']['checked']))
         {
 	        print '<td class="tdoverflowmax100">';
-	        $userstatic->id=$objp->fk_user_author;
-	        $userstatic->login=$objp->login;
-	        $userstatic->lastname=$objp->lastname;
-	        $userstatic->firstname=$objp->firstname;
-	        $userstatic->photo=$objp->photo;
 	        print $userstatic->getNomUrl(-1);
 	        print "</td>\n";
         }

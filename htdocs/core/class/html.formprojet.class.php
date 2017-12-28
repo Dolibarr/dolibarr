@@ -127,9 +127,10 @@ class FormProjets
 	 * @param  int     $nooutput           No print output. Return it only.
 	 * @param  int     $forceaddid         Force to add project id in list, event if not qualified
 	 * @param  int     $htmlid             Html id to use instead of htmlname
+	 * @param  string  $morecss            More CSS
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='')
+	function select_projects_list($socid=-1, $selected='', $htmlname='projectid', $maxlength=24, $option_only=0, $show_empty=1, $discard_closed=0, $forcefocus=0, $disabled=0, $mode=0, $filterkey = '', $nooutput=0, $forceaddid=0, $htmlid='', $morecss='maxwidth500')
 	{
 		global $user,$conf,$langs;
 
@@ -170,15 +171,13 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$morecss='maxwidth500';
-
 			// Use select2 selector
 			if (! empty($conf->use_javascript_ajax))
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	           	$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
-            	$morecss='minwidth100 maxwidth300';
+            	$morecss='minwidth100 maxwidth500';
 			}
 
 			if (empty($option_only)) {

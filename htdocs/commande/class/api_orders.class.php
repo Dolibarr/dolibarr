@@ -372,19 +372,23 @@ class Orders extends DolibarrApi
 
       $result = $this->commande->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+         throw new RestException(404, 'Order not found');
       }
 
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
-      $request_data = (object) $request_data;
+      // TODO Check the lineid $lineid is a line of ojbect
+
       $updateRes = $this->commande->deleteline(DolibarrApiAccess::$user,$lineid);
       if ($updateRes > 0) {
         return $this->get($id);
       }
-      return false;
+      else
+      {
+      	throw new RestException(405, $this->commande->error);
+      }
     }
 
     /**
@@ -434,7 +438,7 @@ class Orders extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $this->task->error);
+        	throw new RestException(500, $this->commande->error);
         }
     }
 
@@ -534,7 +538,7 @@ class Orders extends DolibarrApi
      * @url     POST {id}/reopen
      *
      * @return int
-     * 
+     *
      * @throws 304
      * @throws 400
      * @throws 401
@@ -545,7 +549,7 @@ class Orders extends DolibarrApi
 
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
                 throw new RestException(401);
-        }     
+        }
         if(empty($id)) {
                 throw new RestException(400, 'Order ID is mandatory');
         }
@@ -572,7 +576,7 @@ class Orders extends DolibarrApi
      * @url     POST {id}/setinvoiced
      *
      * @return int
-     * 
+     *
      * @throws 400
      * @throws 401
      * @throws 404
@@ -582,7 +586,7 @@ class Orders extends DolibarrApi
 
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
                 throw new RestException(401);
-        }     
+        }
         if(empty($id)) {
                 throw new RestException(400, 'Order ID is mandatory');
         }

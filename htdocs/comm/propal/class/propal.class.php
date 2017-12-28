@@ -804,6 +804,8 @@ class Propal extends CommonObject
 
 		if ($this->statut == self::STATUS_DRAFT)
 		{
+			$this->db->begin();
+
 			$line=new PropaleLigne($this->db);
 
 			// For triggers
@@ -813,15 +815,18 @@ class Propal extends CommonObject
 			{
 				$this->update_price(1);
 
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->db->rollback();
 				return -1;
 			}
 		}
 		else
 		{
+			$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 	}

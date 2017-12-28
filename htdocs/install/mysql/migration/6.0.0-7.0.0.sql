@@ -71,6 +71,26 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 
 -- For 7.0
 
+ALTER TABLE llx_product_attribute_value DROP INDEX unique_ref;
+ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
+
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN quantity double DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN unitprice double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN price_base_type	varchar(3) DEFAULT 'HT';
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price	double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price_ttc	double(24,8) DEFAULT NULL;
+
+-- VMYSQL4.0 DROP INDEX uk_product_price_by_qty_level on llx_product_price_by_qty;
+-- VPGSQL8.0 DROP INDEX uk_product_price_by_qty_level;
+
+ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, quantity);
+
+  
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_doc (fk_doc);
 
 ALTER TABLE llx_c_revenuestamp ADD COLUMN revenuestamp_type  varchar(16) DEFAULT 'fixed' NOT NULL;
@@ -80,6 +100,9 @@ ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '';
 
 INSERT INTO llx_c_type_contact(rowid, element, source, code, libelle, active ) values (42, 'propal',  'external', 'SHIPPING', 'Customer contact for delivery', 1);
 
+ALTER TABLE llx_inventory ADD date_validation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN datec date_creation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN fk_user_author fk_user_creat integer;
 ALTER TABLE llx_inventory ADD UNIQUE INDEX uk_inventory_ref (ref, entity);
 
 ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);

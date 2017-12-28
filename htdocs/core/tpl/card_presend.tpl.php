@@ -16,7 +16,6 @@
  * or see http://www.gnu.org/
  */
 
-
 /*
  * Code to ouput content when action is presend
  *
@@ -25,6 +24,14 @@
  * $defaulttopic
  * $diroutput
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 if ($action == 'presend')
 {

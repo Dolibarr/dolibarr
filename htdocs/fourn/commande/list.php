@@ -83,11 +83,10 @@ $search_total_ht=GETPOST('search_total_ht','alpha');
 $search_total_vat=GETPOST('search_total_vat','alpha');
 $search_total_ttc=GETPOST('search_total_ttc','alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$billed = GETPOST('billed','int');
+$search_billed = GETPOST('search_billed','int');
 $search_project_ref=GETPOST('search_project_ref','alpha');
 
 $status=GETPOST('statut','alpha');
-$billed=GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
 
 // Security check
@@ -212,6 +211,7 @@ if (empty($reshook))
 		$deliverymonth='';
 		$deliveryyear='';
 		$billed='';
+		$search_billed='';
 		$toselect='';
 		$search_array_options=array();
 	}
@@ -478,7 +478,7 @@ if ($status)
 	if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
 	else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
 }
-if ($billed > 0) $title.=' - '.$langs->trans("Billed");
+if ($search_billed > 0) $title.=' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url='';
@@ -525,7 +525,7 @@ if ($search_refsupp) $sql.= natural_search("cf.ref_supplier", $search_refsupp);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname','u.login'), $search_request_author) ;
-if ($billed != '' && $billed >= 0) $sql .= " AND cf.billed = ".$billed;
+if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$search_billed;
 
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
@@ -630,8 +630,8 @@ if ($resql)
 	if ($search_total_ttc != '') $param.="&search_total_ttc=".$search_total_ttc;
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($search_project_ref >= 0)  	$param.="&search_project_ref=".$search_project_ref;
-	if ($billed != '')          $param.="&billed=".$billed;
+	if ($search_project_ref >= 0) $param.="&search_project_ref=".$search_project_ref;
+	if ($search_billed != '')   $param.="&search_billed=".$search_billed;
 	if ($show_files)            $param.='&show_files=' .$show_files;
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
@@ -883,7 +883,7 @@ if ($resql)
 	if (! empty($arrayfields['cf.billed']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('billed', $billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
 		print '</td>';
 	}
 	// Action column

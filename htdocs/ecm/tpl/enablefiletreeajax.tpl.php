@@ -16,6 +16,14 @@
  *
  * Output javascript for interactions code of ecm module
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template enablefiletreeajax.tpl.php can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE ecm/tpl/enablefiletreeajax.tpl.php -->

@@ -1340,6 +1340,13 @@ class Contrat extends CommonObject
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits, $rang");
 
+		// Check parameters
+		if ($fk_product <= 0 && empty($desc))
+		{
+			$this->error="DescRequiredForFreeProductLines";
+			return -1;
+		}
+
 		if ($this->statut >= 0)
 		{
 			$this->db->begin();
@@ -1758,6 +1765,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 	}

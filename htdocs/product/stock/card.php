@@ -42,9 +42,11 @@ $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm');
 
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
+
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
@@ -259,13 +261,14 @@ if ($action == 'create')
 else
 {
     $id=GETPOST("id",'int');
-	if ($id)
+	if ($id > 0 || $ref)
 	{
 		$object = new Entrepot($db);
-		$result = $object->fetch($id);
-		if ($result < 0)
+		$result = $object->fetch($id, $ref);
+		if ($result <= 0)
 		{
-			dol_print_error($db);
+			print 'No record found';
+			exit;
 		}
 
 		/*
@@ -305,7 +308,7 @@ else
             $shownav = 1;
             if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-        	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'libelle', $morehtmlref);
+        	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
         	print '<div class="fichecenter">';
         	print '<div class="fichehalfleft">';

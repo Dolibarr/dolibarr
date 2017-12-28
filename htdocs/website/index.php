@@ -610,6 +610,12 @@ if ($action == 'addcontainer')
 			$htmlheadercontent ="<html>\n";
 			$htmlheadercontent.='<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>'."\n";
 			$htmlheadercontent.='<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>'."\n";
+
+			$htmlheadercontent.='<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
+			$htmlheadercontent.='<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
+
+			$htmlheadercontent.='<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
+
 			$htmlheadercontent.='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />'."\n";
 			$htmlheadercontent.="</html>";
 			$result=dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
@@ -1183,7 +1189,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 }
 
 // Export site
-if (GETPOST('exportsite'))
+if (GETPOST('exportsite','alpha'))
 {
 	$fileofzip = $object->exportWebSite();
 
@@ -1749,9 +1755,17 @@ if ($action == 'editcss')
 	// Common HTML header
 	print '<tr><td class="tdtop">';
 	$htmlhelp=$langs->trans("Example").' :<br>';
+	$htmlhelp.='<br>';
 	$htmlhelp.='&lt;script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" &gt;&lt;/script&gt;<br>';
 	$htmlhelp.='&lt;script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='<br>';
 	$htmlhelp.='&lt;link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /&gt;<br>';
+	$htmlhelp.='<br>';
+	$htmlhelp.='&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='<br>';
+	$htmlhelp.='&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js" &gt;&lt;/script&gt;<br>';
+
 	print $form->textwithpicto($langs->trans('WEBSITE_HTML_HEADER'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 
@@ -1977,10 +1991,19 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp=$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
-	$htmlhelp.=$langs->trans("Example").' :<br>';
+
+	$htmlhelp=$langs->trans("Example").' :<br>';
+	$htmlhelp.='<br>';
 	$htmlhelp.='&lt;script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" &gt;&lt;/script&gt;<br>';
 	$htmlhelp.='&lt;script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='<br>';
 	$htmlhelp.='&lt;link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /&gt;<br>';
+	$htmlhelp.='<br>';
+	$htmlhelp.='&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js" &gt;&lt;/script&gt;<br>';
+	$htmlhelp.='<br>';
+	$htmlhelp.='&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js" &gt;&lt;/script&gt;<br>';
+
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
@@ -2020,6 +2043,7 @@ if ($action == 'editfile' || $action == 'file_manager')
 	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 	print '</div>';
+
 }
 
 if ($action == 'editmenu')

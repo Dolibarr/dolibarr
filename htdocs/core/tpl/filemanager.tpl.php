@@ -17,6 +17,14 @@
  * Output code for the filemanager
  * $module must be defined ('ecm', 'medias', ...)
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page filemanager.tpl.php can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE core/tpl/filemanager.tpl.php -->
@@ -196,7 +204,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 $mode='noajax';
 if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
-include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
+include DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
 // End right panel

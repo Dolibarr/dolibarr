@@ -97,6 +97,7 @@ class DolibarrApi
         // Remove $db object property for object
         unset($object->db);
 		unset($object->ismultientitymanaged);
+		unset($object->restrictiononfksoc);
 
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
@@ -104,7 +105,6 @@ class DolibarrApi
         unset($object->lignes); // we don't want lignes, we want only ->lines
 
         unset($object->fields);
-
         unset($object->oldline);
 
         unset($object->error);
@@ -141,6 +141,8 @@ class DolibarrApi
         unset($object->picto);
 
         unset($object->facturee);		// Replace with billed
+        unset($object->fieldsforcombobox);
+		unset($object->comments);
 
         unset($object->skip_update_total);
         unset($object->context);
@@ -157,23 +159,48 @@ class DolibarrApi
         unset($object->oldcopy);
 
         // If object has lines, remove $db property
-        if(isset($object->lines) && count($object->lines) > 0)  {
+        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0)  {
             $nboflines = count($object->lines);
         	for ($i=0; $i < $nboflines; $i++)
             {
                 $this->_cleanObjectDatas($object->lines[$i]);
+
+                unset($object->lines[$i]->contact);
+                unset($object->lines[$i]->contact_id);
+                unset($object->lines[$i]->country);
+                unset($object->lines[$i]->country_id);
+                unset($object->lines[$i]->country_code);
+                unset($object->lines[$i]->mode_reglement_id);
+                unset($object->lines[$i]->mode_reglement_code);
+                unset($object->lines[$i]->mode_reglement);
+                unset($object->lines[$i]->cond_reglement_id);
+                unset($object->lines[$i]->cond_reglement_code);
+                unset($object->lines[$i]->cond_reglement);
+                unset($object->lines[$i]->fk_delivery_address);
+                unset($object->lines[$i]->fk_projet);
+                unset($object->lines[$i]->thirdparty);
+                unset($object->lines[$i]->user);
+                unset($object->lines[$i]->model_pdf);
+                unset($object->lines[$i]->modelpdf);
+                unset($object->lines[$i]->note_public);
+                unset($object->lines[$i]->note_private);
+                unset($object->lines[$i]->fk_incoterms);
+                unset($object->lines[$i]->libelle_incoterms);
+                unset($object->lines[$i]->location_incoterms);
+                unset($object->lines[$i]->name);
+                unset($object->lines[$i]->lastname);
+                unset($object->lines[$i]->firstname);
+                unset($object->lines[$i]->civility_id);
+                unset($object->lines[$i]->fk_multicurrency);
+                unset($object->lines[$i]->multicurrency_code);
+                unset($object->lines[$i]->shipping_method_id);
             }
         }
 
-        // If object has linked objects, remove $db property
-        /*
-        if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
-            foreach($object->linkedObjects as $type_object => $linked_object) {
-                foreach($linked_object as $object2clean) {
-                    $this->_cleanObjectDatas($object2clean);
-                }
-            }
-        }*/
+        if (! empty($object->thirdparty) && is_object($object->thirdparty))
+        {
+        	$this->_cleanObjectDatas($object->thirdparty);
+        }
 
 		return $object;
     }

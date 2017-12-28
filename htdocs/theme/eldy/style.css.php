@@ -12,7 +12,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FI8TNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -790,7 +790,7 @@ ul.attendees li {
     min-height: 0.01%;
 }
 .div-table-responsive {
-    line-height: 100%;
+    line-height: 120%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -858,6 +858,7 @@ select.selectarrowonleft option {
     .minwidth400imp { min-width: 400px !important; }
     .minwidth500imp { min-width: 500px !important; }
 }
+.width25  { width: 25px; }
 .width50  { width: 50px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
@@ -1276,6 +1277,9 @@ div.nopadding {
 .pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
 }
+.fiche img.pictoedit {
+    opacity: 0.7;
+}
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -1325,8 +1329,8 @@ div.statusref img {
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    -webkit-box-shadow: 2px 2px 4px #ccc;
+    box-shadow: 2px 2px 4px #ccc;
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -2125,7 +2129,7 @@ div.tabsElem {
 	margin-top: 1px;
 }	/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
-    font-weight: normal !important;
+    /* font-weight: normal !important; */
 }
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
@@ -2488,7 +2492,7 @@ table.liste td, table.noborder td, div.noborder form div {
 	line-height: 1.2em;
 }
 div.liste_titre_bydiv .divsearchfield {
-	padding: 2px 1px 2px 0px;			/* t r b l */
+	padding: 2px 1px 2px 7px;			/* t r b l */
 }
 
 tr.box_titre .nobordernopadding td {
@@ -2535,7 +2539,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #868;
+  	color: #625;
   	font-size: 160%;
 }
 div.refidno  {
@@ -3167,7 +3171,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  */
 
 .product_line_stock_ok { color: #002200; }
-.product_line_stock_too_low { color: #664400; }
+.product_line_stock_too_low { color: #884400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
@@ -3612,6 +3616,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editkey_datepicker {
@@ -3619,6 +3624,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 	margin-right: 3px;
 	cursor: pointer;
 	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
@@ -3774,6 +3780,12 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 
 
 /* Style to overwrites JQuery styles */
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    border: 1px solid #888;
+    background: rgb(<?php echo $colorbacktitle1; ?>);
+    color: unset;
+}
+
 .ui-menu .ui-menu-item a {
     text-decoration:none;
     display:block;

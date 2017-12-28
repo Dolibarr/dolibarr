@@ -1,4 +1,12 @@
 <?php
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 // Loop to show all columns of extrafields for the search title line
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -17,10 +25,15 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
 				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
 			}
-			else
+			elseif (! in_array($typeofextrafield, array('datetime','timestamp')))
 			{
 				// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
 				echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
+			}
+			elseif (in_array($typeofextrafield, array('datetime','timestamp')))
+			{
+				// TODO
+				// Use showInputField in a particular manner to have input with a comparison operator, not input for a specific value date-hour-minutes
 			}
 			print '</td>';
 		}
