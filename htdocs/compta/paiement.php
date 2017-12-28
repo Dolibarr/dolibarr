@@ -102,7 +102,7 @@ if (empty($reshook))
 	    $tmpinvoice=new Facture($db);
 	    foreach ($_POST as $key => $value)
 	    {
-	        if (substr($key,0,7) == 'amount_')
+			if (substr($key,0,7) == 'amount_' && GETPOST($key) != '')
 	        {
 	            $cursorfacid = substr($key,7);
 	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
