@@ -141,7 +141,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
 	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'p.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-        'pr.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1),
+        'pr.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1, 'enabled'=>$conf->projet->enabled),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
 	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
@@ -166,10 +166,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
-
-// no project enabled we suppress from array
-if (empty($conf->projet->enabled))
-	unset($arrayfields['pr.ref']);
 
 $object = new Propal($db);	// To be passed as parameter of executeHooks that need
 
