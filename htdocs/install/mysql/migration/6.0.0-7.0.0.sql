@@ -37,6 +37,8 @@
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_expeditiondet_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_expeditiondet_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
@@ -57,11 +59,60 @@ ALTER TABLE llx_product_price ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
+ALTER TABLE llx_product_customer_price_log ADD COLUMN default_vat_code varchar(10);
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
 
 -- For 7.0
+
+ALTER TABLE llx_product_attribute_value DROP INDEX unique_ref;
+ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
+
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN quantity double DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN unitprice double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN price_base_type	varchar(3) DEFAULT 'HT';
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price	double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price_ttc	double(24,8) DEFAULT NULL;
+
+-- VMYSQL4.0 DROP INDEX uk_product_price_by_qty_level on llx_product_price_by_qty;
+-- VPGSQL8.0 DROP INDEX uk_product_price_by_qty_level;
+
+ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, quantity);
+
+  
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_doc (fk_doc);
+
+ALTER TABLE llx_c_revenuestamp ADD COLUMN revenuestamp_type  varchar(16) DEFAULT 'fixed' NOT NULL;
+
+UPDATE llx_contrat SET ref = rowid WHERE ref IS NULL OR ref = '';
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '';
+
+INSERT INTO llx_c_type_contact(rowid, element, source, code, libelle, active ) values (42, 'propal',  'external', 'SHIPPING', 'Customer contact for delivery', 1);
+
+ALTER TABLE llx_inventory ADD date_validation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN datec date_creation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN fk_user_author fk_user_creat integer;
+ALTER TABLE llx_inventory ADD UNIQUE INDEX uk_inventory_ref (ref, entity);
+
+ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);
+
+UPDATE llx_paiementfourn SET ref = rowid WHERE ref IS NULL;
+UPDATE llx_paiementfourn SET entity = 1 WHERE entity IS NULL;
+
+UPDATE llx_website SET entity = 1 WHERE entity IS NULL;
+-- VMYSQL4.3 ALTER TABLE llx_website MODIFY COLUMN entity integer NOT NULL DEFAULT 1;
+-- VPGSQL8.2 ALTER TABLE llx_website ALTER COLUMN entity SET NOT NULL;
 
 ALTER TABLE llx_user ADD COLUMN birth date;
 
@@ -164,40 +215,19 @@ ALTER TABLE llx_accounting_account ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_accounting_account ADD COLUMN extraparams varchar(255);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN extraparams varchar(255);
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_lim_reglement datetime DEFAULT NULL;
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN fk_user integer NULL;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN date_lim_reglement datetime DEFAULT NULL;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN fk_user integer NULL;
 
 
 ALTER TABLE llx_menu MODIFY fk_mainmenu varchar(100);
 ALTER TABLE llx_menu MODIFY fk_leftmenu varchar(100); 
 
 
-CREATE TABLE llx_websiteaccount(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	login             varchar(64) NOT NULL, 
-    pass_crypted      varchar(128),
-    pass_temp         varchar(128),			    -- temporary password when asked for forget password
-    fk_soc integer,
-	fk_website integer,
-    date_last_login     datetime,
-    date_previous_login datetime,
-	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
-	status integer 
-) ENGINE=innodb;
-
-
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_rowid (rowid);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_login (login);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_import_key (import_key);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_status (status);
-ALTER TABLE llx_websiteaccount ADD INDEX idx_websiteaccount_fk_soc (fk_soc);
-
-create table llx_websiteaccount_extrafields
+CREATE TABLE llx_website_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
@@ -205,8 +235,54 @@ create table llx_websiteaccount_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
+ALTER TABLE llx_website_extrafields ADD INDEX idx_website_extrafields (fk_object);
 
 
+CREATE TABLE llx_website_account(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	login             varchar(64) NOT NULL, 
+	pass_encoding     varchar(24) NOT NULL,
+    pass_crypted      varchar(128),
+    pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    fk_soc integer,
+	fk_website          integer NOT NULL,
+	note_private        text,
+    date_last_login     datetime,
+    date_previous_login datetime,
+	date_creation       datetime NOT NULL, 
+	tms                 timestamp NOT NULL, 
+	fk_user_creat       integer NOT NULL, 
+	fk_user_modif       integer, 
+	import_key          varchar(14), 
+	status integer 
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_rowid (rowid);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_login (login);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_import_key (import_key);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_status (status);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_soc (fk_soc);
+
+ALTER TABLE llx_website_account ADD UNIQUE INDEX uk_website_account_login_website_soc(login, fk_website, fk_soc);
+
+ALTER TABLE llx_website_account ADD CONSTRAINT llx_website_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
+
+CREATE TABLE llx_website_account_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_website_account_extrafields ADD INDEX idx_website_account_extrafields (fk_object);
+
+
+
+
+
+alter table llx_user add column pass_encoding varchar(24) NULL;
 
 
 
@@ -353,6 +429,7 @@ ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
 -- We fix value of 'list' from 0 to 1 for all extrafields created before this migration
 UPDATE llx_extrafields SET list = 1 WHERE list = 0 AND fk_user_author IS NULL and fk_user_modif IS NULL and datec IS NULL;		
+UPDATE llx_extrafields SET list = 3 WHERE type = 'separate' AND list != 3;		
 
 ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
 --VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN list SET DEFAULT 1;
@@ -362,16 +439,31 @@ ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
+ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_socpeople MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_actioncomm MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_expedition MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_livraison MODIFY COLUMN ref_ext varchar(255);
+ALTER TABLE llx_contrat MODIFY COLUMN ref_ext varchar(255);
+
 ALTER TABLE llx_actioncomm MODIFY COLUMN label varchar(255) NOT NULL;
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_user_action (fk_user_action);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_project (fk_project);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep (datep);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datep2 (datep2);
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_recurid (recurid);
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_ref_ext (ref_ext);
 
 ALTER TABLE llx_payment_various ADD COLUMN fk_projet integer DEFAULT NULL after accountancy_code;
 
-UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_OK'  where name = 'PAYPAL_MESSAGE_OK';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_MESSAGE_KO'  where name = 'PAYPAL_MESSAGE_KO';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_CREDITOR'    where name = 'PAYPAL_CREDITOR';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_CSS_URL'     where name = 'PAYPAL_CSS_URL';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_NEWFORMTEXT' where name = 'PAYPAL_NEWFORMTEXT';
-UPDATE llx_const set name = 'ONLINE_PAYMENT_LOGO'        where name = 'PAYPAL_LOGO';
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_MESSAGE_OK')__  where name = __ENCRYPT('PAYPAL_MESSAGE_OK')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_MESSAGE_KO')__  where name = __ENCRYPT('PAYPAL_MESSAGE_KO')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_CREDITOR')__    where name = __ENCRYPT('PAYPAL_CREDITOR')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_CSS_URL')__     where name = __ENCRYPT('PAYPAL_CSS_URL')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_NEWFORMTEXT')__ where name = __ENCRYPT('PAYPAL_NEWFORMTEXT')__;
+UPDATE llx_const set name = __ENCRYPT('ONLINE_PAYMENT_LOGO')__        where name = __ENCRYPT('PAYPAL_LOGO')__;
 
 ALTER TABLE llx_accounting_system ADD COLUMN fk_country integer;
 
@@ -402,6 +494,8 @@ CREATE TABLE llx_comment (
     entity integer DEFAULT 1,
     import_key varchar(125) DEFAULT NULL
 )ENGINE=innodb;
+
+DELETE FROM llx_const where name = __ENCRYPT('MAIN_SHOW_WORKBOARD')__;
 
 -- Accountancy - Remove old constants
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
@@ -457,6 +551,26 @@ UPDATE llx_accounting_system SET fk_country = 80 WHERE pcg_version = 'DK-STD';
 UPDATE llx_accounting_system SET fk_country = 67 WHERE pcg_version = 'PC-MIPYME';
 UPDATE llx_accounting_system SET fk_country =  6 WHERE pcg_version = 'PCG_SUISSE';
 UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMBURG';
+UPDATE llx_accounting_system SET fk_country = 12 WHERE pcg_version = 'PCG';
+
+
+CREATE TABLE llx_actioncomm_reminder(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	dateremind datetime NOT NULL, 
+	typeremind varchar(32) NOT NULL, 
+	fk_user integer NOT NULL, 
+	offsetvalue integer NOT NULL, 
+	offsetunit varchar(1) NOT NULL,
+	status integer NOT NULL DEFAULT 0
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_rowid (rowid);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_dateremind (dateremind);
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_user (fk_user);
+
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_user, typeremind, offsetvalue, offsetunit);
 
 
 -- VPGSQL8.2 CREATE SEQUENCE llx_supplier_proposal_rowid_seq;
@@ -470,5 +584,63 @@ UPDATE llx_accounting_system SET fk_country =140 WHERE pcg_version = 'PCN-LUXEMB
 -- VPGSQL8.2 SELECT setval('llx_supplier_proposaldet_rowid_seq', (SELECT MAX(rowid) FROM llx_supplier_proposaldet));
 
 
+create table llx_onlinesignature
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  entity                    integer DEFAULT 1 NOT NULL,
+  object_type               varchar(32) NOT NULL,
+  object_id					integer NOT NULL,
+  datec                     datetime NOT NULL,
+  tms                       timestamp,
+  name						varchar(255) NOT NULL,
+  ip						varchar(128),
+  pathoffile				varchar(255)
+)ENGINE=innodb;
+
+
+
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
+
+ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER accountancy_code_sell;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
+
+ALTER TABLE llx_facture_rec ADD COLUMN modelpdf varchar(255) AFTER note_public;
+ALTER TABLE llx_facture_rec ADD COLUMN generate_pdf integer DEFAULT 1 AFTER auto_validate;
+
+ALTER TABLE llx_blockedlog ADD COLUMN date_creation	datetime;
+ALTER TABLE llx_blockedlog ADD COLUMN user_fullname	varchar(255);
+ALTER TABLE llx_blockedlog MODIFY COLUMN ref_object varchar(255);
+
+-- SPEC : use database type 'double' to store monetary values
+ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
+ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_commande_fournisseur MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_don MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_expensereport_rules MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_loan MODIFY COLUMN capital double(24,8);
+ALTER TABLE llx_loan MODIFY COLUMN capital_position double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_capital double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_insurance double(24,8);
+ALTER TABLE llx_loan_schedule MODIFY COLUMN amount_interest double(24,8);
+ALTER TABLE llx_paiementcharge MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_paiementfourn MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_donation MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_expensereport MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_capital double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_insurance double(24,8);
+ALTER TABLE llx_payment_loan MODIFY COLUMN amount_interest double(24,8);
+ALTER TABLE llx_payment_salary MODIFY COLUMN salary double(24,8);
+ALTER TABLE llx_payment_salary MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_bons MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_prelevement_lignes MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_societe MODIFY COLUMN capital double(24,8);
+ALTER TABLE llx_tva MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);
+
+ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
+ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
+

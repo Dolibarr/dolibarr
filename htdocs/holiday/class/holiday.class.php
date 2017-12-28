@@ -698,14 +698,14 @@ class Holiday extends CommonObject
 	 *  Warning: It consumes a lot of memory because it load in ->holiday all holiday of a dedicated user at each call.
 	 *
 	 * 	@param 	int		$fk_user		Id user
-	 * 	@param 	date	$dateDebut		Start date of period to check
-	 * 	@param 	date	$dateFin		End date of period to check
+	 * 	@param 	date	$dateStart		Start date of period to check
+	 * 	@param 	date	$dateEnd		End date of period to check
 	 *  @param	int		$halfday		Tag to define how start and end the period to check:
-	 *  	    						0:Full days, 2:Sart afternoon end monring, -1:Start afternoon, 1:End morning
-	 * 	@return boolean					False is on holiday at least partially into the period, True is never on holiday during chcked period.
+	 *  	    						0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	 * 	@return boolean					False = New range overlap an existing holiday, True = no overlapping (is never on holiday during checked period).
 	 *  @see verifDateHolidayForTimestamp
 	 */
-	function verifDateHolidayCP($fk_user, $dateDebut, $dateFin, $halfday=0)
+	function verifDateHolidayCP($fk_user, $dateStart, $dateEnd, $halfday=0)
 	{
 		$this->fetchByUser($fk_user,'','');
 
@@ -713,34 +713,59 @@ class Holiday extends CommonObject
 		{
 			if ($infos_CP['statut'] == 4) continue;		// ignore not validated holidays
 			if ($infos_CP['statut'] == 5) continue;		// ignore not validated holidays
+			/*
+			var_dump("--");
+			var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
+			var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
+			*/
 
-			// TODO Also use halfday for the check
 			if ($halfday == 0)
 			{
-				if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin'])
+				{
+					return false;
+				}
+				if ($dateEnd <= $infos_CP['date_fin'] && $dateEnd >= $infos_CP['date_debut'])
 				{
 					return false;
 				}
 			}
 			elseif ($halfday == -1)
 			{
-				if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+				// new start afternoon, new end afternoon
+				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin'])
 				{
-					return false;
+					if ($dateStart < $infos_CP['date_fin'] || in_array($infos_CP['halfday'], array(0, -1))) return false;
+				}
+				if ($dateEnd <= $infos_CP['date_fin'] && $dateEnd >= $infos_CP['date_debut'])
+				{
+					if ($dateStart < $dateEnd) return false;
+					if ($dateEnd < $infos_CP['date_fin'] || in_array($infos_CP['halfday'], array(0, -1))) return false;
 				}
 			}
 			elseif ($halfday == 1)
 			{
-				if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+				// new start morning, new end morning
+				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin'])
 				{
-					return false;
+					if ($dateStart < $dateEnd) return false;
+					if ($dateStart > $infos_CP['date_debut'] || in_array($infos_CP['halfday'], array(0, 1))) return false;
+				}
+				if ($dateEnd <= $infos_CP['date_fin'] && $dateEnd >= $infos_CP['date_debut'])
+				{
+					if ($dateEnd > $infos_CP['date_debut'] || in_array($infos_CP['halfday'], array(0, 1))) return false;
 				}
 			}
 			elseif ($halfday == 2)
 			{
-				if ($dateDebut >= $infos_CP['date_debut'] && $dateDebut <= $infos_CP['date_fin'] || $dateFin <= $infos_CP['date_fin'] && $dateFin >= $infos_CP['date_debut'])
+				// new start afternoon, new end morning
+				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin'])
 				{
-					return false;
+					if ($dateStart < $infos_CP['date_fin'] || in_array($infos_CP['halfday'], array(0, -1))) return false;
+				}
+				if ($dateEnd <= $infos_CP['date_fin'] && $dateEnd >= $infos_CP['date_debut'])
+				{
+					if ($dateEnd > $infos_CP['date_debut'] || in_array($infos_CP['halfday'], array(0, 1))) return false;
 				}
 			}
 			else
@@ -828,7 +853,7 @@ class Holiday extends CommonObject
 		global $langs;
 
 		$result='';
-		$picto='holiday';
+
 		$label=$langs->trans("Show").': '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
@@ -844,9 +869,11 @@ class Holiday extends CommonObject
 		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -1094,7 +1121,7 @@ class Holiday extends CommonObject
 						while ($i < $nbUser)
 						{
 							$now_holiday = $this->getCPforUser($users[$i]['rowid'], $val['rowid']);
-							$new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
+							$new_solde = $now_holiday + $nb_holiday;
 
 							// We add a log for each user
 							$this->addLogCP($user->id, $users[$i]['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $new_solde, $val['rowid']);

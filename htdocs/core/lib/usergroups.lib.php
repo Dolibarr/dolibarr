@@ -224,7 +224,7 @@ function group_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("GroupRights");
+		$head[$h][1] = $langs->trans("GroupRights"). ' <span class="badge">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}
@@ -267,7 +267,7 @@ function user_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-   $head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." ".$langs->trans("Groups");
 	$head[$h][2] = 'attributes_group';
 	$h++;
@@ -578,7 +578,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
-		$default='ffffff';
+		$default='f0f0f0';
 		if ($conf->theme == 'md') $default='ffffff';
 
 		print '<tr class="oddeven">';
@@ -597,6 +597,33 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</td>';
+	}
+
+	// TextTitleColor
+	if ($foruserprofile)
+	{
+
+
+	}
+	else
+	{
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("TextTitleColor").'</td>';
+		print '<td colspan="'.($colspan-1).'">';
+		if ($edit)
+		{
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLENOTAB,array()),''),'THEME_ELDY_TEXTTITLENOTAB','formcolor',1).' ';
+		}
+		else
+		{
+			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
+		}
+		print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #643c14">643c14</span></strong>) ';
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+
+		print '</td>';
+
+		print '</tr>';
 	}
 
 	// BackgroundTableTitleColor
@@ -679,33 +706,6 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</td>';
-	}
-
-	// TextTitleColor
-	if ($foruserprofile)
-	{
-
-
-	}
-	else
-	{
-		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans("TextTitleColor").'</td>';
-		print '<td colspan="'.($colspan-1).'">';
-		if ($edit)
-		{
-			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLENOTAB,array()),''),'THEME_ELDY_TEXTTITLENOTAB','formcolor',1).' ';
-		}
-		else
-		{
-			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLENOTAB, $langs->trans("Default"));
-		}
-		print ' &nbsp; ('.$langs->trans("Default").': <strong><span style="color: #3c3c14">3c3c14</span></strong>) ';
-		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
-
-		print '</td>';
-
-		print '</tr>';
 	}
 
 	// Text LinkColor

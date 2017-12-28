@@ -149,11 +149,11 @@ if ($action == 'create')
 	    {
     	    $object->fk_user = $fuserid;
     	    $object->description = $description;
-    	    $object->date_debut = $date_debut;
-    	    $object->date_fin = $date_fin;
     	    $object->fk_validator = $valideur;
-    		$object->halfday = $halfday;
     		$object->fk_type = $type;
+    		$object->date_debut = $date_debut;
+    		$object->date_fin = $date_fin;
+    		$object->halfday = $halfday;
 
     		$result = $object->create($user);
     		if ($result <= 0)
@@ -386,7 +386,9 @@ if ($action == 'confirm_send')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
@@ -472,12 +474,14 @@ if ($action == 'confirm_valid')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
 
-            if(!$result) {
+            if (!$result) {
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=mail&error_content='.$mail->error);
                 exit;
             }
@@ -547,7 +551,9 @@ if ($action == 'confirm_refuse')
 	            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
                 $message.= "\n";
 
-                $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+	            $trackid='leav'.$object->id;
+
+	            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
                 // Envoi du mail
                 $result=$mail->sendfile();
@@ -684,7 +690,9 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
@@ -1081,7 +1089,7 @@ else
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>'.dol_print_date($object->date_debut,'day');
 			        print ' &nbsp; &nbsp; ';
-                    print $langs->trans($listhalfday[$starthalfday]);
+			        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
                 }
@@ -1103,7 +1111,7 @@ else
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>'.dol_print_date($object->date_fin,'day');
                     print ' &nbsp; &nbsp; ';
-                    print $langs->trans($listhalfday[$endhalfday]);
+                    print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
                 }

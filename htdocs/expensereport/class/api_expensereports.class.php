@@ -361,7 +361,9 @@ class ExpenseReports extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-			$request_data = (object) $request_data;
+
+      // TODO Check the lineid $lineid is a line of ojbect
+
       $updateRes = $this->expensereport->deleteline($lineid);
       if ($updateRes == 1) {
         return $this->get($id);
@@ -378,7 +380,6 @@ class ExpenseReports extends DolibarrApi
      *
      * @return int
      */
-    /*
     function put($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 		  	throw new RestException(401);
@@ -397,12 +398,15 @@ class ExpenseReports extends DolibarrApi
             $this->expensereport->$field = $value;
         }
 
-        if($this->expensereport->update(DolibarrApiAccess::$user))
+        if ($this->expensereport->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+		}
+		else
+		{
+			throw new RestException(500, $this->expensereport->error);
+		}
     }
-    */
 
     /**
      * Delete Expense Report
@@ -479,6 +483,24 @@ class ExpenseReports extends DolibarrApi
             )
         );
     }*/
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->barcode_type);
+    	unset($object->barcode_type_code);
+    	unset($object->barcode_type_label);
+    	unset($object->barcode_type_coder);
+
+    	return $object;
+    }
 
     /**
      * Validate fields before create or update object

@@ -153,7 +153,7 @@ if (empty($reshook))
 
 			// On choisit les mails non deja envoyes pour ce mailing (statut=0)
 			// ou envoyes en erreur (statut=-1)
-			$sql = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
+			$sql = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$object->id;
 
@@ -283,7 +283,7 @@ if (empty($reshook))
 						}
 
 						// Fabrication du mail
-						$trackid='emailing-'.$obj2->source_type.$obj2->source_id;
+						$trackid='emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, '', 'emailing');
 
 						if ($mail->error)

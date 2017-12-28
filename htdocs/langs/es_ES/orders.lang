@@ -152,5 +152,7 @@ OrderCreated=Sus pedidos han sido creados
 OrderFail=Se ha producido un error durante la creación de sus pedidos
 CreateOrders=Crear pedidos
 ToBillSeveralOrderSelectCustomer=Para crear una factura para numerosos pedidos, haga primero click sobre el cliente y luego elija "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Cerrar el pedido automáticamente a "%s" si se han recibido todos los productos
 SetShippingMode=Indica el modo de envío

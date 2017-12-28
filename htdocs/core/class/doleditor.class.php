@@ -271,10 +271,23 @@ class DolEditor
 	            $out.= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;									// Init status bar. Need lib ext-statusbar
 	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.$this->htmlname.'"));	// Init status bar. Need lib ext-statusbar
-	            			jQuery(".morelines'.$this->htmlname.'").click(function() {
-									console.log("We click on more lines");
-	        	    				var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
-	        	    				aceEditor.setOptions({ maxLines: 500 });
+	            			var oldNbOfLines = 0
+							jQuery(".morelines'.$this->htmlname.'").click(function() {
+	        	    				var aceEditorClicked = window.ace.edit("'.$this->htmlname.'aceeditorid");
+									currentline = aceEditorClicked.getOption("maxLines");
+									if (oldNbOfLines == 0)
+									{
+										oldNbOfLines = currentline;
+									}
+									console.log("We click on more lines, oldNbOfLines is "+oldNbOfLines+", we have currently "+currentline);
+									if (currentline < 500)
+									{
+										aceEditorClicked.setOptions({ maxLines: 500 });
+									}
+									else
+									{
+										aceEditorClicked.setOptions({ maxLines: oldNbOfLines });
+									}
 							});
 						})';
 	            $out.= '</script>'."\n";

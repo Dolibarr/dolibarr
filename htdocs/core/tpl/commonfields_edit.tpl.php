@@ -20,25 +20,36 @@
  * $conf
  * $langs
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 <!-- BEGIN PHP TEMPLATE commonfields_edit.tpl.php -->
 <?php
 
 foreach($object->fields as $key => $val)
 {
-	if (abs($val['visible']) != 1) continue;	// Discard such field from form
+	// Discard if extrafield is a hidden field on form
+	if (abs($val['visible']) != 1) continue;
+
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
 
 	print '<tr><td';
 	print ' class="titlefieldcreate';
 	if ($val['notnull'] > 0) print ' fieldrequired';
-	if ($val['type'] == 'text') print ' tdtop';
+	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>'.$langs->trans($val['label']).'</td>';
 	print '<td>';
 	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key)?GETPOST($key, 'int'):$object->$key;
-	elseif ($val['type'] == 'text') $value = GETPOSTISSET($key)?GETPOST($key,'none'):$object->$key;
+	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key)?GETPOST($key,'none'):$object->$key;
 	else $value = GETPOSTISSET($key)?GETPOST($key, 'alpha'):$object->$key;
+	//var_dump($val.' '.$key.' '.$value);
 	print $object->showInputField($val, $key, $value, '', '', '', 0);
 	print '</td>';
 	print '</tr>';

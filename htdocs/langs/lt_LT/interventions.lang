@@ -28,7 +28,6 @@ InterventionClassifyBilled=Priskirti "Pateiktos sąskaitos"
 InterventionClassifyUnBilled=Classify "Unbilled"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Pateikta sąskaita
-ShowIntervention=Rodyti intervenciją
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by Email
 InterventionCreatedInDolibarr=Intervention %s created

@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Unika kontakter av företag
 MailNoChangePossible=Mottagare för validerade e-post kan inte ändras
 SearchAMailing=Sök utskick
 SendMailing=Skicka e-post
-SendMail=Skicka e-post
 SentBy=Skickat av
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Du kan dock skicka dem online genom att lägga till parametern MAILING_LIMIT_SENDBYWEB med värde av maximalt antal e-postmeddelanden du vill skicka genom sessionen. För detta, gå hem - Setup - Annat.

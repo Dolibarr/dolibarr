@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Referenca pogodbe
 DateContract=Datum pogodbe
 DateServiceActivate=Datum aktiviranja storitve
-ShowContract=Prikaži pogodbo
 ListOfServices=Seznam storitev
 ListOfInactiveServices=Seznam neaktivnih storitev
 ListOfExpiredServices=Seznam pretečenih aktivnih storitev

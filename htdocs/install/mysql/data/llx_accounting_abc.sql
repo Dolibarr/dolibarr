@@ -4,7 +4,7 @@
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 --
@@ -29,7 +29,7 @@
 --
 
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('VT', 'Sale Journal', 2, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Purhcase Journal', 3, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Purchase Journal', 3, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Bank Journal', 4, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Other Journal', 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Has new Journal', 9, 1);
@@ -65,4 +65,52 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account LU PCN-LUXEMBURG
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN-LUXEMBURG', 'Plan comptable normalisé Luxembourgeois', 1);
+
+-- Description of chart of account MA PCG
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 12, 'PCG', 'The Moroccan chart of accounts', 1);
+
+-- Description of chart of account BJ SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account BF SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 60,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account CM SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 24,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account CF SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 65,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account KM SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 71,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account CG SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 72,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account CI SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 21,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account GA SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 16,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account GQ SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 87,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account ML SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (147,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account NE SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (168,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account CD SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 73,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account SN SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 22,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account TD SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 66,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+
+-- Description of chart of account TG SYSCOHADA
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
 

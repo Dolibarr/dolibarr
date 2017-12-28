@@ -435,7 +435,7 @@ class Projects extends DolibarrApi
             $this->project->$field = $value;
         }
 
-        if($this->project->update(DolibarrApiAccess::$user, 0) > 0)
+        if($this->project->update(DolibarrApiAccess::$user) >= 0)
         {
             return $this->get($id);
         }
@@ -513,7 +513,7 @@ class Projects extends DolibarrApi
 
 		$result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-		    throw new RestException(500, 'Error nothing done. May be object is already validated');
+		    throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Project: '.$this->project->error);

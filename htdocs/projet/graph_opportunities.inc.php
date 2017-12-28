@@ -52,7 +52,6 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
-	    $var=true;
 	    $listofstatus=array_keys($listofoppstatus);
 	    foreach ($listofstatus as $status)
 	    {
@@ -65,7 +64,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        //$labelstatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
 	        //$labelstatus .= ' - '.price2num($listofoppstatus[$status]).'%';
 
-	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
+	        $dataseries[]=array($labelstatus, (isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
 
@@ -77,9 +76,19 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    }
 	    if ($conf->use_javascript_ajax)
 	    {
-	        print '<tr class="impair"><td align="center" colspan="2">';
-   	        $data=array('series'=>$dataseries);
-   	        dol_print_graph('stats',360,180,$data,1,'pie',0,'',0,$totaloppnb?0:1);
+	        print '<tr><td align="center" colspan="2">';
+
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+	        $dolgraph = new DolGraph();
+	        $dolgraph->SetData($dataseries);
+	        $dolgraph->setShowLegend(1);
+	        $dolgraph->setShowPercent(1);
+	        $dolgraph->SetType(array('pie'));
+	        $dolgraph->setWidth('100%');
+	        $dolgraph->SetHeight(180);
+	        $dolgraph->draw('idgraphstatus');
+	        print $dolgraph->show($totaloppnb?0:1);
+
 	        print '</td></tr>';
 	    }
 	    //if ($totalinprocess != $total)

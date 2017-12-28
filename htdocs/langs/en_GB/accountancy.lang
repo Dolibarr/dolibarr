@@ -92,7 +92,6 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this finance account b
 FicheVentilation=Link card
 GeneralLedgerIsWritten=Transactions are written to the Ledger
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be processed. If there is no other error message, this is probably because they had already been processed.
-NoNewRecordSaved=No new records processed
 ListOfProductsWithoutAccountingAccount=List of products not linked to any finance account
 ChangeBinding=Change the link
 CategoryDeleted=Category for the finance account has been removed

@@ -192,6 +192,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
         if ($type == 1) $apply_tax = true;
         break;
     }
+
     if ($uselocaltax1_rate && $apply_tax) {
   		$result[14] = price2num(($tot_sans_remise_wt * (1 + ( $localtax1_rate / 100))) - $tot_sans_remise_wt, 'MT');
   		$localtaxes[0] += $result[14];

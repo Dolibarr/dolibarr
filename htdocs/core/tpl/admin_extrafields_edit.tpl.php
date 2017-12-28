@@ -25,6 +25,14 @@
  * $elementtype
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $langs->load("modulebuilder");
 
 ?>
@@ -37,6 +45,7 @@ $langs->load("modulebuilder");
         	console.log("select new type "+type);
     		var size = jQuery("#size");
     		var computed_value = jQuery("#computed_value");
+    		var langfile = jQuery("#langfile");
     		var default_value = jQuery("#default_value");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
@@ -50,7 +59,7 @@ $langs->load("modulebuilder");
 
     		if (GETPOST('type','alpha') == "separate")
     		{
-				print "jQuery('#size, #default_value').val('').prop('disabled', true);";
+				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
     			print 'jQuery("#value_choice").hide();';
     		}
     		?>
@@ -99,7 +108,8 @@ $langs->load("modulebuilder");
 			if (type == 'separate')
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
-				jQuery('#size, #default_value').val('').prop('disabled', true);
+				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
+				jQuery('#list').val(3);	// visible on create/update/view form only
 			}
 			else
 			{

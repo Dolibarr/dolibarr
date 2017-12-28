@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Доклад разходи
-ExpenseReports=Expense reports
 ShowExpenseReport=Показване на доклад за разходи
 Trips=Expense reports
 TripsAndExpenses=Доклади разходи
@@ -12,6 +10,8 @@ ListOfFees=Списък на такси
 TypeFees=Types of fees
 ShowTrip=Показване на доклад за разходи
 NewTrip=Нов доклад за разходи
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Сума или км
 DeleteTrip=Изтриване на доклад за разходи
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Създали сте друг доклад за разходи в подобен времеви отрязък.
 AucuneLigne=Няма все още деклариран доклад за разходи 

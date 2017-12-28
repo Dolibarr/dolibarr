@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Отчёт о затратах
-ExpenseReports=Отчёты о затратах
 ShowExpenseReport=Show expense report
 Trips=Отчёты о затратах
 TripsAndExpenses=Отчёты о затратах
@@ -12,6 +10,8 @@ ListOfFees=Список сборов
 TypeFees=Types of fees
 ShowTrip=Show expense report
 NewTrip=Новый отчёт о затртатах
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=Сумма или километры
 DeleteTrip=Удалить отчёт о затратах
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=Вы должны задекларировать другой отчёт о затратах в этом временном диапазоне. 
 AucuneLigne=Нет задекларированных отчётов о затратах

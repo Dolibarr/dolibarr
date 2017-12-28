@@ -22,7 +22,7 @@
  *
  * cd htdocs/install
  * php upgrade.php 3.4.0 3.5.0
- * php upgrade2.php 3.4.0 3.5.0
+ * php upgrade2.php 3.4.0 3.5.0 [MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE]
  *
  * Return code is 0 if OK, >0 if error
  */
@@ -89,7 +89,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto || preg_match('/version/', $versionto)))
 {
 	print 'Error: Parameter versionfrom or versionto missing or having a bad format.'."\n";
-	print 'Upgrade must be ran from cmmand line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
@@ -243,9 +243,9 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
             migrate_restore_missing_links($db,$langs,$conf);
 
-            migrate_directories($db,$langs,$conf,'/compta','/banque');
+            migrate_rename_directories($db,$langs,$conf,'/compta','/banque');
 
-            migrate_directories($db,$langs,$conf,'/societe','/mycompany');
+            migrate_rename_directories($db,$langs,$conf,'/societe','/mycompany');
         }
 
         // Script for VX (X<2.8) -> V2.8
@@ -302,7 +302,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','3.1.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            migrate_directories($db,$langs,$conf,'/rss','/externalrss');
+            migrate_rename_directories($db,$langs,$conf,'/rss','/externalrss');
 
             migrate_actioncomm_element($db,$langs,$conf);
         }
@@ -351,7 +351,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            migrate_directories($db,$langs,$conf,'/fckeditor','/medias');
+            migrate_rename_directories($db,$langs,$conf,'/fckeditor','/medias');
         }
 
         // Scripts for last version
@@ -372,6 +372,17 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
             // No particular code
+        }
+
+        // Scripts for last version
+        $afterversionarray=explode('.','6.0.9');
+        $beforeversionarray=explode('.','7.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Migrate contact association
+        	migrate_event_assignement_contact($db,$langs,$conf);
+
+        	migrate_reset_blocked_log($db,$langs,$conf);
         }
     }
 
@@ -470,13 +481,20 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     $db->commit();
     $db->close();
 
+
+    // Copy directory medias
+    $srcroot=DOL_DOCUMENT_ROOT.'/install/medias';
+    $destroot=DOL_DATA_ROOT.'/medias';
+    dolCopyDir($srcroot, $destroot, 0, 0);
+
+
     // Actions for all versions (no database change, delete files and directories)
     migrate_delete_old_files($db, $langs, $conf);
     migrate_delete_old_dir($db, $langs, $conf);
     // Actions for all versions (no database change, create directories)
     dol_mkdir(DOL_DATA_ROOT.'/bank');
     // Actions for all versions (no database change, rename directories)
-    migrate_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
+    migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
 
     print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
 }
@@ -3780,6 +3798,202 @@ function migrate_event_assignement($db,$langs,$conf)
 }
 
 /**
+ * Migrate event assignement to owner
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_event_assignement_contact($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationEventsContact')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_event_assignement");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT a.id, a.fk_contact";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sqlSelect.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'socpeople' AND ar.fk_element = a.fk_contact";
+	$sqlSelect.= " WHERE fk_contact > 0 AND fk_contact NOT IN (SELECT fk_element FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'socpeople')";
+	$sqlSelect.= " ORDER BY a.id";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element) ";
+				$sqlUpdate.= "VALUES(".$obj->id.", 'socpeople', ".$obj->fk_contact.")";
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+
+/**
+ * Migrate to reset the blocked log for V7+ algorithm
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_reset_blocked_log($db,$langs,$conf)
+{
+	global $user;
+
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationResetBlockedLog')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_reset_blocked_log");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT DISTINCT entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."blockedlog";
+
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				print 'Process entity '.$obj->entity;
+
+				$sqlSearch = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog WHERE action = 'MODULE_SET' and entity = ".$obj->entity;
+				$resqlSearch = $db->query($sqlSearch);
+				if ($resqlSearch)
+				{
+					$objSearch = $db->fetch_object($resqlSearch);
+					//var_dump($objSearch);
+					if ($objSearch && $objSearch->nb == 0)
+					{
+						print ' - Record for entity must be reset...';
+
+						$sqlUpdate = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
+						$sqlUpdate.= " WHERE entity = " . $obj->entity;
+						$resqlUpdate=$db->query($sqlUpdate);
+						if (! $resqlUpdate)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+						else
+						{
+							// Add set line
+							$object=new stdClass;
+							$object->id = 1;
+							$object->element = 'module';
+							$object->ref = 'systemevent';
+							$object->entity = $obj->entity;
+							$object->date = dol_now();
+
+							$b=new BlockedLog($db);
+							$b->setObjectData($object, 'MODULE_SET', 0);
+
+							$res = $b->create($user);
+							if ($res<=0) {
+								$error++;
+							}
+						}
+					}
+					else
+					{
+						print ' - '.$langs->trans('AlreadyInV7');
+					}
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('NothingToDo')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+
+/**
  * Migrate to add entity value into llx_societe_remise
  *
  * @param	DoliDB		$db				Database handler
@@ -3852,7 +4066,6 @@ function migrate_remise_entity($db,$langs,$conf)
 		dol_print_error($db);
 		$db->rollback();
 	}
-
 
 	print '</td></tr>';
 }
@@ -3979,13 +4192,13 @@ function migrate_remise_except_entity($db,$langs,$conf)
  * @param	string		$newname	New name (relative to DOL_DATA_ROOT)
  * @return	void
  */
-function migrate_directories($db,$langs,$conf,$oldname,$newname)
+function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
 {
-    dolibarr_install_syslog("upgrade2::migrate_directories");
+    dolibarr_install_syslog("upgrade2::migrate_rename_directories");
 
     if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
     {
-        dolibarr_install_syslog("upgrade2::migrate_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
+        dolibarr_install_syslog("upgrade2::migrate_rename_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
         @rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
     }
 }

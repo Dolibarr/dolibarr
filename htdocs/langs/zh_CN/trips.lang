@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=费用报表
-ExpenseReports=费用报表
 ShowExpenseReport=显示费用报表
 Trips=费用报表
 TripsAndExpenses=费用报表
@@ -12,6 +10,8 @@ ListOfFees=费用清单
 TypeFees=费用类型
 ShowTrip=显示费用报表
 NewTrip=新建费用报表
+LastExpenseReports=Latest %s expense reports
+AllExpenseReports=All expense reports
 CompanyVisited=Company/organisation visited
 FeesKilometersOrAmout=金额或公里
 DeleteTrip=删除费用报表
@@ -71,6 +71,8 @@ EX_FUE_VP=Fuel PV
 EX_TOL_VP=Toll PV
 EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
+DefaultCategoryCar=Default transportation mode
+DefaultRangeNumber=Default range number
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
 AucuneLigne=There is no expense report declared yet

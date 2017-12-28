@@ -231,6 +231,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             $nblines=count($contents);
 
             $out.= "\n<!-- Box ".get_class($this)." start -->\n";
+            //$out.= '<div class="div-table-responsive-no-min">';		// Does not work on home page. TODO Try to fix this.
             $out.= '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
 
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
@@ -259,7 +260,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $sublink='';
-                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
+                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?'':' target="'.$head['target'].'"').'>';
                     if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
                     if (! empty($head['sublink']))  $sublink.= '</a>';
 
@@ -360,6 +361,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && ! $nblines) $out.= "<br>\n";
 
             $out.= "</div>\n";
+            //$out.= "</div>\n";
             $out.= "<!-- Box ".get_class($this)." end -->\n\n";
             if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
                 dol_filecache($cachedir, $filename, $out);

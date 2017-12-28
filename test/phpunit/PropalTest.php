@@ -142,7 +142,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
      * testPropalFetch
      *
      * @param	int		$id		Id of object
-     * @return	void
+     * @return	Propal
      *
      * @depends	testPropalCreate
      * The depends says test is run only if previous is ok
@@ -164,12 +164,37 @@ class PropalTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testPropalAddLine
+     * testPropalUpdate
      *
-     * @param	int		$localobject	Proposal
-     * @return	void
+     * @param	Propal		$localobject	Proposal
+     * @return	Propal
      *
      * @depends	testPropalFetch
+     * The depends says test is run only if previous is ok
+     */
+    public function testPropalUpdate($localobject)
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$localobject->note_private='New note private after update';
+    	$result=$localobject->update($user);
+
+    	$this->assertLessThan($result, 0);
+    	print __METHOD__." id=".$id." result=".$result."\n";
+    	return $localobject;
+    }
+
+    /**
+     * testPropalAddLine
+     *
+     * @param	Propal		$localobject	Proposal
+     * @return	Propal
+     *
+     * @depends	testPropalUpdate
      * The depends says test is run only if previous is ok
      */
     public function testPropalAddLine($localobject)
@@ -191,8 +216,8 @@ class PropalTest extends PHPUnit_Framework_TestCase
     /**
      * testPropalValid
      *
-     * @param	Proposal	$localobject	Proposal
-     * @return	Proposal
+     * @param	Propal	$localobject	Proposal
+     * @return	Propal
      *
      * @depends	testPropalAddLine
      * The depends says test is run only if previous is ok
@@ -215,7 +240,7 @@ class PropalTest extends PHPUnit_Framework_TestCase
    /**
      * testPropalOther
      *
-     * @param	Proposal	$localobject	Proposal
+     * @param	Propal	$localobject	Proposal
      * @return	int
      *
      * @depends testPropalValid

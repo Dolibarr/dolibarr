@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Používáte instalaci Dolibarr z Linux-ového balíčku (U
 KeepDefaultValuesMamp=Používáte instalaci Dolibarr pomocí DoliMamp, takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Parametry měňte jen pokud skutečně víte co děláte.
 KeepDefaultValuesProxmox=Používáte instalaci Dolibarr pomocí Proxmox, takže tyto hodnoty jsou již optimalizovány pro Váš stroj. Parametry měňte jen pokud skutečně víte co děláte.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Oprava denormalizovaných dat
@@ -191,6 +192,7 @@ MigrationActioncommElement=Aktualizovat údaje na činnostech
 MigrationPaymentMode=Migrace dat platebního režimu
 MigrationCategorieAssociation=Migrace kategorií
 MigrationEvents=Migrace událostí přidá vlastníka události do přiřazené tabulky
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Načíst modul %s

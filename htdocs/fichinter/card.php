@@ -483,7 +483,7 @@ if (empty($reshook))
 	// Add line
 	else if ($action == "addline" && $user->rights->ficheinter->creer)
 	{
-		if (!GETPOST('np_desc') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC) )
+		if (!GETPOST('np_desc','none') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC) )
  		{
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
 			$error++;
@@ -502,7 +502,7 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			$desc=GETPOST('np_desc');
+			$desc=GETPOST('np_desc','none');
 			$date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
 			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION)?convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int')) : 0;
 

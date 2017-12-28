@@ -28,7 +28,6 @@ InterventionClassifyBilled=Sklasyfikować "Rozlicz"
 InterventionClassifyUnBilled=Sklasyfikować "Unbilled"
 InterventionClassifyDone=Sklasyfikuj "Gotowe"
 StatusInterInvoiced=Zapowiadane
-ShowIntervention=Pokaż interwencję
 SendInterventionRef=Złożenie interwencyjnego% s
 SendInterventionByMail=Wyślij interwencję przez e-mail
 InterventionCreatedInDolibarr=Interwencja %s stworzona

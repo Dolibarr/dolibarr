@@ -99,7 +99,6 @@ NbOfCompaniesContacts=تماس با ما منحصر به فرد / آدرس
 MailNoChangePossible=دریافت کنندگان برای ایمیل معتبر نمی تواند تغییر کند
 SearchAMailing=جستجو های پستی
 SendMailing=ارسال ایمیل
-SendMail=ارسال ایمیل
 SentBy=ارسال شده توسط
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=با این حال شما می توانید آنها را به صورت آنلاین ارسال شده توسط اضافه کردن MAILING_LIMIT_SENDBYWEB پارامتر با مقدار حداکثر تعداد ایمیل های شما می خواهید به جلسه ارسال کنید. برای این کار، در خانه به - راه اندازی - سایر.

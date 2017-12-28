@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Puteţi utiliza expertul de configurare Dolibarr dintr-un p
 KeepDefaultValuesMamp=Puteţi utiliza expertul de configurare de la Dolibarr DoliMamp, astfel încât valorile propuse aici sunt deja optimizate. Schimbaţi-le numai daca stii ce faci.
 KeepDefaultValuesProxmox=Puteţi utiliza expertul de configurare Dolibarr de la un aparat Proxmox virtuale, astfel încât valorile propuse aici sunt deja optimizate. Schimbaţi-le numai daca stii ce faci.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Fix pentru date denormalized
@@ -191,6 +192,7 @@ MigrationActioncommElement=Actualizare date pe acţiuni
 MigrationPaymentMode=Migrare de date pentru modul de plată
 MigrationCategorieAssociation=Migrarea categoriilor
 MigrationEvents=Migrația evenimentelor pentru a adăuga proprietarului evenimentul în tabelul de atribuire
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reîncarcă modul %s

@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Бухгалтерия / Казначейство обл
 NewPayment=Новые оплаты
 Payments=Платежи
 PaymentCustomerInvoice=Заказчиком оплаты счетов-фактур
+PaymentSupplierInvoice=Поставщик оплате счета-фактуры
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=НДС платеж
 ListPayment=Список платежей

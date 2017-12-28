@@ -113,7 +113,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
@@ -243,8 +243,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			$langs->load("commercial");
 
-			$fromtype = GETPOST('fromtype');
-			if ($fromtype === 'user') {
+			$fromtype = GETPOST('fromtype','alpha');
+			if ($fromtype === 'robot') {
+				$from = $conf->global->MAIN_MAIL_EMAIL_FROM .' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
+			}
+			elseif ($fromtype === 'user') {
 				$from = $user->getFullName($langs) .' <'.$user->email.'>';
 			}
 			elseif ($fromtype === 'company') {
@@ -442,7 +445,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 					if ($error)
 					{
-						dol_print_error($db);
+						// error message event set by trigger interface
 					}
 					else
 					{

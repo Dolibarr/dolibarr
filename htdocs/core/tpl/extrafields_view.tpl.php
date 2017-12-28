@@ -24,6 +24,14 @@
  * $parameters
  * $cols
  */
+
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
@@ -42,6 +50,10 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
+		// Discard if extrafield is a hidden field on form
+		if (empty($extrafields->attributes[$object->table_element]['list'][$key])) continue;	// 0 = Never visible field
+		if (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 1 && abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+
 		// Load language if required
 		if (! empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
 

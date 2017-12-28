@@ -469,7 +469,7 @@ class Productbatch extends CommonObject
         }
     }
     /**
-     * Return all batch detail records for given product and warehouse
+     * Return all batch detail records for a given product and warehouse
      *
      *  @param	DoliDB		$db    				database object
      *  @param	int			$fk_product_stock	id product_stock for objet

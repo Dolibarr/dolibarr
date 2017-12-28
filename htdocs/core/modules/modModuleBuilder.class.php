@@ -92,7 +92,7 @@ class modModuleBuilder extends DolibarrModules
             'titre'=>'ModuleBuilder',
             'mainmenu'=>'home',
             'leftmenu'=>'admintools_modulebuilder',
-            'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools_modulebuilder',
+            'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools',
             'langs'=>'modulebuilder',
             'position'=>100,
             'perms'=>'1',

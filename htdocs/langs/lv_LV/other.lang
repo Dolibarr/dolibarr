@@ -11,7 +11,7 @@ BirthdayAlertOn=dzimšanas dienas brīdinājums aktīvs
 BirthdayAlertOff=dzimšanas dienas brīdinājums neaktīvs
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=Sākt augšupielādi
 CancelUpload=Atcelt augšupielādi
 FileIsTooBig=Faili ir pārāk lieli
 PleaseBePatient=Lūdzu, esiet pacietīgi ...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=Pieprasījumu, lai mainītu savu Dolibarr paroli ir saņemta
 NewKeyIs=Tas ir jūsu jaunās atslēgas, lai pieteiktos
 NewKeyWillBe=Jūsu jaunais galvenais, lai pieteiktos uz programmatūru, būs
@@ -223,6 +224,7 @@ ForgetIfNothing=Ja Jums nav lūgt šīs izmaiņas, vienkārši aizmirst šo e-pa
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Diagramma
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Eksportēšanas sadaļa

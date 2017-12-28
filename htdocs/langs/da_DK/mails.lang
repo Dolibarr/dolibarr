@@ -99,7 +99,6 @@ NbOfCompaniesContacts=Unikke kontakter af virksomheder
 MailNoChangePossible=Modtagere til validerede emailing kan ikke ændres
 SearchAMailing=Søg mailing
 SendMailing=Send emailing
-SendMail=Send email
 SentBy=Sendt af
 MailingNeedCommand=Sending an emailing can be performed from command line. Ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Du kan dog sende dem online ved at tilføje parameteren MAILING_LIMIT_SENDBYWEB med værdien af max antal e-mails, du vil sende ved session.

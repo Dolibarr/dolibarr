@@ -177,7 +177,7 @@ if (count($object->records) > 0)
 	// ***** Part for web sites
 
 	print '<div class="websiteselection hideonsmartphoneimp">';
-	print $langs->trans("Website").': ';
+	print $langs->trans("WebSite").': ';
 	print '</div>';
 
 	// List of websites

@@ -512,10 +512,10 @@ if ($mode == 'feature')
     	$i=0;
         foreach($objMod->module_parts['hooks'] as $key => $val)
         {
-        	if ($key == 'entity') continue;
+        	if ($key === 'entity') continue;
 
         	// For special values
-        	if ($key == 'data')
+        	if ($key === 'data')
         	{
         		if (is_array($val))
         		{

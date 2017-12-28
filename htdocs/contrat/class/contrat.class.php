@@ -44,8 +44,17 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='contract';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     * @var integer
+     */
+    public $restrictiononfksoc = 1;
 
 	/**
 	 * {@inheritdoc}
@@ -311,13 +320,15 @@ class Contrat extends CommonObject
 		// Load lines
 		$this->fetch_lines();
 
+		$now = dol_now();
+
 		$ok=true;
 		foreach($this->lines as $contratline)
 		{
 			// Close lines not already closed
 	        if ($contratline->statut != 5)
 	        {
-				$contratline->date_cloture=dol_now();
+				$contratline->date_cloture=$now;
 				$contratline->fk_user_cloture=$user->id;
 				$contratline->statut='5';
 				$result=$contratline->update($user);
@@ -448,9 +459,9 @@ class Contrat extends CommonObject
 			if (! $error)
 			{
 				$this->ref = $num;
-				$this->statut=1;
-				$this->brouillon=0;
-				$this->date_validation=$now;
+				$this->statut = 1;
+				$this->brouillon = 0;
+				$this->date_validation = $now;
 			}
 		}
 		else
@@ -556,7 +567,7 @@ class Contrat extends CommonObject
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
-		if (! $id) $sql.=" WHERE entity IN (".getEntity('contract', 0).")";
+		if (! $id) $sql.=" WHERE entity IN (".getEntity('contract').")";
 		else $sql.= " WHERE rowid=".$id;
 		if ($ref_customer)
 		{
@@ -1196,6 +1207,11 @@ class Contrat extends CommonObject
 		$error=0;
 
 		// Clean parameters
+		if (empty($this->fk_commercial_signature) && $this->commercial_signature_id > 0) $this->fk_commercial_signature = $this->commercial_signature_id;
+		if (empty($this->fk_commercial_suivi) && $this->commercial_suivi_id > 0) $this->fk_commercial_suivi = $this->commercial_suivi_id;
+		if (empty($this->fk_soc) && $this->socid > 0) $this->fk_soc = $this->socid;
+		if (empty($this->fk_project) && $this->projet > 0) $this->fk_project = $this->projet;
+
 		if (isset($this->ref)) $this->ref=trim($this->ref);
 		if (isset($this->ref_customer)) $this->ref_customer=trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
@@ -1203,7 +1219,6 @@ class Contrat extends CommonObject
 		if (isset($this->entity)) $this->entity=trim($this->entity);
 		if (isset($this->statut)) $this->statut=(int) $this->statut;
 		if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
-		if (isset($this->fk_projet)) $this->fk_projet=trim($this->fk_projet);
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature=trim($this->fk_commercial_signature);
 		if (isset($this->fk_commercial_suivi)) $this->fk_commercial_suivi=trim($this->fk_commercial_suivi);
 		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service=trim($this->fk_user_mise_en_service);
@@ -1228,8 +1243,8 @@ class Contrat extends CommonObject
 		$sql.= " mise_en_service=".(dol_strlen($this->mise_en_service)!=0 ? "'".$this->db->idate($this->mise_en_service)."'" : 'null').",";
 		$sql.= " fin_validite=".(dol_strlen($this->fin_validite)!=0 ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
 		$sql.= " date_cloture=".(dol_strlen($this->date_cloture)!=0 ? "'".$this->db->idate($this->date_cloture)."'" : 'null').",";
-		$sql.= " fk_soc=".(isset($this->fk_soc)?$this->fk_soc:"null").",";
-		$sql.= " fk_projet=".(isset($this->fk_projet)?$this->fk_projet:"null").",";
+		$sql.= " fk_soc=".($this->fk_soc > 0 ? $this->fk_soc:"null").",";
+		$sql.= " fk_projet=".($this->fk_project > 0 ? $this->fk_project:"null").",";
 		$sql.= " fk_commercial_signature=".(isset($this->fk_commercial_signature)?$this->fk_commercial_signature:"null").",";
 		$sql.= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi)?$this->fk_commercial_suivi:"null").",";
 		$sql.= " fk_user_mise_en_service=".(isset($this->fk_user_mise_en_service)?$this->fk_user_mise_en_service:"null").",";
@@ -1324,6 +1339,13 @@ class Contrat extends CommonObject
 		global $user, $langs, $conf, $mysoc;
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits, $rang");
+
+		// Check parameters
+		if ($fk_product <= 0 && empty($desc))
+		{
+			$this->error="DescRequiredForFreeProductLines";
+			return -1;
+		}
 
 		if ($this->statut >= 0)
 		{
@@ -1743,6 +1765,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 	}
@@ -1878,7 +1901,6 @@ class Contrat extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		//}
 
-		$picto = 'contract';
         $label = '';
 
         if ($user->rights->contrat->lire) {
@@ -1913,9 +1935,11 @@ class Contrat extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$linkstart.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -2089,10 +2113,10 @@ class Contrat extends CommonObject
 			if ($mode == 'inactives') {
 				$warning_delay = $conf->contrat->services->inactifs->warning_delay;
 				$label = $langs->trans("BoardNotActivatedServices");
-				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=0';
 			} else {
 				$warning_delay = $conf->contrat->services->expires->warning_delay;
-				$url = DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&amp;leftmenu=contracts&amp;mode=4&amp;filter=expired';
 				$label = $langs->trans("BoardRunningServices");
 			}
 

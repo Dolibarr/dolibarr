@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Accountancy/Treasury area
 NewPayment=Novo plaćanje
 Payments=Uplate
 PaymentCustomerInvoice=Plaćanje računa kupca
+PaymentSupplierInvoice=Supplier invoice payment
 PaymentSocialContribution=Plaćanje socijalnog/fiskalnog poreza
 PaymentVat=Plaćanje PDVa
 ListPayment=Spisak plaćanja

@@ -227,7 +227,7 @@ class modResource extends DolibarrModules
 			'titre'=> 'MenuResourceAdd',
 			'mainmenu'=> 'tools',
 			'leftmenu'=> 'resource_add',
-			'url'=> '/resource/add.php',
+			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
 			'position'=> 101,
 			'enabled'=> '1',

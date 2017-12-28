@@ -235,7 +235,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 if (! defined('NOREQUIRETRAN'))
 {
     $langcode=(GETPOST('lang','aZ09')?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
-	$langs->setDefaultLang($langcode);
+    if (defined('MAIN_LANG_DEFAULT')) $langcode=constant('MAIN_LANG_DEFAULT');
+    $langs->setDefaultLang($langcode);
 }
 
 

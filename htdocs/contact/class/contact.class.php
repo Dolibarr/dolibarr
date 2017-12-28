@@ -40,6 +40,7 @@ class Contact extends CommonObject
 	public $element='contact';
 	public $table_element='socpeople';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $picto = 'contact';
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
@@ -266,9 +267,10 @@ class Contact extends CommonObject
 	 *      @param      User	$user        	Objet user making change
 	 *      @param      int		$notrigger	    0=no, 1=yes
 	 *      @param		string	$action			Current action for hookmanager
+	 *      @param		int		$nosyncuser		No sync linked user (external users and contacts are linked)
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=null, $notrigger=0, $action='update')
+	function update($id, $user=null, $notrigger=0, $action='update', $nosyncuser=0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -352,12 +354,69 @@ class Contact extends CommonObject
 		    }
 		    else if ($reshook < 0) $error++;
 
+			if (! $error && $this->user_id > 0)
+			{
+				$tmpobj = new User($this->db);
+				$tmpobj->fetch($this->user_id);
+				$usermustbemodified = 0;
+				if ($tmpobj->office_phone != $this->phone_pro)
+				{
+					$tmpobj->office_phone = $this->phone_pro;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->office_fax != $this->fax)
+				{
+					$tmpobj->office_fax = $this->fax;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->address != $this->address)
+				{
+					$tmpobj->address = $this->address;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->town != $this->town)
+				{
+					$tmpobj->town = $this->town;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->zip != $this->zip)
+				{
+					$tmpobj->zip = $this->zip;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->zip != $this->zip)
+				{
+					$tmpobj->state_id=$this->state_id;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->country_id != $this->country_id)
+				{
+					$tmpobj->country_id = $this->country_id;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->email != $this->email)
+				{
+					$tmpobj->email = $this->email;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->skype != $this->skype)
+				{
+					$tmpobj->skype = $this->skype;
+					$usermustbemodified++;
+				}
+				if ($usermustbemodified)
+				{
+					$result=$tmpobj->update($user, 0, 1, 1, 1);
+					if ($result < 0) { $error++; }
+				}
+			}
+
 			if (! $error && ! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('CONTACT_MODIFY',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('CONTACT_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			if (! $error)
@@ -1053,8 +1112,12 @@ class Contact extends CommonObject
 			$linkend='</a>';
 		}
 
-	        if ($withpicto) $result.=($linkstart.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
-			$result.=$linkstart.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
+
+		$result.=$linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
+		$result.=$linkend;
+
 		return $result;
 	}
 

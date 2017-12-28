@@ -44,7 +44,6 @@ ConfirmActivateService=Sigur doriți să activați acest serviciu cu data <b> %s
 RefContract=Referinţă contract
 DateContract=Data Contract
 DateServiceActivate=Data  activare Serviciu
-ShowContract=Afişează contract
 ListOfServices=Lista  servicii
 ListOfInactiveServices=Lista  servicii inactive
 ListOfExpiredServices=Lista  servicii active expirate

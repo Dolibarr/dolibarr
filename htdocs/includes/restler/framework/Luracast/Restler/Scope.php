@@ -52,7 +52,7 @@ class Scope
         'MemcacheCache'      => 'Luracast\Restler\MemcacheCache',
 
         //Utility classes
-        'Object'             => 'Luracast\Restler\Data\Object',
+        'Obj'                => 'Luracast\Restler\Data\Obj',
         'Text'               => 'Luracast\Restler\Data\Text',
         'Arr'                => 'Luracast\Restler\Data\Arr',
 
@@ -194,6 +194,11 @@ class Scope
     {
         if (empty($className) || !is_string($className))
             return false;
+
+        if (self::isPrimitiveDataType($className)) {
+            return false;
+        }
+
         $divider = '\\';
         $qualified = false;
         if ($className{0} == $divider) {
@@ -211,5 +216,15 @@ class Scope
                 return $qualified;
         }
         return false;
+    }
+
+    /**
+     * @param string $stringName
+     * @return boolean
+     */
+    private static function isPrimitiveDataType($stringName)
+    {
+        $primitiveDataTypes = array('Array', 'array', 'bool', 'boolean', 'float', 'int', 'integer', 'string');
+        return in_array($stringName, $primitiveDataTypes);
     }
 }

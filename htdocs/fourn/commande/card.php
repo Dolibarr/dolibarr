@@ -446,6 +446,7 @@ if (empty($reshook))
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 			$desc = $product_desc;
 			$type = GETPOST('type');
+			$ref_supplier = GETPOST('fourn_ref','alpha');
 
 			$fk_unit= GETPOST('units', 'alpha');
 
@@ -470,7 +471,7 @@ if (empty($reshook))
 
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
+			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -507,6 +508,7 @@ if (empty($reshook))
 			unset($_POST['price_ht']);
 			unset($_POST['multicurrency_price_ht']);
 			unset($_POST['price_ttc']);
+			unset($_POST['fourn_ref']);
 			unset($_POST['tva_tx']);
 			unset($_POST['label']);
 			unset($localtax1_tx);
@@ -547,23 +549,23 @@ if (empty($reshook))
 
    		if ($lineid)
 		{
-				$line = new CommandeFournisseurLigne($db);
-				$res = $line->fetch($lineid);
-				if (!$res) dol_print_error($db);
+			$line = new CommandeFournisseurLigne($db);
+			$res = $line->fetch($lineid);
+			if (!$res) dol_print_error($db);
 		}
 
 		$productsupplier = new ProductFournisseur($db);
-		if ($productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
+		if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
 		{
 			setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 		}
 
-			$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-			$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+		$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+		$date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 
-	  	  // Define info_bits
-	  	  $info_bits = 0;
-	  	  if (preg_match('/\*/', $vat_rate))
+		// Define info_bits
+		$info_bits = 0;
+		if (preg_match('/\*/', $vat_rate))
 				$info_bits |= 0x01;
 
 	   	 // Define vat_rate
@@ -604,23 +606,24 @@ if (empty($reshook))
 			}
 
 			$result	= $object->updateline(
-			$lineid,
-			$_POST['product_desc'],
-			$ht,
-			$_POST['qty'],
-			$_POST['remise_percent'],
-			$vat_rate,
-			$localtax1_rate,
-			$localtax2_rate,
-			$price_base_type,
-			0,
-			isset($_POST["type"])?$_POST["type"]:$line->product_type,
-			false,
-			$date_start,
-			$date_end,
-			$array_options,
+				$lineid,
+				$_POST['product_desc'],
+				$ht,
+				$_POST['qty'],
+				$_POST['remise_percent'],
+				$vat_rate,
+				$localtax1_rate,
+				$localtax2_rate,
+				$price_base_type,
+				0,
+				isset($_POST["type"])?$_POST["type"]:$line->product_type,
+				false,
+				$date_start,
+				$date_end,
+				$array_options,
 				$_POST['units'],
-				$pu_ht_devise
+				$pu_ht_devise,
+				GETPOST('fourn_ref','alpha')
 			);
 			unset($_POST['qty']);
 			unset($_POST['type']);
@@ -629,6 +632,7 @@ if (empty($reshook))
 			unset($_POST['dp_desc']);
 			unset($_POST['np_desc']);
 			unset($_POST['pu']);
+			unset($_POST['fourn_ref']);
 			unset($_POST['tva_tx']);
 			unset($_POST['date_start']);
 			unset($_POST['date_end']);
@@ -1344,11 +1348,6 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 $help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('',$langs->trans("Order"),$help_url);
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
 
 $now=dol_now();
 if ($action=='create')
@@ -1521,6 +1520,8 @@ if ($action=='create')
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
 		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$societe->id).'">' . $langs->trans("AddProject") . '</a>';
+
 		print '</td></tr>';
 	}
 
@@ -2187,10 +2188,10 @@ elseif (! empty($object->id))
 					}
 				}
 				// Create event
-				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
-				}
+				}*/
 
 				// Modify
 				if ($object->statut == 1)

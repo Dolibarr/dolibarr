@@ -28,7 +28,7 @@
 // Filename to print must be provided into 'file' parameter
 
 // Print file
-if ($action == 'print_file' and $user->rights->printing->read) 
+if ($action == 'print_file' and $user->rights->printing->read)
 {
     $langs->load("printing");
     require_once DOL_DOCUMENT_ROOT . '/core/modules/printing/modules_printing.php';
@@ -44,10 +44,10 @@ if ($action == 'print_file' and $user->rights->printing->read)
             $printer = new $classname($db);
             //print '<pre>'.print_r($printer, true).'</pre>';
 
-            if (! empty($conf->global->{$printer->active})) 
+            if (! empty($conf->global->{$printer->active}))
             {
                 $printerfound++;
-                
+
                 $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
                 $module = GETPOST('printer', 'alpha');
                 if ($module =='commande_fournisseur') {
@@ -60,11 +60,11 @@ if ($action == 'print_file' and $user->rights->printing->read)
                         //print '<pre>'.print_r($printer->errors, true).'</pre>';
                         setEventMessages($printer->error, $printer->errors, 'errors');
                     }
-                    if ($ret==0) 
+                    if ($ret==0)
                     {
                         //print '<pre>'.print_r($printer->errors, true).'</pre>';
                         setEventMessages($printer->error, $printer->errors);
-                        setEventMessages($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
+                        setEventMessages($langs->transnoentitiesnoconv("FileWasSentToPrinter", basename(GETPOST('file', 'alpha'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
                     }
                 }
                 catch(Exception $e)
@@ -74,7 +74,7 @@ if ($action == 'print_file' and $user->rights->printing->read)
                 }
             }
         }
-        if ($printerfound==0) setEventMessages($langs->trans("NoActivePrintingModuleFound"), null, 'warnings');
+        if ($printerfound==0) setEventMessages($langs->trans("NoActivePrintingModuleFound", $langs->transnoentities("Module64000Name")), null, 'warnings');
     } else {
         setEventMessages($langs->trans("NoModuleFound"), null, 'warnings');
     }

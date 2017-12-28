@@ -38,7 +38,7 @@ class ExpenseReport extends CommonObject
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
 
-    var $lignes=array();
+    var $lines=array();
 
     public $date_debut;
 
@@ -215,7 +215,8 @@ class ExpenseReport extends CommonObject
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
-            if (is_array($this->lines) && count($this->lines)>0) {
+            if (is_array($this->lines) && count($this->lines)>0)
+            {
 	            foreach ($this->lines as $i => $val)
 	            {
 	                $newndfline=new ExpenseReportLine($this->db);
@@ -231,6 +232,12 @@ class ExpenseReport extends CommonObject
 	                    break;
 	                }
 	            }
+            }
+
+            if (! $error)
+            {
+            	$result=$this->insertExtraFields();
+           		if ($result < 0) $error++;
             }
 
             if (! $error)
@@ -448,7 +455,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_statut as status, d.fk_c_paiement,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity = " . getEntity('c_paiement');
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity IN (".getEntity('c_paiement').")";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
         //$sql.= $restrict;
@@ -1513,13 +1520,13 @@ class ExpenseReport extends CommonObject
 				$this->error=$obj->error;
 				$this->errors=$obj->errors;
             	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-            	return "";
+            	return -1;
             }
         }
         else
         {
-            print $langs->trans("Error")." ".$langs->trans("Error_EXPENSEREPORT_ADDON_NotDefined");
-            return "";
+            $this->error = "Error_EXPENSEREPORT_ADDON_NotDefined";
+            return -2;
         }
     }
 
@@ -1544,7 +1551,6 @@ class ExpenseReport extends CommonObject
 
         if ($short) return $url;
 
-        $picto='trip';
         $label = '<u>' . $langs->trans("ShowExpenseReport") . '</u>';
         if (! empty($this->ref))
             $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1583,8 +1589,11 @@ class ExpenseReport extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
-        $result.=$linkstart.($max?dol_trunc($ref,$max):$ref).$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.=($max?dol_trunc($ref,$max):$ref);
+        $result .= $linkend;
+
         return $result;
     }
 
@@ -1925,7 +1934,7 @@ class ExpenseReport extends CommonObject
 
             $tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
-            // calcul de tous les totaux de la ligne
+            // calcul total of line
             //$total_ttc  = price2num($qty*$value_unit, 'MT');
 
             $tx_tva = $vatrate / 100;
@@ -2556,7 +2565,7 @@ class ExpenseReportLine
 
         $this->db->begin();
 
-        // Mise a jour ligne en base
+        // Update line in database
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
         $sql.= ",value_unit=".$this->value_unit;

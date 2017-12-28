@@ -28,7 +28,6 @@ InterventionClassifyBilled=Eingeordnet "Angekündigt"
 InterventionClassifyUnBilled=Als "nicht verrechnet" markieren
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Angekündigt
-ShowIntervention=Zeige Serviceauftrag
 SendInterventionRef=Einreichung von Serviceauftrag %s
 SendInterventionByMail=Serviceauftrag per E-Mail versenden
 InterventionCreatedInDolibarr=Serviceauftrag %s erstellt

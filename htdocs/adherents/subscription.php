@@ -834,13 +834,15 @@ if ($rowid > 0)
             print "</tr>\n";
 
             $accountstatic=new Account($db);
-		
+
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                print '<tr class="oddeven">';
+
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
+
+                print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
@@ -885,17 +887,20 @@ if ($rowid > 0)
     }
 
 
-    // Shon online payment link
-    $useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
-
-    if ($useonlinepayment)
+    if (($action != 'addsubscription' && $action != 'create_thirdparty'))
     {
-    	print '<br>';
+	    // Shon online payment link
+	    $useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
 
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-    	print showOnlinePaymentUrl('membersubscription', $object->ref);
+	    if ($useonlinepayment)
+	    {
+	    	print '<br>';
+
+	    	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+	    	print showOnlinePaymentUrl('membersubscription', $object->ref);
+	    	print '<br>';
+	    }
     }
-
 
     /*
      * Add new subscription form

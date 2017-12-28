@@ -57,3 +57,4 @@ ErrorInsertingComment=Dogodila se greška kod unosa vašeg komentara
 MoreChoices=Unesite još odabira za glasače
 SurveyExpiredInfo=Anketa je zatvorena ili glasanje je završeno.
 EmailSomeoneVoted=%s je ispunio liniju. \nVašu anketu možete pronaći na linku:\n%s
+ShowSurvey=Show survey

@@ -100,13 +100,13 @@ $bankstatic = new Account($db);
 $sql = "SELECT t.rowid, t.amount, t.label, t.datev as dv, t.datep as dp, t.fk_typepayment as type, t.num_payment, t.fk_bank, pst.code as payment_code,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id AND pst.entity = " . getEntity('c_paiement');
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id AND pst.entity IN (".getEntity('c_paiement').")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-$sql.= " WHERE t.entity = ".$conf->entity;
-if ($search_ref)	$sql.=" AND t.rowid=".$search_ref;
-if ($search_label) 	$sql.=" AND t.label LIKE '%".$db->escape($search_label)."%'";
-if ($search_amount) $sql.=" AND t.amount='".$db->escape(price2num(trim($search_amount)))."'";
+$sql.= " WHERE t.entity IN (".getEntity('tax').")";
+if ($search_ref)	$sql.= natural_search("t.rowid", $search_ref);
+if ($search_label) 	$sql.= natural_search("t.label", $search_label);
+if ($search_amount) $sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($month > 0)
 {

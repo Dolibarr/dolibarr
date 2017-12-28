@@ -42,7 +42,7 @@ class WebsiteAccount extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'websiteaccount';
+	public $table_element = 'website_account';
 	/**
 	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
@@ -50,7 +50,7 @@ class WebsiteAccount extends CommonObject
 	/**
 	 * @var string String with name of icon for websiteaccount. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'globe';
+	public $picto = 'lock';
 
 
 	/**
@@ -77,14 +77,15 @@ class WebsiteAccount extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Login',),
-		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>1),
-		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>30, 'notnull'=>-1,),
+		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
+		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
+		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
 		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>1, 'index'=>1),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
-		//'note_private' => array('type'=>'text', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>46, 'notnull'=>-1,),
+		'note_private' => array('type'=>'text', 'label'=>'NotePrivate', 'visible'=>-1, 'enabled'=>1, 'position'=>46, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1,),
@@ -94,9 +95,11 @@ class WebsiteAccount extends CommonObject
 	);
 	public $rowid;
 	public $login;
+	public $pass_encoding;
 	public $pass_crypted;
 	public $date_last_login;
 	public $date_previous_login;
+	public $note_private;
 	public $date_creation;
 	public $tms;
 	public $fk_user_creat;
@@ -114,11 +117,11 @@ class WebsiteAccount extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'websiteaccountdet';
+	//public $table_element_line = 'website_accountdet';
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_websiteaccount';
+	//public $fk_element = 'fk_website_account';
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
@@ -126,7 +129,7 @@ class WebsiteAccount extends CommonObject
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
-	//protected $childtables=array('websiteaccountdet');
+	//protected $childtables=array('website_accountdet');
 	/**
 	 * @var WebsiteAccountLine[]     Array of subtable lines
 	 */
@@ -316,12 +319,11 @@ class WebsiteAccount extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto)
-        {
-            $result.=($linkstart.img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $linkstart . $this->ref . $linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 

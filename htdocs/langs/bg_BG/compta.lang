@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Секция Счетоводство/ценности
 NewPayment=Ново плащане
 Payments=Плащания
 PaymentCustomerInvoice=Плащане на продажна фактура
+PaymentSupplierInvoice=Плащане доставна фактура
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=Плащането на ДДС
 ListPayment=Списък на плащанията

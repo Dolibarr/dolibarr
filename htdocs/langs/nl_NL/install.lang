@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=U gebruikt de Dolibarr installatiewizard uit een Ubuntu of 
 KeepDefaultValuesMamp=U gebruikt de Dolibarr installatiewizard van DoliMamp, dus de hier voorgestelde waarden zijn al geoptimaliseerd. Wijzig ze alleen wanneer u weet wat u doet.
 KeepDefaultValuesProxmox=U gebruikt de Dolibarr installatiewizard van een Proxmox virtueel systeem, dus de hier voorgestelde waarden zijn al geoptimaliseerd. Wijzig ze alleen wanneer u weet wat u doet.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Reparatie voor gedenormaliseerde gegevens
@@ -191,6 +192,7 @@ MigrationActioncommElement=Bijwerken van gegevens over acties
 MigrationPaymentMode=Data migratie voor de betaling mode
 MigrationCategorieAssociation=Migratie van categoriën
 MigrationEvents=Migratie van taken om taak eigenaar toe te voegen in toekennings tabel
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Herlaad module %s

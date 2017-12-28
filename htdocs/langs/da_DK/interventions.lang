@@ -28,7 +28,6 @@ InterventionClassifyBilled=Klassificere &quot;Billed&quot;
 InterventionClassifyUnBilled=Classify "Unbilled"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Billed
-ShowIntervention=Vis indgreb
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by Email
 InterventionCreatedInDolibarr=Intervention %s created

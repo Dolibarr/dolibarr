@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Muhasebe/Maliye alanı
 NewPayment=Yeni ödeme
 Payments=Ödemeler
 PaymentCustomerInvoice=Müşteri fatura ödemesi
+PaymentSupplierInvoice=Tedarikçi fatura ödemesi
 PaymentSocialContribution=Sosyal/mali vergi ödemesi
 PaymentVat=KDV ödeme
 ListPayment=Ödemeler listesi

@@ -101,7 +101,6 @@ MySqlExportParameters=Parámetros de exportación de MySQL
 PostgreSqlExportParameters=Parámetros de exportación de PostgreSQL
 UseTransactionnalMode=Usar modo transaccional
 FullPathToPostgreSQLdumpCommand=Ruta completa del comando pg_dump
-ExportOptions=Opciónes de exportación
 AddDropDatabase=Agregar comando DROP DATABASE
 AddDropTable=Agregar comando DROP TABLE
 NameColumn=Nombre de columnas
