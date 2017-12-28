@@ -708,6 +708,58 @@ class Invoices extends DolibarrApi
 
     }
 
+    /**
+     * Sets an invoice as unpaid
+     *
+     * @param   int     $id            Order ID
+     *
+     * @url POST    {id}/settounpaid
+     *
+     * @return  array   An invoice object
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     */
+    function settounpaid($id)
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->set_unpaid(DolibarrApiAccess::$user);
+        if ($result == 0) {
+                throw new RestException(304, 'Nothing done');
+        }
+        if ($result < 0) {
+                throw new RestException(500, 'Error : '.$this->invoice->error);
+        }
+
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+
+
+    }
+
 
      /**
      * Add a discount line into an invoice (as an invoice line) using an existing absolute discount

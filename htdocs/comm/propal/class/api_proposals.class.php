@@ -527,13 +527,52 @@ class Proposals extends DolibarrApi
 		$this->propal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->propal);
 	}
+        /**
+         * Set a commercial proposal billed
+         *
+         * @param   int     $id             Commercial proposal ID
+         *
+         * @url POST    {id}/setbilled
+         *
+         * @return  array
+         */
+        function setbilled($id)
+        {
+                if(! DolibarrApiAccess::$user->rights->propal->creer) {
+                        throw new RestException(401);
+                }
+                $result = $this->propal->fetch($id);
+                if( ! $result ) {
+                        throw new RestException(404, 'Commercial Proposal not found');
+                }
+
+                if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+                        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+                }
+
+                $result = $this->propal->classifyBilled(DolibarrApiAccess::$user );
+                if ($result < 0) {
+                        throw new RestException(500, 'Error : '.$this->propal->error);
+                }
+
+               $result = $this->propal->fetch($id);
+               if( ! $result ) {
+                       throw new RestException(404, 'Proposal not found');
+               }
+
+               if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+                       throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+               }
+
+               $this->propal->fetchObjectLinked();
+               return $this->_cleanObjectDatas($this->propal);
+	}
 
 
 	/**
 	 * Validate a commercial proposal
 	 *
 	 * @param   int     $id             Commercial proposal ID
-	 * @param   int     $notrigger      Use {}
 	 *
 	 * @url POST    {id}/validate
 	 *
@@ -545,7 +584,7 @@ class Proposals extends DolibarrApi
 	 * "notrigger": 0
 	 * }
 	 */
-	function validate($id, $notrigger=0)
+	function validate($id)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
@@ -559,7 +598,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->valid(DolibarrApiAccess::$user, $notrigger);
+		$result = $this->propal->valid(DolibarrApiAccess::$user );
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
@@ -567,12 +606,25 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->error);
 		}
 
+	       $result = $this->propal->fetch($id);
+               if( ! $result ) {
+                       throw new RestException(404, 'Proposal not found');
+               }
+
+               if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+                       throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+               }
+
+               $this->propal->fetchObjectLinked();
+               return $this->_cleanObjectDatas($this->propal);
+/*
 		return array(
 			'success' => array(
 				'code' => 200,
 				'message' => 'Commercial Proposal validated (Ref='.$this->propal->ref.')'
 			)
 		);
+*/
 	}
 
 	/**
