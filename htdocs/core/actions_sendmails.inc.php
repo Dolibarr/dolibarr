@@ -392,8 +392,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
-					$error=0;
-
 					// FIXME This must be moved into the trigger for action $trigger_name
 					if (! empty($conf->dolimail->enabled))
 					{
@@ -438,29 +436,22 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     						$interface=new Interfaces($db);
     						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 							if ($result < 0) {
-    							$error++; $errors=$interface->errors;
+    							setEventMessages($interface->error, $interface->errors, 'errors');
     						}
 						}
 					}
 
-					if ($error)
+					// Redirect here
+					// This avoid sending mail twice if going out and then back to page
+					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+					setEventMessages($mesg, null, 'mesgs');
+					if ($conf->dolimail->enabled)
 					{
-						// error message event set by trigger interface
-					}
-					else
-					{
-						// Redirect here
-						// This avoid sending mail twice if going out and then back to page
-						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-						setEventMessages($mesg, null, 'mesgs');
-						if ($conf->dolimail->enabled)
-						{
-						    header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						    exit;
-						}
-						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
+						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
 						exit;
 					}
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
+					exit;
 				}
 				else
 				{
