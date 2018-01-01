@@ -7,7 +7,8 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
-
+ * Copyright (C) 2017       Ari Elbaz (elarifr)	        <github@accedinfo.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -641,6 +642,31 @@ class FormFile
 				$out.= '&nbsp;';
 			}
 
+			// Elarifr Facture printing options
+			if (in_array($modulepart,array('facture')))
+            // The optional print switch are implemented only for such elements. 
+            // TEMP values are resetted from facture/card.php to report admin default value
+            // TODO Add & Check users rights to change option
+            // 'propal','order','commande','supplier_proposal''proposal',,'expedition', 'commande_fournisseur', 'expensereport'
+			{
+				//Switch Preprint
+				//TODO Check module context is facture devis commande...
+				$out.='&nbsp;'.$langs->trans("FactureUsePreprintSmall");
+				$htmltooltip = $langs->trans("FactureUsePreprintInfo");
+				$out.=$form->textwithpicto('',$htmltooltip,1,0);
+				$out.= ajax_constantonoff('FACTURE_USE_PREPRINT_TEMP'); //,,$conf->entity
+
+				//Switch Preprint CGV
+				//TODO Check module context is facture devis commande...
+				$out.=$langs->trans("FactureUsePreprintCgvSmall");
+				$htmltooltip = $langs->trans("FactureUsePreprintCgvInfo");
+				$out.=$form->textwithpicto('',$htmltooltip,1,0);
+				$out.= ajax_constantonoff('FACTURE_USE_PREPRINT_CGV_TEMP'); //,,$conf->entity
+				$out.= '&nbsp;';
+			}
+
+            // Elarifr TODO Expand for other doc to build using preprinted papers propal, orders.....
+
 			// Button
 			$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton.= ' type="submit" value="'.$buttonlabel.'"';
@@ -664,6 +690,7 @@ class FormFile
 				}
 			}
 			$out.= '</tr>';
+
 
 			// Execute hooks
 			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
