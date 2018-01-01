@@ -14,6 +14,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014	   Ferran Marcet	 	 <fmarcet@2byte.es>
  * Copyright (C) 2015-2016 Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ari Elbaz (elarifr)	        <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -4471,6 +4473,9 @@ else if ($id > 0 || ! empty($ref))
 		$genallowed = $user->rights->facture->lire;
 		$delallowed = $user->rights->facture->creer;
 
+		//Elarifr we reset print switch values to default as set in admin
+		dolibarr_set_const($db, "FACTURE_USE_PREPRINT_TEMP",$conf->global->FACTURE_USE_PREPRINT,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "FACTURE_USE_PREPRINT_CGV_TEMP",$conf->global->FACTURE_USE_PREPRINT_CGV,'chaine',0,'',$conf->entity);
 		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		$somethingshown = $formfile->numoffiles;
 

@@ -6,6 +6,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
+ * Copyright (C) 2017       Ari Elbaz (elarifr)	        <github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -697,8 +698,53 @@ print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=true;
 
+// Elarifr Default invoice use preprint paper (logo & footer)
+// TODO Check entity !
+// TODO Add rights to manage setting by user on generate documents ?
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("FactureUsePreprint");
+$htmltooltip = $langs->trans("FactureUsePreprintInfo");
+print $form->textwithpicto('',$htmltooltip,1,0);
+//TODO move to language file
+$htmltooltip = 'Enable if you use paper with preprinted logo & footer. Disable to print logo & Footer. This can be changed by user';
+print $form->textwithpicto('',$htmltooltip,1,0);
+print '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('FACTURE_USE_PREPRINT'); //,,$conf->entity
+print '</td></tr>';
+
+// Elarifr Default invoice use preprint paper with cgv
+// TODO Check entity !
+// TODO Add rights to manage setting by user on generate documents ?
+// TODO Add help tooltip for cgv.pdf file if found and where to upload it
+// Upload of cgv direcltly provided here ?
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("FactureUsePreprintCgv");
+$htmltooltip = $langs->trans("FactureUsePreprintCgvInfo");
+//TODO move to language file
+print $form->textwithpicto('',$htmltooltip,1,0);
+$htmltooltip = 'Enable if you use paper with preprinted cgv. Disable to append cgv.pdf if any found in society folder & should manage multilanguage cgv.';
+print $form->textwithpicto('',$htmltooltip,1,0);
+print '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('FACTURE_USE_PREPRINT_CGV'); //,,$conf->entity
+print '</td></tr>';
+
+
 // Force date validation
+// TODO Check entity !
 $var=! $var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("ForceInvoiceDate").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('FAC_FORCE_DATE_VALIDATION'); // ,,$conf->entity
+print '</td></tr>';
+/*
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
@@ -710,7 +756,7 @@ print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
-
+*/
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
