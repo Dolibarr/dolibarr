@@ -99,6 +99,8 @@ $accounting = new AccountingAccount($db);
 $aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT, 1);
 $aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT, 1);
 
+$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
 
 /*
  * Action
@@ -140,6 +142,7 @@ if (empty($reshook))
 
 if ($massaction == 'ventil') {
     $msg='';
+
     //print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
     if (! empty($mesCasesCochees)) {
         $msg = '<div>' . $langs->trans("SelectedLines") . ': '.count($mesCasesCochees).'</div>';
@@ -167,7 +170,7 @@ if ($massaction == 'ventil') {
                 $accountventilated = new AccountingAccount($db);
                 $accountventilated->fetch($monCompte, '');
 
-                dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
+                dol_syslog("accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
                 if ($db->query($sql)) {
                     $msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
                     $ok++;
@@ -197,23 +200,30 @@ $formother = new FormOther($db);
 
 llxHeader('', $langs->trans("Ventilation"));
 
+if (empty($chartaccountcode))
+{
+	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
+	llxFooter();
+	$db->close();
+	exit;
+}
+
 // Customer Invoice lines
-$sql = "SELECT f.facnumber, f.rowid as facid, f.datef, f.type as ftype,";
-$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
-$sql .= " aa.rowid as aarowid";
+$sql = "SELECT f.rowid as facid, f.facnumber, f.datef, f.type as ftype,";
+$sql.= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
+$sql.= " aa.rowid as aarowid";
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_system as accsys ON accsys.pcg_version = aa.fk_pcg_version";
-$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-$sql .= " AND product_type <= 2";
-$sql .= " AND (accsys.rowid='" . $conf->global->CHARTOFACCOUNTS . "' OR p.accountancy_code_sell IS NULL OR p.accountancy_code_sell ='' OR p.accountancy_code_sell NOT IN
-	(SELECT aa.account_number FROM " . MAIN_DB_PREFIX . "accounting_account as aa , " . MAIN_DB_PREFIX . "accounting_system as asy  WHERE fk_pcg_version = asy.pcg_version AND asy.rowid ='" . $conf->global->CHARTOFACCOUNTS . "'))";
+$sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
+$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."'";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa2 ON p.accountancy_code_sell_intra = aa2.account_number AND aa2.fk_pcg_version = '" . $chartaccountcode."'";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.fk_pcg_version = '" . $chartaccountcode."'";
+$sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
+$sql.= " AND product_type <= 2";
 // Add search filter like
 if ($search_lineid) {
     $sql .= natural_search("l.rowid", $search_lineid, 1);
@@ -255,7 +265,7 @@ else if ($search_year > 0)
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
 } else {
-	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_STANDARD . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
+	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
 }
 $sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";    // We don't share object for accountancy
 
@@ -276,7 +286,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("/accountancy/customer/list.php", LOG_DEBUG);
+dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
@@ -463,12 +473,14 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td align="center">';
-		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth300 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
+		// Column with checkbox
 		print '<td align="center">';
-		print '<input type="checkbox" class="flat checkforselect" name="toselect[]"  value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
+
 		print '</tr>';
 		$i ++;
 	}
@@ -479,6 +491,18 @@ if ($result) {
 } else {
 	print $db->error();
 }
+
+// Add code to auto check the box when we select an account
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery(".codeventil").change(function() {
+		var s=$(this).attr("id").replace("codeventil", "")
+		console.log(s+" "+$(this).val());
+		if ($(this).val() == -1) jQuery(".checkforselect"+s).prop("checked", false);
+		else jQuery(".checkforselect"+s).prop("checked", true);
+	});
+});
+</script>';
 
 llxFooter();
 $db->close();

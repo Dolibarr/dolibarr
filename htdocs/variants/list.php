@@ -57,7 +57,9 @@ $variants = $object->fetchAll();
 
 llxHeader('', $title);
 
-print_fiche_titre($title);
+$buttonadd='<a href="create.php" class="butAction">'.$langs->trans('Create').'</a>';
+
+print load_fiche_titre($title, $buttonadd);
 
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 ?>
@@ -141,11 +143,6 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 
 	</table>
 
-	<div class="tabsAction">
-		<div class="inline-block divButAction">
-		<a href="create.php" class="butAction"><?php echo $langs->trans('Create') ?></a>
-		</div>
-	</div>
 <?php
 
 llxFooter();

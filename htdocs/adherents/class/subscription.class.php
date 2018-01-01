@@ -172,6 +172,7 @@ class Subscription extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$member=new Adherent($this->db);
 			$result=$member->fetch($this->fk_adherent);
 			$result=$member->update_end_date($user);

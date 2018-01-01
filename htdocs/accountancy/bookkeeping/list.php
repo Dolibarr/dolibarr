@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016  Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017  Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2016-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("accountancy");
@@ -99,9 +100,19 @@ $formother = new FormOther($db);
 $form = new Form($db);
 
 
-if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page)) {
-	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page))
+{
+	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+	$year_start = dol_print_date(dol_now(), '%Y');
+	$year_end = $year_start + 1;
+	$month_end = $month_start - 1;
+	if ($month_end < 1)
+	{
+		$month_end = 12;
+		$year_end--;
+	}
+	$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+	$search_date_end = dol_get_last_day($year_end, $month_end);
 }
 
 $arrayfields=array(
@@ -149,6 +160,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_date_creation_end = '';
 	$search_date_modification_start = '';
 	$search_date_modification_end = '';
+	$search_debit = '';
+	$search_credit = '';
 }
 
 // Must be after the remove filter action, before the export.
@@ -236,6 +249,14 @@ if (! empty($search_date_modification_end)) {
 	$filter['t.tms<='] = $search_date_modification_end;
 	$tmp=dol_getdate($search_date_modification_end);
 	$param .= '&date_modification_endmonth=' . $tmp['mon'] . '&date_modification_endday=' . $tmp['mday'] . '&date_modification_endyear=' . $tmp['year'];
+}
+if (! empty($search_debit)) {
+	$filter['t.debit'] = $search_debit;
+	$param .= '&search_debit=' . $search_debit;
+}
+if (! empty($search_credit)) {
+	$filter['t.credit'] = $search_credit;
+	$param .= '&search_credit=' . $search_credit;
 }
 
 if ($action == 'delbookkeeping') {
@@ -398,18 +419,14 @@ $listofformat=AccountancyExport::getType();
 $button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
-$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
+//$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
 $button.= '</a>';
 
+
 $groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php"">' . $langs->trans("GroupByAccountAccounting") . '</a>';
+$addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby, '', $limit);
-
-print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
-print '<div class="inline-block divButAction"><a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a></div>';
-
-print '</div>';
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$addbutton, '', $limit);
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
@@ -500,12 +517,16 @@ if (! empty($arrayfields['t.label_operation']['checked']))
 // Debit
 if (! empty($arrayfields['t.debit']['checked']))
 {
-	print '<td class="liste_titre center">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'">';
+	print '</td>';
 }
 // Credit
 if (! empty($arrayfields['t.credit']['checked']))
 {
-	print '<td class="liste_titre center">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
+	print '</td>';
 }
 // Code journal
 if (! empty($arrayfields['t.code_journal']['checked']))
@@ -695,6 +716,12 @@ if ($num > 0)
 
 print "</table>";
 print '</div>';
+
+// TODO Replace this with mass action
+print '<div class="tabsAction tabsActionNoBottom">' . "\n";
+print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a>';
+print '</div>';
+
 
 print '</form>';
 

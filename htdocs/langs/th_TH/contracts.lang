@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=อ้างอิงตามสัญญา
 DateContract=วันทำสัญญา
 DateServiceActivate=บริการวันที่เปิดใช้งาน
-ShowContract=แสดงสัญญา
 ListOfServices=รายการของการบริการ
 ListOfInactiveServices=รายชื่อของบริการที่ใช้งานไม่ได้
 ListOfExpiredServices=รายชื่อของบริการที่ใช้งานหมดอายุ

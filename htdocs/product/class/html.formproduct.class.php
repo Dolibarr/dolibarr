@@ -87,7 +87,7 @@ class FormProduct
 			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
 		}
 
-		$sql = "SELECT e.rowid, e.label, e.description, e.fk_parent";
+		$sql = "SELECT e.rowid, e.ref as label, e.description, e.fk_parent";
 		if (!empty($fk_product))
 		{
 			if (!empty($batch))
@@ -125,8 +125,8 @@ class FormProduct
 
 		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
 
-		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description, e.fk_parent";
-		$sql.= " ORDER BY e.label";
+		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
+		$sql.= " ORDER BY e.ref";
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -382,14 +382,14 @@ class FormProduct
 		{
 			$productIdArray = array($fk_product); // only show lot stock for product
 		}
-		else 
+		else
 		{
 			foreach($this->cache_lot as $key => $value)
 			{
 				$productIdArray[] = $key;
 			}
 		}
-		
+
 		foreach($productIdArray as $productId)
 		{
 			foreach($this->cache_lot[$productId] as $id => $arraytypes)
@@ -433,21 +433,21 @@ class FormProduct
 		if (count($productIdArray) && count($this->cache_lot))
 		{
 			// check cache already loaded for product id's
-			foreach ($productIdArray as $productId) 
+			foreach ($productIdArray as $productId)
 			{
 				$cacheLoaded = ! empty($this->cache_lot[$productId]) ? true : false;
 			}
 		}
-		if ($cacheLoaded) 
+		if ($cacheLoaded)
 		{
 			return count($this->cache_lot);
 		}
-		else 
+		else
 		{
 			// clear cache
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
-			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.label, ps.fk_product";
+			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
@@ -455,8 +455,8 @@ class FormProduct
 			{
 				$sql.= " WHERE ps.fk_product IN (".$productIdList.")";
 			}
-			$sql.= " ORDER BY e.label, pb.batch";
-	
+			$sql.= " ORDER BY e.ref, pb.batch";
+
 			dol_syslog(get_class($this).'::loadLotStock', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -473,7 +473,7 @@ class FormProduct
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['qty'] = $obj->qty;
 					$i++;
 				}
-	
+
 				return $num;
 			}
 			else

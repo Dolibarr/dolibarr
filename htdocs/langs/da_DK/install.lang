@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Du bruger Dolibarr opsætningsguiden fra en Ubuntu eller De
 KeepDefaultValuesMamp=Du bruger DoliMamp opsætningsguiden, så værdier foreslås her allerede er optimeret. Ændre dem kun, hvis du ved hvad du gør.
 KeepDefaultValuesProxmox=Du bruger Dolibarr opsætningsguiden fra en Proxmox virtual appliance, så værdier, der foreslås her, allerede er optimeret. Skift dem kun hvis du ved hvad du gør.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Fix for denormalized data
@@ -191,6 +192,7 @@ MigrationActioncommElement=Opdatere data om tiltag
 MigrationPaymentMode=Data migration for betaling mode
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration af begivenheder, så begivenhedsejeren tilføjes tildelingstabel
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s

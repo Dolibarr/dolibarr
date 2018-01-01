@@ -79,8 +79,13 @@ class modAgenda extends DolibarrModules
         $this->module_parts = array();
 
 		// Constants
-		//-----------
+        //-----------
+        // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
+        // Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
+        //                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
+        // );
 		$this->const = array();
+		//$this->const[] = array('AGENDA_DEFAULT_FILTER_TYPE', 'chaine', 'AC_NON_AUTO', 'Default filter for type of event on agenda', 0, 'current');
 		$sqlreadactions="SELECT code, label, description FROM ".MAIN_DB_PREFIX."c_action_trigger ORDER by rang";
 		$resql = $this->db->query($sqlreadactions);
 		if ($resql)
@@ -90,7 +95,7 @@ class modAgenda extends DolibarrModules
 		        //if (preg_match('/_CREATE$/',$obj->code) && (! in_array($obj->code, array('COMPANY_CREATE','PRODUCT_CREATE','TASK_CREATE')))) continue;    // We don't track such events (*_CREATE) by default, we prefer validation (except thirdparty/product/task creation because there is no validation).
 		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
-		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1");
+		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 		    }
 		}
 		else

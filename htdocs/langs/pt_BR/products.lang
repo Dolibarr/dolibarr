@@ -84,7 +84,6 @@ RowMaterial=Materia prima
 CloneProduct=Clonar produto ou serviço
 ConfirmCloneProduct=Você tem certeza que deseja clonar o produto ou serviço <b>%s</b>?
 CloneContentProduct=Clonar todas as principais informações de um produto/serviço
-ClonePricesProduct=Clonar principais informações e preços
 CloneCompositionProduct=Clone pacote de produto / serviço
 ProductIsUsed=Este produto é usado
 NewRefForClone=Ref. do novo produto/serviço

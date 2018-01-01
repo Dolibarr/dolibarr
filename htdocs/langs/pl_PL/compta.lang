@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Obszar księgowości
 NewPayment=Nowa płatność
 Payments=Płatności
 PaymentCustomerInvoice=Klient płatności faktury
+PaymentSupplierInvoice=Dostawca płatności faktury
 PaymentSocialContribution=Płatność za ZUS/podatek
 PaymentVat=Zapłata podatku VAT
 ListPayment=Wykaz płatności

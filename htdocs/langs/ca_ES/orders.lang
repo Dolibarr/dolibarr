@@ -152,5 +152,7 @@ OrderCreated=Les seves comandes han estat creats
 OrderFail=S'ha produït un error durant la creació de les seves comandes
 CreateOrders=Crear comandes
 ToBillSeveralOrderSelectCustomer=Per crear una factura per nombroses comandes, faci primer clic sobre el client i després esculli "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Tanca automàticament la comada a "%s" si es reben tots els productes.
 SetShippingMode=Indica el tipus d'enviament

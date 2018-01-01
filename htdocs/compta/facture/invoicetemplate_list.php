@@ -81,6 +81,7 @@ $month_date_when=GETPOST('month_date_when');
 $search_recurring=GETPOST('search_recurring','int');
 $search_frequency=GETPOST('search_frequency','alpha');
 $search_unit_frequency=GETPOST('search_unit_frequency','alpha');
+$search_status=GETPOST('search_status','int');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -127,8 +128,8 @@ $arrayfields=array(
 	'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
 	'f.unit_frequency'=>array('label'=>$langs->trans("FrequencyUnit"), 'checked'=>1),
 	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDoneShort"), 'checked'=>1),
-	'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
-	'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
+	'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGenerationShort"), 'checked'=>1),
+	'f.date_when'=>array('label'=>$langs->trans("NextDateToExecutionShort"), 'checked'=>1),
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
 	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -180,6 +181,7 @@ if (empty($reshook))
 		$search_recurring='';
 		$search_frequency='';
 		$search_unit_frequency='';
+		$search_status='';
 		$search_array_options=array();
 	}
 
@@ -238,7 +240,12 @@ if ($search_recurring == '1')     $sql .= ' AND f.frequency > 0';
 if ($search_recurring == '0')     $sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 if ($search_frequency != '')      $sql .= natural_search('f.frequency', $search_frequency, 1);
 if ($search_unit_frequency != '') $sql .= natural_search('f.unit_frequency', $search_unit_frequency);
-
+if ($search_status != '' && $search_status >= -1)
+{
+	if ($search_status == 0) $sql.= ' AND frequency = 0 AND suspended = 0';
+	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
+	if ($search_status == -1) $sql.= ' AND suspended = 1';
+}
 if ($month > 0)
 {
 	if ($year > 0 && empty($day))
@@ -301,15 +308,11 @@ if ($resql)
 	if ($search_recurring != '' && $search_recurrning != '-1')    $param.='&search_recurring='  .urlencode($search_recurring);
 	if ($search_frequency > 0)      $param.='&search_frequency='  .urlencode($search_frequency);
 	if ($search_unit_frequency > 0) $param.='&search_unit_frequency='.urlencode($search_unit_frequency);
+	if ($search_status != '')		$param.='&search_status='.urlencode($search_status);
 	if ($option)             $param.="&option=".urlencode($option);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
-		if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
@@ -432,28 +435,8 @@ if ($resql)
 		print '</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				print '<td class="liste_titre'.($align?' '.$align:'').'">';
-				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-				{
-					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
-					$searchclass='';
-					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-				print '</td>';
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -474,6 +457,12 @@ if ($resql)
 	if (! empty($arrayfields['status']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
+		$liststatus=array(
+			0=>$langs->trans("Draft"),
+			1=>$langs->trans("Active"),
+			-1=>$langs->trans("Disabled"),
+		);
+		print $form->selectarray('search_status', $liststatus, $search_status, -2);
 		print '</td>';
 	}
 	// Action column
@@ -516,19 +505,22 @@ if ($resql)
 			$companystatic->id=$objp->socid;
 			$companystatic->name=$objp->name;
 
-			$invoicerectmp->id=$objp->id;
+			$invoicerectmp->id=$objp->id?$objp->id:$objp->facid;
 			$invoicerectmp->frequency=$objp->frequency;
 			$invoicerectmp->suspended=$objp->suspended;
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
 			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
+			$invoicerectmp->ref=$objp->titre;
 
 			print '<tr class="oddeven">';
 
 			if (! empty($arrayfields['f.titre']['checked']))
 			{
-			   print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
-			   print "</a></td>\n";
+			   print '<td>';
+			   print $invoicerectmp->getNomUrl(1);
+			   print "</a>";
+			   print "</td>\n";
 			   if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['s.nom']['checked']))

@@ -296,11 +296,14 @@ if ($result > 0)
 			{
 				$objp = $db->fetch_object($resql);
 
+				$facturestatic->id=$objp->facid;
+				$facturestatic->ref=($objp->ref?$objp->ref:$objp->rowid);
+
 				print '<tr class="oddeven">';
 				// Ref
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
-				print ($objp->ref?$objp->ref:$objp->rowid);
-				print "</a></td>\n";
+				print '<td>';
+				print $facturestatic->getNomUrl(1);
+				print "</td>\n";
 				// Ref supplier
 				print '<td>'.$objp->ref_supplier."</td>\n";
 				// Third party

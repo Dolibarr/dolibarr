@@ -225,8 +225,8 @@ if (empty($reshook))
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
 
-			// Get first contract linked to invoice used to generate template
-			if ($id > 0)
+			// Get first contract linked to invoice used to generate template (facid is id of source invoice)
+			if (GETPOST('facid','int') > 0)
 			{
 				$srcObject = new Facture($db);
 				$srcObject->fetch(GETPOST('facid','int'));
@@ -246,7 +246,7 @@ if (empty($reshook))
 			$db->begin();
 
 			$oldinvoice = new Facture($db);
-			$oldinvoice->fetch($id);
+			$oldinvoice->fetch(GETPOST('facid','int'));
 
 			$result = $object->create($user, $oldinvoice->id);
 			if ($result > 0)
@@ -288,7 +288,8 @@ if (empty($reshook))
 	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $user->rights->facture->supprimer)
 	{
 		$object->delete($user);
-		header("Location: " . $_SERVER['PHP_SELF'] );
+
+		header("Location: " . DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
 		exit;
 	}
 
@@ -784,6 +785,7 @@ if (empty($reshook))
 		$pu_ht = GETPOST('price_ht');
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
+		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -898,7 +900,8 @@ if (empty($reshook))
 					0,
 					$special_code,
 					$label,
-					GETPOST('units')
+					GETPOST('units'),
+					$pu_ht_devise
 				);
 
 				if ($result >= 0)

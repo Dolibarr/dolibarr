@@ -79,6 +79,7 @@ AccountancyTreasuryArea=المحاسبة / الخزانة المنطقة
 NewPayment=دفع جديدة
 Payments=المدفوعات
 PaymentCustomerInvoice=الزبون تسديد الفاتورة
+PaymentSupplierInvoice=دفع فاتورة المورد
 PaymentSocialContribution=اجتماعي / دفع الضرائب المالية
 PaymentVat=دفع ضريبة القيمة المضافة
 ListPayment=قائمة المدفوعات

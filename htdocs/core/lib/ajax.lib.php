@@ -417,7 +417,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
 					    //console.log(data.html);
-						if ($(data.element).attr("html") != undefined) return htmlEntityDecodeJs($(data.element).attr("html"));		// If property html set, we decode html entities and use this
+						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
 					    return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */

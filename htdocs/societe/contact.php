@@ -26,9 +26,9 @@
  */
 
 /**
- *  \file       htdocs/societe/card.php
+ *  \file       htdocs/societe/contact.php
  *  \ingroup    societe
- *  \brief      Third party card page
+ *  \brief      Page of contacts of thirdparties
  */
 
 require '../main.inc.php';

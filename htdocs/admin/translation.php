@@ -27,12 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("sms");
-$langs->load("other");
-$langs->load("errors");
+$langs->loadLangs(array("companies","products","admin","sms","other","errors"));
 
 if (!$user->admin) accessforbidden();
 
@@ -263,6 +258,11 @@ if ($mode == 'overwrite')
 {
     //print load_fiche_titre($langs->trans("TranslationOverwriteKey"), '', '')."\n";
 
+	$disabled='';
+	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
+	$disablededit='';
+	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disablededit=' disabled';
+
 	print '<div class="justify"><span class="opacitymedium">';
     print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
     $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
@@ -291,9 +291,6 @@ if ($mode == 'overwrite')
     // Line to add new record
     print "\n";
 
-    $disablededit='';
-    if ($action == 'edit') $disablededit=' disabled';
-
     print '<tr class="oddeven"><td>';
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
@@ -315,9 +312,7 @@ if ($mode == 'overwrite')
     	print '<td align="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
-    $disabled='';
-    if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
-    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
+    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
     print "</td>\n";
     print '</tr>';
 
@@ -406,6 +401,7 @@ if ($mode == 'searchkey')
     // Search modules dirs
     $modulesdir = dolGetModulesDirs();
 
+    $nbtotaloffiles=0;
     $nbempty=0;
     /*var_dump($langcode);
      var_dump($transkey);
@@ -420,6 +416,7 @@ if ($mode == 'searchkey')
     else
     {
         // Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
+        $i=0;
         foreach($modulesdir as $keydir => $tmpsearchdir)
         {
         	$searchdir = $tmpsearchdir;		// $searchdir can be '.../htdocs/core/modules/' or '.../htdocs/custom/mymodule/core/modules/'
@@ -432,10 +429,19 @@ if ($mode == 'searchkey')
         	foreach($filearray as $file)
         	{
         		$tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
-        		$newlang->load($tmpfile, 0, 0, '', 0);                              // Load translation files + database overwrite
-        		$newlangfileonly->load($tmpfile, 0, 0, '', 1);                      // Load translation files only
-        		//print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
+        		$moduledirname =(basename(dirname(dirname($dir_lang))));
+
+        		$langkey=$tmpfile;
+        		if ($i > 0) $langkey.='@'.$moduledirname;
+        		//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
+
+        		$result = $newlang->load($langkey, 0, 0, '', 0);                              // Load translation files + database overwrite
+				$result = $newlangfileonly->load($langkey, 0, 0, '', 1);                      // Load translation files only
+				if ($result < 0) print 'Failed to load language file '.$tmpfile.'<br>'."\n";
+				else $nbtotaloffiles++;
+				//print 'After loading lang '.$langkey.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
         	}
+        	$i++;
         }
 
         // Now search into translation array
@@ -455,7 +461,7 @@ if ($mode == 'searchkey')
 
     //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
     $title = $langs->trans("TranslationKeySearch");
-    if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.')';
+    if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
     print print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
 
     print '<input type="hidden" id="action" name="action" value="search">';

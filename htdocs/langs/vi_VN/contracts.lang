@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Số tham khảo hợp đồng
 DateContract=Ngày hợp đồng
 DateServiceActivate=Ngày kích hoạt dịch vụ
-ShowContract=Hiện hợp đồng
 ListOfServices=Danh sách dịch vụ
 ListOfInactiveServices=Danh sách dịch vụ chưa kích hoạt
 ListOfExpiredServices=Danh sách dịch vụ kích hoạt đã hết hạn

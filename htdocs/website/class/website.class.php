@@ -107,6 +107,8 @@ class Website extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -129,7 +131,7 @@ class Website extends CommonObject
 		if (empty($this->date_modification)) $this->date_modification = $now;
 
 		// Check parameters
-		// Put here code to add control on parameters values
+		if (empty($this->entity)) { $this->entity = $conf->entity; }
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
@@ -770,24 +772,54 @@ class Website extends CommonObject
 
 		$website = $this;
 
+		if (empty($website->id) || empty($website->ref))
+		{
+			setEventMessages("Website id or ref is not defined", null, 'errors');
+			return '';
+		}
+
+		dol_syslog("Create temp dir ".$conf->website->dir_temp);
 		dol_mkdir($conf->website->dir_temp);
+		if (! is_writable($conf->website->dir_temp))
+		{
+			setEventMessages("Temporary dir ".$conf->website->dir_temp." is not writable", null, 'errors');
+			return '';
+		}
+
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
-		$destdir = $conf->website->dir_temp.'/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
 		$arrayreplacement=array();
 
+		dol_syslog("Clear temp dir ".$destdir);
+		dol_delete_dir($destdir, 1);
+
+		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
 
-		$srcdir = DOL_DATA_ROOT.'/medias/images/'.$website->ref;
-		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/images/'.$website->ref;
+		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/'.$website->ref;
 
+		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+
+		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/'.$website->ref;
+
+		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
 
 		// Build sql file
-		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/export');
+		dol_syslog("Create containers dir");
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
 
-		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/export/pages.sql';
+		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
 		$fp = fopen($filesql,"w");
+		if (empty($fp))
+		{
+			setEventMessages("Failed to create file ".$filesql, null, 'errors');
+			return '';
+		}
 
 		$objectpages = new WebsitePage($this->db);
 		$listofpages = $objectpages->fetchAll($website->id);
@@ -844,8 +876,8 @@ class Website extends CommonObject
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref;
-		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-*.zip';
-		$filename = $conf->website->dir_temp.'/'.$website->ref.'/export/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
+		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-*.zip';
+		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
 
 		dol_delete_file($fileglob, 0);
 		dol_compress_file($filedir, $filename, 'zip');

@@ -37,6 +37,8 @@
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_expeditiondet_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_expeditiondet_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
@@ -57,11 +59,56 @@ ALTER TABLE llx_product_price ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 
+ALTER TABLE llx_product_customer_price_log ADD COLUMN default_vat_code varchar(10);
+ALTER TABLE llx_product_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_customer_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN default_vat_code	varchar(10) AFTER tva_tx;
+
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
 
 -- For 7.0
+
+ALTER TABLE llx_product_attribute_value DROP INDEX unique_ref;
+ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
+
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN quantity double DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN unitprice double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_product_price_by_qty ADD COLUMN price_base_type	varchar(3) DEFAULT 'HT';
+ALTER TABLE llx_product_price_by_qty ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price	double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price_by_qty ADD COLUMN multicurrency_price_ttc	double(24,8) DEFAULT NULL;
+
+-- VMYSQL4.0 DROP INDEX uk_product_price_by_qty_level on llx_product_price_by_qty;
+-- VPGSQL8.0 DROP INDEX uk_product_price_by_qty_level;
+
+ALTER TABLE llx_product_price_by_qty ADD UNIQUE INDEX uk_product_price_by_qty_level (fk_product_price, quantity);
+
+  
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_doc (fk_doc);
+
+ALTER TABLE llx_c_revenuestamp ADD COLUMN revenuestamp_type  varchar(16) DEFAULT 'fixed' NOT NULL;
+
+UPDATE llx_contrat SET ref = rowid WHERE ref IS NULL OR ref = '';
+ALTER TABLE llx_contratdet ADD COLUMN vat_src_code varchar(10) DEFAULT '';
+
+INSERT INTO llx_c_type_contact(rowid, element, source, code, libelle, active ) values (42, 'propal',  'external', 'SHIPPING', 'Customer contact for delivery', 1);
+
+ALTER TABLE llx_inventory ADD date_validation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN datec date_creation datetime DEFAULT NULL;
+ALTER TABLE llx_inventory CHANGE COLUMN fk_user_author fk_user_creat integer;
+ALTER TABLE llx_inventory ADD UNIQUE INDEX uk_inventory_ref (ref, entity);
+
+ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);
+
+UPDATE llx_paiementfourn SET ref = rowid WHERE ref IS NULL;
+UPDATE llx_paiementfourn SET entity = 1 WHERE entity IS NULL;
 
 UPDATE llx_website SET entity = 1 WHERE entity IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_website MODIFY COLUMN entity integer NOT NULL DEFAULT 1;
@@ -537,6 +584,21 @@ ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_uniq
 -- VPGSQL8.2 SELECT setval('llx_supplier_proposaldet_rowid_seq', (SELECT MAX(rowid) FROM llx_supplier_proposaldet));
 
 
+create table llx_onlinesignature
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  entity                    integer DEFAULT 1 NOT NULL,
+  object_type               varchar(32) NOT NULL,
+  object_id					integer NOT NULL,
+  datec                     datetime NOT NULL,
+  tms                       timestamp,
+  name						varchar(255) NOT NULL,
+  ip						varchar(128),
+  pathoffile				varchar(255)
+)ENGINE=innodb;
+
+
+
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
 
@@ -545,6 +607,10 @@ ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTE
 
 ALTER TABLE llx_facture_rec ADD COLUMN modelpdf varchar(255) AFTER note_public;
 ALTER TABLE llx_facture_rec ADD COLUMN generate_pdf integer DEFAULT 1 AFTER auto_validate;
+
+ALTER TABLE llx_blockedlog ADD COLUMN date_creation	datetime;
+ALTER TABLE llx_blockedlog ADD COLUMN user_fullname	varchar(255);
+ALTER TABLE llx_blockedlog MODIFY COLUMN ref_object varchar(255);
 
 -- SPEC : use database type 'double' to store monetary values
 ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
@@ -573,4 +639,8 @@ ALTER TABLE llx_prelevement_lignes MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_societe MODIFY COLUMN capital double(24,8);
 ALTER TABLE llx_tva MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);
+
+ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
+ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
 

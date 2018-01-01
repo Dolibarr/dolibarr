@@ -66,6 +66,7 @@ ActionAC_OTH=Άλλο
 ActionAC_OTH_AUTO=Αυτόματα εισηγμένα συμβάντα
 ActionAC_MANUAL=Χειροκίνητα εισηγμένα συμβάντα
 ActionAC_AUTO=Αυτόματα εισηγμένα συμβάντα
+ActionAC_OTH_AUTOShort=Auto
 Stats=Στατιστικά πωλήσεων
 StatusProsp=Κατάσταση προοπτικής
 DraftPropals=Σχέδιο εμπορικών προσφορών

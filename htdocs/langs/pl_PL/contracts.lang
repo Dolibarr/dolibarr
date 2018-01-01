@@ -44,7 +44,6 @@ ConfirmActivateService=Are you sure you want to activate this service with date 
 RefContract=Numer umowy
 DateContract=Data kontraktu
 DateServiceActivate=Data aktywacji usługi
-ShowContract=Pokaż umowę
 ListOfServices=Lista usług
 ListOfInactiveServices=Lista nie aktywnych usług
 ListOfExpiredServices=Lista wygasłych aktywnych usług

@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Bokföring / Treasury område
 NewPayment=Ny betalning
 Payments=Betalningar
 PaymentCustomerInvoice=Kundfaktura betalning
+PaymentSupplierInvoice=Leverantörsfaktura betalning
 PaymentSocialContribution=Sociala och skattemässiga betalningar
 PaymentVat=Moms betalning
 ListPayment=Lista över betalningar

@@ -77,7 +77,7 @@ if ($action == 'update')
 llxHeader();
 
 $form = new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigLoan'),$linkback,'title_setup');

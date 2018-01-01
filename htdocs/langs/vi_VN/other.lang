@@ -11,7 +11,7 @@ BirthdayAlertOn=sinh nhật cảnh báo hoạt động
 BirthdayAlertOff=sinh nhật không hoạt động cảnh báo
 TransKey=Translation of the key TransKey
 MonthOfInvoice=Month (number 1-12) of invoice date
-TextMonthOfInvoice=Month (tex) of invoice date
+TextMonthOfInvoice=Month (text) of invoice date
 PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date
 TextPreviousMonthOfInvoice=Previous month (text) of invoice date
 NextMonthOfInvoice=Following month (number 1-12) of invoice date
@@ -214,6 +214,7 @@ StartUpload=Bắt đầu tải lên
 CancelUpload=Hủy bỏ tải lên
 FileIsTooBig=Tập tin là quá lớn
 PleaseBePatient=Xin hãy kiên nhẫn ...
+ResetPassword=Reset password
 RequestToResetPasswordReceived=Một yêu cầu thay đổi mật khẩu Dolibarr của bạn đã được nhận
 NewKeyIs=Đây là chìa khóa mới để đăng nhập
 NewKeyWillBe=Khóa mới của bạn để đăng nhập vào phần mềm sẽ được
@@ -223,6 +224,7 @@ ForgetIfNothing=Nếu bạn không yêu cầu thay đổi này, chỉ cần quê
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Chart
+PassEncoding=Password encoding
 
 ##### Export #####
 ExportsArea=Khu vực xuất khẩu

@@ -217,6 +217,48 @@ class Invoices extends DolibarrApi
         return $this->invoice->id;
     }
 
+     /**
+     * Create an invoice using an existing order.
+     *
+     *
+     * @param int   $orderid       Id of the order
+     *
+     * @url     POST /createfromorder/{orderid}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function createInvoiceFromOrder($orderid) {
+
+        require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+
+        if(! DolibarrApiAccess::$user->rights->commande->lire) {
+                throw new RestException(401);
+        }
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        if(empty($orderid)) {
+                throw new RestException(400, 'Order ID is mandatory');
+        }
+
+        $order = new Commande($this->db);
+        $result = $order->fetch($orderid);
+        if( ! $result ) {
+                throw new RestException(404, 'Order not found');
+        }
+
+        $result = $this->invoice->createFromOrder($order, DolibarrApiAccess::$user);
+        if( $result < 0) {
+                throw new RestException(405, $this->invoice->error);
+        }
+        $this->invoice->fetchObjectLinked();
+        return $this->_cleanObjectDatas($this->invoice);
+    }
+
     /**
      * Get lines of an invoice
      *
@@ -338,19 +380,16 @@ class Invoices extends DolibarrApi
     		throw new RestException(404, 'Invoice not found');
     	}
 
-    	$result = $this->invoice->deleteline($lineid);
-    	if( $result < 0) {
+    	// TODO Check the lineid $lineid is a line of ojbect
+
+    	$updateRes = $this->invoice->deleteline($lineid);
+    	if ($updateRes > 0) {
+    		return $this->get($id);
+    	}
+    	else
+    	{
     		throw new RestException(405, $this->invoice->error);
     	}
-
-    	$result = $this->invoice->fetch($id);
-
-    	$this->invoice->getLinesArray();
-    	$result = array();
-    	foreach ($this->invoice->lines as $line) {
-    		array_push($result,$this->_cleanObjectDatas($line));
-    	}
-    	return $result;
     }
 
     /**
@@ -379,6 +418,15 @@ class Invoices extends DolibarrApi
             if ($field == 'id') continue;
             $this->invoice->$field = $value;
         }
+
+	// update bank account
+	if(!empty($this->invoice->fk_account))
+	{
+		if($this->invoice->setBankAccount($this->invoice->fk_account) == 0)
+		{
+			throw new RestException(400,$this->invoice->error);
+		}
+	}
 
         if($this->invoice->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
@@ -430,6 +478,11 @@ class Invoices extends DolibarrApi
      * @url     POST {id}/lines
      *
      * @return int
+     *
+     * @throws 200
+     * @throws 401
+     * @throws 404
+     * @throws 400
      */
     function postLine($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->facture->creer) {
@@ -451,6 +504,10 @@ class Invoices extends DolibarrApi
       if (($request_data->product_type != 9 && empty($request_data->fk_parent_line)) || $request_data->product_type == 9) {
               $request_data->fk_parent_line = 0;
       }
+
+      // calculate pa_ht
+      $marginInfos = getMarginInfos($request_data->subprice, $request_data->remise_percent, $request_data->tva_tx, $request_data->localtax1_tx, $request_data->localtax2_tx, $request_data->fk_fournprice, $request_data->pa_ht);
+      $pa_ht = $marginInfos[0];
 
       $updateRes = $this->invoice->addline(
                               $request_data->desc,
@@ -475,7 +532,7 @@ class Invoices extends DolibarrApi
                               $id,
                               $request_data->fk_parent_line,
                               $request_data->fk_fournprice,
-                              $request_data->pa_ht,
+                              $pa_ht,
                               $request_data->label,
                               $request_data->array_options,
                               $request_data->situation_percent,
@@ -483,11 +540,11 @@ class Invoices extends DolibarrApi
                               $request_data->fk_unit
       );
 
-      if ($updateRes > 0) {
-        return $updateRes;
-
+      if ($updateRes < 0) {
+	throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
       }
-      throw new RestException(400, 'Unable to insert the new line. Check your inputs.');
+
+      return $updateRes;
     }
 
     /**

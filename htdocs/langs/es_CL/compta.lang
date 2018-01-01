@@ -66,6 +66,7 @@ AddSocialContribution=Agregar impuesto social / fiscal
 ContributionsToPay=Impuestos sociales / fiscales a pagar
 AccountancyTreasuryArea=Área de Contabilidad / Tesorería
 PaymentCustomerInvoice=Pago de factura de cliente
+PaymentSupplierInvoice=Pago de factura del proveedor
 PaymentSocialContribution=Pago de impuestos sociales / fiscales
 PaymentVat=Pago del IVA
 ListPayment=Lista de pagos

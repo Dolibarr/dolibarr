@@ -60,6 +60,7 @@ ReadmeFile=Fichero leeme
 ChangeLog=Fichero ChangeLog
 TestClassFile=Archivo para la clase de PHP Test
 SqlFile=Fichero Sql
+PageForLib=File for PHP libraries
 SqlFileExtraFields=Archivo Sql para atributos complementarios
 SqlFileKey=Fichero Sql de claves
 AnObjectAlreadyExistWithThisNameAndDiffCase=Un objeto ya existe con este nombre y un caso diferente
@@ -69,6 +70,7 @@ DirScanned=Directorio analizado
 NoTrigger=No hay trigger
 NoWidget=No hay widget
 GoToApiExplorer=Ir al Explorador de API
+ListOfMenusEntries=List of menu entries
 ListOfPermissionsDefined=Listado de permisos definidos
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=¿Es el campo visible? (Ejemplos: 0=Nunca visible, 1=Visible en listado y  en formularios creación /actualización/visualización, 2=Visible en listado solamente, 3=Visible en formularios creación /actualización/visualización. Usar un valor negativo significa que no se muestra el campo predeterminado en el listado pero se puede seleccionar para verlo)
@@ -83,3 +85,10 @@ TriggerDefDesc=Defina en el archivo trigger el código que desea ejecutar para c
 SeeIDsInUse=Ver IDs en uso en su instalación
 SeeReservedIDsRangeHere=Ver rango de IDs reservados
 ToolkitForDevelopers=Herramientas para desarrolladores de Dolibarr
+TryToUseTheModuleBuilder=If you have knowledge in SQL and PHP, you can try to use the native module builder wizard. Just enable the module and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu. Warning: This is a developer feature, bad use may breaks your application.
+SeeTopRightMenu=See <span class="fa fa-bug"></span> on the top right menu
+AddLanguageFile=Add language file
+YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")
+DropTableIfEmpty=(Delete table if empty)
+TableDoesNotExists=The table %s does not exists
+TableDropped=Table %s deleted

@@ -427,7 +427,18 @@ class SMTPs
 
 		if ($usetls) $host='tls://'.$host;
 
-		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
+		$hosth = $host;
+
+		if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
+		{
+			// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+			$hosth = $this->getFrom('addr');
+			$hosth = preg_replace('/^.*</', '', $hosth);
+			$hosth = preg_replace('/>.*$/', '', $hosth);
+			$hosth = preg_replace('/.*@/', '', $hosth);
+		}
+
+		if ( $_retVal = $this->socket_send_str('EHLO ' . $hosth, '250') )
 		{
 			if ($usetls)
 			{
@@ -512,6 +523,8 @@ class SMTPs
 	 */
 	function sendMsg($_bolTestMsg = false, $_bolDebug = false)
 	{
+		global $conf;
+
 		/**
 		 * Default return value
 		 */
@@ -538,7 +551,18 @@ class SMTPs
 				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
-				$_retVal = $this->socket_send_str('HELO ' . $host, '250');
+				$hosth = $host;
+
+				if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
+				{
+					// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+					$hosth = $this->getFrom('addr');
+					$hosth = preg_replace('/^.*</', '', $hosth);
+					$hosth = preg_replace('/>.*$/', '', $hosth);
+					$hosth = preg_replace('/.*@/', '', $hosth);
+				}
+
+				$_retVal = $this->socket_send_str('HELO ' . $hosth, '250');
 			}
 
 			// Well, did we get to the server?
@@ -1725,7 +1749,7 @@ class SMTPs
 	 * using SMTP Extensions
 	 *
 	 * @param	Handler		$socket			Socket handler
-	 * @param	string		$response		Response
+	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
 	function server_parse($socket, $response)
@@ -1737,20 +1761,22 @@ class SMTPs
 		$_retVal = true;
 
 		$server_response = '';
+
         // avoid infinite loop
         $limit=0;
 
-		while ( substr($server_response,3,1) != ' ' && $limit<100)
+		while (substr($server_response,3,1) != ' ' && $limit<100)
 		{
-			if( !( $server_response = fgets($socket, 256) ) )
+			if (! ($server_response = fgets($socket, 256)))
 			{
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
+				break;
 			}
             $limit++;
 		}
 
-		if( !( substr($server_response, 0, 3) == $response ) )
+		if (! (substr($server_response, 0, 3) == $response))
 		{
 			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
 			$_retVal = false;

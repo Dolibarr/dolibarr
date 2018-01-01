@@ -19,6 +19,14 @@
 // Need global variable $title to be defined by caller (like dol_loginfunction)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -46,6 +54,7 @@ $disablenofollow=1;
 if (! preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow=0;
 
 print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
+
 ?>
 <!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
 
@@ -54,7 +63,7 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
-	// Set focus on correct field
+	/* Set focus on correct field */
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>

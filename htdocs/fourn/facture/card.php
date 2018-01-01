@@ -52,12 +52,7 @@ if (!empty($conf->variants->enabled)) {
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
 
-$langs->load('bills');
-$langs->load('compta');
-$langs->load('suppliers');
-$langs->load('companies');
-$langs->load('products');
-$langs->load('banks');
+$langs->loadLangs(array('bills','compta','suppliers','companies','products','banks'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
@@ -469,7 +464,7 @@ if (empty($reshook))
 		// Credit note invoice
 		if ($_POST['type'] == FactureFournisseur::TYPE_CREDIT_NOTE)
 		{
-			$sourceinvoice = GETPOST('fac_avoir');
+			$sourceinvoice = GETPOST('fac_avoir','int');
 			if (! ($sourceinvoice > 0) && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE))
 			{
 				$error ++;
@@ -1601,7 +1596,7 @@ if ($action == 'create')
 	}
     */
 
-	/* Not yet supporter for supplier
+	/* Not yet supported for supplier
 	if ($societe->id > 0)
 	{
 		// Replacement
@@ -1926,7 +1921,24 @@ else
 		// fetch optionals attributes and labels
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
-		$alreadypaid=$object->getSommePaiement();
+		$totalpaye = $object->getSommePaiement();
+		$totalcreditnotes = $object->getSumCreditNotesUsed();
+		$totaldeposits = $object->getSumDepositsUsed();
+		// print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
+		// selleruserrevenuestamp=".$selleruserevenustamp;
+
+		// We can also use bcadd to avoid pb with floating points
+		// For example print 239.2 - 229.3 - 9.9; does not return 0.
+		// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+		// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+		$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+
+		if ($object->paye)
+		{
+			$resteapayer = 0;
+		}
+		$resteapayeraffiche = $resteapayer;
+
 
 		/*
          *	View card
@@ -2124,7 +2136,7 @@ else
     	}
     	$morehtmlref.='</div>';
 
-    	$object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
+    	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
     	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -2412,7 +2424,7 @@ else
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
 		$sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
 		$sql.= ' ORDER BY p.datep, p.tms';
@@ -2439,12 +2451,14 @@ else
 				{
 					$objp = $db->fetch_object($result);
 
-					print '<tr class="oddeven"><td>';
 					$paymentstatic->id=$objp->rowid;
 					$paymentstatic->datepaye=$db->jdate($objp->dp);
 					$paymentstatic->ref=($objp->ref ? $objp->ref : $objp->rowid);;
 					$paymentstatic->num_paiement=$objp->num_paiement;
 					$paymentstatic->payment_code=$objp->payment_code;
+
+					print '<tr class="oddeven">';
+					print '<td>';
 					print $paymentstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
@@ -2612,6 +2626,8 @@ else
 		}
 		else // Credit note
 		{
+			$cssforamountpaymentcomplete='';
+
 			// Total already paid back
 			print '<tr><td colspan="' . $nbcols . '" align="right">';
 			print $langs->trans('AlreadyPaidBack');
@@ -2627,7 +2643,7 @@ else
 			else
 				print $langs->trans('ExcessPaydBack');
 			print ' :</td>';
-			print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
 			// Sold credit note
@@ -2816,10 +2832,10 @@ else
 	            }
 
 				// Create event
-				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
-				}
+				}*/
 
 				// Clone
 				if ($action != 'edit' && $user->rights->fournisseur->facture->creer)
@@ -2839,9 +2855,26 @@ else
 	            // Delete
 	            if ($action != 'confirm_edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
-                    if ($object->getSommePaiement()) {
-                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
-                    } else {
+	            	$isErasable=$object->is_erasable();
+	            	//var_dump($isErasable);
+	            	if ($isErasable == -4) {
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable == -3) {	// Should never happen with supplier invoice
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastSituationInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable == -2) {	// Should never happen with supplier invoice
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotLastInvoice") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable == -1) {
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseDispatchedInBookkeeping") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+	            	elseif ($isErasable <= 0)	// Any other cases
+	            	{
+	            		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotErasable") . '">' . $langs->trans('Delete') . '</a></div>';
+	            	}
+                    else
+                    {
     	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>';
                     }
 	            }

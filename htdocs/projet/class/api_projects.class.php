@@ -435,7 +435,7 @@ class Projects extends DolibarrApi
             $this->project->$field = $value;
         }
 
-        if($this->project->update(DolibarrApiAccess::$user, 0) > 0)
+        if($this->project->update(DolibarrApiAccess::$user) >= 0)
         {
             return $this->get($id);
         }

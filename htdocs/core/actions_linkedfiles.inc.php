@@ -179,8 +179,8 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
     // For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
     if (! empty($upload_dir))
     {
-        $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'));
-        $filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'));
+        $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
+        $filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
 
         // Security:
         // Disallow file with some extensions. We rename them.

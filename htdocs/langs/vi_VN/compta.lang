@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Kế toán / Tài chính khu vực
 NewPayment=Thanh toán mới
 Payments=Thanh toán
 PaymentCustomerInvoice=Thanh toán hóa đơn của khách hàng
+PaymentSupplierInvoice=Thanh toán hóa đơn nhà cung cấp
 PaymentSocialContribution=Thanh toán xã hội/ fiscal tax
 PaymentVat=Nộp thuế GTGT
 ListPayment=Danh sách thanh toán

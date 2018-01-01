@@ -133,7 +133,7 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 		{
 			$assignedtouser=json_decode($_SESSION['assignedtouser'], true);
 		}
-		$assignedtouser[GETPOST('assignedtouser')]=array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'),'mandatory'=>1);
+		$assignedtouser[GETPOST('assignedtouser')]=array('id'=>GETPOST('assignedtouser'), 'transparency'=>GETPOST('transparency'), 'mandatory'=>1);
 		$_SESSION['assignedtouser']=json_encode($assignedtouser);
 	}
 	$donotclearsession=1;
@@ -439,7 +439,7 @@ if ($action == 'update')
 		if (! empty($_SESSION['assignedtouser']))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
-			$tmplist1=json_decode($_SESSION['assignedtouser'], true); $tmplist2=array();
+			$tmplist1=json_decode($_SESSION['assignedtouser'], true);
 			foreach($tmplist1 as $key => $val)
 			{
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) $listofuserid[$val['id']]=$val;
@@ -449,7 +449,6 @@ if ($action == 'update')
 			$assignedtouser=(! empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
 			if ($assignedtouser) $listofuserid[$assignedtouser]=array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : ''));	// Owner first
 		}
-
 		$object->userassigned=array();	$object->userownerid=0; // Clear old content
 		$i=0;
 		foreach($listofuserid as $key => $val)
@@ -460,6 +459,7 @@ if ($action == 'update')
 		}
 
 		$object->transparency = $transparency;		// We set transparency on event (even if we can also store it on each user, standard says this property is for event)
+		// TODO store also transparency on owner user
 
 		if (! empty($conf->global->AGENDA_ENABLE_DONEBY))
 		{
@@ -545,8 +545,9 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 
 /*
  * Action move update, used when user move an event in calendar by drag'n drop
+ * TODO Move this into page comm/action/index that trigger this call by the drag and drop of event.
  */
-if ($action == 'mupdate')
+if (GETPOST('actionmove','alpha') == 'mupdate')
 {
     $object->fetch($id);
     $object->fetch_userassigned();
@@ -557,7 +558,7 @@ if ($action == 'mupdate')
     $newdate=GETPOST('newdate','alpha');
     if (empty($newdate) || strpos($newdate,'dayevent_') != 0 )
     {
-       header("Location: ".$backtopage);
+        header("Location: ".$backtopage);
         exit;
     }
 
@@ -597,6 +598,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
  * View
  */
 
+$form=new Form($db);
 $formproject=new FormProjets($db);
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
@@ -856,7 +858,9 @@ if ($action == 'create')
 
 		// Related contact
 		print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
-		print $form->selectcontacts(GETPOST('socid','int'), GETPOST('socpeopleassigned', 'array'), 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
+		$preselectedids=GETPOST('socpeopleassigned', 'array');
+		if (GETPOST('contactid','int')) $preselectedids[GETPOST('contactid','int')]=GETPOST('contactid','int');
+		print $form->selectcontacts(GETPOST('socid','int'), $preselectedids, 'socpeopleassigned[]', 1, '', '', 0, 'quatrevingtpercent', false, 0, array(), false, 'multiple', 'contactid');
 		print '</td></tr>';
 	}
 
@@ -868,11 +872,8 @@ if ($action == 'create')
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
-		if ($numproject==0)
-		{
-			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
-		}
+		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1), GETPOST("projectid")?GETPOST("projectid"):'', 'projectid', 0, 0, 1, 1);
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 		print '</td></tr>';
 	}
 	if (!empty($origin) && !empty($originid))
@@ -899,7 +900,7 @@ if ($action == 'create')
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note',(GETPOST('note','none')?GETPOST('note','none'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,'90%');
+    $doleditor=new DolEditor('note',(GETPOST('note','none')?GETPOST('note','none'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_4,'90%');
     $doleditor->Create();
     print '</td></tr>';
 
@@ -952,11 +953,11 @@ if ($id > 0)
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
-		foreach ($socpeopleassigned as $id) $object->socpeopleassigned[$id] = array('id' => $id);
+		foreach ($socpeopleassigned as $tmpid) $object->socpeopleassigned[$id] = array('id' => $tmpid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
 
-		$object->note = GETPOST("note");
+		$object->note = GETPOST("note",'none');
 	}
 
 	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
@@ -1134,11 +1135,21 @@ if ($id > 0)
 	    $listofuserid=array();							// User assigned
 	    if (empty($donotclearsession))
 	    {
-	    	if ($object->userownerid > 0) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid, 'type'=>'user', 'transparency'=>$object->userassigned[$user->id]['transparency'], 'answer_status'=>$object->userassigned[$user->id]['answer_status'], 'mandatory'=>$object->userassigned[$user->id]['mandatory']);	// Owner first
+	    	if ($object->userownerid > 0)
+	    	{
+	    		$listofuserid[$object->userownerid]=array(
+	    			'id'=>$object->userownerid,
+	    			'type'=>'user',
+	    			//'transparency'=>$object->userassigned[$user->id]['transparency'],
+	    			'transparency'=>$object->transparency, 										// Force transparency on ownerfrom event
+	    			'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
+	    			'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
+	    		);
+	    	}
 	    	if (! empty($object->userassigned))	// Now concat assigned users
 	    	{
 	    		// Restore array with key with same value than param 'id'
-	    		$tmplist1=$object->userassigned; $tmplist2=array();
+	    		$tmplist1=$object->userassigned;
 	    		foreach($tmplist1 as $key => $val)
 	    		{
 	    			if ($val['id'] && $val['id'] != $object->userownerid)
@@ -1284,14 +1295,18 @@ if ($id > 0)
 
 		// Link to other agenda views
 		$out='';
-		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
-		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
+		$out.='</li>';
+		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
-		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
+		$out.='</li>';
+		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
-		$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
+		$out.='</li>';
+		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
+		$out.='</li>';
+		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
+		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
 		$linkback.=$out;
 
 		$morehtmlref='<div class="refidno">';
@@ -1382,11 +1397,19 @@ if ($id > 0)
 		$listofuserid=array();
 		if (empty($donotclearsession))
 		{
-			if ($object->userownerid > 0) $listofuserid[$object->userownerid]=array('id'=>$object->userownerid,'transparency'=>$object->transparency);	// Owner first
+			if ($object->userownerid > 0)
+			{
+				$listofuserid[$object->userownerid]=array(
+					'id'=>$object->userownerid,
+					'transparency'=>$object->transparency,	// Force transparency on onwer from preoperty of event
+					'answer_status'=>$object->userassigned[$object->userownerid]['answer_status'],
+					'mandatory'=>$object->userassigned[$object->userownerid]['mandatory']
+				);
+			}
 			if (! empty($object->userassigned))	// Now concat assigned users
 			{
 				// Restore array with key with same value than param 'id'
-				$tmplist1=$object->userassigned; $tmplist2=array();
+				$tmplist1=$object->userassigned;
 				foreach($tmplist1 as $key => $val)
 				{
 					if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']]=$val;
@@ -1401,6 +1424,7 @@ if ($id > 0)
 				$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 			}
 		}
+
 		$listofcontactid=array();	// not used yet
 		$listofotherid=array();	// not used yet
 		print '<div class="assignedtouser">';

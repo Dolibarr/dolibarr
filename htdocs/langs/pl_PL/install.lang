@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=Używasz kreatora instalacji Dolibarr z pakietu Linux (Ubut
 KeepDefaultValuesMamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 KeepDefaultValuesProxmox=Możesz skorzystać z kreatora konfiguracji Dolibarr z urządzeniem wirtualnym Proxmox, więc wartości zaproponowane tutaj są już zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 UpgradeExternalModule=Uruchom dedykowany proces uaktualniania modułów zewnętrznych
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Napraw nieznormalizowane dane
@@ -191,6 +192,7 @@ MigrationActioncommElement=Aktualizacja danych na temat działań
 MigrationPaymentMode=Migracji danych w trybie płatności
 MigrationCategorieAssociation=Migracja kategorii
 MigrationEvents=Przenieś wydarzenie by dodać nowego właściciela do przypisanej tabeli.
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Zaktualizuj wartość pola podmiotu llx_societe_remise
 MigrationRemiseExceptEntity=Zaktualizuj wartość pola podmiotu llx_societe_remise_except
 MigrationReloadModule=Odśwież moduł %s

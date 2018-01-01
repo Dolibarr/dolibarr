@@ -110,11 +110,13 @@ class modMyModule extends DolibarrModules
 		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->langfiles = array("mymodule@mymodule");
 		$this->phpmin = array(5,3);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4,0);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("mymodule@mymodule");
 		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		//$this->automatic_activation = array('FR'=>'MyModuleWasAutomaticallyActivatedBecauseOfYourCountryChoice');
+		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -297,12 +299,12 @@ class modMyModule extends DolibarrModules
 	}
 
 	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *	Function called when module is enabled.
+	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *	It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options='')
 	{
@@ -324,12 +326,12 @@ class modMyModule extends DolibarrModules
 	}
 
 	/**
-	 * Function called when module is disabled.
-	 * Remove from database constants, boxes and permissions from Dolibarr database.
-	 * Data directories are not deleted
+	 *	Function called when module is disabled.
+	 *	Remove from database constants, boxes and permissions from Dolibarr database.
+	 *	Data directories are not deleted
 	 *
-	 * @param      string	$options    Options when enabling module ('', 'noboxes')
-	 * @return     int             	1 if OK, 0 if KO
+	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	public function remove($options = '')
 	{

@@ -355,11 +355,11 @@ if ($id > 0 || ! empty($ref))
 
 			// Ref
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-			print '<td><input size="12" name="taskref" value="'.$object->ref.'"></td></tr>';
+			print '<td><input class="minwidth100" name="taskref" value="'.$object->ref.'"></td></tr>';
 
 			// Label
 			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-			print '<td><input size="30" name="label" value="'.$object->label.'"></td></tr>';
+			print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
 
 			// Project
 			if (empty($withproject))

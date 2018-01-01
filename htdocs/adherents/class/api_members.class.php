@@ -225,10 +225,14 @@ class Members extends DolibarrApi
 
         // If there is no error, update() returns the number of affected rows
         // so if the update is a no op, the return value is zero.
-        if($member->update(DolibarrApiAccess::$user) >= 0)
+        if ($member->update(DolibarrApiAccess::$user) >= 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $member->error);
+        }
     }
 
     /**
@@ -295,6 +299,17 @@ class Members extends DolibarrApi
 
         // Remove the subscriptions because they are handled as a subresource.
         unset($object->subscriptions);
+        unset($object->fk_incoterms);
+        unset($object->libelle_incoterms);
+        unset($object->location_incoterms);
+        unset($object->fk_delivery_address);
+        unset($object->shipping_method_id);
+
+        unset($object->total_ht);
+        unset($object->total_ttc);
+        unset($object->total_tva);
+        unset($object->total_localtax1);
+        unset($object->total_localtax2);
 
         return $object;
     }

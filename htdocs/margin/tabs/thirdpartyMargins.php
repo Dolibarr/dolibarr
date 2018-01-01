@@ -176,6 +176,7 @@ if ($socid > 0)
     	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=".$object->id,$sortfield,$sortorder,'',0,0,'');
 
     	$i = 0;
+    	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     	print "<table class=\"noborder\" width=\"100%\">";
 
     	print '<tr class="liste_titre">';
@@ -263,6 +264,8 @@ if ($socid > 0)
     	dol_print_error($db);
     }
     print "</table>";
+    print '</div>';
+
     print '<br>';
     $db->free($result);
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,12 +266,12 @@ class PaymentVarious extends CommonObject
 		$this->fk_user_modif='';
 	}
 
-    /**
-     *  Create in database
-     *
-     *  @param      User	$user       User that create
-     *  @return     int      			<0 if KO, >0 if OK
-     */
+	/**
+	 *  Create in database
+	 *
+	 *  @param   User   $user   User that create
+	 *  @return  int            <0 if KO, >0 if OK
+	 */
 	function create($user)
 	{
 		global $conf,$langs;
@@ -338,6 +338,7 @@ class PaymentVarious extends CommonObject
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
 		$sql.= ", ".$user->id;
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
@@ -407,10 +408,10 @@ class PaymentVarious extends CommonObject
 					}
 				}
 
-	            // Call trigger
-	            $result=$this->call_trigger('PAYMENT_VARIOUS_CREATE',$user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('PAYMENT_VARIOUS_CREATE',$user);
+				if ($result < 0) $error++;
+				// End call triggers
 
 			}
 			else $error++;
@@ -437,8 +438,8 @@ class PaymentVarious extends CommonObject
 	/**
 	 *  Update link between payment various and line generate into llx_bank
 	 *
-	 *  @param	int		$id_bank    Id bank account
-	 *	@return	int					<0 if KO, >0 if OK
+	 *  @param  int     $id_bank    Id bank account
+	 *	@return int                 <0 if KO, >0 if OK
 	 */
 	function update_fk_bank($id_bank)
 	{
@@ -517,18 +518,18 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Send name clicable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			link option
-	 *	@return	string					Chaine with URL
+	 *	@param  int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param  string	$option			link option
+	 *	@return string					Chaine with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowVariousPayment").': '.$this->ref;
+		$label=$langs->trans("ShowVariousPayment").': '.$this->ref;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$result .= $linkstart;
@@ -542,8 +543,8 @@ class PaymentVarious extends CommonObject
 	/**
 	 * Information on record
 	 *
-	 * @param	int		$id      Id of record
-	 * @return	void
+	 * @param  int      $id      Id of record
+	 * @return void
 	 */
 	function info($id)
 	{

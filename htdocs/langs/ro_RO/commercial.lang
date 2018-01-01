@@ -66,6 +66,7 @@ ActionAC_OTH=Altele
 ActionAC_OTH_AUTO=Evenimente inserate automat
 ActionAC_MANUAL=Evenimente inserate manual
 ActionAC_AUTO=Evenimente inserate automat
+ActionAC_OTH_AUTOShort=Auto
 Stats=Statistici vânzări
 StatusProsp=Statut Prospect
 DraftPropals=Oferte Comerciale Schiţă

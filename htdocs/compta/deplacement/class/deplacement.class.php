@@ -60,8 +60,6 @@ class Deplacement extends CommonObject
 
         $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
         $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-
-		return 1;
 	}
 
 	/**
@@ -223,7 +221,7 @@ class Deplacement extends CommonObject
 	{
 		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
-		$sql.= " WHERE entity IN (".getEntity('deplacement', 0).")";
+		$sql.= " WHERE entity IN (".getEntity('deplacement').")";
 		if ($ref) $sql.= " AND ref ='".$this->db->escape($ref)."'";
 		else $sql.= " AND rowid = ".$id;
 

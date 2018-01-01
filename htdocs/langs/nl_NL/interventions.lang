@@ -28,7 +28,6 @@ InterventionClassifyBilled=Classificeer "gefactureerd"
 InterventionClassifyUnBilled=Classificeer "Nog niet gefactureerd"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Gefactureerd
-ShowIntervention=Tonen tussenkomst
 SendInterventionRef=Indiening van de interventie %s
 SendInterventionByMail=Stuur intervemtie per e-mail
 InterventionCreatedInDolibarr=Interventie %s gecreëerd

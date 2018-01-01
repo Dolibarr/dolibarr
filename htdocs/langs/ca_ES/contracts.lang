@@ -44,7 +44,6 @@ ConfirmActivateService=Vols activar aquest servei amb data <b>%s</b>?
 RefContract=Ref. contracte
 DateContract=Data contracte
 DateServiceActivate=Data activació del servei
-ShowContract=Mostrar contracte
 ListOfServices=Llistat de serveis
 ListOfInactiveServices=Llistat de serveis inactius
 ListOfExpiredServices=Llistat de serveis actius expirats

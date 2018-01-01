@@ -75,8 +75,12 @@ if (! $object->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
 }
-
-if (GETPOST('selectvariant'))
+if ($action == 'add')
+{
+	unset($selectedvariant);
+	unset($_SESSION['addvariant_'.$object->id]);
+}
+if ($action == 'create' && GETPOST('selectvariant','alpha'))	// We click on select combination
 {
     $action = 'add';
     if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1')
@@ -94,8 +98,8 @@ $productCombination2ValuePairs1 = array();
 
 if ($_POST) {
 
-	if (($action == 'add' || $action == 'create') && empty($massaction) && ! GETPOST('selectvariant')) {
-
+	if (($action == 'add' || $action == 'create') && empty($massaction) && ! GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
+	{
 		//$features = GETPOST('features', 'array');
         $features = $_SESSION['addvariant_'.$object->id];
 
@@ -121,7 +125,7 @@ if ($_POST) {
 					continue;
 				}
 
-				//Valuepair
+				// Valuepair
 				$sanit_features[$explode[0]] = $explode[1];
 
 				$tmp = new ProductCombination2ValuePair($db);
@@ -133,18 +137,28 @@ if ($_POST) {
 
 			$db->begin();
 
-			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features)) {
-				if (ProductCombination::createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact)) {
-					$db->commit();
+			// sanit_feature is an array with 1 (and only 1) value per attribute.
+			// For example:  Color->blue, Size->Small, Option->2
+			//var_dump($sanit_features);
+			//var_dump($productCombination2ValuePairs1); exit;
+
+			if (! $prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
+			{
+				$result = $prodcomb->createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
+				if ($result > 0)
+				{
 					setEventMessage($langs->trans('RecordSaved'));
 					unset($_SESSION['addvariant_'.$object->id]);
+
+					$db->commit();
 					header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 					exit();
 				} else {
-					setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+					$langs->load("errors");
+					setEventMessages('', $prodcomb->errors, 'errors');
 				}
 			} else {
-				setEventMessage($langs->trans('ErrorRecordAlreadyExists'), 'errors');
+				setEventMessages($langs->trans('ErrorRecordAlreadyExists'), null, 'errors');
 			}
 
 			$db->rollback();
@@ -178,7 +192,7 @@ if ($_POST) {
 				$prodstatic->status_buy = 0;
 				$res = $prodstatic->update($prodstatic->id, $user);
 			} elseif ($bulkaction == 'delete') {
-				$res = $prodstatic->delete($prodstatic->id);
+				$res = $prodstatic->delete($user, $prodstatic->id);
 			} else {
 				break;
 			}
@@ -193,9 +207,9 @@ if ($_POST) {
 			$db->rollback();
 
 			if ($prodstatic->error) {
-				setEventMessage($langs->trans($prodstatic->error), 'errors');
+				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
 			} else {
-				setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+				setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 			}
 
 		} else {
@@ -215,12 +229,12 @@ if ($_POST) {
 		$prodcomb->variation_price = $price_impact;
 		$prodcomb->variation_weight = $weight_impact;
 
-		if ($prodcomb->update() > 0) {
+		if ($prodcomb->update($user) > 0) {
 			setEventMessage($langs->trans('RecordSaved'));
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 			exit();
 		} else {
-			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+			setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
 		}
 	}
 }
@@ -408,9 +422,10 @@ if (! empty($id) || ! empty($ref))
 		<?php
 		}
 
-		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'#parttoaddvariant">'."\n";
+		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
-		print '<input type="hidden" name="action" value="add">'."\n";
+		print '<input type="hidden" name="action" value="create">'."\n";
 
 		print dol_fiche_head();
 
@@ -421,12 +436,27 @@ if (! empty($id) || ! empty($ref))
 			<!--  Variant -->
 			<tr>
 				<td class="titlefieldcreate fieldrequired"><label for="attribute"><?php echo $langs->trans('ProductAttribute') ?></label></td>
-				<td><select class="flat minwidth100" id="attribute" name="attribute">
-					<option value="-1">&nbsp;</option>
-					<?php foreach ($prodattr_all as $attr): ?>
-					<option value="<?php echo $attr->id ?>"><?php echo $attr->label ?></option>
-					<?php endforeach ?>
-				</select></td>
+				<td>
+				<?php
+				if (is_array($prodattr_all))
+				{
+					print '<select class="flat minwidth100" id="attribute" name="attribute">';
+					print '<option value="-1">&nbsp;</option>';
+					foreach ($prodattr_all as $attr)
+					{
+						print '<option value="'.$attr->id.'">'.$attr->label.'</option>';
+					}
+					print '</select>';
+				}
+
+				$htmltext=$langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
+				print $form->textwithpicto('', $htmltext);
+				/*print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+				print $langs->trans("Create");
+				print '</a>';*/
+
+				?>
+				</td>
 			</tr>
 			<!-- Value -->
 			<tr>
@@ -435,21 +465,32 @@ if (! empty($id) || ! empty($ref))
 					<select class="flat minwidth100" id="value" name="value">
 						<option value="-1">&nbsp;</option>
 					</select>
+					<?php
+					$htmltext=$langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
+					print $form->textwithpicto('', $htmltext);
+					/*
+						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&id='.$object->id).'">';
+						print $langs->trans("Create");
+						print '</a>';
+					*/
+					?>
 				</td>
 			</tr>
 			<tr>
 				<td></td><td>
 					<input type="submit" class="button" name="selectvariant" id="selectvariant" value="<?php echo dol_escape_htmltag($langs->trans("SelectCombination")); ?>">
-					<!-- <a href="#" class="button" id="addfeature"><?php echo $langs->trans("SelectCombination"); ?></a> -->
 				</td>
 			</tr>
 		</table>
+		<?php
+		}
+
+		if (is_array($selectedvariant)) {
+		?>
 		<hr>
-			<?php }
-			?>
 		<table class="border" style="width: 100%">
 			<tr>
-				<td class="titlefieldcreate fieldrequired tdtop"><label for="features"><?php echo $langs->trans('Variant') ?></label></td>
+				<td class="titlefieldcreate fieldrequired tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
 				<td class="tdtop">
 					<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
@@ -485,9 +526,10 @@ if (! empty($id) || ! empty($ref))
 				<td><input type="text" id="weight_impact" name="weight_impact" value="<?php echo price($weight_impact) ?>"></td>
 			</tr>
 		</table>
-
 		<?php
-        print dol_fiche_end();
+		}
+
+		print dol_fiche_end();
         ?>
 
 		<div style="text-align: center">
@@ -573,7 +615,7 @@ if (! empty($id) || ! empty($ref))
 		    print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
 
-		print '<a href="combinations.php?id='.$object->id.'&action=add#parttoaddvariant" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
+		print '<a href="combinations.php?id='.$object->id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
 
 		// Too much bugged page.
 		/*
@@ -590,8 +632,11 @@ if (! empty($id) || ! empty($ref))
 
 
 		// List of variants
-		print '<form method="POST" action="#parttoaddvariant">';
-
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="massaction">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		// List of mass actions available
 		/*
@@ -616,7 +661,6 @@ if (! empty($id) || ! empty($ref))
     		$aaa .= '	<option value="on_sell">'.$langs->trans('ProductStatusOnSell').'</option>';
     		$aaa .= '	<option value="delete">'.$langs->trans('Delete').'</option>';
     		$aaa .= '</select>';
-    		$aaa .= '<input type="hidden" name="action" value="massaction">';
     		$aaa .= '<input type="submit" value="'.dol_escape_htmltag($langs->trans("Apply")).'" class="button">';
 		}
 		$massactionbutton = $aaa;
@@ -647,7 +691,8 @@ if (! empty($id) || ! empty($ref))
 
 			if (count($productCombinations))
 			{
-    			foreach ($productCombinations as $currcomb) {
+    			foreach ($productCombinations as $currcomb)
+    			{
     				$prodstatic->fetch($currcomb->fk_product_child);
     				?>
     				<tr class="oddeven">
@@ -697,6 +742,7 @@ if (! empty($id) || ! empty($ref))
 
 		<?php
 		print '</div>';
+
 		print '</form>';
 	}
 }

@@ -514,7 +514,7 @@ if ($action == "set")
             {
                 if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
                 {
-                	if (preg_match('/^llx_accounting_account_/')) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
+                	if (preg_match('/^llx_accounting_account_/',$file)) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
 
                     //print 'x'.$file.'-'.$createdata.'<br>';
                     if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i',$file))

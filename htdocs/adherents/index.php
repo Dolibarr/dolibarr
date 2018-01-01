@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -165,12 +165,13 @@ if ($conf->use_javascript_ajax)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-    print '<tr '.$bc[0].'><td align="center" colspan="2">';
+    print '<tr><td align="center" colspan="2">';
 
     $SommeA=0;
     $SommeB=0;
     $SommeC=0;
     $SommeD=0;
+    $total=0;
     $dataval=array();
     $datalabels=array();
     $i=0;
@@ -187,14 +188,23 @@ if ($conf->use_javascript_ajax)
         $SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
         $i++;
     }
-
+    $total = $SommeA + $SommeB + $SommeC + $SommeD;
     $dataseries=array();
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=>round($SommeB));
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'data'=>round($SommeC));
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'data'=>round($SommeD));
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'data'=>round($SommeA));
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+    $dataseries[]=array($langs->trans("MenuMembersNotUpToDate"), round($SommeB));
+    $dataseries[]=array($langs->trans("MenuMembersUpToDate"), round($SommeC));
+    $dataseries[]=array($langs->trans("MembersStatusResiliated"), round($SommeD));
+    $dataseries[]=array($langs->trans("MembersStatusToValid"), round($SommeA));
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($total?0:1);
+
     print '</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
     print $SommeA+$SommeB+$SommeC+$SommeD;

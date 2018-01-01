@@ -28,7 +28,6 @@ InterventionClassifyBilled=Zaradiť ako "Účtovaný"
 InterventionClassifyUnBilled=Zaradiť ako "Neúčtovaný"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Účtované
-ShowIntervention=Zobraziť zásah
 SendInterventionRef=Záznam zásahu %s
 SendInterventionByMail=Poslať zásah e-mailom
 InterventionCreatedInDolibarr=Zásah %s vytvorený

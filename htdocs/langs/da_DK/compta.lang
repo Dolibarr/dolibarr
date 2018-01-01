@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Regnskab/økonomi
 NewPayment=Ny betaling
 Payments=Betalinger
 PaymentCustomerInvoice=Betaling for kundefaktura
+PaymentSupplierInvoice=Leverandør faktura betaling
 PaymentSocialContribution=Betaling af skat/afgift
 PaymentVat=Betaling af moms
 ListPayment=Oversigt over betalinger

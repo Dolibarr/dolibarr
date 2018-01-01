@@ -19,7 +19,17 @@
  * $action
  * $conf
  * $langs
+ *
+ * $keyforbreak may be defined to key to switch on second column
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 <!-- BEGIN PHP TEMPLATE commonfields_view.tpl.php -->
 <?php
@@ -37,6 +47,7 @@ foreach($object->fields as $key => $val)
 	print '<tr><td';
 	print ' class="titlefield';
 	if ($val['notnull'] > 0) print ' fieldrequired';
+	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>'.$langs->trans($val['label']).'</td>';
 	print '<td>';
@@ -45,7 +56,7 @@ foreach($object->fields as $key => $val)
 	print '</td>';
 	print '</tr>';
 
-	//if ($key == 'targetsrcfile3') break;						// key used for break on second column
+	if (! empty($keyforbreak) && $key == $keyforbreak) break;						// key used for break on second column
 }
 
 print '</table>';
@@ -60,7 +71,7 @@ foreach($object->fields as $key => $val)
 {
 	if ($alreadyoutput)
 	{
-		//if ($key == 'targetsrcfile3') $alreadyoutput = 0;		// key used for break on second column
+		if (! empty($keyforbreak) && $key == $keyforbreak) $alreadyoutput = 0;		// key used for break on second column
 		continue;
 	}
 
@@ -73,6 +84,7 @@ foreach($object->fields as $key => $val)
 	print '<tr><td';
 	print ' class="titlefield';
 	if ($val['notnull'] > 0) print ' fieldrequired';
+	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '"';
 	print '>'.$langs->trans($val['label']).'</td>';
 	print '<td>';

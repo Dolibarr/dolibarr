@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Exportar etiqueta
 ACCOUNTING_EXPORT_AMOUNT=Exportar importe
 ACCOUNTING_EXPORT_DEVISE=Exportar divisa
 Selectformat=Seleccione el formato del archivo
+ACCOUNTING_EXPORT_FORMAT=Seleccione el formato del archivo
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre de archivo
 ThisService=Este servicio
 ThisProduct=Este producto
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=No se ha registrado en el Libro Mayor
 GroupIsEmptyCheckSetup=El grupo está vacío, compruebe la configuración de grupos contables
 DetailByAccount=Ver detalles por cuenta
 AccountWithNonZeroValues=Cuentas con valores no cero
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
 MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=PASO %s: Añadir o editar transacciones existentes, g
 AccountancyAreaDescClosePeriod=PASO %s: Cerrar periodo, por lo que no podrá hacer modificaciones en un futuro.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=No se ha completado un paso obligatorio en la configuración (cuenta contable no definida en todas las cuentas bancarias)
-MenuAccountancy=Contabilidad
 Selectchartofaccounts=Seleccione un plan contable activo
 ChangeAndLoad=Cambiar y cargar
 Addanaccount=Añadir una cuenta contable
@@ -166,7 +168,7 @@ DeleteMvt=Eliminar líneas del Libro Mayor
 DelYear=Año a eliminar
 DelJournal=Diario a eliminar
 ConfirmDeleteMvt=Esto eliminará todas las lineas del Libro Mayor del año y/o de un diario específico. Se requiere al menos un criterio.
-ConfirmDeleteMvtPartial=Esto borrará todas las líneas seleccionadas del Libro Mayor
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Eliminar los registros del Libro Mayor
 FinanceJournal=Diario financiero
 ExpenseReportsJournal=Diario informe de gastos
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Asiento contabilizado incorrectamente. Debe=%s. Haber=%s
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Transacciones escritas en el Libro Mayor
 GeneralLedgerSomeRecordWasNotRecorded=Algunas de las operaciones que no podrán registrarse. Si no hay un mensaje de error, es probable que ya estén contabilizadas
-NoNewRecordSaved=No se guardaron nuevos registros
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Listado de productos sin cuentas contables
 ChangeBinding=Cambiar la unión
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Exportar hacia Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
 Modelcsv_agiris=Exportar a Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service

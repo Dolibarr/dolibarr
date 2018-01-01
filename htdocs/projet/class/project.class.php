@@ -388,6 +388,8 @@ class Project extends CommonObject
      */
     function fetch($id, $ref='')
     {
+    	global $conf;
+
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
@@ -443,7 +445,11 @@ class Project extends CommonObject
 
                 // Retreive all extrafield for thirdparty
                 $this->fetch_optionals();
-                $this->fetchComments();
+
+                if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
+                {
+                	$this->fetchComments();
+                }
 
                 return 1;
             }

@@ -119,10 +119,15 @@ $sql .= " WHERE ba.fk_accountancy_journal=" . $id_journal;
 $sql .= ' AND b.amount != 0 AND ba.entity IN ('.getEntity('bank_account', 0).')';		// We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND b.dateo >= '" . $db->idate($date_start) . "' AND b.dateo <= '" . $db->idate($date_end) . "'";
+// Already in bookkeeping or not
 if ($in_bookkeeping == 'already')
+{
 	$sql .= " AND (b.rowid IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+}
 if ($in_bookkeeping == 'notyet')
+{
 	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+}
 $sql .= " ORDER BY b.datev";
 //print $sql;
 
@@ -402,6 +407,9 @@ if (! $error && $action == 'writebookkeeping') {
 
 		$errorforline = 0;
 
+		$totalcredit = 0;
+		$totaldebit = 0;
+
 		$db->begin();
 
 		// Introduce a protection. Total of tabtp must be total of tabbq
@@ -459,6 +467,9 @@ if (! $error && $action == 'writebookkeeping') {
 						// ???
 						$bookkeeping->subledger_account = '';
 					}
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
@@ -566,6 +577,9 @@ if (! $error && $action == 'writebookkeeping') {
 						}
 					}
 
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
 						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -585,6 +599,13 @@ if (! $error && $action == 'writebookkeeping') {
 			}
 		}
 
+		if ($totaldebit != $totalcredit)
+		{
+			$error++;
+			$errorforline++;
+			setEventMessages('Try to insert a non balanced transaction in book for '.$ref.'. Canceled. Surely a bug.', null, 'errors');
+		}
+
 		if (! $errorforline)
 		{
 			$db->commit();
@@ -597,8 +618,8 @@ if (! $error && $action == 'writebookkeeping') {
 			$MAXNBERRORS=5;
 			if ($error >= $MAXNBERRORS)
 			{
-			    setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
-			    break;  // Break in the foreach
+				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
+				break;  // Break in the foreach
 			}
 		}
 	}
@@ -627,7 +648,7 @@ if (! $error && $action == 'writebookkeeping') {
 		$param.='&date_endday='.$date_endday;
 		$param.='&date_endmonth='.$date_endmonth;
 		$param.='&date_endyear='.$date_endyear;
-		$param.='&in_bookeeping='.$in_bookeeping;
+		$param.='&in_bookkeeping='.$in_bookkeeping;
 		header("Location: ".$_SERVER['PHP_SELF'].($param?'?'.$param:''));
 		exit;
 	}
@@ -781,7 +802,7 @@ if (empty($action) || $action == 'view') {
 		if ($obj->nb > 0)
 		{
 			print '<br>'.img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
-			print ' : '.$langs->trans("AccountancyAreaDescBank", 9, '<strong>'.$langs->transnoentitiesnoconv("MenuBankCash").'</strong>');
+			print ' : '.$langs->trans("AccountancyAreaDescBank", 9, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("BankAccounts").'</strong>');
 		}
 	}
 	else dol_print_error($db);
@@ -797,8 +818,9 @@ if (empty($action) || $action == 'view') {
 
 
 	print '<div class="tabsAction tabsActionNoBottom">';
-	print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	else print '<a class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	print '</div>';
 
 	// TODO Avoid using js. We can use a direct link with $param
@@ -1021,7 +1043,7 @@ function getSourceDocRef($val, $typerecord)
 	if ($ref == '(DonationPayment)') {
 		$ref = $langs->trans('Donation');
 	}
-	if ($refl == '(SubscriptionPayment)') {
+	if ($ref == '(SubscriptionPayment)') {
 		$ref = $langs->trans('Subscription');
 	}
 	if ($ref == '(ExpenseReportPayment)') {
@@ -1030,64 +1052,66 @@ function getSourceDocRef($val, $typerecord)
 	if ($ref == '(payment_salary)') {
 		$ref = $langs->trans('Employee');
 	}
+
+	$sqlmid = '';
 	if ($typerecord == 'payment')
 	{
 		$sqlmid = 'SELECT payfac.fk_facture as id, f.facnumber as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
 		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=" . $val["paymentid"];
-        $ref = $langs->trans("Invoice");
+		$ref = $langs->trans("Invoice");
 	}
 	elseif ($typerecord == 'payment_supplier')
 	{
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfac, ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=" . $val["paymentsupplierid"];
-        $ref = $langs->trans("SupplierInvoice");
+		$ref = $langs->trans("SupplierInvoice");
 	}
 	elseif ($typerecord == 'payment_expensereport')
 	{
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_expensereport as pe, " . MAIN_DB_PREFIX . "expensereport as e";
 		$sqlmid .= " WHERE pe.rowid=" . $val["paymentexpensereport"]." AND pe.fk_expensereport = e.rowid";
-        $ref = $langs->trans("ExpenseReport");
+		$ref = $langs->trans("ExpenseReport");
 	}
 	elseif ($typerecord == 'payment_salary')
 	{
 		$sqlmid = 'SELECT s.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_salary as s";
 		$sqlmid .= " WHERE s.rowid=" . $val["paymentsalid"];
-        $ref = $langs->trans("SalaryPayment");
+		$ref = $langs->trans("SalaryPayment");
 	}
 	elseif ($typerecord == 'payment_vat')
 	{
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "tva as v";
 		$sqlmid .= " WHERE v.rowid=" . $val["paymentvatid"];
-        $ref = $langs->trans("PaymentVat");
+		$ref = $langs->trans("PaymentVat");
 	}
 	elseif ($typerecord == 'payment_donation')
 	{
 		$sqlmid = 'SELECT payd.fk_donation as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_donation as payd";
 		$sqlmid .= " WHERE payd.fk_donation=" . $val["paymentdonationid"];
-        $ref = $langs->trans("Donation").' ';
+		$ref = $langs->trans("Donation").' ';
 	}
 	elseif ($typerecord == 'payment_various')
 	{
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_various as v";
 		$sqlmid .= " WHERE v.rowid=" . $val["paymentvariousid"];
-        $ref = $langs->trans("VariousPayment");
+		$ref = $langs->trans("VariousPayment");
 	}
-    dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-    $resultmid = $db->query($sqlmid);
-    if ($resultmid) {
-        while ($objmid = $db->fetch_object($resultmid))
-        {
-            $ref.=' '.$objmid->ref;
-        }
-    }
-    else dol_print_error($db);
+	dol_syslog("accountancy/journal/bankjournal.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+	$resultmid = $db->query($sqlmid);
+	if ($resultmid) {
+		while ($objmid = $db->fetch_object($resultmid))
+		{
+			$ref.=' '.$objmid->ref;
+		}
+	}
+	else dol_print_error($db);
 
 	return $ref;
 }

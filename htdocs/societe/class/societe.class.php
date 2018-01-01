@@ -53,6 +53,11 @@ class Societe extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+	/**
+	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer
+	 */
+	public $restrictiononfksoc = 1;
 
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -727,7 +732,7 @@ class Societe extends CommonObject
 	 *
 	 *      @param	int		$id              			Id of company (deprecated, use 0 here and call update on an object loaded by a fetch)
 	 *      @param  User	$user            			Utilisateur qui demande la mise a jour
-	 *      @param  int		$call_trigger    			0=non, 1=oui
+	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
 	 *		@param	string	$action						'add' or 'update'
@@ -1151,7 +1156,7 @@ class Societe extends CommonObject
 		if ($idprof4) $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
 		if ($idprof5) $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
 		if ($idprof6) $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
-		if ($email)   $sql .= " AND email = '".$this->db->escape($email)."'";
+		if ($email)   $sql .= " AND s.email = '".$this->db->escape($email)."'";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1959,7 +1964,7 @@ class Societe extends CommonObject
 		if (! empty($this->country_code))
 			$label.= '<br><b>' . $langs->trans('Country') . ':</b> '. $this->country_code;
 		if (! empty($this->tva_intra))
-			$label.= '<br><b>' . $langs->trans('VATNumber') . ':</b> '. $this->tva_intra;
+			$label.= '<br><b>' . $langs->trans('VATIntra') . ':</b> '. $this->tva_intra;
 			if (! empty($this->code_client) && $this->client)
 			$label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
 		if (! empty($this->code_fournisseur) && $this->fournisseur)

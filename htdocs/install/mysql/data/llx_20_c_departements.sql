@@ -370,7 +370,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA32', 1204, '', 0, '', 'Province de Driouch', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA33', 1204, '', 0, '', 'Province de Figuig', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA34', 1204, '', 0, '', 'Province de Jerada', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA35', 1204, '', 0, '', 'Province de Nadorgg', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA35', 1204, '', 0, '', 'Province de Nador', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA36', 1204, '', 0, '', 'Province de Taourirt', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA37', 1216, '', 0, '', 'Province d''Aousserd', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA38', 1216, '', 0, '', 'Province d''Oued Ed-Dahab', 1);

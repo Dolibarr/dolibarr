@@ -21,6 +21,7 @@ AddWebsite=Add website
 Webpage=Web page/container
 AddPage=Add page/container
 HomePage=Hjemmeside
+PageContainer=Page/container
 PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> not yet available. You must first add a page.
 RequestedPageHasNoContentYet=Requested page with id %s has no content yet, or cache file .tpl.php was removed. Edit content of the page to solve this.
 PageContent=Page/Contenair
@@ -38,7 +39,7 @@ VirtualHostUrlNotDefined=URL of the virtual host served by external web server n
 NoPageYet=No pages yet
 SyntaxHelp=Help on specific syntax tips
 YouCanEditHtmlSourceckeditor=You can edit HTML source code using the "Source" button in editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $langs, $db, $mysoc, $user, $website.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php dolIncludeHtmlContent($websitekey.'/alias_of_container_to_include.php'); ?&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=relative_dir/filename.ext"&gt;</strong><br>For same file into documents/ecm (open access using the sharing hash key), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=relative_dir/filename.ext&hashp=publicsharekeyoffile"&gt;</strong><br>For a file into documents/media (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=relative_dir/filename.ext"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/media (open access), syntax is:<br><strong>&lt;a href="/viewimage.php?modulepart=medias&amp;file=relative_dir/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $langs, $db, $mysoc, $user, $website.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php dolIncludeHtmlContent($websitekey.'/alias_of_container_to_include.php'); ?&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open access), syntax is:<br><strong>&lt;a href="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 ClonePage=Clone page/container
 CloneSite=Clone site
 SiteAdded=Web site added
@@ -55,3 +56,4 @@ IDOfPage=Id of page
 WebsiteAccount=Web site account
 WebsiteAccounts=Web site accounts
 AddWebsiteAccount=Create web site account
+BackToListOfThirdParty=Back to list for Third Party

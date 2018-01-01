@@ -28,7 +28,6 @@ InterventionClassifyBilled=Sınıflandırma "Faturalandı"
 InterventionClassifyUnBilled=Sınıflandırma "Faturalanmadı"
 InterventionClassifyDone="Bitti" olarak sınıflandır
 StatusInterInvoiced=Faturalanmış
-ShowIntervention=Müdahale göster
 SendInterventionRef=%s müdahalesinin sunulması
 SendInterventionByMail=Müdahaleyi Eposta ile gönder
 InterventionCreatedInDolibarr=Oluşturulan müdahale %s

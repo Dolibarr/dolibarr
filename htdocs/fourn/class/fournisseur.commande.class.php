@@ -43,8 +43,17 @@ class CommandeFournisseur extends CommonOrder
     public $table_element='commande_fournisseur';
     public $table_element_line = 'commande_fournisseurdet';
     public $fk_element = 'fk_commande';
-    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='order';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     * @var integer
+     */
+    public $restrictiononfksoc = 1;
 
     /**
      * {@inheritdoc}
@@ -223,8 +232,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ', c.fk_incoterms, c.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid AND cr.entity = " . getEntity('c_payment_term') . ")";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (c.fk_mode_reglement = p.id AND p.entity = " . getEntity('c_paiement') . ")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid AND cr.entity IN (".getEntity('c_payment_term').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id AND p.entity IN (".getEntity('c_paiement').")";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
@@ -1953,7 +1962,7 @@ class CommandeFournisseur extends CommonOrder
 
     	// List of already dispatched lines
 		$sql = "SELECT p.ref, p.label,";
-		$sql.= " e.rowid as warehouse_id, e.label as entrepot,";
+		$sql.= " e.rowid as warehouse_id, e.ref as entrepot,";
 		$sql.= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
@@ -2350,7 +2359,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param		string		$ref_supplier		Supplier ref
      *	@return    	int         	    			< 0 if error, > 0 if ok
      */
-    public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise=0, $ref_supplier='')
+    public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=0, $date_start='', $date_end='', $array_options=0, $fk_unit=null, $pu_ht_devise=0, $ref_supplier='')
     {
     	global $mysoc, $conf;
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type, $fk_unit");

@@ -67,8 +67,24 @@ function bank_prepare_head(Account $object)
 
     if ($object->courant != Account::TYPE_CASH)
     {
+    	$nbReceipts=0;
+
+    	// List of all standing receipts
+    	$sql = "SELECT COUNT(DISTINCT(b.num_releve)) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+    	$sql.= " WHERE b.fk_account = ".$object->id;
+
+    	$resql = $db->query($sql);
+    	if ($resql)
+    	{
+    		$obj = $db->fetch_object($resql);
+    		if ($obj) $nbReceipts = $obj->nb;
+    		$db->free($resql);
+    	}
+
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");
+	    if (($nbReceipts) > 0) $head[$h][1].= ' <span class="badge">'.($nbReceipts).'</span>';
 	    $head[$h][2] = 'statement';
 	    $h++;
 	}

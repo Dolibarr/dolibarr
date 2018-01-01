@@ -57,3 +57,4 @@ ErrorInsertingComment=Възникна грешка при въвежданет�
 MoreChoices=Въведете повече възможности за избор за анкетираните
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=%s е попълнил ред.\nМожете да намерите вашата анкета на линка:\n%s
+ShowSurvey=Show survey

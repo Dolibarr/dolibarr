@@ -149,13 +149,13 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var CommonObject An originating object?
+	 * @var string 	The type of originating object ('commande', 'facture', ...)
 	 * @see fetch_origin()
 	 */
 	public $origin;
 	/**
-	 * @var int The originating object?
-	 * @see fetch_origin(), origin
+	 * @var int 	The id of originating object
+	 * @see fetch_origin()
 	 */
 	public $origin_id;
 
@@ -391,7 +391,7 @@ abstract class CommonObject
 	/**
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
-	 *	@param	Translate	$langs			Language object for translation of civility
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option, 1=Add civility
 	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname
 	 * 	@param	int			$maxlen			Maximum length
@@ -505,17 +505,17 @@ abstract class CommonObject
 		if (! empty($this->phone_perso)) {
 			$out.=dol_print_phone($this->phone_perso,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePerso")); $outdone++;
 		}
-		if (! empty($this->fax)) {
-			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
-		}
 		if (! empty($this->office_phone)) {
 			$out.=dol_print_phone($this->office_phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
 		if (! empty($this->user_mobile)) {
 			$out.=dol_print_phone($this->user_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','mobile',$langs->trans("PhoneMobile")); $outdone++;
 		}
-		if (! empty($this->office_fax)) {
+		if (! empty($this->fax)) {
 			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
+		}
+		if (! empty($this->office_fax)) {
+			$out.=dol_print_phone($this->office_fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
 		}
 
 		$out.='<div style="clear: both;"></div>';
@@ -1414,6 +1414,10 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'none') return 1;
 
+		// Security on socid
+		$socid = 0;
+		if ($user->societe_id > 0) $socid = $user->societe_id;
+
 		// this->ismultientitymanaged contains
 		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 		$alias = 's';
@@ -1422,18 +1426,25 @@ abstract class CommonObject
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
+		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id.' OR te.fk_soc IS NULL)';
 		if (! empty($filter))
 		{
 			if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
 			$sql.=$filter;
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql.= ' AND te.fk_soc = ' . $socid;
+		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql.= ' AND (te.fk_soc = ' . $socid.' OR te.fk_soc IS NULL)';
+		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') $sql.= ' AND te.rowid = ' . $socid;
+		//print 'socid='.$socid.' restrictiononfksoc='.$this->restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 
-		//print 'filter = '.$filter.' -> '.$sql."<br>";
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -1447,19 +1458,26 @@ abstract class CommonObject
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
+		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id.' OR te.fk_soc IS NULL)';
 		if (! empty($filter))
 		{
 			if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
 			$sql.=$filter;
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql.= ' AND te.fk_soc = ' . $socid;
+		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql.= ' AND (te.fk_soc = ' . $socid.' OR te.fk_soc IS NULL)';
+		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') $sql.= ' AND te.rowid = ' . $socid;
+		//print 'socid='.$socid.' restrictiononfksoc='.$this->restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
-		//print $sql."<br>";
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -3025,7 +3043,7 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid, canvas";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+		$sql.= " WHERE entity IN (".getEntity($this->element).")";
 		if (! empty($id))  $sql.= " AND rowid = ".$id;
 		if (! empty($ref)) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 
@@ -4167,7 +4185,12 @@ abstract class CommonObject
 
 						// Set the public "share" key
 						$setsharekey = false;
-						if ($this->element == 'propal'   && ! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						if ($this->element == 'propal')
+						{
+							$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok
+							if ($useonlinesignature) $setsharekey=true;
+							if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						}
 						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))    $setsharekey=true;
 						if ($this->element == 'facture'  && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))  $setsharekey=true;
 						if ($setsharekey)
@@ -4361,7 +4384,7 @@ abstract class CommonObject
 
 
 	/**
-	 *  Function to get extra fields of a member into $this->array_options
+	 *  Function to get extra fields of an object into $this->array_options
 	 *  This method is in most cases called by method fetch of objects but you can call it separately.
 	 *
 	 *  @param	int		$rowid			Id of line. Use the id of object if not defined. Deprecated. Function must be called without parameters.
@@ -4505,8 +4528,10 @@ abstract class CommonObject
 			//Eliminate copied source object extra_fields that do not exist in target object
 			$new_array_options=array();
 			foreach ($this->array_options as $key => $value) {
-				if (in_array(substr($key,8), array_keys($target_extrafields)))	// We remove the 'options_' from $key
+				if (in_array(substr($key,8), array_keys($target_extrafields)))	// We remove the 'options_' from $key for test
 					$new_array_options[$key] = $value;
+				elseif (in_array($key, array_keys($target_extrafields)))		// We test on $key that does not contains the 'options_' prefix
+					$new_array_options['options_'.$key] = $value;
 			}
 
 			foreach($new_array_options as $key => $value)
@@ -4738,13 +4763,13 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array   $val		       Array of properties for field to show
-	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  $moreparam      To add more parametes on html input tag
-	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   $showsize       Value for css to define size. May also be a numeric.
+	 * @param  array   		$val	       Array of properties for field to show
+	 * @param  string  		$key           Key of attribute
+	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  		$moreparam     To add more parametes on html input tag
+	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string|int	$showsize      Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
 	function showInputField($val, $key, $value, $moreparam='', $keysuffix='', $keyprefix='', $showsize=0)
@@ -4759,12 +4784,17 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-		$label=$val['label'];
-		$type =$val['type'];
-		$size =$val['css'];
+		$label= $val['label'];
+		$type = $val['type'];
+		$size = $val['css'];
 
 		// Convert var to be able to share same code than showInputField of extrafields
-		if (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
+		{
+			$type = 'varchar';		// convert varchar(xx) int varchar
+			$size = $reg[1];
+		}
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -4791,6 +4821,11 @@ abstract class CommonObject
 			else return '';
 		}
 
+		// Use in priorit showsize from parameters, then $val['css'] then autodefine
+		if (empty($showsize) && ! empty($val['css']))
+		{
+			$showsize = $val['css'];
+		}
 		if (empty($showsize))
 		{
 			if ($type == 'date')
@@ -4833,6 +4868,7 @@ abstract class CommonObject
 				}
 			}
 		}
+		//var_dump($showsize.' '.$size);
 
 		if (in_array($type,array('date','datetime')))
 		{
@@ -4862,6 +4898,12 @@ abstract class CommonObject
 			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,0,ROWS_5,'90%');
+			$out=$doleditor->Create(1);
+		}
+		elseif ($type == 'html')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_5,'90%');
@@ -5285,12 +5327,17 @@ abstract class CommonObject
 		}
 
 		$objectid = $this->id;
-		$label=$val['label'];
-		$type =$val['type'];
-		$size =$val['css'];
+		$label = $val['label'];
+		$type  = $val['type'];
+		$size  = $val['css'];
 
 		// Convert var to be able to share same code than showOutputField of extrafields
-		if (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
+		{
+			$type = 'varchar';		// convert varchar(xx) int varchar
+			$size = $reg[1];
+		}
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -5325,20 +5372,42 @@ abstract class CommonObject
 		{
 			if ($type == 'date')
 			{
-				$showsize=10;
+				//$showsize=10;
+				$showsize = 'minwidth100imp';
 			}
 			elseif ($type == 'datetime')
 			{
-				$showsize=19;
+				//$showsize=19;
+				$showsize = 'minwidth200imp';
 			}
-			elseif ($type == 'int' || $type == 'integer')
+			elseif (in_array($type,array('int','double','price')))
 			{
-				$showsize=10;
+				//$showsize=10;
+				$showsize = 'maxwidth75';
+			}
+			elseif ($type == 'url')
+			{
+				$showsize='minwidth400';
+			}
+			elseif ($type == 'boolean')
+			{
+				$showsize='';
 			}
 			else
 			{
-				$showsize=round($size);
-				if ($showsize > 48) $showsize=48;
+				if (round($size) < 12)
+				{
+					$showsize = 'minwidth100';
+				}
+				else if (round($size) <= 48)
+				{
+					$showsize = 'minwidth200';
+				}
+				else
+				{
+					//$showsize=48;
+					$showsize = 'minwidth400';
+				}
 			}
 		}
 
@@ -5579,7 +5648,7 @@ abstract class CommonObject
 				}
 			}
 		}
-		elseif ($type == 'text')
+		elseif ($type == 'text' || $type == 'html')
 		{
 			$value=dol_htmlentitiesbr($value);
 		}
@@ -6147,8 +6216,9 @@ abstract class CommonObject
 		// Clean and check mandatory
 		foreach($keys as $key)
 		{
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
-			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';
+			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
 			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
@@ -6156,6 +6226,10 @@ abstract class CommonObject
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
+
+			// If field is an implicit foreign key field
+			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key]='null';
+			if (! empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key]='null';
 		}
 
 		if ($error) return -1;

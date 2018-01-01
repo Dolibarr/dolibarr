@@ -540,7 +540,7 @@ function dol_filemtime($pathoffile)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dolCopyr dolReplaceRegExInFile
+ * @see		dol_copy dolReplaceRegExInFile
  */
 function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
@@ -610,7 +610,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param	int		$indexdatabase		Index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
- * @see		dolCopyr dolReplaceInFile
+ * @see		dol_copy dolReplaceInFile
  */
 function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0, $indexdatabase=0)
 {
@@ -626,7 +626,7 @@ function dolReplaceRegExInFile($srcfile, $arrayreplacement, $destfile='', $newma
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @return	int							<0 if error, 0 if nothing done (dest file already exists and overwriteifexists=0), >0 if OK
- * @see		dolCopyr
+ * @see		dol_delete_file
  */
 function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -1205,7 +1205,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
  *  @param	string	$dir            Directory to delete
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @return boolean         		True if success, false if error
- *  @see dol_delete_file
+ *  @see dol_delete_file dol_copy
  */
 function dol_delete_dir($dir,$nophperrors=0)
 {
@@ -1947,14 +1947,18 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
 {
-	global $user, $conf, $db;
+	global $conf, $db, $user;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
 
 	if (! is_object($fuser)) $fuser=$user;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
-	if (empty($entity)) $entity=0;
-	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file);
+	if (empty($entity))
+	{
+		if (empty($conf->multicompany->enabled)) $entity=1;
+		else $entity=0;
+	}
+	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
@@ -1975,6 +1979,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for miscellaneous medias files
 	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
 	{
+		if (empty($entity) || empty($conf->medias->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		$accessallowed=1;
 		$original_file=$conf->medias->multidir_output[$entity].'/'.$original_file;
 	}
@@ -2133,6 +2138,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for categories
 	elseif ($modulepart == 'category' && !empty($conf->categorie->dir_output))
 	{
+		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->categorie->{$lire}) $accessallowed=1;
 		$original_file=$conf->categorie->multidir_output[$entity].'/'.$original_file;
 	}
@@ -2202,6 +2208,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for third parties
 	else if (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
 	{
+		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -2213,6 +2220,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for contact
 	else if ($modulepart == 'contact' && !empty($conf->societe->dir_output))
 	{
+		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire})
 		{
 			$accessallowed=1;
@@ -2463,6 +2471,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping pour les produits et services
 	else if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
 	{
+		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -2723,3 +2732,44 @@ function dol_readcachefile($directory, $filename)
 	$object = unserialize(file_get_contents($cachefile));
 	return $object;
 }
+
+
+/**
+ * Function to get list of updated or modified files.
+ * $file_list is used as global variable
+ *
+ * @param	array				$file_list	        Array for response
+ * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
+ * @param   string   			$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
+ * @param   string              $pathref            Path ref (DOL_DOCUMENT_ROOT)
+ * @param   array               $checksumconcat     Array of checksum
+ * @return  array               			        Array of filenames
+ */
+function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
+{
+	$exclude = 'install';
+
+	foreach ($dir->md5file as $file)    // $file is a simpleXMLElement
+	{
+		$filename = $path.$file['name'];
+		$file_list['insignature'][] = $filename;
+
+		//if (preg_match('#'.$exclude.'#', $filename)) continue;
+
+		if (!file_exists($pathref.'/'.$filename))
+		{
+			$file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file);
+		}
+		else
+		{
+			$md5_local = md5_file($pathref.'/'.$filename);
+			if ($md5_local != (string) $file) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file, 'md5'=>(string) $md5_local);
+			$checksumconcat[] = $md5_local;
+		}
+	}
+
+	foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
+
+	return $file_list;
+}
+

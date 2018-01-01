@@ -54,6 +54,8 @@ if (! $sortfield) $sortfield="p.ref"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
+if ($user->societe_id) $fourn_id=$user->societe_id;
+
 $catid = GETPOST('catid', 'intcomma');
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array

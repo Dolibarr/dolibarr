@@ -37,6 +37,7 @@
 
 include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
 
+
 /**
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
@@ -105,7 +106,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  * 	@param	string	$element		Current element
  *									'societe', 'socpeople', 'actioncomm', 'agenda', 'resource',
  *									'product', 'productprice', 'stock',
- *									'propal', 'supplier_proposal', 'facture', 'facture_fourn',
+ *									'propal', 'supplier_proposal', 'facture', 'facture_fourn', 'payment_various',
  *									'categorie', 'bank_account', 'bank_account', 'adherent', 'user',
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
@@ -467,7 +468,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 	}
 
 	// Substitution variables for GETPOST (used to get final url with variable parameters or final default value with variable paramaters)
-	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOUNTRYID__, __USERID__, __ENTITYID__, ...
+	// Example of variables: __DAY__, __MONTH__, __YEAR__, __MYCOMPANY_COUNTRY_ID__, __USER_ID__, ...
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (! is_array($out) && empty($_POST[$paramname]) && empty($noreplace))
 	{
@@ -485,7 +486,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 				elseif ($reg[1] == 'NEXT_DAY')       { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
 				elseif ($reg[1] == 'NEXT_MONTH')     { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
 				elseif ($reg[1] == 'NEXT_YEAR')      { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
-				elseif ($reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
+				elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
 				{
 					$newout = $mysoc->country_id;
 				}
@@ -493,11 +494,11 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 				{
 					$newout = $user->id;
 				}
-				elseif ($reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
+				elseif ($reg[1] == 'USER_SUPERVISOR_ID' || $reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
 				{
 					$newout = $user->fk_user;
 				}
-				elseif ($reg[1] == 'ENTITYID')
+				elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID')
 				{
 					$newout = $conf->entity;
 				}
@@ -516,7 +517,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_numeric($out)) { $out=''; }
 			break;
 		case 'intcomma':
-			if (preg_match('/[^0-9,]+/i',$out)) $out='';
+			if (preg_match('/[^0-9,-]+/i',$out)) $out='';
 			break;
 		case 'alpha':
 			if (! is_array($out))
@@ -595,30 +596,34 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 
 /**
  *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
- *  This prefix is unique for instance and avoid conflict between multi-instances,
- *  even when having two instances with one root dir or two instances in virtual servers.
+ *  This prefix is valid in a web context only and is unique for instance and avoid conflict
+ *  between multi-instances, even when having two instances with one root dir or two instances
+ *  in virtual servers.
  *
- *  @param  string  $mode       '' (prefix for session name) or 'email' (prefix for email id)
- *  @return	string      		A calculated prefix
+ *  @param  string  $mode       			'' (prefix for session name) or 'email' (prefix for email id)
+ *  @return	string      					A calculated prefix
  */
-function dol_getprefix($mode='')
+if (! function_exists('dol_getprefix'))
 {
-	global $conf;
-
-	// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
-	if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+	function dol_getprefix($mode='')
 	{
-		if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
-		else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
-	}
+		global $conf;
 
-	if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
-	{
-		return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
-		// Use this for a "clear" cookie name
-		//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		// If MAIL_PREFIX_FOR_EMAIL_ID is set and prefix is for email
+		if ($mode == 'email' && ! empty($conf->global->MAIL_PREFIX_FOR_EMAIL_ID))
+		{
+			if ($conf->global->MAIL_PREFIX_FOR_EMAIL_ID != 'SERVER_NAME') return $conf->global->MAIL_PREFIX_FOR_EMAIL_ID;
+			else if (isset($_SERVER["SERVER_NAME"])) return $_SERVER["SERVER_NAME"];
+		}
+
+		if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["DOCUMENT_ROOT"]))
+		{
+			return dol_hash($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+			// Use this for a "readable" cookie name
+			//return dol_sanitizeFileName($_SERVER["SERVER_NAME"].$_SERVER["DOCUMENT_ROOT"].DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
+		}
+		else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 	}
-	else return dol_hash(DOL_DOCUMENT_ROOT.DOL_URL_ROOT);
 }
 
 /**
@@ -1119,7 +1124,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 		if (count($keys)) $maxkey=max($keys);
 	}
 
-	//$conf->global->MAIN_MAXTABS_IN_CARD=3;
+	if (! empty($conf->dol_optimize_smallscreen)) $conf->global->MAIN_MAXTABS_IN_CARD=2;
 
 	// Show tabs
 	$bactive=false;
@@ -1132,9 +1137,8 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	{
 		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
 		{
-			// si l'active est présent dans la box
-			if ($i >= $limittoshow)
-				$limittoshow--;
+			// If active tab is already present
+			if ($i >= $limittoshow) $limittoshow--;
 		}
 	}
 
@@ -1146,7 +1150,9 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 			$bactive=true;
 		}
 		else
+		{
 			$isactive=false;
+		}
 
 		if ($i < $limittoshow || $isactive)
 		{
@@ -1155,11 +1161,11 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 			{
 				if (!empty($links[$i][0]))
 				{
-					$out.='<a data-role="button" class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$out.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				}
 				else
 				{
-					$out.='<span data-role="button" class="tabspan">'.$links[$i][1].'</span>'."\n";
+					$out.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 				}
 			}
 			else if (! empty($links[$i][1]))
@@ -1167,11 +1173,15 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 				//print "x $i $active ".$links[$i][2]." z";
 				if ($isactive)
 				{
-					$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">';
+					$out.=$links[$i][1];
+					$out.='</a>'."\n";
 				}
 				else
 				{
-					$out.='<a data-role="button"'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabunactive tab inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabunactive tab inline-block" href="'.$links[$i][0].'">';
+					$out.=$links[$i][1];
+					$out.='</a>'."\n";
 				}
 			}
 			$out.='</div>';
@@ -1182,9 +1192,9 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 			if (! $popuptab)
 			{
 				$popuptab=1;
-				$outmore.='<div class="popuptabset">';
+				$outmore.='<div class="popuptabset wordwrap">';	// The css used to hide/show popup
 			}
-			$outmore.='<div class="popuptab" style="display:inherit;">';
+			$outmore.='<div class="popuptab wordwrap" style="display:inherit;">';
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
 				if (!empty($links[$i][0]))
@@ -1194,8 +1204,11 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 			}
 			else if (! empty($links[$i][1]))
-				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="inline-block" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
-
+			{
+				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="wordwrap inline-block" href="'.$links[$i][0].'">';
+				$outmore.=preg_replace('/([a-z])\/([a-z])/i', '\\1 / \\2', $links[$i][1]);	// Replace x/y with x / y to allow wrap on long composed texts.
+				$outmore.='</a>'."\n";
+			}
 			$outmore.='</div>';
 
 			$nbintab++;
@@ -1206,15 +1219,21 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 	if ($displaytab > $limittoshow)
 	{
+		$left=($langs->trans("DIRECTION") == 'rtl'?'right':'left');
+		$right=($langs->trans("DIRECTION") == 'rtl'?'left':'right');
+
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="#" data-role="button" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';
-		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; left: -999em;text-align: left;margin:0px;padding:2px">'.$outmore.'</div>';
+		$out.='<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';
+		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px">';
+		$out.=$outmore;
+		$out.='</div>';
+		$out.='<div></div>';
 		$out.="</div>\n";
 
 		$out.="<script>";
-		$out.="$('#moretabs".$tabsname."').mouseenter( function() { $('#moretabsList".$tabsname."').css('left','auto');});";
-		$out.="$('#moretabs".$tabsname."').mouseleave( function() { $('#moretabsList".$tabsname."').css('left','-999em');});";
+		$out.="$('#moretabs".$tabsname."').mouseenter( function() { console.log('mouseenter ".$left."'); $('#moretabsList".$tabsname."').css('".$left."','auto');});";
+		$out.="$('#moretabs".$tabsname."').mouseleave( function() { console.log('mouseleave ".$left."'); $('#moretabsList".$tabsname."').css('".$left."','-999em');});";
 		$out.="</script>";
 	}
 
@@ -1259,7 +1278,7 @@ function dol_get_fiche_end($notab=0)
  *  Show tab footer of a card.
  *  Note: $object->next_prev_filter can be set to restrict select to find next or previous record by $form->showrefnav.
  *
- *  @param	object	$object			Object to show
+ *  @param	Object	$object			Object to show
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
  *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
@@ -1935,7 +1954,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 
 
 /**
- *	Return date for now. In mot cases, we use this function without parameters (that means GMT time).
+ *	Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
  * 	@param	string		$mode	'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
@@ -1945,7 +1964,8 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  */
 function dol_now($mode='gmt')
 {
-	$ret='';
+	$ret=0;
+
 	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
@@ -1953,7 +1973,7 @@ function dol_now($mode='gmt')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
-		$ret=dol_now('gmt')+($tzsecond*3600);
+		$ret=(int) dol_now('gmt')+($tzsecond*3600);
 	}
 	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
@@ -1966,8 +1986,9 @@ function dol_now($mode='gmt')
 		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
-		$ret=dol_now('gmt')+($offsettz+$offsetdst);
+		$ret=(int) dol_now('gmt')+($offsettz+$offsetdst);
 	}
+
 	return $ret;
 }
 
@@ -3471,9 +3492,10 @@ function dol_print_error($db='',$error='',$errors=null)
  *
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
+ * @param	array	$errormessages	Array of error messages
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='')
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
 {
 	global $langs,$conf;
 
@@ -3482,6 +3504,13 @@ function dol_print_error_email($prefixcode, $errormessage='')
 	print '<br><div class="center login_main_message"><div class="error">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
+	if (is_array($errormessages) && count($errormessages))
+	{
+		foreach($errormessages as $mesgtoshow)
+		{
+			print '<br><br>'.$mesgtoshow;
+		}
+	}
 	print '</div></div>';
 }
 
@@ -3693,19 +3722,19 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
  *	@param	string	    $options         	More parameters for links ('' by default, does not include sortfield neither sortorder). Value must be 'urlencoded' before calling function.
  *	@param	string    	$sortfield       	Field to sort on ('' by default)
  *	@param	string	    $sortorder       	Order to sort ('' by default)
- *	@param	string	    $center          	String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
+ *	@param	string	    $morehtmlcenter     String in the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction()
  *	@param	int		    $num				Number of records found by select with limit+1
  *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	    $morehtml			More html to show
+ *  @param	string	    $morehtmlright			More html to show
  *  @param  string      $morecss            More css to the table
  *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
  *  @param  int         $hideselectlimit    Force to hide select limit
  *  @param  int         $hidenavigation     Force to hide all navigation tools
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0, $hidenavigation=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $morehtmlcenter='', $num=-1, $totalnboflines='', $picto='title_generic.png', $pictoisfullpath=0, $morehtmlright='', $morecss='', $limit=-1, $hideselectlimit=0, $hidenavigation=0)
 {
 	global $conf,$langs;
 
@@ -3739,15 +3768,15 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	print '</div></td>';
 
 	// Center
-	if ($center)
+	if ($morehtmlcenter)
 	{
-		print '<td class="nobordernopadding center valignmiddle">'.$center.'</td>';
+		print '<td class="nobordernopadding center valignmiddle">'.$morehtmlcenter.'</td>';
 	}
 
 	// Right
 	print '<td class="nobordernopadding valignmiddle" align="right">';
-	if ($sortfield) $options .= "&sortfield=".$sortfield;
-	if ($sortorder) $options .= "&sortorder=".$sortorder;
+	if ($sortfield) $options .= "&sortfield=".urlencode($sortfield);
+	if ($sortorder) $options .= "&sortorder=".urlencode($sortorder);
 	// Show navigation bar
 	$pagelist = '';
 	if ($savlimit != 0 && ($page > 0 || $num > $limit))
@@ -3795,7 +3824,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		}
 	}
 
-	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
 
 	print '</td>';
 
@@ -4010,7 +4039,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	{
 		if ($currency_code == 'auto') $currency_code=$conf->currency;
 
-		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN');
+		$listofcurrenciesbefore=array('USD','GBP','AUD','MXN','PEN','CNY');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else
 		{
@@ -4857,8 +4886,8 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	global $conf;
 
 	$path = '';
-
-	$arrayforoldpath=array('cheque','user','category','holiday','shipment','supplier_invoice','invoice_supplier','mailing','supplier_payment');
+	
+	$arrayforoldpath=array('cheque','user','category','holiday','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
 	{
@@ -4875,7 +4904,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and object->modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member')))
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment')))
 		{
 			$path=$object->ref?$object->ref:$object->id;
 		}
@@ -5354,7 +5383,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 	if (empty($exclude) || ! in_array('system', $exclude))
 	{
-		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationKey');
+		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
 		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 	}
 	if (empty($exclude) || ! in_array('mycompany', $exclude))
@@ -5573,7 +5603,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
  *  Make substition into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
  *
  *  @param	string		$text	      			Source string in which we must do substitution
- *  @param  array		$substitutionarray		Array with key->val to substitute
+ *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal')
  *  @param	Translate	$outputlangs			Output language
  * 	@return string  		    				Output string after substitutions
  *  @see	complete_substitutions_array
@@ -5589,17 +5619,29 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 	// Make substitution for language keys
 	if (is_object($outputlangs))
 	{
-		while (preg_match('/__\(([^\)]*)\)__/', $text, $reg))
+		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg))
 		{
+			$msgishtml = 0;
+			if (dol_textishtml($text,1)) $msgishtml = 1;
+
 			// If key is __(TranslationKey|langfile)__, then force load of langfile.lang
 			$tmp=explode('|',$reg[1]);
 			if (! empty($tmp[1])) $outputlangs->load($tmp[1]);
 
-			$msgishtml = 0;
-			if (dol_textishtml($text,1)) $msgishtml = 1;
-
 			$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])):$outputlangs->transnoentitiesnoconv($reg[1]), $text);
 		}
+	}
+
+	// Make substitution for constant keys. Must be after the substitution of translation, so if text of translation contains a constant,
+	// it is also converted.
+	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg))
+	{
+		$msgishtml = 0;
+		if (dol_textishtml($text,1)) $msgishtml = 1;
+
+		$keyfound = $reg[1];
+		$newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
+		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
 	}
 
 	// Make substitition for array $substitutionarray
@@ -5634,16 +5676,16 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 
 	// Add a substitution key for each extrafields, using key __EXTRA_XXX__
 	// TODO Remove this. Already available into the getCommonSubstitutionArray used to build the substitution array.
-	if (is_object($object) && is_array($object->array_options))
+	/*if (is_object($object) && is_array($object->array_options))
 	{
 		foreach($object->array_options as $key => $val)
 		{
 			$keyshort=preg_replace('/^(options|extra)_/','',$key);
-			$substitutionarray['__EXTRA_'.$keyshort.'__']=$val;
+			$substitutionarray['__EXTRAFIELD_'.$keyshort.'__']=$val;
 			// For backward compatibiliy
 			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
 		}
-	}
+	}*/
 
 	// Check if there is external substitution to do, requested by plugins
 	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
@@ -6098,15 +6140,15 @@ function dol_osencode($str)
  *      Store also Code-Id into a cache to speed up next request on same key.
  *
  * 		@param	DoliDB	$db				Database handler
- * 		@param	string	$key				Code or Id to get Id or Code
+ * 		@param	string	$key			Code or Id to get Id or Code
  * 		@param	string	$tablename		Table name without prefix
- * 		@param	string	$fieldkey		Field for code
- * 		@param	string	$fieldid			Field for id
+ * 		@param	string	$fieldkey		Field to search the key into
+ * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id',$entityfilter=0)
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey='code', $fieldid='id', $entityfilter=0)
 {
 	global $cache_codes;
 
@@ -6539,7 +6581,7 @@ function dol_getmypid()
 /**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
- * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR)
+ * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
  * @param 	string 			$value 		The value to look for.
  *                          		    If param $mode is 0, can contains several keywords separated with a space or |
  *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
@@ -6935,4 +6977,37 @@ function colorIsLight($stringcolor)
 		if ($bright > 0.6) $res = 1;
 	}
 	return $res;
+}
+
+/**
+ * Function to test if an entry is enabled or not
+ *
+ * @param	string		$type_user					0=We test for internal user, 1=We test for external user
+ * @param	array		$menuentry					Array for feature entry to test
+ * @param	array		$listofmodulesforexternal	Array with list of modules allowed to external users
+ * @return	int										0=Hide, 1=Show, 2=Show gray
+ */
+function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal)
+{
+	global $conf;
+
+	//print 'type_user='.$type_user.' module='.$menuentry['module'].' enabled='.$menuentry['enabled'].' perms='.$menuentry['perms'];
+	//print 'ok='.in_array($menuentry['module'], $listofmodulesforexternal);
+	if (empty($menuentry['enabled'])) return 0;	// Entry disabled by condition
+	if ($type_user && $menuentry['module'])
+	{
+		$tmploops=explode('|',$menuentry['module']);
+		$found=0;
+		foreach($tmploops as $tmploop)
+		{
+			if (in_array($tmploop, $listofmodulesforexternal)) {
+				$found++; break;
+			}
+		}
+		if (! $found) return 0;	// Entry is for menus all excluded to external users
+	}
+	if (! $menuentry['perms'] && $type_user) return 0; 											// No permissions and user is external
+	if (! $menuentry['perms'] && ! empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))	return 0;	// No permissions and option to hide when not allowed, even for internal user, is on
+	if (! $menuentry['perms']) return 2;															// No permissions and user is external
+	return 1;
 }

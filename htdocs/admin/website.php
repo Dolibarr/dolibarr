@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
@@ -37,6 +38,8 @@ $langs->load("website");
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $rowid=GETPOST('rowid','alpha');
 
 $id=1;
@@ -114,6 +117,11 @@ $tabfieldcheck[1]  = array();
 $elementList = array();
 $sourceList=array();
 
+
+/*
+ * Actions
+ */
+
 // Actions add or modify a website
 if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
 {
@@ -126,19 +134,20 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if ((! isset($_POST[$value]) || $_POST[$value]=='')
-			&& (! in_array($listfield[$f], array('virtualhost'))))        // Fields that are not mandatory
-        {
-            $ok=0;
-            $fieldnamekey=$listfield[$f];
-            setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
-        }
-		if ($value == 'ref' && ! preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
-        {
+    	if ($value == 'ref' && (! isset($_POST[$value]) || $_POST[$value]==''))
+	    {
+    	    $ok=0;
+        	$fieldnamekey=$listfield[$f];
+	        setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+	        break;
+    	}
+		elseif ($value == 'ref' && ! preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
+	    {
 			$ok=0;
-            $fieldnamekey=$listfield[$f];
+    	    $fieldnamekey=$listfield[$f];
 			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities($fieldnamekey)), null, 'errors');
-        }
+			break;
+	    }
     }
 
     // Clean parameters
@@ -204,29 +213,6 @@ if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-			global $dolibarr_main_data_root;
-			$pathofwebsite=$dolibarr_main_data_root.'/website/'.$websitekey;
-			$filehtmlheader=$pathofwebsite.'/htmlheader.html';
-			$filecss=$pathofwebsite.'/styles.css.php';
-			$filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
-			$fileindex=$pathofwebsite.'/index.php';
-
-        	// Css file
-        	$csscontent = '<!-- BEGIN DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
-        	$csscontent.= '<!-- File generated to wrap the css file - YOU CAN MODIFY DIRECTLY THE FILE styles.css.php. Change affects all pages of website. -->'."\n";
-        	$csscontent.= '<?php '."\n";
-        	$csscontent.= "header('Content-type: text/css');\n";
-        	$csscontent.= "?>"."\n";
-        	$csscontent.= '<!-- END -->'."\n";
-        	$csscontent.= 'body { margin: 0; }'."\n";
-
-        	dol_syslog("Save file css into ".$filecss);
-
-        	dol_mkdir($pathofwebsite);
-        	$result = file_put_contents($filecss, $csscontent);
-        	if (! empty($conf->global->MAIN_UMASK))
-        		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
-
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	unset($_POST);	// Clean $_POST array, we keep only
         }
@@ -333,21 +319,36 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
-    $result = $db->query($sql);
+    $website = new Website($db);
+    $website->fetch($rowid);
 
-    $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
-    $result = $db->query($sql);
-    if (! $result)
+    if ($website->id > 0)
     {
-        if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
-        {
-            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
-        }
-        else
-        {
-            dol_print_error($db);
-        }
+	    $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
+	    $result = $db->query($sql);
+
+	    $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+	    $result = $db->query($sql);
+	    if (! $result)
+	    {
+	        if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
+	        {
+	            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
+	        }
+	        else
+	        {
+	            dol_print_error($db);
+	        }
+	    }
+
+	    if ($website->ref)
+	    {
+	    	dol_delete_dir_recursive($conf->website->dir_output.'/'.$website->ref);
+	    }
+    }
+    else
+    {
+    	dol_print_error($db, 'Failed to load website with id '.$rowid);
     }
 }
 
@@ -394,10 +395,10 @@ if ($action == $acts[1])
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-llxHeader();
+llxHeader('', $langs->trans("WebsiteSetup"));
 
 $titre=$langs->trans("WebsiteSetup");
-$linkback='';
+$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($titre,$linkback,'title_setup');
 
 print $langs->trans("WebsiteSetupDesc").'<br>';
@@ -616,7 +617,8 @@ if ($id)
                     }
 
                     // Can an entry be erased or disabled ?
-                    $iserasable=1;$isdisable=1;	// true by default
+                    $iserasable=1; $isdisable=1;		// true by default
+                    if ($obj->status) $iserasable=0;	// We can't delete a website on. Disable it first.
 
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;';
 
@@ -626,12 +628,11 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
-                    else print '<td>&nbsp;</td>';
+                    print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 
                     // Delete link
                     if ($iserasable) print '<td align="center"><a href="'.$url.'action=delete">'.img_delete().'</a></td>';
-                    else print '<td>&nbsp;</td>';
+                    else print '<td align="center">'.img_delete($langs->trans("DisableSiteFirst"), 'class="opacitymedium"').'</td>';
 
                     print "</tr>\n";
                 }

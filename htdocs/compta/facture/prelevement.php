@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 if (!$user->rights->facture->lire) accessforbidden();
 
@@ -120,6 +124,8 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
+	$selleruserevenustamp = $mysoc->useRevenueStamp();
+
 	$totalpaye  = $object->getSommePaiement();
 	$totalcreditnotes = $object->getSumCreditNotesUsed();
 	$totaldeposits = $object->getSumDepositsUsed();
@@ -486,17 +492,7 @@ if ($object->id > 0)
 	    }
         print '</tr></table>';
         print '</td><td>';
-        if ($action == 'editrevenuestamp') {
-            print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-            print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-            print '<input type="hidden" name="action" value="setrevenuestamp">';
-            print $formother->select_revenue_stamp(GETPOST('revenuestamp'), 'revenuestamp', $mysoc->country_code);
-            // print '<input type="text" class="flat" size="4" name="revenuestamp" value="'.price2num($object->revenuestamp).'">';
-            print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-            print '</form>';
-        } else {
-            print price($object->revenuestamp, 1, '', 1, - 1, - 1, $conf->currency);
-        }
+       	print price($object->revenuestamp, 1, '', 1, - 1, - 1, $conf->currency);
         print '</td></tr>';
 	}
 
@@ -520,6 +516,7 @@ if ($object->id > 0)
 	dol_fiche_end();
 
 
+	$numopen = 0; $numclosed = 0;
 
 	/*
 	 * Withdrawal opened requests
@@ -540,6 +537,7 @@ if ($object->id > 0)
 	if ($result_sql)
 	{
 		$num = $db->num_rows($result_sql);
+		$numopen = $num;
 	}
 
 
@@ -548,7 +546,7 @@ if ($object->id > 0)
 	 */
 	print "\n<div class=\"tabsAction\">\n";
 
-	// Add a withdraw request
+	// Add a transfer request
 	if ($object->statut > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0)
 	{
 	    if ($resteapayer > 0)
@@ -586,12 +584,14 @@ if ($object->id > 0)
 	print "</div><br>\n";
 
 
-	print $langs->trans("DoStandingOrdersBeforePayments").'<br><br>';
+	print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments").'</div><br>';
 
 
 	/*
 	 * Withdrawals
-	*/
+	 */
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
@@ -603,7 +603,6 @@ if ($object->id > 0)
 	print '<td align="center">'.$langs->trans("DateProcess").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
-	$var=true;
 
 	if ($result_sql)
 	{
@@ -612,7 +611,6 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
-
 
 			print '<tr class="oddeven">';
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
@@ -658,12 +656,12 @@ if ($object->id > 0)
 	if ($result)
 	{
 		$num = $db->num_rows($result);
+		$numclosed = $num;
 		$i = 0;
 
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
-
 
 			print '<tr class="oddeven">';
 
@@ -690,6 +688,9 @@ if ($object->id > 0)
 			$i++;
 		}
 
+		if (! $numopen && ! $numclosed)
+			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+
 		$db->free($result);
 	}
 	else
@@ -698,6 +699,7 @@ if ($object->id > 0)
 	}
 
 	print "</table>";
+	print '</div>';
 }
 
 

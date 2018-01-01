@@ -42,10 +42,6 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 
 // Security check
-if ($user->societe_id > 0)
-{
-	$id = $user->societe_id;
-}
 $result=restrictedArea($user,'adherent',$id);
 
 // Get parameters

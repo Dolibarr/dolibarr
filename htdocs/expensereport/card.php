@@ -222,7 +222,7 @@ if (empty($reshook))
     	    if ($ret < 0) $error++;
     	}
 
-    	if ($object->periode_existe($fuser,$object->date_debut,$object->date_fin))
+    	if (empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser,$object->date_debut,$object->date_fin))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
@@ -1862,16 +1862,13 @@ else
 				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
 				$sql.= "c.code as p_code, c.libelle as payment_type,";
 				$sql.= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
-				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e";
-				$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
-				$sql.= ", ".MAIN_DB_PREFIX."payment_expensereport as p";
-				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
-				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
+				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
+				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 				$sql.= " WHERE e.rowid = '".$id."'";
 				$sql.= " AND p.fk_expensereport = e.rowid";
 				$sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
-				$sql.= " AND p.fk_typepayment = c.id";
-				$sql.= " AND c.entity = " . getEntity('c_paiement');
 				$sql.= " ORDER BY dp";
 
 				$resql = $db->query($sql);
@@ -1883,19 +1880,21 @@ else
 				    {
 				        $objp = $db->fetch_object($resql);
 
+				        $paymentexpensereportstatic->id = $objp->rowid;
+				        $paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
+				        $paymentexpensereportstatic->ref = $objp->rowid;
+				        $paymentexpensereportstatic->num_paiement = $objp->num_paiement;
+				        $paymentexpensereportstatic->payment_code = $objp->payment_code;
+
 				        print '<tr class="oddseven">';
 				        print '<td>';
-						$paymentexpensereportstatic->id = $objp->rowid;
-						$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
-						$paymentexpensereportstatic->ref = $objp->rowid;
-						$paymentexpensereportstatic->num_paiement = $objp->num_paiement;
-						$paymentexpensereportstatic->payment_code = $objp->payment_code;
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->fk_typepayment;
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-						if (! empty($conf->banque->enabled)) {
+						if (! empty($conf->banque->enabled))
+						{
 							$bankaccountstatic->id = $objp->baid;
 							$bankaccountstatic->ref = $objp->baref;
 							$bankaccountstatic->label = $objp->baref;

@@ -44,8 +44,17 @@ class FactureFournisseur extends CommonInvoice
     public $table_element='facture_fourn';
     public $table_element_line='facture_fourn_det';
     public $fk_element='fk_facture_fourn';
-    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='bill';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     * @var integer
+     */
+    public $restrictiononfksoc = 1;
 
     /**
      * {@inheritdoc}
@@ -552,8 +561,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON (t.fk_cond_reglement = cr.rowid AND cr.entity = " . getEntity('c_payment_term') . ")";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON (t.fk_mode_reglement = p.id AND p.entity = " . getEntity('c_paiement') . ")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON t.fk_cond_reglement = cr.rowid AND cr.entity IN (".getEntity('c_payment_term').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON t.fk_mode_reglement = p.id AND p.entity IN (".getEntity('c_paiement').")";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
         if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
@@ -2518,6 +2527,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->product_type		= $obj->product_type;
 		$this->product_label		= $obj->label;
 		$this->info_bits		    = $obj->info_bits;
+		$this->tva_npr              = ($obj->info_bits & 1 == 1) ? 1 : 0;
 		$this->fk_parent_line    = $obj->fk_parent_line;
 		$this->special_code		= $obj->special_code;
 		$this->rang       		= $obj->rang;
@@ -2756,7 +2766,7 @@ class SupplierInvoiceLine extends CommonObjectLine
         $sql.= " VALUES (".$this->fk_facture_fourn.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->db->escape($this->fk_parent_line)."'":"null").",";
         $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
-        $sql.= " '".$this->db->escape($this->desc)."',";
+        $sql.= " '".$this->db->escape($this->desc ? $this->desc : $this->description)."',";
         $sql.= " '".$this->db->escape($this->ref_supplier)."',";
         $sql.= " ".price2num($this->qty).",";
 

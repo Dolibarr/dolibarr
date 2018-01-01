@@ -7,6 +7,8 @@ ACCOUNTING_EXPORT_LABEL=Exportovať názov
 ACCOUNTING_EXPORT_AMOUNT=Exportovať sumu
 ACCOUNTING_EXPORT_DEVISE=Exportovať menu
 Selectformat=Vyberte formát súboru
+ACCOUNTING_EXPORT_FORMAT=Vyberte formát súboru
+ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
 ACCOUNTING_EXPORT_PREFIX_SPEC=Zadajte predponu pre názov súboru
 ThisService=This service
 ThisProduct=This product
@@ -34,6 +36,7 @@ NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
 AccountWithNonZeroValues=Accounts with non zero values
+ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
 MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
@@ -67,7 +70,6 @@ AccountancyAreaDescAnalyze=KROK %s: Pridanie alebo úprava existujúcich transak
 AccountancyAreaDescClosePeriod=KROK %s: Zavrieť obdobie, takže nemôžeme robiť zmeny v budúcnosti.
 
 TheJournalCodeIsNotDefinedOnSomeBankAccount=A mandatory step in setup was not complete (accounting code journal not defined for all bank accounts)
-MenuAccountancy=Účtovníctvo
 Selectchartofaccounts=Vyberte aktívnu účtovnú schému
 ChangeAndLoad=Zmeniť a načítať
 Addanaccount=Pridajte účtovníctvo
@@ -166,7 +168,7 @@ DeleteMvt=Odstrániť riadky knihy
 DelYear=Rok na zmazanie
 DelJournal=Žurnále na zmazanie
 ConfirmDeleteMvt=Tým sa odstránia všetky riadky knihy za rok a / alebo z určitého časopisu. Vyžaduje sa aspoň jedno kritérium.
-ConfirmDeleteMvtPartial=Tým sa vymažú vybrané riadok(y) v knihe 
+ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 DelBookKeeping=Odstrániť záznam knihy
 FinanceJournal=Finančný časopis
 ExpenseReportsJournal=Expense reports journal
@@ -218,7 +220,7 @@ MvtNotCorrectlyBalanced=Pohyb nie je správne vyvážený. Úver = %s. Debit = %
 FicheVentilation=Viazacia karta
 GeneralLedgerIsWritten=Transakcie sú zapísané v knihe
 GeneralLedgerSomeRecordWasNotRecorded=Niektoré transakcie nebolo možné odoslať. Ak sa nenachádza žiadna iná chybová správa, pravdepodobne je to preto, že už boli odoslané.
-NoNewRecordSaved=Žiadny nový záznam nebol odoslaný
+NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Zoznam produktov, ktoré nie sú viazané na žiadny účtovný účet
 ChangeBinding=Zmeňte väzbu
 
@@ -253,6 +255,7 @@ Modelcsv_quadratus=Exportovať pre Quadratus QuadraCompta
 Modelcsv_ebp=Exportovať pre EBP
 Modelcsv_cogilog=Exportovať pre Cogilog
 Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service

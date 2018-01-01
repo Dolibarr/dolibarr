@@ -1034,12 +1034,12 @@ elseif ($object->id > 0)
 		{
 
 			// Create event
-			if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
+			/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
 				// "workflow" action so should appears somewhere else on
 				// page.
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '&amp;projectid=' . $object->id . '">' . $langs->trans("AddAction") . '</a></div>';
-			}
+			}*/
 
 		// Modify
 			if ($object->statut != 2 && $user->rights->projet->creer)

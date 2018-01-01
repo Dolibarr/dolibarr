@@ -28,7 +28,6 @@ InterventionClassifyBilled=Ταξινομήστε τα "Τιμολογημένα
 InterventionClassifyUnBilled=Ταξινομήστε τα μη "Τιμολογημένα"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Τιμολογείται
-ShowIntervention=Εμφάνιση παρέμβασης
 SendInterventionRef=Υποβολή παρέμβασης %s
 SendInterventionByMail=Αποστολή παρέμβασης μέσω e-mail
 InterventionCreatedInDolibarr=Παρέμβαση %s δημιουργήθηκε

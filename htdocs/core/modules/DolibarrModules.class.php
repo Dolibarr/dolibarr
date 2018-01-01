@@ -641,6 +641,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			if ((float) DOL_VERSION >= 6.0)
 			{
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
 				$content = dolMd2Html($content, 'parsedown',
 					array(
 						'doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1),
@@ -1666,7 +1667,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$r_def      = $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
-					$r_modul    = $this->rights_class;
+					$r_modul    = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
 					if (empty($r_type)) $r_type='w';
 
@@ -1815,7 +1816,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		{
 			$menu = new Menubase($this->db);
 			$menu->menu_handler='all';
+
+			//$menu->module=strtolower($this->name);	TODO When right_class will be same than module name
 			$menu->module=$this->rights_class;
+
 			if (! $this->menu[$key]['fk_menu'])
 			{
 				$menu->fk_menu=0;
@@ -1909,8 +1913,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 		$err=0;
 
+		//$module=strtolower($this->name);		TODO When right_class will be same than module name
+		$module=$this->rights_class;
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-		$sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
+		$sql.= " WHERE module = '".$this->db->escape($module)."'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);

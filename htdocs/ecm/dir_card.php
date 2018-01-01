@@ -139,11 +139,23 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 // Remove dir
 if ($action == 'confirm_deletedir' && $confirm == 'yes')
 {
-	// Fetch was already done
-	$result=$ecmdir->delete($user);
+	$backtourl = DOL_URL_ROOT."/ecm/index.php";
+	if ($module == 'medias') $backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
+
+	if ($module == 'ecm')
+	{
+		// Fetch was already done
+		$result=$ecmdir->delete($user);
+	}
+	else
+	{
+		$resbool = dol_delete_dir($upload_dir);
+		if ($resbool) $result = 1;
+		else $result = 0;
+	}
 	if ($result > 0)
 	{
-		header("Location: ".DOL_URL_ROOT."/ecm/index.php");
+		header("Location: ".$backtourl);
 		exit;
 	}
 	else

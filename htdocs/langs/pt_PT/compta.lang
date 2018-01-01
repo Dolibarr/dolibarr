@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Área Contabilidade/Tesouraria
 NewPayment=Novo Pagamento
 Payments=Pagamentos
 PaymentCustomerInvoice=Cobrança factura a cliente
+PaymentSupplierInvoice=Pagamento factura de fornecedor
 PaymentSocialContribution=Pagamento da taxa social/fiscal
 PaymentVat=Pagamento IVA
 ListPayment=Lista de pagamentos

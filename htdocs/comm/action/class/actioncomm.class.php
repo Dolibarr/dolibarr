@@ -36,8 +36,17 @@ class ActionComm extends CommonObject
     public $element='action';
     public $table_element = 'actioncomm';
     public $table_rowid = 'id';
-    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='action';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user, 2=Same than 1 but accept record if fksoc is empty
+     * @var integer
+     */
+    public $restrictiononfksoc = 2;
 
     /**
      * Id of the event
@@ -571,8 +580,9 @@ class ActionComm extends CommonObject
                 $this->type_color = $obj->type_color;
                 $this->type_picto = $obj->type_picto;
                 $transcode=$langs->trans("Action".$obj->type_code);
-                $type_label=($transcode!="Action".$obj->type_code?$transcode:$obj->type_label);
-                $this->type       = $type_label;
+                $this->type       = (($transcode!="Action".$obj->type_code) ? $transcode : $obj->type_label);
+                $transcode=$langs->trans("Action".$obj->type_code.'Short');
+                $this->type_short       = (($transcode!="Action".$obj->type_code.'Short') ? $transcode : '');
 
 				$this->code					= $obj->code;
                 $this->label				= $obj->label;
@@ -589,11 +599,11 @@ class ActionComm extends CommonObject
                 $this->authorid             = $obj->fk_user_author;
                 $this->usermodid			= $obj->fk_user_mod;
 
-                if (!is_object($this->author)) $this->author = new stdClass(); // For avoid warning
+                if (!is_object($this->author)) $this->author = new stdClass(); // To avoid warning
                 $this->author->id			= $obj->fk_user_author;		// deprecated
                 $this->author->firstname	= $obj->firstname;			// deprecated
                 $this->author->lastname		= $obj->lastname;			// deprecated
-                if (!is_object($this->usermod)) $this->usermod = new stdClass(); // For avoid warning
+                if (!is_object($this->usermod)) $this->usermod = new stdClass(); // To avoid warning
                 $this->usermod->id			= $obj->fk_user_mod;		// deprecated
 
                 $this->userownerid			= $obj->fk_user_action;
@@ -1214,7 +1224,7 @@ class ActionComm extends CommonObject
      */
     function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0, $notooltip=0)
     {
-		global $conf, $langs, $user, $hookmanager;
+		global $conf, $langs, $user, $hookmanager, $action;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1230,7 +1240,7 @@ class ActionComm extends CommonObject
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
 		}
 
-		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
+		$tooltip = '<u>' . $langs->trans('ShowAction') . '</u>';
 		if (! empty($this->ref))
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($label))

@@ -44,6 +44,7 @@ class User extends CommonObject
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	public $id=0;
+	public $statut;
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -56,7 +57,7 @@ class User extends CommonObject
 	public $address;
 	public $zip;
 	public $town;
-	public $state_id;
+	public $state_id;		// The state/department
 	public $state_code;
 	public $state;
 	public $office_phone;
@@ -101,7 +102,6 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
-	public $statut;
 	public $photo;
 	public $lang;
 
@@ -521,7 +521,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);
@@ -632,7 +633,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);
@@ -725,19 +727,21 @@ class User extends CommonObject
 				if ($perms)
 				{
 					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = new stdClass(); // For avoid error
-					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-					if ($subperms)
+					if ($module)
 					{
-						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
-						$this->rights->$module->$perms->$subperms = 1;
+						if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
+						if ($subperms)
+						{
+							if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+							if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+							$this->rights->$module->$perms->$subperms = 1;
+						}
+						else
+						{
+							if(empty($this->rights->$module->$perms)) $this->nb_rights++;
+							$this->rights->$module->$perms = 1;
+						}
 					}
-					else
-					{
-						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
-					}
-
 				}
 				$i++;
 			}
@@ -1007,7 +1011,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
-	function create($user,$notrigger=0)
+	function create($user, $notrigger=0)
 	{
 		global $conf,$langs;
 		global $mysoc;
@@ -1333,9 +1337,10 @@ class User extends CommonObject
 	 *    	@param  int		$notrigger			1 ne declenche pas les triggers, 0 sinon
 	 *		@param	int		$nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
 	 *		@param	int		$nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
+	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
 	 *    	@return int 		        		<0 si KO, >=0 si OK
 	 */
-	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
+	function update($user, $notrigger=0, $nosyncmember=0, $nosyncmemberpass=0, $nosynccontact=0)
 	{
 		global $conf, $langs;
 
@@ -1470,7 +1475,7 @@ class User extends CommonObject
 
 					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-					// This user is linked with a member, so we also update members informations
+					// This user is linked with a member, so we also update member information
 					// if this is an update.
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
@@ -1492,8 +1497,6 @@ class User extends CommonObject
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 
-						$adh->note=$this->note;
-
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
 
@@ -1510,6 +1513,61 @@ class User extends CommonObject
 					{
 						$this->error=$adh->error;
 						$this->errors=$adh->errors;
+						$error++;
+					}
+				}
+
+				if ($this->contact_id > 0 && ! $nosynccontact)
+				{
+					dol_syslog(get_class($this)."::update user is linked with a contact. We try to update contact too.", LOG_DEBUG);
+
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+					// This user is linked with a contact, so we also update contact information
+					// if this is an update.
+					$tmpobj=new Contact($this->db);
+					$result=$tmpobj->fetch($this->contact_id);
+
+					if ($result >= 0)
+					{
+						$tmpobj->firstname=$this->firstname;
+						$tmpobj->lastname=$this->lastname;
+						$tmpobj->login=$this->login;
+						$tmpobj->gender=$this->gender;
+						$tmpobj->birth=$this->birth;
+
+						//$tmpobj->pass=$this->pass;
+
+						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
+
+						$tmpobj->email=$this->email;
+						$tmpobj->skype=$this->skype;
+						$tmpobj->phone_pro=$this->office_phone;
+						$tmpobj->phone_mobile=$this->user_mobile;
+						$tmpobj->fax=$this->office_fax;
+
+						$tmpobj->address=$this->address;
+						$tmpobj->town=$this->town;
+						$tmpobj->zip=$this->zip;
+						$tmpobj->state_id=$this->state_id;
+						$tmpobj->country_id=$this->country_id;
+
+						$tmpobj->user_id=$this->id;
+						$tmpobj->user_login=$this->login;
+
+						$result=$tmpobj->update($tmpobj->id, $user, 0, 'update', 1);
+						if ($result < 0)
+						{
+							$this->error=$tmpobj->error;
+							$this->errors=$tmpobj->errors;
+							dol_syslog(get_class($this)."::update error after calling adh->update to sync it with user: ".$this->error, LOG_ERR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$tmpobj->error;
+						$this->errors=$tmpobj->errors;
 						$error++;
 					}
 				}
@@ -2053,7 +2111,7 @@ class User extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to
+	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
 	 *  @param  integer $infologin      			Add complete info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
@@ -2093,11 +2151,12 @@ class User extends CommonObject
 		{
 			$thirdpartystatic = new Societe($db);
 			$thirdpartystatic->fetch($this->societe_id);
-			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
+			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink')?'nolink':''));	// picto only of company
 			$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 		}
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
 
 		// Info Login
@@ -2159,7 +2218,7 @@ class User extends CommonObject
 		$linkend='</a>';
 
 		//if ($withpictoimg == -1) $result.='<div class="nowrap">';
-		$result.=$linkstart;
+		$result.=(($option == 'nolink')?'':$linkstart);
 		if ($withpictoimg)
 		{
 		  	$paddafterimage='';
@@ -2177,7 +2236,7 @@ class User extends CommonObject
 			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
-		$result.=$linkend;
+		$result.=(($option == 'nolink')?'':$linkend);
 		//if ($withpictoimg == -1) $result.='</div>';
 
 		$result.=$companylink;

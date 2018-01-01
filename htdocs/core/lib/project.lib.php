@@ -262,11 +262,11 @@ function project_timesheet_prepare_head($mode, $fuser=null)
 		$h++;
 	}
 
-	/*if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERACTION))
+	/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/projet/activity/peraction.php".($mode?'?mode='.$mode:'');
-		$head[$h][1] = $langs->trans("InputPerAction");
-		$head[$h][2] = 'inputperaction';
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perline.php".($param?'?'.$param:'');
+		$head[$h][1] = $langs->trans("InputDetail");
+		$head[$h][2] = 'inputperline';
 		$h++;
 	}*/
 
@@ -592,6 +592,232 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
+function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
+{
+	global $conf, $db, $user, $bc, $langs;
+	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
+
+	$lastprojectid=0;
+	$totalforeachline=array();
+	$workloadforid=array();
+	$lineswithoutlevel0=array();
+
+	$numlines=count($lines);
+
+	// Create a smaller array with sublevels only to be used later. This increase dramatically performances.
+	if ($parent == 0) // Always and only if at first level
+	{
+		for ($i = 0 ; $i < $numlines ; $i++)
+		{
+			if ($lines[$i]->fk_task_parent) $lineswithoutlevel0[]=$lines[$i];
+		}
+	}
+
+	if (empty($oldprojectforbreak))
+	{
+		$oldprojectforbreak = (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:-1);	// 0 to start break , -1 no break
+	}
+
+	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
+	for ($i = 0 ; $i < $numlines ; $i++)
+	{
+		if ($parent == 0) $level = 0;
+
+		//if ($lines[$i]->fk_task_parent == $parent)
+		//{
+			// If we want all or we have a role on task, we show it
+			if (empty($mine) || ! empty($tasksrole[$lines[$i]->id]))
+			{
+				//dol_syslog("projectLinesPerWeek Found line ".$i.", a qualified task (i have role or want to show all tasks) with id=".$lines[$i]->id." project id=".$lines[$i]->fk_project);
+
+				// Break on a new project
+				if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
+				{
+					$lastprojectid=$lines[$i]->fk_project;
+					if ($preselectedday)
+					{
+						$projectstatic->id = $lines[$i]->fk_project;
+					}
+				}
+
+				if (empty($workloadforid[$projectstatic->id]))
+				{
+					if ($preselectedday)
+					{
+						$projectstatic->loadTimeSpent($preselectedday, 0, $fuser->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+						$workloadforid[$projectstatic->id]=1;
+					}
+				}
+
+				$projectstatic->id=$lines[$i]->fk_project;
+				$projectstatic->ref=$lines[$i]->project_ref;
+				$projectstatic->title=$lines[$i]->project_label;
+				$projectstatic->public=$lines[$i]->public;
+
+				$taskstatic->id=$lines[$i]->task_id;
+				$taskstatic->ref=($lines[$i]->task_ref?$lines[$i]->task_ref:$lines[$i]->task_id);
+				$taskstatic->label=$lines[$i]->task_label;
+				$taskstatic->date_start=$lines[$i]->date_start;
+				$taskstatic->date_end=$lines[$i]->date_end;
+
+				$thirdpartystatic->id=$lines[$i]->socid;
+				$thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				$thirdpartystatic->email=$lines[$i]->thirdparty_email;
+
+				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
+				{
+					print '<tr class="oddeven trforbreak">'."\n";
+					print '<td colspan="11">';
+					print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+					if ($projectstatic->title)
+					{
+						print ' - ';
+						print $projectstatic->title;
+					}
+					print '</td>';
+					print '</tr>';
+				}
+
+				if ($oldprojectforbreak != -1) $oldprojectforbreak = $projectstatic->id;
+
+				print '<tr class="oddeven">'."\n";
+
+				// User
+				/*
+				 print '<td class="nowrap">';
+				 print $fuser->getNomUrl(1, 'withproject', 'time');
+				 print '</td>';
+				 */
+
+				// Project
+				print "<td>";
+				if ($oldprojectforbreak == -1)
+				{
+					print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+					print '<br>'.$projectstatic->title;
+				}
+				print "</td>";
+
+				// Thirdparty
+				print '<td class="tdoverflowmax100">';
+				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				print '</td>';
+
+				// Ref
+				print '<td>';
+				print '<!-- Task id = '.$lines[$i]->id.' -->';
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				print $taskstatic->getNomUrl(1, 'withproject', 'time');
+				// Label task
+				print '<br>';
+				for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				print $taskstatic->label;
+				//print "<br>";
+				//for ($k = 0 ; $k < $level ; $k++) print "&nbsp;&nbsp;&nbsp;";
+				//print get_date_range($lines[$i]->date_start,$lines[$i]->date_end,'',$langs,0);
+				print "</td>\n";
+
+				// Date
+				print '<td align="center">';
+				print dol_print_date($lines[$i]->timespent_datehour,'day');
+				print '</td>';
+
+				$disabledproject=1;$disabledtask=1;
+				//print "x".$lines[$i]->fk_project;
+				//var_dump($lines[$i]);
+				//var_dump($projectsrole[$lines[$i]->fk_project]);
+				// If at least one role for project
+				if ($lines[$i]->public || ! empty($projectsrole[$lines[$i]->fk_project]) || $user->rights->projet->all->creer)
+				{
+					$disabledproject=0;
+					$disabledtask=0;
+				}
+				// If $restricteditformytask is on and I have no role on task, i disable edit
+				if ($restricteditformytask && empty($tasksrole[$lines[$i]->id]))
+				{
+					$disabledtask=1;
+				}
+
+				// Hour
+				print '<td class="nowrap" align="center">';
+				print dol_print_date($lines[$i]->timespent_datehour,'hour');
+				print '</td>';
+
+				$cssonholiday='';
+				if (! $isavailable[$preselectedday]['morning'] && ! $isavailable[$preselectedday]['afternoon'])   $cssonholiday.='onholidayallday ';
+				elseif (! $isavailable[$preselectedday]['morning'])   $cssonholiday.='onholidaymorning ';
+				elseif (! $isavailable[$preselectedday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+				// Duration
+				print '<td align="center" class="duration'.($cssonholiday?' '.$cssonholiday:'').'">';
+
+				$dayWorkLoad = $lines[$i]->timespent_duration;
+				$totalforeachline[$preselectedday]+=$lines[$i]->timespent_duration;
+
+				$alreadyspent='';
+				if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($lines[$i]->timespent_duration,'allhourmin');
+
+				print convertSecondToTime($lines[$i]->timespent_duration,'allhourmin');
+
+				$modeinput='hours';
+
+				print '<script type="text/javascript">';
+				print "jQuery(document).ready(function () {\n";
+				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
+				print "})\n";
+				print '</script>';
+
+				print '</td>';
+
+				// Note
+				print '<td align="center">';
+				print '<textarea name="'.$lines[$i]->id.'note" rows="'.ROWS_2.'" id="'.$lines[$i]->id.'note"'.($disabledtask?' disabled="disabled"':'').'>';
+				print $lines[$i]->timespent_note;
+				print '</textarea>';
+				print '</td>';
+
+				// Warning
+				print '<td align="right">';
+				/*if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("UserIsNotContactOfProject"));
+				else if ($disabledtask)
+				{
+					$titleassigntask = $langs->trans("AssignTaskToMe");
+					if ($fuser->id != $user->id) $titleassigntask = $langs->trans("AssignTaskToUser", '...');
+
+					print $form->textwithpicto('',$langs->trans("TaskIsNotAssignedToUser", $titleassigntask));
+				}*/
+				print '</td>';
+
+				print "</tr>\n";
+			}
+		//}
+		//else
+		//{
+			//$level--;
+		//}
+	}
+
+	return $totalforeachline;
+}
+
+
+/**
+ * Output a task line into a pertime intput mode
+ *
+ * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
+ * @param   string		$parent					Id of parent task to show (0 to show all)
+ * @param	User|null	$fuser					Restrict list to user if defined
+ * @param   Task[]		$lines					Array of lines
+ * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
+ * @param   string		$projectsrole			Array of roles user has on project
+ * @param   string		$tasksrole				Array of roles user has on task
+ * @param	string		$mine					Show only task lines I am assigned to
+ * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
+ * @param	int			$preselectedday			Preselected day
+ * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
+ * @param	int			$oldprojectforbreak		Old project id of last project break
+ * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
+ */
 function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
 {
 	global $conf, $db, $user, $bc, $langs;
@@ -656,7 +882,6 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
-				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->label=$lines[$i]->label;
 				$taskstatic->date_start=$lines[$i]->date_start;
 				$taskstatic->date_end=$lines[$i]->date_end;
@@ -930,7 +1155,6 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=($lines[$i]->ref?$lines[$i]->ref:$lines[$i]->id);
-				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->label=$lines[$i]->label;
 				$taskstatic->date_start=$lines[$i]->date_start;
 				$taskstatic->date_end=$lines[$i]->date_end;

@@ -121,8 +121,8 @@ $hookmanager->initHooks(array('agendalist'));
 $arrayfields=array(
 	'a.id'=>array('label'=>"Ref", 'checked'=>1),
 	'owner'=>array('label'=>"Owner", 'checked'=>1),
-	'a.label'=>array('label'=>"Title", 'checked'=>1),
 	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
+	'a.label'=>array('label'=>"Title", 'checked'=>1),
 	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
 	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
@@ -168,10 +168,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-    $actioncode='';
+    //$actioncode='';
     $search_title='';
     $datestart='';
     $dateend='';
+    $status='';
     $search_array_options=array();
 }
 
@@ -222,12 +223,7 @@ if (GETPOST('dateendday','int')) $param.='&dateendday='.GETPOST('dateendday','in
 if (GETPOST('dateendmonth','int')) $param.='&dateendmonth='.GETPOST('dateendmonth','int');
 if (GETPOST('dateendyear','int')) $param.='&dateendyear='.GETPOST('dateendyear','int');
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
@@ -311,19 +307,8 @@ if ($dateselect > 0) $sql.= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AN
 if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart+3600*24-1)."'";
 if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode_search=0;
-	if (in_array($typ, array('int','double','real'))) $mode_search=1;								// Search on a numeric
-	if (in_array($typ, array('sellist','link')) && $crit != '0' && $crit != '-1') $mode_search=2;	// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0') && (! in_array($typ, array('link')) || $crit != '-1'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode_search);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
@@ -356,6 +341,28 @@ if ($resql)
 	$tabactive='cardlist';
 
 	$head = calendars_prepare_head($param);
+
+	print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
+	$nav='';
+	if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	//if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+	if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
+	if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+	if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+	if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+	if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
+	if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+	if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+	print $nav;
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
     print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,-1,$actioncode,$usergroup,'',$resourceid);
@@ -392,28 +399,6 @@ if ($resql)
     	$s = $hookmanager->resPrint;
     }
 
-
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="list">';
-    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
-    print '<input type="hidden" name="type" value="'.$type.'">';
-    $nav='';
-    if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-    if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
-    if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-    if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-    if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-    if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-    if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-    if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-    print $nav;
-
     if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
     {
         $tmpforcreatebutton=dol_getdate(dol_now(), true);
@@ -427,7 +412,7 @@ if ($resql)
         $link.= '</a>';
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$link, '', $limit);
 
     $moreforfilter='';
 
@@ -456,34 +441,10 @@ if ($resql)
 	if (! empty($arrayfields['s.nom']['checked']))			print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.fk_contact']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.fk_element']['checked']))	print '<td class="liste_titre"></td>';
+
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val)
-	   {
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				print '<td class="liste_titre'.($align?' '.$align:'').'">';
-				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
-				{
-					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
-					$searchclass='';
-					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-				else
-				{
-					// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
-					echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
-				}
-				print '</td>';
-			}
-	   }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -515,19 +476,8 @@ if ($resql)
     if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"],"a.fk_element",$param,"","",$sortfield,$sortorder);
 
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$sortonfield = "ef.".$key;
-				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-			}
-		}
-	}
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -542,7 +492,7 @@ if ($resql)
 
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 	$caction=new CActionComm($db);
-	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
+	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
 
 	$var=true;
 	while ($i < min($num,$limit))
@@ -584,17 +534,21 @@ if ($resql)
 			else print '&nbsp;';
 			print '</td>';
 		}
-		if (! empty($arrayfields['c.libelle']['checked'])) {
-			// Type
+
+		// Type
+		if (! empty($arrayfields['c.libelle']['checked']))
+		{
 			print '<td>';
 			if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 			{
 	    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
     			else {
-    			    if ($actionstatic->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
-    			    if ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
-    			    if ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
-    			    if ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+    			    if ($actionstatic->type_code == 'AC_RDV')       print img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif ($actionstatic->type_code == 'AC_INT')   print img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+    			    elseif (! preg_match('/_AUTO/', $actionstatic->type_code)) print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
     			}
 			}
 			$labeltype=$obj->type_code;
@@ -603,15 +557,16 @@ if ($resql)
 			print dol_trunc($labeltype,28);
 			print '</td>';
 		}
+
+		// Label
 		if (! empty($arrayfields['a.label']['checked'])) {
-			// Label
 			print '<td class="tdoverflowmax300">';
 			print $actionstatic->label;
 			print '</td>';
 		}
 
+		// Start date
 		if (! empty($arrayfields['a.datep']['checked'])) {
-			// Start date
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->dp),"dayhour");
 			$late=0;
@@ -622,14 +577,16 @@ if ($resql)
 			if ($late) print img_warning($langs->trans("Late")).' ';
 			print '</td>';
 		}
+
+		// End date
 		if (! empty($arrayfields['a.datep2']['checked'])) {
-			// End date
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->dp2),"dayhour");
 			print '</td>';
 		}
+
+		// Third party
 		if (! empty($arrayfields['s.nom']['checked'])) {
-			// Third party
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid)
 			{
@@ -641,8 +598,9 @@ if ($resql)
 			else print '&nbsp;';
 			print '</td>';
 		}
+
+		// Contact
 		if (! empty($arrayfields['a.fk_contact']['checked'])) {
-			// Contact
 			print '<td>';
 			if ($obj->fk_contact > 0)
 			{
@@ -657,8 +615,9 @@ if ($resql)
 			}
 			print '</td>';
 		}
+
+		// Linked object
 		if (! empty($arrayfields['a.fk_element']['checked'])) {
-		        // Linked object
 		        print '<td>';
 		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
               		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -669,24 +628,9 @@ if ($resql)
 		        print '</td>';
 
 		}
+
 		// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-		   foreach($extrafields->attribute_label as $key => $val)
-		   {
-				if (! empty($arrayfields["ef.".$key]['checked']))
-				{
-					print '<td';
-					$align=$extrafields->getAlignFlag($key);
-					if ($align) print ' align="'.$align.'"';
-					print '>';
-					$tmpkey='options_'.$key;
-					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-					print '</td>';
-					if (! $i) $totalarray['nbfield']++;
-				}
-		   }
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook

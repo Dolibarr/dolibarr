@@ -371,7 +371,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
     $langs->load("main");
     $langs->load("admin");
 
-    $jquerytheme='smoothness';
+    $jquerytheme='base';
 
     if ($forcejqueryurl)
     {

@@ -1,4 +1,12 @@
 <?php
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 // Require
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

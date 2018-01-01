@@ -716,22 +716,8 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 			$posy=$pdf->GetY()+3;
 		}
-		else {
-			$pdf->SetFont('','B', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche, $posy);
-			$titre = $outputlangs->transnoentities("PaymentConditions").':';
-			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
-			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($posxval, $posy);
-
-			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
-			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
-
-			$posy=$pdf->GetY()+3;
-		}
-
-		if (! empty($conf->global->SUPPLIER_PROPOSAL_PDF_SHOW_PAYMENTTERMCOND))
+		if (! empty($conf->global->SUPPLIER_PROPOSAL_PDF_SHOW_PAYMENTTERMMODE))
 		{
 			// Show payment mode
 			if ($object->mode_reglement_code

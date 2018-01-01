@@ -128,5 +128,7 @@ Ordered=Ordenado
 OrderCreated=Tus pedidos han sido creados
 OrderFail=Se produjo un error durante la creación de sus pedidos
 ToBillSeveralOrderSelectCustomer=Para crear una factura para varios pedidos, haga clic primero en el cliente, luego elija "%s".
+OptionToSetOrderBilledNotEnabled=La opción (del flujo de trabajo del módulo) para configurar el pedido en 'Facturado' automáticamente cuando se valida la factura está desactivado, por lo que deberá establecer el estado de la orden en 'Facturado' manualmente.
+IfValidateInvoiceIsNoOrderStayUnbilled=Si la validación de la factura es 'No', la orden permanecerá en estado 'Sin facturar' hasta que la factura sea validada.
 CloseReceivedSupplierOrdersAutomatically=Cierre el pedido a "%s" automáticamente si se reciben todos los productos.
 SetShippingMode=Establecer el modo de envío

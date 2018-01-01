@@ -1520,6 +1520,8 @@ if ($action=='create')
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
 		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$societe->id).'">' . $langs->trans("AddProject") . '</a>';
+
 		print '</td></tr>';
 	}
 
@@ -2186,10 +2188,10 @@ elseif (! empty($object->id))
 					}
 				}
 				// Create event
-				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
-				}
+				}*/
 
 				// Modify
 				if ($object->statut == 1)

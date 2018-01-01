@@ -66,6 +66,7 @@ ActionAC_OTH=Besteak
 ActionAC_OTH_AUTO=Automatically inserted events
 ActionAC_MANUAL=Manually inserted events
 ActionAC_AUTO=Automatically inserted events
+ActionAC_OTH_AUTOShort=Auto
 Stats=Sales statistics
 StatusProsp=Proiektuaren egoera
 DraftPropals=Draft commercial proposals

@@ -79,6 +79,7 @@ AccountancyTreasuryArea=Kirjanpito / Treasury alueella
 NewPayment=Uusi maksu
 Payments=Maksut
 PaymentCustomerInvoice=Asiakas laskun maksu
+PaymentSupplierInvoice=Toimittajan laskun maksu
 PaymentSocialContribution=Social/fiscal veron maksu
 PaymentVat=ALV-maksu
 ListPayment=Luettelo maksut

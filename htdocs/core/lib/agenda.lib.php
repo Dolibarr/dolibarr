@@ -58,7 +58,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	$formactions=new FormActions($db);
 
 	// Filters
-	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
+	//print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="month" value="' . $month . '">';
@@ -199,7 +199,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</div>';	// Close fichecenter
 	print '<div style="clear:both"></div>';
 
-	print '</form>';
+	//print '</form>';
 }
 
 
@@ -519,9 +519,9 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardlist';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewDay");
-    $head[$h][2] = 'cardday';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewCal");
+    $head[$h][2] = 'cardmonth';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param?'&'.$param:'');
@@ -529,9 +529,9 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardweek';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewCal");
-    $head[$h][2] = 'cardmonth';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewDay");
+    $head[$h][2] = 'cardday';
     $h++;
 
     //if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))

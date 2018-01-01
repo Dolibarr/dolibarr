@@ -16,13 +16,14 @@
  */
 
 /**
- *	\file       htdocs/core/triggers/interface_50_modAgenda_ActionsBlockedLog.class.php
+ *	\file       htdocs/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php
  *  \ingroup    system
  *  \brief      Trigger file for blockedlog module
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
 
 /**
  *  Class of triggered functions for agenda module
@@ -54,15 +55,35 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-		// Event/record is qualified
-		if ($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
-			|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW'
-			|| $action === 'BILL_SUPPLIER_PAYED')
+		$b=new BlockedLog($this->db);
+
+		// Tracked events
+		if (! in_array($action, array_keys($b->trackedevents)))
 		{
+			return 0;
+		}
+
+		// Event/record is qualified
+		$qualified = 0;
+		$amounts = 0;
+		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
+			|| $action==='BILL_SUPPLIER_VALIDATE' || $action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL'
+			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
+		)
+		{
+			$qualified++;
 			$amounts=  (double) $object->total_ttc;
 		}
-		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK' || $action === 'PAYMENT_SUPPLIER_CREATE')
+		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
+		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
 		{
+			$qualified++;
+			$amounts=  (double) $object->total_ttc;
+		}*/
+		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE'
+			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE')			// 'PAYMENT_ADD_TO_BANK'
+		{
+			$qualified++;
 			$amounts = 0;
 			if(!empty($object->amounts)) {
 				foreach($object->amounts as $amount) {
@@ -70,24 +91,33 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				}
 			}
 		}
-		else if(strpos($action,'PAYMENT')!==false) {
+		if (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
+		{
+			$qualified++;
 			$amounts= (double) $object->amount;
 		}
-		else {
+
+		// Another protection.
+		// May be used when event is DOC_DOWNLOAD or DOC_PREVIEW and element is not an invoice
+		if (! $qualified)
+		{
 			return 0; // not implemented action log
 		}
 
 
-		$b=new BlockedLog($this->db);
-		$b->action = $action;
-		$b->amounts= $amounts;
-		$b->setObjectData($object);		// Set field date_object, ref_object, fk_object, element, object_data
+		$result = $b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
+		if ($result < 0)
+		{
+			$this->error = $b->error;
+			$this->errors = $b->erros;
+			return -1;
+		}
 
 		$res = $b->create($user);
 
 		if ($res<0)
 		{
-			setEventMessage($b->error,'errors');
+			setEventMessages($b->error, $b->errors, 'errors');
 			return -1;
 		}
 		else
