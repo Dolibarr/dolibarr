@@ -8,6 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2014-2018 Ari Elbaz (elarifr)	<github@accedinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -691,6 +692,28 @@ class pdf_crabe extends ModelePDFFactures
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
 
+				// Add CGV file in pdf
+                // TODO add multilanguage cgv or only external modules ?
+				$company_cgv=$conf->mycompany->dir_output.'/cgv/cgv.pdf';
+				if (file_exists($company_cgv))
+				{
+					$pagecount = $pdf->setSourceFile($company_cgv);
+					for ($i = 1; $i <= $pagecount; $i++)
+					{
+						$tplidx = $pdf->ImportPage($i);
+						$s = $pdf->getTemplatesize($tplidx);
+						$pdf->AddPage('P', array($s['w'], $s['h']));
+						$pdf->useTemplate($tplidx);
+						// Ajout du watermark (brouillon)
+						if ($object->statut==0 && (!empty($conf->global->FACTURE_DRAFT_WATERMARK)))
+						{
+							pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->FACTURE_DRAFT_WATERMARK);
+							$pdf->SetTextColor(0,0,60);
+						}
+						// Ajout du footer
+						pdf_pagefoot($pdf,$outputlangs,'',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object);
+					}
+				}
 				$pdf->Close();
 
 				$pdf->Output($file,'F');
@@ -1539,7 +1562,9 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->SetXY($this->marge_gauche,$posy);
 
-		// Logo
+		// Logo or removed if preprint paper
+        if($conf->global->FACTURE_USE_PREPRINT_USERCHOICE==0)
+        {
 		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
 		{
@@ -1561,6 +1586,7 @@ class pdf_crabe extends ModelePDFFactures
 			$text=$this->emetteur->name;
 			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
+        }
 
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
@@ -1778,8 +1804,13 @@ class pdf_crabe extends ModelePDFFactures
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
 		global $conf;
+        if($conf->global->FACTURE_USE_PREPRINT_USERCHOICE==0)
+        {
+
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+        }
+
 	}
 
 }

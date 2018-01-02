@@ -4473,9 +4473,11 @@ else if ($id > 0 || ! empty($ref))
 		$genallowed = $user->rights->facture->lire;
 		$delallowed = $user->rights->facture->creer;
 
-		//Elarifr we reset print switch values to default as set in admin
-		dolibarr_set_const($db, "FACTURE_USE_PREPRINT_TEMP",$conf->global->FACTURE_USE_PREPRINT,'chaine',0,'',$conf->entity);
-		dolibarr_set_const($db, "FACTURE_USE_PREPRINT_CGV_TEMP",$conf->global->FACTURE_USE_PREPRINT_CGV,'chaine',0,'',$conf->entity);
+		//Elarifr we reset USERSELECT print switch values to admin default
+        //TODO add & check user rights
+        //TODO should it be moved in core\class\html.formfile.class.php function showdocuments ?
+		dolibarr_set_const($db, "FACTURE_USE_PREPRINT_USERCHOICE",$conf->global->FACTURE_USE_PREPRINT,'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db, "FACTURE_USE_PREPRINT_CGV_USERCHOICE",$conf->global->FACTURE_USE_PREPRINT_CGV,'chaine',0,'',$conf->entity);
 		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		$somethingshown = $formfile->numoffiles;
 

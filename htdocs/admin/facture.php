@@ -703,11 +703,8 @@ $var=true;
 // TODO Add rights to manage setting by user on generate documents ?
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("FactureUsePreprint");
-$htmltooltip = $langs->trans("FactureUsePreprintInfo");
-print $form->textwithpicto('',$htmltooltip,1,0);
-//TODO move to language file
-$htmltooltip = 'Enable if you use paper with preprinted logo & footer. Disable to print logo & Footer. This can be changed by user';
+print '<td>'.$langs->trans("DocumentUsePreprintPaper");
+$htmltooltip = $langs->trans("DocumentUsePreprintPaperInfo");
 print $form->textwithpicto('',$htmltooltip,1,0);
 print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
@@ -722,11 +719,8 @@ print '</td></tr>';
 // Upload of cgv direcltly provided here ?
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("FactureUsePreprintCgv");
-$htmltooltip = $langs->trans("FactureUsePreprintCgvInfo");
-//TODO move to language file
-print $form->textwithpicto('',$htmltooltip,1,0);
-$htmltooltip = 'Enable if you use paper with preprinted cgv. Disable to append cgv.pdf if any found in society folder & should manage multilanguage cgv.';
+print '<td>'.$langs->trans("DocumentUsePreprintPaperCgv");
+$htmltooltip = $langs->trans("DocumentUsePreprintPaperCgvInfo");
 print $form->textwithpicto('',$htmltooltip,1,0);
 print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';

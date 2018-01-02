@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2017       Ari Elbaz (elarifr)	        <github@accedinfo.com>
- *
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -293,6 +293,8 @@ class FormFile
 		if (! is_object($form)) $form=new Form($this->db);
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        //elarifr to remove in not using dolibarr_set_const(
+        //include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 		// For backward compatibility
 		if (! empty($iconPDF)) {
@@ -642,30 +644,70 @@ class FormFile
 				$out.= '&nbsp;';
 			}
 
-			// Elarifr Facture printing options
-			if (in_array($modulepart,array('facture')))
-            // The optional print switch are implemented only for such elements. 
-            // TEMP values are resetted from facture/card.php to report admin default value
-            // TODO Add & Check users rights to change option
-            // 'propal','order','commande','supplier_proposal''proposal',,'expedition', 'commande_fournisseur', 'expensereport'
+			// Elarifr Propal printing options ajax switch before gen of document
+            // The optional print switch are implemented only for such elements.
+            // TODO add a check user right to change settings
+            // DO WE USE PROPALE_ as actual or move to PROPAL_ as module ?
+			if (in_array($modulepart,array('propal')))
 			{
 				//Switch Preprint
-				//TODO Check module context is facture devis commande...
-				$out.='&nbsp;'.$langs->trans("FactureUsePreprintSmall");
-				$htmltooltip = $langs->trans("FactureUsePreprintInfo");
+				$out.='&nbsp;'.$langs->trans("DocumentUsePreprintPaperSmall");
+				$htmltooltip = $langs->trans("DocumentUsePreprintPaperInfo");
 				$out.=$form->textwithpicto('',$htmltooltip,1,0);
-				$out.= ajax_constantonoff('FACTURE_USE_PREPRINT_TEMP'); //,,$conf->entity
+				$out.= ajax_constantonoff('PROPALE_USE_PREPRINT_USERCHOICE'); //,,$conf->entity
 
 				//Switch Preprint CGV
-				//TODO Check module context is facture devis commande...
-				$out.=$langs->trans("FactureUsePreprintCgvSmall");
-				$htmltooltip = $langs->trans("FactureUsePreprintCgvInfo");
+				$out.='&nbsp;'.$langs->trans("DocumentUsePreprintPaperCgvSmall");
+				$htmltooltip = $langs->trans("DocumentUsePreprintPaperCgvInfo");
 				$out.=$form->textwithpicto('',$htmltooltip,1,0);
-				$out.= ajax_constantonoff('FACTURE_USE_PREPRINT_CGV_TEMP'); //,,$conf->entity
+				$out.= ajax_constantonoff('PROPALE_USE_PREPRINT_CGV_USERCHOICE'); //,,$conf->entity
+				$out.= '&nbsp;';
+			}
+
+			// Elarifr Order printing options ajax switch before gen of document
+            // TODO add a check user right to change settings
+            // DO WE USE COMMANDE_ as actual or move to ORDER_  ?
+			if (in_array($modulepart,array('commande')))
+			{
+				//Switch Preprint
+				$out.='&nbsp;'.$langs->trans("DocumentUsePreprintPaperSmall");
+				$htmltooltip = $langs->trans("DocumentUsePreprintPaperInfo");
+				$out.=$form->textwithpicto('',$htmltooltip,1,0);
+				$out.= ajax_constantonoff('COMMANDE_USE_PREPRINT_USERCHOICE'); //,,$conf->entity
+
+				//Switch Preprint CGV
+				$out.='&nbsp;'.$langs->trans("DocumentUsePreprintPaperCgvSmall");
+				$htmltooltip = $langs->trans("DocumentUsePreprintPaperCgvInfo");
+				$out.=$form->textwithpicto('',$htmltooltip,1,0);
+				$out.= ajax_constantonoff('COMMANDE_USE_PREPRINT_CGV_USERCHOICE'); //,,$conf->entity
+				$out.= '&nbsp;';
+			}
+
+			// Elarifr Facture printing options ajax switch before gen of document
+            // TODO add a check user right to change settings
+			if (in_array($modulepart,array('facture')))
+            // TEMP values are resetted from facture/card.php to report admin default value
+            // TODO Add & Check users rights to change option
+			{
+				//Switch Preprint
+        		//dolibarr_set_const($db, "FACTURE_USE_PREPRINT_USERCHOICE",$conf->global->FACTURE_USE_PREPRINT,'chaine',0,'',$conf->entity);
+				$out.='&nbsp;'.$langs->trans("DocumentUsePreprintPaperSmall");
+				$htmltooltip = $langs->trans("DocumentUsePreprintPaperInfo");
+				$out.=$form->textwithpicto('',$htmltooltip,1,0);
+				$out.= ajax_constantonoff('FACTURE_USE_PREPRINT_USERCHOICE'); //,,$conf->entity
+
+				//Switch Preprint CGV
+		        //dolibarr_set_const($db, "FACTURE_USE_PREPRINT_CGV_USERCHOICE",$conf->global->FACTURE_USE_PREPRINT_CGV,'chaine',0,'',$conf->entity);
+				$out.='&nbsp;'.$langs->trans("DocumentUsePreprintPaperCgvSmall");
+				$htmltooltip = $langs->trans("DocumentUsePreprintPaperCgvInfo");
+				$out.=$form->textwithpicto('',$htmltooltip,1,0);
+				$out.= ajax_constantonoff('FACTURE_USE_PREPRINT_CGV_USERCHOICE'); //,,$conf->entity
 				$out.= '&nbsp;';
 			}
 
             // Elarifr TODO Expand for other doc to build using preprinted papers propal, orders.....
+            // The optional print switch are not implemented for such elements.
+            // 'commande','supplier_proposal''proposal','expedition', 'commande_fournisseur', 'expensereport'
 
 			// Button
 			$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
@@ -690,7 +732,6 @@ class FormFile
 				}
 			}
 			$out.= '</tr>';
-
 
 			// Execute hooks
 			$parameters=array('socid'=>(isset($GLOBALS['socid'])?$GLOBALS['socid']:''),'id'=>(isset($GLOBALS['id'])?$GLOBALS['id']:''),'modulepart'=>$modulepart);
