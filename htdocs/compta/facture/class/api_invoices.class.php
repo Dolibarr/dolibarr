@@ -344,8 +344,10 @@ class Invoices extends DolibarrApi
     		$result = $this->get($id);
     		unset($result->line);
     		return $this->_cleanObjectDatas($result);
-    	}
-    	return false;
+    	} else {
+		throw new RestException(304);
+	}
+    	//return false;
     }
 
     /**
