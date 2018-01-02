@@ -2264,7 +2264,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 	$rep='';
 	
 	if ($hookmanager) {
-            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $picto);
+            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
             $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
             $rep.=$hookmanager->resPrint;
         }
