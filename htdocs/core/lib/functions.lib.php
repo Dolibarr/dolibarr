@@ -2268,8 +2268,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
             $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
             $rep.=$hookmanager->resPrint;
         }
-	 if (empty($reshook))
-        {
+	
 		$picto = '';
 		if($withpicto){
 			if($withpicto=='fax'){
@@ -2287,7 +2286,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
 		if ($adddivfloat) $rep.='</div>';
 		else $rep.='</span>';
-	 }
+	 
 	
 	return $rep;
 }
