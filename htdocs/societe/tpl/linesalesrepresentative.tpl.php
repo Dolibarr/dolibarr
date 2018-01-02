@@ -1,5 +1,12 @@
 <?php
-        // Sale representative
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+		// Sale representative
         print '<tr><td>';
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('SalesRepresentatives');
