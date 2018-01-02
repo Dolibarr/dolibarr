@@ -150,7 +150,7 @@ $htmlheadercontentdefault.='<script src="https://code.jquery.com/ui/1.12.1/jquer
 $htmlheadercontentdefault.='<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
-
+$htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=relativepathtomyfile.js"></script>'."\n";
 
 
 /*
