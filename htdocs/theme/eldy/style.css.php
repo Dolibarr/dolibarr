@@ -5002,12 +5002,12 @@ div.tabsElem a.tab {
 {
 	.side-nav {
 		z-index: 200;
-    	background: #FFF;
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
 		padding-top: 70px;
     }
 	#id-left {
     	z-index: 201;
-        background: #FFF;
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
 	}
 
     .login_vertical_align {
@@ -5050,7 +5050,9 @@ div.tabsElem a.tab {
 		left: 0 !important;
 		text-align: center;
         vertical-align: middle;
-        background: #FFF;
+
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
+
         height: 50px;
 
     	z-index: 202;

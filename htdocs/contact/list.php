@@ -498,15 +498,6 @@ if (! empty($arrayfields['p.firstname']['checked']))
 	print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
 	print '</td>';
 }
-<<<<<<< HEAD
-if (! empty($arrayfields['p.poste']['checked']))
-{
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
-	print '</td>';
-}
-=======
->>>>>>> branch '6.0' of git@github.com:Dolibarr/dolibarr.git
 if (! empty($arrayfields['p.zip']['checked']))
 {
 	print '<td class="liste_titre">';
