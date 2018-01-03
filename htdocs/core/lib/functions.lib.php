@@ -4886,7 +4886,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	global $conf;
 
 	$path = '';
-	
+
 	$arrayforoldpath=array('cheque','user','category','holiday','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
@@ -5133,7 +5133,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
  */
-function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
+function dol_htmlentitiesbr($stringtoencode, $nl2brmode=0, $pagecodefrom='UTF-8', $removelasteolbr=1)
 {
 	$newstring=$stringtoencode;
 	if (dol_textishtml($stringtoencode))	// Check if text is already HTML or not
