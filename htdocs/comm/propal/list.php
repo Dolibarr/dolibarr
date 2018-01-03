@@ -374,7 +374,7 @@ if ($resql)
 	if ($search_year)        $param.='&search_year='.urlencode($search_year);
 	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
-        if ($search_refprojet)   $param.='&search_refprojet='.urlencode($search_refprojet);
+	if ($search_refprojet)   $param.='&search_refprojet='.urlencode($search_refprojet);
 	if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
 	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
 	if ($search_sale > 0)    $param.='&search_sale='.urlencode($search_sale);
