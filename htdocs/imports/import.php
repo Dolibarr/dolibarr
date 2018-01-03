@@ -343,7 +343,7 @@ if ($step == 1 || ! $datatoimport)
 	dol_fiche_head($head, 'step1', $langs->trans("NewImport"), -1);
 
 
-	print $langs->trans("SelectImportDataSet").'<br>';
+	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
 
 	// Affiche les modules d'imports
 	print '<table class="noborder" width="100%">';
