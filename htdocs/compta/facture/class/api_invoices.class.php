@@ -168,6 +168,14 @@ class Invoices extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $invoice_static = new Facture($db);
                 if($invoice_static->fetch($obj->rowid)) {
+
+		    // Get payment details
+        	    $invoice_static->totalpaye = $invoice_static->getSommePaiement();
+        	    $invoice_static->totalcreditnotes = $invoice_static->getSumCreditNotesUsed();
+        	    $invoice_static->totaldeposits = $invoice_static->getSumDepositsUsed();
+        	    $invoice_static->resteapayer = price2num($invoice_static->total_ttc - $invoice_static->totalpaye - $invoice_static->totalcreditnotes - $invoice_static->totaldeposits, 'MT');
+
+
                     $obj_ret[] = $this->_cleanObjectDatas($invoice_static);
                 }
                 $i++;
