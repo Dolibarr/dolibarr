@@ -68,6 +68,9 @@ $search_categ_thirdparty=GETPOST("search_categ_thirdparty",'int');
 $search_categ_supplier=GETPOST("search_categ_supplier",'int');
 $search_status=GETPOST("search_status",'int');
 $search_type=GETPOST('search_type','alpha');
+$search_zip=GETPOST('search_zip','alpha');
+$search_town=GETPOST('search_town','alpha');
+
 if ($search_status=='') $search_status=1; // always display activ customer first
 
 $optioncss = GETPOST('optioncss','alpha');
@@ -289,7 +292,7 @@ if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_pos
 if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
-if (strlen($search_fax))            $sql.= natural_search('p.phone_fax', $search_fax);
+if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
 if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
@@ -396,6 +399,7 @@ if ($search_email != '') $param.='&amp;search_email='.urlencode($search_email);
 if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status);
 if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
+
 // Add $param from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -491,12 +495,6 @@ if (! empty($arrayfields['p.firstname']['checked']))
     print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
     print '</td>';
 }
-if (! empty($arrayfields['p.poste']['checked']))
-{
-    print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
-    print '</td>';
-}
 if (! empty($arrayfields['p.zip']['checked']))
 {
     print '<td class="liste_titre">';
@@ -508,6 +506,12 @@ if (! empty($arrayfields['p.town']['checked']))
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_town" size="5" value="'.dol_escape_htmltag($search_town).'">';
     print '</td>';
+}
+if (! empty($arrayfields['p.poste']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
+	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))
 {
