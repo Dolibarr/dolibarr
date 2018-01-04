@@ -1965,12 +1965,12 @@ class Societe extends CommonObject
 			$label.= '<br><b>' . $langs->trans('Country') . ':</b> '. $this->country_code;
 		if (! empty($this->tva_intra))
 			$label.= '<br><b>' . $langs->trans('VATIntra') . ':</b> '. $this->tva_intra;
-			if (! empty($this->code_client) && $this->client)
+		if (! empty($this->code_client) && $this->client)
 			$label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
 		if (! empty($this->code_fournisseur) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
 		if (! empty($conf->accounting->enabled) && $this->client)
-			$label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. $this->code_compta_client;
+			$label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. ($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (! empty($conf->accounting->enabled) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
 
