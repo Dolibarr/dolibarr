@@ -126,8 +126,10 @@ if (g.getDivId() != null)
 			$projecttmp=new Project($db);
 			$projecttmp->fetch($t['task_project_id']);
 			$tmpt = array(
-				'task_id'=> '-'.$t['task_project_id'], 'task_alternate_id'=> '-'.$t['task_project_id'], 'task_name'=>$projecttmp->ref.' '.$projecttmp->title, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
-				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0, 'task_notes'=>''
+				'task_id'=> '-'.$t['task_project_id'], 'task_alternate_id'=> '-'.$t['task_project_id'], 'task_name'=>$projecttmp->ref.' '.$projecttmp->title, 'task_resources'=>'',
+				'task_start_date'=>'', 'task_end_date'=>'',
+				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0, 'task_notes'=>'',
+				'task_planned_workload'=>0
 			);
 			constructGanttLine($tasks, $tmpt, array(), 0, $t['task_project_id']);
 			$old_project_id = $t['task_project_id'];
@@ -168,6 +170,7 @@ else
  */
 function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project_id=null)
 {
+	global $langs;
     global $dateformatinput2;
 
     $start_date = $task["task_start_date"];
@@ -262,7 +265,11 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level=0, $project
     $taskid = $task["task_alternate_id"];
     //$taskid = $task['task_id'];
 
-    $s.= "g.AddTaskItem(new JSGantt.TaskItem('".$taskid."', '".dol_escape_js(trim($name))."', '".$start_date."', '".$end_date."', '".$css."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".$line_is_auto_group.", '".$parent."', 1, '".$dependency."', '".(empty($task["task_is_group"]) ? (($percent >= 0 && $percent != '') ? $percent.'%' : '') : '')."', '".dol_escape_js($task['note'])."', g));";
+    $note = $task['note'];
+
+    $note = dol_concatdesc($note, $langs->trans("Workload").' : '.($task['task_planned_workload'] ? convertSecondToTime($task['task_planned_workload'], 'allhourmin') : ''));
+
+    $s.= "g.AddTaskItem(new JSGantt.TaskItem('".$taskid."', '".dol_escape_js(trim($name))."', '".$start_date."', '".$end_date."', '".$css."', '".$link."', ".$task['task_milestone'].", '".dol_escape_js($resources)."', ".($percent >= 0 ? $percent : 0).", ".$line_is_auto_group.", '".$parent."', 1, '".$dependency."', '".(empty($task["task_is_group"]) ? (($percent >= 0 && $percent != '') ? $percent.'%' : '') : '')."', '".dol_escape_js($note)."', g));";
     echo $s;
 
 

@@ -260,6 +260,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_is_group'] = 0;
         $tasks[$taskcursor]['task_css'] = 'gtaskblue';
         $tasks[$taskcursor]['task_position'] = $val->rang;
+        $tasks[$taskcursor]['task_planned_workload'] = $val->planned_workload;
 
         if ($val->fk_parent != 0 && $task->hasChildren()> 0){
             $tasks[$taskcursor]['task_is_group']=1;
@@ -280,6 +281,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_start_date']=$val->date_start;
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;
 		$tasks[$taskcursor]['task_color']='b4d1ea';
+
 		$idofusers=$task->getListContactId('internal');
 		$idofcontacts=$task->getListContactId('external');
   		$s='';
