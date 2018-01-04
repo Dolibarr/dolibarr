@@ -307,6 +307,11 @@ class Invoices extends DolibarrApi
      * @url	PUT {id}/lines/{lineid}
      *
      * @return object
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
      */
     function putLine($id, $lineid, $request_data = NULL) {
     	if(! DolibarrApiAccess::$user->rights->facture->creer) {
@@ -352,8 +357,9 @@ class Invoices extends DolibarrApi
     		$result = $this->get($id);
     		unset($result->line);
     		return $this->_cleanObjectDatas($result);
+	    } else {
+	    	throw new RestException(304, $this->invoice->error);
     	}
-    	return false;
     }
 
     /**
@@ -365,6 +371,7 @@ class Invoices extends DolibarrApi
      * @url     DELETE {id}/lines/{lineid}
      *
      * @return array
+     *
      * @throws 400
      * @throws 401
      * @throws 404
