@@ -532,13 +532,44 @@ class Proposals extends DolibarrApi
 
 
 	/**
+	 * Set a commercial proposal billed. Could be also called setbilled
+	 *
+	 * @param   int     $id             Commercial proposal ID
+	 *
+	 * @url POST    {id}/setbilled
+	 *
+	 * @return  array
+	 */
+	function setinvoiced($id)
+	{
+		if(! DolibarrApiAccess::$user->rights->propal->creer) {
+			throw new RestException(401);
+		}
+		$result = $this->propal->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Commercial Proposal not found');
+		}
+
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->propal->classifyBilled(DolibarrApiAccess::$user);
+		if( $result < 0) {
+			throw new RestException(400, $this->propal->error);
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Validate a commercial proposal
 	 *
 	 * If you get a bad value for param notrigger check that ou provide this in body
 	 * {
 	 * "notrigger": 0
 	 * }
-	 * 
+	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
@@ -548,13 +579,13 @@ class Proposals extends DolibarrApi
      * @throws 401
      * @throws 404
      * @throws 500
-     * 
+     *
      * @return array
 	 */
 	function validate($id, $notrigger=0)
 	{
 		var_dump($notrigger);exit;
-		
+
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
 		}
@@ -656,7 +687,7 @@ class Proposals extends DolibarrApi
             if ($result < 0) {
                     throw new RestException(500, 'Error : '.$this->propal->error);
             }
-				
+
 			return array(
 				'success' => array(
 					'code' => 200,
@@ -664,8 +695,8 @@ class Proposals extends DolibarrApi
 				)
 			);
     }
-    
-	
+
+
 	/**
 	 * Validate fields before create or update object
 	 *
