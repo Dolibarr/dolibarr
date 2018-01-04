@@ -111,7 +111,7 @@ if (g.getDivId() != null)
 	<?php
 
 	echo "\n";
-	echo "/* g.AddTaskItem(new JSGantt.TaskItem(task_id, 'label', 'start_date', 'end_date', 'css', 'link', milestone, 'Resources', Compl%, Group, Parent, 1, 'Dependency', 'label','note', g)); */\n";
+	echo "/* g.AddTaskItem(new JSGantt.TaskItem(task_id, 'label', 'start_date', 'end_date', 'css', 'link', milestone, 'Resources', Compl%, Group, Parent, Open, 'Dependency', 'label','note', g)); */\n";
 
 	$level=0;
 	$tnums = count($tasks);

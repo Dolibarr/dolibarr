@@ -64,7 +64,7 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
-$langs->loadLangs(array('bills','companies','compta','products','banks','main'));
+$langs->loadLangs(array('bills','companies','compta','products','banks','main','withdrawals'));
 if (! empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
 
@@ -4293,8 +4293,12 @@ else if ($id > 0 || ! empty($ref))
 				{
 					if ($user->rights->prelevement->bons->creer)
 					{
-						$langs->load("withdrawals");
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MakeWithdrawRequest")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+						if (! $objectidnext && $object->close_code != 'replaced') 				// Not replaced by another invoice
+						{
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MakeWithdrawRequest")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+						} else {
+							print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('MakeWithdrawRequest') . '</span></div>';
+						}
 					}
 					else
 					{

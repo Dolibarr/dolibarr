@@ -4954,6 +4954,7 @@ div.tabsElem a.tab {
 	.mainmenuaspan {
     	/*display: none;*/
   		font-size: 10px;
+  		padding-right: 0;
     }
     .topmenuimage {
     	background-size: 22px auto;
@@ -4990,6 +4991,7 @@ div.tabsElem a.tab {
 	.mainmenuaspan {
     	/*display: none;*/
   		font-size: 10px;
+  		padding-right: 0;
     }
     .topmenuimage {
     	background-size: 20px auto;
