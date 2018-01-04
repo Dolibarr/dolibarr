@@ -196,6 +196,20 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error generating document');
 			}
 		}
+                elseif ($module_part == 'propal' || $module_part == 'proposal')
+                {
+                        require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+                        $this->propal = new Propal($this->db);
+                        $result = $this->propal->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+                        if( ! $result ) {
+                                throw new RestException(404, 'Propal not found');
+                        }
+                        $templateused = $doctemplate?$doctemplate:$this->propal->modelpdf;
+                        $result = $this->propal->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                        if( $result <= 0 ) {
+                                throw new RestException(500, 'Error generating document');
+                        }
+                }
 		else
 		{
 			throw new RestException(403, 'Generation not available for this modulepart');
