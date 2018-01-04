@@ -156,7 +156,16 @@ else if($action === 'downloadcsv') {
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("BlockedLogSetup"));
+if (GETPOST('withtab','alpha'))
+{
+	$title=$langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
+}
+else
+{
+	$title=$langs->trans("BrowseBlockedLog");
+}
+
+llxHeader('',$langs->trans("BrowseBlockedLog"));
 
 $blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount);
 if (! is_array($blocks))
@@ -171,7 +180,7 @@ if (GETPOST('withtab','alpha'))
 	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
-print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
+print load_fiche_titre($title, $linkback);
 
 if (GETPOST('withtab','alpha'))
 {
