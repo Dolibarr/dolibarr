@@ -795,6 +795,7 @@ class BlockedLog
 		if (empty($conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT)) { // creation of a unique fingerprint
 
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 			$fingerprint = dol_hash(print_r($mysoc,true).getRandomPassword(1), '5');
 
