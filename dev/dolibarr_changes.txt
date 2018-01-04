@@ -123,4 +123,12 @@ PARSEDOWN
 	else $len = strlen($line);
 	$shortage = 4 - $len % 4;
                 	
-    	
+
+
+JEDITABLE.JS
+------------
+
+* <button type="submit" />  =>  <button class="button" type="submit" />
+* <button type="cancel" />  =>  <button class="button" type="cancel" />
+
+

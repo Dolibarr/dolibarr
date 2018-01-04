@@ -81,7 +81,8 @@ function test_sql_and_script_inject($val, $type)
     // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
     if ($type != 2)
     {
-        $inj += preg_match('/delete\s+from/i',	 $val);
+    	$inj += preg_match('/updatexml\(/i',	 $val);
+    	$inj += preg_match('/delete\s+from/i',	 $val);
         $inj += preg_match('/create\s+table/i',	 $val);
         $inj += preg_match('/update.+set.+=/i',  $val);
         $inj += preg_match('/insert\s+into/i', 	 $val);
@@ -1244,7 +1245,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! defined('DISABLE_JQUERY_JEDITABLE'))
             {
             	print '<!-- JS to manage editInPlace feature -->'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript">'."\n";
