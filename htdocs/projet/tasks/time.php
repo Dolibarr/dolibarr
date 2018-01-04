@@ -662,7 +662,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$sql .= $db->order($sortfield, $sortorder);
 
-		$var=true;
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -755,7 +754,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		// Fields title search
 		print '<tr class="liste_titre_filter">';
 		// Date
-		if (! empty($arrayfields['t.task_date']['checked'])) 
+		if (! empty($arrayfields['t.task_date']['checked']))
 		{
 			print '<td class="liste_titre">';
 			if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
