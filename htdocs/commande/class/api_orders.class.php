@@ -573,9 +573,8 @@ class Orders extends DolibarrApi
         return $result;
     }
 
-
     /**
-     *  Classify the order as invoiced
+     * Classify the order as invoiced. Could be also called setbilled
      *
      * @param int   $id           Id of the order
      *
@@ -605,7 +604,7 @@ class Orders extends DolibarrApi
         if( $result < 0) {
                 throw new RestException(400, $this->commande->error);
         }
-        
+
         return $result;
     }
 
