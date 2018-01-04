@@ -86,7 +86,7 @@ if ($pastmonth == 0) {
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
@@ -638,7 +638,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
-	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 
@@ -811,32 +811,34 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// VAT counterpart for NPR
-		foreach ( $tabother[$key] as $k => $mt ) {
-			print '<tr class="oddeven">';
-			print "<td><!-- VAT counterpart NPR --></td>";
-			print "<td>" . $date . "</td>";
-			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-			$companystatic->supplier_code = $tabcompany[$key]['code_supplier'];
-			// Account
-			print "<td>";
-			$accountoshow = length_accountg($k);
-			if (empty($accountoshow) || $accountoshow == 'NotDefined')
-			{
-				print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
+		if (is_array($tabother[$key]))
+		{
+			foreach ( $tabother[$key] as $k => $mt ) {
+				print '<tr class="oddeven">';
+				print "<td><!-- VAT counterpart NPR --></td>";
+				print "<td>" . $date . "</td>";
+				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				$companystatic->id = $tabcompany[$key]['id'];
+				$companystatic->name = $tabcompany[$key]['name'];
+				$companystatic->supplier_code = $tabcompany[$key]['code_supplier'];
+				// Account
+				print "<td>";
+				$accountoshow = length_accountg($k);
+				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				{
+					print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
+				}
+				else print $accountoshow;
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				print '</td>';
+				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT") . " NPR (counterpart)</td>";
+				print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print "</tr>";
 			}
-			else print $accountoshow;
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			print '</td>';
-			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT") . " NPR (counterpart)</td>";
-			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
-			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-			print "</tr>";
 		}
-
 	}
 
 	print "</table>";
