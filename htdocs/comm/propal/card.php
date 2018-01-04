@@ -1411,16 +1411,13 @@ if ($action == 'create')
 	}
 	print '</tr>' . "\n";
 
-	// Contacts (ask contact only if thirdparty already defined). TODO do this also into order and invoice.
 	if ($socid > 0)
 	{
+         	// Contacts (ask contact only if thirdparty already defined). TODO do this also into order and invoice.
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td>';
 		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
-	}
 
-	if ($socid > 0)
-	{
 		// Ligne info remises tiers
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 		if ($soc->remise_percent)
