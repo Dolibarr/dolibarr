@@ -26,9 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("blockedlog");
+$langs->loadLangs(array("admin","other","blockedlog"));
 
 if (! $user->admin || empty($conf->blockedlog->enabled)) accessforbidden();
 
@@ -143,7 +141,7 @@ if ($resql)
 {
 	while ($obj = $db->fetch_object($resql))
 	{
-			$countryArray[$obj->code_iso]		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+			$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
 	}
 }
 
@@ -162,7 +160,7 @@ print $langs->trans("ListOfTrackedEvents").'</td><td>';
 $arrayoftrackedevents=$block_static->trackedevents;
 foreach($arrayoftrackedevents as $key => $val)
 {
-	print $key.'-'.$val.'<br>';
+	print $key.' - '.$langs->trans($val).'<br>';
 }
 
 print '</td></tr>';

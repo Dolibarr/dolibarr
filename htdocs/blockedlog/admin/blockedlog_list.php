@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'blockedloglist';   // To manage different context of search
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
@@ -43,6 +43,7 @@ $search_start = -1;
 if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
 $search_end = -1;
 if(GETPOST('search_endyear')!='') $search_end= dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+$search_code = GETPOST('search_code', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
@@ -76,6 +77,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_fk_user = '';
 	$search_start = -1;
 	$search_end = -1;
+	$search_code = '';
 	$search_ref = '';
 	$search_amount = '';
 	$toselect='';
@@ -167,7 +169,7 @@ else
 
 llxHeader('',$langs->trans("BrowseBlockedLog"));
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount);
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (! is_array($blocks))
 {
 	dol_print_error($block_static->db);
@@ -216,24 +218,41 @@ print ' </div>';
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 
 print '<table class="noborder" width="100%">';
+
+// Line of filters
 print '<tr class="liste_titre_filter">';
 
 print '<td class="liste_titre">&nbsp;</td>';
 
 print '<td class="liste_titre">';
-print $form->select_date($search_start,'search_start');
-print $form->select_date($search_end,'search_end');
+//print $langs->trans("from").': ';
+$form->select_date($search_start,'search_start');
+//print '<br>';
+//print $langs->trans("to").': ';
+$form->select_date($search_end,'search_end');
 print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_users($search_fk_user, 'search_fk_user', 1);
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1);
 print '</td>';
 
-print '<td class="liste_titre"></td>';
+// Actions code
+$langs->load("blockedlog");
+print '<td class="liste_titre">';
+print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth200', 1);
+print '</td>';
 
 // Ref
 print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
@@ -292,7 +311,9 @@ foreach($blocks as &$block) {
 	   	//print $block->getUser()
 	   	print $block->user_fullname;
 	   	print '</td>';
+	   	// Action
 	   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
+	   	// Ref
 	   	print '<td>'.$block->ref_object.'</td>';
 	   	print '<td>'.$object_link.'</td>';
 	   	print '<td align="right">'.price($block->amounts).'</td>';
@@ -328,6 +349,8 @@ print '</table>';
 print '</form>';
 
 print '</div>';
+
+
 
 print '<script type="text/javascript">
 
@@ -374,29 +397,27 @@ jQuery(document).ready(function () {
 </script>'."\n";
 
 
-if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
-
+if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL))
+{
 ?>
-				<script type="text/javascript">
+		<script type="text/javascript">
 
-					$.ajax({
-						url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php',1) ?>"
-						,dataType:"html"
-					}).done(function(data) {
+			$.ajax({
+				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php',1) ?>"
+				,dataType:"html"
+			}).done(function(data) {
 
-						if(data == 'hashisok') {
-							$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityReconizeFingerprintConformity'). ' '. img_picto($langs->trans('SignatureOK'), 'on') ?>');
-						}
-						else{
-							$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityDidntReconizeFingerprintConformity'). ' '.img_picto($langs->trans('SignatureKO'), 'off') ?>');
-						}
+				if(data == 'hashisok') {
+					$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityReconizeFingerprintConformity'). ' '. img_picto($langs->trans('SignatureOK'), 'on') ?>');
+				}
+				else{
+					$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityDidntReconizeFingerprintConformity'). ' '.img_picto($langs->trans('SignatureKO'), 'off') ?>');
+				}
 
-					});
+			});
 
-				</script>
-
+		</script>
 <?php
-
 }
 
 if (GETPOST('withtab','alpha'))

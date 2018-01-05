@@ -1303,11 +1303,6 @@ class Adherent extends CommonObject
 				$this->last_subscription_amount=$montant;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
-
-				// Call trigger
-				$result=$this->call_trigger('MEMBER_SUBSCRIPTION',$user);
-				if ($result < 0) { $error++; }
-				// End call triggers
 			}
 
 			if (! $error)
