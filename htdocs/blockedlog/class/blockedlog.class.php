@@ -154,7 +154,7 @@ class BlockedLog
 	}
 
 	/**
-	 *      try to retrieve logged object link
+	 *  Try to retrieve source object (it it still exists)
 	 */
 	public function getObjectLink()
 	{
@@ -164,7 +164,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 			$object = new Facture($this->db);
-			if($object->fetch($this->fk_object)>0) {
+			if ($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
 			else{
@@ -175,7 +175,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 			$object = new FactureFournisseur($this->db);
-			if($object->fetch($this->fk_object)>0) {
+			if ($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
 			else{
@@ -186,7 +186,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 			$object = new Paiement($this->db);
-			if($object->fetch($this->fk_object)>0) {
+			if ($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
 			else{
@@ -197,7 +197,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 			$object = new PaiementFourn($this->db);
-			if($object->fetch($this->fk_object)>0) {
+			if ($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
 			else{
@@ -208,7 +208,18 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 
 			$object = new PaymentDonation($this->db);
-			if($object->fetch($this->fk_object)>0) {
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
+		else if($this->element === 'don' || $this->element === 'donation') {
+			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+
+			$object = new Don($this->db);
+			if ($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
 			else{
@@ -796,14 +807,12 @@ class BlockedLog
 		if ($search_end > 0)      $sql.=" AND date_creation <= '".$this->db->idate($search_end)."'";
 		if ($search_ref != '')    $sql.=natural_search("ref_object", $search_ref);
 		if ($search_amount != '') $sql.=natural_search("amounts", $search_amount, 1);
-		if ($search_code != '')   $sql.=natural_search("action", $search_code, 3);
+		if ($search_code != '' && $search_code != '-1')   $sql.=natural_search("action", $search_code, 3);
 
 		$sql.=$this->db->order($sortfield, $sortorder);
-
-		if($limit > 0 )$sql.=' LIMIT '.$limit;
+		$sql.=$this->db->plimit($limit);
 
 		$res = $this->db->query($sql);
-
 		if($res) {
 
 			$results=array();

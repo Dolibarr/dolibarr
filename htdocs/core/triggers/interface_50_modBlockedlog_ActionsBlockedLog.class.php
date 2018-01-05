@@ -74,7 +74,9 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		)
 		{
 			$qualified++;
-			$amounts=  (double) $object->total_ttc;
+
+			if ($action==='DON_VALIDATE') $amounts = (double) $object->amount;
+			else $amounts = (double) $object->total_ttc;
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
@@ -106,8 +108,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // not implemented action log
 		}
 
-
 		$result = $b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
+
 		if ($result < 0)
 		{
 			$this->error = $b->error;

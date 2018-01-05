@@ -305,8 +305,11 @@ foreach($blocks as &$block) {
 	if (empty($showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
 	{
 	   	print '<tr class="oddeven">';
+	   	// ID
 	   	print '<td>'.$block->id.'</td>';
+	   	// Date
 	   	print '<td>'.dol_print_date($block->tms,'dayhour').'</td>';
+		// User
 	   	print '<td>';
 	   	//print $block->getUser()
 	   	print $block->user_fullname;
@@ -315,6 +318,7 @@ foreach($blocks as &$block) {
 	   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
 	   	// Ref
 	   	print '<td>'.$block->ref_object.'</td>';
+	   	// Link to source object
 	   	print '<td>'.$object_link.'</td>';
 	   	print '<td align="right">'.price($block->amounts).'</td>';
 	   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
