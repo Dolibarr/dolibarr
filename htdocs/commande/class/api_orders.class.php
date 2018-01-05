@@ -605,7 +605,18 @@ class Orders extends DolibarrApi
                 throw new RestException(400, $this->commande->error);
         }
 
-        return $result;
+        $result = $this->commande->fetch($id);
+        if( ! $result ) {
+        	throw new RestException(404, 'Order not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+        	throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $this->commande->fetchObjectLinked();
+
+        return $this->_cleanObjectDatas($this->commande);
     }
 
     /**
@@ -640,7 +651,18 @@ class Orders extends DolibarrApi
     		throw new RestException(500, 'Error when closing Order: '.$this->commande->error);
     	}
 
-    	return $result;
+    	$result = $this->commande->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Order not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$this->commande->fetchObjectLinked();
+
+    	return $this->_cleanObjectDatas($this->commande);
     }
 
     /**

@@ -516,7 +516,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, 'Error : '.$this->propal->error);
 		}
 
-                $result = $this->propal->fetch($id);
+		$result = $this->propal->fetch($id);
 		if( ! $result ) {
 			throw new RestException(404, 'Proposal not found');
 		}
@@ -530,37 +530,6 @@ class Proposals extends DolibarrApi
 		return $this->_cleanObjectDatas($this->propal);
 	}
 
-
-	/**
-	 * Set a commercial proposal billed. Could be also called setbilled
-	 *
-	 * @param   int     $id             Commercial proposal ID
-	 *
-	 * @url POST    {id}/setbilled
-	 *
-	 * @return  array
-	 */
-	function setinvoiced($id)
-	{
-		if(! DolibarrApiAccess::$user->rights->propal->creer) {
-			throw new RestException(401);
-		}
-		$result = $this->propal->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'Commercial Proposal not found');
-		}
-
-		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		$result = $this->propal->classifyBilled(DolibarrApiAccess::$user);
-		if( $result < 0) {
-			throw new RestException(400, $this->propal->error);
-		}
-
-		return $result;
-	}
 
 	/**
 	 * Validate a commercial proposal
@@ -584,8 +553,6 @@ class Proposals extends DolibarrApi
 	 */
 	function validate($id, $notrigger=0)
 	{
-		var_dump($notrigger);exit;
-
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
 		}
@@ -614,6 +581,8 @@ class Proposals extends DolibarrApi
         if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
+
+        $this->propal->fetchObjectLinked();
 
         return $this->_cleanObjectDatas($this->propal);
 	}
@@ -652,16 +621,22 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, 'Error when closing Commercial Proposal: '.$this->propal->error);
 		}
 
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => 'Commercial Proposal closed (Ref='.$this->propal->ref.')'
-			)
-		);
+		$result = $this->propal->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Proposal not found');
+		}
+
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->propal->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->propal);
 	}
 
     /**
-     * Set a commercial proposal billed
+     * Set a commercial proposal billed. Could be also called setbilled
      *
      * @param   int     $id             Commercial proposal ID
      *
@@ -688,12 +663,18 @@ class Proposals extends DolibarrApi
                     throw new RestException(500, 'Error : '.$this->propal->error);
             }
 
-			return array(
-				'success' => array(
-					'code' => 200,
-					'message' => 'Commercial Proposal set billed (Ref='.$this->propal->ref.')'
-				)
-			);
+            $result = $this->propal->fetch($id);
+            if( ! $result ) {
+            	throw new RestException(404, 'Proposal not found');
+            }
+
+            if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
+            	throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+            }
+
+            $this->propal->fetchObjectLinked();
+
+            return $this->_cleanObjectDatas($this->propal);
     }
 
 
