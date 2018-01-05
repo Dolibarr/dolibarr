@@ -4216,7 +4216,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 	}*/
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
+	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local tax
 	{
 		if ($local == 1)
 		{
@@ -4421,17 +4421,18 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 }
 
 /**
- *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
+ *  Get type and rate of localtaxes for a particular vat rate/country of a thirdparty.
+ *  This does not take into account the seller setup if subject to vat or not, only country.
  *  TODO
  *  This function is ALSO called to retrieve type for building PDF. Such call of function must be removed.
  *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
- *  @param	int|string  $vatrate			VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	int|string  $vatrate			VAT ID or Rate+Code. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	int		    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	Societe	    $buyer         		Company object
  *  @param	Societe	    $seller        		Company object
- *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
+ *  @param  int         $firstparamisid     1 if first param is ID into table instead of Rate+code (use this if you can)
  *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId
  */
