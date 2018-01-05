@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
+/* Copyright (C) 2017 ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017 Laurent Destailleur <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,6 +81,9 @@ class BlockedLog
 	 * @var int
 	 */
 	public $fk_user = 0;
+
+	public $date_creation;
+	public $date_modification;
 
 	public $date_object = 0;
 
@@ -607,7 +610,7 @@ class BlockedLog
 
 		$this->db->begin();
 
-		$previoushash = $this->getPreviousHash(1);	// This get last record and lock database until insert is done
+		$previoushash = $this->getPreviousHash(1, 0);	// This get last record and lock database until insert is done
 
 		$keyforsignature = $this->buildKeyForSignature();
 
@@ -678,19 +681,20 @@ class BlockedLog
 	}
 
 	/**
-	 *	Check if current signature still correct compare to the chain
+	 *	Check if current signature still correct compared to the value in chain
 	 *
-	 *	@return	boolean			True if OK, False if KO
+	 *	@param	string		$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
+	 *	@return	boolean							True if OK, False if KO
 	 */
-	public function checkSignature()
+	public function checkSignature($previoushash='')
 	{
-
-		//$oldblockedlog = new BlockedLog($this->db);
-		//$previousrecord = $oldblockedlog->fetch($this->id - 1);
-		$previoushash = $this->getPreviousHash(0, $this->id);
-
+		if (empty($previoushash))
+		{
+			$previoushash = $this->getPreviousHash(0, $this->id);
+		}
 		// Recalculate hash
 		$keyforsignature = $this->buildKeyForSignature();
+
 		$signature_line = dol_hash($keyforsignature, '5');		// Not really usefull
 		$signature = dol_hash($previoushash . $keyforsignature, '5');
 		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
@@ -720,10 +724,10 @@ class BlockedLog
 	 *	Get previous signature/hash in chain
 	 *
 	 *	@param int	$withlock		1=With a lock
-	 *	@param int	$beforeid		Before id
-	 *  @return	string				Hash of last record
+	 *	@param int	$beforeid		ID of a record
+	 *  @return	string				Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
-	 private function getPreviousHash($withlock=0, $beforeid=0)
+	 public function getPreviousHash($withlock=0, $beforeid=0)
 	 {
 		global $conf;
 
