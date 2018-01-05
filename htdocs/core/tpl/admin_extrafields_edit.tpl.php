@@ -181,8 +181,9 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 <?php
 // Define list of possible type transition
 $typewecanchangeinto=array(
-    'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-    'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select', 'password'),
+	'password'=>array('password', 'varchar'),
+	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
     'select'=>array('varchar', 'phone', 'mail', 'url', 'select')
