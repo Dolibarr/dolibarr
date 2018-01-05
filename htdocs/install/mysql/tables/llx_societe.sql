@@ -104,5 +104,6 @@ create table llx_societe
   webservices_key          varchar(128),                            	-- supplier webservice key
   
   fk_multicurrency			integer,
-  multicurrency_code		varchar(255)
+  multicurrency_code		varchar(255),
+  fk_entrepot             int             DEFAULT 0                 -- Id de l'entrepôt par défaut (Warehouse ID by default)
 )ENGINE=innodb;
