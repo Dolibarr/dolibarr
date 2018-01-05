@@ -731,7 +731,7 @@ if ($resql)
 	$morehtml.='</div>';
 
 	$addbutton = '';
-	if ($action != 'addline')
+	if ($action != 'addline' && $action != 'reconcile')
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
 		{
