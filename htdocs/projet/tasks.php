@@ -535,14 +535,14 @@ else if ($id > 0 || ! empty($ref))
 
 	print '<tr class="liste_titre nodrag nodrop">';
 	// print '<td>'.$langs->trans("Project").'</td>';
-	print_liste_field_titre($langs->trans("RefTask"), $_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'');
-	print_liste_field_titre($langs->trans("LabelTask"), $_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'');
-	print_liste_field_titre($langs->trans("DateStart"), $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'');
-	print_liste_field_titre($langs->trans("DateEnd"), $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'');
-	print_liste_field_titre($langs->trans("PlannedWorkload"), $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
-	print_liste_field_titre($langs->trans("TimeSpent"), $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
-	print_liste_field_titre($langs->trans("ProgressCalculated"), $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
-	print_liste_field_titre($langs->trans("ProgressDeclared"), $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	print_liste_field_titre("RefTask", $_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'');
+	print_liste_field_titre("LabelTask", $_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'');
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'');
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'');
+	print_liste_field_titre("PlannedWorkload", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
 	//print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center" width="80"',$sortfield,$sortorder,'maxwidthsearch ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="center" width="80"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
