@@ -25,7 +25,7 @@
 
 /**
  * Convert a page content to have correct links (based on DOL_URL_ROOT) into an html content.
- * Used to ouput the page on the Preview.
+ * Used to ouput the page on the Preview from backoffice.
  *
  * @param	Website		$website			Web site object
  * @param	string		$content			Content to replace
@@ -87,9 +87,11 @@ function dolWebsiteOutput($content)
 		global $website;
 
 		// Replace relative link / with dolibarr URL:  ...href="/"...
-		$content=preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+		$content=preg_replace('/(href=")\/\"/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'"', $content, -1, $nbrep);
 		// Replace relative link /xxx.php with dolibarr URL:  ...href="....php"
 		$content=preg_replace('/(href=")\/?([^:\"]*)(\.php\")/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
+		// Replace relative link /xxx with dolibarr URL:  ...href="....php"
+		$content=preg_replace('/(href=")\/?([a-zA-Z0-9\-]+)(["\?]+)/', '\1'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
 
 		// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
 		$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1'.DOL_URL_ROOT.'\2\3"', $content, -1, $nbrep);
