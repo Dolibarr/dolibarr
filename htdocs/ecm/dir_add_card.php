@@ -83,6 +83,7 @@ if (! empty($section))
 	}
 }
 
+// Permissions
 $permtoadd = 0;
 $permtoupload = 0;
 if ($module == 'ecm')
