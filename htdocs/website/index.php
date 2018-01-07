@@ -524,7 +524,9 @@ if ($action == 'addcontainer')
 
 		$substitutionarray=array();
 		$substitutionarray['__WEBSITE_CREATE_BY__']=$user->getFullName($langs);
-		$objectpage->content = make_substitutions(file_get_contents(DOL_DOCUMENT_ROOT.'/website/pagetemplate.html'), $substitutionarray);
+
+		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
+		$objectpage->content = make_substitutions(@file_get_contents(DOL_DOCUMENT_ROOT.'/website/'.$objectpage->type_container.'template.html'), $substitutionarray);
 	}
 
 	if (! $error)
