@@ -455,9 +455,9 @@ class SupplierProposal extends CommonObject
             $this->line->desc=$desc;
             $this->line->qty=$qty;
             $this->line->tva_tx=$txtva;
-            $this->line->localtax1_tx=$txlocaltax1;
-            $this->line->localtax2_tx=$txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
+            $this->line->localtax1_tx=($total_localtax1?$localtaxes_type[1]:0);
+            $this->line->localtax2_tx=($total_localtax2?$localtaxes_type[3]:0);
+            $this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
             $this->line->fk_product=$fk_product;
             $this->line->remise_percent=$remise_percent;

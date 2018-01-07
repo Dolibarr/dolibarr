@@ -45,8 +45,8 @@ if ($module == 'ecm')
 }
 if ($module == 'medias')
 {
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->setup);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->setup);
+	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
 

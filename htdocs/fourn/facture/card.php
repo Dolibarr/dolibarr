@@ -682,6 +682,11 @@ if (empty($reshook))
 								$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
 								$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
 
+								// Extrafields
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+								}
+								
 								// Dates
 								// TODO mutualiser
 								$date_start=$lines[$i]->date_debut_prevue;

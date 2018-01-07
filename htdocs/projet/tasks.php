@@ -34,10 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->load("users");
 $langs->load("projects");
 
-$action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
+$action = GETPOST('action', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $cancel=GETPOST('cancel','alpha');
 
@@ -437,8 +437,24 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 else if ($id > 0 || ! empty($ref))
 {
 	/*
-	 * Fiche projet en mode visu
+	 * Projet card in view mode
 	 */
+
+	// Definition of fields for list
+	$arrayfields=array();
+	$arrayfields['t.task_ref']=array('label'=>$langs->trans("RefTask"), 'checked'=>1);
+	$arrayfields['t.task_label']=array('label'=>$langs->trans("LabelTask"), 'checked'=>1);
+	$arrayfields['t.task_date_start']=array('label'=>$langs->trans("DateStart"), 'checked'=>1);
+	$arrayfields['t.task_date_end']=array('label'=>$langs->trans("DateEnd"), 'checked'=>1);
+	// Extra fields
+	if (is_array($extrafields_task->attribute_label) && count($extrafields_task->attribute_label))
+	{
+		foreach($extrafields_task->attribute_label as $key => $val)
+		{
+			if (! empty($extrafields_task->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields_task->attribute_label[$key], 'checked'=>(($extrafields_task->attribute_list[$key]<0)?0:1), 'position'=>$extrafields_task->attribute_pos[$key], 'enabled'=>(abs($extrafields_task->attribute_list[$key])!=3 && $extrafields_task->attribute_perms[$key]));
+		}
+	}
+
 
 	/*
 	 * Actions
@@ -496,6 +512,9 @@ else if ($id > 0 || ! empty($ref))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 	}
 
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+
 	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder" width="100%">';
 
@@ -516,15 +535,16 @@ else if ($id > 0 || ! empty($ref))
 
 	print '<tr class="liste_titre nodrag nodrop">';
 	// print '<td>'.$langs->trans("Project").'</td>';
-	print '<td width="100">'.$langs->trans("RefTask").'</td>';
-	print '<td>'.$langs->trans("LabelTask").'</td>';
-	print '<td align="center">'.$langs->trans("DateStart").'</td>';
-	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-	print '<td align="right">'.$langs->trans("PlannedWorkload").'</td>';
-	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
-	print '<td align="right">'.$langs->trans("ProgressCalculated").'</td>';
-	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
-	print '<td>&nbsp;</td>';
+	print_liste_field_titre("RefTask", $_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'');
+	print_liste_field_titre("LabelTask", $_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'');
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'');
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'');
+	print_liste_field_titre("PlannedWorkload", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
+	//print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center" width="80"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="center" width="80"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	if (count($tasksarray) > 0)

@@ -187,11 +187,12 @@ class Task extends CommonObject
 	/**
 	 *  Load object in memory from database
 	 *
-	 *  @param	int		$id			Id object
-	 *  @param	int		$ref		ref object
-	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
+	 *  @param	int		$id					Id object
+	 *  @param	int		$ref				ref object
+	 *  @param	int		$loadparentdata		Also load parent data
+	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id,$ref='')
+	function fetch($id, $ref='', $loadparentdata=0)
 	{
 		global $langs;
 
@@ -215,7 +216,13 @@ class Task extends CommonObject
 		$sql.= " t.note_private,";
 		$sql.= " t.note_public,";
 		$sql.= " t.rang";
+		if (! empty($loadparentdata))
+		{
+			$sql.=", t2.ref as task_parent_ref";
+			$sql.=", t2.rang as task_parent_position";
+		}
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+		if (! empty($loadparentdata)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t2 ON t.fk_task_parent = t2.rowid";
 		$sql.= " WHERE ";
 		if (!empty($ref)) {
 			$sql.="t.ref = '".$this->db->escape($ref)."'";
@@ -253,14 +260,20 @@ class Task extends CommonObject
 				$this->note_public			= $obj->note_public;
 				$this->rang					= $obj->rang;
 
-				// Retreive all extrafield for thirdparty
+				if (! empty($loadparentdata))
+				{
+					$this->task_parent_ref      = $obj->task_parent_ref;
+					$this->task_parent_position = $obj->task_parent_position;
+				}
+
+				// Retreive all extrafield data
 			   	$this->fetch_optionals();
 			}
 
 			$this->db->free($resql);
 
-			if ($num_rows) {
-				$this->fetchComments();
+			if ($num_rows)
+			{
 				return 1;
 			}else {
 				return 0;

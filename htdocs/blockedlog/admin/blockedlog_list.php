@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
+/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectlist';   // To manage different context of search
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'blockedloglist';   // To manage different context of search
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
@@ -43,6 +44,7 @@ $search_start = -1;
 if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
 $search_end = -1;
 if(GETPOST('search_endyear')!='') $search_end= dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+$search_code = GETPOST('search_code', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
@@ -76,6 +78,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_fk_user = '';
 	$search_start = -1;
 	$search_end = -1;
+	$search_code = '';
 	$search_ref = '';
 	$search_amount = '';
 	$toselect='';
@@ -101,9 +104,9 @@ else if($action === 'downloadcsv') {
 	$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 	$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
 	$sql.= " WHERE entity = ".$conf->entity;
-	$sql.= " ORDER BY rowid ASC";
-	$res = $db->query($sql);
+	$sql.= " ORDER BY rowid ASC";					// Required so later we can use the parameter $previoushash of checkSignature()
 
+	$res = $db->query($sql);
 	if($res) {
 
 		$signature = $block_static->getSignature();
@@ -122,10 +125,43 @@ else if($action === 'downloadcsv') {
 			.';'.$langs->transnoentities('Date')
 			.';'.$langs->transnoentities('Ref')
 			.';'.$langs->transnoentities('Fingerprint')
+			.';'.$langs->transnoentities('Status')
 			.';'.$langs->transnoentities('FullData')
 			."\n";
 
-		while($obj = $db->fetch_object($res)) {
+		$previoushash = '';
+		$loweridinerror = 0;
+
+		while ($obj = $db->fetch_object($res))
+		{
+			// We set here all data used into signature calculation (see checkSignature method) and more
+			// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
+			$block_static->id = $obj->rowid;
+			$block_static->date_creation = $db->jdate($obj->date_creation);
+			$block_static->date_modification = $db->jdate($obj->tms);
+			$block_static->action = $obj->action;
+			$block_static->fk_object = $obj->fk_object;
+			$block_static->element = $obj->element;
+			$block_static->amounts = (double) $obj->amounts;
+			$block_static->ref_object = $obj->ref_object;
+			$block_static->date_object = $db->jdate($obj->date_object);
+			$block_static->user_fullname = $obj->user_fullname;
+			$block_static->fk_user = $obj->fk_user;
+			$block_static->signature = $obj->signature;
+			$block_static->object_data = unserialize($obj->object_data);
+
+			$checksignature = $block_static->checkSignature($previoushash);	// If $previoushash is not defined, checkSignature will search it
+
+			if ($checksignature)
+			{
+				if ($loweridinerror > 0) $statusofrecord = 'ValidButFoundAPreviousKO';
+				else $statusofrecord = 'Valid';
+			}
+			else
+			{
+				$statusofrecord = 'KO';
+				$loweridinerror = $obj->rowid;
+			}
 
 			print $obj->rowid
 				.';'.$obj->date_creation
@@ -137,16 +173,20 @@ else if($action === 'downloadcsv') {
 				.';'.$obj->date_object
 				.';"'.$obj->ref_object.'"'
 				.';'.$obj->signature
+				.';'.$statusofrecord
 				.';"'.str_replace('"','""',$obj->object_data).'"'
 				."\n";
+
+			// Set new previous hash for next fetch
+			$previoushash = $obj->signature;
 		}
 
 		exit;
 	}
-	else{
+	else
+	{
 		setEventMessage($db->lasterror, 'errors');
 	}
-
 }
 
 
@@ -156,9 +196,18 @@ else if($action === 'downloadcsv') {
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("BlockedLogSetup"));
+if (GETPOST('withtab','alpha'))
+{
+	$title=$langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
+}
+else
+{
+	$title=$langs->trans("BrowseBlockedLog");
+}
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount);
+llxHeader('',$langs->trans("BrowseBlockedLog"));
+
+$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (! is_array($blocks))
 {
 	dol_print_error($block_static->db);
@@ -171,7 +220,7 @@ if (GETPOST('withtab','alpha'))
 	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
-print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'),$linkback);
+print load_fiche_titre($title, $linkback);
 
 if (GETPOST('withtab','alpha'))
 {
@@ -207,24 +256,41 @@ print ' </div>';
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 
 print '<table class="noborder" width="100%">';
+
+// Line of filters
 print '<tr class="liste_titre_filter">';
 
 print '<td class="liste_titre">&nbsp;</td>';
 
 print '<td class="liste_titre">';
-print $form->select_date($search_start,'search_start');
-print $form->select_date($search_end,'search_end');
+//print $langs->trans("from").': ';
+$form->select_date($search_start,'search_start');
+//print '<br>';
+//print $langs->trans("to").': ';
+$form->select_date($search_end,'search_end');
 print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_users($search_fk_user, 'search_fk_user', 1);
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1);
 print '</td>';
 
-print '<td class="liste_titre"></td>';
+// Actions code
+$langs->load("blockedlog");
+print '<td class="liste_titre">';
+print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth200', 1);
+print '</td>';
 
 // Ref
 print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
@@ -258,17 +324,28 @@ print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],
 print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print '</tr>';
 
-$loweridinerror=0;
-$checkresult=array();
-foreach($blocks as &$block) {
-	$checksignature = $block->checkSignature();
-	$checkresult[$block->id]=$checksignature;	// false if error
-	if (! $checksignature)
-	{
-		if (empty($loweridinerror)) $loweridinerror=$block->id;
-		else $loweridinerror = min($loweridinerror, $block->id);
-	}
+if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
+{
+	// This is version that is faster memory but require more memory and report errors that are outside the filter range
 
+	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
+	// to find the $loweridinerror.
+
+}
+else
+{
+	// This is version that optimize memory (but will not report error that are outside the filter range)
+	$loweridinerror=0;
+	$checkresult=array();
+	foreach($blocks as &$block) {
+		$checksignature = $block->checkSignature();	// Note: this make a sql request at each call, we can't avoid this as the sorting order is various
+		$checkresult[$block->id]=$checksignature;	// false if error
+		if (! $checksignature)
+		{
+			if (empty($loweridinerror)) $loweridinerror=$block->id;
+			else $loweridinerror = min($loweridinerror, $block->id);
+		}
+	}
 }
 
 foreach($blocks as &$block) {
@@ -277,14 +354,20 @@ foreach($blocks as &$block) {
 	if (empty($showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
 	{
 	   	print '<tr class="oddeven">';
+	   	// ID
 	   	print '<td>'.$block->id.'</td>';
+	   	// Date
 	   	print '<td>'.dol_print_date($block->tms,'dayhour').'</td>';
+		// User
 	   	print '<td>';
 	   	//print $block->getUser()
 	   	print $block->user_fullname;
 	   	print '</td>';
+	   	// Action
 	   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
+	   	// Ref
 	   	print '<td>'.$block->ref_object.'</td>';
+	   	// Link to source object
 	   	print '<td>'.$object_link.'</td>';
 	   	print '<td align="right">'.price($block->amounts).'</td>';
 	   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
@@ -319,6 +402,8 @@ print '</table>';
 print '</form>';
 
 print '</div>';
+
+
 
 print '<script type="text/javascript">
 
@@ -365,29 +450,27 @@ jQuery(document).ready(function () {
 </script>'."\n";
 
 
-if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
-
+if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL))
+{
 ?>
-				<script type="text/javascript">
+		<script type="text/javascript">
 
-					$.ajax({
-						url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php',1) ?>"
-						,dataType:"html"
-					}).done(function(data) {
+			$.ajax({
+				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php',1) ?>"
+				,dataType:"html"
+			}).done(function(data) {
 
-						if(data == 'hashisok') {
-							$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityReconizeFingerprintConformity'). ' '. img_picto($langs->trans('SignatureOK'), 'on') ?>');
-						}
-						else{
-							$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityDidntReconizeFingerprintConformity'). ' '.img_picto($langs->trans('SignatureKO'), 'off') ?>');
-						}
+				if(data == 'hashisok') {
+					$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityReconizeFingerprintConformity'). ' '. img_picto($langs->trans('SignatureOK'), 'on') ?>');
+				}
+				else{
+					$('#blockchainstatus').html('<?php echo $langs->trans('AuthorityDidntReconizeFingerprintConformity'). ' '.img_picto($langs->trans('SignatureKO'), 'off') ?>');
+				}
 
-					});
+			});
 
-				</script>
-
+		</script>
 <?php
-
 }
 
 if (GETPOST('withtab','alpha'))

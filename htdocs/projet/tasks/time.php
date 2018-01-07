@@ -41,9 +41,9 @@ $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
 
-$search_dateday=GETPOST('search_dateday');
-$search_datemonth=GETPOST('search_datemonth');
-$search_dateyear=GETPOST('search_dateyear');
+$search_day=GETPOST('search_day','int');
+$search_month=GETPOST('search_month','int');
+$search_year=GETPOST('search_year','int');
 $search_datehour='';
 $search_datewithhour='';
 $search_note=GETPOST('search_note','alpha');
@@ -98,7 +98,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_date='';
+	$search_day='';
+	$search_month='';
+	$search_year='';
+	$search_date='';
     $search_datehour='';
     $search_datewithhour='';
     $search_note='';
@@ -643,9 +646,22 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($search_task_ref) $sql .= natural_search('pt.ref', $search_task_ref);
 		if ($search_task_label) $sql .= natural_search('pt.label', $search_task_label);
 		if ($search_user > 0) $sql .= natural_search('t.fk_user', $search_user);
+		if ($search_month > 0)
+		{
+			if ($search_year > 0 && empty($search_day))
+			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+			else if ($search_year > 0 && ! empty($search_day))
+			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
+			else
+			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
+		}
+		else if ($search_year > 0)
+		{
+			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
+		}
+
 		$sql .= $db->order($sortfield, $sortorder);
 
-		$var=true;
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -738,14 +754,21 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		// Fields title search
 		print '<tr class="liste_titre_filter">';
 		// Date
-		if (! empty($arrayfields['t.task_date']['checked'])) print '<td class="liste_titre"></td>';
+		if (! empty($arrayfields['t.task_date']['checked']))
+		{
+			print '<td class="liste_titre">';
+			if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+			print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+			$formother->select_year($search_year,'search_year',1, 20, 5);
+			print '</td>';
+		}
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
             if (! empty($arrayfields['t.task_ref']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
             if (! empty($arrayfields['t.task_label']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
         }
         // Author
-        if (! empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers($search_user > 0 ? $search_user : -1, 'search_user', 1).'</td>';
+        if (! empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200').'</td>';
 		// Note
         if (! empty($arrayfields['t.note']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 		// Duration

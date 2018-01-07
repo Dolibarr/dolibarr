@@ -81,7 +81,7 @@ if ($pastmonth == 0) {
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
@@ -115,10 +115,12 @@ if ($date_start && $date_end)
 if ($in_bookkeeping == 'already')
 {
 	$sql .= " AND f.rowid IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
+	//	$sql .= " AND fd.rowid IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 if ($in_bookkeeping == 'notyet')
 {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
+//	$sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 $sql .= " ORDER BY f.datef";
 
@@ -238,7 +240,6 @@ if ($action == 'writebookkeeping') {
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
-		$companystatic->client = $tabcompany[$key]['code_client'];
 
 		$invoicestatic->id = $key;
 		$invoicestatic->ref = (string) $val["ref"];
@@ -478,7 +479,10 @@ if ($action == 'exportcsv') {
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->client = $tabcompany[$key]['code_client'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_supplier'];
 
 		$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
@@ -569,7 +573,7 @@ if (empty($action) || $action == 'view') {
 		$description .= $langs->trans("DepositsAreIncluded");
 
 	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
-	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 
@@ -630,10 +634,19 @@ if (empty($action) || $action == 'view') {
 	$invoicestatic = new Facture($db);
 	$companystatic = new Client($db);
 
-	foreach ( $tabfac as $key => $val ) {
+	foreach ( $tabfac as $key => $val )
+	{
 		$invoicestatic->id = $key;
 		$invoicestatic->ref = $val["ref"];
 		$invoicestatic->type = $val["type"];
+
+		$companystatic->id = $tabcompany[$key]['id'];
+		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
+		$companystatic->client = 3;
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -643,9 +656,6 @@ if (empty($action) || $action == 'view') {
 			print "<td><!-- Thirdparty --></td>";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-			$companystatic->customer_code = $tabcompany[$key]['code_client'];
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);

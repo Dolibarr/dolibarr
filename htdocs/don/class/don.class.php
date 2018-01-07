@@ -689,27 +689,45 @@ class Don extends CommonObject
      *    @param  	int		$userid  	User who validate the donation/promise
      *    @return   int     			<0 if KO, >0 if OK
      */
-    function valid_promesse($id, $userid)
+    function valid_promesse($id, $userid, $notrigger=0)
     {
+		global $langs, $user;
+
+		$error=0;
+
+		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".$userid." WHERE rowid = ".$id." AND fk_statut = 0";
 
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ( $this->db->affected_rows($resql) )
+            if ($this->db->affected_rows($resql))
             {
-                return 1;
-            }
-            else
-            {
-                return 0;
+            	if (!$notrigger)
+            	{
+            		// Call trigger
+            		$result=$this->call_trigger('DON_VALIDATE',$user);
+            		if ($result < 0) { $error++; }
+            		// End call triggers
+            	}
             }
         }
         else
         {
-            dol_print_error($this->db);
-            return -1;
+            $error++;
+            $this->error = $this->db->lasterror();
+        }
+
+        if (!$error)
+        {
+        	$this->db->commit();
+        	return 1;
+        }
+        else
+        {
+        	$this->db->rollback();
+        	return -1;
         }
     }
 
@@ -720,14 +738,14 @@ class Don extends CommonObject
      *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
-    function set_paid($id, $modepayment='')
+    function set_paid($id, $modepayment=0)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
         if ($modepayment)
         {
-            $sql .= ", fk_payment=$modepayment";
+            $sql .= ", fk_payment=".$modepayment;
         }
-        $sql .=  " WHERE rowid = $id AND fk_statut = 1";
+        $sql .=  " WHERE rowid = ".$id." AND fk_statut = 1";
 
         $resql=$this->db->query($sql);
         if ($resql)

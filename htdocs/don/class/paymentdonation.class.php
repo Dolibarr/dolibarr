@@ -67,10 +67,11 @@ class PaymentDonation extends CommonObject
 	 *  Create payment of donation into database.
      *  Use this->amounts to have list of lines for the payment
      *
-	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
+	 *  @param      User		$user			User making payment
+	 *	@param      bool 		$notrigger 		false=launch triggers after, true=disable triggers
+	 *  @return     int     					<0 if KO, id of payment if OK
 	 */
-	function create($user)
+	function create($user, $notrigger=false)
 	{
 		global $conf, $langs;
 
@@ -125,12 +126,20 @@ class PaymentDonation extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
+				$this->ref = $this->id;
 			}
 			else
 			{
 				$error++;
 			}
+		}
 
+		if (! $error && ! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger('DONATION_PAYMENT_CREATE',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		if ($totalamount != 0 && ! $error)
@@ -241,14 +250,11 @@ class PaymentDonation extends CommonObject
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET";
-
 		$sql.= " fk_donation=".(isset($this->fk_donation)?$this->fk_donation:"null").",";
 		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
@@ -260,8 +266,6 @@ class PaymentDonation extends CommonObject
 		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
 		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
 		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
-
-
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -274,15 +278,13 @@ class PaymentDonation extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
+				if (! $error && ! $notrigger)
+				{
+					// Call triggers
+					$result=$this->call_trigger('DONATION_PAYMENT_MODIFY',$user);
+					if ($result < 0) { $error++; }
+					// End call triggers
+				}
 			}
 		}
 
@@ -343,15 +345,13 @@ class PaymentDonation extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
+				if (! $error && ! $notrigger)
+				{
+					// Call triggers
+					$result=$this->call_trigger('DONATION_PAYMENT_DELETE',$user);
+					if ($result < 0) { $error++; }
+					// End call triggers
+				}
 			}
 		}
 

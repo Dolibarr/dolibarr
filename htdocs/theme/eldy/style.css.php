@@ -1163,7 +1163,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -3799,7 +3799,8 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -2px; <?php print (preg_match('/chrome/',$conf->browser->name)?'padding-top: 1px;':''); ?> }
+/* .ui-button { margin-left: -2px; <?php print (preg_match('/chrome/',$conf->browser->name)?'padding-top: 1px;':''); ?> } */
+.ui-button { margin-left: -2px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -4954,6 +4955,7 @@ div.tabsElem a.tab {
 	.mainmenuaspan {
     	/*display: none;*/
   		font-size: 10px;
+  		padding-right: 0;
     }
     .topmenuimage {
     	background-size: 22px auto;
@@ -4990,6 +4992,7 @@ div.tabsElem a.tab {
 	.mainmenuaspan {
     	/*display: none;*/
   		font-size: 10px;
+  		padding-right: 0;
     }
     .topmenuimage {
     	background-size: 20px auto;
@@ -5002,12 +5005,12 @@ div.tabsElem a.tab {
 {
 	.side-nav {
 		z-index: 200;
-    	background: #FFF;
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
 		padding-top: 70px;
     }
 	#id-left {
     	z-index: 201;
-        background: #FFF;
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
 	}
 
     .login_vertical_align {
@@ -5050,7 +5053,9 @@ div.tabsElem a.tab {
 		left: 0 !important;
 		text-align: center;
         vertical-align: middle;
-        background: #FFF;
+
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
+
         height: 50px;
 
     	z-index: 202;

@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/ecm/index.php
+ *	\file       htdocs/ecm/search.php
  *	\ingroup    ecm
  *	\brief      Page to make advanced search into ECM
  */

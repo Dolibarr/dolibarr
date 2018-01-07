@@ -158,7 +158,7 @@ NumPiece=Piece number
 TransactionNumShort=Num. transaction
 AccountingCategory=Personalized groups
 GroupByAccountAccounting=Group by accounting account
-AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.  
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.  
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
@@ -191,6 +191,7 @@ DescThirdPartyReport=Consult here the list of the third party customers and supp
 ListAccounts=List of the accounting accounts
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account

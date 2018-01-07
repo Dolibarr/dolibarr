@@ -199,8 +199,11 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
 }
 if ($action == 'valid_promesse')
 {
+	$object->fetch($id);
 	if ($object->valid_promesse($id, $user->id) >= 0)
 	{
+		setEventMessages($langs->trans("DonationValidated", $object->ref), null);
+
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
@@ -210,7 +213,8 @@ if ($action == 'valid_promesse')
 }
 if ($action == 'set_cancel')
 {
-    if ($object->set_cancel($id) >= 0)
+	$object->fetch($id);
+	if ($object->set_cancel($id) >= 0)
     {
         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
         exit;
@@ -221,6 +225,7 @@ if ($action == 'set_cancel')
 }
 if ($action == 'set_paid')
 {
+	$object->fetch($id);
 	if ($object->set_paid($id, $modepayment) >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -740,7 +745,7 @@ if (! empty($id) && $action != 'edit')
 		}
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
 		}
 	}
 	else

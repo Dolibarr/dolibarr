@@ -31,14 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("main");
-$langs->load("companies");
-$langs->load("resource");
-$langs->load("holiday");
-$langs->load("accountancy");
-$langs->load("hrm");
+$langs->loadLangs(array("errors","admin","companies","resource","holiday","accountancy","hrm"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -418,7 +411,7 @@ if ($action == 'disable_favorite')
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-llxHeader('', $langs->trans('AccountingCategory'));
+llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
 
 $titre=$langs->trans($tablib[$id]);
 $linkback='';

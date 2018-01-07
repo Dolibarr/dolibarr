@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file		htdocs/ecm/docdir.php
+ *	\file		htdocs/ecm/dir_add_card.php
  *	\ingroup	ecm
  *	\brief		Main page for ECM section area
  */
@@ -30,8 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
 $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts","categories"));
-
-if (! $user->rights->ecm->setup) accessforbidden();
 
 // Get parameters
 $socid      = GETPOST('socid','int');
@@ -85,13 +83,30 @@ if (! empty($section))
 	}
 }
 
+// Permissions
+$permtoadd = 0;
+$permtoupload = 0;
+if ($module == 'ecm')
+{
+	$permtoadd = $user->rights->ecm->setup;
+	$permtoupload = $user->rights->ecm->upload;
+}
+if ($module == 'medias')
+{
+	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+}
+
+if (! $permtoadd) accessforbidden();
+
+
 
 /*
  * Actions
  */
 
 // Action ajout d'un produit ou service
-if ($action == 'add' && $user->rights->ecm->setup)
+if ($action == 'add' && $permtoadd)
 {
 	if ($cancel)
 	{

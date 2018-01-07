@@ -4216,7 +4216,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 	}*/
 
 	// Some test to guess with no need to make database access
-	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
+	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local tax
 	{
 		if ($local == 1)
 		{
@@ -4421,17 +4421,18 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 }
 
 /**
- *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
+ *  Get type and rate of localtaxes for a particular vat rate/country of a thirdparty.
+ *  This does not take into account the seller setup if subject to vat or not, only country.
  *  TODO
  *  This function is ALSO called to retrieve type for building PDF. Such call of function must be removed.
  *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
- *  @param	int|string  $vatrate			VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	int|string  $vatrate			VAT ID or Rate+Code. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	int		    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	Societe	    $buyer         		Company object
  *  @param	Societe	    $seller        		Company object
- *  @param  int         $firstparamisid     1 if first param is id into table (use this if you can)
+ *  @param  int         $firstparamisid     1 if first param is ID into table instead of Rate+code (use this if you can)
  *  @return	array    	    				array(localtax_type1(1-6/0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId
  */
@@ -4886,7 +4887,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	global $conf;
 
 	$path = '';
-	
+
 	$arrayforoldpath=array('cheque','user','category','holiday','supplier_invoice','invoice_supplier','mailing','supplier_payment');
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[]='product';
 	if (! empty($level) && in_array($modulepart, $arrayforoldpath))
@@ -5133,7 +5134,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
  *  @param	int		$removelasteolbr	1=Remove last br or lasts \n (default), 0=Do nothing
  *  @return	string						String encoded
  */
-function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8',$removelasteolbr=1)
+function dol_htmlentitiesbr($stringtoencode, $nl2brmode=0, $pagecodefrom='UTF-8', $removelasteolbr=1)
 {
 	$newstring=$stringtoencode;
 	if (dol_textishtml($stringtoencode))	// Check if text is already HTML or not
@@ -6588,6 +6589,7 @@ function dol_getmypid()
  *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
+ *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
  * @param	integer			$mode		0=value is list of keyword strings, 1=value is a numeric test (Example ">5.5 <10"), 2=value is a list of id separated with comma (Example '1,3,4')
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
@@ -6651,6 +6653,24 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $db->escape(trim($crit)) . ")";
 				$i2++;	// a criteria was added to string
 			}
+			else if ($mode == 3)
+			{
+				$tmparray=explode(',',trim($crit));
+				if (count($tmparray))
+				{
+					$listofcodes='';
+					foreach($tmparray as $val)
+					{
+						if ($val)
+						{
+							$listofcodes.=($listofcodes?',':'');
+							$listofcodes.="'".$db->escape(trim($val))."'";
+						}
+					}
+					$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $listofcodes . ")";
+					$i2++;	// a criteria was added to string
+				}
+			}
 			else    // $mode=0
 			{
 				$textcrit = '';
@@ -6660,7 +6680,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 				{
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
-					if (preg_match('/\.(id|rowid)$/', $field))	// Special cas for rowid that is sometimes a ref so used as a search field
+					if (preg_match('/\.(id|rowid)$/', $field))	// Special case for rowid that is sometimes a ref so used as a search field
 					{
 						$newres .= $field . " = " . (is_numeric(trim($tmpcrit))?trim($tmpcrit):'0');
 					}

@@ -66,7 +66,7 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (empty($search_date_start))
+if (empty($search_date_start) && ! GETPOSTISSET('formfilteraction'))
 {
 	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
 	$year_start = dol_print_date(dol_now(), '%Y');
@@ -115,6 +115,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_accountancy_code_end = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$filter = array();
 }
 
 
@@ -135,7 +136,8 @@ if ($action == 'export_csv') {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	foreach ($object->lines as $line) {
+	foreach ($object->lines as $line)
+	{
 		print length_accountg($line->numero_compte) . $sep;
 		print $object->get_compte_desc($line->numero_compte) . $sep;
 		print price($line->debit) . $sep;
@@ -153,7 +155,8 @@ else {
 
 	// List
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
 		$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
 		if ($nbtotalofrecords < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -166,6 +169,13 @@ else {
 	}
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$button = '<input type="submit" name="exportcsv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
@@ -174,9 +184,9 @@ else {
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('DateStart') . ': ';
-	$moreforfilter .= $form->select_date($search_date_start, 'date_start', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1, '', 1, 0, 1);
 	$moreforfilter .= $langs->trans('DateEnd') . ': ';
-	$moreforfilter .= $form->select_date($search_date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter .= $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1, '', 1, 0, 1);
 	$moreforfilter .= '</div>';
 
 	if (! empty($moreforfilter)) {
@@ -220,7 +230,8 @@ else {
 	$sous_total_credit = 0;
 	$displayed_account = "";
 
-	foreach ($object->lines as $line) {
+	foreach ($object->lines as $line)
+	{
 		$link = '';
 		$total_debit += $line->debit;
 		$total_credit += $line->credit;
@@ -280,4 +291,5 @@ else {
 
 	llxFooter();
 }
+
 $db->close();

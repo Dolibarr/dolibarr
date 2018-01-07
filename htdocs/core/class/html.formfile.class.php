@@ -114,7 +114,7 @@ class FormFile
 
 			if (! empty($options)) $out .= '<td>'.$options.'</td>';
 
-			$out .= '<td valign="middle">';
+			$out .= '<td class="valignmiddle nowrap">';
 
 			$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
 			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
