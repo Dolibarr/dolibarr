@@ -356,7 +356,6 @@ class BlockedLog
 
 		if ($this->element == 'facture')
 		{
-			var_dump($object);exit;
 			foreach($object as $key=>$value)
 			{
 				if (in_array($key, array('fields'))) continue;	// Discard some properties
