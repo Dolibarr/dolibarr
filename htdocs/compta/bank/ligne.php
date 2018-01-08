@@ -92,11 +92,16 @@ if ($user->rights->banque->consolidate && $action == 'donext')
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST("cat1");
-    if (! $db->query($sql))
-    {
-        dol_print_error($db);
-    }
+	$cat1=GETPOST("cat1",'int');
+	if (!empty($rowid) && !empty($cat1)) {
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$cat1;
+    	if (! $db->query($sql))
+    	{
+        	dol_print_error($db);
+    	}
+	} else {
+		setEventMessage('Missing ids','errors');
+	}
 }
 
 if ($user->rights->banque->modifier && $action == "update")
