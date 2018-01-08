@@ -2438,8 +2438,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 		{
 			if ($action != 'editline')
 			{
-				$var = true;
-
 				// Add free products/services
 				$object->formAddObjectLine(1, $mysoc, $soc);
 
@@ -2607,8 +2605,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-			// Show online signature link
+			// Show online payment link
+			//$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
 			$useonlinepayment = $conf->global->ORDER_SHOW_ONLINE_PAYMENT_ON_ORDER;
+
 			if ($object->statut != Commande::STATUS_DRAFT && $useonlinepayment)
 			{
 				print '<br><!-- Link to pay -->';
@@ -2616,6 +2616,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				print showOnlinePaymentUrl('order', $object->ref).'<br>';
 			}
 
+			// Show direct download link
 			if ($object->statut != Commande::STATUS_DRAFT && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))
 			{
 				print '<br><!-- Link to download main doc -->'."\n";

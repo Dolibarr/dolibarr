@@ -2237,8 +2237,6 @@ if ($action == 'create')
 	{
 		if ($action != 'editline')
 		{
-			$var = true;
-
 			// Add products/services form
 			$object->formAddObjectLine(1, $mysoc, $soc);
 
@@ -2379,8 +2377,6 @@ if ($action == 'create')
 		$genallowed = $user->rights->propal->lire;
 		$delallowed = $user->rights->propal->creer;
 
-		$var = true;
-
 		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
@@ -2397,6 +2393,7 @@ if ($action == 'create')
 			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
 		}
 
+		// Show direct download link
 		if ($object->statut != Propal::STATUS_DRAFT && ! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD))
 		{
 			print '<br><!-- Link to download main doc -->'."\n";

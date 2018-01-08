@@ -4188,8 +4188,6 @@ else if ($id > 0 || ! empty($ref))
 	{
 		if ($action != 'editline')
 		{
-			$var = true;
-
 			// Add free products/services
 			$object->formAddObjectLine(1, $mysoc, $soc);
 
@@ -4493,6 +4491,7 @@ else if ($id > 0 || ! empty($ref))
 			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
 		}
 
+		// Show direct download link
 		if ($object->statut != Facture::STATUS_DRAFT && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))
 		{
 			print '<br><!-- Link to download main doc -->'."\n";

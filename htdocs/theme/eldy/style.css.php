@@ -349,7 +349,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 300px;
+	min-width: 320px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -359,6 +359,7 @@ input.buttonpayment {
 	text-align: <?php echo $left; ?>;
 	border: 2px solid #ccc;
 	background-color: #eee;
+	white-space: normal;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
@@ -1023,6 +1024,10 @@ select.selectarrowonleft option {
    	}
 	div.statusref img {
     	padding-right: 3px !important;
+   	}
+
+   	input.buttonpayment {
+		min-width: 300px;
    	}
 }
 .linkobject { cursor: pointer; }
@@ -3231,7 +3236,7 @@ div.titre {
     padding-bottom: 5px;
 }
 
-#dolpaymenttable { min-width: 310px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
+#dolpaymenttable { min-width: 300px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
