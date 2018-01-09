@@ -94,7 +94,7 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 
 $idpays = $mysoc->country_id;
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlf, ";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlf, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.accountancy_code_buy , aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -180,9 +180,9 @@ if ($result) {
 		$tabfac[$obj->rowid]["ref"] = $obj->ref_supplier . ' (' . $obj->ref . ')';
 		$tabfac[$obj->rowid]["refsologest"] = $obj->ref;
 		$tabfac[$obj->rowid]["refsuppliersologest"] = $obj->ref_supplier;
-
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->description;
+		$tabfac[$obj->rowid]["close_code"] = $obj->close_code;		// close_code = 'replaced' for replacement invoices (not used in most european countries)
 		//$tabfac[$obj->rowid]["fk_facturefourndet"] = $obj->fdid;
 
 		// Avoid warnings
@@ -219,6 +219,9 @@ if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
+	$companystatic = new Societe($db);
+	$invoicestatic = new FactureFournisseur($db);
+
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 
 		$errorforline = 0;
@@ -228,22 +231,37 @@ if ($action == 'writebookkeeping') {
 
 		$db->begin();
 
-		$companystatic = new Societe($db);
-		$invoicestatic = new FactureFournisseur($db);
-
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
-		$companystatic->client = $tabcompany[$key]['code_client'];
+		$companystatic->fournisseur = 1;
 
 		$invoicestatic->id = $key;
 		$invoicestatic->ref = (string) $val["refsologest"];
-		$invoicestatic->refsupplier = $val["refsuppliersologest"];
+		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
 		$invoicestatic->description = html_entity_decode(dol_trunc($val["description"], 32));
+		$invoicestatic->close_code = $val["close_code"];
+
+		$date = dol_print_date($val["date"], 'day');
+
+		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		$replacedinvoice = 0;
+		if ($invoicestatic->close_code == 'replaced')
+		{
+			$replacedinvoice = 1;
+			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
+			if ($alreadydispatched) $replacedinvoice = 2;
+		}
+
+		// If not already into bookkeeping, we won't add it, if yes, we will also add the counterpart.
+		if ($replacedinvoice == 1)
+		{
+			continue;
+		}
 
 		// Thirdparty
 		if (! $errorforline)
@@ -262,7 +280,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 					$bookkeeping->subledger_label = '';    // TODO To complete
 					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("SubledgerAccount");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount");
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt <= 0) ? -$mt : 0;
@@ -313,7 +331,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $accountingaccount->label;
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -370,7 +388,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
 						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT").' '.join(', ',$def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -420,7 +438,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("VAT").' NPR';
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT").' NPR';
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -523,65 +541,84 @@ if ($action == 'exportcsv') {
 
 	foreach ( $tabfac as $key => $val )
 	{
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-			$companystatic->client = $tabcompany[$key]['code_client'];
-			$companystatic->fournisseur = 1;
+		$companystatic->id = $tabcompany[$key]['id'];
+		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
+		$companystatic->fournisseur = 1;
 
-			$invoicestatic->id = $key;
-			$invoicestatic->ref = $val["refsologest"];
-			$invoicestatic->ref_supplier = $val["refsuppliersologest"];
-			$invoicestatic->type = $val["type"];
-			$invoicestatic->description = dol_trunc(html_entity_decode($val["description"]), 32);
+		$invoicestatic->id = $key;
+		$invoicestatic->ref = $val["refsologest"];
+		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
+		$invoicestatic->type = $val["type"];
+		$invoicestatic->description = dol_trunc(html_entity_decode($val["description"]), 32);
+		$invoicestatic->close_code = $val["close_code"];
 
-			$date = dol_print_date($val["date"], 'day');
+		$date = dol_print_date($val["date"], 'day');
 
-			// Third party
-			foreach ( $tabttc[$key] as $k => $mt ) {
+		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		$replacedinvoice = 0;
+		if ($invoicestatic->close_code == 'replaced')
+		{
+			$replacedinvoice = 1;
+			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
+			if ($alreadydispatched) $replacedinvoice = 2;
+		}
+
+		// If not already into bookkeeping, we won't add it, if yes, we will also add the counterpart.
+		if ($replacedinvoice == 1)
+		{
+			continue;
+		}
+
+		// Third party
+		foreach ( $tabttc[$key] as $k => $mt ) {
+			print '"' . $key . '"' . $sep;
+			print '"' . $date . '"' . $sep;
+			print '"' . $val["refsologest"] . '"' . $sep;
+			print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
+			print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+			print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
+			print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+			print '"' . $langs->trans("Code_tiers") . '"' . $sep;
+			print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
+			print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+			print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
+			print '"' . $journal . '"' ;
+			print "\n";
+		}
+
+		// Product / Service
+		foreach ( $tabht[$key] as $k => $mt ) {
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch(null, $k, true);
+			if ($mt) {
 				print '"' . $key . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["refsologest"] . '"' . $sep;
-				print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
-				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-				print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
-				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-				print '"' . $langs->trans("Code_tiers") . '"' . $sep;
-				print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
-				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-				print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
+				print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ) . '"' . $sep;
+				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+				print '""' . $sep;
+				print '"' . utf8_decode ( dol_trunc($accountingaccount->label, 32) ) . '"' . $sep;
+				print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
+				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+				print '"' . ($mt < 0 ? price(- $mt) : '') . '"'. $sep;
 				print '"' . $journal . '"' ;
 				print "\n";
 			}
+		}
 
-			// Product / Service
-			foreach ( $tabht[$key] as $k => $mt ) {
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(null, $k, true);
-				if ($mt) {
-					print '"' . $key . '"' . $sep;
-					print '"' . $date . '"' . $sep;
-					print '"' . $val["refsologest"] . '"' . $sep;
-					print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ) . '"' . $sep;
-					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-					print '""' . $sep;
-					print '"' . utf8_decode ( dol_trunc($accountingaccount->label, 32) ) . '"' . $sep;
-					print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-					print '"' . ($mt < 0 ? price(- $mt) : '') . '"'. $sep;
-					print '"' . $journal . '"' ;
-					print "\n";
-				}
-			}
+		// VAT
+		$listoftax = array(0, 1, 2);
+		foreach ($listoftax as $numtax) {
+			$arrayofvat = $tabtva;
+			if ($numtax == 1) $arrayofvat = $tablocaltax1;
+			if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
-			// VAT
-			$listoftax = array(0, 1, 2);
-			foreach ($listoftax as $numtax) {
-				$arrayofvat = $tabtva;
-				if ($numtax == 1) $arrayofvat = $tablocaltax1;
-				if ($numtax == 2) $arrayofvat = $tablocaltax2;
-
-				foreach ($arrayofvat[$key] as $k => $mt) {
+			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
@@ -600,21 +637,24 @@ if ($action == 'exportcsv') {
 			}
 
 			// VAT counterpart for NPR
-			foreach ( $tabother[$key] as $k => $mt ) {
-				if ($mt) {
-					print '"' . $key . '"' . $sep;
-					print '"' . $date . '"' . $sep;
-					print '"' . $val["refsologest"] . '"' . $sep;
-					print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
-					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-					print '"' . $langs->trans("Code_tiers") . '"' . $sep;
-					print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("VAT") . ' NPR"' . $sep;
-					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-					print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
-					print '"' . $journal . '"' ;
-					print "\n";
+			if (is_array($tabother[$key]))
+			{
+				foreach ( $tabother[$key] as $k => $mt ) {
+					if ($mt) {
+						print '"' . $key . '"' . $sep;
+						print '"' . $date . '"' . $sep;
+						print '"' . $val["refsologest"] . '"' . $sep;
+						print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
+						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+						print '"' . $langs->trans("Code_tiers") . '"' . $sep;
+						print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("VAT") . ' NPR"' . $sep;
+						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+						print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
+						print '"' . $journal . '"' ;
+						print "\n";
+					}
 				}
 			}
 		}
@@ -701,19 +741,53 @@ if (empty($action) || $action == 'view') {
 
 	foreach ( $tabfac as $key => $val )
 	{
-		$invoicestatic->id = $key;
-		$invoicestatic->type = $val["type"];
-		$invoicestatic->ref = $val["refsologest"];
-		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
-		$invoicestatic->description = dol_trunc(html_entity_decode($val["description"]), 32);
-
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
+		$invoicestatic->id = $key;
+		$invoicestatic->ref = $val["refsologest"];
+		$invoicestatic->ref_supplier = $val["refsuppliersologest"];
+		$invoicestatic->type = $val["type"];
+		$invoicestatic->description = dol_trunc(html_entity_decode($val["description"]), 32);
+		$invoicestatic->close_code = $val["close_code"];
+
 		$date = dol_print_date($val["date"], 'day');
+
+		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		$replacedinvoice = 0;
+		if ($invoicestatic->close_code == 'replaced')
+		{
+			$replacedinvoice = 1;
+			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
+			if ($alreadydispatched) $replacedinvoice = 2;
+		}
+
+		// If no, we won't add it, if yes, we will also add the counterpart.
+		if ($replacedinvoice == 1)
+		{
+			print '<tr class="oddeven">';
+			print "<td><!-- Replaced invoice --></td>";
+			print "<td>" . $date . "</td>";
+			print "<td><strike>" . $invoicestatic->getNomUrl(1) . "</strike></td>";
+			// Account
+			print "<td>";
+			print $langs->trans("Replaced");
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			print '</td>';
+			print "<td>";
+			print "</td>";
+			print '<td align="right"></td>';
+			print '<td align="right"></td>';
+			print "</tr>";
+			continue;
+		}
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
