@@ -774,12 +774,13 @@ if (empty($reshook))
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) $tva_npr=0;
 
+				// Price unique per product
 				$pu_ht = $prod->price;
 				$pu_ttc = $prod->price_ttc;
 				$price_min = $prod->price_min;
 				$price_base_type = $prod->price_base_type;
 
-				// On defini prix unitaire
+				// If price per segment
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->thirdparty->price_level)
 				{
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
@@ -792,6 +793,7 @@ if (empty($reshook))
 					  if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
 				}
+				// If price per customer
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
@@ -813,6 +815,37 @@ if (empty($reshook))
 							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
+				}
+				// If price per quantity
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				{
+					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
+					{
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						$pqp = GETPOST('pbq','int');
+
+						// Search price into product_price_by_qty from $prod->id
+						foreach($prod->prices_by_qty_list[0] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
+							break;
+						}
+					}
+				}
+				// If price per quantity and customer
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES))
+				{
+					// TODO Same than PRODUIT_CUSTOMER_PRICES_BY_QTY but using $object->thirdparty->price_level
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
