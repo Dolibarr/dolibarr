@@ -147,7 +147,7 @@ class Paiement extends CommonObject
 	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
 	 *    @return   int                 			id of created payment, < 0 if error
 	 */
-	function create($user,$closepaidinvoices=0)
+	function create($user, $closepaidinvoices=0)
 	{
 		global $conf, $langs;
 
@@ -190,6 +190,7 @@ class Paiement extends CommonObject
 		// Check parameters
         if (empty($totalamount) && empty($atleastonepaymentnotnull))	 // We accept negative amounts for withdraw reject but not empty arrays
         {
+        	$this->errors[]='TotalAmountEmpty';
         	$this->error='TotalAmountEmpty';
         	return -1;
         }
