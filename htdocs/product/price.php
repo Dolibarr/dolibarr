@@ -463,7 +463,7 @@ if (empty($reshook))
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
 			$sql .= " WHERE rowid = " . $rowid;
 
-			$result = $db->query($sql)
+			$result = $db->query($sql);
 		} else {
 			setEventMessage('delete_price_by_qty Missing Ids','errors');
 		}
