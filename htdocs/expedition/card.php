@@ -212,7 +212,7 @@ if (empty($reshook))
 	    $objectsrc->fetch($object->origin_id);
 
 	    $object->socid					= $objectsrc->socid;
-	    $object->ref_customer			= '';                   // We don't use $objectsrc->ref_client, this is ref or order not shipment
+	    $object->ref_customer			= GETPOST('ref_customer');                   // We don't use $objectsrc->ref_client, this is ref or order not shipment
 	    $object->model_pdf				= GETPOST('model');
 	    $object->date_delivery			= $date_delivery;	    // Date delivery planed
 	    $object->fk_delivery_address	= $objectsrc->fk_delivery_address;
@@ -692,7 +692,7 @@ if ($action == 'create')
             else if ($origin == 'propal') print $langs->trans('RefCustomerOrder');
             else print $langs->trans('RefCustomer');
             print '</td><td colspan="3">';
-            print $object->ref_client;
+            print '<input type="text" name="ref_customer" value="'.$object->ref_client.'" />';
             print '</td>';
             print '</tr>';
 
@@ -1212,11 +1212,16 @@ if ($action == 'create')
 
 									print '<!-- Show details of lot -->';
 									print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
-									//print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
 									$productlotObject->fetch(0, $line->fk_product, $dbatch->batch);
-									print $langs->trans("Batch").': '.$productlotObject->getNomUrl(1);
-									print ' ('.$dbatch->qty.')';
-									//print $langs->trans("DetailBatchFormat", 'ee'.$dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
+									if (!empty($productlotObject->batch)) 
+									{
+										print $langs->trans("Batch").': '.$productlotObject->getNomUrl(1);
+										print ' ('.$dbatch->qty.')';
+									}
+									else 	// When lot not found in lot table (this can happen with old record)
+									{
+										print $langs->trans("Batch").': '.$dbatch->batch.' ('.$dbatch->qty.')';
+									}
 									$quantityToBeDelivered -= $deliverableQty;
 									if ($quantityToBeDelivered < 0)
 									{

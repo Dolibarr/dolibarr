@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,7 +245,7 @@ if ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic=new FactureFournisseur($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture_fourn = f.rowid";

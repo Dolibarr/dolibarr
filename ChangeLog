@@ -2,6 +2,22 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 5.0.7 compared to 5.0.6 *****
+FIX: #7000 Dashboard link for late pending payment supplier invoices do not work
+FIX: #7148
+FIX: #7325 Default VAT rate when editing template invoices is 0%
+FIX: #7366 renaming table with pgsql
+FIX: #7391
+FIX: #7510 Bug: extrafield content disappear when generate pdf within intervention
+FIX: Agenda events are not exported in the ICAL, VCAL if begin exactly with the same $datestart
+FIX: Bad link to unpayed suppliers invoices
+FIX: bankentries search conciliated if val 0
+FIX: multicompany better accuracy in rounding and with revenue stamp.
+FIX: PDF output was sharing 2 different currencies in same total
+FIX: Upgrade missing on field
+FIX: wrong key in selectarray
+FIX: wrong personnal project time spent
+
 ***** ChangeLog for 5.0.6 compared to 5.0.5 *****
 FIX: Removed a bad symbolic link into custom directory.
 FIX: Renaming a resouce ref rename also the directory of attached files.

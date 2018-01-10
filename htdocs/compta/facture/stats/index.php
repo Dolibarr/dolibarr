@@ -232,7 +232,7 @@ $tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, a
 $companies = array();
 
 foreach ($tmp_companies as $value) {
-	$companies[$value['value']] = $value['label'];
+	$companies[$value['key']] = $value['label'];
 }
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
