@@ -114,7 +114,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$db->begin();
 
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as l";
-	$sql1 .= " SET l.fk_code_ventilation=" . GETPOST('account_parent');
+	$sql1 .= " SET l.fk_code_ventilation=" . GETPOST('account_parent','int');
 	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
 
 	dol_syslog('accountancy/supplier/lines.php::changeaccount sql= ' . $sql1);
