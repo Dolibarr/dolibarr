@@ -924,7 +924,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             $contactstatic->setGenderFromCivility();
 
-            print "<tr>";
+            print '<tr class="oddeven">';
 
 			// Photo - Name
 			print '<td>';
