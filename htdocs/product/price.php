@@ -409,12 +409,12 @@ if (empty($reshook))
 	if ($action == 'update_price_by_qty')
 	{
 		// Récupération des variables
-		$rowid = GETPOST('rowid');
-		$priceid = GETPOST('priceid');
-		$newprice = price2num(GETPOST("price"), 'MU');
+		$rowid = GETPOST('rowid','int');
+		$priceid = GETPOST('priceid','int');
+		$newprice = price2num(GETPOST("price",'alpha'), 'MU');
 		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
-		$quantity = GETPOST('quantity');
-		$remise_percent = price2num(GETPOST('remise_percent'));
+		$quantity = GETPOST('quantity','int');
+		$remise_percent = price2num(GETPOST('remise_percent','alpha'));
 		$remise = 0; // TODO : allow discount by amount when available on documents
 
 		if (empty($quantity)) {
@@ -442,7 +442,7 @@ if (empty($reshook))
 				$sql .= " quantity=" . $quantity . ",";
 				$sql .= " remise_percent=" . $remise_percent . ",";
 				$sql .= " remise=" . $remise;
-				$sql .= " WHERE rowid = " . GETPOST('rowid');
+				$sql .= " WHERE rowid = " . $rowid;
 
 				$result = $db->query($sql);
 				if (! $result) dol_print_error($db);
@@ -458,22 +458,28 @@ if (empty($reshook))
 
 	if ($action == 'delete_price_by_qty')
 	{
-		$rowid = GETPOST('rowid');
+		$rowid = GETPOST('rowid','int');
+		if (!empty($rowid)) {
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
+			$sql .= " WHERE rowid = " . $rowid;
 
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
-		$sql .= " WHERE rowid = " . GETPOST('rowid');
-
-		$result = $db->query($sql);
+			$result = $db->query($sql);
+		} else {
+			setEventMessage('delete_price_by_qty Missing Ids','errors');
+		}
 	}
 
 	if ($action == 'delete_all_price_by_qty')
 	{
-		$priceid = GETPOST('priceid');
-
+		$priceid = GETPOST('priceid','int');
+		if (!empty($rowid)) {
 		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
 		$sql .= " WHERE fk_product_price = " . $priceid;
 
 		$result = $db->query($sql);
+		} else {
+			setEventMessage('delete_all_price_by_qty Missing Ids','errors');
+		}
 	}
 
 	/**
@@ -485,7 +491,7 @@ if (empty($reshook))
 
 		$maxpricesupplier = $object->min_recommended_price();
 
-		$update_child_soc = GETPOST('updatechildprice');
+		$update_child_soc = GETPOST('updatechildprice','int');
 
 		// add price by customer
 		$prodcustprice->fk_soc = GETPOST('socid', 'int');
@@ -585,7 +591,7 @@ if (empty($reshook))
 	{
 		$maxpricesupplier = $object->min_recommended_price();
 
-		$update_child_soc = GETPOST('updatechildprice');
+		$update_child_soc = GETPOST('updatechildprice','int');
 
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
