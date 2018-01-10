@@ -25,9 +25,9 @@
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("compta","banks","bills","accountancy"));
 
@@ -205,7 +205,7 @@ if ($result)
 	}
 
 	// Accounting account
-	if (! empty($conf->accounting->enabled)) 
+	if (! empty($conf->accounting->enabled))
 	{
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
@@ -305,8 +305,9 @@ if ($result)
 		$i++;
 	}
 
-	$colspan=5;
+	$colspan=4;
 	if (! empty($conf->banque->enabled)) $colspan++;
+	if (! empty($conf->accounting->enabled)) $colspan++;
 
 	print '<tr class="liste_total">';
 	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
