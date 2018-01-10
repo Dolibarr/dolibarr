@@ -2477,11 +2477,11 @@ else
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 	        }
 
-	        // Subsidiaries list
-	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
-	        {
-	        	$result=show_subsidiaries($conf,$langs,$db,$object);
-	        }
+			// Subsidiaries list
+			if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
+			{
+				$result=show_subsidiaries($conf,$langs,$db,$object);
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -2497,6 +2497,21 @@ else
 			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for thirdparty
 
 			print '</div></div></div>';
+
+			if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+			{
+				// Contacts list
+				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+				{
+					$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+
+				// Addresses list
+				if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+				{
+					$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+			}
 		}
 
 		// Presend form
