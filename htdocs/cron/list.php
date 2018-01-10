@@ -424,6 +424,7 @@ if ($num > 0)
 		print '<td align="center">';
 		if ($obj->status == 1) print $langs->trans("Enabled");
 		elseif ($obj->status == 2) print $langs->trans("Archived");
+		elseif ($obj->status == 9) print $langs->trans("Processing");
 		else print $langs->trans("Disabled");
 		print '</td>';
 
