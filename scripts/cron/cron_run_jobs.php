@@ -177,7 +177,15 @@ if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 				exit(-1);
 			}
 			// Execute job
+			$oldstatus = $cronjob->status;
+			$cronjob->status= 9;
+			$cronjob->update($user);
+
 			$result=$cronjob->run_jobs($userlogin);
+			
+			$cronjob->status= $oldstatus;
+			$cronjob->update($user);
+
 			if ($result < 0)
 			{
 				echo "Error cronjob->run_job: ".$cronjob->error."\n";

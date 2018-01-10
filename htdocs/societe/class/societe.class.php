@@ -700,7 +700,7 @@ class Societe extends CommonObject
 			{
 				//var_dump($conf->global->SOCIETE_EMAIL_UNIQUE);
 				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
-				if ($key == 'EMAIL')
+				if ($key == 'EMAIL' && ! empty($conf->global->SOCIETE_EMAIL_UNIQUE))
 				{
 					// Check for unicity
 					if ($vallabel && ! empty($conf->global->SOCIETE_EMAIL_UNIQUE))
