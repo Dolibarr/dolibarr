@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2014       Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+/* Copyright (C) 2014	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015	Frederic France		<frederic.france@free.fr>
+ * Copyright (C) 2017	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ if (! $sortfield) $sortfield="name";
 
 if ($id > 0) $object->fetch($id);
 
-$upload_dir = $conf->societe->dir_output.'/contact/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart='contact';
 
 

@@ -279,15 +279,13 @@ if (empty($reshook))
             $action = 'edit';
         }
 
+		if (! $error)
+		{
+			$contactid=GETPOST("contactid",'int');
+			$object->fetch($contactid);
 
-        if (! $error)
-        {
-        	$contactid=GETPOST("contactid",'int');
-
-            $object->fetch($contactid);
-
-            // Photo save
-            $dir = $conf->societe->dir_output."/contact/".$object->id."/photos";
+			// Photo save
+			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
             $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
             if (GETPOST('deletephoto') && $object->photo)
             {
