@@ -5576,21 +5576,28 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 	if (empty($exclude) || ! in_array('user', $exclude))
 	{
+		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
+		// this will also replace var found into content of signature
+		$signature = $user->signature;
+		$substitutionarray=array_merge($substitutionarray, array(
+			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
+		)
+			);
+		// For backward compatibility
+		if ($onlykey != 2)
+		{
+			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
+		}
+
 		$substitutionarray=array_merge($substitutionarray, array(
 			'__USER_ID__' => (string) $user->id,
 			'__USER_LOGIN__' => (string) $user->login,
 			'__USER_LASTNAME__' => (string) $user->lastname,
 			'__USER_FIRSTNAME__' => (string) $user->firstname,
 			'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-			'__USER_SUPERVISOR_ID__' => (string) $user->fk_user,
-			'__USER_SIGNATURE__' => (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '')
+			'__USER_SUPERVISOR_ID__' => (string) $user->fk_user
 			)
 		);
-		// For backward compatibility
-		if ($onlykey != 2)
-		{
-			$substitutionarray['__SIGNATURE__'] = (string) (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($user->signature), 30) : $user->signature) : '');
-		}
 	}
 	if (! empty($conf->multicompany->enabled))
 	{
