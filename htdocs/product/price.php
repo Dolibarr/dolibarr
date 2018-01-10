@@ -411,10 +411,10 @@ if (empty($reshook))
 		// Récupération des variables
 		$rowid = GETPOST('rowid','int');
 		$priceid = GETPOST('priceid','int');
-		$newprice = price2num(GETPOST("price",'int'), 'MU');
+		$newprice = price2num(GETPOST("price",'alpha'), 'MU');
 		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
 		$quantity = GETPOST('quantity','int');
-		$remise_percent = price2num(GETPOST('remise_percent','int'));
+		$remise_percent = price2num(GETPOST('remise_percent','alpha'));
 		$remise = 0; // TODO : allow discount by amount when available on documents
 
 		if (empty($quantity)) {
