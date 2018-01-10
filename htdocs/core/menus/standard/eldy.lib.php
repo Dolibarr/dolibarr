@@ -941,7 +941,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// Various payment
-				if (! empty($conf->banque->enabled))
+				if (! empty($conf->banque->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
 				{
 					$langs->load("banks");
 					$newmenu->add("/compta/bank/various_payment/index.php?leftmenu=tax_various&amp;mainmenu=billing",$langs->trans("MenuVariousPayment"),1,$user->rights->banque->lire, '', $mainmenu, 'tax_various');
