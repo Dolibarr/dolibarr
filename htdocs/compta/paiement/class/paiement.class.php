@@ -143,7 +143,7 @@ class Paiement extends CommonObject
 	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
 	 *    @return   int                 			id of created payment, < 0 if error
 	 */
-	function create($user,$closepaidinvoices=0)
+	function create($user, $closepaidinvoices=0)
 	{
 		global $conf, $langs;
 
@@ -154,7 +154,7 @@ class Paiement extends CommonObject
         // Clean parameters
         $totalamount = 0;
         $atleastonepaymentnotnull = 0;
-		foreach ($this->amounts as $key => $value)	// How payment is dispatch
+		foreach ($this->amounts as $key => $value)	// How payment is dispatched (invoice id => amount)
 		{
 			$newvalue = price2num($value,'MT');
 			$this->amounts[$key] = $newvalue;
@@ -696,7 +696,7 @@ class Paiement extends CommonObject
 
 	/**
 	 *    Information sur l'objet
-	 *    
+	 *
 	 *    @param   int     $id      id du paiement dont il faut afficher les infos
 	 *    @return  void
 	 */
