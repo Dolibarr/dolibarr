@@ -472,7 +472,7 @@ class Societe extends CommonObject
 		if ($result >= 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
-			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$conf->entity.", '".$this->db->idate($now)."'";
+			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->entity.", '".$this->db->idate($now)."'";
 			$sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
 			$sql.= ", ".(! empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'":"null");
 			$sql.= ", ".$this->status;
