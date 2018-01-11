@@ -3378,20 +3378,19 @@ div#card-errors {
 /* ============================================================================== */
 
 table.valid {
-    border-top: solid 1px #E6E6E6;
-    border-<?php print $left; ?>: solid 1px #E6E6E6;
-    border-<?php print $right; ?>: solid 1px #444444;
-    border-bottom: solid 1px #555555;
-	padding-top: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
+    /* border-top: solid 1px #E6E6E6; */
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+    /* border-<?php print $right; ?>: solid 1px #444444;
+    border-bottom: solid 1px #555555; */
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 4px;
 	margin: 0px 0px;
-    background: #D5BAA8;
+    background: #fcf8e3;
 }
 
 .validtitre {
-    background: #D5BAA8;
 	font-weight: bold;
 }
 
