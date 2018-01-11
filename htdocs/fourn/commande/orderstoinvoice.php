@@ -171,16 +171,15 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			if ($ret < 0) $error++;
 
 			if ($_POST['origin'] && $_POST['originid']) {
-				$object->linked_objects = $orders_id;
+				$linked_orders_ids=array();
+				foreach ( $orders_id as $origin => $origin_id ) {
+					$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
+					$linked_orders_ids[]=$origin_id;
+				}
+				$object->linked_objects = array(GETPOST('origin')=>$linked_orders_ids);
 				$id = $object->create($user);
 
 				if ($id > 0) {
-					foreach ( $orders_id as $origin => $origin_id ) {
-						$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
-
-						$object->add_object_linked(GETPOST('origin'), $origin_id);
-					}
-
 					while ( $ii < $nn ) {
 						$objectsrc = new CommandeFournisseur($db);
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");

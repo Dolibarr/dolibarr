@@ -725,12 +725,12 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $mysoc;
+				$thirdparty = $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,((!empty($object->contact))?$object->contact:null),$usecontact,'target',$object);
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$thirdparty,((!empty($object->contact))?$object->contact:null),$usecontact,'target',$object);
 
 			// Show recipient
 			$widthrecbox=90;
