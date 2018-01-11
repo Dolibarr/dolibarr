@@ -494,6 +494,8 @@ class Thirdparties extends DolibarrApi
 
 	    $object = parent::_cleanObjectDatas($object);
 
+	    unset($object->nom);	// ->name already defined and nom deprecated
+
 	    unset($object->total_ht);
 	    unset($object->total_tva);
 	    unset($object->total_localtax1);
