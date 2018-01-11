@@ -214,10 +214,10 @@ class Facture extends CommonInvoice
 	 */
 	const STATUS_ABANDONED = 3;
 
-	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
-	const CLOSECODE_BADDEBT = 'badcustomer';
-	const CLOSECODE_ABANDONED = 'abandon';
-	const CLOSECODE_REPLACED = 'replaced';
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat';	// Abandonned remain - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer';		// Abandonned - bad
+	const CLOSECODE_ABANDONED = 'abandon';			// Abandonned - other
+	const CLOSECODE_REPLACED = 'replaced';			// Closed after doing a replacement invoice
 
 	/**
 	 * 	Constructor
