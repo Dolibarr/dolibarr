@@ -57,6 +57,7 @@ if (GETPOST("exportcsv")) $action = 'export_csv';
 
 
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
+if (empty($page) || $page < 0) { $page = 0; }
 
 $offset = $limit * $page;
 

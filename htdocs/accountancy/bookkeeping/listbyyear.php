@@ -79,6 +79,7 @@ if ($sortorder == "")
 if ($sortfield == "")
 	$sortfield = "t.rowid";
 
+	if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 
 
