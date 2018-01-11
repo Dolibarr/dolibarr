@@ -250,14 +250,14 @@ if ($action == 'writebookkeeping') {
 
 		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == 'replaced')
+		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED)
 		{
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
 			if ($alreadydispatched) $replacedinvoice = 2;
 		}
 
-		// If not already into bookkeeping, we won't add it, if yes, we will also add the counterpart.
+		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
 		if ($replacedinvoice == 1)
 		{
 			continue;
@@ -560,14 +560,14 @@ if ($action == 'exportcsv') {
 
 		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == 'replaced')
+		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED)
 		{
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
 			if ($alreadydispatched) $replacedinvoice = 2;
 		}
 
-		// If not already into bookkeeping, we won't add it, if yes, we will also add the counterpart.
+		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
 		if ($replacedinvoice == 1)
 		{
 			continue;
@@ -760,14 +760,14 @@ if (empty($action) || $action == 'view') {
 
 		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == 'replaced')
+		if ($invoicestatic->close_code == FactureFournisseur::CLOSECODE_REPLACED)
 		{
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
 			if ($alreadydispatched) $replacedinvoice = 2;
 		}
 
-		// If no, we won't add it, if yes, we will also add the counterpart.
+		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
 		if ($replacedinvoice == 1)
 		{
 			print '<tr class="oddeven">';
