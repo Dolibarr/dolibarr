@@ -1036,10 +1036,13 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
             print '<tr><td colspan="2">';
             print $table;
             $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+            print $sql;
             if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
             {
-                $db->query($sql);
+            	$resql = $db->query($sql);
+            	print ' - Done ('.$resql.')';
             }
+            else print ' - Disabled';
             print '</td></tr>';
         }
     }
