@@ -5479,6 +5479,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
 			$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
 
+			if ($object->element == 'societe')
+			{
+				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
+			}
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
