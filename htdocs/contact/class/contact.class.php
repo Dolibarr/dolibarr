@@ -76,17 +76,17 @@ class Contact extends CommonObject
 	public $email;
 	public $skype;
 	public $photo;
-    	public $jabberid;
+	public $jabberid;
 	public $phone_pro;
 	public $phone_perso;
 	public $phone_mobile;
-    	public $fax;
+	public $fax;
 
-    	public $priv;
+	public $priv;
 
 	public $birthday;
 	public $default_lang;
-    	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
+	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	public $ref_facturation;       // Reference number of invoice for which it is contact
 	public $ref_contrat;           // Nb de reference contrat pour lequel il est contact
@@ -177,6 +177,8 @@ class Contact extends CommonObject
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
+		$entity = isset($this->entity)?$this->entity:$conf->entity;
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
@@ -199,7 +201,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$this->entity.",";
+        $sql.= " ".$entity.",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
