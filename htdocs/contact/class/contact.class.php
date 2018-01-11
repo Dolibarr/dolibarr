@@ -176,6 +176,7 @@ class Contact extends CommonObject
         if (empty($this->socid)) $this->socid = 0;
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
+		$entity = (isset($this->entity) && is_numeric($this->entity)?$this->entity:$conf->entity);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
@@ -199,7 +200,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$this->entity.",";
+        $sql.= " ".$entity.",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
