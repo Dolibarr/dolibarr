@@ -686,7 +686,7 @@ if (empty($reshook))
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 								}
-								
+
 								// Dates
 								// TODO mutualiser
 								$date_start=$lines[$i]->date_debut_prevue;
@@ -2439,6 +2439,8 @@ else
 		{
 			$num = $db->num_rows($result);
 			$i = 0;
+
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder paymenttable" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">' . ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')) . '</td>';
@@ -2449,7 +2451,6 @@ else
 			print '<td width="18">&nbsp;</td>';
 			print '</tr>';
 
-			$var=false;
 			if ($num > 0)
 			{
 				while ($i < $num)
@@ -2658,6 +2659,7 @@ else
 		}
 
 		print '</table>';
+		print '</div>';
 
 		print '</div>';
 		print '</div>';
@@ -2712,8 +2714,6 @@ else
 		{
 			if ($action != 'editline')
 			{
-				$var = true;
-
 				// Add free products/services
 				$object->formAddObjectLine(1, $societe, $mysoc);
 
