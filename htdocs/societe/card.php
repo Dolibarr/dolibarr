@@ -3,7 +3,7 @@
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -56,9 +56,9 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
-$cancel     = GETPOST('cancel','alpha');
-$backtopage = GETPOST('backtopage','alpha');
-$confirm	= GETPOST('confirm');
+$cancel		= GETPOST('cancel','alpha');
+$backtopage	= GETPOST('backtopage','alpha');
+$confirm		= GETPOST('confirm');
 
 $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -351,82 +351,83 @@ if (empty($reshook))
 
         if (! $error)
         {
-        	if ($action == 'update')
+        		if ($action == 'update')
 	        {
-	        	$ret=$object->fetch($socid);
+	        		$ret=$object->fetch($socid);
 				$object->oldcopy = clone $object;
 	        }
 			else $object->canvas=$canvas;
 
 	        if (GETPOST("private") == 1)	// Ask to create a contact
 	        {
-	            $object->particulier       = GETPOST("private");
+	            $object->particulier			= GETPOST("private");
 
-	            $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
-	            $object->civility_id       = GETPOST('civility_id');	// Note: civility id is a code, not an int
+	            $object->name				= dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
+	            $object->civility_id			= GETPOST('civility_id');	// Note: civility id is a code, not an int
 	            // Add non official properties
-	            $object->name_bis          = GETPOST('name','alpha');
-	            $object->firstname         = GETPOST('firstname','alpha');
+	            $object->name_bis			= GETPOST('name','alpha');
+	            $object->firstname			= GETPOST('firstname','alpha');
 	        }
 	        else
 	        {
-	            $object->name              = GETPOST('name', 'alpha');
+	            $object->name				= GETPOST('name', 'alpha');
 	        }
-	        $object->name_alias            = GETPOST('name_alias');
-	        $object->address               = GETPOST('address');
-	        $object->zip                   = GETPOST('zipcode', 'alpha');
-	        $object->town                  = GETPOST('town', 'alpha');
-	        $object->country_id            = GETPOST('country_id', 'int');
-	        $object->state_id              = GETPOST('state_id', 'int');
-	        $object->skype                 = GETPOST('skype', 'alpha');
-	        $object->phone                 = GETPOST('phone', 'alpha');
-	        $object->fax                   = GETPOST('fax','alpha');
-	        $object->email                 = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
-	        $object->url                   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
-	        $object->idprof1               = trim(GETPOST('idprof1', 'alpha'));
-	        $object->idprof2               = trim(GETPOST('idprof2', 'alpha'));
-	        $object->idprof3               = trim(GETPOST('idprof3', 'alpha'));
-	        $object->idprof4               = trim(GETPOST('idprof4', 'alpha'));
-	        $object->idprof5               = trim(GETPOST('idprof5', 'alpha'));
-	        $object->idprof6               = trim(GETPOST('idprof6', 'alpha'));
-	        $object->prefix_comm           = GETPOST('prefix_comm', 'alpha');
-	        $object->code_client           = GETPOST('code_client', 'alpha');
-	        $object->code_fournisseur      = GETPOST('code_fournisseur', 'alpha');
-	        $object->capital               = GETPOST('capital', 'alpha');
-	        $object->barcode               = GETPOST('barcode', 'alpha');
+	        $object->entity					= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
+	        $object->name_alias				= GETPOST('name_alias');
+	        $object->address					= GETPOST('address');
+	        $object->zip						= GETPOST('zipcode', 'alpha');
+	        $object->town					= GETPOST('town', 'alpha');
+	        $object->country_id				= GETPOST('country_id', 'int');
+	        $object->state_id				= GETPOST('state_id', 'int');
+	        $object->skype					= GETPOST('skype', 'alpha');
+	        $object->phone					= GETPOST('phone', 'alpha');
+	        $object->fax						= GETPOST('fax','alpha');
+	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+	        $object->url						= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+	        $object->idprof1					= trim(GETPOST('idprof1', 'alpha'));
+	        $object->idprof2					= trim(GETPOST('idprof2', 'alpha'));
+	        $object->idprof3					= trim(GETPOST('idprof3', 'alpha'));
+	        $object->idprof4					= trim(GETPOST('idprof4', 'alpha'));
+	        $object->idprof5					= trim(GETPOST('idprof5', 'alpha'));
+	        $object->idprof6					= trim(GETPOST('idprof6', 'alpha'));
+	        $object->prefix_comm				= GETPOST('prefix_comm', 'alpha');
+	        $object->code_client				= GETPOST('code_client', 'alpha');
+	        $object->code_fournisseur		= GETPOST('code_fournisseur', 'alpha');
+	        $object->capital					= GETPOST('capital', 'alpha');
+	        $object->barcode					= GETPOST('barcode', 'alpha');
 
-	        $object->tva_intra             = GETPOST('tva_intra', 'alpha');
-	        $object->tva_assuj             = GETPOST('assujtva_value', 'alpha');
-	        $object->status                = GETPOST('status', 'alpha');
+	        $object->tva_intra				= GETPOST('tva_intra', 'alpha');
+	        $object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
+	        $object->status					= GETPOST('status', 'alpha');
 
 	        // Local Taxes
-	        $object->localtax1_assuj       = GETPOST('localtax1assuj_value', 'alpha');
-	        $object->localtax2_assuj       = GETPOST('localtax2assuj_value', 'alpha');
+	        $object->localtax1_assuj			= GETPOST('localtax1assuj_value', 'alpha');
+	        $object->localtax2_assuj			= GETPOST('localtax2assuj_value', 'alpha');
 
-	        $object->localtax1_value	   = GETPOST('lt1', 'alpha');
-	        $object->localtax2_value	   = GETPOST('lt2', 'alpha');
+	        $object->localtax1_value			= GETPOST('lt1', 'alpha');
+	        $object->localtax2_value			= GETPOST('lt2', 'alpha');
 
-	        $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
-	        $object->effectif_id           = GETPOST('effectif_id', 'int');
-	        $object->typent_id             = GETPOST('typent_id','int');
+	        $object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
+	        $object->effectif_id				= GETPOST('effectif_id', 'int');
+	        $object->typent_id				= GETPOST('typent_id','int');
 
-	        $object->typent_code           = dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
+	        $object->typent_code				= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
 
-	        $object->client                = GETPOST('client', 'int');
-	        $object->fournisseur           = GETPOST('fournisseur', 'int');
+	        $object->client					= GETPOST('client', 'int');
+	        $object->fournisseur				= GETPOST('fournisseur', 'int');
 
-	        $object->commercial_id         = GETPOST('commercial_id', 'int');
-	        $object->default_lang          = GETPOST('default_lang');
+	        $object->commercial_id			= GETPOST('commercial_id', 'int');
+	        $object->default_lang			= GETPOST('default_lang');
 
 	        // Webservices url/key
-	        $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
-	        $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
+	        $object->webservices_url			= GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+	        $object->webservices_key			= GETPOST('webservices_key', 'san_alpha');
 
 			// Incoterms
 			if (!empty($conf->incoterm->enabled))
 			{
-				$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
-				$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
+				$object->fk_incoterms		= GETPOST('incoterm_id', 'int');
+				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 			}
 
 			// Multicurrency
@@ -499,17 +500,17 @@ if (empty($reshook))
                 $result = $object->create($user);
 
 				if ($result >= 0)
-                {
-                    if ($object->particulier)
-                    {
-                        dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
-                        $result=$object->create_individual($user);
-                        if ($result < 0)
-                        {
-                            setEventMessages($object->error, $object->errors, 'errors');
-                        	$error++;
-                        }
-                    }
+				{
+					if ($object->particulier)
+					{
+						dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
+						$result=$object->create_individual($user);
+						if ($result < 0)
+						{
+							setEventMessages($object->error, $object->errors, 'errors');
+							$error++;
+						}
+					}
 
 					// Customer categories association
 					$custcats = GETPOST('custcats', 'array');
@@ -2477,11 +2478,11 @@ else
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 	        }
 
-	        // Subsidiaries list
-	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
-	        {
-	        	$result=show_subsidiaries($conf,$langs,$db,$object);
-	        }
+			// Subsidiaries list
+			if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
+			{
+				$result=show_subsidiaries($conf,$langs,$db,$object);
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -2497,6 +2498,21 @@ else
 			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for thirdparty
 
 			print '</div></div></div>';
+
+			if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD))
+			{
+				// Contacts list
+				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+				{
+					$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+
+				// Addresses list
+				if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+				{
+					$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+			}
 		}
 
 		// Presend form

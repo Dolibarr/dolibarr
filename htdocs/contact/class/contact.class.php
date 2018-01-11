@@ -187,7 +187,7 @@ class Contact extends CommonObject
 		$sql.= ", statut";
 		$sql.= ", canvas";
 		$sql.= ", entity";
-		$sql.= ",ref_ext";
+		$sql.= ", ref_ext";
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
@@ -199,7 +199,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$conf->entity.",";
+        $sql.= " ".$this->entity.",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -642,7 +642,7 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
@@ -671,41 +671,42 @@ class Contact extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id				= $obj->rowid;
+				$this->entity			= $obj->entity;
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
-				$this->civility_code	= $obj->civility_id;
+				$this->civility_code		= $obj->civility_id;
 				$this->lastname			= $obj->lastname;
-				$this->firstname		= $obj->firstname;
+				$this->firstname			= $obj->firstname;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
 
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
-				$this->departement_code = $obj->state_code;	       // deprecated
-				$this->state_code       = $obj->state_code;
+				$this->departement_code	= $obj->state_code;	       // deprecated
+				$this->state_code		= $obj->state_code;
 				$this->departement		= $obj->state;	           // deprecated
-				$this->state			= $obj->state;
+				$this->state				= $obj->state;
 
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->socid			= $obj->fk_soc;
+				$this->socid				= $obj->fk_soc;
 				$this->socname			= $obj->socname;
-				$this->poste			= $obj->poste;
+				$this->poste				= $obj->poste;
 				$this->statut			= $obj->statut;
 
-				$this->phone_pro		= trim($obj->phone);
+				$this->phone_pro			= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
 				$this->phone_perso		= trim($obj->phone_perso);
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email			= $obj->email;
+				$this->email				= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        		$this->skype			= $obj->skype;
-                $this->photo			= $obj->photo;
+				$this->skype				= $obj->skype;
+				$this->photo				= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
