@@ -2499,7 +2499,7 @@ else
 
 			print '</div></div></div>';
 
-			if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+			if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD))
 			{
 				// Contacts list
 				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
