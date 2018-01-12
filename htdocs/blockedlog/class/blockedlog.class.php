@@ -398,6 +398,7 @@ class BlockedLog
 
 				$totalamount += $amount;
 
+				$tmpobject = null;
 				if ($this->element == 'payment_supplier')
 				{
 					include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -412,6 +413,10 @@ class BlockedLog
 				{
 					include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 					$tmpobject = new Don($this->db);
+				}
+				if (! is_object($tmpobject))
+				{
+					continue;
 				}
 
 				$result = $tmpobject->fetch($objid);
