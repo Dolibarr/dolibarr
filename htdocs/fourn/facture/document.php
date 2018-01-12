@@ -244,6 +244,8 @@ if ($object->id > 0)
 	print '</table>';
 	print '</div>';
 
+	print '<div class="clearboth"></div>';
+
 	dol_fiche_end();
 
 
