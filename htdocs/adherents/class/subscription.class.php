@@ -88,7 +88,7 @@ class Subscription extends CommonObject
 		$sql.= " '".$this->db->escape($this->note)."')";
 
 		$resql = $this->db->query($sql);
-		if ($res===false) {
+		if (! $resql) {
 			$error++;
 			$this->errors[] = $this->db->lasterror();
 		}
