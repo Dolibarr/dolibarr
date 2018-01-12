@@ -648,7 +648,10 @@ if ($action == 'create')
 					print "</tr>\n";
 				}
 
-				if (price2num($total_debit) != price2num($total_credit))
+				$total_debit = price2num($total_debit);
+				$total_credit = price2num($total_credit);
+
+				if ($total_debit != $total_credit)
 				{
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_credit, $total_debit)), 'warnings');
 				}
