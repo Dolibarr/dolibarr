@@ -1236,7 +1236,7 @@ class FormFile
 			print "</table>";
 			print '</div>';
 
-			if (! $editline && $nboflines > 1 && is_object($object)) {
+			if ($nboflines > 1 && is_object($object)) {
 				if (! empty($conf->use_javascript_ajax) && $permtoeditline) {
 					$table_element_line = 'ecm_files';
 					include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
