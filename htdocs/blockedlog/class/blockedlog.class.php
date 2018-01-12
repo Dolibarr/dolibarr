@@ -364,6 +364,8 @@ class BlockedLog
 				))) continue;									// Discard if not into a dedicated list
 				if (!is_object($value)) $this->object_data->{$key} = $value;
 			}
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
 		elseif ($this->element == 'invoice_supplier')
 		{
@@ -375,6 +377,8 @@ class BlockedLog
 				))) continue;									// Discard if not into a dedicated list
 				if (!is_object($value)) $this->object_data->{$key} = $value;
 			}
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
 		elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation')
 		{
@@ -474,10 +478,14 @@ class BlockedLog
 			}
 
 			$this->object_data->amount = $totalamount;
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
 		elseif($this->element == 'payment_salary')
 		{
 			$this->object_data->amounts = array($object->amount);
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
 
 		return 1;
