@@ -248,11 +248,15 @@ print '<br>';
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-if ($search_fk_user > 0) $param.='&search_fk_user='.urlencode($search_fk_user);
-if ($search_start > 0)   $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int')).'&search_startmonth='.urlencode(GETPOST('search_startmonth','int')).'&search_startday='.urlencode(GETPOST('search_startday','int'));
-if ($search_end > 0)     $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int')).'&search_endmonth='.urlencode(GETPOST('search_endmonth','int')).'&search_endday='.urlencode(GETPOST('search_endday','int'));
+if ($search_fk_user > 0)    $param.='&search_fk_user='.urlencode($search_fk_user);
+if ($search_startyear > 0)  $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int'));
+if ($search_startmonth > 0) $param.='&search_startmonth='.urlencode(GETPOST('search_startmonth','int'));
+if ($search_startday > 0)   $param.='&search_startday='.urlencode(GETPOST('search_startday','int'));
+if ($search_endyear > 0)    $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int'));
+if ($search_endmonth > 0)   $param.='&search_endmonth='.urlencode(GETPOST('search_endmonth','int'));
+if ($search_endday > 0)     $param.='&search_endday='.urlencode(GETPOST('search_endday','int'));
 if ($search_showonlyerrors > 0) $param.='&search_showonlyerrors='.urlencode($search_showonlyerrors);
-if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
 if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab','alpha'));
 
 // Add $param from extra fields
