@@ -523,8 +523,13 @@ class Form
 			}
 		}
 
-		// If info or help with smartphone, show only text (tooltip can't works)
-		if (! empty($conf->dol_no_mouse_hover))
+		// If info or help with smartphone, show only text (tooltip hover can't works)
+		if (! empty($conf->dol_no_mouse_hover) && empty($tooltiptrigger))
+		{
+			if ($type == 'info' || $type == 'help') return $text;
+		}
+		// If info or help with smartphone, show only text (tooltip on lick does not works with dialog on smaprtphone)
+		if (! empty($conf->dol_no_mouse_hover) && ! empty($tooltiptrigger))
 		{
 			if ($type == 'info' || $type == 'help') return $text;
 		}
