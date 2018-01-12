@@ -1133,31 +1133,30 @@ class Paiement extends CommonObject
 	    }*/
 		return '';
 	}
-	
+
 	/**
-     *    	Load the third party of object, from id into this->thirdparty
-     *
-     *		@param		int		$force_thirdparty_id	Force thirdparty id
-     *		@return		int								<0 if KO, >0 if OK
-     */
-    function fetch_thirdparty($force_thirdparty_id=0)
-    {
+	 *    	Load the third party of object, from id into this->thirdparty
+	 *
+	 *		@param		int		$force_thirdparty_id	Force thirdparty id
+	 *		@return		int								<0 if KO, >0 if OK
+	 */
+	function fetch_thirdparty($force_thirdparty_id=0)
+	{
 		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-		
+
 		if (empty($force_thirdparty_id))
 		{
-			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first invoice to get him
+			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first supplier invoice to get him
 			if (!empty($billsarray))
 			{
-				$supplier_invoice = new FactureFournisseur($this->db);
-				if ($supplier_invoice->fetch($billsarray[0]) > 0)
+				$invoice = new Facture($this->db);
+				if ($invoice->fetch($billsarray[0]) > 0)
 				{
-					$force_thirdparty_id = $supplier_invoice->fk_soc;
+					$force_thirdparty_id = $invoice->fk_soc;
 				}
 			}
 		}
-		
-		return parent::fetch_thirdparty($force_thirdparty_id);
-    }
 
+		return parent::fetch_thirdparty($force_thirdparty_id);
+	}
 }

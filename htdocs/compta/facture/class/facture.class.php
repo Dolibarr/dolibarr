@@ -214,10 +214,10 @@ class Facture extends CommonInvoice
 	 */
 	const STATUS_ABANDONED = 3;
 
-	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
-	const CLOSECODE_BADDEBT = 'badcustomer';
-	const CLOSECODE_ABANDONED = 'abandon';
-	const CLOSECODE_REPLACED = 'replaced';
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat';	// Abandonned remain - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer';		// Abandonned - bad
+	const CLOSECODE_ABANDONED = 'abandon';			// Abandonned - other
+	const CLOSECODE_REPLACED = 'replaced';			// Closed after doing a replacement invoice
 
 	/**
 	 * 	Constructor
@@ -2053,11 +2053,11 @@ class Facture extends CommonInvoice
 	 *  of no payment even if merchandises were sent).
 	 *
 	 *	@param	User	$user        	Object user making change
-	 *	@param	string	$close_code		Code de fermeture
+	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
 	 *	@param	string	$close_note		Comment
 	 *	@return int         			<0 if KO, >0 if OK
 	 */
-	function set_canceled($user,$close_code='',$close_note='')
+	function set_canceled($user, $close_code='', $close_note='')
 	{
 
 		dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
@@ -2187,7 +2187,7 @@ class Facture extends CommonInvoice
 				return -12;
 			}
 
-			$result=$facreplaced->set_canceled($user,'replaced','');
+			$result=$facreplaced->set_canceled($user, self::CLOSECODE_REPLACED, '');
 			if ($result < 0)
 			{
 				$this->error=$facreplaced->error;

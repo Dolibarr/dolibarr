@@ -3096,7 +3096,7 @@ function img_info($titlealt = 'default')
  *	Show warning logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1
+ *	@param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"'). If 1, add float: right. Can't be "class" attribute.
  *	@return string      		Return img tag
  */
 function img_warning($titlealt = 'default', $moreatt = '')
@@ -5479,7 +5479,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
 			$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
 
-			if (is_object($object->thirdparty) && $object->thirdparty->id > 0)
+			if (is_object($object) && $object->element == 'societe')
+			{
+				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
+			}
+			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');

@@ -3181,17 +3181,29 @@ div.ok {
   color: #114466;
 }
 
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
+    padding-top: 8px;
+    padding-left: 10px;
+    padding-right: 4px;
+    padding-bottom: 8px;
+    margin: 0.5em 0em 0.5em 0em;
+    background: #eff8fc;
+}
+
 /* Warning message */
 div.warning {
-  color: #302020;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  /* border: 1px solid #e0d0b0; */
-  border: 2px solid #805000
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  /* background: #EFDF9A; */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
+    background: #fcf8e3;
+}
+div.warning a, div.info a, div.error a {
+	color: rgb(<?php echo $colortext; ?>);
 }
 
 /* Error message */
@@ -3205,19 +3217,6 @@ div.error {
   background: #EFCFCF;
 }
 
-/* Info admin */
-div.info {
-  color: #fff;
-  padding: 0.4em 0.4em 0.4em 0.4em;
-  margin: 0.5em 0em 0.5em 0em;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background: #989;
-}
-
-div.warning a, div.info a, div.error a {
-	color: rgb(<?php echo $colortext; ?>);
-}
 
 /*
  *   Liens Payes/Non payes
@@ -3378,20 +3377,19 @@ div#card-errors {
 /* ============================================================================== */
 
 table.valid {
-    border-top: solid 1px #E6E6E6;
-    border-<?php print $left; ?>: solid 1px #E6E6E6;
-    border-<?php print $right; ?>: solid 1px #444444;
-    border-bottom: solid 1px #555555;
-	padding-top: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
+    /* border-top: solid 1px #E6E6E6; */
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+    /* border-<?php print $right; ?>: solid 1px #444444;
+    border-bottom: solid 1px #555555; */
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 4px;
 	margin: 0px 0px;
-    background: #D5BAA8;
+    background: #fcf8e3;
 }
 
 .validtitre {
-    background: #D5BAA8;
 	font-weight: bold;
 }
 

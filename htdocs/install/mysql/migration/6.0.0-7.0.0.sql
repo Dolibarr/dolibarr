@@ -25,6 +25,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_system MODIFY pcg_version VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_system MODIFY pcg_version VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;
