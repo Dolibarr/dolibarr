@@ -189,8 +189,10 @@ foreach($listofnotifiedevents as $notifiedevent)
 print '</td></tr>';
 
 print '</table>';
+print '<div class="opacitymedium">';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
 if (! empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+print '</div>';
 print '<br><br>';
 
 

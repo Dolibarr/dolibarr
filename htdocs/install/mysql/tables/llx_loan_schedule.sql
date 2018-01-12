@@ -24,9 +24,9 @@ create table llx_loan_schedule
   datec				datetime,         -- creation date
   tms				timestamp,
   datep				datetime,         -- payment date
-  amount_capital	real DEFAULT 0,
-  amount_insurance	real DEFAULT 0,
-  amount_interest	real DEFAULT 0,
+  amount_capital	double(24,8) DEFAULT 0,
+  amount_insurance	double(24,8) DEFAULT 0,
+  amount_interest	double(24,8) DEFAULT 0,
   fk_typepayment	integer NOT NULL,
   num_payment		varchar(50),
   note_private      text,

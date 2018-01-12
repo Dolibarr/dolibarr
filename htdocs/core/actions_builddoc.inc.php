@@ -91,11 +91,15 @@ if ($action == 'builddoc' && $permissioncreate)
         }
         else
         {
-        	if (empty($donotredirect))	// This is se when include is done by bulk action "Bill Orders"
+        	if (empty($donotredirect))	// This is set when include is done by bulk action "Bill Orders"
         	{
 	            setEventMessages($langs->trans("FileGenerated"), null);
 
-	            header('Location: '.$_SERVER['REQUEST_URI'].'#builddoc');
+	            $urltoredirect = $_SERVER['REQUEST_URI'];
+	            $urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+	            $urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect);	// To avoid infinite loop
+
+	            header('Location: '.$urltoredirect.'#builddoc');
 	            exit;
         	}
         }

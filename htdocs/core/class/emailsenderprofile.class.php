@@ -43,15 +43,10 @@ class EmailSenderProfile extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_email_senderprofile';
-
-	/**
-	 * @var array  Does this field is linked to a thirdparty ?
-	 */
-	protected $isnolinkedbythird = 1;
 	/**
 	 * @var array  Does emailsenderprofile support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	protected $ismultientitymanaged = 1;
+	public $ismultientitymanaged = 1;
 	/**
 	 * @var string String with name of icon for emailsenderprofile
 	 */

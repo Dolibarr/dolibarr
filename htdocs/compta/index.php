@@ -107,7 +107,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     	$langs->load("donations");
     	$listofsearchfields['search_donation']=array('text'=>'Donation');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -123,7 +123,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -136,7 +136,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
     $sql = "SELECT f.facnumber";
-    $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc";
+    $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
     $sql.= ", f.type";
     $sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
@@ -178,6 +178,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $facturestatic->total_ht=$obj->total_ht;
                 $facturestatic->total_tva=$obj->total_tva;
                 $facturestatic->total_ttc=$obj->total_ttc;
+                $facturestatic->ref_client=$obj->ref_client;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
@@ -193,7 +194,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
-				
+
 			}
 
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
@@ -218,7 +219,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
  */
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
-	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type";
+	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_fournisseur";
@@ -253,6 +254,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
                 $facturesupplierstatic->total_ht=$obj->total_ht;
                 $facturesupplierstatic->total_tva=$obj->total_tva;
                 $facturesupplierstatic->total_ttc=$obj->total_ttc;
+                $facturesupplierstatic->ref_supplier=$obj->ref_supplier;
 				$facturesupplierstatic->type=$obj->type;
 				print $facturesupplierstatic->getNomUrl(1,'',16);
 				print '</td>';
@@ -380,7 +382,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$total_ttc +=  $obj->total_ttc;
 				$total += $obj->total_ht;
 				$totalam +=  $obj->am;
-				
+
 				$i++;
 			}
 		}
@@ -497,7 +499,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 
 	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."don as d";
-	$sql.= " WHERE d.entity = ".$conf->entity;
+	$sql.= " WHERE d.entity IN (".getEntity('donation').")";
 	$sql.= $db->order("d.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
@@ -512,8 +514,9 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations",$max).'</th>';
+        print '<th></th>';
         print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+        print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
         print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
@@ -525,16 +528,19 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				
-				print '<tr class="oddeven">';
+
 				$donationstatic->id=$objp->rowid;
+				$donationstatic->ref=$objp->rowid;
 				$donationstatic->lastname=$objp->lastname;
 				$donationstatic->firstname=$objp->firstname;
+
 				$label=$donationstatic->getFullName($langs);
 				if ($objp->societe) $label.=($label?' - ':'').$objp->societe;
-				$donationstatic->ref=$label;
+
+				print '<tr class="oddeven">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
-                print '<td align="right">'.price($objp->amount).'</td>';
+				print '<td>'.$label.'</td>';
+				print '<td align="right">'.price($objp->amount).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
                 print '<td>'.$donationstatic->LibStatut($objp->fk_statut,3).'</td>';
 				print '</tr>';
@@ -592,11 +598,13 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					print '<tr class="oddeven">';
+
 					$chargestatic->id=$obj->rowid;
 					$chargestatic->ref=$obj->libelle;
 					$chargestatic->lib=$obj->libelle;
 					$chargestatic->paye=$obj->paye;
+
+					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech),'day').'</td>';
 					print '<td align="right">'.price($obj->amount).'</td>';
@@ -717,7 +725,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 				//print "x".$tot_ttc."z".$obj->tot_fttc;
 				$tot_tobill += ($obj->total_ttc-$obj->tot_fttc);
 				$i++;
-				
+
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
@@ -829,7 +837,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$total_ttc +=  $obj->total_ttc;
 				$total += $obj->total_ht;
 				$totalam +=  $obj->am;
-				
+
 				$i++;
 			}
 
@@ -970,7 +978,7 @@ if ($resql)
 	while ($i < $db->num_rows($resql))
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 
 		print "<tr ".$bc[$var]."><td>".dol_print_date($db->jdate($obj->da),"day")."</td>";
 		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';

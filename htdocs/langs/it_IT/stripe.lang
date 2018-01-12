@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
 PaymentForm=Forma di pagamento
@@ -12,7 +12,7 @@ YourEMail=Email per la conferma del pagamento
 STRIPE_PAYONLINE_SENDEMAIL=Email di avviso dopo un pagamento (a buon fine o no)
 Creditor=Creditore
 PaymentCode=Codice pagamento
-StripeDoPayment=Vai al pagamento
+StripeDoPayment=Pay with Credit or Debit Card (Stripe)
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=Successivo
 ToOfferALinkForOnlinePayment=URL per il pagamento %s
@@ -31,8 +31,6 @@ InformationToFindParameters=Aiuto per trovare informazioni sul tuo account %s
 STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
 VendorName=Nome del venditore
 CSSUrlForPaymentForm=URL del foglio di stile CSS per il modulo di pagamento
-MessageOK=Messaggio sulla pagina di pagamento convalidato
-MessageKO=Messaggio sulla pagina di pagamento annullato
 NewStripePaymentReceived=New Stripe payment received
 NewStripePaymentFailed=New Stripe payment tried but failed
 STRIPE_TEST_SECRET_KEY=Secret test key

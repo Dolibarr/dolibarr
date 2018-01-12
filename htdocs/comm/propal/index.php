@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    $var=false;
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -115,14 +114,13 @@ if ($resql)
 
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Proposals").'</td></tr>'."\n";
-    $var=true;
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$propalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
+    	$dataseries[]=array($propalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-            
+
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
@@ -131,9 +129,18 @@ if ($resql)
     }
     if ($conf->use_javascript_ajax)
     {
-        print '<tr class="impair"><td align="center" colspan="2">';
-        $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1);
+        print '<tr><td align="center" colspan="2">';
+
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+        $dolgraph = new DolGraph();
+        $dolgraph->SetData($dataseries);
+        $dolgraph->setShowLegend(1);
+        $dolgraph->setShowPercent(1);
+        $dolgraph->SetType(array('pie'));
+        $dolgraph->setWidth('100%');
+        $dolgraph->draw('idgraphthirdparties');
+        print $dolgraph->show($total?0:1);
+
         print '</td></tr>';
     }
     //if ($totalinprocess != $total)
@@ -173,10 +180,8 @@ if (! empty($conf->propal->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-				
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 
@@ -233,10 +238,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-			
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -308,8 +311,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
@@ -317,7 +318,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref
@@ -402,10 +403,9 @@ if (! empty($conf->propal->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -474,10 +474,9 @@ if (! empty($conf->propal->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';

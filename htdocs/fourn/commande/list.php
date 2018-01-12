@@ -83,11 +83,10 @@ $search_total_ht=GETPOST('search_total_ht','alpha');
 $search_total_vat=GETPOST('search_total_vat','alpha');
 $search_total_ttc=GETPOST('search_total_ttc','alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$billed = GETPOST('billed','int');
+$search_billed = GETPOST('search_billed','int');
 $search_project_ref=GETPOST('search_project_ref','alpha');
 
 $status=GETPOST('statut','alpha');
-$billed=GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
 
 // Security check
@@ -158,7 +157,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
 	foreach($extrafields->attribute_label as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
 
@@ -212,6 +211,7 @@ if (empty($reshook))
 		$deliverymonth='';
 		$deliveryyear='';
 		$billed='';
+		$search_billed='';
 		$toselect='';
 		$search_array_options=array();
 	}
@@ -478,7 +478,7 @@ if ($status)
 	if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
 	else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
 }
-if ($billed > 0) $title.=' - '.$langs->trans("Billed");
+if ($search_billed > 0) $title.=' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url='';
@@ -525,7 +525,7 @@ if ($search_refsupp) $sql.= natural_search("cf.ref_supplier", $search_refsupp);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_request_author) $sql.=natural_search(array('u.lastname','u.firstname','u.login'), $search_request_author) ;
-if ($billed != '' && $billed >= 0) $sql .= " AND cf.billed = ".$billed;
+if ($search_billed != '' && $search_billed >= 0) $sql .= " AND cf.billed = ".$search_billed;
 
 //Required triple check because statut=0 means draft filter
 if (GETPOST('statut', 'intcomma') !== '')
@@ -575,19 +575,7 @@ if ($search_total_vat != '') $sql.= natural_search('cf.tva', $search_total_vat, 
 if ($search_total_ttc != '') $sql.= natural_search('cf.total_ttc', $search_total_ttc, 1);
 if ($search_project_ref != '') $sql.= natural_search("p.ref",$search_project_ref);
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -642,17 +630,12 @@ if ($resql)
 	if ($search_total_ttc != '') $param.="&search_total_ttc=".$search_total_ttc;
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($search_project_ref >= 0)  	$param.="&search_project_ref=".$search_project_ref;
-	if ($billed != '')          $param.="&billed=".$billed;
+	if ($search_project_ref >= 0) $param.="&search_project_ref=".$search_project_ref;
+	if ($search_billed != '')   $param.="&search_billed=".$search_billed;
 	if ($show_files)            $param.='&show_files=' .$show_files;
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
-		if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
@@ -660,8 +643,8 @@ if ($resql)
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+	if ($user->rights->fournisseur->commande->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lignes des champs de filtre
@@ -678,15 +661,11 @@ if ($resql)
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 
-	if ($massaction == 'presend')
-	{
-		$topicmail="SendOrderRef";
-		$modelmail="order_supplier_send";
-		$objecttmp=new CommandeFournisseur($db);
-		$trackid='sord'.$object->id;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-	}
+	$topicmail="SendOrderRef";
+	$modelmail="order_supplier_send";
+	$objecttmp=new CommandeFournisseur($db);
+	$trackid='sord'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($massaction == 'createbills')
 	{
@@ -875,28 +854,8 @@ if ($resql)
 		print '</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				print '<td class="liste_titre'.($align?' '.$align:'').'">';
-				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-				{
-					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
-					$searchclass='';
-					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-				print '</td>';
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -924,7 +883,7 @@ if ($resql)
 	if (! empty($arrayfields['cf.billed']['checked']))
 	{
 		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('billed', $billed, 1, 0, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1);
 		print '</td>';
 	}
 	// Action column
@@ -953,19 +912,7 @@ if ($resql)
 	if (! empty($arrayfields['cf.total_vat']['checked']))      print_liste_field_titre($arrayfields['cf.total_vat']['label'],$_SERVER["PHP_SELF"],"cf.tva","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['cf.total_ttc']['checked']))      print_liste_field_titre($arrayfields['cf.total_ttc']['label'],$_SERVER["PHP_SELF"],"cf.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$sortonfield = "ef.".$key;
-				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -1155,23 +1102,7 @@ if ($resql)
 		}
 
 		// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-			foreach($extrafields->attribute_label as $key => $val)
-			{
-				if (! empty($arrayfields["ef.".$key]['checked']))
-				{
-					print '<td';
-					$align=$extrafields->getAlignFlag($key);
-					if ($align) print ' align="'.$align.'"';
-					print '>';
-					$tmpkey='options_'.$key;
-					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-					print '</td>';
-					if (! $i) $totalarray['nbfield']++;
-				}
-			}
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
@@ -1233,7 +1164,7 @@ if ($resql)
 
 		$filedir=$diroutputmassaction;
 		$genallowed=$user->rights->fournisseur->commande->lire;
-		$delallowed=$user->rights->fournisseur->commande->lire;
+		$delallowed=$user->rights->fournisseur->commande->creer;
 
 		print $formfile->showdocuments('massfilesarea_supplier_order','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}

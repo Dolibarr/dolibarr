@@ -2,10 +2,6 @@
 AmountHTVATRealReceived=Amount excl GST collected
 AmountHTVATRealPaid=Amount excl GST paid
 VATToPay=GST to pay
-VATReceived=GST received
-VATToCollect=GST purchases
-VATSummary=GST balance
-VATPaid=GST paid
 VATCollected=GST to collect
 PaymentVat=GST payment
 ShowVatPayment=Show GST payment

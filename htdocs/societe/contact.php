@@ -26,9 +26,9 @@
  */
 
 /**
- *  \file       htdocs/societe/card.php
+ *  \file       htdocs/societe/contact.php
  *  \ingroup    societe
- *  \brief      Third party card page
+ *  \brief      Page of contacts of thirdparties
  */
 
 require '../main.inc.php';
@@ -171,17 +171,17 @@ else
 	{
 		print '<div class="fichecenter">';
 
-		        // Contacts list
-        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-        {
-            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
+		// Contacts list
+		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+		{
+			$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
 
-        // Addresses list
-        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-        {
-        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
+		// Addresses list
+		if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+		{
+			$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
 
 
 		print '</div>';

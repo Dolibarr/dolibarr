@@ -4,7 +4,6 @@ Proposal=Ofertă  Comercială
 ProposalShort=Ofertă 
 ProposalsDraft=Oferte Comerciale schiţă
 ProposalsOpened=Open commercial proposals
-Prop=Oferte Comerciale
 CommercialProposal=Ofertă Comercială
 PdfCommercialProposalTitle=Ofertă Comercială
 ProposalCard=Fişă Ofertă 
@@ -64,6 +63,7 @@ ProposalLine=Linie Ofertă
 AvailabilityPeriod=Disponibilitate Livrare
 SetAvailability=Setează  disponibilitatea livrării
 AfterOrder=după comandă
+OtherProposals=Alte oferte
 ##### Availability #####
 AvailabilityTypeAV_NOW=Imediat
 AvailabilityTypeAV_1W=1 săptămână

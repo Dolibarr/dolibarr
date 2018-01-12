@@ -392,7 +392,7 @@ class Categorie extends CommonObject
 	 *          					-1 : SQL error
 	 *          					-2 : invalid category
 	 */
-	function update($user='')
+	function update(User $user)
 	{
 		global $conf, $langs,$hookmanager;
 
@@ -766,12 +766,10 @@ class Categorie extends CommonObject
 		// For backward compatibility
 		if ($type == 'societe') {
 			$type = 'customer';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead",
-				LOG_WARNING );
+			dol_syslog( get_class( $this ) . "::del_type(): type 'societe' is deprecated, please use 'customer' instead", LOG_WARNING);
 		} elseif ($type == 'fournisseur') {
 			$type = 'supplier';
-			dol_syslog( get_class( $this ) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead",
-				LOG_WARNING );
+			dol_syslog( get_class( $this ) . "::del_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
 		}
 
         $this->db->begin();

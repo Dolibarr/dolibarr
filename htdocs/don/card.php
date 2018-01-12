@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
@@ -199,8 +199,11 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
 }
 if ($action == 'valid_promesse')
 {
+	$object->fetch($id);
 	if ($object->valid_promesse($id, $user->id) >= 0)
 	{
+		setEventMessages($langs->trans("DonationValidated", $object->ref), null);
+
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
@@ -210,7 +213,8 @@ if ($action == 'valid_promesse')
 }
 if ($action == 'set_cancel')
 {
-    if ($object->set_cancel($id) >= 0)
+	$object->fetch($id);
+	if ($object->set_cancel($id) >= 0)
     {
         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
         exit;
@@ -221,6 +225,7 @@ if ($action == 'set_cancel')
 }
 if ($action == 'set_paid')
 {
+	$object->fetch($id);
 	if ($object->set_paid($id, $modepayment) >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
@@ -630,15 +635,13 @@ if (! empty($id) && $action != 'edit')
 	 * Payments
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-	$sql.= "c.code as type_code,c.libelle as paiement_type";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
-	$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
+	$sql.= " c.code as type_code,c.libelle as paiement_type";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON c.entity IN (".getEntity('c_paiement').")";
 	$sql.= ", ".MAIN_DB_PREFIX."don as d";
 	$sql.= " WHERE d.rowid = '".$id."'";
 	$sql.= " AND p.fk_donation = d.rowid";
-	$sql.= " AND d.entity = ".$conf->entity;
+	$sql.= " AND d.entity IN (".getEntity('donation').")";
 	$sql.= " AND p.fk_typepayment = c.id";
-	$sql.= " AND c.entity = " . getEntity('c_paiement');
 	$sql.= " ORDER BY dp";
 
 	//print $sql;
@@ -742,7 +745,7 @@ if (! empty($id) && $action != 'edit')
 		}
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butActionDelete butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("Delete")."</a></div>";
 		}
 	}
 	else
@@ -761,8 +764,8 @@ if (! empty($id) && $action != 'edit')
 	$filename	=	dol_sanitizeFileName($object->id);
 	$filedir	=	$conf->don->dir_output . "/" . dol_sanitizeFileName($object->id);
 	$urlsource	=	$_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	=	($object->statut == 2 && ($object->paid == 0 || $user->admin) && $user->rights->don->creer);
-	$delallowed	=	$user->rights->don->supprimer;
+	$genallowed	=	($object->statut == 2 && ($object->paid == 0 || $user->admin) && $user->rights->don->lire);
+	$delallowed	=	$user->rights->don->creer;
 
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 

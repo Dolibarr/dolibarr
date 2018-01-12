@@ -28,7 +28,7 @@ create table llx_c_email_templates
   fk_user         integer,                        -- Id user owner if template is private, or null
   datec           datetime,
   tms             timestamp,
-  label           varchar(255),					  -- Label of predefined email
+  label           varchar(180),					  -- Label of predefined email
   position        smallint,					      -- Position
   enabled         varchar(255) DEFAULT '1',		  -- Condition to have this module visible
   active          tinyint DEFAULT 1  NOT NULL,

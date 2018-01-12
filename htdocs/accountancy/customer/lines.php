@@ -64,7 +64,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->AC
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if ($page < 0) $page = 0;
+if (empty($page) || $page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 $offset = $limit * $page;
@@ -365,7 +365,7 @@ if ($result) {
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 		print '<td align="center">';
-		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
+		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')).'">';
 		print img_edit();
 		print '</a>';
 		print '</td>';

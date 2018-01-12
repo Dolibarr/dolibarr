@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("accountancy");
@@ -39,8 +40,22 @@ $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
 $action = GETPOST('action', 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+
+if (empty($search_date_start))
+{
+	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+	$year_start = dol_print_date(dol_now(), '%Y');
+	$year_end = $year_start + 1;
+	$month_end = $month_start - 1;
+	if ($month_end < 1)
+	{
+		$month_end = 12;
+		$year_end--;
+	}
+	$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+	$search_date_end = dol_get_last_day($year_end, $month_end);
+}
+
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
 
@@ -177,7 +192,7 @@ $num=count($object->lines);
 
 
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
@@ -208,18 +223,15 @@ if ($action == 'delbookkeepingyear') {
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
 $viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans("ViewFlatList") . '</a>';
+$addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'', $limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat.$addbutton,'', $limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
   $sortorder = "asc";
 else
   $sortorder = "desc";
-
-print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
-print '</div>';
 
 print '<table class="noborder" width="100%">';
 

@@ -139,7 +139,8 @@ KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubu
 KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
 KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
 #########
 # upgrade
 MigrationFixData=Fix za denormalizovane podatke
@@ -191,6 +192,7 @@ MigrationActioncommElement=Ažuriranje podataka akcija
 MigrationPaymentMode=Migracija podataka načina plaćanja
 MigrationCategorieAssociation=Migracija kategorija
 MigrationEvents=Migracija događaja i dodavanje vlasnika događaja u assignment tabelu
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Ponovo učitavanje modula %s

@@ -63,6 +63,9 @@ if (! $sortorder) $sortorder='DESC';
 
 $object = new BonPrelevement($db,"");
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+
 
 /*
  * Actions
@@ -70,9 +73,7 @@ $object = new BonPrelevement($db,"");
 
 if ( $action == 'confirm_delete' )
 {
-	$object->fetch($id, $ref);
-
-	$res=$object->delete();
+	$res=$object->delete($user);
 	if ($res > 0)
 	{
 		header("Location: index.php");
@@ -83,8 +84,6 @@ if ( $action == 'confirm_delete' )
 // Seems to no be used and replaced with $action == 'infocredit
 if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
 {
-	$object->fetch($id, $ref);
-
 	$res=$object->set_credite();
 	if ($res >= 0)
 	{
@@ -96,8 +95,6 @@ if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
 if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$object->fetch($id, $ref);
 
 	$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
@@ -132,7 +129,6 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 // Set direct debit order to credited, create payment and close invoices
 if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 {
-	$object->fetch($id, $ref);
 	$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
 	$error = $object->set_infocredit($user, $dt);
@@ -156,8 +152,6 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref)
 {
-	$object->fetch($id, $ref);
-
 	$head = prelevement_prepare_head($object);
 	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
@@ -172,7 +166,9 @@ if ($id > 0 || $ref)
 
 	}*/
 
-	dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -414,12 +410,7 @@ if ($id > 0 || $ref)
 	{
 		dol_print_error($db);
 	}
-
-
-
-
 }
-
 
 llxFooter();
 

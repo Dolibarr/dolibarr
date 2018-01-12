@@ -671,7 +671,6 @@ class Fichinter extends CommonObject
 		if (! empty($this->ref))
 			$label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 
-		$picto='intervention';
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 
 		if ($option !== 'nolink')
@@ -698,9 +697,11 @@ class Fichinter extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -839,85 +840,96 @@ class Fichinter extends CommonObject
 
 		$this->db->begin();
 
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('FICHINTER_DELETE',$user);
+			if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+			// End call triggers
+		}
+
 		// Delete linked object
-		$res = $this->deleteObjectLinked();
-		if ($res < 0) $error++;
+		if (! $error)
+		{
+			$res = $this->deleteObjectLinked();
+			if ($res < 0) $error++;
+		}
 
 		// Delete linked contacts
-		$res = $this->delete_linked_contact();
-		if ($res < 0)
+		if (! $error)
 		{
-			$this->error='ErrorFailToDeleteLinkedContact';
-			$error++;
+			$res = $this->delete_linked_contact();
+			if ($res < 0)
+			{
+				$this->error='ErrorFailToDeleteLinkedContact';
+				$error++;
+			}
 		}
 
-		if ($error)
+		if (! $error)
 		{
-			$this->db->rollback();
-			return -1;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
+			$sql.= " WHERE fk_fichinter = ".$this->id;
+
+			$resql = $this->db->query($sql);
+			if (! $resql) $error++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
-		$sql.= " WHERE fk_fichinter = ".$this->id;
-
-		dol_syslog("Fichinter::delete", LOG_DEBUG);
-		if ( $this->db->query($sql) )
+		if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
 		{
+			// Remove extrafields
+			$res = $this->deleteExtraFields();
+			if ($res < 0) $error++;
+		}
+
+		if (! $error)
+		{
+			// Delete object
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("Fichinter::delete", LOG_DEBUG);
-			if ( $this->db->query($sql) )
+			$resql = $this->db->query($sql);
+			if (! $resql) $error++;
+		}
+
+		if (! $error)
+		{
+			// Remove directory with files
+			$fichinterref = dol_sanitizeFileName($this->ref);
+			if ($conf->ficheinter->dir_output)
 			{
-
-				// Remove directory with files
-				$fichinterref = dol_sanitizeFileName($this->ref);
-				if ($conf->ficheinter->dir_output)
+				$dir = $conf->ficheinter->dir_output . "/" . $fichinterref ;
+				$file = $conf->ficheinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
+				if (file_exists($file))
 				{
-					$dir = $conf->ficheinter->dir_output . "/" . $fichinterref ;
-					$file = $conf->ficheinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
-					if (file_exists($file))
-					{
-						dol_delete_preview($this);
+					dol_delete_preview($this);
 
-						if (! dol_delete_file($file,0,0,0,$this)) // For triggers
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-							return 0;
-						}
-					}
-					if (file_exists($dir))
+					if (! dol_delete_file($file,0,0,0,$this)) // For triggers
 					{
-						if (! dol_delete_dir_recursive($dir))
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-							return 0;
-						}
+						$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+						return 0;
 					}
 				}
-
-				if (! $notrigger)
+				if (file_exists($dir))
 				{
-					// Call trigger
-					$result=$this->call_trigger('FICHINTER_DELETE',$user);
-					if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-					// End call triggers
+					if (! dol_delete_dir_recursive($dir))
+					{
+						$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+						return 0;
+					}
 				}
+			}
+		}
 
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->lasterror();
-				$this->db->rollback();
-				return -2;
-			}
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}

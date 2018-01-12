@@ -24,6 +24,14 @@
  * $parameters
  * $cols
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_edit.tpl.php -->
 <?php
