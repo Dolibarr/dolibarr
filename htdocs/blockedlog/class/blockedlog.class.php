@@ -788,7 +788,7 @@ class BlockedLog
 	 *  @param	string	$search_ref		search ref
 	 *  @param	string	$search_amount	search amount
 	 *  @param	string	$search_code	search code
-	 *	@return	array					array of object log
+	 *	@return	array|int				Array of object log or <0 if error
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref='', $search_amount='', $search_code='')
 	{
@@ -826,16 +826,25 @@ class BlockedLog
 		if ($search_code != '' && $search_code != '-1')   $sql.=natural_search("action", $search_code, 3);
 
 		$sql.=$this->db->order($sortfield, $sortorder);
-		$sql.=$this->db->plimit($limit);
+		$sql.=$this->db->plimit($limit+1);					// We want more, because we will stop into loop later with error if we reach max
 
 		$res = $this->db->query($sql);
 		if($res) {
 
 			$results=array();
 
-			while ($obj = $this->db->fetch_object($res)) {
+			$i = 0;
+			while ($obj = $this->db->fetch_object($res))
+			{
+				$i++;
+				if ($i > $limit)
+				{
+					// Too many record, we will consume too much memory
+					return -2;
+				}
 
-				if (!isset($cachedlogs[$obj->rowid])) {
+				if (!isset($cachedlogs[$obj->rowid]))
+				{
 					$b=new BlockedLog($this->db);
 					$b->fetch($obj->rowid);
 
@@ -847,9 +856,8 @@ class BlockedLog
 
 			return $results;
 		}
-		else{
-			return false;
-		}
+
+		return -1;
 	}
 
 	/**
