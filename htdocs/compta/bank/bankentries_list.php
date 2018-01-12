@@ -663,7 +663,7 @@ if ($resql)
 		print '<tr>';
 		print '<td>';
 		print '<input name="label" class="flat minwidth200" type="text" value="'.GETPOST("label","alpha").'">';
-		if ($options) {
+		if (is_array($options) && count($options)) {
 			print '<br>'.$langs->trans("Rubrique").': ';
 			print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
 		}
