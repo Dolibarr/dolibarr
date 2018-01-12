@@ -1149,10 +1149,10 @@ class Paiement extends CommonObject
 			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first supplier invoice to get him
 			if (!empty($billsarray))
 			{
-				$supplier_invoice = new FactureFournisseur($this->db);
-				if ($supplier_invoice->fetch($billsarray[0]) > 0)
+				$invoice = new Facture($this->db);
+				if ($invoice->fetch($billsarray[0]) > 0)
 				{
-					$force_thirdparty_id = $supplier_invoice->fk_soc;
+					$force_thirdparty_id = $invoice->fk_soc;
 				}
 			}
 		}
