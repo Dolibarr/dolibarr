@@ -143,8 +143,9 @@ $arrayfields=array(
     'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || ! empty($ref))?0:1), 'position'=>1000),
     'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
-    'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1000),
-    'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>1010),
+	'balancebefore'=>array('label'=>$langs->trans("BalanceBefore"), 'checked'=>0, 'position'=>1000),
+	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1001),
+	'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>1010),
     'b.conciliated'=>array('label'=>$langs->trans("Conciliated"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile'?1:0), 'position'=>1020),
 );
 // Extra fields
@@ -865,14 +866,21 @@ if ($resql)
     	print '<input type="text" class="flat" name="credit" size="4" value="'.dol_escape_htmltag($credit).'">';
     	print '</td>';
 	}
+	if (! empty($arrayfields['balancebefore']['checked']))
+	{
+		print '<td class="liste_titre" align="right">';
+		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
+		print $form->textwithpicto('', $htmltext, 1);
+		print '</td>';
+	}
 	if (! empty($arrayfields['balance']['checked']))
 	{
-    	print '<td class="liste_titre" align="right">';
-    	$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
-    	print $form->textwithpicto('', $htmltext, 1);
-    	print '</td>';
+		print '<td class="liste_titre" align="right">';
+		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
+		print $form->textwithpicto('', $htmltext, 1);
+		print '</td>';
 	}
-    // Numero statement
+	// Numero statement
 	if (! empty($arrayfields['b.num_releve']['checked']))
 	{
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
@@ -904,6 +912,7 @@ if ($resql)
 	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'],$_SERVER['PHP_SELF'],'ba.ref','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['balancebefore']['checked']))      print_liste_field_titre($arrayfields['balancebefore']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['balance']['checked']))            print_liste_field_titre($arrayfields['balance']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.conciliated']['checked']))      print_liste_field_titre($arrayfields['b.conciliated']['label'],$_SERVER['PHP_SELF'],'b.rappro','',$param,'align="center"',$sortfield,$sortorder);
@@ -929,7 +938,7 @@ if ($resql)
         $objp = $db->fetch_object($resql);
 
         // If we are in a situation where we need/can show balance, we calculate the start of balance
-        if (! $balancecalculated && ! empty($arrayfields['balance']['checked']) && $mode_balance_ok)
+        if (! $balancecalculated && (! empty($arrayfields['balancebefore']['checked']) || ! empty($arrayfields['balance']['checked'])) && $mode_balance_ok)
         {
             if (! $account)
             {
@@ -970,7 +979,7 @@ if ($resql)
             	$balancefieldfound=false;
             	foreach($arrayfields as $key => $val)
             	{
-            		if ($key == 'balance')
+            		if ($key == 'balancebefore' || $key == 'balance')
             		{
             			$balancefieldfound=true;
             			continue;
@@ -1284,25 +1293,46 @@ if ($resql)
     	    if (! $i) $totalarray['totalcredfield']=$totalarray['nbfield'];
     	}
 
+    	// Balance before
+    	if (! empty($arrayfields['balancebefore']['checked']))
+    	{
+    		if ($mode_balance_ok)
+    		{
+    			$balancebefore = price2num($balance - ($sign * $objp->amount),'MT');
+    			if ($balancebefore >= 0)
+    			{
+    				print '<td align="right" class="nowrap">&nbsp;'.price($balancebefore).'</td>';
+    			}
+    			else
+    			{
+    				print '<td align="right" class="error nowrap">&nbsp;'.price($balancebefore).'</td>';
+    			}
+    		}
+    		else
+    		{
+    			print '<td align="right">-</td>';
+    		}
+    		if (! $i) $totalarray['nbfield']++;
+    	}
     	// Balance
     	if (! empty($arrayfields['balance']['checked']))
     	{
-    	    if ($mode_balance_ok)
-        	{
-        	    if ($balance >= 0)
-        	    {
-        	        print '<td align="right" class="nowrap">&nbsp;'.price($balance).'</td>';
-        	    }
-        	    else
-        	    {
-        	        print '<td align="right" class="error nowrap">&nbsp;'.price($balance).'</td>';
-        	    }
-        	}
-        	else
-        	{
-        	    print '<td align="right">-</td>';
-        	}
-			if (! $i) $totalarray['nbfield']++;
+    		if ($mode_balance_ok)
+    		{
+    			if ($balance >= 0)
+    			{
+    				print '<td align="right" class="nowrap">&nbsp;'.price($balance).'</td>';
+    			}
+    			else
+    			{
+    				print '<td align="right" class="error nowrap">&nbsp;'.price($balance).'</td>';
+    			}
+    		}
+    		else
+    		{
+    			print '<td align="right">-</td>';
+    		}
+    		if (! $i) $totalarray['nbfield']++;
     	}
 
     	if (! empty($arrayfields['b.num_releve']['checked']))
