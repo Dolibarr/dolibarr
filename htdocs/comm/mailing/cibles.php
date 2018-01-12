@@ -443,6 +443,7 @@ if ($object->fetch($id) >= 0)
 
 		if ($page)	$param.= "&amp;page=".$page;
 
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 
 		// Ligne des champs de filtres
@@ -590,6 +591,7 @@ if ($object->fetch($id) >= 0)
 			}
 		}
 		print "</table><br>";
+		print '</div>';
 
 		print '</form>';
 
