@@ -176,9 +176,8 @@ class Contact extends CommonObject
         if (empty($this->socid)) $this->socid = 0;
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
-		$entity = (isset($this->entity) && is_numeric($this->entity)?$this->entity:$conf->entity);
 
-		$entity = isset($this->entity)?$this->entity:$conf->entity;
+		$entity = (isset($this->entity) && is_numeric($this->entity)?$this->entity:$conf->entity);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
