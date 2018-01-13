@@ -847,21 +847,28 @@ if ($source == 'invoice')
 
 	// Amount
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+	if (empty($amount) && empty($object->paye)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
+	if (empty($object->paye))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+		if (empty($amount) || ! is_numeric($amount))
+		{
+			print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+			print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+		}
+		else {
+			print '<b>'.price($amount).'</b>';
+			print '<input type="hidden" name="amount" value="'.$amount.'">';
+			print '<input type="hidden" name="newamount" value="'.$amount.'">';
+		}
+		// Currency
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+		print '<input type="hidden" name="currency" value="'.$currency.'">';
 	}
-	else {
-		print '<b>'.price($amount).'</b>';
-		print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+	else
+	{
+		print price($object->total_ttc, 1, $langs);
 	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
@@ -1290,31 +1297,38 @@ if ($action != 'dopayment')
 {
 	if ($found && ! $error)	// We are in a management option and no error
 	{
-		// Buttons for all payments registration methods
-
-		if (! empty($conf->paybox->enabled))
+		if ($source == 'invoice' && $object->paye)
 		{
-			// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
-			print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+			print '<br><br>'.$langs->trans("InvoicePaid");
 		}
-
-		if (! empty($conf->stripe->enabled))
+		else
 		{
-			// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
-			print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
-		}
+			// Buttons for all payments registration methods
 
-		if (! empty($conf->paypal->enabled))
-		{
-			if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
-
-			if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
+			if (! empty($conf->paybox->enabled))
 			{
-				print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
+				print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 			}
-			if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+
+			if (! empty($conf->stripe->enabled))
 			{
-				print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
+				print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+			}
+
+			if (! empty($conf->paypal->enabled))
+			{
+				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
+
+				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
+				{
+					print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+				}
+				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+				{
+					print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				}
 			}
 		}
 	}
