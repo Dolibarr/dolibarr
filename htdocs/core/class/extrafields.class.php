@@ -624,9 +624,10 @@ class ExtraFields
 		{
 			$this->db->begin();
 
-			if(is_array($param) && count($param) > 0)
+			if (is_array($param))
 			{
-				$param = $this->db->escape(serialize($param));
+				if (count($param) > 0) $param = $this->db->escape(serialize($param));
+				else $param='';
 			}
 
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
@@ -698,7 +699,6 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
 

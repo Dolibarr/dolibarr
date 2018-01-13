@@ -4685,14 +4685,16 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 {
 	global $conf;
 
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
 	// Note: possible values for tva_assuj are 0/1 or franchise/reel
 	$seller_use_vat=((is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj) || (! is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj=='franchise'))?0:1;
 
-	$seller_country_code=$thirdparty_seller->country_code;
-	$seller_in_cee=$thirdparty_seller->isInEEC();
+	$seller_country_code = $thirdparty_seller->country_code;
+	$seller_in_cee = isInEEC($thirdparty_seller);
 
-	$buyer_country_code=$thirdparty_buyer->country_code;
-	$buyer_in_cee=$thirdparty_buyer->isInEEC();
+	$buyer_country_code = $thirdparty_buyer->country_code;
+	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
 	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".$seller_in_cee.", buyer country=".$buyer_country_code.", buyer in cee=".$buyer_in_cee.", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
 
