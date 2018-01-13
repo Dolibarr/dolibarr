@@ -1278,6 +1278,7 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
  *
  *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
+ *  @see dol_convert_file
  */
 function dol_delete_preview($object)
 {

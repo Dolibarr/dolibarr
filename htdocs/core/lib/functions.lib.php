@@ -1357,12 +1357,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 					$dir_output = $conf->$modulepart->dir_output . "/";
 					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
 					{
-						$subdir = get_exdir($object->id, 2, 0, 0, $object, $modulepart).$objectref;
+						$subdir = get_exdir($object->id, 2, 0, 0, $object, $modulepart).$objectref;		// the objectref dir is not include into get_exdir when used with level=2, so we add it here
 					}
 					else
 					{
-						$subdir = get_exdir($object->id, 0, 0, 0, $object, $modulepart).$objectref;
+						$subdir = get_exdir($object->id, 0, 0, 0, $object, $modulepart);
 					}
+
 					$filepath = $dir_output . $subdir . "/";
 					$file = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
@@ -4869,10 +4870,11 @@ function yn($yesno, $case=1, $color=0)
 
 
 /**
- *	Return a path to have a directory according to object.
+ *	Return a path to have a the directory according to object where files are stored.
  *  New usage:       $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)
  *         or:       $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, $modulepart)     if multidir_output not defined.
- *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
+ *  Example our with new usage:       $object is invoice -> 'INYYMM-ABCD'
+ *  Example our with old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/"
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
@@ -4904,14 +4906,15 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 	{
 		// TODO
 		// We will enhance here a common way of forging path for document storage
-		// Here, object->id, object->ref and object->modulepart are required.
+		// Here, object->id, object->ref and modulepart are required.
 		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment')))
 		{
-			$path=$object->ref?$object->ref:$object->id;
+			$path=($object->ref?$object->ref:$object->id);
 		}
 	}
 
 	if (empty($withoutslash) && ! empty($path)) $path.='/';
+
 	return $path;
 }
 
