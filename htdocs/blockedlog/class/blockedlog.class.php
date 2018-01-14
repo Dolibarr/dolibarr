@@ -349,8 +349,11 @@ class BlockedLog
 		}
 
 		// Add user info
-		$this->fk_user = $user->id;
-		$this->user_fullname = $user->getFullName($langs);
+		if (! empty($user))
+		{
+			$this->fk_user = $user->id;
+			$this->user_fullname = $user->getFullName($langs);
+		}
 
 		// Field specific to object
 
