@@ -89,6 +89,7 @@ abstract class DoliDB implements Database
 	 */
 	function idate($param)
 	{
+		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
 		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
@@ -279,6 +280,7 @@ abstract class DoliDB implements Database
 	 */
 	function jdate($string, $gm=false)
 	{
+		// TODO GMT must set param gm to true by default
 		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
 		$string=preg_replace('/([^0-9])/i','',$string);
 		$tmp=$string.'000000';
