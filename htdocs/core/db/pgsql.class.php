@@ -658,7 +658,7 @@ class DoliDBPgsql extends DoliDB
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    string	$param      Date TMS to convert
-	 *   @return	string   			Date in a string YYYYMMDDHHMMSS
+	 *   @return	string   			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	function idate($param)
 	{
