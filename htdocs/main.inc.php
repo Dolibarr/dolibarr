@@ -210,8 +210,11 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 	if (empty($cookievalue)) unset($_COOKIE[$cookiename]);
 }
 
+
 // Init session. Name of session is specific to Dolibarr instance.
+// Note: the function dol_getprefix have been redefined to manage another area to protect with a different cookie.
 $prefix=dol_getprefix('');
+
 $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
@@ -375,12 +378,19 @@ $login='';
 if (! defined('NOLOGIN'))
 {
 	// $authmode lists the different means of identification to be tested in order of preference.
-	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser'
+	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser', '...'
 
-	// Authentication mode
-	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
-	// Authentication mode: forceuser
-	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+	if (defined('MAIN_AUTHENTICATION_MODE'))
+	{
+		$dolibarr_main_authentication = constant('MAIN_AUTHENTICATION_MODE');
+	}
+	else
+	{
+		// Authentication mode
+		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
+		// Authentication mode: forceuser
+		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+	}
 	// Set authmode
 	$authmode=explode(',',$dolibarr_main_authentication);
 
