@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Nb de documentos en el directorio
+ECMNbOfDocs=N° de documentos en el directorio
 ECMAddSection=Agregar directorio
 ECMCreationDate=Fecha de creación
 ECMNbOfSubDir=Cantidad de subdirectorios
@@ -29,4 +29,3 @@ ECMSelectASection=Seleccione un directorio en el árbol de la izquierda ...
 DirNotSynchronizedSyncFirst=Este directorio parece ser creado o modificado fuera del módulo ECM. Primero debe hacer clic en el botón "Resincronizar" para sincronizar el disco y la base de datos para obtener el contenido de este directorio.
 HashOfFileContent=Hash del contenido del archivo
 FileNotYetIndexedInDatabase=Archivo aún no indexado en la base de datos (intente volver a subirlo)
-NoDirectoriesFound=No se encontraron directorios

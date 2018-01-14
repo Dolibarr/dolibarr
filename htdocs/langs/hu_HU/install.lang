@@ -141,6 +141,7 @@ KeepDefaultValuesProxmox=Ön használja az Dolibarr Setup Wizard egy Proxmox vir
 UpgradeExternalModule=Run dedicated upgrade process of external modules
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix denormalizált adatra
@@ -196,6 +197,7 @@ MigrationEventsContact=Migration of events to add event contact into assignement
 MigrationRemiseEntity=Üres mező érték frissítése: llx_societe_remise
 MigrationRemiseExceptEntity=Üres mező érték frissítése: llx_societe_remise_except
 MigrationReloadModule=Modul újratöltése %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Nem elérhető opciók mutatása
 HideNotAvailableOptions=Nem elérhető opciók elrejtése
 ErrorFoundDuringMigration=Migráció alatt hiba történt, így nem lehet végrehajtani a következő lépést. A hibák elvetéséhez, végrehajthatja a <a href="%s">kattintson ide</a>, de az alkalmazás egyes lehetőségei nem fognak megfelelően működni a hibajavítás nélkül.

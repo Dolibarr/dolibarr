@@ -196,6 +196,7 @@ CurrentProductPrice=ราคาปัจจุบัน
 AlwaysUseNewPrice=มักจะใช้ราคาปัจจุบันของสินค้า / บริการ
 AlwaysUseFixedPrice=ใช้ราคาคงที่
 PriceByQuantity=ราคาที่แตกต่างกันตามปริมาณ
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=จำนวนช่วง
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

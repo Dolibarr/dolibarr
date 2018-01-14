@@ -9,8 +9,8 @@ ConfirmDeleteEstablishment=Sei sicuro di voler cancellare questa azienda?
 OpenEtablishment=Apri azienda
 CloseEtablishment=Chiudi azienda
 # Dictionary
-DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryDepartment=HRM - Lista dipartimenti
+DictionaryFunction=HRM - Lista funzioni
 # Module
 Employees=Dipendenti
 Employee=Dipendente

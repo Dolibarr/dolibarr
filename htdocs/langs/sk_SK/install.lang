@@ -141,6 +141,7 @@ KeepDefaultValuesProxmox=Používate Dolibarr inštalátor z Proxmox čiže hodn
 UpgradeExternalModule=Run dedicated upgrade process of external modules
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Oprava pre denormalized dát
@@ -196,6 +197,7 @@ MigrationEventsContact=Migration of events to add event contact into assignement
 MigrationRemiseEntity=Aktualizácia hodnoty llx_societe_remise
 MigrationRemiseExceptEntity=Aktualizácia hodnoty llx_societe_remise_except
 MigrationReloadModule=Znovu načítať modul %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Zobraziť nedostupné možnosti
 HideNotAvailableOptions=Skryť nedostupné možnosti
 ErrorFoundDuringMigration=Počas migrácies sa vyskytol problém preto nasledujúci krok nie je dostupný. Pre ignorovanie chýb môžete <a href="%s">kliknúť tu</a>, ale niektoré funkcie aplikácie nebudu fungovať správne pokial ich neopravíte.

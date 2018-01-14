@@ -89,6 +89,7 @@ AccountIdShort=Številka
 LineRecord=Transakcija
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Uskladil
 DateConciliating=Datum uskladitve
 BankLineConciliated=Entry reconciled

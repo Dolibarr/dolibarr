@@ -31,3 +31,4 @@ DONATION_ART200=Prikaži člen 200 iz CGI, če se vas tiče
 DONATION_ART238=Prikaži člen 238 iz CGI, če se vas tiče
 DONATION_ART885=Prikaži člen 885 iz CGI, če se vas tiče
 DonationPayment=Plačilo donacije
+DonationValidated=Donation %s validated

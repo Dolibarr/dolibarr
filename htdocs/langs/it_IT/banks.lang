@@ -89,6 +89,7 @@ AccountIdShort=Numero di conto
 LineRecord=Transazione
 AddBankRecord=Aggiungi operazione
 AddBankRecordLong=Aggiungi operazione manualmente
+Conciliated=Conciliata
 ConciliatedBy=Transazione conciliata da
 DateConciliating=Data di conciliazione
 BankLineConciliated=Transazione conciliata

@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - boxes
-BoxLoginInformation=Login information
+BoxLoginInformation=Pieteikšanās informācija
 BoxLastRssInfos=RSS informācija
 BoxLastProducts=Pēdējie %s produkti/pakalpojumi
 BoxProductsAlertStock=Produktu krājumu brīdinājums
 BoxLastProductsInContract=Pēdējie %s darījumi produktiem/servisiem
 BoxLastSupplierBills=Latest supplier invoices
-BoxLastCustomerBills=Latest customer invoices
+BoxLastCustomerBills=Pēdējie klientu rēķini
 BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices
 BoxOldestUnpaidSupplierBills=Oldest unpaid supplier invoices
 BoxLastProposals=Latest commercial proposals
@@ -82,5 +82,5 @@ ForCustomersInvoices=Klientu rēķini
 ForCustomersOrders=Klientu pasūtījumi
 ForProposals=Priekšlikumi
 LastXMonthRolling=The latest %s month rolling
-ChooseBoxToAdd=Add widget to your dashboard
-BoxAdded=Widget was added in your dashboard
+ChooseBoxToAdd=Pievienojiet logrīku savam informācijas panelim
+BoxAdded=Jūsu vadības panelī ir pievienots logrīks

@@ -47,12 +47,12 @@ TypeContact_fichinter_external_CUSTOMER=Contacte client seguiment intervenció
 PrintProductsOnFichinter=Imprimeix també les línies de tipus "producte" (no només serveis) en les fitxes d'intervencions.
 PrintProductsOnFichinterDetails=Intervencions generades des de comandes
 UseServicesDurationOnFichinter=Utilitza la durada dels serveis en les intervencions generades des de comandes
-UseDurationOnFichinter=Hides the duration field for intervention records
-UseDateWithoutHourOnFichinter=Hides hours and minutes off the date field for intervention records
+UseDurationOnFichinter=Oculta el camp de durada dels registres d'intervenció
+UseDateWithoutHourOnFichinter=Oculta hores i minuts del camp de dates dels registres d'intervenció
 InterventionStatistics=Estadístiques de intervencions
 NbOfinterventions=Nº de fitxes de intervenció
 NumberOfInterventionsByMonth=Nº de fitxes de intervenció per mes (data de validació)
-AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
+AmountOfInteventionNotIncludedByDefault=La quantitat d'intervenció no s'inclou de manera predeterminada en els beneficis (en la majoria dels casos, els fulls de temps s'utilitzen per comptar el temps dedicat). Per incloure'ls, afegiu la opció  PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT amb el valor 1 a Configuració &rarr; Varis.
 ##### Exports #####
 InterId=Id. d'intervenció
 InterRef=Ref. d'intervenció

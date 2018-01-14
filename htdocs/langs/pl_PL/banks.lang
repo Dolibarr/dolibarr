@@ -89,6 +89,7 @@ AccountIdShort=Liczba
 LineRecord=Transakcja
 AddBankRecord=Dodaj wpis
 AddBankRecordLong=Dodaj wpis ręcznie
+Conciliated=Reconciled
 ConciliatedBy=Rekoncyliowany przez
 DateConciliating=Data rekoncyliacji
 BankLineConciliated=Transakcje zaksięgowane

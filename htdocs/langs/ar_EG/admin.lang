@@ -30,4 +30,6 @@ AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module25Name=أمر شراء
 Module25Desc=إدارة أوامر الشراء
+Module700Name=تبرعات
+Module1780Name=الأوسمة/التصنيفات
 Permission81=قراءة أوامر الشراء

@@ -125,8 +125,8 @@ expenseReportRangeFromTo=de %d à %d
 expenseReportRangeMoreThan=Plus de %d
 expenseReportCoefUndefined=(valeur non définie)
 expenseReportCatDisabled=Catégorie désactivée - Voir la dictionnaire  c_exp_tax_cat dictionary
-expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionay
-expenseReportPrintExample=offset + (d x coef) = %s
+expenseReportRangeDisabled=Plage désactivée - voir le dictionay c_exp_tax_range
+expenseReportPrintExample=décalage + (d x coef) = %s
 ExpenseReportApplyTo=Appliquer à
 ExpenseReportDomain=Nom de domaine à utiliser
 ExpenseReportLimitOn=Limite sur

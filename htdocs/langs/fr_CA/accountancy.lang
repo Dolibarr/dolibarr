@@ -127,7 +127,6 @@ Modelcsv_ciel=Exporter vers Sage Ciel Compta ou Compta Evolution
 Modelcsv_quadratus=Exporter vers Quadratus QuadraCompta
 Modelcsv_ebp=Exporter vers EBP
 Modelcsv_cogilog=Exporter vers Cogilog
-Modelcsv_agiris=Export vers Agiris (test)
 ChartofaccountsId=Carte comptable Id
 InitAccountancy=Compabilité initiale
 DefaultBindingDesc=Cette page peut être utilisée pour définir un compte par défaut à utiliser pour lier l'historique des transactions sur les salaires de paiement, le don, les taxes et la TVA lorsque aucun compte comptable spécifique n'a été défini.
