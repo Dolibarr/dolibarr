@@ -102,7 +102,7 @@ if (empty($reshook))
 	    $tmpinvoice=new Facture($db);
 	    foreach ($_POST as $key => $value)
 	    {
-	        if (substr($key,0,7) == 'amount_')
+			if (substr($key,0,7) == 'amount_' && GETPOST($key) != '')
 	        {
 	            $cursorfacid = substr($key,7);
 	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
@@ -827,10 +827,10 @@ if (! GETPOST('action','aZ09'))
 
     $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
     $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
-    $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement').')';
+    $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
+    $sql.= ' WHERE p.fk_facture = f.rowid';
     $sql.= ' AND f.entity IN (' . getEntity('facture').')';
-    $sql.= ' AND c.entity IN (' . getEntity('c_paiement').')';
     if ($socid)
     {
         $sql.= ' AND f.fk_soc = '.$socid;

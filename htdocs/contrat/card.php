@@ -326,11 +326,19 @@ if (empty($reshook))
 									{
 										$label = $lines[$i]->product_label;
 									}
-
 									$desc = ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
 								}
 								else {
 									$desc = dol_htmlentitiesbr($lines[$i]->desc);
+								}
+
+								// Extrafields
+								$array_options = array();
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
+								// trigger used
+								{
+									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+									$array_options = $lines[$i]->array_options;
 								}
 
 								$txtva = $lines[$i]->vat_src_code ? $lines[$i]->tva_tx . ' (' .  $lines[$i]->vat_src_code . ')' : $lines[$i]->tva_tx;
@@ -355,7 +363,7 @@ if (empty($reshook))
 									$lines[$i]->info_bits,
 									$lines[$i]->fk_fournprice,
 									$lines[$i]->pa_ht,
-									array(),
+									$array_options,
 									$lines[$i]->fk_unit
 								);
 
@@ -509,6 +517,9 @@ if (empty($reshook))
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
 							$tva_tx = $prodcustprice->lines [0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 				}
@@ -821,21 +832,19 @@ if (empty($reshook))
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-		if ($ret < 0)
-			$error ++;
+		if ($ret < 0) $error++;
 
 		if (! $error) {
-
-				$result = $object->insertExtraFields();
-				if ($result < 0) {
-					$error ++;
-				}
-			} else if ($reshook < 0)
-				$error ++;
+			$result = $object->insertExtraFields();
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
 
 		if ($error) {
 			$action = 'edit_extras';
-			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	elseif ($action=='setref_supplier')
@@ -1082,6 +1091,10 @@ if ($action == 'create')
 			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
 			$objectsrc->fetch_thirdparty();
 
+			// Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options = $objectsrc->array_options;
+
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
 			$soc = $objectsrc->thirdparty;
@@ -1180,10 +1193,13 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
+		$langs->load('projects');
+
 		$formproject=new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		$formproject->select_projects(($soc->id>0?$soc->id:-1),$projectid,"projectid",0,0,1,1);
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print "</td></tr>";
 	}
 
@@ -1826,7 +1842,7 @@ else
 						{
 							$tmpaction='unactivateline';
 							$tmpactionpicto='playstop';
-							$tmpactiontext=$langs->trans("Unactivate");
+							$tmpactiontext=$langs->trans("Disable");
 						}
 						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver))
 						{
@@ -1968,7 +1984,7 @@ else
 				print '<tr '.$bc[false].'>';
 				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
 				print '<td class="nohover right">';
-				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"> &nbsp; ';
+				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '</tr>';
@@ -2124,8 +2140,8 @@ else
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->contrat->dir_output . "/" . dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->contrat->creer;
-			$delallowed = $user->rights->contrat->supprimer;
+			$genallowed = $user->rights->contrat->lire;
+			$delallowed = $user->rights->contrat->creer;
 
 			$var = true;
 

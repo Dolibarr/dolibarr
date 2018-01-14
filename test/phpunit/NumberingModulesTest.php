@@ -174,7 +174,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
 		$result=$localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
-		$this->assertEquals(0, $result, 'Test for {yyyy}-{0000} that is_erasable is 0 for 1st invoice');						// 1 can no more be deleted (2 is more recent)
+		$this->assertLessThanOrEqual(0, $result, 'Test for {yyyy}-{0000} that is_erasable is 0 for 1st invoice');						// 1 can no more be deleted (2 is more recent)
 
 		// Now we try with a reset
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000@1}';
@@ -264,7 +264,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
     	$result=$localobject->is_erasable();
     	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertEquals(0, $result);						// Case 1 can not be deleted (because there is an invoice 2)
+    	$this->assertLessThanOrEqual(0, $result);						// Case 1 can not be deleted (because there is an invoice 2)
 		$localobject3=new Facture($this->savdb);
 		$localobject3->initAsSpecimen();
 		$localobject3->date=dol_mktime(12, 0, 0, 1, 1, 1926);	// we use following year for third invoice (and there is a reset required)

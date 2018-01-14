@@ -123,7 +123,8 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     $request = curl_getinfo($ch, CURLINFO_HEADER_OUT);	// Reading of request must be done after sending request
 
     dol_syslog("getURLContent request=".$request);
-    dol_syslog("getURLContent response=".$response);
+    //dol_syslog("getURLContent response =".response);	// This may contains binary data, so we dont output it
+    dol_syslog("getURLContent response size=".strlen($response));	// This may contains binary data, so we dont output it
 
     $rep=array();
     if (curl_errno($ch))
@@ -173,5 +174,38 @@ function getDomainFromURL($url)
 	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain);				// Remove part after domain
 	$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
 	$tmpdomain = preg_replace('/^[^\.]+\./', '', $tmpdomain);			// Remove part www. before domain name
+
 	return $tmpdomain;
 }
+
+/**
+ * Function root url from a long url
+ * For example: https://www.abc.mydomain.com/dir/page.html return 'https://www.abc.mydomain.com'
+ * For example: http://www.abc.mydomain.com/ return 'https://www.abc.mydomain.com'
+ *
+ * @param	string	  $url 				    Full URL.
+ * @return	string						    Returns root url
+ */
+function getRootURLFromURL($url)
+{
+	$prefix='';
+	$tmpurl = $url;
+	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) $prefix = $reg[1];
+	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl);				// Remove http(s)://
+	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl);					// Remove part after domain
+
+	return $prefix.$tmpurl;
+}
+
+/**
+ * Function to remove comments into HTML content
+ *
+ * @param	string	  $content 				Text content
+ * @return	string						    Returns text without HTML comments
+ */
+function removeHtmlComment($content)
+{
+	$content = preg_replace('/<!--[^\-]+-->/', '', $content);
+	return $content;
+}
+

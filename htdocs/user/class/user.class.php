@@ -40,9 +40,11 @@ class User extends CommonObject
 {
 	public $element='user';
 	public $table_element='user';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $fk_element='fk_user';
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	public $id=0;
+	public $statut;
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -53,17 +55,17 @@ class User extends CommonObject
 	public $job;
 	public $signature;
 	public $address;
-		public $zip;
-		public $town;
-		public $state_id;
-		public $state_code;
-		public $state;
+	public $zip;
+	public $town;
+	public $state_id;		// The state/department
+	public $state_code;
+	public $state;
 	public $office_phone;
 	public $office_fax;
 	public $user_mobile;
 	public $admin;
 	public $login;
-		public $api_key;
+	public $api_key;
 	public $entity;
 
 	//! Clear password in memory
@@ -100,7 +102,6 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
-	public $statut;
 	public $photo;
 	public $lang;
 
@@ -163,7 +164,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	Load a user from database with its id or ref (login)
+	 *	Load a user from database with its id or ref (login).
+	 *  This function does not load permissions, only user properties. Use getrights() for this just after the fetch.
 	 *
 	 *	@param	int		$id		       		If defined, id to used for search
 	 * 	@param  string	$login       		If defined, login to used for search
@@ -201,7 +203,7 @@ class User extends CommonObject
 		$sql.= " u.color,";
 		$sql.= " u.dateemployment,";
 		$sql.= " u.ref_int, u.ref_ext,";
-		$sql.= " u.default_range, u.default_c_exp_tax_cat,";
+		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
 		$sql.= " d.code_departement as state_code, d.nom as state";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -425,12 +427,13 @@ class User extends CommonObject
 	/**
 	 *  Add a right to the user
 	 *
-	 * 	@param	int		$rid			id du droit a ajouter
-	 *  @param  string	$allmodule		Ajouter tous les droits du module allmodule
-	 *  @param  string	$allperms		Ajouter tous les droits du module allmodule, perms allperms
+	 * 	@param	int		$rid			id of permission to add
+	 *  @param  string	$allmodule		Add all permissions of module $allmodule
+	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
+	 *  @see	clearrights, delrights, getrights
 	 */
 	function addrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
 	{
@@ -475,8 +478,11 @@ class User extends CommonObject
 			// On a pas demande un droit en particulier mais une liste de droits
 			// sur la base d'un nom de module de de perms
 			// Where pour la liste des droits a ajouter
-			if (! empty($allmodule)) $whereforadd="module='".$this->db->escape($allmodule)."'";
-			if (! empty($allperms))  $whereforadd=" AND perms='".$this->db->escape($allperms)."'";
+			if (! empty($allmodule))
+			{
+				$whereforadd="module='".$this->db->escape($allmodule)."'";
+				if (! empty($allperms)) $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+			}
 		}
 
 		// Ajout des droits trouves grace au critere whereforadd
@@ -515,7 +521,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);
@@ -544,6 +551,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
+	 *  @see	clearrights, addrights, getrights
 	 */
 	function delrights($rid, $allmodule='', $allperms='', $entity=0, $notrigger=0)
 	{
@@ -625,7 +633,8 @@ class User extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			$this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+			$langs->load("other");
+			$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			// Call trigger
 			$result=$this->call_trigger('USER_MODIFY',$user);
@@ -665,7 +674,7 @@ class User extends CommonObject
 	 *
 	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 *	@return	void
-	 *  @see	clearrights
+	 *  @see	clearrights, delrights, addrights
 	 */
 	function getrights($moduletag='')
 	{
@@ -718,19 +727,21 @@ class User extends CommonObject
 				if ($perms)
 				{
 					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = new stdClass(); // For avoid error
-					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-					if ($subperms)
+					if ($module)
 					{
-						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
-						$this->rights->$module->$perms->$subperms = 1;
+						if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = new stdClass();
+						if ($subperms)
+						{
+							if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+							if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+							$this->rights->$module->$perms->$subperms = 1;
+						}
+						else
+						{
+							if(empty($this->rights->$module->$perms)) $this->nb_rights++;
+							$this->rights->$module->$perms = 1;
+						}
 					}
-					else
-					{
-						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
-					}
-
 				}
 				$i++;
 			}
@@ -1000,7 +1011,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
-	function create($user,$notrigger=0)
+	function create($user, $notrigger=0)
 	{
 		global $conf,$langs;
 		global $mysoc;
@@ -1326,9 +1337,10 @@ class User extends CommonObject
 	 *    	@param  int		$notrigger			1 ne declenche pas les triggers, 0 sinon
 	 *		@param	int		$nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
 	 *		@param	int		$nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
+	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
 	 *    	@return int 		        		<0 si KO, >=0 si OK
 	 */
-	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
+	function update($user, $notrigger=0, $nosyncmember=0, $nosyncmemberpass=0, $nosynccontact=0)
 	{
 		global $conf, $langs;
 
@@ -1463,7 +1475,7 @@ class User extends CommonObject
 
 					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-					// This user is linked with a member, so we also update members informations
+					// This user is linked with a member, so we also update member information
 					// if this is an update.
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
@@ -1485,8 +1497,6 @@ class User extends CommonObject
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 
-						$adh->note=$this->note;
-
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
 
@@ -1503,6 +1513,61 @@ class User extends CommonObject
 					{
 						$this->error=$adh->error;
 						$this->errors=$adh->errors;
+						$error++;
+					}
+				}
+
+				if ($this->contact_id > 0 && ! $nosynccontact)
+				{
+					dol_syslog(get_class($this)."::update user is linked with a contact. We try to update contact too.", LOG_DEBUG);
+
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+					// This user is linked with a contact, so we also update contact information
+					// if this is an update.
+					$tmpobj=new Contact($this->db);
+					$result=$tmpobj->fetch($this->contact_id);
+
+					if ($result >= 0)
+					{
+						$tmpobj->firstname=$this->firstname;
+						$tmpobj->lastname=$this->lastname;
+						$tmpobj->login=$this->login;
+						$tmpobj->gender=$this->gender;
+						$tmpobj->birth=$this->birth;
+
+						//$tmpobj->pass=$this->pass;
+
+						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
+
+						$tmpobj->email=$this->email;
+						$tmpobj->skype=$this->skype;
+						$tmpobj->phone_pro=$this->office_phone;
+						$tmpobj->phone_mobile=$this->user_mobile;
+						$tmpobj->fax=$this->office_fax;
+
+						$tmpobj->address=$this->address;
+						$tmpobj->town=$this->town;
+						$tmpobj->zip=$this->zip;
+						$tmpobj->state_id=$this->state_id;
+						$tmpobj->country_id=$this->country_id;
+
+						$tmpobj->user_id=$this->id;
+						$tmpobj->user_login=$this->login;
+
+						$result=$tmpobj->update($tmpobj->id, $user, 0, 'update', 1);
+						if ($result < 0)
+						{
+							$this->error=$tmpobj->error;
+							$this->errors=$tmpobj->errors;
+							dol_syslog(get_class($this)."::update error after calling adh->update to sync it with user: ".$this->error, LOG_ERR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$tmpobj->error;
+						$this->errors=$tmpobj->errors;
 						$error++;
 					}
 				}
@@ -2046,7 +2111,7 @@ class User extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to
+	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
 	 *  @param  integer $infologin      			Add complete info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
@@ -2070,7 +2135,7 @@ class User extends CommonObject
 		if (! empty($this->photo))
 		{
 			$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('userphoto', $this, 80, 0, 0, 'photowithmargin photologintooltip', 'small', 0, 1);
+			$label.= Form::showphoto('userphoto', $this, 0, 60, 0, 'photowithmargin photologintooltip', 'small', 0, 1);	// Force height to 60 so we total height of tooltip can be calculated and collision can be managed
 			$label.= '</div><div style="clear: both;"></div>';
 		}
 
@@ -2086,11 +2151,12 @@ class User extends CommonObject
 		{
 			$thirdpartystatic = new Societe($db);
 			$thirdpartystatic->fetch($this->societe_id);
-			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2);	// picto only of company
+			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink')?'nolink':''));	// picto only of company
 			$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 		}
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
 
 		// Info Login
@@ -2125,7 +2191,7 @@ class User extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link='<a href="'.$url.'"';
+		$linkstart='<a href="'.$url.'"';
 		$linkclose="";
 		if (empty($notooltip))
 		{
@@ -2148,11 +2214,11 @@ class User extends CommonObject
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
-		$link.=$linkclose.'>';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
 		//if ($withpictoimg == -1) $result.='<div class="nowrap">';
-		$result.=$link;
+		$result.=(($option == 'nolink')?'':$linkstart);
 		if ($withpictoimg)
 		{
 		  	$paddafterimage='';
@@ -2170,7 +2236,7 @@ class User extends CommonObject
 			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
 		}
-		$result.=$linkend;
+		$result.=(($option == 'nolink')?'':$linkend);
 		//if ($withpictoimg == -1) $result.='</div>';
 
 		$result.=$companylink;
@@ -2179,7 +2245,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Renvoie login clicable (avec eventuellement le picto)
+	 *  Return clickable link of login (eventualy with picto)
 	 *
 	 *	@param	int		$withpicto		Include picto into link
 	 *	@param	string	$option			Sur quoi pointe le lien
@@ -2191,17 +2257,19 @@ class User extends CommonObject
 
 		$result='';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$linkend='</a>';
 
 		if ($option == 'xxx')
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 		}
 
-		if ($withpicto) $result.=($link.img_object($langs->trans("ShowUser"),'user').$linkend.' ');
-		$result.=$link.$this->login.$linkend;
+		$result.=$linkstart;
+		if ($withpicto) $result.=img_object($langs->trans("ShowUser"), 'user', 'class="paddingright"');
+		$result.=$this->login;
+		$result.=$linkend;
 		return $result;
 	}
 

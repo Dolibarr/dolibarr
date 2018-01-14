@@ -169,6 +169,7 @@ else
 }
 
 // Note: $conf->css looks like '/theme/eldy/style.css.php'
+/*
 $conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
 $themepath=dol_buildpath($conf->css,1);
 if (! empty($conf->modules_parts['theme']))	// This slow down
@@ -183,9 +184,7 @@ if (! empty($conf->modules_parts['theme']))	// This slow down
 	}
 }
 $conf_css = $themepath."?lang=".$langs->defaultlang;
-
-$jquerytheme = 'smoothness';
-if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+*/
 
 if (! $username) $focus_element = 'username';
 else $focus_element = 'password';

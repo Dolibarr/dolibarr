@@ -41,6 +41,9 @@ if (!$user->rights->banque->lire)
 function valeur($sql)
 {
 	global $db;
+
+	$valeur = 0;
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{

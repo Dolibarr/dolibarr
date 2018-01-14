@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
 StocksArea=Warehouse area
-StockCorrection=Correct stock
-StockTransfer=Transfer stock
 MassStockTransferShort=Bulk stock transfer
 QtyDispatchedShort=Quantity dispatched
 QtyToDispatchShort=Quantity to be dispatched

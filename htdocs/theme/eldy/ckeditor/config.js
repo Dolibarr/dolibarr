@@ -34,10 +34,10 @@ CKEDITOR.editorConfig = function( config )
 	[
 	    ['Templates','NewPage'],
 	    ['Save'],
-	    ['Source','Maximize','Preview'],
+	    ['Maximize','Preview'],
 	    ['PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],	// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-	 	['CreateDiv','ShowBlocks'],
+	    ['CreateDiv','ShowBlocks'],
 	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
 	    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
 	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
@@ -46,7 +46,8 @@ CKEDITOR.editorConfig = function( config )
 	    ['Link','Unlink','Anchor'],
 	    ['Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
 	    ['Styles','Format','Font','FontSize'],
-	    ['TextColor','BGColor']
+	    ['TextColor','BGColor'],
+	 	['Source']
 	];
 
 	// Used for mailing fields
@@ -83,7 +84,7 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
-	    ['Format','Font','FontSize'],
+	    ['Format','FontSize'],
 	    ['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],	// ,'Subscript','Superscript' useless
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],

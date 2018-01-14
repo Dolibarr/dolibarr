@@ -23,6 +23,6 @@ create table llx_c_ziptown
   fk_county			integer,	         			-- State id in llx_c_departements
   fk_pays           integer NOT NULL DEFAULT 0,     -- Country id in llx_c_country
   zip	 			varchar(10) NOT NULL,			-- Zip code
-  town				varchar(255) NOT NULL,			-- Town name
+  town				varchar(180) NOT NULL,			-- Town name
   active 			tinyint NOT NULL DEFAULT 1
 )ENGINE=innodb;

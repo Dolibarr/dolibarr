@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Segona aprovació realitzada
 SupplierOrderReceivedInDolibarr=Comanda de proveïdor %s rebuda %s
 SupplierOrderSubmitedInDolibarr=Comanda de proveïdor %s enviada
 SupplierOrderClassifiedBilled=Comanda de proveïdor %s facturada
+OtherOrders=Altres comandes
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Agent comercial del seguiment comanda de client
 TypeContact_commande_internal_SHIPPING=Responsable del seguiment de l'enviament
@@ -151,5 +152,7 @@ OrderCreated=Les seves comandes han estat creats
 OrderFail=S'ha produït un error durant la creació de les seves comandes
 CreateOrders=Crear comandes
 ToBillSeveralOrderSelectCustomer=Per crear una factura per nombroses comandes, faci primer clic sobre el client i després esculli "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Tanca automàticament la comada a "%s" si es reben tots els productes.
 SetShippingMode=Indica el tipus d'enviament

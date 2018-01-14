@@ -106,7 +106,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$db->begin();
 
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-	$sql1 .= " SET erd.fk_code_ventilation=" . GETPOST('account_parent');
+	$sql1 .= " SET erd.fk_code_ventilation=" . GETPOST('account_parent','int');
 	$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
 
 	dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= ' . $sql1);
@@ -328,7 +328,7 @@ if ($result) {
 
 		print '<td>' . $codeCompta . '</td>';
 
-		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
+		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')). '">';
 		print img_edit();
 		print '</a></td>';
 

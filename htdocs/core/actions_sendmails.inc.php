@@ -113,7 +113,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
@@ -243,8 +243,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			$langs->load("commercial");
 
-			$fromtype = GETPOST('fromtype');
-			if ($fromtype === 'user') {
+			$fromtype = GETPOST('fromtype','alpha');
+			if ($fromtype === 'robot') {
+				$from = $conf->global->MAIN_MAIL_EMAIL_FROM .' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
+			}
+			elseif ($fromtype === 'user') {
 				$from = $user->getFullName($langs) .' <'.$user->email.'>';
 			}
 			elseif ($fromtype === 'company') {
@@ -389,8 +392,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
-					$error=0;
-
 					// FIXME This must be moved into the trigger for action $trigger_name
 					if (! empty($conf->dolimail->enabled))
 					{
@@ -435,29 +436,22 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     						$interface=new Interfaces($db);
     						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 							if ($result < 0) {
-    							$error++; $errors=$interface->errors;
+    							setEventMessages($interface->error, $interface->errors, 'errors');
     						}
 						}
 					}
 
-					if ($error)
+					// Redirect here
+					// This avoid sending mail twice if going out and then back to page
+					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+					setEventMessages($mesg, null, 'mesgs');
+					if ($conf->dolimail->enabled)
 					{
-						dol_print_error($db);
-					}
-					else
-					{
-						// Redirect here
-						// This avoid sending mail twice if going out and then back to page
-						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-						setEventMessages($mesg, null, 'mesgs');
-						if ($conf->dolimail->enabled)
-						{
-						    header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						    exit;
-						}
-						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
+						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
 						exit;
 					}
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
+					exit;
 				}
 				else
 				{

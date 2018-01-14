@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/bank/various_expenses/card.php
- *      \ingroup    bank
- *		\brief      Page of various expenses
+ *  \file       htdocs/compta/bank/various_expenses/card.php
+ *  \ingroup    bank
+ *  \brief      Page of various expenses
  */
 
 require '../../../main.inc.php';
@@ -26,9 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -40,8 +40,8 @@ $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 // Get parameters
 $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
+$cancel		= GETPOST('cancel', 'aZ09');
+$backtopage	= GETPOST('backtopage', 'alpha');
 
 $accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 $label=GETPOST("label","alpha");
@@ -437,7 +437,7 @@ if ($id)
 	if (! empty($conf->accounting->enabled))
 	{
 		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('',$object->accountancy_code);
+		$accountingaccount->fetch('',$object->accountancy_code, 1);
 
 		print $accountingaccount->getNomUrl(0,1,1,'',1);
 	} else {

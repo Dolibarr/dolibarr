@@ -553,10 +553,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
 		{
 			// If module name translation exists
-			return $langs->trans("Module".$this->numero."Name");
+			return $langs->transnoentitiesnoconv("Module".$this->numero."Name");
 		}
 		else
 		{
@@ -572,11 +572,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			if ($langs->trans("Module".$this->name."Name") != ("Module".$this->name."Name"))
 			{
 				// If module name translation exists
-				return $langs->trans("Module".$this->name."Name");
+				return $langs->transnoentitiesnoconv("Module".$this->name."Name");
 			}
 
-			// Last change with simple product label
-			return $langs->trans($this->name);
+			// Last chance with simple label
+			return $langs->transnoentitiesnoconv($this->name);
 		}
 	}
 
@@ -591,10 +591,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		global $langs;
 		$langs->load("admin");
 
-		if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
+		if ($langs->transnoentitiesnoconv("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
 		{
 			// If module description translation exists
-			return $langs->trans("Module".$this->numero."Desc");
+			return $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
 		}
 		else
 		{
@@ -606,6 +606,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					if ($val) $langs->load($val);
 				}
 			}
+
+			if ($langs->transnoentitiesnoconv("Module".$this->name."Desc") != ("Module".$this->name."Desc"))
+			{
+				// If module name translation exists
+				return $langs->trans("Module".$this->name."Desc");
+			}
+
+			// Last chance with simple label
 			return $langs->trans($this->description);
 		}
 	}
@@ -633,6 +641,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			if ((float) DOL_VERSION >= 6.0)
 			{
 				@include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
+
 				$content = dolMd2Html($content, 'parsedown',
 					array(
 						'doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1),
@@ -657,7 +666,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					}
 				}
 
-				$content = $langs->trans($this->descriptionlong);
+				$content = $langs->transnoentitiesnoconv($this->descriptionlong);
 			}
 		}
 
@@ -671,14 +680,25 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 */
 	function getDescLongReadmeFound()
 	{
+		global $langs;
+
 		$filefound= false;
 
 		// Define path to file README.md.
-		// First check README-la_LA.md then README.md
+		// First check README-la_LA.md then README-la.md then README.md
 		$pathoffile = dol_buildpath(strtolower($this->name).'/README-'.$langs->defaultlang.'.md', 0);
 		if (dol_is_file($pathoffile))
 		{
 			$filefound = true;
+		}
+		if (! $filefound)
+		{
+			$tmp=explode('_', $langs->defaultlang);
+			$pathoffile = dol_buildpath(strtolower($this->name).'/README-'.$tmp[0].'.md', 0);
+			if (dol_is_file($pathoffile))
+			{
+				$filefound = true;
+			}
 		}
 		if (! $filefound)
 		{
@@ -778,13 +798,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$ret='';
 
 		$newversion=preg_replace('/_deprecated/','',$this->version);
-		if ($newversion == 'experimental') $ret=($translated?$langs->trans("VersionExperimental"):$newversion);
-		elseif ($newversion == 'development') $ret=($translated?$langs->trans("VersionDevelopment"):$newversion);
+		if ($newversion == 'experimental') $ret=($translated?$langs->transnoentitiesnoconv("VersionExperimental"):$newversion);
+		elseif ($newversion == 'development') $ret=($translated?$langs->transnoentitiesnoconv("VersionDevelopment"):$newversion);
 		elseif ($newversion == 'dolibarr') $ret=DOL_VERSION;
 		elseif ($newversion) $ret=$newversion;
-		else $ret=($translated?$langs->trans("VersionUnknown"):'unknown');
+		else $ret=($translated?$langs->transnoentitiesnoconv("VersionUnknown"):'unknown');
 
-		if (preg_match('/_deprecated/',$this->version)) $ret.=($translated?' ('.$langs->trans("Deprecated").')':$this->version);
+		if (preg_match('/_deprecated/',$this->version)) $ret.=($translated?' ('.$langs->transnoentitiesnoconv("Deprecated").')':$this->version);
 		return $ret;
 	}
 
@@ -855,12 +875,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		if ($langs->trans($langstring) == $langstring)
 		{
 			// Translation not found
-			return $langs->trans($this->import_label[$r]);
+			return $langs->transnoentitiesnoconv($this->import_label[$r]);
 		}
 		else
 		{
 			// Translation found
-			return $langs->trans($langstring);
+			return $langs->transnoentitiesnoconv($langstring);
 		}
 	}
 
@@ -1647,7 +1667,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$r_def      = $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
-					$r_modul    = $this->rights_class;
+					$r_modul    = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
 					if (empty($r_type)) $r_type='w';
 
@@ -1796,7 +1816,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		{
 			$menu = new Menubase($this->db);
 			$menu->menu_handler='all';
+
+			//$menu->module=strtolower($this->name);	TODO When right_class will be same than module name
 			$menu->module=$this->rights_class;
+
 			if (! $this->menu[$key]['fk_menu'])
 			{
 				$menu->fk_menu=0;
@@ -1843,7 +1866,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 			$menu->langs=$this->menu[$key]['langs'];
 			$menu->position=$this->menu[$key]['position'];
 			$menu->perms=$this->menu[$key]['perms'];
-			$menu->target=$this->menu[$key]['target'];
+			$menu->target=isset($this->menu[$key]['target'])?$this->menu[$key]['target']:'';
 			$menu->user=$this->menu[$key]['user'];
 			$menu->enabled=isset($this->menu[$key]['enabled'])?$this->menu[$key]['enabled']:0;
 			$menu->position=$this->menu[$key]['position'];
@@ -1890,8 +1913,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 		$err=0;
 
+		//$module=strtolower($this->name);		TODO When right_class will be same than module name
+		$module=$this->rights_class;
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-		$sql.= " WHERE module = '".$this->db->escape($this->rights_class)."'";
+		$sql.= " WHERE module = '".$this->db->escape($module)."'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::delete_menus", LOG_DEBUG);

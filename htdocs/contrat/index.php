@@ -184,13 +184,13 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' -
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
 {
-    $dataseries[]=array('label'=>$staticcontratligne->LibStatut($status,1,($bool?1:0)),'data'=>(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
+    $dataseries[]=array($staticcontratligne->LibStatut($status,1,($bool?1:0)),(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
 
         print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
-        print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+        print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
         print "</tr>\n";
     }
     if ($status==4 && ! $bool) $bool=true;
@@ -199,8 +199,17 @@ foreach($listofstatus as $status)
 if (! empty($conf->use_javascript_ajax))
 {
     print '<tr class="impair"><td align="center" colspan="2">';
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($total?0:1);
+
     print '</td></tr>';
 }
 $listofstatus=array(0,4,4,5); $bool=false;
@@ -210,7 +219,7 @@ foreach($listofstatus as $status)
     {
     	print '<tr class="oddeven">';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
-    	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
+    	print '<td align="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
     	if ($status==4 && ! $bool) $bool=true;
     	else $bool=false;
         print "</tr>\n";
@@ -221,14 +230,14 @@ foreach($listofstatus as $status)
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
 print "</table><br>";
 
-/**
- * Draft contratcs
- */
+
+// Draft contracts
+
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
-	$sql  = "SELECT c.rowid as ref, c.rowid,";
+	$sql  = "SELECT c.rowid, c.ref,";
 	$sql.= " s.nom as name, s.rowid as socid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.rowid = c.fk_soc";
 	$sql.= " AND c.entity IN (".getEntity('contract', 0).")";
@@ -254,15 +263,18 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven"><td class="nowrap">';
+
 				$staticcontrat->ref=$obj->ref;
 				$staticcontrat->id=$obj->rowid;
-				print $staticcontrat->getNomUrl(1,'');
-				print '</td>';
-				print '<td>';
+
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=1;
+
+				print '<tr class="oddeven"><td class="nowrap">';
+				print $staticcontrat->getNomUrl(1,'');
+				print '</td>';
+				print '<td>';
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '</tr>';
@@ -468,7 +480,7 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=0"><span class="badge">'.$num.'</span></a></th>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=0"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
 	while ($i < $num)
@@ -548,7 +560,7 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
-	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
+	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
 
 	while ($i < $num)

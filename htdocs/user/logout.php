@@ -63,7 +63,7 @@ if (GETPOST('dol_no_mouse_hover'))       $url.=(preg_match('/\?/',$url)?'&':'?')
 if (GETPOST('dol_use_jmobile'))          $url.=(preg_match('/\?/',$url)?'&':'?').'dol_use_jmobile=1';
 
 // Destroy session
-$prefix=dol_getprefix();
+$prefix=dol_getprefix('');
 $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);

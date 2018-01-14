@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
@@ -98,8 +99,8 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		$destdir = $dirins.'/'.strtolower($modulename);
 
 		$arrayreplacement=array(
-			'mymodule'=>strtolower($modulename),
-		 	'MyModule'=>$modulename
+		'mymodule'=>strtolower($modulename),
+		'MyModule'=>$modulename
 		);
 
 		$result = dolCopyDir($srcdir, $destdir, 0, 0, $arrayreplacement);
@@ -126,13 +127,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/myobject.lib.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
-		dol_delete_file($destdir.'/sql/llx_myobject.sql');
-		dol_delete_file($destdir.'/sql/llx_myobject_extrafields.sql');
-		dol_delete_file($destdir.'/sql/llx_myobject.key.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject_extrafields.sql');
+		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.key.sql');
 		dol_delete_file($destdir.'/scripts/myobject.php');
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
-		dol_delete_file($destdir.'/class/api_myobject.class.php');
+		dol_delete_file($destdir.'/class/api_mymodule.class.php');
 	}
 
 	// Edit PHP files
@@ -143,15 +144,15 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		{
 			//var_dump($phpfileval['fullname']);
 			$arrayreplacement=array(
-				'mymodule'=>strtolower($modulename),
-				'MyModule'=>$modulename,
-				'MYMODULE'=>strtoupper($modulename),
-				'My module'=>$modulename,
-				'my module'=>$modulename,
-				'Mon module'=>$modulename,
-				'mon module'=>$modulename,
-				'htdocs/modulebuilder/template'=>strtolower($modulename),
-				'---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+			'mymodule'=>strtolower($modulename),
+			'MyModule'=>$modulename,
+			'MYMODULE'=>strtoupper($modulename),
+			'My module'=>$modulename,
+			'my module'=>$modulename,
+			'Mon module'=>$modulename,
+			'mon module'=>$modulename,
+			'htdocs/modulebuilder/template'=>strtolower($modulename),
+			'---Put here your own copyright and developer email---'=>dol_print_date($now,'%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 			);
 
 
@@ -172,12 +173,21 @@ if ($dirins && $action == 'initmodule' && $modulename)
 	}
 }
 
+if ($dirins && $action == 'addlanguage' && !empty($module))
+{
+	$newlangcode=GETPOST('newlangcode', 'aZ09');
+	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
+	$destfile = $dirins.'/'.strtolower($module).'/langs/'.$newlangcode;
+	$result = dolCopyDir($srcfile, $destfile, 0, 0);
+}
+
 if ($dirins && $action == 'initobject' && $module && $objectname)
 {
 	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+		$tabobj='newobject';
 	}
 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -213,20 +223,20 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	{
 		// Delete some files
 		$filetogenerate = array(
-			'myobject_card.php'=>strtolower($objectname).'_card.php',
-			'myobject_note.php'=>strtolower($objectname).'_note.php',
-			'myobject_document.php'=>strtolower($objectname).'_document.php',
-			'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
-			'myobject_list.php'=>strtolower($objectname).'_list.php',
-			'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
-			'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-			'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-			'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
-			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
-			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
-			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-			'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
+		'myobject_card.php'=>strtolower($objectname).'_card.php',
+		'myobject_note.php'=>strtolower($objectname).'_note.php',
+		'myobject_document.php'=>strtolower($objectname).'_document.php',
+		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+		'myobject_list.php'=>strtolower($objectname).'_list.php',
+		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+		'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
+		'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+		'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+		'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+		'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php'
 		);
 
 		foreach($filetogenerate as $srcfile => $destfile)
@@ -249,24 +259,24 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 		if (! $error)
 		{
-				// Scan for object class files
-				$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+			// Scan for object class files
+			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
-				$firstobjectname='';
-				foreach($listofobject as $fileobj)
+			$firstobjectname='';
+			foreach($listofobject as $fileobj)
+			{
+				if (preg_match('/^api_/',$fileobj['name'])) continue;
+				if (preg_match('/^actions_/',$fileobj['name'])) continue;
+
+				$tmpcontent=file_get_contents($fileobj['fullname']);
+				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims',$tmpcontent,$reg))
 				{
-					if (preg_match('/^api_/',$fileobj['name'])) continue;
-					if (preg_match('/^actions_/',$fileobj['name'])) continue;
+					$objectnameloop = $reg[1];
+					if (empty($firstobjectname)) $firstobjectname = $objectnameloop;
+				}
 
-					$tmpcontent=file_get_contents($fileobj['fullname']);
-					if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims',$tmpcontent,$reg))
-					{
-						$objectnameloop = $reg[1];
-						if (empty($firstobjectname)) $firstobjectname = $objectnameloop;
-					}
-
-					// Regenerate left menu entry in descriptor for $objectname
-					$stringtoadd="
+				// Regenerate left menu entry in descriptor for $objectname
+				$stringtoadd="
 \t\t\$this->menu[\$r++]=array(
                 				'fk_menu'=>'fk_mainmenu=mymodule',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',			                // This is a Left menu entry
@@ -294,22 +304,22 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
                		";
-					$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
-					$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
-					$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
+				$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
+				$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
+				$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
 
-					$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
+				$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
 
-					// TODO Allow a replace with regex using dolReplaceRegexInFile
-					// TODO Avoid duplicate addition
+				// TODO Allow a replace with regex using dolReplaceRegexInFile
+				// TODO Avoid duplicate addition
 
-					dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
+				dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
 
-					// Add module descriptor to list of files to replace "MyObject' string with real name of object.
-					$filetogenerate[]='core/modules/mod'.$module.'.class.php';
+				// Add module descriptor to list of files to replace "MyObject' string with real name of object.
+				$filetogenerate[]='core/modules/mod'.$module.'.class.php';
 
-					// TODO
-				}
+				// TODO
+			}
 		}
 	}
 
@@ -322,16 +332,16 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 			//var_dump($phpfileval['fullname']);
 			$arrayreplacement=array(
-				'mymodule'=>strtolower($module),
-				'MyModule'=>$module,
-				'MYMODULE'=>strtoupper($module),
-				'My module'=>$module,
-				'my module'=>$module,
-				'mon module'=>$module,
-				'Mon module'=>$module,
-				'htdocs/modulebuilder/template/'=>strtolower($modulename),
-				'myobject'=>strtolower($objectname),
-				'MyObject'=>$objectname
+			'mymodule'=>strtolower($module),
+			'MyModule'=>$module,
+			'MYMODULE'=>strtoupper($module),
+			'My module'=>$module,
+			'my module'=>$module,
+			'mon module'=>$module,
+			'Mon module'=>$module,
+			'htdocs/modulebuilder/template/'=>strtolower($modulename),
+			'myobject'=>strtolower($objectname),
+			'MyObject'=>$objectname
 			);
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -362,6 +372,51 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	}
 }
 
+if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && !empty($module) && ! empty($tabobj))
+{
+	$objectname = $tabobj;
+
+	$arrayoftables=array();
+	if ($action == 'droptable') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj);
+	if ($action == 'droptableextrafields') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj).'_extrafields';
+
+	foreach($arrayoftables as $tabletodrop)
+	{
+		$nb = -1;
+		$sql="SELECT COUNT(*) as nb FROM ".$tabletodrop;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$nb = $obj->nb;
+			}
+		}
+		else
+		{
+			if ($db->lasterrno() == 'DB_ERROR_NOSUCHTABLE')
+			{
+				setEventMessages($langs->trans("TableDoesNotExists", $tabletodrop), null, 'warnings');
+			}
+			else
+			{
+				dol_print_error($db);
+			}
+		}
+		if ($nb == 0)
+		{
+			$resql=$db->DDLDropTable($tabletodrop);
+			//var_dump($resql);
+			setEventMessages($langs->trans("TableDropped", $tabletodrop), null, 'mesgs');
+		}
+		elseif ($nb > 0)
+		{
+			setEventMessages($langs->trans("TableNotEmptyDropCanceled", $tabletodrop), null, 'warnings');
+		}
+	}
+}
+
 if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 {
 	$objectname = $tabobj;
@@ -371,11 +426,11 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 	dol_mkdir($destdir);
 
 	$addfieldentry = array(
-		'name'=>GETPOST('propname','aZ09'),'label'=>GETPOST('proplabel','alpha'),'type'=>GETPOST('proptype','alpha'),
-		'arrayofkeyval'=>GETPOST('proparrayofkeyval','none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-		'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
-		'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
-		'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp'));
+	'name'=>GETPOST('propname','aZ09'),'label'=>GETPOST('proplabel','alpha'),'type'=>GETPOST('proptype','alpha'),
+	'arrayofkeyval'=>GETPOST('proparrayofkeyval','none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+	'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
+	'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
+	'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp','alpha'));
 
 	if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
 	{
@@ -401,14 +456,14 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 
 	if (! $error)
 	{
-		clearstatcache();
-
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
-		// Make a redirect to reload all data
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
+		clearstatcache(true);
+		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
-		clearstatcache();
+		// Make a redirect to reload all data
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname.'&nocache='.time());
+
 		exit;
 	}
 }
@@ -437,14 +492,14 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 
 	if (! $error)
 	{
-		clearstatcache();
-
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
+
+		clearstatcache(true);
+		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
 
-		clearstatcache();
 		exit;
 	}
 }
@@ -500,20 +555,20 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 
 		// Delete some files
 		$filetogenerate = array(
-			'myobject_card.php'=>strtolower($objectname).'_card.php',
-			'myobject_note.php'=>strtolower($objectname).'_note.php',
-			'myobject_document.php'=>strtolower($objectname).'_document.php',
-			'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
-			'myobject_list.php'=>strtolower($objectname).'_list.php',
-			'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
-			'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
-			'sql/llx_myobject.sql'=>'sql/llx_'.strtolower($objectname).'.sql',
-			'sql/llx_myobject_extrafields.sql'=>'sql/llx_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_myobject.key.sql'=>'sql/llx_'.strtolower($objectname).'.key.sql',
-			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
-			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
-			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-			'class/api_myobject.class.php'=>'class/api_'.strtolower($objectname).'.class.php'
+		'myobject_card.php'=>strtolower($objectname).'_card.php',
+		'myobject_note.php'=>strtolower($objectname).'_note.php',
+		'myobject_document.php'=>strtolower($objectname).'_document.php',
+		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+		'myobject_list.php'=>strtolower($objectname).'_list.php',
+		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
+		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+		'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
+		'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
+		'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+		'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+		'class/api_myobject.class.php'=>'class/api_'.strtolower($module).'.class.php'
 		);
 
 		$resultko = 0;
@@ -610,71 +665,20 @@ if ($dirins && $action == 'generatepackage')
 
 if ($dirins && $action == 'generatedoc')
 {
-	$modulelowercase=strtolower($module);
+	$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
+	$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
+	$outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
 
-	// Dir for module
-	$dir = $dirins.'/'.$modulelowercase;
-	// Zip file to build
-	$FILENAMEDOC='';
+	$util = new Utils($db);
+	$result = $util->generateDoc($module);
 
-	// Load module
-	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
-	$class='mod'.$module;
-
-	if (class_exists($class))
+	if ($result > 0)
 	{
-		try {
-			$moduleobj = new $class($db);
-		}
-		catch(Exception $e)
-		{
-			$error++;
-			dol_print_error($e->getMessage());
-		}
+		setEventMessages($langs->trans("DocFileGeneratedInto", $outputfiledoc), null);
 	}
 	else
 	{
-		$error++;
-		$langs->load("errors");
-		dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
-		exit;
-	}
-
-	$arrayversion=explode('.',$moduleobj->version,3);
-	if (count($arrayversion))
-	{
-		$FILENAMEDOC=$modulelowercase.'.html';
-
-		$dirofmodule = dol_buildpath($modulelowercase, 0).'/doc';
-		$outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
-		if ($dirofmodule)
-		{
-			if (! dol_is_dir($dirofmodule)) dol_mkdir($dirofmodule);
-			//...
-
-			$result = 0;
-		}
-		else
-		{
-			$result = 0;
-		}
-
-		if ($result > 0)
-		{
-			setEventMessages($langs->trans("DocFileGeneratedInto", $outputfiledoc), null);
-		}
-		else
-		{
-			$error++;
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToGenerateFile", $outputfiledoc), null, 'errors');
-		}
-	}
-	else
-	{
-		$error++;
-		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorCheckVersionIsDefined"), null, 'errors');
+		setEventMessages($util->error, $util->errors, 'errors');
 	}
 }
 
@@ -768,6 +772,7 @@ if ($action == 'reset' && $user->admin)
 }
 
 
+
 /*
  * View
  */
@@ -784,10 +789,10 @@ $dirins_ok=(dol_is_dir($dirins));
 
 llxHeader('', $langs->trans("ModuleBuilder"), '', '', 0, 0,
 	array(
-		'/includes/ace/ace.js',
-		'/includes/ace/ext-statusbar.js',
-		'/includes/ace/ext-language_tools.js',
-		//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/ace.js',
+	'/includes/ace/ext-statusbar.js',
+	'/includes/ace/ext-language_tools.js',
+	//'/includes/ace/ext-chromevox.js'
 	), array());
 
 
@@ -1061,15 +1066,15 @@ elseif (! empty($module))
 
 				print $langs->trans("ModuleBuilderDesc".$tab).'<br><br>';
 
-				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
 
-				print '<span class="fa fa-file"></span> '.$langs->trans("ReadmeFile").' : <strong>'.$pathtofilereadme.'</strong>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("ReadmeFile").' : <strong>'.$pathtofilereadme.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=markdown&file='.urlencode($pathtofilereadme).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
 
-				print '<span class="fa fa-file"></span> '.$langs->trans("ChangeLog").' : <strong>'.$pathtochangelog.'</strong>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("ChangeLog").' : <strong>'.$pathtochangelog.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=markdown&file='.urlencode($pathtochangelog).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
 
@@ -1212,14 +1217,14 @@ elseif (! empty($module))
 				print $langs->trans("SpecDefDesc").'<br>';
 				print '<br>';
 
-				$specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$');
+				$specs=dol_dir_list(dol_buildpath($modulelowercase.'/doc', 0), 'files', 1, '(\.md|\.asciidoc)$', array('\/temp\/'));
 
 				foreach ($specs as $spec)
 				{
 					$pathtofile = $modulelowercase.'/doc/'.$spec['relativename'];
 					$format='asciidoc';
 					if (preg_match('/\.md$/i', $spec['name'])) $format='markdown';
-					print '<span class="fa fa-file"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("SpecificationFile").' : <strong>'.$pathtofile.'</strong>';
 					print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format='.$format.'&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '<br>';
 				}
@@ -1269,7 +1274,7 @@ elseif (! empty($module))
 				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
-				print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, 0, 0, 0, 0, 'minwidth300', 1);
+				print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'newlangcode', 0, 0, 1, 0, 0, 'minwidth300', 1);
 				print '<input type="submit" name="addlanguage" class="button" value="'.dol_escape_htmltag($langs->trans("AddLanguageFile")).'"><br>';
 				print '</form>';
 
@@ -1281,7 +1286,7 @@ elseif (! empty($module))
 				foreach ($langfiles as $langfile)
 				{
 					$pathtofile = $modulelowercase.'/langs/'.$langfile['relativename'];
-					print '<span class="fa fa-file"></span> '.$langs->trans("LanguageFile").' '.basename(dirname($pathtofile)).' : <strong>'.$pathtofile.'</strong>';
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' '.basename(dirname($pathtofile)).' : <strong>'.$pathtofile.'</strong>';
 					print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format='.$format.'&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '<br>';
 				}
@@ -1378,7 +1383,7 @@ elseif (! empty($module))
 
 				print $langs->trans("EnterNameOfObjectDesc").'<br><br>';
 
-				print '<input type="text" name="objectname" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
+				print '<input type="text" name="objectname" value="'.dol_escape_htmltag(GETPOST('objectname','alpha')?GETPOST('objectname','alpha'):$modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
 				print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
 				print '</form>';
 			}
@@ -1414,16 +1419,16 @@ elseif (! empty($module))
 				{
 					try {
 						$pathtoclass    = strtolower($module).'/class/'.strtolower($tabobj).'.class.php';
-						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($tabobj).'.class.php';
+						$pathtoapi      = strtolower($module).'/class/api_'.strtolower($module).'.class.php';
 						$pathtoagenda   = strtolower($module).'/'.strtolower($tabobj).'_agenda.php';
 						$pathtocard     = strtolower($module).'/'.strtolower($tabobj).'_card.php';
 						$pathtodocument = strtolower($module).'/'.strtolower($tabobj).'_document.php';
 						$pathtolist     = strtolower($module).'/'.strtolower($tabobj).'_list.php';
 						$pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
 						$pathtophpunit  = strtolower($module).'/test/phpunit/'.$tabobj.'Test.php';
-						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.sql';
-						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($tabobj).'_extrafields.sql';
-						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($tabobj).'.key.sql';
+						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
+						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
+						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 
@@ -1442,37 +1447,38 @@ elseif (! empty($module))
 						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 1);
 
 						print '<div class="fichehalfleft">';
-						print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("ApiClassFile").' : <strong>'.($realpathtoapi?'':'<strike>').$pathtoapi.($realpathtoapi?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("ApiClassFile").' : <strong>'.($realpathtoapi?'':'<strike>').$pathtoapi.($realpathtoapi?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print ' &nbsp; <a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("GoToApiExplorer").'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("TestClassFile").' : <strong>'.($realpathtophpunit?'':'<strike>').$pathtophpunit.($realpathtophpunit?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("TestClassFile").' : <strong>'.($realpathtophpunit?'':'<strike>').$pathtophpunit.($realpathtophpunit?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 
 						print '<br>';
 
-						print '<span class="fa fa-file"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtodocument?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForLib").' : <strong>'.($realpathtolib?'':'<strike>').$pathtolib.($realpathtodocument?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("PageForPicto").' : <strong>'.($realpathtopicto?'':'<strike>').$pathtopicto.($realpathtopicto?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.($realpathtopicto?'':'<strike>').$pathtopicto.($realpathtopicto?'':'</strike>').'</strong>';
 						//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("SqlFile").' : <strong>'.($realpathtosql?'':'<strike>').$pathtosql.($realpathtosql?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFile").' : <strong>'.($realpathtosql?'':'<strike>').$pathtosql.($realpathtosql?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-						print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("DropTableIfEmpty").'</a>';
+						print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptable">'.$langs->trans("DropTableIfEmpty").'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.($realpathtosqlextra?'':'<strike>').$pathtosqlextra.($realpathtosqlextra?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.($realpathtosqlextra?'':'<strike>').$pathtosqlextra.($realpathtosqlextra?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptableextrafields">'.$langs->trans("DropTableIfEmpty").'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
@@ -1484,19 +1490,19 @@ elseif (! empty($module))
 						$urlofcard = dol_buildpath($pathtocard, 1);
 
 						print '<div class="fichehalfleft">';
-						print '<span class="fa fa-file"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.($realpathtosql?'':'<strike>').$pathtolist.($realpathtosql?'':'</strike>').'</a></strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.($realpathtosql?'':'<strike>').$pathtolist.($realpathtosql?'':'</strike>').'</a></strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("PageForCreateEditView").' : <strong><a href="'.$urlofcard.'?action=create" target="_test">'.($realpathtocard?'':'<strike>').$pathtocard.($realpathtocard?'':'</strike>').'?action=create</a></strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForCreateEditView").' : <strong><a href="'.$urlofcard.'?action=create" target="_test">'.($realpathtocard?'':'<strike>').$pathtocard.($realpathtocard?'':'</strike>').'?action=create</a></strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtocard).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.($realpathtoagenda?'':'<strike>').$pathtoagenda.($realpathtoagenda?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.($realpathtoagenda?'':'<strike>').$pathtoagenda.($realpathtoagenda?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoagenda).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("PageForDocumentTab").' : <strong>'.($realpathtodocument?'':'<strike>').$pathtodocument.($realpathtodocument?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForDocumentTab").' : <strong>'.($realpathtodocument?'':'<strike>').$pathtodocument.($realpathtodocument?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtodocument).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.($realpathtonote?'':'<strike>').$pathtonote.($realpathtonote?'':'</strike>').'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.($realpathtonote?'':'<strike>').$pathtonote.($realpathtonote?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 
@@ -1528,9 +1534,10 @@ elseif (! empty($module))
 						if (! empty($tmpobjet))
 						{
 							$reflector = new ReflectionClass($tabobj);
-							$properties = $reflector->getProperties();          // Can also use get_object_vars
-							$propdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
+							$reflectorproperties = $reflector->getProperties();          // Can also use get_object_vars
+							$reflectorpropdefault = $reflector->getDefaultProperties();  // Can also use get_object_vars
 							//$propstat = $reflector->getStaticProperties();
+							//var_dump($reflectorpropdefault);
 
 							print load_fiche_titre($langs->trans("Properties"), '', '');
 
@@ -1553,8 +1560,8 @@ elseif (! empty($module))
 							print '</td>';
 							print '<td>'.$langs->trans("Type").'</td>';
 							print '<td>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</td>';
-							print '<td class="center">'.$langs->trans("NotNull").'</td>';
-							//print '<td>'.$langs->trans("DefaultValue").'</td>';
+							print '<td class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</td>';
+							print '<td class="center">'.$langs->trans("DefaultValue").'</td>';
 							print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
 							print '<td class="right">'.$langs->trans("Position").'</td>';
 							print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
@@ -1565,7 +1572,10 @@ elseif (! empty($module))
 							print '<td></td>';
 							print '</tr>';
 
-							$properties = dol_sort_array($tmpobjet->fields, 'position');
+							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobjet->fields may have been
+							// modified during the constructor and we want value into head of class before constructor is called.
+							//$properties = dol_sort_array($tmpobjet->fields, 'position');
+							$properties = dol_sort_array($reflectorpropdefault['fields'], 'position');
 
 							if (! empty($properties))
 							{
@@ -1576,7 +1586,7 @@ elseif (! empty($module))
 								print '<td><input class="text" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype','alpha')).'"></td>';
 								print '<td><input class="text" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval','none')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull','alpha')).'"></td>';
-								//print '<td><input class="text" name="propdefault" value=""></td>';
+								print '<td><input class="text" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex','alpha')).'"></td>';
 								print '<td class="right"><input class="text right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled','alpha')).'"></td>';
@@ -1591,18 +1601,18 @@ elseif (! empty($module))
 								foreach($properties as $propkey => $propval)
 								{
 									/* If from Reflection
-		                            if ($propval->class == $tabobj)
-		                            {
-		                                $propname=$propval->getName();
-		                                $comment=$propval->getDocComment();
-		                                $type=gettype($tmpobjet->$propname);
-		                                $default=$propdefault[$propname];
-		                                // Discard generic properties
-		                                if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'isnolinkedbythird', 'ismultientitymanaged'))) continue;
+									 if ($propval->class == $tabobj)
+									 {
+									 $propname=$propval->getName();
+									 $comment=$propval->getDocComment();
+									 $type=gettype($tmpobjet->$propname);
+									 $default=$propdefault[$propname];
+									 // Discard generic properties
+									 if (in_array($propname, array('element', 'childtables', 'table_element', 'table_element_line', 'class_element_line', 'ismultientitymanaged'))) continue;
 
-		                                // Keep or not lines
-		                                if (in_array($propname, array('fk_element', 'lines'))) continue;
-		                            }*/
+									 // Keep or not lines
+									 if (in_array($propname, array('fk_element', 'lines'))) continue;
+									 }*/
 
 									$propname=$propkey;
 									$proplabel=$propval['label'];
@@ -1610,7 +1620,7 @@ elseif (! empty($module))
 									$proparrayofkeyval=$propval['arrayofkeyval'];
 									$propnotnull=$propval['notnull'];
 									$propsearchall=$propval['searchall'];
-									//$propdefault=$propval['default'];
+									$propdefault=$propval['default'];
 									$propindex=$propval['index'];
 									$propposition=$propval['position'];
 									$propenabled=$propval['enabled'];
@@ -1638,11 +1648,11 @@ elseif (! empty($module))
 									print '<td class="center">';
 									print $propnotnull;
 									print '</td>';
-									/*print '<td>';
-		                            print $propdefault;
-		                            print '</td>';*/
+									print '<td>';
+									print $propdefault;
+									print '</td>';
 									print '<td class="center">';
-									print $propindex?'X':'';
+									print $propindex?'1':'';
 									print '</td>';
 									print '<td align="right">';
 									print $propposition;
@@ -1657,7 +1667,7 @@ elseif (! empty($module))
 									print $propisameasure?$propisameasure:'';
 									print '</td>';
 									print '<td class="center">';
-									print $propsearchall?'X':'';
+									print $propsearchall?'1':'';
 									print '</td>';
 									print '<td>';
 									print $propcomment;
@@ -1680,7 +1690,7 @@ elseif (! empty($module))
 						}
 						else
 						{
-						 	print '<tr><td><span class="warning">'.$langs->trans('Failed to init the object with the new.').'</warning></td></tr>';
+							print '<tr><td><span class="warning">'.$langs->trans('Failed to init the object with the new.').'</warning></td></tr>';
 						}
 					}
 					catch(Exception $e)
@@ -1737,13 +1747,14 @@ elseif (! empty($module))
 				print $langs->trans("MenusDefDesc", '<a href="'.DOL_URL_ROOT.'/admin/menus/index.php">'.$langs->trans('Menus').'</a>').'<br>';
 				print '<br>';
 
-				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
 
 				print '<br>';
-				//print load_fiche_titre($langs->trans("MenusList"), '', '');
+				print load_fiche_titre($langs->trans("ListOfMenusEntries"), '', '');
 
+				print 'TODO...';
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="addproperty">';
@@ -1752,76 +1763,76 @@ elseif (! empty($module))
 				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 				/*
-        		print '<div class="div-table-responsive">';
-        		print '<table class="noborder">';
+				 print '<div class="div-table-responsive">';
+				 print '<table class="noborder">';
 
-        		print '<tr class="liste_titre">';
-        		print_liste_field_titre("Menu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print "</tr>\n";
+				 print '<tr class="liste_titre">';
+				 print_liste_field_titre("Menu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				 print "</tr>\n";
 
-        		if (count($menus))
-        		{
-	        		foreach ($cronjobs as $cron)
-	        		{
-	        			print '<tr class="oddeven">';
+				 if (count($menus))
+				 {
+				 foreach ($cronjobs as $cron)
+				 {
+				 print '<tr class="oddeven">';
 
-	        			print '<td>';
-	        			print $cron['label'];
-	        			print '</td>';
+				 print '<td>';
+				 print $cron['label'];
+				 print '</td>';
 
-	        			print '<td>';
-	        			if ($cron['jobtype']=='method')
-	        			{
-	        				$text=$langs->trans("CronClass");
-	        				$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
-	        				$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
-	        				$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
-	        				$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
-	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-	        			}
-	        			elseif ($cron['jobtype']=='command')
-	        			{
-	        				$text=$langs->trans('CronCommand');
-	        				$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
-	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-	        			}
-	        			print $form->textwithpicto($text, $texttoshow, 1);
-	        			print '</td>';
+				 print '<td>';
+				 if ($cron['jobtype']=='method')
+				 {
+				 $text=$langs->trans("CronClass");
+				 $texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
+				 $texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
+				 $texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
+				 $texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
+				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+				 }
+				 elseif ($cron['jobtype']=='command')
+				 {
+				 $text=$langs->trans('CronCommand');
+				 $texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
+				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+				 }
+				 print $form->textwithpicto($text, $texttoshow, 1);
+				 print '</td>';
 
-	        			print '<td>';
-	        			if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
-	        			if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
-	        			if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
-	        			if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
-	        			print '</td>';
+				 print '<td>';
+				 if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
+				 if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
+				 if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
+				 if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
+				 print '</td>';
 
-	        			print '<td>';
-	        			print $cron['status'];
-	        			print '</td>';
+				 print '<td>';
+				 print $cron['status'];
+				 print '</td>';
 
-	        			print '<td>';
-	        			if (!empty($cron['comment'])) {print $cron['comment'];}
-	        			print '</td>';
+				 print '<td>';
+				 if (!empty($cron['comment'])) {print $cron['comment'];}
+				 print '</td>';
 
-	        			print '</tr>';
-	        		}
-        		}
-        		else
-        		{
-        			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
-        		}
+				 print '</tr>';
+				 }
+				 }
+				 else
+				 {
+				 print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+				 }
 
-        		print '</table>';
-        		print '</div>';
+				 print '</table>';
+				 print '</div>';
 
-        		print '</form>';
-        		*/
+				 print '</form>';
+				 */
 			}
 			else
 			{
@@ -1861,7 +1872,7 @@ elseif (! empty($module))
 				print $langs->trans("PermissionsDefDesc", '<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultPermissions').'</a>').'<br>';
 				print '<br>';
 
-				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
 
@@ -1877,76 +1888,76 @@ elseif (! empty($module))
 
 				print 'TODO...';
 				/*
-        		print '<div class="div-table-responsive">';
-        		print '<table class="noborder">';
+				 print '<div class="div-table-responsive">';
+				 print '<table class="noborder">';
 
-        		print '<tr class="liste_titre">';
-        		print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-        		print "</tr>\n";
+				 print '<tr class="liste_titre">';
+				 print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				 print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				 print "</tr>\n";
 
-        		if (count($cronjobs))
-        		{
-	        		foreach ($cronjobs as $cron)
-	        		{
-	        			print '<tr class="oddeven">';
+				 if (count($cronjobs))
+				 {
+				 foreach ($cronjobs as $cron)
+				 {
+				 print '<tr class="oddeven">';
 
-	        			print '<td>';
-	        			print $cron['label'];
-	        			print '</td>';
+				 print '<td>';
+				 print $cron['label'];
+				 print '</td>';
 
-	        			print '<td>';
-	        			if ($cron['jobtype']=='method')
-	        			{
-	        				$text=$langs->trans("CronClass");
-	        				$texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
-	        				$texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
-	        				$texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
-	        				$texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
-	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-	        			}
-	        			elseif ($cron['jobtype']=='command')
-	        			{
-	        				$text=$langs->trans('CronCommand');
-	        				$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
-	        				$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-	        				$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-	        			}
-	        			print $form->textwithpicto($text, $texttoshow, 1);
-	        			print '</td>';
+				 print '<td>';
+				 if ($cron['jobtype']=='method')
+				 {
+				 $text=$langs->trans("CronClass");
+				 $texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
+				 $texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
+				 $texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
+				 $texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
+				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+				 }
+				 elseif ($cron['jobtype']=='command')
+				 {
+				 $text=$langs->trans('CronCommand');
+				 $texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
+				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
+				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
+				 }
+				 print $form->textwithpicto($text, $texttoshow, 1);
+				 print '</td>';
 
-	        			print '<td>';
-	        			if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
-	        			if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
-	        			if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
-	        			if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
-	        			print '</td>';
+				 print '<td>';
+				 if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
+				 if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
+				 if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
+				 if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
+				 print '</td>';
 
-	        			print '<td>';
-	        			print $cron['status'];
-	        			print '</td>';
+				 print '<td>';
+				 print $cron['status'];
+				 print '</td>';
 
-	        			print '<td>';
-	        			if (!empty($cron['comment'])) {print $cron['comment'];}
-	        			print '</td>';
+				 print '<td>';
+				 if (!empty($cron['comment'])) {print $cron['comment'];}
+				 print '</td>';
 
-	        			print '</tr>';
-	        		}
-        		}
-        		else
-        		{
-        			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
-        		}
+				 print '</tr>';
+				 }
+				 }
+				 else
+				 {
+				 print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+				 }
 
-        		print '</table>';
-        		print '</div>';
+				 print '</table>';
+				 print '</div>';
 
-        		print '</form>';
-        		*/
+				 print '</form>';
+				 */
 			}
 			else
 			{
@@ -1983,14 +1994,14 @@ elseif (! empty($module))
 				print '<br>';
 
 				$pathtofile = $modulelowercase.'/core/modules/mod'.$module.'.class.php';
-				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
 
 				$pathtohook = strtolower($module).'/class/actions_'.strtolower($module).'.class.php';
-				print '<span class="fa fa-file"></span> '.$langs->trans("HooksFile").' : <strong>'.$pathtohook.'</strong>';
-   				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtohook).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-   				print '<br>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("HooksFile").' : <strong>'.$pathtohook.'</strong>';
+				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtohook).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+				print '<br>';
 			}
 			else
 			{
@@ -2037,7 +2048,7 @@ elseif (! empty($module))
 					{
 						$pathtofile = $trigger['relpath'];
 
-						print '<span class="fa fa-file"></span> '.$langs->trans("TriggersFile").' : <strong>'.$pathtofile.'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("TriggersFile").' : <strong>'.$pathtofile.'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 					}
@@ -2088,7 +2099,7 @@ elseif (! empty($module))
 					{
 						$pathtofile = $widget['relpath'];
 
-						print '<span class="fa fa-file"></span> '.$langs->trans("WidgetFile").' : <strong>'.$pathtofile.'</strong>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("WidgetFile").' : <strong>'.$pathtofile.'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
 					}
@@ -2133,10 +2144,10 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
-				print $langs->trans("CronJobDefDesc", '<a href="'.DOL_URL_ROOT.'/cron/list.php?status=-2">'.$langs->trans('CronList').'</a>').'<br>';
+				print $langs->trans("CronJobDefDesc", '<a href="'.DOL_URL_ROOT.'/cron/list.php?status=-2">'.$langs->transnoentities('CronList').'</a>').'<br>';
 				print '<br>';
 
-				print '<span class="fa fa-file"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
 
@@ -2291,11 +2302,13 @@ elseif (! empty($module))
 
 				$FILENAMEDOC=$modulelowercase.'.html';
 				$outputfiledoc = dol_buildpath($modulelowercase, 0).'/doc/'.$FILENAMEDOC;
+				$outputfiledocurl = dol_buildpath($modulelowercase, 1).'/doc/'.$FILENAMEDOC;
+				// TODO Use/test PDF
 			}
 
 			print '<br>';
 
-			print '<span class="fa fa-file"></span> '. $langs->trans("PathToModulePackage") . ' : ';
+			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModulePackage") . ' : ';
 			if (! dol_is_file($outputfilezip)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
 			else {
 				$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;
@@ -2315,10 +2328,14 @@ elseif (! empty($module))
 
 			print '<br><br><br>';
 
-			print '<span class="fa fa-file"></span> '. $langs->trans("PathToModuleDocumentation") . ' : ';
+			print '<span class="fa fa-file-o"></span> '. $langs->trans("PathToModuleDocumentation") . ' : ';
 			if (! dol_is_file($outputfiledoc)) print '<strong>'.$langs->trans("FileNotYetGenerated").'</strong>';
 			else {
-				print '<strong>'.$outputfiledoc.'</strong>';
+				print '<strong>';
+				print '<a href="'.$outputfiledocurl.'" target="_blank">';
+				print $outputfiledoc;
+				print '</a>';
+				print '</strong>';
 				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
 			}
 			print '</strong><br>';

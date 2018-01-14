@@ -82,7 +82,7 @@ class box_external_rss extends ModeleBoxes
 
 		$keyforparamurl="EXTERNAL_RSS_URLRSS_".$site;
 		$keyforparamtitle="EXTERNAL_RSS_TITLE_".$site;
-		
+
 		// Get RSS feed
 		$url=$conf->global->$keyforparamurl;
 
@@ -106,7 +106,7 @@ class box_external_rss extends ModeleBoxes
                 'text' => $title,
                 'sublink' => $link,
                 'subtext'=>$langs->trans("LastRefreshDate").': '.($rssparser->getLastFetchDate()?dol_print_date($rssparser->getLastFetchDate(),"dayhourtext"):$langs->trans("Unknown")),
-                'subpicto'=>'object_bookmark',
+                'subpicto'=>'help',
             );
 		}
 

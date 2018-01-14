@@ -43,7 +43,7 @@ class Adherent extends CommonObject
 {
 	public $element='member';
 	public $table_element='adherent';
-	protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $mesgs;
 
@@ -1303,11 +1303,6 @@ class Adherent extends CommonObject
 				$this->last_subscription_amount=$montant;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
-
-				// Call trigger
-				$result=$this->call_trigger('MEMBER_SUBSCRIPTION',$user);
-				if ($result < 0) { $error++; }
-				// End call triggers
 			}
 
 			if (! $error)
@@ -1969,7 +1964,7 @@ class Adherent extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// For avoid ldap error when firstname and lastname are empty
-		if ($this->morphy == 'mor' && empty($this->fullname)) {
+		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->societe)) {
 			$this->fullname = $this->societe;
 			$this->lastname = $this->societe;
 		}

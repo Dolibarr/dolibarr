@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=貝寶模塊的設置
 PaypalDesc=該模塊提供的網頁，允許<a href="http://www.paypal.com" target="_blank">對貝</a>寶支付客戶的。這可以使用一個免費的付款或支付上一個特定的Dolibarr對象（發票，訂單，... ...）
-PaypalOrCBDoPayment=與信用卡或PayPal付款
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=用PayPal
 PAYPAL_API_SANDBOX=測試/沙箱模式
 PAYPAL_API_USER=API的用戶名
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=優惠“不可分割的”支付（信用卡+貝寶）或“貝寶”只
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=這是交易編號<b>：%s</b>
 PAYPAL_ADD_PAYMENT_URL=當你郵寄一份文件，添加URL Paypal付款
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=您目前在“沙箱”模式
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+ONLINE_PAYMENT_SENDEMAIL=EMail to warn after a payment (success or not)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

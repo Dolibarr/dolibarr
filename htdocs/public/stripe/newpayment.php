@@ -16,6 +16,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Page is called with payment parameters then called with action='dopayment', then called with action='charge' then redirect is done on urlok/jo
  */
 
 /**
@@ -216,25 +218,28 @@ if ($action == 'charge')
 
     $stripeToken = GETPOST("stripeToken",'alpha');
     $email = GETPOST("stripeEmail",'alpha');
+    $vatnumber = GETPOST('vatnumber','alpha');
 
     dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
-    dol_syslog("stripeEmail = ".$stripeEmail, LOG_DEBUG, 0, '_stripe');
+    dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
+    dol_syslog("vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
     $error = 0;
 
     try {
-        dol_syslog("Create customer", LOG_DEBUG, 0, '_stripe');
+        dol_syslog("Create customer card profile", LOG_DEBUG, 0, '_stripe');
         $customer = \Stripe\Customer::create(array(
             'email' => $email,
-            'description' => ($email?'Customer for '.$email:null),
+            'description' => ($email?'Customer card profile for '.$email:null),
             'metadata' => array('ipaddress'=>$_SERVER['REMOTE_ADDR']),
-            'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
+			'business_vat_id' => ($vatnumber?$vatnumber:null),
+        	'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
         ));
         // TODO Add 'business_vat_id' ?
 
         dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
         $charge = \Stripe\Charge::create(array(
-            'customer' => $customer->id,
+            'customer' => $customer->id,				// Will reuse default source of this customer card profile
             'amount'   => price2num($amount, 'MU'),
             'currency' => $currency,
             'description' => 'Stripe payment: '.$FULLTAG,
@@ -346,7 +351,7 @@ if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', '
     exit;
 }
 
-if (empty($conf->global->STRIPE_LIVE))
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
 {
     dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
@@ -360,6 +365,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n"
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 print "\n";
 print '<!-- Form to send a Stripe payment -->'."\n";
 print '<!-- STRIPE_API_SANDBOX = '.$conf->global->STRIPE_API_SANDBOX.' -->'."\n";
@@ -576,6 +582,7 @@ if (GETPOST("source") == 'order')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$order->thirdparty->tva_intra.'">'."\n";
     print '<input type="hidden" name="desc" value="'.$langs->trans("Order").' '.$order->ref.'">'."\n";
 }
 
@@ -686,6 +693,7 @@ if (GETPOST("source") == 'invoice')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$invoice->thirdparty->tva_intra.'">'."\n";
     print '<input type="hidden" name="desc" value="'.$langs->trans("Invoice").' '.$invoice->ref.'">'."\n";
 }
 
@@ -885,6 +893,7 @@ if (GETPOST("source") == 'contractline')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$contract->thirdparty->tva_intra.'">'."\n";
     print '<input type="hidden" name="desc" value="'.$langs->trans("Contract").' '.$contract->ref.'">'."\n";
 }
 
@@ -1118,6 +1127,7 @@ if (preg_match('/^dopayment/',$action))
     print '<input type="hidden" name="entity" value="'.$entity.'" />';
     print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
     print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
+    print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 
     print '
     <table id="dolpaymenttable" summary="Payment form" class="center">

@@ -2,9 +2,46 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 6.0.5 compared to 6.0.4 *****
+FIX: security vulnerability reported by ADLab of Venustech
+     CVE-2017-17897, CVE-2017-17898, CVE-2017-17899, CVE-2017-17900 
+FIX: #7379: Compatibility with PRODUCT_USE_OLD_PATH_FOR_PHOTO variable
+FIX: #7903
+FIX: #7933
+FIX: #8029 Unable to make leave request in holyday module
+FIX: Edit accountancy account and warning message on loan
+FIX: $accounts[$bid] is a label !
+FIX: $oldvatrateclean & $newvatrateclean must be set if preg_match === false
+FIX: product best price on product list
+FIX: search on contact list
+FIX: stats trad for customerinvoice
+FIX: translate unactivate on contractline
+
+***** ChangeLog for 6.0.4 compared to 6.0.3 *****
+FIX: #7737
+FIX: #7751
+FIX: #7756 Add better error message
+FIX: #7786
+FIX: #7806
+FIX: #7824
+FIX: add line bad price and ref
+FIX: A lot of several fix on local taxes and NPR tax
+FIX: createfromorder
+FIX: CSS for IE10
+FIX: external user cannot be set as internal
+FIX: Filter type on actioncomm with multiselect doesn't work
+FIX: list of donation not filtered on multicompany
+FIX: list of module not complete when module mb_strlen not available
+FIX: Locatax were not propagated when cloning order or proposal
+FIX: Searching translation should not be case sensitive
+FIX: Search into language is ok for file into external modules two.
+FIX: test for filter fk_status
+FIX: too much users on holiday list
+FIX: Wrong alias sql
 
 
 ***** ChangeLog for 7.0.0 compared to 6.0.* *****
+For users:
 
 For developers:
 NEW: Add hook addAdminLdapOptions and doAction in ldap admin page
@@ -12,18 +49,58 @@ NEW: complete_head_from_modules() in ldap_prepare_head()
 
 WARNING: 
 
+If you enabled (for test) the experimental BlockedLog module before 7.0, you must purge  the table llx_blockedlog because
+way to save data for final version has changed.
+
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The methode "cloture" on contract were renamed into "closeAll".
-* The substitution key for reference of object is now __REF__ whatever is the object (it replaces __ORDERREF__, 
+* The method "is_erasable" of invoice return a value <= 0 if not erasable (value is meaning) instead of always 0.  
+* The substitution key for reference of objects is now __REF__ whatever is the object (it replaces __ORDERREF__, 
   __PROPALREF__, ...)
-* The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to standardize naming conventions. 
+* The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to follow naming conventions. 
 * Substitution keys with syntax %XXX% were renamed into __XXX__ to match others.
-* Some REST API to access the dictionary (country, town, ...) were moved into a common API. 
-* Page bank/index.php and bank/bankentries.php were renamed into bank/list.php and bank/bankentries_list.php to
-  follow page naming conventions (so default filter/sort order features can also work).
-* The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED
-* The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY
+* Removed old deprecated REST API (APIs found into '/root' section of the REST API explorer in Dolibarr v6).
+* Some REST API to access setup features, like dictionaries (country, town, extrafields, ...) were moved into a 
+  common API "/setup".
+* The REST API /documents were renamed into /documents/download and /documents/upload. 
+* Page bank/index.php, bank/bankentries.php and comm/actions/listactions.php were renamed into 
+  bank/list.php, bank/bankentries_list.php and comm/actions/list.php to follow page naming
+  conventions (so default filter/sort order features can also work for this pages).
+* The trigger ORDER_SUPPLIER_STATUS_ONPROCESS was renamed into ORDER_SUPPLIER_STATUS_ORDERED.
+* The trigger ORDER_SUPPLIER_STATUS_RECEIVED_ALL was renamed into ORDER_SUPPLIER_STATUS_RECEIVED_COMPLETELY.
+* The parameter note into method cloture() is added at end of private note (previously in v6, it replaced).
+* The parameter $user is now mandatory for method createFromOrder and createFromPropal.
+* Removed js library 'fileupload' that was not used by core code.
+* Jquery plugin tableDnd updated. You now need to use decodeURI on the return value of tableDnDSerialize() 
+  and add 'td.' to the beginning of the dragHandle match string. 
+* IE8 and earlier and Firefox 12 and earlier (< 2012) are no more supported. 
 
+
+***** ChangeLog for 6.0.3 compared to 6.0.2 *****
+FIX: #7211 Update qty dispatched on qty change
+FIX: #7458
+FIX: #7593
+FIX: #7616
+FIX: #7619
+FIX: #7626
+FIX: #7648
+FIX: #7675
+FIX: Agenda events are not exported in the ICAL, VCAL if begin exactly with the same $datestart
+FIX: API to get object does not return data of linked objects
+FIX: Bad localtax apply
+FIX: Bad ressource list in popup in gantt view
+FIX: bankentries search conciliated if val 0
+FIX: hook formObjectOptions() must use $expe and not $object
+FIX: make of link to other object during creation
+FIX: Missing function getLinesArray
+FIX: old batch not shown in multi shipping
+FIX: paid supplier invoices are shown as abandoned
+FIX: selection of thirdparty was lost on stats page of invoices
+FIX: sql syntax error because of old field accountancy_journal
+FIX: Stats on invoices show nothing
+FIX: substitution in ODT of thirdparties documents
+FIX: wrong key in selectarray
+FIX: wrong personnal project time spent
 
 ***** ChangeLog for 6.0.2 compared to 6.0.1 *****
 FIX: #7148
@@ -247,6 +324,23 @@ Following changes may create regression for some external modules, but were nece
 * The hook formObjectOptions was not implemented correctly in previous version. Sometimes, you had to return output 
 content by doing a print into function, sometimes by returning content into "resprint". This has been fixed to follow
 hook specifications so you must return output into "resprint".
+
+
+***** ChangeLog for 5.0.7 compared to 5.0.6 *****
+FIX: #7000 Dashboard link for late pending payment supplier invoices do not work
+FIX: #7148
+FIX: #7325 Default VAT rate when editing template invoices is 0%
+FIX: #7366 renaming table with pgsql
+FIX: #7391
+FIX: #7510 Bug: extrafield content disappear when generate pdf within intervention
+FIX: Agenda events are not exported in the ICAL, VCAL if begin exactly with the same $datestart
+FIX: Bad link to unpayed suppliers invoices
+FIX: bankentries search conciliated if val 0
+FIX: multicompany better accuracy in rounding and with revenue stamp.
+FIX: PDF output was sharing 2 different currencies in same total
+FIX: Upgrade missing on field
+FIX: wrong key in selectarray
+FIX: wrong personnal project time spent
 
 ***** ChangeLog for 5.0.6 compared to 5.0.5 *****
 FIX: Removed a bad symbolic link into custom directory.

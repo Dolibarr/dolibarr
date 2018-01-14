@@ -36,7 +36,7 @@ $langs->load("users");
 if (!$user->rights->adherent->lire)
 	accessforbidden();
 
-$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
+$rowid=GETPOST("rowid",'int');
 
 
 
@@ -44,9 +44,9 @@ $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
+
+llxHeader();
 
 $object = new Subscription($db);
 $result = $object->fetch($rowid);

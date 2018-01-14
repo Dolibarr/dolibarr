@@ -43,15 +43,43 @@ class Societe extends CommonObject
 	public $element='societe';
 	public $table_element = 'societe';
 	public $fk_element='fk_soc';
+	public $fieldsforcombobox='nom,name_alias';
 	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
-
+	public $picto = 'company';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
-	protected $ismultientitymanaged = 1;
+	public $ismultientitymanaged = 1;
+	/**
+	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer
+	 */
+	public $restrictiononfksoc = 1;
+
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'nom'           =>array('type'=>'varchar(128)', 'label'=>'Name',            'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'name_alias'    =>array('type'=>'varchar(128)', 'label'=>'Name',            'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
+	);
+
 
 	public $entity;
 
@@ -368,6 +396,10 @@ class Societe extends CommonObject
 	var $fk_multicurrency;
 	var $multicurrency_code;
 
+
+	// END MODULEBUILDER PROPERTIES
+
+
 	/**
 	 * To contains a clone of this when we need to save old properties of object
 	 *  @var Societe
@@ -401,7 +433,7 @@ class Societe extends CommonObject
 	 *    @param	User	$user       Object of user that ask creation
 	 *    @return   int         		>= 0 if OK, < 0 if KO
 	 */
-	function create($user)
+	function create(User $user)
 	{
 		global $langs,$conf,$mysoc;
 
@@ -430,8 +462,8 @@ class Societe extends CommonObject
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-		if ($this->code_client == -1)      $this->get_codeclient($this,0);
-		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this,1);
+		if ($this->code_client == -1 || $this->code_client === 'auto')           $this->get_codeclient($this,0);
+		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') $this->get_codefournisseur($this,1);
 
 		// Check more parameters (including mandatory setup
 		// If error, this->errors[] is filled
@@ -439,8 +471,10 @@ class Societe extends CommonObject
 
 		if ($result >= 0)
 		{
+			$entity = isset($this->entity)?$this->entity:$conf->entity;
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
-			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$conf->entity.", '".$this->db->idate($now)."'";
+			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$entity.", '".$this->db->idate($now)."'";
 			$sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
 			$sql.= ", ".(! empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'":"null");
 			$sql.= ", ".$this->status;
@@ -666,11 +700,12 @@ class Societe extends CommonObject
 			}
 			else
 			{
+				//var_dump($conf->global->SOCIETE_EMAIL_UNIQUE);
 				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL')
 				{
 					// Check for unicity
-					if ($vallabel)
+					if ($vallabel && ! empty($conf->global->SOCIETE_EMAIL_UNIQUE))
 					{
 						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))
 						{
@@ -698,9 +733,9 @@ class Societe extends CommonObject
 	/**
 	 *      Update parameters of third party
 	 *
-	 *      @param	int		$id              			id societe
+	 *      @param	int		$id              			Id of company (deprecated, use 0 here and call update on an object loaded by a fetch)
 	 *      @param  User	$user            			Utilisateur qui demande la mise a jour
-	 *      @param  int		$call_trigger    			0=non, 1=oui
+	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
 	 *		@param	string	$action						'add' or 'update'
@@ -711,6 +746,8 @@ class Societe extends CommonObject
 	{
 		global $langs,$conf,$hookmanager;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		if (empty($id)) $id = $this->id;
 
 		$error=0;
 
@@ -739,7 +776,7 @@ class Societe extends CommonObject
 		$this->skype		= trim($this->skype);
 		$this->url		= $this->url?clean_url($this->url,0):'';
 		$this->note_private 	= trim($this->note_private);
-        	$this->note_public  	= trim($this->note_public);
+		$this->note_public  	= trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
@@ -777,8 +814,8 @@ class Societe extends CommonObject
 		$this->barcode=trim($this->barcode);
 
 		// For automatic creation
-		if ($this->code_client == -1) $this->get_codeclient($this,0);
-		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this,1);
+		if ($this->code_client == -1 || $this->code_client === 'auto')           $this->get_codeclient($this,0);
+		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') $this->get_codefournisseur($this,1);
 
 		$this->code_compta=trim($this->code_compta);
 		$this->code_compta_fournisseur=trim($this->code_compta_fournisseur);
@@ -855,7 +892,7 @@ class Societe extends CommonObject
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",note_private = ".(! empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
-            		$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
+			$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 
 			$sql .= ",siren   = '". $this->db->escape($this->idprof1) ."'";
 			$sql .= ",siret   = '". $this->db->escape($this->idprof2) ."'";
@@ -1122,7 +1159,7 @@ class Societe extends CommonObject
 		if ($idprof4) $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
 		if ($idprof5) $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
 		if ($idprof6) $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
-		if ($email)   $sql .= " AND email = '".$this->db->escape($email)."'";
+		if ($email)   $sql .= " AND s.email = '".$this->db->escape($email)."'";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1434,11 +1471,11 @@ class Societe extends CommonObject
 				// Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
 				if ($this->client || $this->prospect)
 				{
-					$toute_categs['societe'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
+					$toute_categs['customer'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
 				}
 				if ($this->fournisseur)
 				{
-					$toute_categs['fournisseur'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
+					$toute_categs['supplier'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
 				}
 
 				// Remove each "Categorie"
@@ -1867,7 +1904,7 @@ class Societe extends CommonObject
 		if (! empty($this->logo) && class_exists('Form'))
 		{
 			$label.= '<div class="photointooltip">';
-			$label.= Form::showphoto('societe', $this, 80, 0, 0, 'photowithmargin', 'mini');
+			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
 			$label.= '</div><div style="clear: both;"></div>';
 		}
 
@@ -1930,13 +1967,13 @@ class Societe extends CommonObject
 		if (! empty($this->country_code))
 			$label.= '<br><b>' . $langs->trans('Country') . ':</b> '. $this->country_code;
 		if (! empty($this->tva_intra))
-			$label.= '<br><b>' . $langs->trans('VATNumber') . ':</b> '. $this->tva_intra;
-			if (! empty($this->code_client) && $this->client)
+			$label.= '<br><b>' . $langs->trans('VATIntra') . ':</b> '. $this->tva_intra;
+		if (! empty($this->code_client) && $this->client)
 			$label.= '<br><b>' . $langs->trans('CustomerCode') . ':</b> '. $this->code_client;
 		if (! empty($this->code_fournisseur) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
 		if (! empty($conf->accounting->enabled) && $this->client)
-			$label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. $this->code_compta_client;
+			$label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. ($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		if (! empty($conf->accounting->enabled) && $this->fournisseur)
 			$label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
 
@@ -1981,9 +2018,10 @@ class Societe extends CommonObject
 			$linkend='';
 		}
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$linkstart.($maxlen?dol_trunc($name,$maxlen):$name).$linkend;
+		$result.=$linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.=($maxlen?dol_trunc($name,$maxlen):$name);
+		$result.=$linkend;
 
 		return $result;
 	}
@@ -1991,7 +2029,7 @@ class Societe extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *    @return   string        		Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -2003,7 +2041,7 @@ class Societe extends CommonObject
 	 *  Renvoi le libelle d'un statut donne
 	 *
 	 *  @param	int		$statut         Id statut
-	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string          		Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
@@ -2038,8 +2076,13 @@ class Societe extends CommonObject
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-			if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+		}
+		if ($mode == 6)
+		{
+			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+			if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
 		}
 	}
 
@@ -2057,7 +2100,7 @@ class Societe extends CommonObject
 		if ($this->email && $addthirdparty)
 		{
 			if (empty($this->name)) $this->name=$this->nom;
-			$contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+			$contact_emails['thirdparty']=$langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name,16)." <".$this->email.">";
 		}
 		//var_dump($contact_emails)
 		return $contact_emails;
@@ -2078,7 +2121,7 @@ class Societe extends CommonObject
 		{
 			if (empty($this->name)) $this->name=$this->nom;
 			// TODO: Tester si tel non deja present dans tableau contact
-			$contact_phone['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->phone."&gt;";
+			$contact_phone['thirdparty']=$langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name,16)." <".$this->phone.">";
 		}
 		return $contact_phone;
 	}
@@ -2088,7 +2131,7 @@ class Societe extends CommonObject
 	 *
 	 *  @param	string	$mode       		'email' or 'mobile'
 	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
-	 *  @return array       				Array of contacts emails or mobile array(id=>'Name <email>')
+	 *  @return array       				Array of contacts emails or mobile. Example: array(id=>'Name <email>')
 	 */
 	function contact_property_array($mode='email', $hidedisabled=0)
 	{
@@ -2110,7 +2153,8 @@ class Societe extends CommonObject
 				$sepa="("; $sepb=")";
 				if ($mode == 'email')
 				{
-					$sepa="&lt;"; $sepb="&gt;";
+					//$sepa="&lt;"; $sepb="&gt;";
+					$sepa="<"; $sepb=">";
 				}
 				$i = 0;
 				while ($i < $nump)
@@ -2125,8 +2169,8 @@ class Societe extends CommonObject
 					{
 						if (empty($property))
 						{
-							if ($mode == 'email') $property=$langs->trans("NoEMail");
-							else if ($mode == 'mobile') $property=$langs->trans("NoMobilePhone");
+							if ($mode == 'email') $property=$langs->transnoentitiesnoconv("NoEMail");
+							else if ($mode == 'mobile') $property=$langs->transnoentitiesnoconv("NoMobilePhone");
 						}
 
 						if (!empty($obj->poste))
@@ -3665,8 +3709,9 @@ class Societe extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @param string $type Category type (customer or supplier)
+	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+	 * @param 	string 		$type 			Category type ('customer' or 'supplier')
+	 * @return	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories, $type)
 	{
@@ -3681,7 +3726,7 @@ class Societe extends CommonObject
 			$type_text = 'supplier';
 		} else {
 			dol_syslog(__METHOD__ . ': Type ' . $type .  'is an unknown company category type. Done nothing.', LOG_ERR);
-			return;
+			return -1;
 		}
 
 		// Handle single category
@@ -3714,7 +3759,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		return;
+		return 1;
 	}
 
 

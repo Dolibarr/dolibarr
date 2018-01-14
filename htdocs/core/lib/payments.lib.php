@@ -99,7 +99,7 @@ function showOnlinePaymentUrl($type,$ref)
 {
 	global $conf, $langs;
 
-	$langs->load("PAYMENT");
+	$langs->load("payment");
 	$langs->load("paybox");
 	$servicename='Online';
 
@@ -109,7 +109,6 @@ function showOnlinePaymentUrl($type,$ref)
 	$out.= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
-
 
 /**
  * Return string with full Url
@@ -293,7 +292,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suf
     	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
 
     	// Add other message if VAT exists
-    	if (! empty($object->total_vat) || ! empty($object->total_tva))
+    	if ($object->total_vat != 0 || $object->total_tva != 0)
     	{
     		$parammessageform='ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
     		if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);
