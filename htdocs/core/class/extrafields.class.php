@@ -1651,9 +1651,16 @@ class ExtraFields
 					$error_field_required[] = $value;
 				}
 
-				if (in_array($key_type,array('date','datetime')))
+				if (in_array($key_type,array('date')))
 				{
 					// Clean parameters
+					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
+					$value_key=dol_mktime(0, 0, 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+				}
+				elseif (in_array($key_type,array('datetime')))
+				{
+					// Clean parameters
+					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
 				}
 				else if (in_array($key_type,array('checkbox','chkbxlst')))
@@ -1692,12 +1699,12 @@ class ExtraFields
 	}
 
 	/**
-	 * return array_options array for object by extrafields value (using for data send by forms)
+	 * return array_options array of data of extrafields value of object sent by a search form
 	 *
 	 * @param  array   $extralabels    $array of extrafields
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @return int                     1 if array_options set / 0 if no value
+	 * @return array|int               array_options set or 0 if no value
 	 */
 	function getOptionalsFromPost($extralabels,$keyprefix='',$keysuffix='')
 	{
