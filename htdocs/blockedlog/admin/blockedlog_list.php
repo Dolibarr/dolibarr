@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
@@ -37,17 +38,19 @@ $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'blockedlo
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
-$showonlyerrors = GETPOST('showonlyerrors','int');
+$search_showonlyerrors = GETPOST('search_showonlyerrors','int');
+if ($search_showonlyerrors < 0) $search_showonlyerrors=0;
 
 $search_fk_user=GETPOST('search_fk_user','intcomma');
 $search_start = -1;
-if(GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
+if (GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
 $search_end = -1;
-if(GETPOST('search_endyear')!='') $search_end= dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+if (GETPOST('search_endyear')!='') $search_end= dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
 $search_code = GETPOST('search_code', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
+if (($search_start == -1 || empty($search_start)) && ! GETPOSTISSET('search_startmonth')) $search_start = dol_time_plus_duree(dol_now(), '-1', 'w');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -81,6 +84,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_code = '';
 	$search_ref = '';
 	$search_amount = '';
+	$search_showonlyerrors = 0;
 	$toselect='';
 	$search_array_options=array();
 }
@@ -207,11 +211,20 @@ else
 
 llxHeader('',$langs->trans("BrowseBlockedLog"));
 
-$blocks = $block_static->getLog('all', 0, GETPOST('all','alpha') ? 0 : 50, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
+$MAXLINES = 10000;
+
+$blocks = $block_static->getLog('all', 0, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (! is_array($blocks))
 {
-	dol_print_error($block_static->db);
-	exit;
+	if ($blocks == -2)
+	{
+		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
+	}
+	else
+	{
+		dol_print_error($block_static->db, $block_static->error, $block_static->errors);
+		exit;
+	}
 }
 
 $linkback='';
@@ -235,10 +248,15 @@ print '<br>';
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-if ($search_fk_user > 0) $param.='&search_fk_user='.urlencode($search_fk_user);
-if ($search_start > 0)   $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int')).'&search_startmonth='.urlencode(GETPOST('search_startmonth','int')).'&search_startday='.urlencode(GETPOST('search_startday','int'));
-if ($search_end > 0)     $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int')).'&search_endmonth='.urlencode(GETPOST('search_endmonth','int')).'&search_endday='.urlencode(GETPOST('search_endday','int'));
-if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+if ($search_fk_user > 0)    $param.='&search_fk_user='.urlencode($search_fk_user);
+if ($search_startyear > 0)  $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int'));
+if ($search_startmonth > 0) $param.='&search_startmonth='.urlencode(GETPOST('search_startmonth','int'));
+if ($search_startday > 0)   $param.='&search_startday='.urlencode(GETPOST('search_startday','int'));
+if ($search_endyear > 0)    $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int'));
+if ($search_endmonth > 0)   $param.='&search_endmonth='.urlencode(GETPOST('search_endmonth','int'));
+if ($search_endday > 0)     $param.='&search_endday='.urlencode(GETPOST('search_endday','int'));
+if ($search_showonlyerrors > 0) $param.='&search_showonlyerrors='.urlencode($search_showonlyerrors);
+if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
 if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab','alpha'));
 
 // Add $param from extra fields
@@ -246,9 +264,9 @@ if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab',
 
 
 print '<div align="right">';
-print ' <a href="?all=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a>';
-print ' | <a href="?all=1&showonlyerrors=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsErrorsMightBeTooLong').'</a>';
-print ' | <a href="?action=downloadcsv'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadLogCSV').'</a>';
+//print ' <a href="?all=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a>';
+//print ' | <a href="?all=1&search_showonlyerrors=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsErrorsMightBeTooLong').'</a>';
+print ' <a href="?action=downloadcsv'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadLogCSV').'</a>';
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
 print ' </div>';
 
@@ -300,8 +318,17 @@ print '<td class="liste_titre"></td>';
 // Amount
 print '<td class="liste_titre right"><input type="text" class="maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 
+// Full data
 print '<td class="liste_titre"></td>';
+
+// Fingerprint
 print '<td class="liste_titre"></td>';
+
+// Status
+print '<td class="liste_titre">';
+$array=array("1"=>$langs->trans("OnlyNonValid"));
+print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1);
+print '</td>';
 
 // Action column
 print '<td class="liste_titre" align="middle">';
@@ -321,12 +348,13 @@ print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print '</tr>';
 
 if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
 {
-	// This is version that is faster memory but require more memory and report errors that are outside the filter range
+	// This is version that is faster but require more memory and report errors that are outside the filter range
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
@@ -334,66 +362,76 @@ if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
 }
 else
 {
-	// This is version that optimize memory (but will not report error that are outside the filter range)
+	// This is version that optimize the memory (but will not report errors that are outside the filter range)
 	$loweridinerror=0;
 	$checkresult=array();
-	foreach($blocks as &$block) {
-		$checksignature = $block->checkSignature();	// Note: this make a sql request at each call, we can't avoid this as the sorting order is various
-		$checkresult[$block->id]=$checksignature;	// false if error
-		if (! $checksignature)
+	if (is_array($blocks))
+	{
+		foreach($blocks as &$block)
 		{
-			if (empty($loweridinerror)) $loweridinerror=$block->id;
-			else $loweridinerror = min($loweridinerror, $block->id);
+			$checksignature = $block->checkSignature();	// Note: this make a sql request at each call, we can't avoid this as the sorting order is various
+			$checkresult[$block->id]=$checksignature;	// false if error
+			if (! $checksignature)
+			{
+				if (empty($loweridinerror)) $loweridinerror=$block->id;
+				else $loweridinerror = min($loweridinerror, $block->id);
+			}
 		}
 	}
 }
 
-foreach($blocks as &$block) {
-	$object_link = $block->getObjectLink();
-
-	if (empty($showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
+if (is_array($blocks))
+{
+	foreach($blocks as &$block)
 	{
-	   	print '<tr class="oddeven">';
-	   	// ID
-	   	print '<td>'.$block->id.'</td>';
-	   	// Date
-	   	print '<td>'.dol_print_date($block->tms,'dayhour').'</td>';
-		// User
-	   	print '<td>';
-	   	//print $block->getUser()
-	   	print $block->user_fullname;
-	   	print '</td>';
-	   	// Action
-	   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
-	   	// Ref
-	   	print '<td>'.$block->ref_object.'</td>';
-	   	// Link to source object
-	   	print '<td>'.$object_link.'</td>';
-	   	print '<td align="right">'.price($block->amounts).'</td>';
-	   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
+		$object_link = $block->getObjectLink();
 
-	   	print '<td>';
-	   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature);
-	   	print '</td>';
+		if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
+		{
+		   	print '<tr class="oddeven">';
+		   	// ID
+		   	print '<td>'.$block->id.'</td>';
+		   	// Date
+		   	print '<td>'.dol_print_date($block->date_creation,'dayhour').'</td>';
+			// User
+		   	print '<td>';
+		   	//print $block->getUser()
+		   	print $block->user_fullname;
+		   	print '</td>';
+		   	// Action
+		   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
+		   	// Ref
+		   	print '<td class="nowrap">'.$block->ref_object.'</td>';
+		   	// Link to source object
+		   	print '<td>'.$object_link.'</td>';
+		   	print '<td align="right">'.price($block->amounts).'</td>';
+		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
-	   	print '<td class="center">';
-	   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
-	   	{
-	   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
-	   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
-	   	}
-	   	else
-	   	{
-	   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
-	   	}
+		   	print '<td>';
+		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature);
+		   	print '</td>';
 
-	   	if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
-	   		print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') :  img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black') );
-	   	}
-		print '</td>';
+		   	print '<td class="center">';
+		   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
+		   	{
+		   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
+		   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
+		   	}
+		   	else
+		   	{
+		   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
+		   	}
 
-		print '</tr>';
+		   	if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
+		   		print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') :  img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black') );
+		   	}
+			print '</td>';
 
+			print '<td></td>';
+
+			print '</tr>';
+
+		}
 	}
 }
 

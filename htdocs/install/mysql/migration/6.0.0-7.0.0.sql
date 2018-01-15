@@ -429,6 +429,7 @@ ALTER TABLE llx_user ADD COLUMN default_c_exp_tax_cat integer;
 ALTER TABLE llx_extrafields ADD COLUMN fk_user_author integer;
 ALTER TABLE llx_extrafields ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_extrafields ADD COLUMN datec datetime;
+ALTER TABLE llx_extrafields ADD COLUMN enabled varchar(255) DEFAULT '1';
 ALTER TABLE llx_extrafields ADD COLUMN tms timestamp;
 
 -- We fix value of 'list' from 0 to 1 for all extrafields created before this migration

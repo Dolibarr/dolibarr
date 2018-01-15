@@ -141,7 +141,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
 	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'p.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-        'pr.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1, 'enabled'=>$conf->projet->enabled),
+	'pr.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
 	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
@@ -191,7 +191,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_sale='';
 	$search_ref='';
 	$search_refcustomer='';
-	$search_refproject=''; 	
+	$search_refproject='';
 	$search_societe='';
 	$search_montant_ht='';
 	$search_montant_vat='';

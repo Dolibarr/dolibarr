@@ -143,11 +143,12 @@ class ExtraFields
 	 *  @param	int				$list				Visibilty
 	 *  @param	int				$ishidden			Deprecated. Use visibility instead.
 	 *  @param  string  		$computed           Computed value
-	 *  @param  string  		$entity    		 	Entity of extrafields
+	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
 	 *  @param  string  		$langfile  		 	Language file
+	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='')
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -164,7 +165,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden, $default, $computed, $entity, $langfile);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden, $default, $computed, $entity, $langfile, $enabled);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -286,9 +287,10 @@ class ExtraFields
 	 *  @param  string          $computed       Computed value
 	 *  @param  string          $entity     	Entity of extrafields
 	 *  @param	string			$langfile		Language file
+	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $default='', $computed='',$entity='', $langfile='')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
 	{
 		global $conf,$user;
 
@@ -298,6 +300,9 @@ class ExtraFields
 		// Clean parameters
 		if (empty($pos)) $pos=0;
 		if (empty($list)) $list=0;
+		if (empty($required)) $required=0;
+		if (empty($unique)) $unique=0;
+		if (empty($alwayseditable)) $alwayseditable=0;
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
@@ -333,19 +338,20 @@ class ExtraFields
 			$sql.= " fieldcomputed,";
 			$sql.= " fk_user_author,";
 			$sql.= " fk_user_modif,";
-			$sql.= " datec";
+			$sql.= " datec,";
+			$sql.= " enabled";
 			$sql.= " )";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
-			$sql.= " '".$type."',";
-			$sql.= " '".$pos."',";
-			$sql.= " '".$size."',";
+			$sql.= " '".$this->db->escape($type)."',";
+			$sql.= " ".$pos.",";
+			$sql.= " '".$this->db->escape($size)."',";
 			$sql.= " ".($entity===''?$conf->entity:$entity).",";
-			$sql.= " '".$elementtype."',";
-			$sql.= " '".$unique."',";
-			$sql.= " '".$required."',";
-			$sql.= " '".$params."',";
-			$sql.= " '".$alwayseditable."',";
+			$sql.= " '".$this->db->escape($elementtype)."',";
+			$sql.= " ".$unique.",";
+			$sql.= " ".$required.",";
+			$sql.= " '".$this->db->escape($params)."',";
+			$sql.= " ".$alwayseditable.",";
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
 			$sql.= " ".($langfile?"'".$this->db->escape($langfile)."'":"null").",";
 			$sql.= " ".$list.",";
@@ -353,7 +359,8 @@ class ExtraFields
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
 			$sql .= " " . $user->id . ",";
-			$sql .= "'" . $this->db->idate(dol_now()) . "'";
+			$sql .= "'" . $this->db->idate(dol_now()) . "',";
+			$sql.= " ".($enabled?"'".$this->db->escape($enabled)."'":"1");
 			$sql.=')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -488,9 +495,10 @@ class ExtraFields
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity	            Entity of extrafields
 	 *  @param	string	$langfile			Language file
+	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $ishidden=0, $default='', $computed='', $entity='', $langfile='')
+	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $ishidden=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -538,7 +546,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden,$default,$computed,$entity,$langfile);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden,$default,$computed,$entity,$langfile,$enabled);
 				}
 				if ($result > 0)
 				{
@@ -594,26 +602,32 @@ class ExtraFields
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity     		Entity of extrafields
 	 *  @param	string	$langfile			Language file
+	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0,$default='',$computed='',$entity='',$langfile='')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
 	{
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden.", ".$default.", ".$computed.", ".$entity.", ".$langfile);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
+		if (empty($pos)) $pos=0;
 		if (empty($list)) $list=0;
+		if (empty($required)) $required=0;
+		if (empty($unique)) $unique=0;
+		if (empty($alwayseditable)) $alwayseditable=0;
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
 			$this->db->begin();
 
-			if(is_array($param) && count($param) > 0)
+			if (is_array($param))
 			{
-				$param = $this->db->escape(serialize($param));
+				if (count($param) > 0) $param = $this->db->escape(serialize($param));
+				else $param='';
 			}
 
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
@@ -642,27 +656,29 @@ class ExtraFields
 			$sql.= " fieldcomputed,";
 			$sql.= " fk_user_author,";
 			$sql.= " fk_user_modif,";
-			$sql.= " datec";
+			$sql.= " datec,";
+			$sql.= " enabled";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".($entity===''?$conf->entity:$entity).",";
 			$sql.= " '".$this->db->escape($label)."',";
-			$sql.= " '".$type."',";
-			$sql.= " '".$size."',";
-			$sql.= " '".$elementtype."',";
-			$sql.= " '".$unique."',";
-			$sql.= " '".$required."',";
+			$sql.= " '".$this->db->escape($type)."',";
+			$sql.= " '".$this->db->escape($size)."',";
+			$sql.= " '".$this->db->escape($elementtype)."',";
+			$sql.= " ".$unique.",";
+			$sql.= " ".$required.",";
 			$sql.= " ".($perms?"'".$this->db->escape($perms)."'":"null").",";
 			$sql.= " ".($langfile?"'".$this->db->escape($langfile)."'":"null").",";
-			$sql.= " '".$pos."',";
-			$sql.= " '".$alwayseditable."',";
-			$sql.= " '".$param."',";
+			$sql.= " ".$pos.",";
+			$sql.= " '".$this->db->escape($alwayseditable)."',";
+			$sql.= " '".$this->db->escape($param)."',";
 			$sql.= " ".$list.", ";
 			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
 			$sql .= " " . $user->id . ",";
-			$sql .= "'" . $this->db->idate(dol_now()) . "'";
+			$sql .= "'" . $this->db->idate(dol_now()) . "',";
+			$sql .= "'" . $this->db->escape($enabled). "'";
 			$sql.= ")";
 
 			$resql2=$this->db->query($sql);
@@ -683,7 +699,6 @@ class ExtraFields
 		{
 			return 0;
 		}
-
 	}
 
 
@@ -1706,9 +1721,16 @@ class ExtraFields
 					$error_field_required[] = $value;
 				}
 
-				if (in_array($key_type,array('date','datetime')))
+				if (in_array($key_type,array('date')))
 				{
 					// Clean parameters
+					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
+					$value_key=dol_mktime(0, 0, 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+				}
+				elseif (in_array($key_type,array('datetime')))
+				{
+					// Clean parameters
+					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key=dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
 				}
 				else if (in_array($key_type,array('checkbox','chkbxlst')))
@@ -1747,12 +1769,12 @@ class ExtraFields
 	}
 
 	/**
-	 * return array_options array for object by extrafields value (using for data send by forms)
+	 * return array_options array of data of extrafields value of object sent by a search form
 	 *
 	 * @param  array   $extralabels    $array of extrafields
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @return int                     1 if array_options set / 0 if no value
+	 * @return array|int               array_options set or 0 if no value
 	 */
 	function getOptionalsFromPost($extralabels,$keyprefix='',$keysuffix='')
 	{

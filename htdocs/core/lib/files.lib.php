@@ -1273,10 +1273,12 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 
 
 /**
- *  Delete all preview files linked to object instance
+ *  Delete all preview files linked to object instance.
+ *  Note that preview image of PDF files is generated when required, by dol_banner_tab() for example.
  *
  *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
+ *  @see dol_convert_file
  */
 function dol_delete_preview($object)
 {
@@ -1297,19 +1299,39 @@ function dol_delete_preview($object)
 
 	$refsan = dol_sanitizeFileName($object->ref);
 	$dir = $dir . "/" . $refsan ;
-	$file = $dir . "/" . $refsan . ".pdf.png";
-	$multiple = $file . ".";
+	$filepreviewnew = $dir . "/" . $refsan . ".pdf_preview.png";
+	$filepreviewnewbis = $dir . "/" . $refsan . ".pdf_preview-0.png";
+	$filepreviewold = $dir . "/" . $refsan . ".pdf.png";
 
-	if (file_exists($file) && is_writable($file))
+	// For new preview files
+	if (file_exists($filepreviewnew) && is_writable($filepreviewnew))
 	{
-		if (! dol_delete_file($file,1))
+		if (! dol_delete_file($filepreviewnew,1))
 		{
-			$object->error=$langs->trans("ErrorFailedToDeleteFile",$file);
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$filepreviewnew);
+			return 0;
+		}
+	}
+	if (file_exists($filepreviewnewbis) && is_writable($filepreviewnewbis))
+	{
+		if (! dol_delete_file($filepreviewnewbis,1))
+		{
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$filepreviewnewbis);
+			return 0;
+		}
+	}
+	// For old preview files
+	if (file_exists($filepreviewold) && is_writable($filepreviewold))
+	{
+		if (! dol_delete_file($filepreviewold,1))
+		{
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$filepreviewold);
 			return 0;
 		}
 	}
 	else
 	{
+		$multiple = $filepreviewold . ".";
 		for ($i = 0; $i < 20; $i++)
 		{
 			$preview = $multiple.$i;

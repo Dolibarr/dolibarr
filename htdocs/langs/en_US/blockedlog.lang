@@ -45,3 +45,5 @@ ImpossibleToReloadObject=Object (type %s, id %s) removed (see 'Full data' link f
 BlockedLogAreRequiredByYourCountryLegislation=Unalterable Logs module may be required by the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=Unalterable Logs module was activated because of the legislation of your country. Disabling this module may render any future transactions invalid with respect to the law and the use of legal software as they can not be validated by a tax audit.
 BlockedLogDisableNotAllowedForCountry=List of countries where usage of this module is mandatory (just to prevent to disable the module by error, if your country is in this list, disable of module is not possible without editing this list first)
+OnlyNonValid=Non valid
+TooManyRecordToScanRestrictFilters=Too many record to scan/analyze. Please restrict list with more restrictive filters.
