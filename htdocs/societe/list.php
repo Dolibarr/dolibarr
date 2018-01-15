@@ -985,7 +985,7 @@ while ($i < min($num, $limit))
 		print '<td class="tdoverflowmax200">';
 		print $companystatic->getNomUrl(1,'',100);
 		print "</td>\n";
-		$obj->name_alias = $savalias;
+		$companystatic->name_alias = $savalias;
         if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.name_alias']['checked']))
