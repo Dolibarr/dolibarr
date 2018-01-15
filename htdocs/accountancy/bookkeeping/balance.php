@@ -70,7 +70,8 @@ $form = new Form($db);
 if (empty($search_date_start) && ! GETPOSTISSET('formfilteraction'))
 {
 	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$sql .= " where date_start < now() and date_end > now() limit 1";
+	$sql.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+	$sql.= $db->plimit(1);
 	$res = $db->query($sql);
 	if ($res->num_rows > 0) {
 		$fiscalYear = $db->fetch_object($res);
