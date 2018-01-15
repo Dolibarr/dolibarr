@@ -71,14 +71,33 @@ $formaccounting = new FormAccounting($db);
 
 // Filter
 if (empty($search_date_start)) {
-	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	$sql .= " where date_start < now() and date_end > now() limit 1";
+	$res = $db->query($sql);
+	if ($res->num_rows > 0) {
+		$fiscalYear = $db->fetch_object($res);
+		$search_date_start = strtotime($fiscalYear->date_start);
+		$search_date_end = strtotime($fiscalYear->date_end);
+	} else {
+		$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		$year_start = dol_print_date(dol_now(), '%Y');
+		$year_end = $year_start + 1;
+		$month_end = $month_start - 1;
+		if ($month_end < 1)
+		{
+			$month_end = 12;
+			$year_end--;
+		}
+		$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+		$search_date_end = dol_get_last_day($year_end, $month_end);
+	}
 }
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
 	$sortfield = "t.rowid";
 
+	if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 
 

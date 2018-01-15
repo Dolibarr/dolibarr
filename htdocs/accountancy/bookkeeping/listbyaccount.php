@@ -40,22 +40,8 @@ $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
 $action = GETPOST('action', 'alpha');
-
-if (empty($search_date_start))
-{
-	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-	$year_start = dol_print_date(dol_now(), '%Y');
-	$year_end = $year_start + 1;
-	$month_end = $month_start - 1;
-	if ($month_end < 1)
-	{
-		$month_end = 12;
-		$year_end--;
-	}
-	$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-	$search_date_end = dol_get_last_day($year_end, $month_end);
-}
-
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
+$search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
 
@@ -77,15 +63,37 @@ $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->AC
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page','int');
-if ($page < 0) { $page = 0; }
+if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "t.rowid";
 
-if (empty($search_date_start)) $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-if (empty($search_date_end)) $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+if (empty($search_date_start)) {
+	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	$sql .= " where date_start < now() and date_end > now() limit 1";
+	$res = $db->query($sql);
+	if ($res->num_rows > 0) {
+		$fiscalYear = $db->fetch_object($res);
+		$search_date_start = strtotime($fiscalYear->date_start);
+		$search_date_end = strtotime($fiscalYear->date_end);
+	} else {
+		$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		$year_start = dol_print_date(dol_now(), '%Y');
+		$year_end = $year_start + 1;
+		$month_end = $month_start - 1;
+		if ($month_end < 1)
+		{
+			$month_end = 12;
+			$year_end--;
+		}
+		$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+		$search_date_end = dol_get_last_day($year_end, $month_end);
+		$search_date_start = 	dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
+		$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+	}
+}
 
 $object = new BookKeeping($db);
 
