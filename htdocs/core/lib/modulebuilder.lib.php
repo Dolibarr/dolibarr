@@ -254,7 +254,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
 
             $type = $val['type'];
             $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
-
+            if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
