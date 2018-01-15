@@ -34,6 +34,8 @@ if (empty($conf) || ! is_object($conf))
 <!-- BEGIN PHP TEMPLATE commonfields_view.tpl.php -->
 <?php
 
+$object->fields = dol_sort_array($object->fields, 'position');
+
 foreach($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
