@@ -1763,10 +1763,10 @@ form#login {
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
-	margin-bottom: 10px;
+	margin-bottom: 22px;
 }
 .login_main_message .error {
-	border: 1px solid #caa;
+	/* border: 1px solid #caa; */
 	padding: 10px;
 }
 div#login_left, div#login_right {
@@ -3152,6 +3152,12 @@ div.warning a, div.info a, div.error a {
 
 /* Error message */
 div.error {
+    border-<?php print $left; ?>: solid 5px #f28787;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
   background: #EFCFCF;
 }
 
