@@ -89,6 +89,7 @@ AccountIdShort=Количество
 LineRecord=Транзакция
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Conciliated путем
 DateConciliating=Согласительную дата
 BankLineConciliated=Entry reconciled

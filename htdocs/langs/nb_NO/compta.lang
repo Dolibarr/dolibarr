@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Betalinger ikke knyttet til noen faktura, er heller i
 PaymentsNotLinkedToUser=Betalinger ikke knyttet til noen bruker
 Profit=Profit
 AccountingResult=Regnskapsresultat
+BalanceBefore=Balance (before)
 Balance=Balanse
 Debit=Debet
 Credit=Kreditt

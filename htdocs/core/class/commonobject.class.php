@@ -6221,7 +6221,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
+			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
@@ -6299,23 +6299,15 @@ abstract class CommonObject
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			if ($obj = $this->db->fetch_object($res))
+			$obj = $this->db->fetch_object($res);
+			if ($obj)
 			{
-				if ($obj)
-				{
-					$this->setVarsFromFetchObj($obj);
-					return $this->id;
-				}
-				else
-				{
-					return 0;
-				}
+				$this->setVarsFromFetchObj($obj);
+				return $this->id;
 			}
 			else
 			{
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
-				return -1;
+				return 0;
 			}
 		}
 		else

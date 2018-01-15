@@ -196,6 +196,7 @@ CurrentProductPrice=Aktuálna cena
 AlwaysUseNewPrice=Vždy používajte aktuálnu cenu produktu / služby
 AlwaysUseFixedPrice=Použite pevnú cenu
 PriceByQuantity=Rozdielné ceny podľa quantity
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Množstvo rozsah
 MultipriceRules=Pravidlá cenových oblastí
 UseMultipriceRules=Použit cenové oblasti ( definované v nastavenia produktového modulu ) pre automatický výpočet ceny ostatných oblastí podľa prvej oblasti.

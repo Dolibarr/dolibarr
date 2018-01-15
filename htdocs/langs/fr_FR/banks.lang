@@ -89,6 +89,7 @@ AccountIdShort=Numéro
 LineRecord=Ecriture
 AddBankRecord=Ajouter écriture
 AddBankRecordLong=Saisie d'une écriture manuelle
+Conciliated=Rapproché
 ConciliatedBy=Rapproché par
 DateConciliating=Date rapprochement
 BankLineConciliated=Écriture rapprochée

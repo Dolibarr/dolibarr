@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=任意の請求書にリンクされていない支�
 PaymentsNotLinkedToUser=すべてのユーザーにリンクされていない支払い
 Profit=利益
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=バランス
 Debit=借方
 Credit=クレジット

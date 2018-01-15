@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Herhangi bir faturaya bağlı olmayan ödemeler, herh
 PaymentsNotLinkedToUser=Herhangi bir kullanıcıya bağlı olmayan ödemeler
 Profit=Kar
 AccountingResult=Muhasebe sonucu
+BalanceBefore=Balance (before)
 Balance=Bakiye
 Debit=Borç
 Credit=Alacak

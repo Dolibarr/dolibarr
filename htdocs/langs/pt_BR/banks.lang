@@ -69,6 +69,7 @@ StatusAccountClosed=Inativa
 LineRecord=Transação
 AddBankRecord=Adicionar transação
 AddBankRecordLong=Adicionar manualmente uma transação
+Conciliated=Conciliada
 ConciliatedBy=Reconciliado por
 DateConciliating=Data da reconciliação
 BankLineConciliated=Transação reconciliada

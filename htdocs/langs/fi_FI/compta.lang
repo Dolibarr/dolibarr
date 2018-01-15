@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Maksut eivät ole sidoksissa mihinkään lasku, joten
 PaymentsNotLinkedToUser=Maksut eivät ole sidoksissa mihinkään käyttäjä
 Profit=Voitto
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Saldo
 Debit=Debet
 Credit=Credit

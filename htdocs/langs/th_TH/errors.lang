@@ -156,6 +156,7 @@ ErrorPriceExpression20=การแสดงออกที่ว่างเป
 ErrorPriceExpression21=ผลที่ว่างเปล่า '% s'
 ErrorPriceExpression22=ผลเชิงลบ '% s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=ข้อผิดพลาดภายใน '% s'
 ErrorPriceExpressionUnknown=ข้อผิดพลาดที่ไม่รู้จัก '% s'
 ErrorSrcAndTargetWarehouseMustDiffers=แหล่งที่มาและคลังสินค้าเป้าหมายต้องแตกต่าง

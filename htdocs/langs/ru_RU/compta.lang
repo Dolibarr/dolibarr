@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Платежи, не связанные с какой
 PaymentsNotLinkedToUser=Платежи, не связанные с какой-либо пользователь
 Profit=Прибыль
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Баланс
 Debit=Дебет
 Credit=Кредит

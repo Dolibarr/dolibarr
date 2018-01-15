@@ -156,6 +156,7 @@ ErrorPriceExpression20=Espressione vuota
 ErrorPriceExpression21=Risultato vuoto '%s'
 ErrorPriceExpression22=Risultato negativo '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=Errore interno '%s'
 ErrorPriceExpressionUnknown=Errore sconosciuto '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=I magazzini di origine e di destinazione devono essere diversi

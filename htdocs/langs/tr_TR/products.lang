@@ -196,6 +196,7 @@ CurrentProductPrice=Geçerli fiyat
 AlwaysUseNewPrice=Ürün/hizmet için her zaman geçerli fiyatı kullan
 AlwaysUseFixedPrice=Sabit fiyatı kullan
 PriceByQuantity=Miktara göre değişen fiyatlar
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Miktar aralığı
 MultipriceRules=Fiyat seviyesi kuralları
 UseMultipriceRules=Birinci fiyata göre kendiliğinden fiyat hesaplaması için fiyat seviyesi kurallarını (ürün modülü ayarlarında tanımlanan) kullan

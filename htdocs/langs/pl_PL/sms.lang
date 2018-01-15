@@ -48,4 +48,4 @@ SmsInfoNumero= (W formacie międzynarodowym np.: +33899701761)
 DelayBeforeSending=Opóźnienie przed wysłaniem (w minutach)
 SmsNoPossibleSenderFound=Brak nadawcy. Sprawdź ustawienia dostawcy usług SMS.
 SmsNoPossibleRecipientFound=Odbiorca niedostępny. Sprawdź konfigurację dostawcy SMS.
-DisableStopIfSupported=Disable STOP message (if supported)
+DisableStopIfSupported=Wyłącz komunikat STOP (jeśli jest obsługiwany)

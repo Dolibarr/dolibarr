@@ -89,6 +89,7 @@ AccountIdShort=Nummer
 LineRecord=Transaksjon
 AddBankRecord=Legg til oppføringer
 AddBankRecordLong=Legg til oppføring manuelt
+Conciliated=Slått sammen
 ConciliatedBy=Avstemt av
 DateConciliating=Avstemt den
 BankLineConciliated=Oppføring avstemt

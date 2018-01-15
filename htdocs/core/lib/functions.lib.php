@@ -5395,7 +5395,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
 		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 	}
-	if (empty($exclude) || ! in_array('mycompany', $exclude))
+	if ((empty($exclude) || ! in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
 		$substitutionarray=array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,

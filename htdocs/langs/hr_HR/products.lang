@@ -196,6 +196,7 @@ CurrentProductPrice=Trenutna cijena
 AlwaysUseNewPrice=Uvijek koristi trenutnu cijenu za proizvod/uslugu
 AlwaysUseFixedPrice=Koristi fiksnu cijenu
 PriceByQuantity=Različite cijene prema količini
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Raspon količine
 MultipriceRules=Pravila odjelnih cijena
 UseMultipriceRules=Koristite pravila odjelova cijena (definiranih u postavkama modula proizvoda) za automatski izračun cijena ostalih dijelova sukladno prema prvom dijelu

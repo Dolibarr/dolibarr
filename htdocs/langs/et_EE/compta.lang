@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Makseid ei ole seotud ühegi arvega, seega ei ole nad
 PaymentsNotLinkedToUser=Ühegi kasutajaga sidumata maksed
 Profit=Kasum
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Saldo
 Debit=Deebet
 Credit=Kreedit

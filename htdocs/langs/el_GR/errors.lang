@@ -156,6 +156,7 @@ ErrorPriceExpression20=Κενή έκφραση
 ErrorPriceExpression21=Κενό αποτέλεσμα '%s'
 ErrorPriceExpression22=Αρνητικό αποτέλεσμα '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=Εσωτερικό σφάλμα '%s'
 ErrorPriceExpressionUnknown=Άγνωστο σφάλμα '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Η πηγή και ο στόχος των αποθηκών πρέπει να είναι διαφορετικός.

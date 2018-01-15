@@ -225,6 +225,8 @@ IfAmountHigherThan=je-li množství vyšší než <strong>%s</strong>
 SourcesRepository=Úložiště pro zdroje
 Chart=Schéma
 PassEncoding=Password encoding
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions removed
 
 ##### Export #####
 ExportsArea=Exportní plocha

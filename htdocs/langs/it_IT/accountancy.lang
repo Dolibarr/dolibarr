@@ -158,7 +158,7 @@ NumPiece=Numero del pezzo
 TransactionNumShort=Num. transazione
 AccountingCategory=Personalized groups
 GroupByAccountAccounting=Raggruppamento piano dei conti
-AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=Gruppi personalizzati
@@ -191,6 +191,7 @@ DescThirdPartyReport=Consulta la lista dei clienti e fornitori e dei contatti co
 ListAccounts=Lista delle voci del piano dei conti
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
 
 Pcgtype=Gruppo di conto
 Pcgsubtype=Sottogruppo di conto
@@ -244,7 +245,6 @@ ErrorAccountingJournalIsAlreadyUse=Questo giornale è già in uso
 ## Export
 ExportDraftJournal=Export draft journal
 Modelcsv=Modello di esportazione
-OptionsDeactivatedForThisExportModel=Per questo modello di esportazione, le opzioni sono disattivate
 Selectmodelcsv=Seleziona un modello di esportazione
 Modelcsv_normal=Esportazione classica
 Modelcsv_CEGID=Esportazione per CEGID Expert Comptabilité
@@ -254,7 +254,7 @@ Modelcsv_ciel=Esportazione per Sage Ciel Compta o Compta Evolution
 Modelcsv_quadratus=Esportazione per Quadratus QuadraCompta
 Modelcsv_ebp=Esportazione per EBP
 Modelcsv_cogilog=Esporta per Cogilog
-Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_agiris=Export towards Agiris
 Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Id Piano dei Conti
 

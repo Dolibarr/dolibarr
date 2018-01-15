@@ -196,6 +196,7 @@ CurrentProductPrice=Trenutna cena
 AlwaysUseNewPrice=Uvek koristi trenutnu cenu proizvoda/usluge
 AlwaysUseFixedPrice=Koristi fiksnu cenu
 PriceByQuantity=Različite cene po količini
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Raspon količina
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment
