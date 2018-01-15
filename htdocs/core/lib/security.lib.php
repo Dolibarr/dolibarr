@@ -82,7 +82,8 @@ function dol_hash($chain, $type='0')
 	global $conf;
 
 	// No need to add salt for password_hash
-	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash') return password_hash($chain, PASSWORD_DEFAULT);
+	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash'))
+        return password_hash($chain, PASSWORD_DEFAULT);
 
 	// Salt value
 	if (! empty($conf->global->MAIN_SECURITY_SALT)) $chain=$conf->global->MAIN_SECURITY_SALT.$chain;
@@ -114,7 +115,7 @@ function dol_verifyHash($chain, $hash, $type='0')
 {
 	global $conf;
 
-	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash') {
+	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
 		if ($hash[0] == '$') return password_verify($chain, $hash);
 		else if(strlen($hash) == 32) return dol_verifyHash($chain, $hash, '3'); // md5
 		else if(strlen($hash) == 40) return dol_verifyHash($chain, $hash, '2'); // sha1md5
