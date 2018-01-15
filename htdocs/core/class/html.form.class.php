@@ -5723,6 +5723,7 @@ class Form
 		$lis='';
 		$listcheckedstring='';
 
+		$array = dol_sort_array($array, 'position');
 		foreach($array as $key => $val)
 		{
 		   /* var_dump($val);
