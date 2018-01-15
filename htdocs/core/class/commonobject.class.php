@@ -6299,23 +6299,15 @@ abstract class CommonObject
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			if ($obj = $this->db->fetch_object($res))
+			$obj = $this->db->fetch_object($res);
+			if ($obj)
 			{
-				if ($obj)
-				{
-					$this->setVarsFromFetchObj($obj);
-					return $this->id;
-				}
-				else
-				{
-					return 0;
-				}
+				$this->setVarsFromFetchObj($obj);
+				return $this->id;
 			}
 			else
 			{
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
-				return -1;
+				return 0;
 			}
 		}
 		else
