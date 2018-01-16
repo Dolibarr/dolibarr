@@ -49,5 +49,4 @@ Codejournal=Periódico
 DelBookKeeping=Eliminar registro del libro mayor
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas
-OptionsDeactivatedForThisExportModel=Para este modelo de exportación, las opciones están desactivadas
 Modelcsv_CEGID=Exportar hacia CEGID Experto contable

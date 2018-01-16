@@ -449,7 +449,6 @@ Module320Desc=Adiciona um RSS feed dentro das páginas de tela do Dolibarr
 Module330Name=Marcadores de Página
 Module330Desc=Gerenciamento de agendamentos
 Module400Name=Projetos
-Module400Desc=Gestor de Projetos dentro de outros módulos
 Module410Desc=Integração do Webcalendar
 Module500Name=Taxas, Contribuições Sociais e Dividendos
 Module500Desc=Gestor Taxas, Contribuições Sociais e Dividentos

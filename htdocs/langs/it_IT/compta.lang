@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=I pagamenti non legati ad una fattura, quindi non leg
 PaymentsNotLinkedToUser=Pagamenti non legati ad alcun utente
 Profit=Utile
 AccountingResult=Risultato contabile
+BalanceBefore=Balance (before)
 Balance=Saldo
 Debit=Debito
 Credit=Credito

@@ -211,9 +211,12 @@ OppStatusPENDING=Venter
 OppStatusWON=Vunnet
 OppStatusLOST=Tapt
 Budget=Budsjett
+AllowToLinkFromOtherCompany=Tillat å koble prosjekt fra annet firma <br> <br> <u> Støttede verdier: </u> <br> - Hold tom: Kan lenke eventuelle prosjekt fra selskapet (standard) <br> - "alle": Kan lenke eventuelle prosjekter, selv prosjekt fra andre selskaper <br> - En liste over tredjeparts ID, separert med kommaer: Kan lenke alle definerte prosjekter fra disse tredjepartene (Eksempel: 123,4795,53) <br>
 LatestProjects=Siste %s prosjekter
 LatestModifiedProjects=Siste %s endrede prosjekter
 OtherFilteredTasks=Andre filtrerte oppgaver
+NoAssignedTasks=Ingen tildelte oppgaver (tilordne deg prosjekt/oppgaver fra toppvalgsruten for å legge inn tid på det)
 # Comments trans
 AllowCommentOnTask=Tillat brukerkommentarer på oppgaver
 AllowCommentOnProject=Tillat brukerkommentarer på prosjekter
+

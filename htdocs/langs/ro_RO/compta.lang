@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Plăţile nu sunt legate de orice factură, astfel î
 PaymentsNotLinkedToUser=Plăţile nu sunt legate de orice utilizator
 Profit=Profit
 AccountingResult=Rezultatl contabil
+BalanceBefore=Balance (before)
 Balance=Sold
 Debit=Debit
 Credit=Credit

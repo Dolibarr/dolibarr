@@ -262,17 +262,17 @@ if ($action == 'removelogo')
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$logofile=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-	dol_delete_file($logofile);
+	if ($mysoc->logo != '') dol_delete_file($logofile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO",$conf->entity);
 	$mysoc->logo='';
 
 	$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
-	dol_delete_file($logosmallfile);
+	if ($mysoc->logo_small != '') dol_delete_file($logosmallfile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$conf->entity);
 	$mysoc->logo_small='';
 
 	$logominifile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini;
-	dol_delete_file($logominifile);
+	if ($mysoc->logo_mini != '') dol_delete_file($logominifile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$conf->entity);
 	$mysoc->logo_mini='';
 }
@@ -370,7 +370,6 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '</td></tr>'."\n";
 
 	// Web
-
 	print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
 	print '<input name="web" id="web" class="minwidth300" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
 	print '</td></tr>'."\n";
@@ -384,8 +383,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	}
 
 	// Logo
-
-	print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
+	print '<tr class="oddeven hideonsmartphone"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
 	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
 	print '</td><td class="nocellnopadd" valign="middle" align="right">';
@@ -402,7 +400,6 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '</td></tr>';
 
 	// Note
-
 	print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
 	print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOST('note','none') ? GETPOST('note','none') : $conf->global->MAIN_INFO_SOCIETE_NOTE).'</textarea></td></tr>';
 	print '</td></tr>';

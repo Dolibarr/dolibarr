@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Mokėjimai nėra susiję su jokia sąskaita-faktūra,
 PaymentsNotLinkedToUser=Mokėjimai nėra susieti su jokiu Vartotoju
 Profit=Pelnas
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Balansas
 Debit=Debetas
 Credit=Kreditas

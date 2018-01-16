@@ -89,6 +89,7 @@ AccountIdShort=Szám
 LineRecord=Tranzakció
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Egyeztetésenként
 DateConciliating=Összeegyeztetés dátuma
 BankLineConciliated=Entry reconciled

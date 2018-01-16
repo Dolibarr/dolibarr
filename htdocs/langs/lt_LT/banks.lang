@@ -89,6 +89,7 @@ AccountIdShort=Skaičius
 LineRecord=Operacija/Sandoris
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Suderintas
 DateConciliating=Suderinimo data
 BankLineConciliated=Entry reconciled

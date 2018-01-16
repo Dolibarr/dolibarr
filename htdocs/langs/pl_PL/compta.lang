@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Płatność nie dowiązana do żadnej faktury, więc 
 PaymentsNotLinkedToUser=Płatnośc nie dowiązana do żadnego użytkownika
 Profit=Zysk
 AccountingResult=Wynik księgowy
+BalanceBefore=Balance (before)
 Balance=Saldo
 Debit=Rozchody
 Credit=Kredyt

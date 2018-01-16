@@ -225,6 +225,8 @@ IfAmountHigherThan=si el importe es mayor que <strong>%s</strong>
 SourcesRepository=Repositorio de los fuentes
 Chart=Gráfico
 PassEncoding=Cifrado de contraseña
+PermissionsAdd=Permisos añadidos
+PermissionsDelete=Permisos eliminados
 
 ##### Export #####
 ExportsArea=Área de exportaciones

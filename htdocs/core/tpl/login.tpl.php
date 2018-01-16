@@ -244,9 +244,9 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 </form>
 
 
-
-
-<?php if (! empty($_SESSION['dol_loginmesg']))
+<?php
+// Show error message if defined
+if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
 	<div class="center login_main_message"><div class="error">

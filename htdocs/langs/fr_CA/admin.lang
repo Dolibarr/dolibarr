@@ -240,6 +240,7 @@ AskForPreferredShippingMethod=Demandez la méthode d'envoi préférée pour les 
 PasswordGenerationNone=Aucune suggestion de mot de passe généré . Le mot de passe doit être saisi manuellement.
 PasswordGenerationPerso=Retour un mot de passe en fonction de votre configuration personnellement défini.
 PasswordPatternDesc=Description du modèle de mot de passe
+DisableForgetPasswordLinkOnLogonPage=Ne pas afficher le lien "Mot de passe oublié" sur la page de connexion
 HRMSetup=Configuration du module de GRH
 NotificationsDesc=La fonction de notification des messages électroniques vous permet d'envoyer automatiquement un courrier automatique pour certains événements Dolibarr. Les cibles des notifications peuvent être définies:
 NotificationsDescUser=* Par utilisateur, un utilisateur à l'heure.

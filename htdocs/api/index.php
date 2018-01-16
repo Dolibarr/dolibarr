@@ -79,6 +79,9 @@ if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($
 }
 
 
+// This 2 lines are usefull only if we want to exclude some Urls from the explorer
+//use Luracast\Restler\Explorer;
+//Explorer::$excludedPaths = array('/categories');
 
 
 // Analyze URLs

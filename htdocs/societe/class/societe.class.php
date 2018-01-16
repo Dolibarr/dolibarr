@@ -471,7 +471,7 @@ class Societe extends CommonObject
 
 		if ($result >= 0)
 		{
-			$entity = isset($this->entity)?$this->entity:$conf->entity;
+			$entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
 			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$entity.", '".$this->db->idate($now)."'";

@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=پرداخت به هر فاکتور در ارتباط
 PaymentsNotLinkedToUser=پرداخت به هر کاربر در ارتباط نیست
 Profit=سود
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=تعادل
 Debit=بدهی
 Credit=اعتبار

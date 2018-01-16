@@ -89,6 +89,7 @@ AccountIdShort=Broj
 LineRecord=Transakcija
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Uskladio
 DateConciliating=Datum usklađenja
 BankLineConciliated=Entry reconciled

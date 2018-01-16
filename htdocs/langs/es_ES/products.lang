@@ -196,14 +196,15 @@ CurrentProductPrice=Precio actual
 AlwaysUseNewPrice=Usar siempre el precio actual
 AlwaysUseFixedPrice=Usar el precio fijado
 PriceByQuantity=Precios diferentes por cantidad
+DisablePriceByQty=Desactivar precios por cantidad
 PriceByQuantityRange=Rango cantidad
 MultipriceRules=Reglas para segmento de precios
 UseMultipriceRules=Use las reglas de segmentación de precios (definidas en la configuración de módulo de productos) para autocalcular los precios de todos los demás segmentos de acuerdo con el primer segmento
 PercentVariationOver=%% variación sobre %s
 PercentDiscountOver=%% descuento sobre %s
 KeepEmptyForAutoCalculation=Manténgase vacío para que se calcule automáticamente el peso o volumen de productos
-VariantRefExample=Example: COL
-VariantLabelExample=Example: Color
+VariantRefExample=Ejemplo: COL
+VariantLabelExample=Ejemplo: Color
 ### composition fabrication
 Build=Fabricar
 ProductsMultiPrice=Productos y precios para cada segmento de precios
@@ -287,8 +288,8 @@ ConfirmDeleteProductBuyPrice=¿Está seguro de querer eliminar este precio de co
 SubProduct=Subproducto
 ProductSheet=Hoja de producto
 ServiceSheet=Hoja de servicio
-PossibleValues=Possible values
-GoOnMenuToCreateVairants=Go on menu %s - %s to prepare attribute variants (like colors, size, ...)
+PossibleValues=Valores posibles
+GoOnMenuToCreateVairants=Vaya al menú %s - %s para preparar variantes de atributos (como colores, tamaño, ...)
 
 #Attributes
 VariantAttributes=Atributos de variantes

@@ -156,6 +156,7 @@ ErrorPriceExpression20=空白表达式
 ErrorPriceExpression21=空白结果 '%s'
 ErrorPriceExpression22=负结果 '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=内部错误 '%s'
 ErrorPriceExpressionUnknown=未知错误 '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Source and target warehouses must differs
