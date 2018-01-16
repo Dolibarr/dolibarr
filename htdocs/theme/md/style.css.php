@@ -3005,6 +3005,10 @@ div .tdtop {
  *  Boxes
  */
 
+.box {
+    overflow-x: auto;
+    min-height: 40px;
+}
 .ficheaddleft div.boxstats {
     border: none;
 }
