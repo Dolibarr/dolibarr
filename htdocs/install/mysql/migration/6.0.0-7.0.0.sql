@@ -595,6 +595,7 @@ ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_fk_user (f
 
 ALTER TABLE llx_actioncomm_reminder ADD UNIQUE INDEX uk_actioncomm_reminder_unique(fk_user, typeremind, offsetvalue, offsetunit);
 
+UPDATE llx_tva SET datec = tms where datec IS NULL;
 
 -- VPGSQL8.2 CREATE SEQUENCE llx_supplier_proposal_rowid_seq;
 -- VPGSQL8.2 ALTER TABLE llx_supplier_proposal ALTER COLUMN rowid SET DEFAULT nextval('llx_supplier_proposal_rowid_seq');
