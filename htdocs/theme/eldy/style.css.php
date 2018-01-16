@@ -2931,6 +2931,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
  *  Boxes
  */
 
+.box {
+    overflow-x: auto;
+    min-height: 40px;
+}
 .ficheaddleft div.boxstats {
     border: none;
 }

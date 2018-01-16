@@ -124,8 +124,6 @@ if (empty($user->societe_id))
     $boxstat.='</tr>';
     $boxstat.='<tr class="impair"><td class="tdboxstats nohover flexcontainer">';
 
-    $var=true;
-
     $object=new stdClass();
     $parameters=array();
     $action='';
@@ -510,7 +508,6 @@ if ($reshook == 0) {
 
 // Calculate total nb of late
 $totallate=$totaltodo=0;
-$var=true;
 
 //Remove any invalid response
 //load_board can return an integer if failed or WorkboardResponse if OK
@@ -617,25 +614,27 @@ print '<div class="fichecenter fichecenterbis">';
  * Show boxes
  */
 
-$boxlist.='<table width="100%" class="notopnoleftnoright">';
-$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
+$boxlist.='<div class="twocolumns">';
 
-$boxlist.='<div class="fichehalfleft">';
+$boxlist.='<div class="fichehalfleft boxhalfleft" id="boxhalfleft">';
 
-//$boxlist.=$boxinfo;
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlista'];
 
-$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
+$boxlist.= '</div>';
+
+$boxlist.= '<div class="fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist.= '<div class="ficheaddleft">';
 
 $boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlistb'];
 
-$boxlist.= '</div></div>';
+$boxlist.= '</div>';
+$boxlist.= '</div>';
 $boxlist.= "\n";
 
-$boxlist.= "</td></tr>";
-$boxlist.= "</table>";
+$boxlist.='</div>';
+
 
 print $boxlist;
 
