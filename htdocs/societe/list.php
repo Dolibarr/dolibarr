@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
  * Copyright (C) 2017       Rui Strecht      		<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2017       Juanjo Menent      		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -965,8 +966,8 @@ while ($i < min($num, $limit))
 
 	$companystatic->id=$obj->rowid;
 	$companystatic->name=$obj->name;
-	$companystatic->logo=$obj->logo;
 	$companystatic->name_alias=$obj->name_alias;
+	$companystatic->logo=$obj->logo;
 	$companystatic->canvas=$obj->canvas;
 	$companystatic->client=$obj->client;
 	$companystatic->status=$obj->status;
@@ -990,6 +991,8 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
+		$savalias = $obj->name_alias;
+		if (! empty($arrayfields['s.name_alias']['checked'])) $companystatic->name_alias='';
 		print '<td class="tdoverflowmax200">';
 		//if (! empty($arrayfields['s.name_alias']['checked']))	// Hide alias from output
 		//{
@@ -1002,7 +1005,8 @@ while ($i < min($num, $limit))
 			$companystatic->name_alias=$savalias;
 		//}
 		print "</td>\n";
-		if (! $i) $totalarray['nbfield']++;
+		$companystatic->name_alias = $savalias;
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.name_alias']['checked']))
 	{

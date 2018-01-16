@@ -383,12 +383,12 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		if ($feature == 'project') $feature='projet';
 		if ($feature == 'task')    $feature='projet_task';
 
-		$check = array('adherent','banque','user','usergroup','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent','banque','don','user','usergroup','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object
 		$checktask = array('projet_task');
-		$nocheck = array('barcode','stock','fournisseur','don');	// No test
+		$nocheck = array('barcode','stock');	// No test
 		$checkdefault = 'all other not already defined'; // Test on entity and link to third party. Not allowed if link is empty (Ex: invoice, orders...).
 
 		// If dbtablename not defined, we use same name for table than module name
@@ -508,7 +508,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		else if (! in_array($feature,$nocheck))	// By default we check with link to third party
+		else if (! in_array($feature,$nocheck))		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 		{
 			// If external user: Check permission for external users
 			if ($user->societe_id > 0)
@@ -530,7 +530,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 				$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql.= " AND sc.fk_soc = dbt.".$dbt_keyfield;
 				$sql.= " AND dbt.".$dbt_keyfield." = s.rowid";
-				$sql.= " AND s.entity IN (".getEntity($sharedelement, 1).")";
+				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				$sql.= " AND sc.fk_user = ".$user->id;
 			}
 			// If multicompany and internal users with all permissions, check user is in correct entity
