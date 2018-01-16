@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -669,6 +670,38 @@ class Tva extends CommonObject
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
+	
+	/**
+     * 	Return amount of payments already done
+     *
+     *	@return		int		Amount of payment already done, <0 if KO
+     */
+    function getSommePaiement()
+    {
+        $table='paiementcharge';
+        $field='fk_charge';
+
+        $sql = 'SELECT sum(amount) as amount';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+        $sql.= ' WHERE '.$field.' = '.$this->id;
+
+        dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $amount=0;
+
+            $obj = $this->db->fetch_object($resql);
+            if ($obj) $amount=$obj->amount?$obj->amount:0;
+
+            $this->db->free($resql);
+            return $amount;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 	/**
 	 *	Informations of vat payment object
