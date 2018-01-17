@@ -255,6 +255,7 @@ $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $facturestatic=new FactureFournisseur($db);
 $formcompany=new FormCompany($db);
+$thirdparty=new Societe($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
@@ -263,9 +264,10 @@ if ($search_all || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement,";
 $sql.= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
 $sql.= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
-$sql.= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
+$sql.= " s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= " country.code as country_code,";
 $sql.= " p.rowid as project_id, p.ref as project_ref";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
@@ -378,9 +380,10 @@ if (! $search_all)
 	$sql.= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement, f.fk_mode_reglement,";
 	$sql.= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut, f.libelle, f.datec, f.tms,";
 	$sql.= " f.localtax1, f.localtax2,";
-	$sql.= " s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
+	$sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql.= " typent.code,";
 	$sql.= " state.code_departement, state.nom,";
+	$sql.= ' country.code,';
 	$sql.= " p.rowid, p.ref";
 
 	foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
@@ -790,6 +793,17 @@ if ($resql)
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
 
+			$thirdparty->id=$obj->socid;
+			$thirdparty->name=$obj->name;
+			$thirdparty->client=$obj->client;
+			$thirdparty->fournisseur=$obj->fournisseur;
+			$thirdparty->code_client=$obj->code_client;
+			$thirdparty->code_compta_client=$obj->code_compta_client;
+			$thirdparty->code_fournisseur=$obj->code_fournisseur;
+			$thirdparty->code_compta_fournisseur=$obj->code_compta_fournisseur;
+			$thirdparty->email=$obj->email;
+			$thirdparty->country_code=$obj->country_code;
+
 			$paiement = $facturestatic->getSommePaiement();
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
@@ -821,7 +835,7 @@ if ($resql)
 				if (! $i) $totalarray['nbfield']++;
 			}
 
-			// Customer ref
+			// Supplier ref
 			if (! empty($arrayfields['f.ref_supplier']['checked']))
 			{
 				print '<td class="nowrap">';
@@ -878,11 +892,6 @@ if ($resql)
 			if (! empty($arrayfields['s.nom']['checked']))
 			{
 				print '<td class="tdoverflowmax200">';
-				$thirdparty=new Societe($db);
-				$thirdparty->id=$obj->socid;
-				$thirdparty->name=$obj->name;
-				$thirdparty->client=$obj->client;
-				$thirdparty->code_client=$obj->code_client;
 				print $thirdparty->getNomUrl(1,'supplier');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;

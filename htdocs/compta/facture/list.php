@@ -359,9 +359,10 @@ $sql.= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' f.datec as date_creation, f.tms as date_update,';
-$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
 $sql.= " typent.code as typent_code,";
-$sql.= " state.code_departement as state_code, state.nom as state_name";
+$sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= " country.code as country_code";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';
@@ -484,8 +485,10 @@ if (! $sall)
 	$sql.= ' f.datef, f.date_lim_reglement,';
 	$sql.= ' f.paye, f.fk_statut,';
 	$sql.= ' f.datec, f.tms,';
-	$sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code,';
-	$sql.= ' state.code_departement, state.nom';
+	$sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql.= ' typent.code,';
+	$sql.= ' state.code_departement, state.nom,';
+	$sql.= ' country.code';
 
 	foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
 	{
@@ -878,6 +881,17 @@ if ($resql)
 			$facturestatic->note_public=$obj->note_public;
 			$facturestatic->note_private=$obj->note_private;
 
+			$thirdpartystatic->id=$obj->socid;
+			$thirdpartystatic->name=$obj->name;
+			$thirdpartystatic->client=$obj->client;
+			$thirdpartystatic->fournisseur=$obj->fournisseur;
+			$thirdpartystatic->code_client=$obj->code_client;
+			$thirdpartystatic->code_compta_client=$obj->code_compta_client;
+			$thirdpartystatic->code_fournisseur=$obj->code_fournisseur;
+			$thirdpartystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
+			$thirdpartystatic->email=$obj->email;
+			$thirdpartystatic->country_code=$obj->country_code;
+
 			$paiement = $facturestatic->getSommePaiement();
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
@@ -966,11 +980,6 @@ if ($resql)
 			if (! empty($arrayfields['s.nom']['checked']))
 			{
 				print '<td class="tdoverflowmax200">';
-				$thirdpartystatic->id=$obj->socid;
-				$thirdpartystatic->name=$obj->name;
-				$thirdpartystatic->client=$obj->client;
-				$thirdpartystatic->code_client=$obj->code_client;
-				$thirdpartystatic->email=$obj->email;
 				print $thirdpartystatic->getNomUrl(1,'customer');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
