@@ -127,7 +127,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     	$res = $object->reprogram_jobs($user->login, $now);
     	if ($res > 0)
     	{
-    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported
+    		if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
     		{
     		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
     		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
