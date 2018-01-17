@@ -1987,7 +1987,7 @@ function getElementProperties($element_type)
         $module 	= $regs[2];
     }
 
-    //print '<br />1. element : '.$element.' - module : '.$module .'<br />';
+    //print '<br>1. element : '.$element.' - module : '.$module .'<br>';
     if ( preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
     {
         $module = $element = $regs[1];
