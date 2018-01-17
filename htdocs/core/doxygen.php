@@ -27,10 +27,10 @@
  *      <br>
  *      Dolibarr official web site: <a href="https://www.dolibarr.org">www.dolibarr.org</a><br>
  *      <br>
- *      Dolibarr french portal: <a href="http://www.dolibarr.fr">www.dolibarr.fr</a><br>
- *      Dolibarr spanish portal: <a href="http://www.dolibarr.es">www.dolibarr.es</a><br>
- *      Dolibarr italian portal: <a href="http://www.dolibarr.it">www.dolibarr.it</a><br>
- *      Dolibarr greek portal: <a href="http://www.dolibarr.gr">www.dolibarr.gr</a><br>
- *      Dolibarr german portal: <a href="http://www.dolibarr.de">www.dolibarr.de</a><br>
+ *      Dolibarr french portal: <a href="https://www.dolibarr.fr">www.dolibarr.fr</a><br>
+ *      Dolibarr spanish portal: <a href="https://www.dolibarr.es">www.dolibarr.es</a><br>
+ *      Dolibarr italian portal: <a href="https://www.dolibarr.it">www.dolibarr.it</a><br>
+ *      Dolibarr greek portal: <a href="https://www.dolibarr.gr">www.dolibarr.gr</a><br>
+ *      Dolibarr german portal: <a href="https://www.dolibarr.de">www.dolibarr.de</a><br>
  *      <br>
  */

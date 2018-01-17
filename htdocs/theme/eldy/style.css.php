@@ -2935,9 +2935,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     overflow-x: auto;
     min-height: 40px;
 }
-.ficheaddleft div.boxstats {
+/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}
+}*/
 .boxstatsborder {
     border: 1px solid #CCC !important;
 }

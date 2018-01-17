@@ -618,7 +618,7 @@ $boxlist.='<div class="twocolumns">';
 
 $boxlist.='<div class="fichehalfleft boxhalfleft" id="boxhalfleft">';
 
-$boxlist.=$boxstat;
+$boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
@@ -626,7 +626,7 @@ $boxlist.= '</div>';
 $boxlist.= '<div class="fichehalfright boxhalfright" id="boxhalfright">';
 $boxlist.= '<div class="ficheaddleft">';
 
-$boxlist.=$boxwork;
+$boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlistb'];
 
 $boxlist.= '</div>';
