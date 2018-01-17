@@ -539,7 +539,8 @@ if ($search_idprof4 != '') $param.= '&search_idprof4='.urlencode($search_idprof4
 if ($search_idprof5 != '') $param.= '&search_idprof5='.urlencode($search_idprof5);
 if ($search_idprof6 != '') $param.= '&search_idprof6='.urlencode($search_idprof6);
 if ($search_vat != '')     $param.= '&search_vat='.urlencode($search_vat);
-if ($search_type_thirdparty != '') $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
+if ($search_type != '')    $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
+if ($search_type_thirdparty != '') $param.='&search_type='.urlencode($search_type);
 if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 if ($search_status != '') $param.='&search_status='.urlencode($search_status);
 if ($search_stcomm != '') $param.='&search_stcomm='.urlencode($search_stcomm);
