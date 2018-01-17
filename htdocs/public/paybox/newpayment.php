@@ -123,6 +123,30 @@ $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
 // Check security token
 $valid=true;
+if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+{
+	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	{
+		if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+		else $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+	}
+	else
+	{
+		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
+	}
+	if ($SECUREKEY != $token)
+	{
+		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) $valid=false;	// PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
+		else dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+	}
+
+	if (! $valid)
+	{
+		print '<div class="error">Bad value for key.</div>';
+		//print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+		exit;
+	}
+}
 
 
 /*

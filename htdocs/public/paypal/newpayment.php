@@ -170,7 +170,11 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
     {
         $token = $conf->global->PAYPAL_SECURITY_TOKEN;
     }
-	if ($SECUREKEY != $token) $valid=false;
+    if ($SECUREKEY != $token)
+    {
+    	if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) $valid=false;	// PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
+    	else dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+    }
 
 	if (! $valid)
 	{
