@@ -3009,9 +3009,9 @@ div .tdtop {
     overflow-x: auto;
     min-height: 40px;
 }
-.ficheaddleft div.boxstats {
+/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}
+}*/
 .boxstatsborder {
     border: 1px solid #CCC !important;
 }
@@ -3030,6 +3030,7 @@ div .tdtop {
 .boxstats {
     padding: 3px;
     width: 100px;
+    min-height: 40px;
 }
 .boxstats130 {
     width: 135px;
