@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banc
 MenuBankCash=Bancs/Caixes
+MenuVariousPayment=Pagaments varis
+MenuNewVariousPayment=Pagament extra nou
 BankName=Nom del banc
 FinancialAccount=Compte
 BankAccount=Compte bancari
@@ -87,6 +89,7 @@ AccountIdShort=Número
 LineRecord=Registre
 AddBankRecord=Afegir registre
 AddBankRecordLong=Afegir registre manualment
+Conciliated=Conciliat
 ConciliatedBy=Conciliat per
 DateConciliating=Data conciliació
 BankLineConciliated=Registre conciliat
@@ -155,3 +158,6 @@ NewVariousPayment=Nou pagament varis
 VariousPayment=Pagaments varis
 VariousPayments=Pagaments varis
 ShowVariousPayment=Mostra els pagaments varis
+AddVariousPayment=Afegir pagaments extres
+YourSEPAMandate=La vostra ordre SEPA
+FindYourSEPAMandate=Aquest és la vostra ordre SEPA per autoritzar a la nostra empresa a realitzar un ordre de dèbit directe al vostre banc. Gràcies per retornar-la signada (escanejar el document signat) o envieu-lo per correu a

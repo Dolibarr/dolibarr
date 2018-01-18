@@ -133,7 +133,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     $error=0;
     $i=0;
     $buffer = '';
-    $arraysql = Array();
+    $arraysql = array();
 
     // Get version of database
     $versionarray=$db->getVersionArray();
@@ -1133,6 +1133,71 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
 }
 
 /**
+ *  Activate external modules mandatroy when country is country_code
+ *
+ * 	@param		string		$country_code	CountryCode
+ * 	@return		int			1
+ */
+function activateModulesRequiredByCountry($country_code)
+{
+	global $db, $conf, $langs;
+
+	$modulesdir = dolGetModulesDirs();
+
+	foreach ($modulesdir as $dir)
+	{
+		// Load modules attributes in arrays (name, numero, orders) from dir directory
+		dol_syslog("Scan directory ".$dir." for modules");
+		$handle=@opendir(dol_osencode($dir));
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle))!==false)
+			{
+				if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
+				{
+					$modName = substr($file, 0, dol_strlen($file) - 10);
+
+					if ($modName)
+					{
+						include_once $dir.$file;
+						$objMod = new $modName($db);
+
+						$modulequalified=1;
+
+						// We discard modules according to features level (PS: if module is activated we always show it)
+						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+
+						if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+						if(!empty($conf->global->$const_name)) $modulequalified=0; // already activated
+
+						if ($modulequalified)
+						{
+							// Load languages files of module
+							if (isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code]))
+							{
+								activateModule($modName);
+
+								setEventMessage($objMod->automatic_activation[$country_code],'warnings');
+							}
+
+						}
+						else dol_syslog("Module ".get_class($objMod)." not qualified");
+					}
+				}
+			}
+			closedir($handle);
+		}
+		else
+		{
+			dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
+		}
+	}
+
+	return 1;
+}
+
+/**
  *  Add external modules to list of contact element
  *
  * 	@param		array		$elementList			elementList
@@ -1526,4 +1591,51 @@ function phpinfo_array()
 	}
 	return $info_arr;
 }
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	    		    head array with tabs
+ */
+function email_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	if ($user->admin && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates'))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
+		$head[$h][1] = $langs->trans("OutGoingEmailSetup");
+		$head[$h][2] = 'common';
+		$h++;
+
+		if ($conf->mailing->enabled)
+		{
+			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
+			$head[$h][2] = 'common_emailing';
+			$h++;
+		}
+	}
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
+	$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
+	$head[$h][2] = 'templates';
+	$h++;
+
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
+		$head[$h][1] = $langs->trans("EmailSenderProfiles");
+		$head[$h][2] = 'senderprofiles';
+		$h++;
+	}
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'email_admin','remove');
+
+	return $head;
+}
+
 

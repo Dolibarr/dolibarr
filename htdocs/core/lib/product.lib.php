@@ -80,6 +80,9 @@ function product_prepare_head($object)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/composition/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
+
+		$nbFatherAndChild = $object->hasFatherOrChild();
+		if ($nbFatherAndChild > 0) $head[$h][1].= ' <span class="badge">'.$nbFatherAndChild.'</span>';
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
@@ -165,9 +168,14 @@ function product_prepare_head($object)
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product', 'remove');
 
     // Log
-    $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
+    $head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Events");
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+    	$head[$h][1].= '/';
+    	$head[$h][1].= $langs->trans("Agenda");
+    }
+    $head[$h][2] = 'agenda';
     $h++;
 
 	return $head;
@@ -309,7 +317,7 @@ function show_stats_for_company($product,$socid)
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
-	// Propals
+	// Customer proposals
 	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$nblines++;
@@ -327,7 +335,25 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Commandes clients
+	// Supplier proposals
+	if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+	{
+		$nblines++;
+		$ret=$product->load_stats_proposal_supplier($socid);
+		if ($ret < 0) dol_print_error($db);
+		$langs->load("propal");
+		print '<tr><td>';
+		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('','propal').' '.$langs->trans("SupplierProposals").'</a>';
+		print '</td><td align="right">';
+		print $product->stats_proposal_supplier['suppliers'];
+		print '</td><td align="right">';
+		print $product->stats_proposal_supplier['nb'];
+		print '</td><td align="right">';
+		print $product->stats_proposal_supplier['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+	// Customer orders
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$nblines++;
@@ -345,7 +371,7 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Commandes fournisseurs
+	// Supplier orders
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 	{
 		$nblines++;
@@ -363,25 +389,7 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Contrats
-	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
-	{
-		$nblines++;
-		$ret=$product->load_stats_contrat($socid);
-		if ($ret < 0) dol_print_error($db);
-		$langs->load("contracts");
-		print '<tr><td>';
-		print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
-		print '</td><td align="right">';
-		print $product->stats_contrat['customers'];
-		print '</td><td align="right">';
-		print $product->stats_contrat['nb'];
-		print '</td><td align="right">';
-		print $product->stats_contrat['qty'];
-		print '</td>';
-		print '</tr>';
-	}
-	// Factures clients
+	// Customer invoices
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$nblines++;
@@ -399,7 +407,7 @@ function show_stats_for_company($product,$socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Factures fournisseurs
+	// Supplier invoices
 	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 	{
 		$nblines++;
@@ -414,6 +422,25 @@ function show_stats_for_company($product,$socid)
 		print $product->stats_facture_fournisseur['nb'];
 		print '</td><td align="right">';
 		print $product->stats_facture_fournisseur['qty'];
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Contracts
+	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
+	{
+		$nblines++;
+		$ret=$product->load_stats_contrat($socid);
+		if ($ret < 0) dol_print_error($db);
+		$langs->load("contracts");
+		print '<tr><td>';
+		print '<a href="contrat.php?id='.$product->id.'">'.img_object('','contract').' '.$langs->trans("Contracts").'</a>';
+		print '</td><td align="right">';
+		print $product->stats_contrat['customers'];
+		print '</td><td align="right">';
+		print $product->stats_contrat['nb'];
+		print '</td><td align="right">';
+		print $product->stats_contrat['qty'];
 		print '</td>';
 		print '</tr>';
 	}
@@ -475,5 +502,44 @@ function measuring_units_string($unit,$measuring_style='')
         $measuring_units[99] = $langs->transnoentitiesnoconv("VolumeUnitgallon");
 	}
 
+	return $measuring_units[$unit];
+}
+
+/**
+ *	Transform a given unit into the square of that unit, if known
+ *
+ *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
+ * 	@see	formproduct->load_measuring_units
+ */
+function measuring_units_squared($unit)
+{
+	$measuring_units=array();
+	$measuring_units[0] = 0;   // m -> m3
+	$measuring_units[-1] = -2; // dm-> dm2
+	$measuring_units[-2] = -4; // cm -> cm2
+	$measuring_units[-3] = -6; // mm -> mm2
+	$measuring_units[98] = 98; // foot -> foot2
+	$measuring_units[99] = 99; // inch -> inch2
+	return $measuring_units[$unit];
+}
+
+
+/**
+ *	Transform a given unit into the cube of that unit, if known
+ *
+ *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
+ * 	@see	formproduct->load_measuring_units
+ */
+function measuring_units_cubed($unit)
+{
+	$measuring_units=array();
+	$measuring_units[0] = 0;   // m -> m2
+	$measuring_units[-1] = -3; // dm-> dm3
+	$measuring_units[-2] = -6; // cm -> cm3
+	$measuring_units[-3] = -9; // mm -> mm3
+	$measuring_units[98] = 88; // foot -> foot3
+	$measuring_units[99] = 89; // inch -> inch3
 	return $measuring_units[$unit];
 }

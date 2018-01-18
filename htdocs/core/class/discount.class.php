@@ -78,6 +78,7 @@ class DiscountAbsolute
         $sql = "SELECT sr.rowid, sr.fk_soc,";
         $sql.= " sr.fk_user,";
         $sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
+        $sql.= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
         $sql.= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.description,";
         $sql.= " sr.datec,";
         $sql.= " f.facnumber as ref_facture_source";
@@ -97,9 +98,15 @@ class DiscountAbsolute
 
                 $this->id = $obj->rowid;
                 $this->fk_soc = $obj->fk_soc;
+
                 $this->amount_ht = $obj->amount_ht;
                 $this->amount_tva = $obj->amount_tva;
                 $this->amount_ttc = $obj->amount_ttc;
+
+                $this->multicurrency_amount_ht = $obj->multicurrency_amount_ht;
+                $this->multicurrency_amount_tva = $obj->multicurrency_amount_tva;
+                $this->multicurrency_amount_ttc = $obj->multicurrency_amount_ttc;
+
                 $this->tva_tx = $obj->tva_tx;
                 $this->fk_user = $obj->fk_user;
                 $this->fk_facture_line = $obj->fk_facture_line;
@@ -438,14 +445,14 @@ class DiscountAbsolute
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
             $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-            $sql.= ' AND f.type = 2';
+            $sql.= ' AND (f.type = 2 OR f.type = 0)';	// Find discount coming from credit note or excess received
         }
         else if ($invoice->element == 'invoice_supplier')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
             $sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
-            $sql.= ' AND f.type = 2';
+            $sql.= ' AND (f.type = 2 OR f.type = 0)';	// Find discount coming from credit note or excess received
         }
         else
         {

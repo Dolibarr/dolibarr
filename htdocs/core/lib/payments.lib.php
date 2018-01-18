@@ -99,7 +99,7 @@ function showOnlinePaymentUrl($type,$ref)
 {
 	global $conf, $langs;
 
-	$langs->load("PAYMENT");
+	$langs->load("payment");
 	$langs->load("paybox");
 	$servicename='Online';
 
@@ -110,18 +110,17 @@ function showOnlinePaymentUrl($type,$ref)
 	return $out;
 }
 
-
 /**
  * Return string with full Url
  *
  * @param   int		$mode		0=True url, 1=Url formated with colors
  * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
  * @param	string	$ref		Ref of object
- * @param	int		$amount		Amount
+ * @param	int		$amount		Amount (required for $type='free' only)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getOnlinePaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_free_tag')
+function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='your_free_tag')
 {
 	global $conf;
 
@@ -293,7 +292,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suf
     	else if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
 
     	// Add other message if VAT exists
-    	if (! empty($object->total_vat) || ! empty($object->total_tva))
+    	if ($object->total_vat != 0 || $object->total_tva != 0)
     	{
     		$parammessageform='ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
     		if (! empty($conf->global->$parammessageform)) print $langs->transnoentities($conf->global->$parammessageform);

@@ -28,7 +28,6 @@ InterventionClassifyBilled=Classify "Billed"
 InterventionClassifyUnBilled=Classify "Unbilled"
 InterventionClassifyDone=Classify "Done"
 StatusInterInvoiced=Billed
-ShowIntervention=Show intervention
 SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by Email
 InterventionCreatedInDolibarr=Intervention %s created
@@ -53,6 +52,7 @@ UseDateWithoutHourOnFichinter=Hides hours and minutes off the date field for int
 InterventionStatistics=Statistics of interventions
 NbOfinterventions=Nb of intervention cards
 NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
+AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

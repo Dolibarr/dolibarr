@@ -125,9 +125,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($cancel)
-    {
-        $action='';
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+
     	$fk_projet='';
     	$date_start='';
     	$date_end='';
@@ -137,7 +143,7 @@ if (empty($reshook))
     	$value_unit='';
     	$qty=1;
     	$fk_c_type_fees=-1;
-    }
+	}
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -207,8 +213,8 @@ if (empty($reshook))
     	$object->fk_statut = 1;
     	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
     	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-    	$object->note_public				= GETPOST('note_public');
-    	$object->note_private				= GETPOST('note_private');
+    	$object->note_public				= GETPOST('note_public','none');
+    	$object->note_private				= GETPOST('note_private','none');
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
@@ -216,7 +222,7 @@ if (empty($reshook))
     	    if ($ret < 0) $error++;
     	}
 
-    	if ($object->periode_existe($fuser,$object->date_debut,$object->date_fin))
+    	if (empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser,$object->date_debut,$object->date_fin))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
@@ -228,8 +234,12 @@ if (empty($reshook))
     		$db->begin();
 
     		$id = $object->create($user);
+    		if ($id <= 0)
+    		{
+    			$error++;
+    		}
 
-    		if ($id > 0)
+    		if (! $error)
     		{
     			$db->commit();
     			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
@@ -258,8 +268,8 @@ if (empty($reshook))
     	}
 
     	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-    	$object->note_public = GETPOST('note_public');
-    	$object->note_private = GETPOST('note_private');
+    	$object->note_public = GETPOST('note_public','none');
+    	$object->note_private = GETPOST('note_private','none');
     	$object->fk_user_modif = $user->id;
 
     	$result = $object->update($user);
@@ -290,9 +300,11 @@ if (empty($reshook))
             // some hooks
             if (empty($reshook)) {
                 $result = $object->insertExtraFields();
-                if ($result < 0) {
-                    $error++;
-                }
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
             } else if ($reshook < 0)
                 $error++;
         }
@@ -1260,6 +1272,15 @@ if (empty($reshook))
     	}
     }
 
+	// Actions when printing a doc from card
+    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+    // Actions to send emails
+    $trigger_name='EXPENSEREPORT_SENTBYMAIL';
+    $autocopy='MAIN_MAIL_AUTOCOPY_EXPENSEREPORT_TO';
+    $trackid='exp'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
     // Actions to build doc
     $upload_dir = $conf->expensereport->dir_output;
     $permissioncreate = $user->rights->expensereport->creer;
@@ -1439,7 +1460,7 @@ else
 					print '<input type="hidden" name="action" value="update">';
 				}
 
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 				print '<table class="border" style="width:100%;">';
 
@@ -1599,7 +1620,7 @@ else
 				print $formconfirm;
 
 				// Expense report card
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 				$morehtmlref='<div class="refidno">';
 				/*
@@ -1841,15 +1862,13 @@ else
 				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
 				$sql.= "c.code as p_code, c.libelle as payment_type,";
 				$sql.= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
-				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e";
-				$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
-				$sql.= ", ".MAIN_DB_PREFIX."payment_expensereport as p";
-				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
-				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
+				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
+				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 				$sql.= " WHERE e.rowid = '".$id."'";
 				$sql.= " AND p.fk_expensereport = e.rowid";
 				$sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
-				$sql.= " AND p.fk_typepayment = c.id";
 				$sql.= " ORDER BY dp";
 
 				$resql = $db->query($sql);
@@ -1861,19 +1880,21 @@ else
 				    {
 				        $objp = $db->fetch_object($resql);
 
+				        $paymentexpensereportstatic->id = $objp->rowid;
+				        $paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
+				        $paymentexpensereportstatic->ref = $objp->rowid;
+				        $paymentexpensereportstatic->num_paiement = $objp->num_paiement;
+				        $paymentexpensereportstatic->payment_code = $objp->payment_code;
+
 				        print '<tr class="oddseven">';
 				        print '<td>';
-						$paymentexpensereportstatic->id = $objp->rowid;
-						$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
-						$paymentexpensereportstatic->ref = $objp->rowid;
-						$paymentexpensereportstatic->num_paiement = $objp->num_paiement;
-						$paymentexpensereportstatic->payment_code = $objp->payment_code;
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->fk_typepayment;
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-						if (! empty($conf->banque->enabled)) {
+						if (! empty($conf->banque->enabled))
+						{
 							$bankaccountstatic->id = $objp->baid;
 							$bankaccountstatic->ref = $objp->baref;
 							$bankaccountstatic->label = $objp->baref;
@@ -2084,7 +2105,7 @@ else
 								print '<td style="text-align:center;">';
 								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
 								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-								print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 								print '</td>';
 						}
 
@@ -2200,6 +2221,14 @@ if ($action != 'create' && $action != 'edit')
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
+
+	// Send
+	if ($object->fk_statut > ExpenseReport::STATUS_DRAFT) {
+		//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+		//} else
+		//	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+	}
 
 
 	/* Si l'état est "Brouillon"
@@ -2354,47 +2383,56 @@ print '</div>';
 //$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
-print '<div class="fichehalfleft">';
-
-/*
- * Generate documents
- */
-
-if($user->rights->expensereport->export && $action != 'create' && $action != 'edit')
-{
-	$filename	=	dol_sanitizeFileName($object->ref);
-	$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
-	$genallowed	=	1;
-	$delallowed	=	1;
-	$var 		= 	true;
-	print $formfile->showdocuments('expensereport',$filename,$filedir,$urlsource,$genallowed,$delallowed);
-	$somethingshown = $formfile->numoffiles;
+// Select mail models is same action as presend
+if (GETPOST('modelselected')) {
+	$action = 'presend';
 }
 
-print '</div>';
-
-if ($action != 'create' && $action != 'edit' && ($id || $ref))
+if ($action != 'presend')
 {
-    $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
-    // Link invoice to intervention
-    if (GETPOST('LinkedFichinter')) {
-        $object->fetch($id);
-        $object->fetch_thirdparty();
-        $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
-    }
+	/*
+	 * Generate documents
+	 */
 
-    // Show links to link elements
-    $linktoelements=array();
-    if (! empty($conf->global->EXPENSES_LINK_TO_INTERVENTION))
-    {
-        $linktoelements[]='fichinter';
-        $linktoelem = $form->showLinkToObjectBlock($object, $linktoelements, array('expensereport'));
-        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-    }
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	print '<a name="builddoc"></a>'; // ancre
+
+	if($user->rights->expensereport->creer && $action != 'create' && $action != 'edit')
+	{
+		$filename	=	dol_sanitizeFileName($object->ref);
+		$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
+		$genallowed	=	$user->rights->expensereport->creer;
+		$delallowed	=	$user->rights->expensereport->creer;
+		$var 		= 	true;
+		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
+		$somethingshown = $formfile->numoffiles;
+	}
+
+	if ($action != 'create' && $action != 'edit' && ($id || $ref))
+	{
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	}
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	// List of actions on element
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions = new FormActions($db);
+	$somethingshown = $formactions->showactions($object, 'expensereport', null);
+
+	print '</div></div></div>';
+
 }
+
+// Presend form
+$modelmail='expensereport';
+$defaulttopic='SendExpenseReportRef';
+$diroutput = $conf->expensereport->dir_output;
+$trackid = 'exp'.$object->id;
+
+include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
 
 llxFooter();
 

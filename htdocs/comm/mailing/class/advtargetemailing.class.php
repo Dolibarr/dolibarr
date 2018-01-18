@@ -77,8 +77,6 @@ class AdvanceTargetingMailing extends CommonObject
 				2 => $langs->trans("StatusProspect2"),
 				3 => $langs->trans("StatusProspect3")
 		);
-
-		return 1;
 	}
 
 	/**

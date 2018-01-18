@@ -13,8 +13,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
@@ -69,7 +76,7 @@
  		if ($searchfield['enabled']) {
  			if ($searchfield['search'])	{ ?>
   				<td class="liste_titre" align="<?php echo $searchfield['align']; ?>"><input class="flat" type="text" name="s<?php echo $searchfield['alias']; ?>" value=""></td>
-	<?php } else if ($key == $num) { 
+	<?php } else if ($key == $num) {
         print '<td class="liste_titre" align="right">';
         $searchpicto=$form->showFilterAndCheckAddButtons(0);
         print $searchpicto;

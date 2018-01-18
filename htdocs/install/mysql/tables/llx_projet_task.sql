@@ -36,6 +36,7 @@ create table llx_projet_task
   progress				integer DEFAULT 0,				-- percentage increase
   priority				integer DEFAULT 0,				-- priority
   fk_user_creat			integer,						-- user who created the task
+  fk_user_modif			integer,						-- user who modify the task
   fk_user_valid			integer,						-- user who validated the task
   fk_statut				smallint DEFAULT 0 NOT NULL,
   note_private			text,

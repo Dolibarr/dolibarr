@@ -82,13 +82,13 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $object->datev=$datev;
     $object->datep=$datep;
 
-	$amount = price2num(GETPOST("amount"));
+	$amount = price2num(GETPOST("amount",'alpha'));
 	if ($refund == 1) {
 		$amount= -$amount;
 	}
     $object->amount= $amount;
-	$object->label=GETPOST("label");
-	$object->note=GETPOST("note");
+	$object->label=GETPOST("label",'alpha');
+	$object->note=GETPOST("note",'none');
 
 	if (empty($object->datev))
 	{
@@ -304,7 +304,7 @@ if ($id)
 {
 	$head=vat_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), 0, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
 

@@ -224,6 +224,8 @@ if ($object->fetch($id) >= 0)
 
 	dol_fiche_end();
 
+	print '<br>';
+
 
 	$allowaddtarget=($object->statut == 0);
 
@@ -425,7 +427,7 @@ if ($object->fetch($id) >= 0)
 		if ($allowaddtarget) {
 		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
-		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','',$limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','', $limit);
 
 		print '</form>';
 
@@ -441,6 +443,7 @@ if ($object->fetch($id) >= 0)
 
 		if ($page)	$param.= "&amp;page=".$page;
 
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 
 		// Ligne des champs de filtres
@@ -588,6 +591,7 @@ if ($object->fetch($id) >= 0)
 			}
 		}
 		print "</table><br>";
+		print '</div>';
 
 		print '</form>';
 

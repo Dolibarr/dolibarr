@@ -130,7 +130,7 @@ function limitChars(textarea, limit, infodiv)
         print "<table class=\"border centpercent\">\n";
 
         // Substitution array
-        if ($this->withsubstit)
+        if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
         {
             print "<tr><td colspan=\"2\">";
             $help="";

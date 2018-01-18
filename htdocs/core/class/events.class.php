@@ -48,7 +48,7 @@ class Events // extends CommonObject
 	var $dateevent;
 	var $description;
 
-	// List of all events supported by triggers
+	// List of all Audit/Security events supported by triggers
 	var $eventstolog=array(
 		array('id'=>'USER_LOGIN',             'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED',      'test'=>1),

@@ -90,9 +90,9 @@ class Paiement extends CommonObject
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
 		$sql.= ' p.num_paiement, p.note,';
 		$sql.= ' b.fk_account';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
-		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+		$sql.= ' WHERE p.entity IN (' . getEntity('facture').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
@@ -147,7 +147,7 @@ class Paiement extends CommonObject
 	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
 	 *    @return   int                 			id of created payment, < 0 if error
 	 */
-	function create($user,$closepaidinvoices=0)
+	function create($user, $closepaidinvoices=0)
 	{
 		global $conf, $langs;
 
@@ -190,6 +190,7 @@ class Paiement extends CommonObject
 		// Check parameters
         if (empty($totalamount) && empty($atleastonepaymentnotnull))	 // We accept negative amounts for withdraw reject but not empty arrays
         {
+        	$this->errors[]='TotalAmountEmpty';
         	$this->error='TotalAmountEmpty';
         	return -1;
         }
@@ -506,12 +507,12 @@ class Paiement extends CommonObject
 
 
     /**
-     *      Add a record into bank for payment with links between this bank record and invoices of payment.
+     *      Add a record into bank for payment + links between this bank record and sources of payment.
      *      All payment properties (this->amount, this->amounts, ...) must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
      *      @param  string	$mode               'payment', 'payment_supplier'
-     *      @param  string	$label              Label to use in bank record
+     *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
      *      @param  int		$accountid          Id of bank account to do link with
      *      @param  string	$emetteur_nom       Name of transmitter
      *      @param  string	$emetteur_banque    Name of bank
@@ -595,10 +596,11 @@ class Paiement extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                if (! $error  && $label != '(WithdrawalPayment)')
+                //if (! $error && $label != '(WithdrawalPayment)')
+                if (! $error)
                 {
                     $linkaddedforthirdparty=array();
-                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    foreach ($this->amounts as $key => $value)  // We should have invoices always for same third party but we loop in case of.
                     {
                         if ($mode == 'payment')
                         {
@@ -1051,7 +1053,7 @@ class Paiement extends CommonObject
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();
-            if (count($arraybill) > 0)
+            if (is_array($arraybill) && count($arraybill) > 0)
             {
             	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             	$facturestatic=new Facture($this->db);
@@ -1132,4 +1134,29 @@ class Paiement extends CommonObject
 		return '';
 	}
 
+	/**
+	 *    	Load the third party of object, from id into this->thirdparty
+	 *
+	 *		@param		int		$force_thirdparty_id	Force thirdparty id
+	 *		@return		int								<0 if KO, >0 if OK
+	 */
+	function fetch_thirdparty($force_thirdparty_id=0)
+	{
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
+		if (empty($force_thirdparty_id))
+		{
+			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first supplier invoice to get him
+			if (!empty($billsarray))
+			{
+				$invoice = new Facture($this->db);
+				if ($invoice->fetch($billsarray[0]) > 0)
+				{
+					$force_thirdparty_id = $invoice->fk_soc;
+				}
+			}
+		}
+
+		return parent::fetch_thirdparty($force_thirdparty_id);
+	}
 }

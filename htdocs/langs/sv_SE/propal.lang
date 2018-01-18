@@ -4,7 +4,6 @@ Proposal=Kommersiella förslag
 ProposalShort=Förslag
 ProposalsDraft=Utkast till kommersiella förslag
 ProposalsOpened=Open commercial proposals
-Prop=Kommersiella förslag
 CommercialProposal=Kommersiella förslag
 PdfCommercialProposalTitle=Kommersiella förslag
 ProposalCard=Förslaget kortet
@@ -64,6 +63,7 @@ ProposalLine=Förslag linje
 AvailabilityPeriod=Tillgänglighet fördröjning
 SetAvailability=Ställa tillgänglighet fördröjning
 AfterOrder=Efter att
+OtherProposals=Andra förslag
 ##### Availability #####
 AvailabilityTypeAV_NOW=Omedelbar
 AvailabilityTypeAV_1W=1 vecka

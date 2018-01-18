@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
+/* Copyright (C) 2004-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
+	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -82,10 +82,10 @@ else if (preg_match('/del_(.*)/',$action,$reg))
 
 else if ($action == 'updateform')
 {
-	$res3=dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity);
-    $res4=dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity);
-    $res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity);
-    $res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity);
+	$res3=dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',GETPOST('MAIN_UPLOAD_DOC','alpha'),'chaine',0,'',$conf->entity);
+	$res4=dolibarr_set_const($db, "MAIN_UMASK", GETPOST('MAIN_UMASK','alpha'),'chaine',0,'',$conf->entity);
+	$res5=dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", trim(GETPOST('MAIN_ANTIVIRUS_COMMAND','none')),'chaine',0,'',$conf->entity);    // Use GETPOST none because we must accept "
+	$res6=dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", trim(GETPOST('MAIN_ANTIVIRUS_PARAM','none')),'chaine',0,'',$conf->entity);	// Use GETPOST none because we must accept "
 	if ($res3 && $res4 && $res5 && $res6) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
@@ -178,7 +178,7 @@ if (ini_get('safe_mode') && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
         dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
     }
 }
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_COMMAND)?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND):'').'">';
 print "</td>";
 print '</tr>';
 
@@ -189,7 +189,7 @@ print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';
 print '<td>';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_htmlentities($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
+print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(! empty($conf->global->MAIN_ANTIVIRUS_PARAM)?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM):'').'">';
 print "</td>";
 print '</tr>';
 

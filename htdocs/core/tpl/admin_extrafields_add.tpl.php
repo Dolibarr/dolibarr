@@ -26,6 +26,16 @@
  * $elementtype
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
+$langs->load("modulebuilder");
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_add.tpl.php -->
@@ -33,9 +43,10 @@
     jQuery(document).ready(function() {
     	function init_typeoffields(type)
     	{
-        	console.log("selected type is "+type);
-    		var size = jQuery("#size");
+        	console.log("We select a new type = "+type);
+        	var size = jQuery("#size");
     		var computed_value = jQuery("#computed_value");
+    		var langfile = jQuery("#langfile");
     		var default_value = jQuery("#default_value");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
@@ -49,7 +60,7 @@
 
     		if (GETPOST('type','alpha') == "separate")
     		{
-				print "jQuery('#size, #default_value').val('').prop('disabled', true);";
+				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
     			print 'jQuery("#value_choice").hide();';
     		}
     		?>
@@ -65,15 +76,15 @@
     		{
         		console.log("We enter a computed formula");
         		jQuery("#default_value").val('');
-        		/* jQuery("#unique, #required, #alwayseditable, #ishidden, #list").removeAttr('checked'); */
-        		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', true);
-        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").hide();
+        		/* jQuery("#unique, #required, #alwayseditable, #list").removeAttr('checked'); */
+        		jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', true);
+        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").hide();
     		}
     		else
     		{
         		console.log("No computed formula");
-        		jQuery("#default_value, #unique, #required, #alwayseditable, #ishidden, #list").attr('disabled', false);
-        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_ishidden, tr.extra_list").show();
+        		jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', false);
+        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").show();
     		}
 
 			if (type == 'date')          { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
@@ -91,7 +102,7 @@
 			else if (type == 'chkbxlst') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();jQuery("#helplink").hide();}
 			else if (type == 'link')     { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").show();}
 			else if (type == 'separate') {
-				size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true);
+				langfile.val('').prop('disabled',true);size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true);
 				jQuery("#value_choice").hide();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();
 			}
 			else {	// type = string
@@ -101,13 +112,14 @@
 
 			if (type == 'separate')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.val('').prop('disabled', true);
-				jQuery('#size, #default_value').val('').prop('disabled', true);
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
+				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
+				jQuery('#list').val(3);	// visible on create/update/view form only
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.val('').removeAttr('disabled');
+				langfile.removeAttr('disabled');required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
 			}
     	}
     	init_typeoffields('<?php echo GETPOST('type','alpha'); ?>');
@@ -149,10 +161,10 @@
     <tr><td>
     	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param','alpha'); ?></textarea>
     </td><td>
-    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
-    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
-    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
-    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
+    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0,'', 0, 2, 'helpvalue1')?></span>
+    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0,'', 0, 2, 'helpvalue2')?></span>
+    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0,'', 0, 2, 'helpvalue3')?></span>
+    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0,'', 0, 2, 'helpvalue4')?></span>
     </td></tr>
     </table>
 </td>
@@ -160,7 +172,7 @@
 <!-- Position -->
 <tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo GETPOST('pos','int'); ?>"></td></tr>
 <!-- Language file -->
-<tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile','alpha')); ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile','alpha')); ?>"></td></tr>
 <!-- Computed Value -->
 <tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" type="text" name="computed_value" class="quatrevingtpercent" value="<?php echo (GETPOST('computed_value','none')?GETPOST('computed_value','none'):''); ?>"></td></tr>
 <!-- Default Value (at sql setup level) -->
@@ -171,19 +183,12 @@
 <tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo (GETPOST('required','alpha')?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ((GETPOST('alwayseditable','alpha') || ! GETPOST('button','alpha'))?' checked':''); ?>></td></tr>
-<!-- Is visible or not -->
-<?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
-<tr class="extra_ishidden"><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden"<?php echo (GETPOST('ishidden','alpha') ?' checked' : ''); ?>></td></tr>
-<?php } ?>
 <?php if ($conf->multicompany->enabled) { ?>
     <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (GETPOST('entitycurrentorall','alpha') ? '':' checked'); ?>></td></tr>
 <?php } ?>
-<?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
-<!-- By default visible into list -->
-<tr><td><?php echo $langs->trans("ByDefaultInList"); ?>
-<?php echo img_info($langs->trans("FeatureNotYetSupported")); ?>
-</td><td class="valeur"><input id="list" type="checkbox" name="list" <?php echo (GETPOST('list','alpha')?' checked':''); ?>></td></tr>
-<?php } ?>
+<!-- Visibility -->
+<tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
+</td><td class="valeur"><input id="list" size="1" type="text" name="list" value="<?php echo GETPOST('list','int')!='' ? GETPOST('list','int') : '1'; ?>"></td></tr>
 </table>
 
 <?php dol_fiche_end(); ?>

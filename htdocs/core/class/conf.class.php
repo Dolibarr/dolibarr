@@ -83,8 +83,8 @@ class Conf
 		$this->file				= new stdClass();
 		$this->db				= new stdClass();
 		$this->global			= new stdClass();
-		$this->mycompany			= new stdClass();
-		$this->admin				= new stdClass();
+		$this->mycompany		= new stdClass();
+		$this->admin			= new stdClass();
 		$this->user				= new stdClass();
 		$this->syslog			= new stdClass();
 		$this->browser			= new stdClass();
@@ -254,13 +254,13 @@ class Conf
 		if (! isset($this->global->LDAP_KEY_GROUPS)) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
 		if (! isset($this->global->LDAP_KEY_CONTACTS)) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
 		if (! isset($this->global->LDAP_KEY_MEMBERS)) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! isset($this->global->LDAP_KEY_MEMBERS_TYPES)) $this->global->LDAP_KEY_MEMBERS_TYPES=$this->global->LDAP_FIELD_FULLNAME;
 
 		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
-        // By default, we repeat info on all tabs
-		if (! isset($this->global->MAIN_REPEATCONTACTONEACHTAB)) $this->global->MAIN_REPEATCONTACTONEACHTAB=1;
-		if (! isset($this->global->MAIN_REPEATADDRESSONEACHTAB)) $this->global->MAIN_REPEATADDRESSONEACHTAB=1;
+		//if (! isset($this->global->MAIN_REPEATCONTACTONEACHTAB)) $this->global->MAIN_REPEATCONTACTONEACHTAB=1;
+		//if (! isset($this->global->MAIN_REPEATADDRESSONEACHTAB)) $this->global->MAIN_REPEATADDRESSONEACHTAB=1;
 
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
@@ -287,15 +287,18 @@ class Conf
 		{
 			foreach($this->modules_parts['dir'] as $module => $dirs)
 			{
-				foreach($dirs as $type => $name)
+				if (! empty($this->$module->enabled))
 				{
-					$subdir=($type=='temp'?'/temp':'');
-					// For multicompany sharings
-					$varname = 'multidir_'.$type;
-					$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
-					// For backward compatibility
-					$varname = 'dir_'.$type;
-					$this->$module->$varname = $rootfordata."/".$name.$subdir;
+					foreach($dirs as $type => $name)
+					{
+						$subdir=($type=='temp'?'/temp':'');
+						// For multicompany sharings
+						$varname = 'multidir_'.$type;
+						$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
+						// For backward compatibility
+						$varname = 'dir_'.$type;
+						$this->$module->$varname = $rootfordata."/".$name.$subdir;
+					}
 				}
 			}
 		}
@@ -500,7 +503,7 @@ class Conf
 		if (! isset($this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE)) $this->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=1;
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
-		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Enable select2
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';
@@ -577,6 +580,8 @@ class Conf
 		if (! empty($this->global->MAIN_HIDE_LEFT_MENU)) $this->dol_hide_leftmenu=$this->global->MAIN_HIDE_LEFT_MENU;
 
 		if (empty($this->global->MAIN_SIZE_SHORTLIST_LIMIT)) $this->global->MAIN_SIZE_SHORTLIST_LIMIT=3;
+
+		if (! isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) $this->global->THEME_HIDE_BORDER_ON_INPUT=0;
 
 		// Save inconsistent option
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && (! isset($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO'))

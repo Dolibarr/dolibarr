@@ -38,7 +38,7 @@ class ExpenseReport extends CommonObject
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
 
-    var $lignes=array();
+    var $lines=array();
 
     public $date_debut;
 
@@ -215,20 +215,29 @@ class ExpenseReport extends CommonObject
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
-            foreach ($this->lines as $i => $val)
+            if (is_array($this->lines) && count($this->lines)>0)
             {
-                $newndfline=new ExpenseReportLine($this->db);
-                $newndfline=$this->lines[$i];
-                $newndfline->fk_expensereport=$this->id;
-                if ($result >= 0)
-                {
-                    $result=$newndfline->insert();
-                }
-                if ($result < 0)
-                {
-                    $error++;
-                    break;
-                }
+	            foreach ($this->lines as $i => $val)
+	            {
+	                $newndfline=new ExpenseReportLine($this->db);
+	                $newndfline=$this->lines[$i];
+	                $newndfline->fk_expensereport=$this->id;
+	                if ($result >= 0)
+	                {
+	                    $result=$newndfline->insert();
+	                }
+	                if ($result < 0)
+	                {
+	                    $error++;
+	                    break;
+	                }
+	            }
+            }
+
+            if (! $error)
+            {
+            	$result=$this->insertExtraFields();
+           		if ($result < 0) $error++;
             }
 
             if (! $error)
@@ -445,7 +454,8 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_user_valid, d.fk_user_approve,";
         $sql.= " d.fk_statut as status, d.fk_c_paiement,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity IN (".getEntity('c_paiement').")";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
         //$sql.= $restrict;
@@ -826,7 +836,7 @@ class ExpenseReport extends CommonObject
                     print '<tr>';
                     print '<td><a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$objp->rowid.'">'.$objp->ref_num.'</a></td>';
                     print '<td align="center">'.dol_print_date($objp->date,'day').'</td>';
-                    print '<td>'.$author->getNomUrl().'</td>';
+                    print '<td>'.$author->getNomUrl(1).'</td>';
                     print '<td>'.$objp->comments.'</td>';
                     print '<td align="right">'.price($objp->total_ht).'</td>';
                     print '<td align="right">'.price($objp->total_ttc).'</td>';
@@ -1510,27 +1520,28 @@ class ExpenseReport extends CommonObject
 				$this->error=$obj->error;
 				$this->errors=$obj->errors;
             	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-            	return "";
+            	return -1;
             }
         }
         else
         {
-            print $langs->trans("Error")." ".$langs->trans("Error_EXPENSEREPORT_ADDON_NotDefined");
-            return "";
+            $this->error = "Error_EXPENSEREPORT_ADDON_NotDefined";
+            return -2;
         }
     }
 
     /**
      *  Return clicable name (with picto eventually)
      *
-     *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param		int		$max			Max length of shown ref
-     *	@param		int		$short			1=Return just URL
-     *	@param		string	$moretitle		Add more text to title tooltip
-     *	@param		int		$notooltip		1=Disable tooltip
-     *	@return		string					String with URL
+     *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param		int		$max						Max length of shown ref
+     *	@param		int		$short						1=Return just URL
+     *	@param		string	$moretitle					Add more text to title tooltip
+     *	@param		int		$notooltip					1=Disable tooltip
+     *  @param  	int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return		string								String with URL
      */
-    function getNomUrl($withpicto=0,$max=0,$short=0,$moretitle='',$notooltip=0)
+    function getNomUrl($withpicto=0, $max=0, $short=0, $moretitle='', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $langs, $conf;
 
@@ -1540,7 +1551,6 @@ class ExpenseReport extends CommonObject
 
         if ($short) return $url;
 
-        $picto='trip';
         $label = '<u>' . $langs->trans("ShowExpenseReport") . '</u>';
         if (! empty($this->ref))
             $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1551,6 +1561,14 @@ class ExpenseReport extends CommonObject
         if (! empty($this->total_ttc))
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         if ($moretitle) $label.=' - '.$moretitle;
+
+        //if ($option != 'nolink')
+        //{
+        // Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        //}
 
         $ref=$this->ref;
         if (empty($ref)) $ref=$this->id;
@@ -1571,8 +1589,11 @@ class ExpenseReport extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
-        $result.=$linkstart.($max?dol_trunc($ref,$max):$ref).$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.=($max?dol_trunc($ref,$max):$ref);
+        $result .= $linkend;
+
         return $result;
     }
 
@@ -1821,13 +1842,13 @@ class ExpenseReport extends CommonObject
 			return false;
 		}
 
-		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) $offset = $range->offset;
-		else $offset = $range->offset / 12; // The amount of offset is a global value for the year
+		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) $ikoffset = $range->ikoffset;
+		else $ikoffset = $range->ikoffset / 12; // The amount of offset is a global value for the year
 
-		// Test if offset has been applied for the current month
+		// Test if ikoffset has been applied for the current month
 		if (!$this->offsetAlreadyGiven())
 		{
-			$new_up = $range->coef + ($offset / $this->line->qty);
+			$new_up = $range->coef + ($ikoffset / $this->line->qty);
 			$tmp = calcul_price_total($this->line->qty, $new_up, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
@@ -1842,7 +1863,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 * If the sql find any rows then the offset is already given (offset is applied at the first expense report line)
+	 * If the sql find any rows then the ikoffset is already given (ikoffset is applied at the first expense report line)
 	 *
 	 * @return bool
 	 */
@@ -1913,7 +1934,7 @@ class ExpenseReport extends CommonObject
 
             $tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
-            // calcul de tous les totaux de la ligne
+            // calcul total of line
             //$total_ttc  = price2num($qty*$value_unit, 'MT');
 
             $tx_tva = $vatrate / 100;
@@ -2544,7 +2565,7 @@ class ExpenseReportLine
 
         $this->db->begin();
 
-        // Mise a jour ligne en base
+        // Update line in database
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
         $sql.= ",value_unit=".$this->value_unit;

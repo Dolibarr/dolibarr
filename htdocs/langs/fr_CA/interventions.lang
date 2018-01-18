@@ -22,7 +22,6 @@ InterventionClassifyBilled=Classer "facturé"
 InterventionClassifyUnBilled=Classer "Non facturé"
 InterventionClassifyDone=Classer "Terminé"
 StatusInterInvoiced=Facturées
-ShowIntervention=Montrer l'intervention
 SendInterventionRef=Soumission de l'intervention %s
 SendInterventionByMail=Envoyer l'intervention par courrier électronique
 InterventionClassifiedBilledInDolibarr=Intervention %s définie comme facturée

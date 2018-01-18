@@ -624,61 +624,48 @@ foreach ($listofreferent as $key => $value)
 				if ($qualifiedfortotal) $total_ttc = $total_ttc + $total_ttc_by_line;
 			}
 
+			// Each element with at least one line is output
+			$qualifiedforfinalprofit=true;
+			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) $qualifiedforfinalprofit=false;
+			//var_dump($key);
+
 			// Calculate margin
-			if ($margin=="add")
+			if ($qualifiedforfinalprofit)
 			{
-				$balance_ht+= $total_ht;
-				$balance_ttc+= $total_ttc;
-			}
-			else
-			{
-				$balance_ht-= $total_ht;
-				$balance_ttc-= $total_ttc;
+				if ($margin=="add")
+				{
+					$balance_ht+= $total_ht;
+					$balance_ttc+= $total_ttc;
+				}
+				else
+				{
+					$balance_ht-= $total_ht;
+					$balance_ttc-= $total_ttc;
+				}
+
+				// Show $total_ht & $total_ttc -- add a minus when necessary
+				if ($margin!="add")
+				{
+					$total_ht = -$total_ht;
+					$total_ttc = -$total_ttc;
+				}
 			}
 
-			// Show $total_ht & $total_ttc -- add a minus when necessary
-			if ($margin!="add")
-			{
-				$total_ht = -$total_ht;
-				$total_ttc = -$total_ttc;
-			}
-
-			/*switch ($classname) {
-				case 'FactureFournisseur':
-					$newclassname = 'SupplierInvoice';
-					break;
-				case 'Facture':
-					$newclassname = 'Bill';
-					break;
-				case 'Propal':
-					$newclassname = 'CommercialProposal';
-					break;
-				case 'Commande':
-					$newclassname = 'Order';
-					break;
-				case 'Expedition':
-					$newclassname = 'Sending';
-					break;
-				case 'Contrat':
-					$newclassname = 'Contract';
-					break;
-				case 'MouvementStock':
-					$newclassname = 'StockMovement';
-					break;
-				default:
-					$newclassname = $classname;
-			}*/
-
-			$var = ! $var;
 			print '<tr class="oddeven">';
 			// Module
 			print '<td align="left">'.$name.'</td>';
 			// Nb
 			print '<td align="right">'.$i.'</td>';
 			// Amount HT
-			print '<td align="right">'.price($total_ht).'</td>';
+			print '<td align="right">';
+			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else print price($total_ht);
+			print '</td>';
 			// Amount TTC
-			print '<td align="right">'.price($total_ttc).'</td>';
+			print '<td align="right">';
+			if (! $qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else print price($total_ttc);
+			print '</td>';
 			print '</tr>';
 		}
 	}
@@ -691,7 +678,6 @@ print '<td align="right" >'.price($balance_ttc).'</td>';
 print '</tr>';
 
 print "</table>";
-
 
 
 print '<br><br>';
@@ -771,7 +757,7 @@ foreach ($listofreferent as $key => $value)
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
-		// Remove link
+		// Remove link column
 		print '<td style="width: 24px"></td>';
 		// Ref
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').'>'.$langs->trans("Ref").'</td>';
@@ -862,11 +848,15 @@ foreach ($listofreferent as $key => $value)
 				}
 
 				print '<tr class="oddeven">';
+
 				// Remove link
 				print '<td style="width: 24px">';
 				if ($tablename != 'projet_task' && $tablename != 'stock_mouvement')
 				{
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
+					{
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '">' . img_picto($langs->trans('Unlink'), 'editdelete') . '</a>';
+					}
 				}
 				print "</td>\n";
 
@@ -1157,13 +1147,11 @@ foreach ($listofreferent as $key => $value)
 }
 
 // Enhance with select2
-$nodatarole='';
 if ($conf->use_javascript_ajax)
 {
 	include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	$comboenhancement = ajax_combobox('.elementselect');
 	$out.=$comboenhancement;
-	$nodatarole=($comboenhancement?' data-role="none"':'');
 
 	print $comboenhancement;
 }

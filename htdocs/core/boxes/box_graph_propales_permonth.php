@@ -111,7 +111,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
-			if (empty($shownb) && empty($showtot)) $showtot=1;
+			if (empty($shownb) && empty($showtot))  { $shownb=1; $showtot=1; }
 			$nowarray=dol_getdate(dol_now(),true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
@@ -123,7 +123,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 
 				$filenamenb = $dir."/".$prefix."propalsnbinyear-".$endyear.".png";
@@ -162,7 +162,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 				//$datatype2 = array('lines','bars');
 

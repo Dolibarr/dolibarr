@@ -81,8 +81,8 @@ class ActionsMyModule
         /* print_r($parameters); print_r($object); echo "action: " . $action; */
 	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))	    // do something only for the context 'somecontext1' or 'somecontext2'
 	    {
-
-
+			// Do what you want here...
+			// You can for example call global vars like $fieldstosearchall to overwrite them, or update database depending on $action and $_POST values.
 		}
 
 		if (! $error) {

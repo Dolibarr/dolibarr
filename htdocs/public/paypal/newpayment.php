@@ -170,7 +170,11 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
     {
         $token = $conf->global->PAYPAL_SECURITY_TOKEN;
     }
-	if ($SECUREKEY != $token) $valid=false;
+    if ($SECUREKEY != $token)
+    {
+    	if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) $valid=false;	// PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
+    	else dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+    }
 
 	if (! $valid)
 	{
@@ -282,7 +286,7 @@ if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', '
     exit;
 }
 
-if (! empty($conf->global->PAYPAL_API_SANDBOX))
+if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
@@ -296,6 +300,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n"
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 print "\n";
 print '<!-- Form to send a Paypal payment -->'."\n";
 print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";

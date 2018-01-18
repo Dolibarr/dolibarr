@@ -13,3 +13,5 @@ TJM=priemerná denná mzda
 CurrentSalary=Súčasná mzda
 THMDescription=Táto hodnota môže byť použitá pre výpočet ceny času stráveného na projekte užívateľom ak modul Projekt je použitý
 TJMDescription=Táto hoidnota je iba informačná a nie je použitá pre kalkulácie
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

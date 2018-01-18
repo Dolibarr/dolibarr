@@ -1051,61 +1051,24 @@ class Cronjob extends CommonObject
 		// Run a command line
 		if ($this->jobtype=='command')
 		{
-			$command=escapeshellcmd($this->command);
-			$command.=" 2>&1";
-			dol_mkdir($conf->cronjob->dir_temp);
-			$outputfile=$conf->cronjob->dir_temp.'/cronjob.'.$userlogin.'.out';
+			$outputdir = $conf->cron->dir_temp;
+			if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
 
-			dol_syslog(get_class($this)."::run_jobs system:".$command, LOG_DEBUG);
-			$output_arr=array();
-
-			$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
-			if ($execmethod == 1)
+			if (! empty($outputdir))
 			{
-				exec($command, $output_arr, $retval);
-				if ($retval != 0)
-				{
-				    $langs->load("errors");
-				    dol_syslog(get_class($this)."::run_jobs retval=".$retval, LOG_ERR);
-				    $this->error = 'Error '.$retval;
-				    $this->lastoutput = '';     // Will be filled later
-				    $this->lastresult = $retval;
-				    $retval = $this->lastresult;
-				    $error++;
-				}
+				dol_mkdir($outputdir);
+				$outputfile=$outputdir.'/cronjob.'.$userlogin.'.out';	// File used with popen method
+
+				// Execute a CLI
+				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($this->db);
+				$arrayresult = $utils->executeCLI($this->command, $outputfile);
+
+				$retval = $arrayresult['result'];
+				$this->error      = $arrayresult['error'];
+				$this->lastoutput = $arrayresult['output'];
+				$this->lastresult = $arrayresult['result'];
 			}
-			if ($execmethod == 2)
-			{
-				$ok=0;
-				$handle = fopen($outputfile, 'w');
-				if ($handle)
-				{
-					dol_syslog("Run command ".$command);
-					$handlein = popen($command, 'r');
-					while (!feof($handlein))
-					{
-						$read = fgets($handlein);
-						fwrite($handle,$read);
-						$output_arr[]=$read;
-					}
-					pclose($handlein);
-					fclose($handle);
-				}
-				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
-
-			// Update with result
-    		if (is_array($output_arr) && count($output_arr)>0)
-    		{
-    			foreach($output_arr as $val)
-    			{
-    				$this->lastoutput.=$val."\n";
-    			}
-    		}
-
-    		$this->lastresult=$retval;
-
-    		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
 
 		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
@@ -1124,6 +1087,7 @@ class Cronjob extends CommonObject
 		}
 
 	}
+
 
 	/**
 	 * Reprogram a job
