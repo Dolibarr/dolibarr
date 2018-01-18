@@ -61,13 +61,15 @@ class FormOther
      *    @param    string	$htmlname          Nom de la zone select
      *    @param    string	$type              Type des modeles recherches
      *    @param    int		$useempty          Affiche valeur vide dans liste
+     *    @param    int		$fk_user          Utilisateur créant le modèle
      *    @return	void
      */
-    function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
+    function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0, $fk_user=null)
     {
         $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
+		if(!empty($fk_user))$sql.=" AND fk_user=".$fk_user;
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
