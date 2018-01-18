@@ -202,7 +202,7 @@ class Adherent extends CommonObject
         $infos.= $langs->transnoentities("PhonePro").": ".$this->phone."\n";
         $infos.= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
         $infos.= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		if (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 		    $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
 		    $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
@@ -307,7 +307,7 @@ class Adherent extends CommonObject
             return -1;
         }
         if (! $this->datec) $this->datec=$now;
-        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+        if (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
         {
             if (empty($this->login))
             {
