@@ -73,7 +73,7 @@ if ($action == 'convert')
 		{
 			$vat_src_code_old = $reg[1];
 			$oldvatrateclean = preg_replace('/\s*\(.*\)/', '', $oldvatrate);    // Remove code into vatrate.
-		}
+		} else $oldvatrateclean=$oldvatrate;
 
 		// Clean vat code new
 		$vat_src_code_new='';
@@ -81,7 +81,7 @@ if ($action == 'convert')
 		{
 			$vat_src_code_new = $reg[1];
 			$newvatrateclean = preg_replace('/\s*\(.*\)/', '', $newvatrate);    // Remove code into vatrate.
-		}
+		} else $newvatrateclean=$newvatrate;
 
 		// If country to edit is my country, so we change customer prices
 		if ($country_id == $mysoc->country_id)
