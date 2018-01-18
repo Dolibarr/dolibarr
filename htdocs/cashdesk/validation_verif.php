@@ -136,7 +136,7 @@ switch ($action)
 				$cond_reglement_id = 0;
 				break;
 			case 'ESP':
-				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
 				$note .= $langs->trans("Received").' : '.$obj_facturation->montantEncaisse()." ".$conf->currency."\n";
@@ -145,11 +145,11 @@ switch ($action)
 				$note .= '--------------------------------------'."\n\n";
 				break;
 			case 'CB':
-				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CB','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				break;
 			case 'CHQ':
-				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement');
+				$mode_reglement_id = dol_getIdFromCode($db,'CHQ','c_paiement','code','id',1);
 				$cond_reglement_id = 0;
 				break;
 		}

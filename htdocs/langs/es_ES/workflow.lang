@@ -2,14 +2,19 @@
 WorkflowSetup=Configuración del módulo Flujo de trabajo
 WorkflowDesc=Este módulo está diseñado para modificar el comportamiento de acciones automáticas en la aplicación. Por defecto, el flujo de trabajo está abierto (se pueden hacer cosas en el orden que se desee). Puede activar las acciones automáticas que le interesen.
 ThereIsNoWorkflowToModify=No hay disponibles modificaciones de flujo de trabajo de los módulos activados.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear un pedido de cliente automáticamente a la firma de un presupuesto
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamente a la firma de un presupuesto
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear automáticamente un pedido de cliente después de la firma de un presupuesto (el nuevo pedido tendrá el mismo importe que el presupuesto)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente después de la firma de un presupuesto (la nueva factura tendrá el mismo importe que el presupuesto)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamente al validar un contrato
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamente después de cerrar una orden
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar como facturado el presupuesto cuando el pedido de cliente relacionado se clasifique como pagado
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar como facturados los pedidos cuando la factura relacionada se clasifique como pagada
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar como facturados los pedidos de cliente relacionados cuando la factura sea validada
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar como facturado el presupuesto relacionado cuando la factura a cliente sea validada
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar como enviado el pedido relacionado cuando el envío relacionado sea validado y la cantidad enviada sea la misma que la del pedido
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente después del cierre del pedido de cliente (la nueva factura tendrá el mismo importe que el pedido)
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar presupuesto(s) origen como facturado cuando el pedido de cliente sea marcado como facturado (y si el importe del pedido es igual a la suma de los importes de los presupuestos relacionados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar los presupuesto(s) origen como facturados cuando la factura a cliente sea validada (y si el importe de la factura es igual a la suma de los importes de los presupuestos relacionados)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar pedido(s) de cliente origen como facturado cuando la factura a cliente se valide (y si el importe de la factura es igual a la suma de los importes de los pedidos relacionados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar pedido(s) de cliente origen como facturado cuando la factura a cliente sea marcada como pagada (y si el importe de la factura es la misma que la suma de los importes de los pedidos relacionados)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar automáticamente el pedido origen como enviado cuando el envío se valide (y si la cantidad enviada por todos los envíos sea la misma que el pedido)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar automáticamente el presupuestos(s) de proveedor como facturado cuando la factura se valide (y si el importe de la factura sea la misma que el total de los presupuestos enlazados)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar automáticamente el pedido(s) a proveedor como facturado cuando la factura se valide (y si el importe de la factura sea la misma que el total de los pedidos enlazados)
 AutomaticCreation=Creación automática
 AutomaticClassification=Clasificación automática

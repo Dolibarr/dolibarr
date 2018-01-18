@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=مقترحات التجارية المورد
 supplier_proposalDESC=إدارة طلبات السعر للموردين
-SupplierProposalNew=طلب جديد
+SupplierProposalNew=طلب السعر الجديد
 CommRequest=طلب السعر
 CommRequests=طلبات الأسعار
 SearchRequest=العثور على الطلب

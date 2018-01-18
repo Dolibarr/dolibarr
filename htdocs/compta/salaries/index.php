@@ -100,12 +100,12 @@ $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 $accountstatic = new Account($db);
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
 $sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id AND pst.entity IN (".getEntity('c_paiement').")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
@@ -114,7 +114,7 @@ $sql.= " AND s.entity = ".$conf->entity;
 
 // Search criteria
 if ($search_ref)	$sql.=" AND s.rowid=".$search_ref;
-if ($search_user)   $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email', 'u.note'), $search_user);
+if ($search_user)   $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
 if ($search_label) 	$sql.=natural_search(array('s.label'), $search_label);
 if ($search_amount) $sql.=natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
@@ -197,13 +197,13 @@ if ($result)
     print '</td>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("BankAccount"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("PaymentMode",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+    if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
 
@@ -222,6 +222,7 @@ if ($result)
         $userstatic->login=$obj->login;
         $userstatic->email=$obj->email;
         $userstatic->societe_id=$obj->fk_soc;
+        $userstatic->statut=$obj->status;
 
         $salstatic->id=$obj->rowid;
 		$salstatic->ref=$obj->rowid;

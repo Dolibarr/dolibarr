@@ -201,7 +201,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->lastresult)?'NULL':"'".$this->db->escape($this->lastresult)."'").",";
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':"'".$this->db->idate($this->datelastresult)."'").",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
-		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
+		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
 		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";
@@ -439,7 +439,6 @@ class Cronjob extends CommonObject
     		{
 	    		while ($i < $num)
 	    		{
-
 	    			$line = new Cronjobline();
 
 	    			$obj = $this->db->fetch_object($resql);
@@ -480,7 +479,6 @@ class Cronjob extends CommonObject
 	    			$this->lines[]=$line;
 
 	    			$i++;
-
 	    		}
     		}
     		$this->db->free($resql);
@@ -924,16 +922,16 @@ class Cronjob extends CommonObject
 			// load classes
 			if (! $error)
 			{
-    			$ret=dol_include_once($this->classesname);
-    			if ($ret===false || (! class_exists($this->objectname)))
-    			{
-    			    $this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
-    				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
-    				$this->lastoutput = $this->error;
-    				$this->lastresult = -1;
-                    $retval = $this->lastresult;
-                    $error++;
-    			}
+				$ret=dol_include_once($this->classesname);
+				if ($ret===false || (! class_exists($this->objectname)))
+				{
+					$this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+					$this->lastoutput = $this->error;
+					$this->lastresult = -1;
+					$retval = $this->lastresult;
+					$error++;
+				}
 			}
 
 			// test if method exists
@@ -973,6 +971,7 @@ class Cronjob extends CommonObject
 				$object = new $this->objectname($this->db);
 
 				$params_arr = array_map('trim', explode(",",$this->params));
+
 				if (!is_array($params_arr))
 				{
 					$result = call_user_func(array($object, $this->methodename), $this->params);
@@ -982,7 +981,7 @@ class Cronjob extends CommonObject
 					$result = call_user_func_array(array($object, $this->methodename), $params_arr);
 				}
 
-				if ($result===false || $result != 0)
+				if ($result === false || (! is_bool($result) && $result != 0))
 				{
 				    $langs->load("errors");
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$object->error, LOG_ERR);
@@ -1031,7 +1030,7 @@ class Cronjob extends CommonObject
 				$result = call_user_func_array($this->methodename, $params_arr);
 			}
 
-			if ($result === false || $result != 0)
+			if ($result === false || (! is_bool($result) && $result != 0))
 			{
 			    $langs->load("errors");
 			    dol_syslog(get_class($this)."::run_jobs result=".$result, LOG_ERR);
@@ -1052,61 +1051,24 @@ class Cronjob extends CommonObject
 		// Run a command line
 		if ($this->jobtype=='command')
 		{
-			$command=escapeshellcmd($this->command);
-			$command.=" 2>&1";
-			dol_mkdir($conf->cronjob->dir_temp);
-			$outputfile=$conf->cronjob->dir_temp.'/cronjob.'.$userlogin.'.out';
+			$outputdir = $conf->cron->dir_temp;
+			if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
 
-			dol_syslog(get_class($this)."::run_jobs system:".$command, LOG_DEBUG);
-			$output_arr=array();
-
-			$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
-			if ($execmethod == 1)
+			if (! empty($outputdir))
 			{
-				exec($command, $output_arr, $retval);
-				if ($retval != 0)
-				{
-				    $langs->load("errors");
-				    dol_syslog(get_class($this)."::run_jobs retval=".$retval, LOG_ERR);
-				    $this->error = 'Error '.$retval;
-				    $this->lastoutput = '';     // Will be filled later
-				    $this->lastresult = $retval;
-				    $retval = $this->lastresult;
-				    $error++;
-				}
+				dol_mkdir($outputdir);
+				$outputfile=$outputdir.'/cronjob.'.$userlogin.'.out';	// File used with popen method
+
+				// Execute a CLI
+				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($this->db);
+				$arrayresult = $utils->executeCLI($this->command, $outputfile);
+
+				$retval = $arrayresult['result'];
+				$this->error      = $arrayresult['error'];
+				$this->lastoutput = $arrayresult['output'];
+				$this->lastresult = $arrayresult['result'];
 			}
-			if ($execmethod == 2)
-			{
-				$ok=0;
-				$handle = fopen($outputfile, 'w');
-				if ($handle)
-				{
-					dol_syslog("Run command ".$command);
-					$handlein = popen($command, 'r');
-					while (!feof($handlein))
-					{
-						$read = fgets($handlein);
-						fwrite($handle,$read);
-						$output_arr[]=$read;
-					}
-					pclose($handlein);
-					fclose($handle);
-				}
-				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
-
-			// Update with result
-    		if (is_array($output_arr) && count($output_arr)>0)
-    		{
-    			foreach($output_arr as $val)
-    			{
-    				$this->lastoutput.=$val."\n";
-    			}
-    		}
-
-    		$this->lastresult=$retval;
-
-    		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
 
 		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
@@ -1125,6 +1087,7 @@ class Cronjob extends CommonObject
 		}
 
 	}
+
 
 	/**
 	 * Reprogram a job

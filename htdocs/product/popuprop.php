@@ -139,10 +139,10 @@ if ($resql)
     while ($i < $num)
     {
         $objp = $db->fetch_object($resql);
-        
+
         $infoprod[$objp->rowid]=array('type'=>$objp->type, 'ref'=>$objp->ref, 'label'=>$objp->label);
         $infoprod[$objp->rowid]['nblineproposal']=$objp->c;
-        
+
         $i++;
     }
     $db->free($resql);
@@ -159,10 +159,10 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 print '<table class="noborder" width="100%">';
 
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('Label'), $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('NbOfQtyInProposals'), $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre('NbOfQtyInProposals', $_SERVER["PHP_SELF"], 'c', '', $param, 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
 foreach($infoprod as $prodid => $vals)

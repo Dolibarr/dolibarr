@@ -64,14 +64,13 @@ llxHeader();
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
 $sql.=", c.libelle as paiement_type, p.num_paiement";
-$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
+$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 if ($socid)
 {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
-$sql.= " WHERE p.fk_paiement = c.id";
-$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (" . getEntity('facture') . ')';
 if ($socid)
 {
     $sql.= " AND f.fk_soc = ".$socid;
@@ -101,17 +100,17 @@ if ($resql)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","",'width="60"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","","",'width="80" align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"c.libelle","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"p.rowid","","",'width="60"',$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"dp","","",'width="80" align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle","","","",$sortfield,$sortorder);
+    print_liste_field_titre("AmountTTC",$_SERVER["PHP_SELF"],"c.libelle","","",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
-        
+
         print '<tr class="oddeven">';
         print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";

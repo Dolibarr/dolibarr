@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Teddy Andreotti <125155@supinfo.com>
+/* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +99,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 			$this->Spe = str_replace($this->Ambi,"",$this->Spe);
 		}
 
-		$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
+		$pattern = $this->Min . (! empty($this->NbMaj)?$this->Maj:'') . (! empty($this->NbNum)?$this->Nb:'') . (! empty($this->NbSpe)?$this->Spe:'');
+		$this->All = str_shuffle($pattern);
+
+		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
 		//$this->All = $this->Maj. $this->Min. $this->Nb. $this->Spe;
 		//$this->All =  $this->Spe;
 

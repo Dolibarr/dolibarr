@@ -42,6 +42,7 @@ class CSMSFile
 	var $priority;
 	var $class;
 	var $message;
+	var $nostop;
 
 
 	/**
@@ -81,6 +82,7 @@ class CSMSFile
         $this->priority=$priority;
         $this->class=$class;
         $this->message=$msg;
+        $this->nostop=false;
 	}
 
 
@@ -107,6 +109,7 @@ class CSMSFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
 		{
+
 		    // Action according to choosed sending method
 		    if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
 			{
@@ -118,6 +121,7 @@ class CSMSFile
 				$sms->deferred=$this->deferred;
 				$sms->priority=$this->priority;
                 $sms->class=$this->class;
+                $sms->nostop=$this->nostop;
 
                 $res=$sms->SmsSend();
 				if ($res <= 0)
@@ -129,7 +133,7 @@ class CSMSFile
 				{
 					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 					//var_dump($res);        // 1973128
-					$this->dump_sms_result($res);
+					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
 				}
 			}
 		    else if (! empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
@@ -147,6 +151,7 @@ class CSMSFile
 		            $sms->priority=$this->priority;
 		            $sms->class=$this->class;
 		            $sms->message=$this->message;
+		            $sms->nostop=$this->nostop;
 
                     $res=$sms->SmsSend();
                     $this->error = $sms->error;
@@ -159,7 +164,7 @@ class CSMSFile
     				{
     					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
     					//var_dump($res);        // 1973128
-    					$this->dump_sms_result($res);
+    					if (! empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
     				}
 		        }
 		        catch(Exception $e)
@@ -207,6 +212,7 @@ class CSMSFile
 			fputs($fp, "Priority: ".$this->priority."\n");
 			fputs($fp, "Class: ".$this->class."\n");
 			fputs($fp, "Deferred: ".$this->deferred."\n");
+			fputs($fp, "DisableStop: ".$this->nostop."\n");
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);

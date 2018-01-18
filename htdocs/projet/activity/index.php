@@ -29,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user','int');
+$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
@@ -73,7 +75,7 @@ $morehtml='';
 $morehtml.='<form name="projectform">';
 $morehtml.='<SELECT name="mode">';
 $morehtml.='<option name="all" value="all"'.($mine?'':' selected').'>'.$titleall.'</option>';
-$morehtml.='<option name="mine" value="mine"'.($mine?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
@@ -98,7 +100,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_task']=array('text'=>'Task');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -114,7 +116,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -148,7 +150,7 @@ if ( $resql )
 
 	while ($row = $db->fetch_object($resql))
 	{
-		
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
@@ -205,7 +207,7 @@ if ( $resql )
 
 	while ($row = $db->fetch_object($resql))
 	{
-		
+
 		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
@@ -237,14 +239,14 @@ print "</table>";
 if ($db->type != 'pgsql')
 {
     print '<br>';
-    
+
     // Affichage de la liste des projets de la semaine
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
     print '<td align="right">'.$langs->trans("Time").'</td>';
     print "</tr>\n";
-    
+
     $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
     $sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
@@ -256,16 +258,16 @@ if ($db->type != 'pgsql')
     $sql.= " AND task_date >= '".$db->idate(dol_get_first_day($year, $month)).'" AND ...";
     $sql.= " AND p.rowid in (".$projectsListId.")";
     $sql.= " GROUP BY p.rowid, p.ref, p.title";
-    
+
     $resql = $db->query($sql);
     if ( $resql )
     {
     	$total = 0;
     	$var=true;
-    
+
     	while ($row = $db->fetch_object($resql))
     	{
-    		
+
     		print '<tr class="oddeven">';
     		print '<td>';
     		$projectstatic->id=$row->rowid;
@@ -278,7 +280,7 @@ if ($db->type != 'pgsql')
     		print "</tr>\n";
     		$total += $row->nb;
     	}
-    
+
     	$db->free($resql);
     }
     else
@@ -302,7 +304,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($now,"%B %Y").'</td>';
     print '<td align="right">'.$langs->trans("Time").'</td>';
     print "</tr>\n";
-    
+
     $sql = "SELECT p.rowid, p.ref, p.title, p.public, SUM(tt.task_duration) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
     $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
@@ -314,12 +316,12 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
 	$sql.= " AND task_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
     $sql.= " AND p.rowid in (".$projectsListId.")";
     $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
-    
+
     $resql = $db->query($sql);
     if ( $resql )
     {
     	$var=false;
-    
+
     	while ($row = $db->fetch_object($resql))
     	{
     		print '<tr class="oddeven">';
@@ -331,7 +333,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print '</td>';
     		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
     		print "</tr>\n";
-    		
+
     	}
     	$db->free($resql);
     }
@@ -383,7 +385,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print '</td>';
 			print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
 			print "</tr>\n";
-			
+
 		}
 		$db->free($resql);
 	}
@@ -430,12 +432,12 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
     }
     else dol_print_error($db);
     if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
-    
+
 
 	// Tasks for all resources of all opened projects and time spent for each task/resource
 	// This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
     // Add constant PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA to show this list
-    
+
 	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
 
 	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdateo, p.datee as projdatee,";
@@ -489,7 +491,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		while ($i < $num && $i < $max)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 
 			$username='';
 			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
@@ -509,7 +511,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			$projectstatic->public = $obj->public;
 			$projectstatic->dateo = $db->jdate($obj->projdateo);
 			$projectstatic->datee = $db->jdate($obj->projdatee);
-				
+
 			print $projectstatic->getNomUrl(1,'',0,'','<br>');
 			print '</td>';
 			if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -536,7 +538,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			$taskstatic->datee = $db->jdate($obj->datee);
 			print '<td align="center">'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($obj->datee),'day');
-			print dol_print_date($obj->date_end,'dayhour');			
+			print dol_print_date($obj->date_end,'dayhour');
 			if ($taskstatic->hasDelay()) print img_warning($langs->trans("Late"));
 			print '</td>';
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';

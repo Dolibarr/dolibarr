@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=Nasledovné adresy URL sú k dispozícii ponúknuť stránky na zákazníka, aby platbu na Dolibarr objektov
 PaymentForm=Platba formulár
@@ -12,7 +12,7 @@ YourEMail=E-mail obdržať potvrdenie platby
 STRIPE_PAYONLINE_SENDEMAIL=E-mail upozorniť po platbe (úspech alebo nie)
 Creditor=Veriteľ
 PaymentCode=Platobné kód
-StripeDoPayment=Ísť na zaplatenie
+StripeDoPayment=Pay with Credit or Debit Card (Stripe)
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=Ďalšie
 ToOfferALinkForOnlinePayment=URL pre %s platby
@@ -31,8 +31,6 @@ InformationToFindParameters=Pomôžte nájsť %s informácie o účte
 STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
 VendorName=Názov dodávateľa
 CSSUrlForPaymentForm=CSS štýlov url platobného formulára
-MessageOK=Správa o overených strane platobnej návrate
-MessageKO=Správa o zrušení strane platobnej návrate
 NewStripePaymentReceived=New Stripe payment received
 NewStripePaymentFailed=New Stripe payment tried but failed
 STRIPE_TEST_SECRET_KEY=Secret test key

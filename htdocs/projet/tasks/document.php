@@ -130,7 +130,8 @@ if ($object->id > 0)
 		// Tabs for project
 		$tab='tasks';
 		$head=project_prepare_head($projectstatic);
-		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+
+		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
 		$param=($mode=='mine'?'&mode=mine':'');
 
@@ -215,6 +216,8 @@ if ($object->id > 0)
         print '<div class="clearboth"></div>';
 
 		dol_fiche_end();
+
+		print '<br>';
 	}
 
 	$head = task_prepare_head($object);

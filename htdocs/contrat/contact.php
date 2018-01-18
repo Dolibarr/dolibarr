@@ -2,6 +2,7 @@
 /* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
  * Copyright (C) 2005-2009	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 
 $langs->load("contracts");
@@ -134,9 +138,9 @@ if ($id > 0 || ! empty($ref))
 
 		// Contract card
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-        
+
         $morehtmlref='';
         //if (! empty($modCodeContract->code_auto)) {
             $morehtmlref.=$object->ref;
@@ -144,7 +148,7 @@ if ($id > 0 || ! empty($ref))
             $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
             $morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
         }*/
-        
+
 		$morehtmlref.='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
@@ -196,10 +200,10 @@ if ($id > 0 || ! empty($ref))
 
 	    print '<div class="fichecenter">';
 	    print '<div class="underbanner clearboth"></div>';
-		
+
 		print '<table class="border" width="100%">';
 
-	    
+
         // Ligne info remises tiers
         print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
         if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
@@ -225,7 +229,7 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 		dol_fiche_end();
-		
+
 		print '<br>';
 
 		// Contacts lines

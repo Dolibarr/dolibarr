@@ -296,7 +296,7 @@ if ($conf->use_javascript_ajax)
 
 	//puis tous les elements enfants
 
-	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.module";
+	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND entity = ".$conf->entity;
@@ -323,6 +323,7 @@ if ($conf->use_javascript_ajax)
 				'leftmenu'=>$menu['leftmenu'],
 				'fk_mainmenu'=>$menu['fk_mainmenu'],
 				'fk_leftmenu'=>$menu['fk_leftmenu'],
+			    'position'=>$menu['position'],
 				'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.
 						'<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
 						'</td><td align="right">'.
@@ -344,10 +345,11 @@ if ($conf->use_javascript_ajax)
 
 	global $tree_recur_alreadyadded;       // This var was def into tree_recur
 
-	// Appelle de la fonction recursive (ammorce)
-	// avec recherche depuis la racine.
 	//var_dump($data);
-	tree_recur($data, $data[0], 0, 'iddivjstree');  // $data[0] is virtual record 'racine'
+
+	// Appelle de la fonction recursive (ammorce) avec recherche depuis la racine.
+	//tree_recur($data, $data[0], 0, 'iddivjstree', 0, 1);  // use this to get info on name and foreign keys of menu entry
+	tree_recur($data, $data[0], 0, 'iddivjstree', 0, 0);  // $data[0] is virtual record 'racine'
 
 
 	print '</td>';
@@ -376,7 +378,6 @@ if ($conf->use_javascript_ajax)
 
     	print '<tr>';
     	print '<td colspan="2">';
-
     	foreach($remainingdata as $datar)
     	{
             $father = array('rowid'=>$datar['rowid'],'title'=>"???",'mainmenu'=>$datar['fk_mainmenu'],'leftmenu'=>$datar['fk_leftmenu'],'fk_mainmenu'=>'','fk_leftmenu'=>'');

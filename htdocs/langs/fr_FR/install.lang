@@ -53,10 +53,10 @@ AdminLogin=Identifiant du propriétaire de la base de données Dolibarr.
 PasswordAgain=Vérification du mot de passe
 AdminPassword=Mot de passe du propriétaire de la base de données Dolibarr.
 CreateDatabase=Créer la base de données
-CreateUser=Créer le propriétaire
+CreateUser=Créer le propriétaire ou lui affecter les droits à la base
 DatabaseSuperUserAccess=Serveur de base de données - Accès super utilisateur
 CheckToCreateDatabase=Cochez cette option si la base de données n'existe pas et doit être créée.<br>Dans ce cas, il faut renseigner identifiant et mot de passe du super-utilisateur au bas de cette page.
-CheckToCreateUser=Cochez cette option si l'utilisateur propriétaire n'existe pas et doit être créé.<br>Dans ce cas, il faut renseigner l'identifiant et mot de passe du propriétaire à créer ainsi que l'identifiant et mot de passe du super-utilisateur au bas de cette page. Si la case n'est pas cochée, l'identifiant et le mot de passe du propriétaire doivent exister.
+CheckToCreateUser=Case à cocher si le propriétaire de la base de données n'existe pas et doit être créé, ou s'il existe, mais la base de données n'existe pas et les autorisations doivent être accordées<br>. Dans ce cas, vous devez choisir son identifiant et son mot de passe et remplir le mot de passe pour le compte super-utilisateur au bas de cette page. Si cette case n'est pas cochée, la base de données propriétaire et ses mots de passe doivent exister.
 DatabaseRootLoginDescription=Identifiant de l'utilisateur de la base ayant les droits de création de bases de données ou de comptes pour la base, requis si la base ou son propriétaire n'existent pas déjà et doivent être créés.
 KeepEmptyIfNoPassword=Laissez vide si l'administrateur n'a pas de mot de passe
 SaveConfigurationFile=Enregistrement du fichier de configuration
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Vous utilisez l'assistant d'installation depuis un environn
 KeepDefaultValuesMamp=Vous utilisez l'assistant d'installation DoliMamp. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 KeepDefaultValuesProxmox=Vous utilisez l'assistant d'installation depuis une application Proxmox. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 UpgradeExternalModule=Lancer le processus de mise à jour d'un module externe
-
+SetAtLeastOneOptionAsUrlParameter=Définissez au moins une option en tant que paramètre dans l'URL. Par exemple: '... repair.php?standard=confirmed'
+NothingToDelete=Rien a supprimer
+NothingToDo=Rien à faire
 #########
 # upgrade
 MigrationFixData=Correction de données dé-normalisées
@@ -191,9 +193,11 @@ MigrationActioncommElement=Mise à jour des données des actions des éléments
 MigrationPaymentMode=Migration des modes de paiement
 MigrationCategorieAssociation=Migration des categories
 MigrationEvents=Migration des évènements pour ajouter les propriétaires dans la table des utilisateurs assignés
+MigrationEventsContact=Migration des événements pour ajouter le contact de l'événement dans la table d'affectation
 MigrationRemiseEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise
 MigrationRemiseExceptEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise_except"
 MigrationReloadModule=Rechargement du module %s
+MigrationResetBlockedLog=Réinitialiser le module BlockedLog pour l'algorithme v7
 ShowNotAvailableOptions=Afficher les choix non disponibles
 HideNotAvailableOptions=Cacher les choix non disponibles
 ErrorFoundDuringMigration=Une erreur est survenu lors du processus de migration, aussi l'étape suivante ne peut pas être réalisée. Pour ignorer les erreurs, vous pouvez <a href="%s">cliquer ici</a>, mais l'application ou certaines fonctionnalités risquent de présenter des dysfonctionnements jusqu'à la résolution de la ou des erreurs

@@ -26,6 +26,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -33,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->load("projects");
 $langs->load("companies");
 
-$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
 $search_project_user = GETPOST('search_project_user','int');
+$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
@@ -49,12 +51,14 @@ $sortorder = GETPOST("sortorder",'alpha');
  * View
  */
 
-$socstatic=new Societe($db);
+$companystatic=new Societe($db);
 $projectstatic=new Project($db);
 $userstatic=new User($db);
 $form=new Form($db);
+$formfile=new FormFile($db);
 
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:(empty($user->rights->projet->all->lire)?0:2)),1);
+$projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
 //var_dump($projectsListId);
 
 
@@ -93,6 +97,7 @@ else
 $listofoppstatus=array(); $listofopplabel=array(); $listofoppcode=array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
+$sql.= " WHERE active=1";
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -122,7 +127,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_project']=array('text'=>'Project');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -138,7 +143,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -158,20 +163,106 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
+$max=5;
+
+// Last modified projects
+$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
+$sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
+$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sql.= " WHERE p.entity IN (".getEntity('project').")";
+if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
+if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+$sql.= " ORDER BY p.tms DESC";
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects",$max).'</th></tr>';
+
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		$var = true;
+		while ($i < $num)
+		{
+
+			$obj = $db->fetch_object($resql);
+
+			print '<tr class="oddeven">';
+			print '<td width="20%" class="nowrap">';
+
+			$projectstatic->id=$obj->rowid;
+			$projectstatic->ref=$obj->ref;
+			$projectstatic->title=$obj->title;
+			$projectstatic->dateo=$obj->dateo;
+			$projectstatic->datep=$obj->datep;
+			$projectstatic->thirdparty_name=$obj->name;
+
+			$companystatic->id=$obj->socid;
+			$companystatic->name=$obj->name;
+			$companystatic->email=$obj->email;
+			$companystatic->client=$obj->client;
+			$companystatic->fournisseur=$obj->fournisseur;
+			$companystatic->code_client=$obj->code_client;
+			$companystatic->code_fournisseur=$obj->code_fournisseur;
+			$companystatic->canvas=$obj->canvas;
+
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td width="96" class="nobordernopadding nowrap">';
+			print $projectstatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td width="16" class="nobordernopadding nowrap">';
+			print '&nbsp;';
+			print '</td>';
+
+			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			$filename=dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
+			print '</td></tr></table>';
+
+			print '</td>';
+
+			print '<td class="nowrap">';
+			if ($companystatic->id > 0)
+			{
+				print $companystatic->getNomUrl(1,'company',16);
+			}
+			print '</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
+			print '<td align="right">'.$projectstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	print "</table><br>";
+}
+else dol_print_error($db);
+
+
+// Open project per thirdparty
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("OpenedProjectsByThirdparties"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("NbOfProjects"),"","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("OpenedProjectsByThirdparties",$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
+print_liste_field_titre("NbOfProjects","","","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (".getEntity('project', $conf->entity).")";
 $sql.= " AND p.fk_statut = 1";
-if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
-if ($socid)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
+if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= $db->order($sortfield, $sortorder);
 
@@ -185,14 +276,14 @@ if ( $resql )
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 		print '<tr class="oddeven">';
 		print '<td class="nowrap">';
 		if ($obj->socid)
 		{
-			$socstatic->id=$obj->socid;
-			$socstatic->name=$obj->name;
-			print $socstatic->getNomUrl(1);
+			$companystatic->id=$obj->socid;
+			$companystatic->name=$obj->name;
+			print $companystatic->getNomUrl(1);
 		}
 		else
 		{
@@ -212,14 +303,15 @@ else
 	dol_print_error($db);
 }
 print "</table>";
+print '</div>';
 
 if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 {
     // This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
     // Add constant PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA to show this list
-    
+
     print '<br>';
-    
+
     print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 

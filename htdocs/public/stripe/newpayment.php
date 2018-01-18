@@ -2,6 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2017       Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +16,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Page is called with payment parameters then called with action='dopayment', then called with action='charge' then redirect is done on urlok/jo
  */
 
 /**
@@ -171,7 +174,11 @@ if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
     {
         $token = $conf->global->STRIPE_SECURITY_TOKEN;
     }
-    if ($SECUREKEY != $token) $valid=false;
+    if ($SECUREKEY != $token)
+    {
+    	if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) $valid=false;	// PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
+    	else dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+    }
 
     if (! $valid)
     {
@@ -183,9 +190,9 @@ if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
 
 // Common variables
 $creditor=$mysoc->name;
-$paramcreditor='STRIPE_CREDITOR_'.$suffix;
+$paramcreditor='ONLINE_PAYMENT_CREDITOR_'.$suffix;
 if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$paramcreditor;
-else if (! empty($conf->global->STRIPE_CREDITOR)) $creditor=$conf->global->STRIPE_CREDITOR;
+else if (! empty($conf->global->ONLINE_PAYMENT_CREDITOR)) $creditor=$conf->global->ONLINE_PAYMENT_CREDITOR;
 
 
 
@@ -215,25 +222,28 @@ if ($action == 'charge')
 
     $stripeToken = GETPOST("stripeToken",'alpha');
     $email = GETPOST("stripeEmail",'alpha');
+    $vatnumber = GETPOST('vatnumber','alpha');
 
     dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
-    dol_syslog("stripeEmail = ".$stripeEmail, LOG_DEBUG, 0, '_stripe');
+    dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
+    dol_syslog("vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
     $error = 0;
 
     try {
-        dol_syslog("Create customer", LOG_DEBUG, 0, '_stripe');
+        dol_syslog("Create customer card profile", LOG_DEBUG, 0, '_stripe');
         $customer = \Stripe\Customer::create(array(
             'email' => $email,
-            'description' => ($email?'Customer for '.$email:null),
+            'description' => ($email?'Customer card profile for '.$email:null),
             'metadata' => array('ipaddress'=>$_SERVER['REMOTE_ADDR']),
-            'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
+			'business_vat_id' => ($vatnumber?$vatnumber:null),
+        	'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
         ));
         // TODO Add 'business_vat_id' ?
 
         dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
         $charge = \Stripe\Charge::create(array(
-            'customer' => $customer->id,
+            'customer' => $customer->id,				// Will reuse default source of this customer card profile
             'amount'   => price2num($amount, 'MU'),
             'currency' => $currency,
             'description' => 'Stripe payment: '.$FULLTAG,
@@ -297,7 +307,7 @@ if ($action == 'charge')
     }
 
 	$_SESSION["onlinetoken"] = $stripeToken;
-    $_SESSION["Payment_Amount"] = $amount;
+    $_SESSION["FinalPaymentAmt"] = $amount;
     $_SESSION["currencyCodeType"] = $currency;
     $_SESSION["paymentType"] = '';
     $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];  // Payer ip
@@ -328,7 +338,7 @@ if ($action == 'charge')
  */
 
 $head='';
-if (! empty($conf->global->STRIPE_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->STRIPE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (! empty($conf->global->ONLINE_PAYMENT_CSS_URL)) $head='<link rel="stylesheet" type="text/css" href="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 
 $conf->dol_hide_topmenu=1;
 $conf->dol_hide_leftmenu=1;
@@ -345,7 +355,7 @@ if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', '
     exit;
 }
 
-if (empty($conf->global->STRIPE_LIVE))
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
 {
     dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
@@ -359,6 +369,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n"
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 print "\n";
 print '<!-- Form to send a Stripe payment -->'."\n";
 print '<!-- STRIPE_API_SANDBOX = '.$conf->global->STRIPE_API_SANDBOX.' -->'."\n";
@@ -369,14 +380,14 @@ print "\n";
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
-// Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
+// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
 $width=0;
 // Define logo and logosmall
 $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
-$paramlogo='STRIPE_LOGO_'.$suffix;
+$paramlogo='PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->STRIPE_LOGO)) $logosmall=$conf->global->STRIPE_LOGO;
+else if (! empty($conf->global->PAYMENT_LOGO)) $logosmall=$conf->global->PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
@@ -401,17 +412,17 @@ if ($urllogo)
 
 // Output introduction text
 $text='';
-if (! empty($conf->global->STRIPE_NEWFORM_TEXT))
+if (! empty($conf->global->PAYMENT_NEWFORM_TEXT))
 {
     $langs->load("members");
-    if (preg_match('/^\((.*)\)$/',$conf->global->STRIPE_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
-    else $text.=$conf->global->STRIPE_NEWFORM_TEXT."<br>\n";
+    if (preg_match('/^\((.*)\)$/',$conf->global->PAYMENT_NEWFORM_TEXT,$reg)) $text.=$langs->trans($reg[1])."<br>\n";
+    else $text.=$conf->global->PAYMENT_NEWFORM_TEXT."<br>\n";
     $text='<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text))
 {
-    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong><br></td></tr>'."\n";
-    $text.='<tr><td class="textpublicpayment"><br>'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToPay",$creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 
@@ -575,6 +586,7 @@ if (GETPOST("source") == 'order')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$order->thirdparty->tva_intra.'">'."\n";
     print '<input type="hidden" name="desc" value="'.$langs->trans("Order").' '.$order->ref.'">'."\n";
 }
 
@@ -685,6 +697,7 @@ if (GETPOST("source") == 'invoice')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$invoice->thirdparty->tva_intra.'">'."\n";
     print '<input type="hidden" name="desc" value="'.$langs->trans("Invoice").' '.$invoice->ref.'">'."\n";
 }
 
@@ -884,6 +897,7 @@ if (GETPOST("source") == 'contractline')
         print '<!-- Shipping address not complete, so we don t use it -->'."\n";
     }
     print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
+    print '<input type="hidden" name="vatnumber" value="'.$contract->thirdparty->tva_intra.'">'."\n";
     print '<input type="hidden" name="desc" value="'.$langs->trans("Contract").' '.$contract->ref.'">'."\n";
 }
 
@@ -1084,6 +1098,7 @@ if (preg_match('/^dopayment/',$action))
         box-shadow: 0 1px 3px 0 #e6ebf1;
         -webkit-transition: box-shadow 150ms ease;
         transition: box-shadow 150ms ease;
+        width: 350px;
     }
 
     .StripeElement--focus {
@@ -1116,6 +1131,7 @@ if (preg_match('/^dopayment/',$action))
     print '<input type="hidden" name="entity" value="'.$entity.'" />';
     print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
     print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
+    print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 
     print '
     <table id="dolpaymenttable" summary="Payment form" class="center">
@@ -1227,7 +1243,7 @@ if (preg_match('/^dopayment/',$action))
 
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix);
 
 llxFooter('', 'public');
 

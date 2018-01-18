@@ -48,4 +48,4 @@ SmsInfoNumero= (Internasjonal prefix dvs.: +4711223344)
 DelayBeforeSending=Forsinkelse før sending (minutter)
 SmsNoPossibleSenderFound=Ingen sender tilgjengelig. Sjekk oppsett av SMS-leverandør
 SmsNoPossibleRecipientFound=Ingen mål tilgjengelig. Sjekk oppsettet fra din SMS-leverandør.
-
+DisableStopIfSupported=Deaktiver STOPP-melding (hvis støttet)

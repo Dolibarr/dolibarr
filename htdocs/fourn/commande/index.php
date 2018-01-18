@@ -116,10 +116,10 @@ if ($resql)
 	print "</tr>\n";
 	foreach (array(0,1,2,3,4,5,6) as $statut)
 	{
-		$dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
+		$dataseries[]=array($commandestatic->LibStatut($statut,1), (isset($vals[$statut])?(int) $vals[$statut]:0));
 		if (! $conf->use_javascript_ajax)
 		{
-			
+
 			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
 			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
@@ -129,8 +129,17 @@ if ($resql)
 	if ($conf->use_javascript_ajax)
 	{
 		print '<tr class="impair"><td align="center" colspan="2">';
-		$data=array('series'=>$dataseries);
-		dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->setShowLegend(1);
+		$dolgraph->setShowPercent(1);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->setWidth('100%');
+		$dolgraph->draw('idgraphstatus');
+		print $dolgraph->show($total?0:1);
+
 		print '</td></tr>';
 	}
 	//if ($totalinprocess != $total)
@@ -177,7 +186,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
@@ -225,7 +234,7 @@ if (! empty($conf->fournisseur->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -268,7 +277,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td>';
@@ -324,7 +333,7 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			
+
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';

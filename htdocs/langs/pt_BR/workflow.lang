@@ -1,11 +1,4 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowDesc=Este módulo é concebido para modificar o comportamento das ações automáticas para aplicação. Por padrão, o fluxo de trabalho está aberto (você pode fazer as coisas na ordem que você quiser). Você pode ativar as ações automáticas que você está interessado.
 ThereIsNoWorkflowToModify=Não há alterações do fluxo de trabalho disponíveis com os módulos ativados.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar automaticamente uma ordem de cliente depois de uma proposta comercial é assinado
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente depois que uma proposta comercial é assinada
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente depois que um contrato é validado
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente depois que uma ordem do cliente é fechada
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificar proposta fonte ligada ao bico quando a ordem do cliente é definido como pago
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifique os pedido do cliente vinculado as fonte(s) das faturas quando a fatura do cliente ainda não foi paga
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifique os pedidos do cliente vinculado as fonte(s) das faturas quando a fatura do cliente  for paga.
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classificar proposta fonte ligada a construir quando fatura do cliente é validado

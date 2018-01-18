@@ -182,7 +182,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 			//print ' -> A '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";
 		    $tree_recur_alreadyadded[$tab[$x]['rowid']]=($rang + 1);
 			// And now we search all its sons of lower level
-			tree_recur($tab,$tab[$x],$rang+1);
+			tree_recur($tab, $tab[$x], $rang+1, 'iddivjstree', 0, $showfk);
 			print '</li>';
 		}
 		elseif (! empty($tab[$x]['rowid']) && $tab[$x]['fk_menu'] == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu'])
@@ -206,7 +206,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 			    print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">';
 			    print $tab[$x]['title'];
 			    print '</a></strong>';
-			    print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			    print '&nbsp; (mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' - fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
 			    print '</td><td align="right">';
 			    print $tab[$x]['buttons'];
 			    print '</td></tr></table>';
@@ -219,7 +219,7 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetal
 			$tree_recur_alreadyadded[$tab[$x]['rowid']]=($rang + 1);
 			// And now we search all its sons of lower level
 			//print 'Call tree_recur for x='.$x.' rowid='.$tab[$x]['rowid']." fk_mainmenu pere = ".$tab[$x]['fk_mainmenu']." fk_leftmenu pere = ".$tab[$x]['fk_leftmenu']."<br>\n";
-		    tree_recur($tab,$tab[$x],$rang+1);
+		    tree_recur($tab, $tab[$x], $rang+1, 'iddivjstree', 0, $showfk);
 			print '</li>';
 		}
 	}

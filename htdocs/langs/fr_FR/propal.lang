@@ -4,8 +4,8 @@ Proposal=Proposition commerciale
 ProposalShort=Proposition
 ProposalsDraft=Propositions commerciales brouillons
 ProposalsOpened=Propositions commerciales ouvertes
-Prop=Propositions commerciales
 CommercialProposal=Proposition commerciale
+PdfCommercialProposalTitle=Proposition commerciale
 ProposalCard=Fiche proposition
 NewProp=Nouvelle proposition commerciale
 NewPropal=Nouvelle proposition
@@ -63,6 +63,7 @@ ProposalLine=Ligne de proposition
 AvailabilityPeriod=Délai de livraison
 SetAvailability=Définir le délai de livraison
 AfterOrder=après commande
+OtherProposals=Autres propositions
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immédiate
 AvailabilityTypeAV_1W=1 semaine

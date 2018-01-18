@@ -187,7 +187,7 @@ if ($id > 0 || ! empty($ref))
     		// Tabs for project
     		$tab='tasks';
     		$head=project_prepare_head($projectstatic);
-    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+    		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
     		$param=($mode=='mine'?'&mode=mine':'');
 
@@ -272,7 +272,10 @@ if ($id > 0 || ! empty($ref))
             print '<div class="clearboth"></div>';
 
     		dol_fiche_end();
+
+    		print '<br>';
 		}
+
 
 		// To verify role of users
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
@@ -336,7 +339,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
-			print '<td>'.$langs->trans("ProjectContact").'</td>';
+			print '<td>'.$langs->trans("TaskContact").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
@@ -394,7 +397,7 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td colspan="1">';
 				$thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
-				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
+				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->socid;
 				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
 				print '</td>';
 
@@ -418,7 +421,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		print '<td>'.$langs->trans("ProjectContact").'</td>';
+		print '<td>'.$langs->trans("TaskContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
 		print '<td align="center">'.$langs->trans("Status").'</td>';
 		print '<td colspan="2">&nbsp;</td>';

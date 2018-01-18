@@ -36,7 +36,7 @@ class UserGroup extends CommonObject
 {
 	public $element='usergroup';
 	public $table_element='usergroup';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='group';
 	public $entity;		// Entity of group
 
@@ -49,6 +49,8 @@ class UserGroup extends CommonObject
 	public $datec;			// Creation date of group
 	public $datem;			// Modification date of group
 	public $members=array();	// Array of users
+
+	public $nb_rights;					// Number of rights granted to the user
 
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
@@ -63,19 +65,19 @@ class UserGroup extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-
-		return 0;
+		$this->nb_rights = 0;
 	}
 
 
 	/**
 	 *	Charge un objet group avec toutes ces caracteristiques (except ->members array)
 	 *
-	 *	@param      int		$id			id du groupe a charger
-	 *	@param      string	$groupname	name du groupe a charger
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@param      int		$id				Id of group to load
+	 *	@param      string	$groupname		Name of group to load
+	 *  @param		boolean	$load_members	Load all members of the group
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function fetch($id='', $groupname='')
+	function fetch($id='', $groupname='', $load_members = true)
 	{
 		global $conf;
 
@@ -107,7 +109,8 @@ class UserGroup extends CommonObject
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
 
-				$this->members=$this->listUsersForGroup();
+				if($load_members)
+					$this->members=$this->listUsersForGroup();
 
 
 				// Retreive all extrafield for group
@@ -135,10 +138,11 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of groups objects for a particular user
 	 *
-	 *	@param		int		$userid 	User id to search
-	 * 	@return		array     			Array of groups objects
+	 *	@param		int		$userid 		User id to search
+	 *  @param		boolean	$load_members	Load all members of the group
+	 * 	@return		array     				Array of groups objects
 	 */
-	function listGroupsForUser($userid)
+	function listGroupsForUser($userid, $load_members = true)
 	{
 		global $conf, $user;
 
@@ -168,7 +172,7 @@ class UserGroup extends CommonObject
 				if (! array_key_exists($obj->rowid, $ret))
 				{
 					$newgroup=new UserGroup($this->db);
-					$newgroup->fetch($obj->rowid);
+					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid]=$newgroup;
 				}
 
@@ -342,7 +346,8 @@ class UserGroup extends CommonObject
 
 			if (! $error)
 			{
-			    $this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+				$langs->load("other");
+				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			    // Call trigger
 			    $result=$this->call_trigger('GROUP_MODIFY',$user);
@@ -455,7 +460,8 @@ class UserGroup extends CommonObject
 
 			if (! $error)
 			{
-		        $this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+				$langs->load("other");
+				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			    // Call trigger
 			    $result=$this->call_trigger('GROUP_MODIFY',$user);
@@ -531,10 +537,12 @@ class UserGroup extends CommonObject
 					if ($subperms)
 					{
 						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
+						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
 						$this->rights->$module->$perms = 1;
 					}
 				}

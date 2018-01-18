@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-ModuleBuilderDesc3=Des modules générés / modifiables ont été trouvés: <strong>%s</strong> (ils sont détectés comme modifiables lorsque le fichier <strong>%s</strong> existe dans le répertoire racine du module).
 ModuleBuilderDescmenus=Cet onglet est dédié à définir les entrées de menu fournies par votre module.
 ModuleBuilderDescpermissions=Cet onglet est dédié à définir les nouvelles autorisations que vous souhaitez fournir à votre module.
 ModuleBuilderDeschooks=Cet onglet est dédié aux crochets.

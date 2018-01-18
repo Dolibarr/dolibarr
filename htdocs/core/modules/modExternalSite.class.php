@@ -104,7 +104,7 @@ class modExternalSite extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>0,
 			'type'=>'top',
-			'titre'=>'$conf->global->EXTERNALSITE_LABEL',
+			'titre'=>'__[EXTERNALSITE_LABEL]__',
 			'mainmenu'=>'externalsite',
 			'url'=>'/externalsite/frames.php',
 			'langs'=>'other',

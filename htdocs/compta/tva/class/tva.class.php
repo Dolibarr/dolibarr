@@ -100,19 +100,16 @@ class Tva extends CommonObject
 		$sql.= "fk_bank,";
 		$sql.= "fk_user_creat,";
 		$sql.= "fk_user_modif";
-
         $sql.= ") VALUES (";
-
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
-		$sql.= " '".$this->amount."',";
-		$sql.= " '".$this->label."',";
-		$sql.= " '".$this->note."',";
-		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
-		$sql.= " '".$this->fk_user_creat."',";
-		$sql.= " '".$this->fk_user_modif."'";
-
+		$sql.= " '".$this->db->escape($this->amount)."',";
+		$sql.= " '".$this->db->escape($this->label)."',";
+		$sql.= " '".$this->db->escape($this->note)."',";
+		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
+		$sql.= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql.= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql.= ")";
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -496,6 +493,7 @@ class Tva extends CommonObject
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
+		if (empty($this->datec)) $this->datec = dol_now();
 
         // Check parameters
 		if (! $this->label)
@@ -520,8 +518,10 @@ class Tva extends CommonObject
         }
 
         // Insert into llx_tva
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep";
-		$sql.= ", datev";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (";
+        $sql.= "datec";
+        $sql.= ", datep";
+        $sql.= ", datev";
 		$sql.= ", amount";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
@@ -532,14 +532,15 @@ class Tva extends CommonObject
 		$sql.= ", entity";
 		$sql.= ") ";
         $sql.= " VALUES (";
-		$sql.= "'".$this->db->idate($this->datep)."'";
+        $sql.= " '".$this->db->idate($this->datec)."'";
+        $sql.= ", '".$this->db->idate($this->datep)."'";
         $sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
-        $sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+        $sql.= ", '".$this->db->escape($this->type_payment)."'";
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
-        $sql.= ", '".$user->id."'";
+        $sql.= ", '".$this->db->escape($user->id)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
         $sql.= ")";
@@ -678,7 +679,7 @@ class Tva extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = "SELECT t.rowid, t.tms, t.datec, t.fk_user_creat";
+		$sql = "SELECT t.rowid, t.tms, t.fk_user_modif, t.datec, t.fk_user_creat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql.= " WHERE t.rowid = ".$id;
 

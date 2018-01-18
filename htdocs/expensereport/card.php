@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -49,7 +49,7 @@ $langs->load("bills");
 $langs->load("mails");
 
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth'), GETPOST('date_debutday'), GETPOST('date_debutyear'));
@@ -125,9 +125,15 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($cancel)
-    {
-        $action='';
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action='';
+
     	$fk_projet='';
     	$date_start='';
     	$date_end='';
@@ -137,7 +143,7 @@ if (empty($reshook))
     	$value_unit='';
     	$qty=1;
     	$fk_c_type_fees=-1;
-    }
+	}
 
     include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -207,8 +213,8 @@ if (empty($reshook))
     	$object->fk_statut = 1;
     	$object->fk_c_paiement				= GETPOST('fk_c_paiement','int');
     	$object->fk_user_validator			= GETPOST('fk_user_validator','int');
-    	$object->note_public				= GETPOST('note_public');
-    	$object->note_private				= GETPOST('note_private');
+    	$object->note_public				= GETPOST('note_public','none');
+    	$object->note_private				= GETPOST('note_private','none');
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
@@ -216,7 +222,7 @@ if (empty($reshook))
     	    if ($ret < 0) $error++;
     	}
 
-    	if ($object->periode_existe($fuser,$object->date_debut,$object->date_fin))
+    	if (empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS) && $object->periode_existe($fuser,$object->date_debut,$object->date_fin))
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorDoubleDeclaration"), null, 'errors');
@@ -228,8 +234,12 @@ if (empty($reshook))
     		$db->begin();
 
     		$id = $object->create($user);
+    		if ($id <= 0)
+    		{
+    			$error++;
+    		}
 
-    		if ($id > 0)
+    		if (! $error)
     		{
     			$db->commit();
     			Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
@@ -258,8 +268,8 @@ if (empty($reshook))
     	}
 
     	$object->fk_c_paiement = GETPOST('fk_c_paiement','int');
-    	$object->note_public = GETPOST('note_public');
-    	$object->note_private = GETPOST('note_private');
+    	$object->note_public = GETPOST('note_public','none');
+    	$object->note_private = GETPOST('note_private','none');
     	$object->fk_user_modif = $user->id;
 
     	$result = $object->update($user);
@@ -290,9 +300,11 @@ if (empty($reshook))
             // some hooks
             if (empty($reshook)) {
                 $result = $object->insertExtraFields();
-                if ($result < 0) {
-                    $error++;
-                }
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
             } else if ($reshook < 0)
                 $error++;
         }
@@ -1060,30 +1072,17 @@ if (empty($reshook))
     {
     	$error = 0;
 
-    	$db->begin();
+		// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
+    	if (empty($vatrate)) $vatrate = "0.000";
+    	$vatrate = price2num($vatrate);
 
-    	$object_ligne = new ExpenseReportLine($db);
+		$value_unit=price2num(GETPOST('value_unit'),'MU');
+    	$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
 
-    	$vatrate = GETPOST('vatrate','alpha');             // May be 8.5* (8.5NPROM)
-
-    	$object_ligne->comments = GETPOST('comments');
     	$qty  = GETPOST('qty','int');
     	if (empty($qty)) $qty=1;
-    	$object_ligne->qty = $qty;
 
-    	$up=price2num(GETPOST('value_unit'),'MU');
-    	$object_ligne->value_unit = $up;
-
-    	$object_ligne->date = $date;
-
-    	$object_ligne->fk_c_type_fees = GETPOST('fk_c_type_fees');
-
-    	// if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
-    	if (empty($vatrate)) $vatrate = "0.000";
-
-    	$object_ligne->fk_projet = $fk_projet;
-
-    	if (! (GETPOST('fk_c_type_fees') > 0))
+    	if (! $fk_c_type_fees > 0)
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
@@ -1108,13 +1107,13 @@ if (empty($reshook))
     	}*/
 
     	// Si aucune date n'est rentrée
-    	if (empty($object_ligne->date) || $object_ligne->date=="--")
+    	if (empty($date) || $date=="--")
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
     	}
     	// Si aucun prix n'est rentré
-    	if($object_ligne->value_unit==0)
+    	if($value_unit==0)
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PriceUTTC")), null, 'errors');
@@ -1123,50 +1122,39 @@ if (empty($reshook))
     	// S'il y'a eu au moins une erreur
     	if (! $error)
     	{
-    		$object_ligne->fk_expensereport = $_POST['fk_expensereport'];
-
     		$type = 0;	// TODO What if service ?
 
-            // We don't know seller and buyer for expense reports
-    		$seller = $mysoc;
-            $buyer = new Societe($db);
+			// Insert line
+			$result = $object->addline($qty,$value_unit,$fk_c_type_fees,$vatrate,$date,$comments,$fk_projet,$fk_c_exp_tax_cat,$type);
+			if ($result > 0) {
+				$ret = $object->fetch($object->id); // Reload to get new records
 
-    		$localtaxes_type=getLocalTaxesFromRate($vatrate,0,$buyer,$seller);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					// Define output language
+					$outputlangs = $langs;
+					$newlang = GETPOST('lang_id', 'alpha');
+					if (! empty($conf->global->MAIN_MULTILANGS) && empty($newlang))
+						$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
 
-    		// Clean vat code
-    		$vat_src_code='';
+					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				}
 
-    		if (preg_match('/\((.*)\)/', $vatrate, $reg))
-    		{
-    		    $vat_src_code = $reg[1];
-    		    $vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
-    		}
-    		$vatrate = preg_replace('/\*/','',$vatrate);
+				unset($qty);
+				unset($value_unit);
+				unset($vatrate);
+				unset($comments);
+				unset($fk_c_type_fees);
+				unset($fk_projet);
 
-    		$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+				unset($date);
 
-    		$object_ligne->vat_src_code = $vat_src_code;
-    		$object_ligne->vatrate = price2num($vatrate);
-    		$object_ligne->total_ttc = $tmp[2];
-    		$object_ligne->total_ht = $tmp[0];
-    		$object_ligne->total_tva = $tmp[1];
-    		$object_ligne->localtax1_tx = $localtaxes_type[1];
-    		$object_ligne->localtax2_tx = $localtaxes_type[3];
-    		$object_ligne->localtax1_type = $localtaxes_type[0];
-    		$object_ligne->localtax2_type = $localtaxes_type[2];
-
-    		$result = $object_ligne->insert();
-    		if ($result > 0)
-    		{
-    			$db->commit();
-    			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    			exit;
-    		}
-    		else
-    		{
-    			dol_print_error($db,$object->error);
-    			$db->rollback();
-    		}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
     	}
 
     	$action='';
@@ -1222,6 +1210,7 @@ if (empty($reshook))
 
     	$rowid = $_POST['rowid'];
     	$type_fees_id = GETPOST('fk_c_type_fees');
+		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
     	$projet_id = $fk_projet;
     	$comments = GETPOST('comments');
     	$qty = GETPOST('qty');
@@ -1248,7 +1237,7 @@ if (empty($reshook))
     	if (! $error)
     	{
     	    // TODO Use update method of ExpenseReportLine
-    		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id);
+    		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id, $fk_c_exp_tax_cat);
     		if ($result >= 0)
     		{
     			if ($result > 0)
@@ -1282,6 +1271,15 @@ if (empty($reshook))
     		}
     	}
     }
+
+	// Actions when printing a doc from card
+    include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+    // Actions to send emails
+    $trigger_name='EXPENSEREPORT_SENTBYMAIL';
+    $autocopy='MAIN_MAIL_AUTOCOPY_EXPENSEREPORT_TO';
+    $trackid='exp'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
     // Actions to build doc
     $upload_dir = $conf->expensereport->dir_output;
@@ -1462,7 +1460,7 @@ else
 					print '<input type="hidden" name="action" value="update">';
 				}
 
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 				print '<table class="border" style="width:100%;">';
 
@@ -1622,7 +1620,7 @@ else
 				print $formconfirm;
 
 				// Expense report card
-				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 				$morehtmlref='<div class="refidno">';
 				/*
@@ -1864,15 +1862,13 @@ else
 				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
 				$sql.= "c.code as p_code, c.libelle as payment_type,";
 				$sql.= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
-				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e";
-				$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
-				$sql.= ", ".MAIN_DB_PREFIX."payment_expensereport as p";
-				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
-				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
+				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
+				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 				$sql.= " WHERE e.rowid = '".$id."'";
 				$sql.= " AND p.fk_expensereport = e.rowid";
-				$sql.= " AND e.entity = ".$conf->entity;
-				$sql.= " AND p.fk_typepayment = c.id";
+				$sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
 				$sql.= " ORDER BY dp";
 
 				$resql = $db->query($sql);
@@ -1884,19 +1880,21 @@ else
 				    {
 				        $objp = $db->fetch_object($resql);
 
+				        $paymentexpensereportstatic->id = $objp->rowid;
+				        $paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
+				        $paymentexpensereportstatic->ref = $objp->rowid;
+				        $paymentexpensereportstatic->num_paiement = $objp->num_paiement;
+				        $paymentexpensereportstatic->payment_code = $objp->payment_code;
+
 				        print '<tr class="oddseven">';
 				        print '<td>';
-						$paymentexpensereportstatic->id = $objp->rowid;
-						$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
-						$paymentexpensereportstatic->ref = $objp->rowid;
-						$paymentexpensereportstatic->num_paiement = $objp->num_paiement;
-						$paymentexpensereportstatic->payment_code = $objp->payment_code;
 						print $paymentexpensereportstatic->getNomUrl(1);
 						print '</td>';
 				        print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				        $labeltype=$langs->trans("PaymentType".$objp->p_code)!=("PaymentType".$objp->p_code)?$langs->trans("PaymentType".$objp->p_code):$objp->fk_typepayment;
 				        print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-						if (! empty($conf->banque->enabled)) {
+						if (! empty($conf->banque->enabled))
+						{
 							$bankaccountstatic->id = $objp->baid;
 							$bankaccountstatic->ref = $objp->baref;
 							$bankaccountstatic->label = $objp->baref;
@@ -1946,17 +1944,6 @@ else
 
 				print '<div class="clearboth"></div><br>';
 
-				// Fetch Lines of current expense report
-				$sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-				$sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
-				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
-				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
-				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
-				$sql.= ' ORDER BY fde.date ASC';
-
 				print '<div style="clear: both;"></div>';
 
 				$actiontouse='updateligne';
@@ -1971,235 +1958,244 @@ else
 				print '<div class="div-table-responsive">';
 				print '<table id="tablelines" class="noborder" width="100%">';
 
-				$resql = $db->query($sql);
-				if ($resql)
+				if (!empty($object->lines))
 				{
-					$num_lignes = $db->num_rows($resql);
 					$i = 0;$total = 0;
 
-					if ($num_lignes)
+					print '<tr class="liste_titre">';
+					print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
+					print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
+					print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
+					print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
+					print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
+					print '<td style="text-align:right;">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td style="text-align:right;">'.$langs->trans('Qty').'</td>';
+					if ($action != 'editline')
 					{
-						print '<tr class="liste_titre">';
-						print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
-						print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
-						if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
-						print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
-						print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('PriceUTTC').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('Qty').'</td>';
-						if ($action != 'editline')
-						{
-							print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
-							print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
-						}
-						// Ajout des boutons de modification/suppression
-						if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
-						{
-							print '<td style="text-align:right;"></td>';
-						}
-						print '</tr>';
+						print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
+						print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
+					}
+					// Ajout des boutons de modification/suppression
+					if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
+					{
+						print '<td style="text-align:right;"></td>';
+					}
+					print '</tr>';
 
-						while ($i < $num_lignes)
-						{
-							$piece_comptable = $i + 1;
-							$objp = $db->fetch_object($resql);
+					foreach ($object->lines as &$line)
+					{
+						$piece_comptable = $i + 1;
 
-							if ($action != 'editline' || $objp->rowid != GETPOST('rowid'))
+						if ($action != 'editline' || $line->rowid != GETPOST('rowid'))
+						{
+							print '<tr class="oddeven">';
+
+							print '<td style="text-align:center;">';
+							print img_picto($langs->trans("Document"), "object_generic");
+							print ' <span>'.$piece_comptable.'</span></td>';
+							print '<td style="text-align:center;">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+							if (! empty($conf->projet->enabled))
 							{
+								print '<td>';
+								if ($line->fk_projet > 0)
+								{
+									$projecttmp->id=$line->fk_projet;
+									$projecttmp->ref=$line->projet_ref;
+									print $projecttmp->getNomUrl(1);
+								}
+								print '</td>';
+							}
+							if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+							{
+								print '<td class="fk_c_exp_tax_cat">';
+								print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+								print '</td>';
+							}
+							// print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
+							print '<td style="text-align:center;">'.($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans(($line->type_fees_code))).'</td>';
+							print '<td style="text-align:left;">'.$line->comments.'</td>';
+							print '<td style="text-align:right;">'.vatrate($line->vatrate,true).'</td>';
+							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
+							print '<td style="text-align:right;">'.$line->qty.'</td>';
+
+							if ($action != 'editline')
+							{
+								print '<td style="text-align:right;">'.price($line->total_ht).'</td>';
+								print '<td style="text-align:right;">'.price($line->total_ttc).'</td>';
+							}
+
+							// Ajout des boutons de modification/suppression
+							if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
+							{
+								print '<td style="text-align:right;" class="nowrap">';
+
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$line->rowid.'#'.$line->rowid.'">';
+								print img_edit();
+								print '</a> &nbsp; ';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$line->rowid.'">';
+								print img_delete();
+								print '</a>';
+
+								print '</td>';
+							}
+
+							print '</tr>';
+						}
+
+						if ($action == 'editline' && $line->rowid == GETPOST('rowid'))
+						{
 								print '<tr class="oddeven">';
 
-								print '<td style="text-align:center;">';
-								print img_picto($langs->trans("Document"), "object_generic");
-								print ' <span>'.$piece_comptable.'</span></td>';
-								print '<td style="text-align:center;">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
+								print '<td></td>';
+
+								// Select date
+								print '<td class="center">';
+								$form->select_date($line->date,'date');
+								print '</td>';
+
+								// Select project
 								if (! empty($conf->projet->enabled))
 								{
-    								print '<td>';
-    								if ($objp->projet_id > 0)
-    								{
-    									$projecttmp->id=$objp->projet_id;
-    									$projecttmp->ref=$objp->projet_ref;
-    									print $projecttmp->getNomUrl(1);
-    								}
-    								print '</td>';
+									print '<td>';
+									$formproject->select_projects(-1, $line->fk_projet,'fk_projet', 0, 0, 1, 1);
+									print '</td>';
 								}
-								// print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
-								print '<td style="text-align:center;">'.($langs->trans(($objp->type_fees_code)) == $objp->type_fees_code ? $objp->type_fees_libelle : $langs->trans(($objp->type_fees_code))).'</td>';
-								print '<td style="text-align:left;">'.$objp->comments.'</td>';
-								print '<td style="text-align:right;">'.vatrate($objp->vatrate.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''),true).'</td>';
-								print '<td style="text-align:right;">'.price($objp->value_unit).'</td>';
-								print '<td style="text-align:right;">'.$objp->qty.'</td>';
+
+								if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
+								{
+									print '<td class="fk_c_exp_tax_cat">';
+									$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->rowid, 'date' => $line->dates);
+									print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
+									print '</td>';
+								}
+
+								// Select type
+								print '<td class="center">';
+								select_type_fees_id($line->fk_c_type_fees,'fk_c_type_fees');
+								print '</td>';
+
+								// Add comments
+								print '<td>';
+								print '<textarea name="comments" class="flat_ndf centpercent">'.$line->comments.'</textarea>';
+								print '</td>';
+
+								// VAT
+								print '<td style="text-align:right;">';
+								print $form->load_tva('vatrate', (isset($_POST["vatrate"])?$_POST["vatrate"]:$line->vatrate), $mysoc, '');
+								print '</td>';
+
+								// Unit price
+								print '<td style="text-align:right;">';
+								print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.$line->value_unit.'" />';
+								print '</td>';
+
+								// Quantity
+								print '<td style="text-align:right;">';
+								print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.$line->qty.'" />';
+								print '</td>';
 
 								if ($action != 'editline')
 								{
-									print '<td style="text-align:right;">'.price($objp->total_ht).'</td>';
-									print '<td style="text-align:right;">'.price($objp->total_ttc).'</td>';
+									print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
+									print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
 								}
 
-								// Ajout des boutons de modification/suppression
-								if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
-								{
-									print '<td style="text-align:right;" class="nowrap">';
-
-									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
-									print img_edit();
-									print '</a> &nbsp; ';
-									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$objp->rowid.'">';
-									print img_delete();
-									print '</a>';
-
-									print '</td>';
-								}
-
-								print '</tr>';
-							}
-
-							if ($action == 'editline' && $objp->rowid == GETPOST('rowid'))
-							{
-									print '<tr class="oddeven">';
-
-									print '<td></td>';
-
-									// Select date
-									print '<td class="center">';
-									$form->select_date($objp->date,'date');
-									print '</td>';
-
-									// Select project
-									if (! empty($conf->projet->enabled))
-									{
-    									print '<td>';
-    									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 1, 1);
-    									print '</td>';
-									}
-
-									// Select type
-									print '<td class="center">';
-									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
-									print '</td>';
-
-									// Add comments
-									print '<td>';
-									print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($objp->comments).'</textarea>';
-									print '</td>';
-
-									// VAT
-									print '<td style="text-align:right;">';
-									$seller=$mysoc;
-									$buyer=new Societe($db);
-									$selectedvat=(GETPOST("vatrate",'alpha')?GETPOST("vatrate",'alpha'):$objp->vatrate.($objp->vat_src_code?' ('.$objp->vat_src_code.')':''));
-									print $form->load_tva('vatrate', $selectedvat, $seller, $buyer, 0, 0, '', false, 1);
-									print '</td>';
-
-									// Unit price
-									print '<td style="text-align:right;">';
-									print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.dol_escape_htmltag($objp->value_unit).'" />';
-									print '</td>';
-
-									// Quantity
-									print '<td style="text-align:right;">';
-									print '<input type="text" min="0" class="maxwidth50" name="qty" value="'.$objp->qty.'" />';    // We must be able to enter decimal qty
-									print '</td>';
-
-									if ($action != 'editline')
-									{
-									    print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
-									    print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
-									}
-
-									print '<td style="text-align:center;">';
-									print '<input type="hidden" name="rowid" value="'.$objp->rowid.'">';
-									print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-									print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-									print '</td>';
-							}
-
-							$i++;
+								print '<td style="text-align:center;">';
+								print '<input type="hidden" name="rowid" value="'.$line->rowid.'">';
+								print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+								print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+								print '</td>';
 						}
 
-						$db->free($resql);
+						$i++;
+					}
+				}
+
+				// Add a line
+				if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
+				{
+					print '<tr class="liste_titre">';
+					print '<td></td>';
+					print '<td align="center">'.$langs->trans('Date').'</td>';
+					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
+					print '<td align="center">'.$langs->trans('Type').'</td>';
+					print '<td>'.$langs->trans('Description').'</td>';
+					print '<td align="right">'.$langs->trans('VAT').'</td>';
+					print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td colspan="3"></td>';
+					print '</tr>';
+
+					print '<tr '.$bc[true].'>';
+
+					print '<td></td>';
+
+					// Select date
+					print '<td align="center">';
+					$form->select_date($date?$date:-1,'date');
+					print '</td>';
+
+					// Select project
+					if (! empty($conf->projet->enabled))
+					{
+						print '<td>';
+						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
+						print '</td>';
 					}
 
-					// Add a line
-					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
+					if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
 					{
-						print '<tr class="liste_titre">';
-						print '<td></td>';
-						print '<td align="center">'.$langs->trans('Date').'</td>';
-						if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
-						print '<td align="center">'.$langs->trans('Type').'</td>';
-						print '<td>'.$langs->trans('Description').'</td>';
-						print '<td align="right">'.$langs->trans('VAT').'</td>';
-						print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-						print '<td align="right">'.$langs->trans('Qty').'</td>';
-						print '<td colspan="3"></td>';
-						print '</tr>';
-
-						print '<tr '.$bc[true].'>';
-
-						print '<td></td>';
-
-						// Select date
-						print '<td align="center">';
-						$form->select_date($date?$date:-1,'date');
+						print '<td class="fk_c_exp_tax_cat">';
+						$params = array('fk_expense' => $object->id);
+						print $form->selectExpenseCategories('', 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
 						print '</td>';
+					}
 
-						// Select project
-						if (! empty($conf->projet->enabled))
-						{
-							print '<td>';
-							$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
-							print '</td>';
-						}
+					// Select type
+					print '<td align="center">';
+					select_type_fees_id($fk_c_type_fees,'fk_c_type_fees',1);
+					print '</td>';
 
-						// Select type
-						print '<td align="center">';
-						select_type_fees_id($fk_c_type_fees,'fk_c_type_fees',1);
-						print '</td>';
+					// Add comments
+					print '<td>';
+					print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
+					print '</td>';
 
-						// Add comments
-						print '<td>';
-						print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
-						print '</td>';
+					// Select VAT
+					print '<td align="right">';
+					$defaultvat=-1;
+					if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
+					print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false, 1);
+					print '</td>';
 
-						// Select VAT
-						print '<td align="right">';
-						$defaultvat=-1;
-						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
-						print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false, 1);
-						print '</td>';
+					// Unit price
+					print '<td align="right">';
+					print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
+					print '</td>';
 
-						// Unit price
-						print '<td align="right">';
-						print '<input type="text" class="right maxwidth50" name="value_unit" value="'.(GETPOST('value_unit','alpha')?GETPOST('value_unit','alpha'):dol_escape_htmltag($value_unit)).'">';
-						print '</td>';
+					// Quantity
+					print '<td align="right">';
+					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';    // We must be able to enter decimal qty
+					print '</td>';
 
-						// Quantity
-						print '<td align="right">';
-						print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';    // We must be able to enter decimal qty
-						print '</td>';
+					if ($action != 'editline')
+					{
+						print '<td align="right"></td>';
+						print '<td align="right"></td>';
+					}
 
-						if ($action != 'editline')
-						{
-						    print '<td align="right"></td>';
-						    print '<td align="right"></td>';
-						}
+					print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
 
-						print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+					print '</tr>';
+				} // Fin si c'est payé/validé
 
-						print '</tr>';
-					} // Fin si c'est payé/validé
+				print '</table>';
+				print '</div>';
 
-					print '</table>';
-					print '</div>';
-
-					print '</form>';
-				}
-				else
-				{
-					dol_print_error($db);
-				}
+				print '</form>';
 
 				dol_fiche_end();
 
@@ -2225,6 +2221,14 @@ if ($action != 'create' && $action != 'edit')
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
+
+	// Send
+	if ($object->fk_statut > ExpenseReport::STATUS_DRAFT) {
+		//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+		//} else
+		//	print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+	}
 
 
 	/* Si l'état est "Brouillon"
@@ -2369,6 +2373,8 @@ if ($action != 'create' && $action != 'edit')
 	    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 }
 
 print '</div>';
@@ -2377,47 +2383,56 @@ print '</div>';
 //$conf->global->DOL_URL_ROOT_DOCUMENT_PHP=dol_buildpath('/expensereport/documentwrapper.php',1);
 
 
-print '<div class="fichehalfleft">';
-
-/*
- * Generate documents
- */
-
-if($user->rights->expensereport->export && $action != 'create' && $action != 'edit')
-{
-	$filename	=	dol_sanitizeFileName($object->ref);
-	$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
-	$genallowed	=	1;
-	$delallowed	=	1;
-	$var 		= 	true;
-	print $formfile->showdocuments('expensereport',$filename,$filedir,$urlsource,$genallowed,$delallowed);
-	$somethingshown = $formfile->numoffiles;
+// Select mail models is same action as presend
+if (GETPOST('modelselected')) {
+	$action = 'presend';
 }
 
-print '</div>';
-
-if ($action != 'create' && $action != 'edit' && ($id || $ref))
+if ($action != 'presend')
 {
-    $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
-    // Link invoice to intervention
-    if (GETPOST('LinkedFichinter')) {
-        $object->fetch($id);
-        $object->fetch_thirdparty();
-        $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
-    }
+	/*
+	 * Generate documents
+	 */
 
-    // Show links to link elements
-    $linktoelements=array();
-    if (! empty($conf->global->EXPENSES_LINK_TO_INTERVENTION))
-    {
-        $linktoelements[]='fichinter';
-        $linktoelem = $form->showLinkToObjectBlock($object, $linktoelements, array('expensereport'));
-        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-    }
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	print '<a name="builddoc"></a>'; // ancre
+
+	if($user->rights->expensereport->creer && $action != 'create' && $action != 'edit')
+	{
+		$filename	=	dol_sanitizeFileName($object->ref);
+		$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$urlsource	=	$_SERVER["PHP_SELF"]."?id=".$object->id;
+		$genallowed	=	$user->rights->expensereport->creer;
+		$delallowed	=	$user->rights->expensereport->creer;
+		$var 		= 	true;
+		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
+		$somethingshown = $formfile->numoffiles;
+	}
+
+	if ($action != 'create' && $action != 'edit' && ($id || $ref))
+	{
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('expensereport'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	}
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	// List of actions on element
+	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	$formactions = new FormActions($db);
+	$somethingshown = $formactions->showactions($object, 'expensereport', null);
+
+	print '</div></div></div>';
+
 }
+
+// Presend form
+$modelmail='expensereport';
+$defaulttopic='SendExpenseReportRef';
+$diroutput = $conf->expensereport->dir_output;
+$trackid = 'exp'.$object->id;
+
+include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
 
 llxFooter();
 

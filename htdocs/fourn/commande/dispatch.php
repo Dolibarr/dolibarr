@@ -28,6 +28,7 @@
  * \ingroup commande
  * \brief Page to dispatch receiving
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
@@ -55,7 +56,7 @@ $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action','aZ09');
 if ($user->societe_id)
 	$socid = $user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (empty($conf->stock->enabled)) {
 	accessforbidden();
@@ -84,17 +85,33 @@ if ($id > 0 || ! empty($ref)) {
  * Actions
  */
 
-if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(1);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(1);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error++;
+			$action = '';
+		}
+	}
+
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -102,19 +119,42 @@ if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED
 			$action = '';
 		}
 	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
-if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(0);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(0);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error ++;
+			$action = '';
+		}
+	}
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -122,25 +162,56 @@ if ($action == 'uncheckdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANC
 			$action = '';
 		}
 	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
-if ($action == 'denydispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))) {
+if ($action == 'denydispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
+{
+	$error=0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
+
+	$db->begin();
+
 	$result = $supplierorderdispatch->fetch($lineid);
 	if (! $result)
-		dol_print_error($db);
-	$result = $supplierorderdispatch->setStatut(2);
-	if ($result < 0) {
+	{
+		$error++;
 		setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
-		$error ++;
 		$action = '';
-	} else {
+	}
+
+	if (! $error)
+	{
+		$result = $supplierorderdispatch->setStatut(2);
+		if ($result < 0) {
+			setEventMessages($supplierorderdispatch->error, $supplierorderdispatch->errors, 'errors');
+			$error ++;
+			$action = '';
+		}
+	}
+	if (! $error)
+	{
 		$result = $object->calcAndSetStatusDispatch($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error ++;
 			$action = '';
 		}
+	}
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 }
 
@@ -355,8 +426,8 @@ if ($id > 0 || ! empty($ref)) {
 		}
 	}
 
-	// Auteur
-	print '<tr><td>' . $langs->trans("AuthorRequest") . '</td>';
+	// Author
+	print '<tr><td class="titlefield">' . $langs->trans("AuthorRequest") . '</td>';
 	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
 
@@ -372,11 +443,13 @@ if ($id > 0 || ! empty($ref)) {
 		$disabled = 0;
 
 	// Line of orders
-	if ($object->statut <= 2 || $object->statut >= 6) {
-		print $langs->trans("OrderStatusNotReadyToDispatch");
+	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {
+		print '<span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
 
-	if ($object->statut == 3 || $object->statut == 4 || $object->statut == 5) {
+	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
 
@@ -476,6 +549,9 @@ if ($id > 0 || ! empty($ref)) {
 
 						print "\n";
 						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
+						// hidden fields for js function
+						print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
+						print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 						print '<tr class="oddeven">';
 
 						$linktoprod = '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
@@ -536,9 +612,6 @@ if ($id > 0 || ! empty($ref)) {
 							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
 							}
 
-							// hidden fields for js function
-							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
-							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 							print '</td>';
 
 							print '<td>';
@@ -578,16 +651,13 @@ if ($id > 0 || ! empty($ref)) {
 							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
 							}
 
-							// hidden fields for js function
-							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
-							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 							print '</td>';
 						}
 
 						// Qty to dispatch
 						print '<td align="right">';
 						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" size="8" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
-                        print '</td>';
+						print '</td>';
 
                         print '<td>';
 						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
@@ -665,7 +735,7 @@ if ($id > 0 || ! empty($ref)) {
 
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
-	$sql .= " e.rowid as warehouse_id, e.label as entrepot,";
+	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";
@@ -743,7 +813,8 @@ if ($id > 0 || ! empty($ref)) {
 
 					// Add button to check/uncheck disaptching
 					print '<td align="center">';
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))) {
+					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
+					{
 						if (empty($objp->status)) {
 							print '<a class="button buttonRefused" href="#">' . $langs->trans("Approve") . '</a>';
 							print '<a class="button buttonRefused" href="#">' . $langs->trans("Deny") . '</a>';

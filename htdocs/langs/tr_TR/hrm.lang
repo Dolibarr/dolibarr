@@ -5,7 +5,7 @@ Establishments=Kuruluşlar
 Establishment=Kuruluş
 NewEstablishment=Yeni kuruluş
 DeleteEstablishment=Kuruluş sil
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
+ConfirmDeleteEstablishment=Bu kuruluşu silmek istediğinizden emin misiniz?
 OpenEtablishment=Kuruluş aç
 CloseEtablishment=Kuruluş kapat
 # Dictionary
