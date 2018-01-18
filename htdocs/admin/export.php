@@ -69,7 +69,7 @@ dol_fiche_head(
     'settings',
     $langs->trans("ExportsArea"),
     0,
-    "clialphadiab@clialphadiab"
+    "exports"
 );
 
 // Setup page goes here
