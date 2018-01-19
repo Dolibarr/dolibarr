@@ -519,6 +519,9 @@ class BonPrelevement extends CommonObject
                      */
 					if ($error == 0)
 					{
+						$this->date_credit = $date;
+						$this->statut = 1;
+
 						$this->db->commit();
 						return 0;
 					}
@@ -584,13 +587,16 @@ class BonPrelevement extends CommonObject
 				// TODO Call trigger to create a notification using notification module
 			}
 			else
-		   {
+			{
 				$error++;
 			}
 
 			if ($error == 0)
 			{
+				$this->date_trans = $date;
+				$this->statut = 1;
 				$this->db->commit();
+
 				return 0;
 			}
 			else
