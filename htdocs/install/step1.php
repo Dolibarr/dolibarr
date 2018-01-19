@@ -663,7 +663,7 @@ if (! $error && $db->connected && $action == "set")
 
                     $check1=$newdb->getDefaultCharacterSetDatabase();
                     $check2=$newdb->getDefaultCollationDatabase();
-                    dolibarr_install_syslog('step1: note that default server was charset=' . $check1 . ' collation=' . $check2);
+                    dolibarr_install_syslog('step1: note that new database is using charset=' . $check1 . ' collation=' . $check2);
 
                     // If values differs, we save conf file again
                     //if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('step1: value for character_set is not the one asked for database creation', LOG_WARNING);
