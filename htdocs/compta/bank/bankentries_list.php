@@ -1442,6 +1442,14 @@ if ($resql)
 	print "</table>";
 	print "</div>";
 
+    if ($user->rights->banque->consolidate && $action == 'reconcile') {
+        print '<div class="tabsAction">';
+        print '<div class="inline-block divButAction">';
+        print '<input class="button" name="confirm_reconcile" type="submit" value="' . $langs->trans("Conciliate") . '">';
+        print "</div>";
+        print "</div>";
+    }
+
     print '</form>';
 	$db->free($resql);
 }
