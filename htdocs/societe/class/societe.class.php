@@ -334,6 +334,12 @@ class Societe extends CommonObject
 	 */
 	var $price_level;
 	var $outstanding_limit;
+	
+	/**
+	 * Min order amounts
+	 */
+	var $order_min_amount;
+	var $supplier_order_min_amount;
 
 	/**
 	 * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
@@ -785,6 +791,8 @@ class Societe extends CommonObject
 		$this->idprof6		= (! empty($this->idprof6)?trim($this->idprof6):'');
 		$this->prefix_comm	= trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
+		$this->order_min_amount = price2num($this->order_min_amount);
+		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
 		$this->tva_assuj	= trim($this->tva_assuj);
 		$this->tva_intra	= dol_sanitizeFileName($this->tva_intra,'');
@@ -955,6 +963,8 @@ class Societe extends CommonObject
 			$sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
 			$sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
 			$sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
+			$sql .= ",order_min_amount= ".($this->order_min_amount!=''?$this->order_min_amount:'null');
+			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount!=''?$this->supplier_order_min_amount:'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 
 			$sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
