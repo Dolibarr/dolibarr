@@ -111,7 +111,7 @@ $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if ($action == 'addlimitstockwarehouse' AND !empty($user->rights->produit->creer))
+if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer))
 {
 
 	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
@@ -155,7 +155,7 @@ if ($action == 'addlimitstockwarehouse' AND !empty($user->rights->produit->creer
 
 }
 
-if($action == 'delete_productstockwarehouse' AND !empty($user->rights->produit->creer))
+if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->creer))
 {
 
 	$pse = new ProductStockEntrepot($db);
@@ -167,7 +167,7 @@ if($action == 'delete_productstockwarehouse' AND !empty($user->rights->produit->
 }
 
 // Set stock limit
-if ($action == 'setseuil_stock_alerte' AND !empty($user->rights->produit->creer))
+if ($action == 'setseuil_stock_alerte' && !empty($user->rights->produit->creer))
 {
     $object = new Product($db);
     $result=$object->fetch($id);
@@ -181,7 +181,7 @@ if ($action == 'setseuil_stock_alerte' AND !empty($user->rights->produit->creer)
 }
 
 // Set desired stock
-if ($action == 'setdesiredstock' AND !empty($user->rights->produit->creer))
+if ($action == 'setdesiredstock' && !empty($user->rights->produit->creer))
 {
     $object = new Product($db);
     $result=$object->fetch($id);
