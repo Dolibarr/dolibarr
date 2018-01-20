@@ -1142,6 +1142,7 @@ class Societe extends CommonObject
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
+		$sql .= ', s.order_min_amount, s.supplier_order_min_amount';
 		$sql .= ', s.fk_multicurrency, s.multicurrency_code';
 		$sql .= ', fj.libelle as forme_juridique';
 		$sql .= ', e.libelle as effectif';
@@ -1289,6 +1290,8 @@ class Societe extends CommonObject
 				$this->webservices_key = $obj->webservices_key;
 
 				$this->outstanding_limit		= $obj->outstanding_limit;
+				$this->order_min_amount			= $obj->order_min_amount;
+				$this->supplier_order_min_amount	= $obj->supplier_order_min_amount;
 
 				// multiprix
 				$this->price_level = $obj->price_level;
