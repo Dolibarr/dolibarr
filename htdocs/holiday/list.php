@@ -2,6 +2,7 @@
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frederic France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -447,7 +448,7 @@ print '</td>';
 
 // Status
 print '<td class="liste_titre maxwidthonsmartphone maxwidth200" align="right">';
-$holiday->selectStatutCP($search_statut);
+print $holiday->selectStatutCP($search_statut);
 print '</td>';
 
 // Actions
