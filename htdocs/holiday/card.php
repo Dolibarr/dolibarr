@@ -331,7 +331,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
         $langs->load('agenda');
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         $actioncom = new ActionComm($db);
-        $actioncoms = $action->getActions($db, 0, $id, 'holiday', ' AND a.code LIKE "AC_HOL"');
+        $actioncoms = $actioncom->getActions($db, 0, $id, 'holiday', ' AND a.code LIKE "AC_HOL"');
         foreach ($actioncoms as $item) {
             $item->delete();
             setEventMessages($item->error, $item->errors, 'warnings');
@@ -361,26 +361,26 @@ if ($action == 'confirm_send' && $id > 0)
     {
         $object->statut = Holiday::STATUS_TO_REVIEW;
 
-        $verif = $object->update($user);
+        $result = $object->update($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
-        if ($verif > 0)
+        if ($result > 0)
         {
             // To
             $destinataire = new User($db);
             $destinataire->fetch($object->fk_validator);
             $emailTo = $destinataire->email;
 
-            if ($emailTo)
+            // From
+            $expediteur = new User($db);
+            $expediteur->fetch($object->fk_user);
+            $emailFrom = $expediteur->email;
+
+            if (! empty($emailTo) && !empty($emailFrom))
             {
 
-                // From
-                $expediteur = new User($db);
-                $expediteur->fetch($object->fk_user);
-                $emailFrom = $expediteur->email;
-
                 // Subject
-			    $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+                $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
                 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
 
                 $subject = $societeName." - ".$langs->transnoentitiesnoconv("HolidaysToValidate");
@@ -457,10 +457,10 @@ if ($action == 'confirm_valid' && $id > 0)
         $object->fk_user_valid = $user->id;
         $object->statut = 3;
 
-        $verif = $object->update($user);
+        $result = $object->update($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
-        if ($verif > 0)
+        if ($result > 0)
         {
             // Calculcate number of days consummed
             $nbopenedday=num_open_day($object->date_debut_gmt,$object->date_fin_gmt,0,1,$object->halfday);
@@ -479,13 +479,13 @@ if ($action == 'confirm_valid' && $id > 0)
             $destinataire->fetch($object->fk_user);
             $emailTo = $destinataire->email;
 
-            if ($emailTo)
-            {
+            // From
+            $expediteur = new User($db);
+            $expediteur->fetch($object->fk_validator);
+            $emailFrom = $expediteur->email;
 
-                // From
-                $expediteur = new User($db);
-                $expediteur->fetch($object->fk_validator);
-                $emailFrom = $expediteur->email;
+            if (! empty($emailTo) && !empty($emailFrom))
+            {
 
                 // Subject
 			    $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -497,9 +497,7 @@ if ($action == 'confirm_valid' && $id > 0)
                 $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
                 $message.= "\n";
                 $message.=  $langs->transnoentities("HolidaysValidatedBody", dol_print_date($object->date_debut,'day'),dol_print_date($object->date_fin,'day'))."\n";
-
                 $message.= "- ".$langs->transnoentitiesnoconv("ValidatedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
                 $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
                 $message.= "\n";
 
@@ -548,13 +546,13 @@ if ($action == 'confirm_refuse' && GETPOST('confirm') == 'yes' && $id > 0)
                 $destinataire->fetch($object->fk_user);
                 $emailTo = $destinataire->email;
 
-                if ($emailTo)
-                {
+                // From
+                $expediteur = new User($db);
+                $expediteur->fetch($object->fk_validator);
+                $emailFrom = $expediteur->email;
 
-                    // From
-                    $expediteur = new User($db);
-                    $expediteur->fetch($object->fk_validator);
-                    $emailFrom = $expediteur->email;
+                if (! empty($emailTo) && ! empty($emailFrom))
+                {
 
 	                // Subject
 				    $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -567,9 +565,7 @@ if ($action == 'confirm_refuse' && GETPOST('confirm') == 'yes' && $id > 0)
 	                $message.= "\n";
                     $message.= $langs->transnoentities("HolidaysRefusedBody", dol_print_date($object->date_debut,'day'), dol_print_date($object->date_fin,'day'))."\n";
                     $message.= GETPOST('detail_refuse','alpha')."\n\n";
-
 	                $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
 	                $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
                     $message.= "\n";
 
@@ -676,13 +672,13 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes' && $id > 0)
             $destinataire->fetch($object->fk_user);
             $emailTo = $destinataire->email;
 
-            if ($emailTo)
-            {
+            // From
+            $expediteur = new User($db);
+            $expediteur->fetch($object->fk_user_cancel);
+            $emailFrom = $expediteur->email;
 
-                // From
-                $expediteur = new User($db);
-                $expediteur->fetch($object->fk_user_cancel);
-                $emailFrom = $expediteur->email;
+            if (! empty($emailTo) && ! empty($emailFrom))
+            {
 
                 // Subject
 			    $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
@@ -693,10 +689,8 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes' && $id > 0)
                 // Content
            	    $message = $langs->transnoentitiesnoconv("Hello")." ".$destinataire->firstname.",\n";
                 $message.= "\n";
-
                 $message.= $langs->transnoentities("HolidaysCanceledBody", dol_print_date($object->date_debut,'day'), dol_print_date($object->date_fin,'day'))."\n";
                 $message.= "- ".$langs->transnoentitiesnoconv("ModifiedBy")." : ".dolGetFirstLastname($expediteur->firstname, $expediteur->lastname)."\n";
-
                 $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
                 $message.= "\n";
 
