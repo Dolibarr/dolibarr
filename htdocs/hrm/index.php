@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frederic France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +186,10 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         $holidaystatic=new Holiday($db);
         $userstatic=new User($db);
 
-        $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+        $listhalfday=array(
+            'morning'=>$langs->trans("Morning"),
+            "afternoon"=>$langs->trans("Afternoon"),
+        );
         $typeleaves=$holidaystatic->getTypes(1,-1);
 
         $i = 0;
