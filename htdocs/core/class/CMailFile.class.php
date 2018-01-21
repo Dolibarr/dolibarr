@@ -80,14 +80,16 @@ class CMailFile
 	var $atleastoneimage=0;    // at least one image file with file=xxx.ext into content (TODO Debug this. How can this case be tested. Remove if not used).
 	var $html_images=array();
 	var $images_encoded=array();
-	var $image_types = array('gif'  => 'image/gif',
-			'jpg'  => 'image/jpeg',
-			'jpeg' => 'image/jpeg',
-			'jpe'  => 'image/jpeg',
-			'bmp'  => 'image/bmp',
-			'png'  => 'image/png',
-			'tif'  => 'image/tiff',
-			'tiff' => 'image/tiff');
+	var $image_types = array(
+        'gif'  => 'image/gif',
+		'jpg'  => 'image/jpeg',
+		'jpeg' => 'image/jpeg',
+		'jpe'  => 'image/jpeg',
+		'bmp'  => 'image/bmp',
+		'png'  => 'image/png',
+		'tif'  => 'image/tiff',
+        'tiff' => 'image/tiff',
+    );
 
 
 	/**
@@ -395,9 +397,21 @@ class CMailFile
 
 			$host = dol_getprefix('email');
 
+			require_once DOL_DOCUMENT_ROOT.'/includes/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailParser.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Warning/Warning.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Warning/LocalTooLong.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/Parser.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/DomainPart.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/LocalPart.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Validation/EmailValidation.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Validation/RFCValidation.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailLexer.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailValidator.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 			// Create the message
-			$this->message = Swift_Message::newInstance();
+			//$this->message = Swift_Message::newInstance();
+			$this->message = new Swift_Message();
 
 			// Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
@@ -449,11 +463,11 @@ class CMailFile
 			if ($this->msgishtml) {
 				$this->message->setBody($msg,'text/html');
 				// And optionally an alternative body
-				//$this->message->addPart('Here is the message itself', 'text/plain');
+				$this->message->addPart(html_entity_decode(strip_tags($msg)), 'text/plain');
 			} else {
 				$this->message->setBody($msg,'text/plain');
 				// And optionally an alternative body
-				//$this->message->addPart('<q>Here is the message itself</q>', 'text/html');
+				$this->message->addPart($msg, 'text/html');
 			}
 
 			if ($this->atleastonefile)
@@ -491,7 +505,7 @@ class CMailFile
 		global $conf,$db,$langs;
 
 		$errorlevel=error_reporting();
-		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
+		//error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
 
 		$res=false;
 
@@ -721,19 +735,19 @@ class CMailFile
 				if (empty($conf->global->$keyforsmtpport))   $conf->global->$keyforsmtpport=ini_get('smtp_port');
 
 				// If we use SSL/TLS
-				$server=$conf->global->$keyforsmtpserver;
-				$secure='';
+				$server = $conf->global->$keyforsmtpserver;
+				$secure = '';
 				if (! empty($conf->global->$keyfortls) && function_exists('openssl_open')) $secure='ssl';
 				if (! empty($conf->global->$keyforstarttls) && function_exists('openssl_open')) $secure='tls';
 
-				$this->transport = Swift_SmtpTransport::newInstance($server, $conf->global->$keyforsmtpport, $secure);
+				$this->transport = new Swift_SmtpTransport($server, $conf->global->$keyforsmtpport, $secure);
 
 				if (! empty($conf->global->$keyforsmtpid)) $this->transport->setUsername($conf->global->$keyforsmtpid);
 				if (! empty($conf->global->$keyforsmtppw)) $this->transport->setPassword($conf->global->$keyforsmtppw);
 				//$smtps->_msgReplyTo  = 'reply@web.com';
 
 				// Create the Mailer using your created Transport
-				$this->mailer = Swift_Mailer::newInstance($this->transport);
+				$this->mailer = new Swift_Mailer($this->transport);
 
 				if (! empty($conf->global->MAIN_MAIL_DEBUG)) {
 					// To use the ArrayLogger
@@ -751,7 +765,7 @@ class CMailFile
 				if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
 				$res = true;
-				if (! empty($this->error) && ! $result) {
+				if (! empty($this->error) || ! $result) {
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				} else {
