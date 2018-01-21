@@ -203,7 +203,7 @@ if ($action == 'update' && $id > 0)
     // If no right to modify a request
     if (! $user->rights->holiday->write)
     {
-        setEventMessages($langs->transnoentitiesnoconv('CantUpdateCP') , null, 'errors');
+        setEventMessages($langs->transnoentitiesnoconv('CantUpdateCP'), null, 'errors');
         $action = 'request';
     } else {
 
