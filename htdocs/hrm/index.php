@@ -134,20 +134,21 @@ if (! empty($conf->holiday->enabled))
 
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-    print "<tr ".$bc[0].">";
+    print '<tr class="oddeven">';
     print '<td colspan="3">';
 
-    $out='';
+    $out = '';
     $typeleaves=$holiday->getTypes(1,1);
     foreach($typeleaves as $key => $val)
     {
     	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
     	$nb_holiday += $nb_type;
-    	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+    	$out.= '<li>'.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong></li>';
     }
-    print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+    print $langs->trans('SoldeCPUser', round($nb_holiday,5));
+    print '<ul>';
     print $out;
-
+    print '</ul>';
     print '</td>';
     print '</tr>';
     print '</table><br>';

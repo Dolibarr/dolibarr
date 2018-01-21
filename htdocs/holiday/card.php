@@ -758,14 +758,15 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         $out='';
         $typeleaves=$object->getTypes(1, 1);
-        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
-        print '<ul>';
     	foreach($typeleaves as $key => $val)
 		{
 			$nb_type = $object->getCPforUser($user->id, $val['rowid']);
 			$nb_holiday += $nb_type;
-			print '<li>'.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong></li>';
+			$out.= '<li>'.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong></li>';
 		}
+        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+        print '<ul>';
+        print $out;
         print '</ul>';
         dol_fiche_end();
 
@@ -1063,13 +1064,13 @@ else
 
         print '<tr>';
         print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+        print '<td>';
         if ($action != 'edit') {
-            print '<td>'.$valideur->getNomUrl(-1).'</td>';
+            print $valideur->getNomUrl(-1);
         } else {
-            print '<td>';
         	print $form->select_dolusers($object->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
-            print '</td>';
         }
+        print '</td>';
         print '</tr>';
 
         print '<tr>';
@@ -1154,7 +1155,7 @@ else
                 else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
             }
 
-            if ($canedit && $object->statut == 4)
+            if ($canedit && $object->statut == Holiday::STATUS_CANCELED)
             {
                 print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
             }
