@@ -170,6 +170,24 @@ if ($action == 'create')
     			$error++;
     		}
 	    }
+        if (! $error && $conf->agenda->enabled)
+        {
+            $langs->load('agenda');
+            require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+            $actioncom = new ActionComm($db);
+            $actioncom->label = $langs->trans('CPDraft');
+            $actioncom->note = $description;
+            $actioncom->percentage = -1;
+            $actioncom->elementtype = 'holiday';
+            $actioncom->fk_element = $id;
+            $actioncom->userownerid = $fuserid;
+            //$actioncom->userassigned = array($fuserid);
+            $actioncom->type_code = 'AC_HOL';
+            $actioncom->datep = $date_debut;
+            $actioncom->datef = $date_fin;
+            $actioncom->create($user);
+            setEventMessages($actioncom->error, $actioncom->errors, 'warnings');
+        }
 
 	    // If no SQL error we redirect to the request card
 	    if (! $error)
@@ -307,6 +325,18 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
             $error++;
 		}
 	}
+
+    if (! $error && $conf->agenda->enabled)
+    {
+        $langs->load('agenda');
+        require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+        $actioncom = new ActionComm($db);
+        $actioncoms = $action->getActions($db, 0, $id, 'holiday', ' AND a.code LIKE "AC_HOL"');
+        foreach ($actioncoms as $item) {
+            $item->delete();
+            setEventMessages($item->error, $item->errors, 'warnings');
+        }
+    }
 
 	if (! $error)
 	{

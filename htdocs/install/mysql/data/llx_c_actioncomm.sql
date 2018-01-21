@@ -37,6 +37,7 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 4,'AC_EMAIL','system','Send Email',NULL, 1, 4);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 5,'AC_RDV','system','Rendez-vous',NULL, 1, 1);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values (12,'AC_HOL','system','Holidays',NULL, 1, 5);
 -- Code kept for backward compatibility < 3.3 
 --insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 3,'AC_PROP','systemauto', 'Send commercial proposal by email','propal',0,10);
 --insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 8,'AC_COM','systemauto','Send customer order by email','order', 0,8);
@@ -46,4 +47,4 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 --insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 31,'AC_SUP_INV','systemauto','Send supplier invoice by email','invoice_supplier',0,7);
 -- Code used from 3.3+ when type of event is not used
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 40,'AC_OTH_AUTO','systemauto','Other (automatically inserted events)',NULL, 1, 20);
-insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 50,'AC_OTH','system','Other (manually inserted events)',NULL, 1, 5);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 50,'AC_OTH','system','Other (manually inserted events)',NULL, 1, 6);
