@@ -1,0 +1,17 @@
+{
+    "name": "mikehaertl/php-tmpfile",
+    "description": "A convenience class for temporary files",
+    "keywords": ["files"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Härtl",
+            "email": "haertl.mike@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "mikehaertl\\tmp\\": "src/"
+        }
+    }
+}

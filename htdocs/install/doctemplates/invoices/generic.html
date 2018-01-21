@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice Template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    {literal}
+        page { size:A4; margin-left:auto; margin-right:auto; }
+        html { height:100%; }
+        body { margin-left:2.2cm; margin-right:1cm; padding-bottom: 100px;}
+        table { border-collapse:collapse; border-spacing:0; border:0; width:100%; }
+        th, td { padding:0; }
+        @media print { #footer {page-break-after:always !important; position: fixed; bottom: 0; } tr { page-break-inside: avoid } #notes { page-break-inside: avoid }
+        .foldmark { position:absolute; background-color:black; height:1px; width:3mm; left:4mm; } }
+    {/literal}
+    </style>
+    <script>
+    {literal}
+        function substitutePdfVariables() {
+
+            function getParameterByName(name) {
+                var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+                return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+            }
+
+            function substitute(name) {
+                var value = getParameterByName(name);
+                var elements = document.getElementsByClassName(name);
+
+                for (var i = 0; elements && i < elements.length; i++) {
+                    elements[i].textContent = value;
+                }
+            }
+
+            ['frompage', 'topage', 'page', 'webpage', 'section', 'subsection', 'subsubsection']
+                .forEach(function(param) {
+                    substitute(param);
+                });
+        }
+    {/literal}
+    </script>
+</head>
+<body onload="substitutePdfVariables()">
+    <p>Page <span class="page"></span> / <span class="topage"></span></p>
+<div class="foldmark" style="top:35.35%;"></div>
+<div class="foldmark" style="top:70.70%;"></div>
+<div style="width:100%; height:5.1cm; background:url({DOL_MAIN_URL_ROOT}/viewimage.php?cache=1&modulepart=mycompany&file={$mysoc->logo}) right center no-repeat;"></div>
+<div style="font-size:100%; font-family:Helvetica, sans-serif; float:left; width:100%;">
+    <table>
+    <tr>
+        <td><span style="width:70%; font-size:65%; text-decoration:underline;">
+            {$mysoc->name} · {$mysoc->address} · 
+            {$mysoc->zip} {$mysoc->town}
+            </span><br><br>
+            {if !empty($object->thirdparty->name)}<strong>{$object->thirdparty->name}</strong><br>{/if}
+            {if !empty($object->thirdparty->name)}{$object->thirdparty->name}<br>{/if}
+            {if !empty($object->thirdparty->address)}{$object->thirdparty->address}<br><br>{else}<br>{/if}
+            {$object->thirdparty->zip} {$object->thirdparty->town}<br>
+            {if !empty($object->thirdparty->country)}<strong>{$object->thirdparty->country}</strong><br>{else}<br>{/if}
+            <br><br><br><br><br>
+        </td>
+        <td style="width:30%; vertical-align:top;">
+        <strong>{$mysoc->name}</strong><br>
+			{$mysoc->address}<br>
+			{$mysoc->zip} {$mysoc->town}<br>
+			<br>
+			<table>
+				<tr><td><strong>{$langs->trans("PhoneShort")}</strong></td><td>{$mysoc->phone}</td></tr>
+				<tr><td><strong>{$langs->trans("Fax")}</strong></td><td>{$mysoc->fax}</td></tr>
+				<tr><td><strong>{$langs->trans("Email")}</strong></td><td>{$mysoc->email}</td></tr>
+				<tr><td><strong>{$langs->trans("Web")}</strong></td><td>{$mysoc->url}</td></tr>
+            </table>
+        </td>
+    </tr>
+    </table>
+
+    <table>
+    <tr>
+        <td style="font-size: 100%; font-weight: bold;">
+            {$langs->trans("Bill")} {$object->ref}
+        </td>
+        <td style="text-align:right; font-size: 90%;">
+            {$mysoc->town}, {date("d.m.Y")}
+        </td>
+	</tr>
+	<tr>
+		<td colspan="2" style="border-bottom: 1px solid #000;">
+			<br>
+			Num Client: {$object->thirdparty->ref_client}<br>
+			Date Commande: {$orderDate}<br>
+			<br><br>
+		</td>
+	</tr>
+	</table>
+
+	<table>
+	<tr style="font-weight: bold;">
+		<td style="width:15%;">{$langs->trans("Ref")}</td>
+		<td style="width:45%;">{$langs->trans("Designation")}</td>
+		<td style="width:10%; text-align:right;">{$langs->trans("Qty")}</td>
+		<td style="width:15%; text-align:right;">{$langs->trans("TotalHT")}</td>
+		<td style="width:15%; text-align:right;">{$langs->trans("TotalTTC")}</td>
+	</tr>
+	<tr>
+		<td colspan="5" style="border-top:1px solid #000;">&nbsp;</td>
+	</tr>
+
+    {foreach from=$object->lines key=k item=v}
+	<tr>
+		<td>{$v->ref}</td>
+		<td>{$v->desc}</td>
+		<td style="text-align:right;">{$v->qty}</td>
+		<td style="text-align:right;">{price2num($v->subprice)}</td>
+		<td style="text-align:right;">{price2num($v->total_ttc)}</td>
+	</tr>
+    {/foreach}
+	<tr>
+		<td colspan="5" style="border-bottom:1px solid #000;">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="5">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="4" style="text-align:right;">Montant Net</td>
+		<td style="text-align:right;">{price2num($object->total_ht,'MT')}</td>
+	</tr>
+	<tr>
+		<td colspan="4" style="text-align:right;">{$langs->trans("TotalVAT")} {20} %</td>
+		<td style="text-align:right;">{price2num($object->total_tva,'MT')}</td>
+	</tr>
+	<tr>
+		<td colspan="5" style="border-bottom: 1px solid #000;">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="5">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="4" style="text-align:right; font-weight:bold;">{$langs->trans("AmountTTC")}</td>
+		<td style="text-align:right; font-weight:bold;">{price2num($object->total_ttc, 'MT')}</td>
+	</tr>
+	</table>
+
+    <br><br><br>
+
+    <table id="notes">
+        <tr>
+            <td style="font-weight:bold;"><u>Notes</u></td>
+        </tr>
+        <tr>
+            <td>
+                Le montant de la facture est payable dans les 14 jours sans déduction.<br>
+                Erreurs et omissions exceptées. Nos termes et conditions s'appliquent.<br><br>
+                Merci pour votre commande.
+            </td>
+        </tr>
+    </table>
+<table id="footer" style="position:fixed; bottom:5mm; left:0; font-size: 70%; font-weight: bold; text-align: center; width: 100%; vertical-align:bottom;border: none;background-color:#DDDDFF;border-top:solid 1mm #AAAADD;padding:2mm;">
+    <tr>
+        <td>
+        {$langs->trans("RegisteredOffice")}:{$mysoc->name} - {str_replace("\n", ", ", $mysoc->address)} {$mysoc->zip} {$mysoc->town}- {$langs->trans("Phone")}: {$mysoc->phone} - 
+        {$langs->convToOutputCharset(getFormeJuridiqueLabel($mysoc->forme_juridique_code))}
+        </td>
+    </tr>
+</table>
+</div>
+</body>
+</html>

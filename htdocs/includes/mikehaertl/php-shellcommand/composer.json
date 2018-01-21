@@ -1,0 +1,17 @@
+{
+    "name": "mikehaertl/php-shellcommand",
+    "description": "An object oriented interface to shell commands",
+    "keywords": ["shell"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Härtl",
+            "email": "haertl.mike@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "mikehaertl\\shellcommand\\": "src/"
+        }
+    }
+}

@@ -32,6 +32,8 @@ TCPDF                  6.2.12        LGPL-3+                     Yes            
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
 Stripe                 4.7.0         MIT licence                 Yes             Library for Stripe module
+Smarty                 3.1.30        LGPL-2.1+                   Yes             TPL for pdf generation
+phpwkhtmltopdf         2.2.2         MIT License                 Yes             PHP interface to wkhtml2pdf
 
 JS libraries:
 jQuery                 3.1.1         MIT License                 Yes             JS library
