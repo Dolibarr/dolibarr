@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 // Get parameters
 $myparam = GETPOST("myparam");
@@ -49,9 +49,14 @@ if ($user->societe_id > 0) accessforbidden();
 
 $now=dol_now();
 
-$langs->load("holiday");
+$langs->loadLangs(array('users', 'holiday', 'hrm', 'other'));
 
 $object = new Holiday($db);
+$extrafields = new ExtraFields($db);
+
+$hookmanager->initHooks(array('holidaycard'));     // Note that conf->hooks_modules contains array
+// Fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('holiday');
 
 // Load object
 if ($id > 0) {
