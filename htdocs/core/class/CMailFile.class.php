@@ -399,6 +399,8 @@ class CMailFile
 
 			require_once DOL_DOCUMENT_ROOT.'/includes/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailParser.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailLexer.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailValidator.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Warning/Warning.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Warning/LocalTooLong.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/Parser.php';
@@ -406,8 +408,6 @@ class CMailFile
 			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/LocalPart.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Validation/EmailValidation.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Validation/RFCValidation.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailLexer.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailValidator.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 			// Create the message
 			//$this->message = Swift_Message::newInstance();
