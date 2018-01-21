@@ -720,39 +720,6 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Formulaire de demande de congés payés
         print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
-        // // Si il y a une erreur
-        // if (GETPOST('error')) {
-
-        //     switch(GETPOST('error')) {
-        //         case 'datefin' :
-        //             $errors[] = $langs->trans('ErrorEndDateCP');
-        //             break;
-        //         case 'SQL_Create' :
-        //             $errors[] = $langs->trans('ErrorSQLCreateCP').' <b>'.htmlentities($_GET['msg']).'</b>';
-        //             break;
-        //         case 'CantCreate' :
-        //             $errors[] = $langs->trans('CantCreateCP');
-        //             break;
-        //         case 'Valideur' :
-        //             $errors[] = $langs->trans('InvalidValidatorCP');
-        //             break;
-        //         case 'nodatedebut' :
-        //             $errors[] = $langs->trans('NoDateDebut');
-        //             break;
-        //         case 'nodatefin' :
-        //             $errors[] = $langs->trans('NoDateFin');
-        //             break;
-        //         case 'DureeHoliday' :
-        //             $errors[] = $langs->trans('ErrorDureeCP');
-        //             break;
-        //         case 'alreadyCP' :
-        //             $errors[] = $langs->trans('alreadyCPexist');
-        //             break;
-        //     }
-
-	    //     setEventMessages($errors, null, 'errors');
-        // }
-
 
         $delayForRequest = $object->getConfCP('delayForRequest');
         //$delayForRequest = $delayForRequest * (60*60*24);
