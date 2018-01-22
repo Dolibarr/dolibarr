@@ -1025,6 +1025,9 @@ select.selectarrowonleft option {
 	div.statusref img {
     	padding-right: 3px !important;
    	}
+	div.statusrefbis {
+    	padding-right: 3px !important;
+   	}
 
    	input.buttonpayment {
 		min-width: 300px;
@@ -1328,6 +1331,11 @@ div.statusref {
 	clear: both;
 }
 div.statusref img {
+    padding-left: 8px;
+   	padding-right: 9px;
+   	vertical-align: text-bottom;
+}
+div.statusrefbis {
     padding-left: 8px;
    	padding-right: 9px;
    	vertical-align: text-bottom;

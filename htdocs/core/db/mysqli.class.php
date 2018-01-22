@@ -903,7 +903,8 @@ class DoliDBMysqli extends DoliDB
     }
 
     /**
-     *	Return charset used to store data in current database (same result than using SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = "databasename";)
+     *	Return charset used to store data in current database
+     *  Note: if we are connected to databasename, it is same result than using SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = "databasename";)
      *
      *	@return		string		Charset
      *  @see getDefaultCollationDatabase

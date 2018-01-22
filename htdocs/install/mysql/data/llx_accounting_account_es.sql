@@ -29,6 +29,7 @@
 
 --
 -- Descriptif des plans comptables ES PCG08-PYME
+-- ID 4000 - 4784
 --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4001,'PCG08-PYME','CAPIT', 'XXXXXX', '1', '0', 'Financiación básica', 1);

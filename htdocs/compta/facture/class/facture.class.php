@@ -531,6 +531,7 @@ class Facture extends CommonInvoice
 				else dol_print_error($resqlcontact);
 			}
 
+
 			/*
 			 *  Insert lines of invoices into database
 			 */
@@ -655,11 +656,20 @@ class Facture extends CommonInvoice
 						$prod = new Product($this->db);
 						$res=$prod->fetch($_facrec->lines[$i]->fk_product);
 					}
+
+					// For line from template invoice, we use data from template invoice
+					/*
 					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
 					$tva_npr = get_default_npr($mysoc,$soc,$prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
 					$localtax1_tx=get_localtax($tva_tx,1,$soc,$mysoc,$tva_npr);
 					$localtax2_tx=get_localtax($tva_tx,2,$soc,$mysoc,$tva_npr);
+					*/
+					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
+					$tva_npr = $_facrec->lines[$i]->info_bits;
+					if (empty($tva_tx)) $tva_npr=0;
+					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
+					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
 					$result_insert = $this->addline(
 						$_facrec->lines[$i]->desc,
@@ -670,7 +680,11 @@ class Facture extends CommonInvoice
 						$localtax2_tx,
 						$_facrec->lines[$i]->fk_product,
 						$_facrec->lines[$i]->remise_percent,
-						'','',0,$tva_npr,'','HT',0,
+						'','',0,
+						$tva_npr,
+						'',
+						'HT',
+						0,
 						$_facrec->lines[$i]->product_type,
 						$_facrec->lines[$i]->rang,
 						$_facrec->lines[$i]->special_code,

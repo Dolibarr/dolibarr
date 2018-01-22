@@ -1494,7 +1494,20 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
 		$morehtmlstatus.=$tmptxt;
 	}
-	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
+
+	// Add if object was dispatched "into accountancy"
+	if (! empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'facture', 'invoice', 'invoice_supplier', 'expensereport')))
+	{
+		if (method_exists($object, 'getVentilExportCompta'))
+		{
+			$accounted = $object->getVentilExportCompta();
+			$langs->load("accountancy");
+			$morehtmlstatus.='</div><div class="statusref statusrefbis">'.($accounted > 0 ? $langs->trans("Accounted") : $langs->trans("NotYetAccounted"));
+		}
+	}
+
+	// Add alias for thirdparty
+	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
 
 	// Add label
 	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')
@@ -5620,10 +5633,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 }
 
 /**
- *  Make substition into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
+ *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
+ *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced
  *
  *  @param	string		$text	      			Source string in which we must do substitution
- *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal')
+ *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
  *  @param	Translate	$outputlangs			Output language
  * 	@return string  		    				Output string after substitutions
  *  @see	complete_substitutions_array

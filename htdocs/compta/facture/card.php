@@ -840,8 +840,8 @@ if (empty($reshook))
 
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
-				$object->note_public		= trim($_POST['note_public']);
-				$object->note				= trim($_POST['note']);
+				$object->note_public		= trim(GETPOST('note_public','none'));
+				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int			= $_POST['ref_int'];
 				$object->modelpdf			= $_POST['model'];
@@ -854,7 +854,7 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Proprietes particulieres a facture de remplacement
 				$object->fk_facture_source = $_POST['fac_replacement'];
@@ -892,8 +892,8 @@ if (empty($reshook))
 				$object->number				= $_POST['facnumber'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
-				$object->note_public		= trim($_POST['note_public']);
-				$object->note				= trim($_POST['note']);
+				$object->note_public		= trim(GETPOST('note_public','none'));
+				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int			= $_POST['ref_int'];
 				$object->modelpdf			= $_POST['model'];
@@ -906,7 +906,7 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Proprietes particulieres a facture avoir
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
@@ -989,17 +989,17 @@ if (empty($reshook))
 
 			if (! $error)
 			{
-				$object->socid			= GETPOST('socid','int');
-				$object->type           = $_POST['type'];
-				$object->number         = $_POST['facnumber'];
+				$object->socid			 = GETPOST('socid','int');
+				$object->type            = $_POST['type'];
+				$object->number          = $_POST['facnumber'];
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public	= trim($_POST['note_public']);
-				$object->note_private   = trim($_POST['note_private']);
-				$object->ref_client     = $_POST['ref_client'];
-				$object->ref_int     	= $_POST['ref_int'];
-				$object->modelpdf       = $_POST['model'];
-				$object->fk_project		= $_POST['projectid'];
+				$object->note_public	 = trim(GETPOST('note_public','none'));
+				$object->note_private    = trim(GETPOST('note_private','none'));
+				$object->ref_client      = $_POST['ref_client'];
+				$object->ref_int     	 = $_POST['ref_int'];
+				$object->modelpdf        = $_POST['model'];
+				$object->fk_project		 = $_POST['projectid'];
 				$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
 				$object->fk_account         = GETPOST('fk_account', 'int');
@@ -1009,12 +1009,12 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Source facture
-				$object->fac_rec = GETPOST('fac_rec');
+				$object->fac_rec = GETPOST('fac_rec', 'int');
 
-				$id = $object->create($user);       // This include recopy of links from recurring invoice
+				$id = $object->create($user);       // This include recopy of links from recurring invoice and invoice lines
 			}
 		}
 
@@ -1044,8 +1044,8 @@ if (empty($reshook))
 				$object->number				= $_POST['facnumber'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
-				$object->note_public		= trim($_POST['note_public']);
-				$object->note_private		= trim($_POST['note_private']);
+				$object->note_public		= trim(GETPOST('note_public','none'));
+				$object->note_private		= trim(GETPOST('note_private','none'));
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int			= $_POST['ref_int'];
 				$object->modelpdf			= $_POST['model'];
@@ -1059,7 +1059,7 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				if (GETPOST('type') == Facture::TYPE_SITUATION)
 				{
@@ -1905,8 +1905,7 @@ if (empty($reshook))
 
 		// Define info_bits
 		$info_bits = 0;
-		if (preg_match('/\*/', $vat_rate))
-			$info_bits |= 0x01;
+		if (preg_match('/\*/', $vat_rate)) $info_bits |= 0x01;
 
 		// Define vat_rate
 		$vat_rate = str_replace('*', '', $vat_rate);

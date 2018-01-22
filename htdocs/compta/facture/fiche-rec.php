@@ -789,64 +789,63 @@ if (empty($reshook))
 
 		// Define info_bits
 		$info_bits = 0;
-		if (preg_match('/\*/', $vat_rate))
-			$info_bits |= 0x01;
+		if (preg_match('/\*/', $vat_rate)) $info_bits |= 0x01;
 
-			// Define vat_rate
-			$vat_rate = str_replace('*', '', $vat_rate);
-			$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
-			$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
+		// Define vat_rate
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
+		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
 
-			// Add buying price
-			$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
-			$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');       // If buying_price is '0', we muste keep this value
+		// Add buying price
+		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
+		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');       // If buying_price is '0', we muste keep this value
 
-			// Extrafields
-			$extrafieldsline = new ExtraFields($db);
-			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+		// Extrafields
+		$extrafieldsline = new ExtraFields($db);
+		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
 
-			$objectline = new FactureLigneRec($db);
-			if ($objectline->fetch(GETPOST('lineid')))
+		$objectline = new FactureLigneRec($db);
+		if ($objectline->fetch(GETPOST('lineid')))
+		{
+			$objectline->array_options=$array_options;
+			$result=$objectline->insertExtraFields();
+			if ($result < 0)
 			{
-				$objectline->array_options=$array_options;
-				$result=$objectline->insertExtraFields();
-				if ($result < 0)
-				{
-					setEventMessages($langs->trans('Error').$result, null, 'errors');
-				}
+				setEventMessages($langs->trans('Error').$result, null, 'errors');
 			}
+		}
 
-			// Unset extrafield
-			if (is_array($extralabelsline))
+		// Unset extrafield
+		if (is_array($extralabelsline))
+		{
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value)
 			{
-				// Get extra fields
-				foreach ($extralabelsline as $key => $value)
-				{
-					 unset($_POST["options_" . $key]);
-				}
+				 unset($_POST["options_" . $key]);
 			}
+		}
 
-			// Define special_code for special lines
-			$special_code=GETPOST('special_code');
-			if (! GETPOST('qty')) $special_code=3;
+		// Define special_code for special lines
+		$special_code=GETPOST('special_code');
+		if (! GETPOST('qty')) $special_code=3;
 
-			/*$line = new FactureLigne($db);
-            $line->fetch(GETPOST('lineid'));
-            $percent = $line->get_prev_progress($object->id);
+		/*$line = new FactureLigne($db);
+        $line->fetch(GETPOST('lineid'));
+        $percent = $line->get_prev_progress($object->id);
 
-            if (GETPOST('progress') < $percent)
-            {
+        if (GETPOST('progress') < $percent)
+        {
                 $mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
                 setEventMessages($mesg, null, 'warnings');
                 $error++;
                 $result = -1;
-            }*/
+        }*/
 
-			// Check minimum price
-			$productid = GETPOST('productid', 'int');
-			if (! empty($productid))
-			{
+		// Check minimum price
+		$productid = GETPOST('productid', 'int');
+		if (! empty($productid))
+		{
 			$product = new Product($db);
 			$product->fetch($productid);
 
@@ -854,18 +853,19 @@ if (empty($reshook))
 
 			$price_min = $product->price_min;
 			if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
-					$price_min = $product->multiprices_min [$object->thirdparty->price_level];
+				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 
-					$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
+			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
-					// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-					if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
-						setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
-						$error ++;
-					}
-			} else {
-				$type = GETPOST('type');
-				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
+			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
+			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min)))
+			{
+				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
+				$error ++;
+			}
+		} else {
+			$type = GETPOST('type');
+			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 
 				// Check parameters
 				if (GETPOST('type') < 0) {
@@ -873,39 +873,39 @@ if (empty($reshook))
 					$error ++;
 				}
 			}
-			if ($qty < 0) {
-				$langs->load("errors");
-				setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
-				$error ++;
-			}
+		if ($qty < 0) {
+			$langs->load("errors");
+			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
+			$error ++;
+		}
 
-			// Update line
-			if (! $error)
+		// Update line
+		if (! $error)
+		{
+			$result = $object->updateline(
+				GETPOST('lineid'),
+				$description,
+				$pu_ht,
+				$qty,
+				$vat_rate,
+				$localtax1_rate,
+				$localtax1_rate,
+				GETPOST('productid'),
+				GETPOST('remise_percent'),
+				'HT',
+				$info_bits,
+				0,
+				0,
+				$type,
+				0,
+				$special_code,
+				$label,
+				GETPOST('units'),
+				$pu_ht_devise
+			);
+
+			if ($result >= 0)
 			{
-				$result = $object->updateline(
-					GETPOST('lineid'),
-					$description,
-					$pu_ht,
-					$qty,
-					$vat_rate,
-					$localtax1_rate,
-					$localtax1_rate,
-					GETPOST('productid'),
-					GETPOST('remise_percent'),
-					'HT',
-					$info_bits,
-					0,
-					0,
-					$type,
-					0,
-					$special_code,
-					$label,
-					GETPOST('units'),
-					$pu_ht_devise
-				);
-
-				if ($result >= 0)
-				{
 					/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
                         // Define output language
                         $outputlangs = $langs;

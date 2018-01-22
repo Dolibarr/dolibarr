@@ -528,7 +528,10 @@ class Adherent extends CommonObject
 					{
 						//var_dump($this->user_login);exit;
 						//var_dump($this->login);exit;
-						$luser->login=$this->login;
+
+						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
+						if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $luser->login=$this->login;
+
 						$luser->civility_id=$this->civility_id;
 						$luser->firstname=$this->firstname;
 						$luser->lastname=$this->lastname;

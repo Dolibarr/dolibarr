@@ -44,7 +44,7 @@ $action	= GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 
@@ -141,11 +141,11 @@ if ($id > 0 || ! empty($ref))
 
 		$head = ordersupplier_prepare_head($object);
 		dol_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), 0, 'order');
-		
+
 		// Supplier order card
-	
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-		
+
 		$morehtmlref='<div class="refidno">';
 		// Ref supplier
 		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
@@ -186,12 +186,12 @@ if ($id > 0 || ! empty($ref))
 		    }
 		}
 		$morehtmlref.='</div>';
-		
-		
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);	
-		
+
+
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+
 		dol_fiche_end();
-		
+
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 

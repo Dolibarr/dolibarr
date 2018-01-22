@@ -25,6 +25,11 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Must be before the utf8 pagecode fix
+ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER accountancy_code_sell;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
+
+
 -- Drop old key with old name
 ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accountingaccount_fk_pcg_version;
 
@@ -53,6 +58,10 @@ ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accountingaccount_fk_pcg_
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell_intra VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell_intra VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell_export VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell_export VARCHAR(32) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) CHARACTER SET utf8;
@@ -635,9 +644,6 @@ create table llx_onlinesignature
 
 -- May have error due to duplicate keys
 ALTER TABLE llx_resource ADD UNIQUE INDEX uk_resource_ref (ref, entity);
-
-ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_intra varchar(32) AFTER accountancy_code_sell;
-ALTER TABLE llx_product ADD COLUMN accountancy_code_sell_export varchar(32) AFTER accountancy_code_sell_intra;
 
 ALTER TABLE llx_facture_rec ADD COLUMN modelpdf varchar(255) AFTER note_public;
 ALTER TABLE llx_facture_rec ADD COLUMN generate_pdf integer DEFAULT 1 AFTER auto_validate;

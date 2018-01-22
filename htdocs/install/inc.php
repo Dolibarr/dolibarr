@@ -220,8 +220,8 @@ if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant alrea
 	else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
 	else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
 	//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
-	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
 }
+if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
 if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
 // We init log handler for install
 $handlers = array('mod_syslog_file');
@@ -326,8 +326,8 @@ function conf($dolibarr_main_document_root)
         else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
         else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
-        if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
     }
+    if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
     if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
     // We init log handler for install
     $handlers = array('mod_syslog_file');

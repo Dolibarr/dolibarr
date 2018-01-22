@@ -35,9 +35,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 // Langs
 $langs->load("accountancy");
 
-$page = GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
 $action = GETPOST('action', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type");
@@ -49,7 +46,7 @@ $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmo
 $search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
 $search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
 $search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
-
+//var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';
 }
@@ -99,10 +96,10 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page) && ! GETPOST('noreset','int'))
+if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page','int') == '' && ! GETPOST('noreset','int'))
 {
-	$query = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$query .= " where date_start < now() and date_end > now() limit 1";
+	$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	$query.= " where date_start < '".$this->idate(dol_now())."' and date_end > '".$this->idate(dol_now())."' limit 1";
 	$res = $db->query($query);
 	if ($res->num_rows > 0) {
 		$fiscalYear = $db->fetch_object($res);

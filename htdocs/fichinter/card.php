@@ -316,7 +316,7 @@ if (empty($reshook))
 										$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
 									} else {
 										$prod->fetch($lines[$i]->fk_product);
-										$label .= $lines[$i]->product_label;
+										$label = $lines[$i]->product_label;
 									}
 
 									if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
