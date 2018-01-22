@@ -110,6 +110,7 @@ if ($disablenofollow) echo '</a>';
 <img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </div>
 
+<br>
 
 <div id="login_right">
 
