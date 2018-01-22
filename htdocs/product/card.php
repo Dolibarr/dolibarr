@@ -1633,20 +1633,20 @@ else
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
                 {
-			$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
-			if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+					$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+					if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
 
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="setbarcode">';
-			print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-			print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
-			print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="action" value="setbarcode">';
+					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
+					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+					print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+					print '</form>';
                 }
                 else
                 {
-                    print $object->barcode;
+					print $object->barcode;
                 }
                 print '</td></tr>'."\n";
             }
