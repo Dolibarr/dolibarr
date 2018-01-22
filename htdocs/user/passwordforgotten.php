@@ -168,24 +168,6 @@ else
     $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 }
 
-// Note: $conf->css looks like '/theme/eldy/style.css.php'
-/*
-$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
-$themepath=dol_buildpath($conf->css,1);
-if (! empty($conf->modules_parts['theme']))	// This slow down
-{
-	foreach($conf->modules_parts['theme'] as $reldir)
-	{
-		if (file_exists(dol_buildpath($reldir.$conf->css, 0)))
-		{
-			$themepath=dol_buildpath($reldir.$conf->css, 1);
-			break;
-		}
-	}
-}
-$conf_css = $themepath."?lang=".$langs->defaultlang;
-*/
-
 if (! $username) $focus_element = 'username';
 else $focus_element = 'password';
 
