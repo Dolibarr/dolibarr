@@ -174,7 +174,7 @@ if ($action == 'create')
     			setEventMessages($object->error, $object->errors, 'errors');
     			$error++;
     		}
-	    }
+        }
         if (! $error && $conf->agenda->enabled)
         {
             $langs->load('agenda');
@@ -186,12 +186,27 @@ if ($action == 'create')
             $actioncom->elementtype = 'holiday';
             $actioncom->fk_element = $id;
             $actioncom->userownerid = $fuserid;
-            //$actioncom->userassigned = array($fuserid);
+            //$actioncom->userassigned[$fuserid] = array(
+            //    'id' => $fuserid,
+            //    'transparency' => 1,
+            //);
             $actioncom->type_code = 'AC_HOL';
+            $actioncom->fulldayevent = 0;
+            $actioncom->priority = 0;
+            $actioncom->transparency = 1;
             $actioncom->datep = $date_debut;
             $actioncom->datef = $date_fin;
-            $actioncom->create($user);
-            setEventMessages($actioncom->error, $actioncom->errors, 'warnings');
+            $actioncom->societe = null;
+            $actioncom->socid = null;
+            $actioncom->contact = null;
+
+            $result = $actioncom->create($user);
+            if ($result>0) {
+                //success
+            } else {
+                setEventMessages($actioncom->error, $actioncom->errors, 'warnings');
+                $error++;
+            }
         }
 
 	    // If no SQL error we redirect to the request card
@@ -296,7 +311,19 @@ if ($action == 'update' && $id > 0)
                     {
                         setEventMessages($langs->trans('ErrorSQLCreateCP'), null, 'errors');
                         setEventMessages($object->error, $object->errors, 'errors');
+                        $error++;
                         $action = 'edit';
+                    }
+                }
+                if (! $error && $conf->agenda->enabled)
+                {
+                    $langs->load('agenda');
+                    require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+                    $actioncom = new ActionComm($db);
+                    $actioncoms = $actioncom->getActions($db, 0, $id, 'holiday', ' AND a.code LIKE "AC_HOL"');
+                    foreach ($actioncoms as $item) {
+                        //$item->update();
+                        //setEventMessages($item->error, $item->errors, 'warnings');
                     }
                 }
             }
