@@ -164,28 +164,6 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$menu->add('/compta/index.php?mainmenu=billing&amp;leftmenu=', $langs->trans("MenuFinancial"), 0, $showmode, $atarget, "billing", '', 50, $id, $idsel, $classname);
 	}
 
-	// Accounting
-	$menuqualified=0;
-	if (! empty($conf->comptabilite->enabled)) $menuqualified++;
-	if (! empty($conf->accounting->enabled)) $menuqualified++;
-	$tmpentry=array(
-		'enabled'=>$menuqualified,
-		'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire)),
-		'module'=>'comptabilite|accounting');
-	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
-	if ($showmode)
-	{
-		$langs->load("compta");
-
-		$classname="";
-		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
-		else $classname = 'class="tmenu"';
-		$idsel='accountancy';
-
-		$menu->add('/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=', $langs->trans("MenuAccountancy"), 0, $showmode, $atarget, "accountancy", '', 52, $id, $idsel, $classname);
-	}
-
-
 	// Bank
 	$tmpentry=array('enabled'=>(! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled)),
 	'perms'=>(! empty($user->rights->banque->lire) || ! empty($user->rights->prelevement->lire)),
@@ -201,7 +179,28 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		else $classname = 'class="tmenu"';
 		$idsel='bank';
 
-		$menu->add('/compta/bank/list.php?mainmenu=bank&amp;leftmenu=', $langs->trans("MenuBankCash"), 0, $showmode, $atarget, "bank", '', 60, $id, $idsel, $classname);
+		$menu->add('/compta/bank/list.php?mainmenu=bank&amp;leftmenu=', $langs->trans("MenuBankCash"), 0, $showmode, $atarget, "bank", '', 52, $id, $idsel, $classname);
+	}
+
+	// Accounting
+	$menuqualified=0;
+	if (! empty($conf->comptabilite->enabled)) $menuqualified++;
+	if (! empty($conf->accounting->enabled)) $menuqualified++;
+	$tmpentry=array(
+	'enabled'=>$menuqualified,
+	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire)),
+	'module'=>'comptabilite|accounting');
+	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
+	if ($showmode)
+	{
+		$langs->load("compta");
+
+		$classname="";
+		if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") { $classname='class="tmenusel"'; $_SESSION['idmenu']=''; }
+		else $classname = 'class="tmenu"';
+		$idsel='accountancy';
+
+		$menu->add('/accountancy/index.php?mainmenu=accountancy&amp;leftmenu=', $langs->trans("MenuAccountancy"), 0, $showmode, $atarget, "accountancy", '', 54, $id, $idsel, $classname);
 	}
 
 	// Projects

@@ -1496,7 +1496,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 
 	// Add if object was dispatched "into accountancy"
-	if (! empty($conf->accounting->enabled) && in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'expensereport')))
+	if (! empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'facture', 'invoice', 'invoice_supplier', 'expensereport')))
 	{
 		if (method_exists($object, 'getVentilExportCompta'))
 		{

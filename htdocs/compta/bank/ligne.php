@@ -291,7 +291,6 @@ if ($result)
         if ($action == 'delete_categ')
         {
             print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
-
         }
 
         print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
@@ -300,13 +299,14 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
+        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), -1, 'account', 0);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 
         dol_banner_tab($bankline, 'rowid', $linkback);
 
+		print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border" width="100%">';
@@ -597,6 +597,8 @@ if ($result)
 
         print "</table>";
 
+        print '</div>';
+
         dol_fiche_end();
 
 
@@ -617,6 +619,8 @@ if ($result)
             print '<input type="hidden" name="action" value="setreconcile">';
             print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+            print '<div class="fichecenter">';
 
             print '<table class="border" width="100%">';
 
@@ -655,6 +659,8 @@ if ($result)
             }
             print '</tr>';
             print '</table>';
+
+            print '</div>';
 
             print '<div class="center">';
 
