@@ -172,10 +172,10 @@ print '</td></tr>';
 print '</table>';
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
-$sql .= " bk.thirdparty_code, bk.numero_compte , bk.label_compte, bk.debit, ";
+$sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
 $sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code ";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
-$sql .= " WHERE (bk.thirdparty_code =  '" . $object->code_compta . "' AND bk.numero_compte = '" . $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER . "' )";
+$sql .= " WHERE (bk.subledger_account =  '" . $object->code_compta . "' AND bk.numero_compte = '" . $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER . "' )";
 
 if (dol_strlen($search_year)) {
 	$date_start = dol_mktime(0, 0, 0, 1, 1, $search_year);
