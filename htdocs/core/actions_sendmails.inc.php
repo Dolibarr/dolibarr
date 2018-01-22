@@ -102,7 +102,8 @@ if (GETPOST('removAll','alpha'))
  */
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
-	$trackid = GETPOST('trackid','aZ09');
+	if (empty($trackid)) $trackid = GETPOST('trackid','aZ09');
+
 	$subject='';$actionmsg='';$actionmsg2='';
 
 	if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
