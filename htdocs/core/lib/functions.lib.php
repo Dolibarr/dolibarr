@@ -1494,7 +1494,20 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
 		$morehtmlstatus.=$tmptxt;
 	}
-	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
+
+	// Add if object was dispatched "into accountancy"
+	if (! empty($conf->accounting->enabled) && in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'expensereport')))
+	{
+		if (method_exists($object, 'getVentilExportCompta'))
+		{
+			$accounted = $object->getVentilExportCompta();
+			$langs->load("accountancy");
+			$morehtmlstatus.='</div><div class="statusref statusrefbis">'.($accounted > 0 ? $langs->trans("Accounted") : $langs->trans("NotYetAccounted"));
+		}
+	}
+
+	// Add alias for thirdparty
+	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
 
 	// Add label
 	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')

@@ -709,6 +709,7 @@ if (empty($action) || $action == 'view') {
 			$("div.fiche form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
+			console.log("click on writebookkeeping");
 			$("div.fiche form input[name=\"action\"]").val("writebookkeeping");
 			$("div.fiche form input[type=\"submit\"]").click();
 			$("div.fiche form input[name=\"action\"]").val("");
