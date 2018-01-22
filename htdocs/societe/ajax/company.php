@@ -28,7 +28,6 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
 require '../../main.inc.php';
 
@@ -74,7 +73,6 @@ else
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$langs->load("companies");
-	$langs->load("main");
 
 	top_httphead();
 

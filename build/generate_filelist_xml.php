@@ -49,6 +49,8 @@ if (empty($argv[1]))
     print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
     exit -1;
 }
+parse_str($argv[1]);
+
 $i=0;
 while ($i < $argc)
 {
@@ -98,9 +100,9 @@ foreach ($includeconstants as $countrycode => $tmp)
 print "\n";
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
-$outputdir=dirname(__FILE__).'/../htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist-'.$release.'.xml'."\n";
-dol_delete_file($outputdir.'/filelist-'.$release.'.xml',0,1,1);
+$outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
+print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
+dol_delete_file($outputdir.'/filelist*.xml',0,1,1);
 
 $checksumconcat=array();
 
@@ -129,7 +131,7 @@ $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 */
 $regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install)$';  // Exclude dirs
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;

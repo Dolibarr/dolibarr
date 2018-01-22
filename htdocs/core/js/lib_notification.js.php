@@ -90,7 +90,7 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
                     if (arr.length > 0) {
                     	var audio = null; 
                         <?php
-                        if (! empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
+                        if (! empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
                             print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
                         }
                         ?>

@@ -89,9 +89,9 @@ if ($result)
 	print"\n<!-- debut table -->\n";
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
-	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
-	print_liste_field_titre($langs->trans("Reason"),$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
+	print_liste_field_titre("Line",$_SERVER["PHP_SELF"],"p.ref",'',$urladd);
+	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
+	print_liste_field_titre("Reason",$_SERVER["PHP_SELF"],"pr.motif","",$urladd);
 	print "</tr>\n";
 
 	$total = 0;
@@ -110,7 +110,7 @@ if ($result)
 
 		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 		print "</tr>\n";
-		
+
 		$i++;
 	}
 

@@ -85,9 +85,10 @@ if ($action == 'builddoc')
 
 $formother=new FormOther($db);
 
-llxHeader();
-
 $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("PaymentsReports"));
+
+llxHeader('', $titre);
+
 print load_fiche_titre($titre,'','title_accountancy.png');
 
 // Formulaire de generation
@@ -152,7 +153,7 @@ if ($year)
             {
                 if (preg_match('/^supplier_payment/i',$file))
                 {
-                    
+
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
                     print "<tr ".$bc[$var].">".'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';

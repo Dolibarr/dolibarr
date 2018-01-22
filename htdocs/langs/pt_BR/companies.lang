@@ -230,5 +230,6 @@ MergeOriginThirdparty=Duplicar terceiros (terceiros que deseja excluir)
 MergeThirdparties=Mesclar terceiros
 ThirdpartiesMergeSuccess=Terceiros foram mesclados
 SaleRepresentativeLogin=Login para o representante de vendas
+SaleRepresentativeLastname=Sobrenome do representante de vendas
 ErrorThirdpartiesMerge=Houve um erro ao excluir os terceiros. Por favor, verifique o log. As alterações foram revertidas.
 NewCustomerSupplierCodeProposed=Código sugerido para o novo cliente ou fornecedor está duplicado

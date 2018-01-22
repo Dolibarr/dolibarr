@@ -98,11 +98,11 @@ if ($result)
 
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin, "", "", $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Email"));
-    print_liste_field_titre($langs->trans("Phone"));
+    print_liste_field_titre("Lastname",$_SERVER["PHP_SELF"],"p.name", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre("Firstname",$_SERVER["PHP_SELF"],"p.firstname", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom", $begin, "", "", $sortfield,$sortorder);
+    print_liste_field_titre("Email");
+    print_liste_field_titre("Phone");
     print "</tr>\n";
 
     $var=True;
@@ -111,7 +111,7 @@ if ($result)
     {
         $obj = $db->fetch_object($result);
 
-        
+
 
         print '<tr class="oddeven">';
 

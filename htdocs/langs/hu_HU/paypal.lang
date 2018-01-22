@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modul beállítása
 PaypalDesc=Ez a modul ajánlat oldalakat, hogy fizetést <a href="http://www.paypal.com" target="_blank">PayPal</a> ügyfelek. Ezt fel lehet használni a szabad fizetés vagy a fizetés egy adott Dolibarr objektum (számla, megrendelés, ...)
-PaypalOrCBDoPayment=Fizessen hitelkártyával vagy Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Fizetés Paypal
 PAYPAL_API_SANDBOX=Üzemmódban végzett vizsgálat / homokozó
 PAYPAL_API_USER=API felhasználónév
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ajánlat fizetés &quot;szerves&quot; (hitelkártya + Paypal) vagy a &quot;Paypal&quot; csak
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=Ez a tranzakció id: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Add az url a Paypal fizetési amikor a dokumentumot postán
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=Ön jelenleg a &quot;sandbox&quot; mód
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+ONLINE_PAYMENT_SENDEMAIL=EMail to warn after a payment (success or not)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

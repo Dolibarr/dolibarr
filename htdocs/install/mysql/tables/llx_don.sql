@@ -28,7 +28,7 @@ create table llx_don
   tms             timestamp,
   fk_statut       smallint NOT NULL DEFAULT 0,  -- Status of donation promise or validate
   datedon         datetime,                     -- Date of the donation/promise
-  amount          real DEFAULT 0,
+  amount          double(24,8) DEFAULT 0,
   fk_payment      integer,
   paid            smallint default 0 NOT NULL,
   firstname       varchar(50),

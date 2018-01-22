@@ -169,22 +169,33 @@ class ExpeditionLineBatch extends CommonObject
 	}
 
 	/**
-	 * Retrieve all batch number details link to a shipment line
+	 * Retrieve all batch number detailed information of a shipment line
 	 *
-	 * @param	DoliDB	$db					Database object
-	 * @param	int		$id_line_expdet		id of shipment line
-	 * @return	variant						-1 if KO, array of ExpeditionLineBatch if OK
+	 * @param	DoliDB		$db					Database object
+	 * @param	int			$id_line_expdet		id of shipment line
+	 * @param	int			$fk_product			If provided, load also detailed information of lot
+	 * @return	int|array						-1 if KO, array of ExpeditionLineBatch if OK
 	 */
-	static function fetchAll($db,$id_line_expdet)
+	static function fetchAll($db, $id_line_expdet, $fk_product=0)
 	{
-		$sql="SELECT rowid,";
-		$sql.= "fk_expeditiondet";
-		$sql.= ", sellby";
-		$sql.= ", eatby";
-		$sql.= ", batch";
-		$sql.= ", qty";
-		$sql.= ", fk_origin_stock";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element;
+		$sql="SELECT";
+		$sql.= " eb.rowid,";
+		$sql.= " eb.fk_expeditiondet,";
+		$sql.= " eb.sellby as oldsellby,";				// deprecated
+		$sql.= " eb.eatby as oldeatby,";				// deprecated
+		$sql.= " eb.batch,";
+		$sql.= " eb.qty,";
+		$sql.= " eb.fk_origin_stock";
+		if ($fk_product > 0)
+		{
+			$sql.= ", pl.sellby";
+			$sql.= ", pl.eatby";
+		}
+		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as eb";
+		if ($fk_product > 0)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.batch = eb.batch AND pl.fk_product = ".$fk_product;
+		}
 		$sql.= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
 		dol_syslog(__METHOD__ ."", LOG_DEBUG);
@@ -200,8 +211,8 @@ class ExpeditionLineBatch extends CommonObject
 
 				$obj = $db->fetch_object($resql);
 
-				$tmp->sellby = $db->jdate($obj->sellby);
-				$tmp->eatby = $db->jdate($obj->eatby);
+				$tmp->sellby = $db->jdate($obj->sellby ? $obj->sellby : $obj->oldsellby);
+				$tmp->eatby = $db->jdate($obj->eatby ? $obj->eatby : $obj->oldeatby);
 				$tmp->batch = $obj->batch;
 				$tmp->id = $obj->rowid;
 				$tmp->fk_origin_stock = $obj->fk_origin_stock;
@@ -216,6 +227,7 @@ class ExpeditionLineBatch extends CommonObject
 		}
 		else
 		{
+			dol_print_error($db);
 			return -1;
 		}
 	}

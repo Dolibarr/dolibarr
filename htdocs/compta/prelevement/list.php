@@ -149,13 +149,13 @@ if ($result)
     print '</tr>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Line"),$_SERVER["PHP_SELF"]);
-    print_liste_field_titre($langs->trans("WithdrawalsReceipts"),$_SERVER["PHP_SELF"],"p.ref");
-    print_liste_field_titre($langs->trans("Bill"),$_SERVER["PHP_SELF"],"f.facnumber",'',$urladd);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
-    print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client",'','','align="center"');
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"p.datec","","",'align="center"');
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"pl.amount","","",'align="right"');
+    print_liste_field_titre("Line",$_SERVER["PHP_SELF"]);
+    print_liste_field_titre("WithdrawalsReceipts",$_SERVER["PHP_SELF"],"p.ref");
+    print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"f.facnumber",'',$urladd);
+    print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom");
+    print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client",'','','align="center"');
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"p.datec","","",'align="center"');
+    print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"pl.amount","","",'align="right"');
     print_liste_field_titre('');
 	print "</tr>\n";
 

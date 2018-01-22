@@ -4,8 +4,8 @@ Proposal=Đơn hàng đề xuất
 ProposalShort=Đơn hàng đề xuất
 ProposalsDraft=Dự thảo đơn hàng đề xuất
 ProposalsOpened=Open commercial proposals
-Prop=Đơn hàng đề xuất
 CommercialProposal=Đơn hàng đề xuất
+PdfCommercialProposalTitle=Đơn hàng đề xuất
 ProposalCard=Thẻ đơn hàng đề xuất
 NewProp=Đơn hàng đề xuất mới
 NewPropal=Đơn hàng đề xuất mới
@@ -63,6 +63,7 @@ ProposalLine=Chi tiết đơn hàng đề xuất
 AvailabilityPeriod=Độ chậm trễ có thể
 SetAvailability=Chỉnh thời gian trì hoãn sẵn có
 AfterOrder=sau đơn hàng
+OtherProposals=Các đơn hàng đề xuất khác
 ##### Availability #####
 AvailabilityTypeAV_NOW=Ngay lập tức
 AvailabilityTypeAV_1W=1 tuần

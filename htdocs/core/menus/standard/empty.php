@@ -150,11 +150,13 @@ class MenuManager
 		        print '<ul class="ulmenu" data-inset="true">';
 		        print '<li class="lilevel0">';
 
+		        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+		        $substitarray['__USERID__'] = $user->id;	// For backward compatibility
+		        $val['url'] = make_substitutions($val['url'], $substitarray);
+
 		        if ($val['enabled'] == 1)
 		        {
 		            $relurl=dol_buildpath($val['url'],1);
-		            $relurl=preg_replace('/__LOGIN__/',$user->login,$relurl);
-		            $relurl=preg_replace('/__USERID__/',$user->id,$relurl);
 		            $canonurl=preg_replace('/\?.*$/','',$val['url']);
 
 		            print '<a class="alilevel0" href="#">';
@@ -199,7 +201,7 @@ class MenuManager
 		            //var_dump($canonnexturl);
 		            print '<ul>'."\n";
 		            if (($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('tools')))
-		                || (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/index.php') !== false))
+		                || (strpos($canonrelurl,'/product/index.php') !== false || strpos($canonrelurl,'/compta/bank/list.php') !== false))
 		            {
 		                // We add sub entry
 		                print str_pad('',1).'<li class="lilevel1 ui-btn-icon-right ui-btn">';	 // ui-btn to highlight on clic
@@ -249,9 +251,11 @@ class MenuManager
 
 		                if ($showmenu)		// Visible (option to hide when not allowed is off or allowed)
 		                {
+		                	$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+		                	$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+		                	$val2['url'] = make_substitutions($val2['url'], $substitarray);
+
 		                    $relurl2=dol_buildpath($val2['url'],1);
-		                    $relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
-		                    $relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
 		                    $canonurl2=preg_replace('/\?.*$/','',$val2['url']);
 		                    //var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
 		                    if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
@@ -447,11 +451,14 @@ class MenuManager
 			{
 				print '<ul class="ulmenu" data-inset="true">';
 				print '<li class="lilevel0">';
+
+		        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+		        $substitarray['__USERID__'] = $user->id;	// For backward compatibility
+		        $val['url'] = make_substitutions($val['url'], $substitarray);
+
 				if ($val['enabled'] == 1)
 				{
 					$relurl=dol_buildpath($val['url'],1);
-					$relurl=preg_replace('/__LOGIN__/',$user->login,$relurl);
-					$relurl=preg_replace('/__USERID__/',$user->id,$relurl);
 
 					print '<a href="#">'.$val['titre'].'</a>'."\n";
 					// Search submenu fot this entry
@@ -474,9 +481,11 @@ class MenuManager
 					}
 					foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 					{
+	                	$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+	                	$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+	                	$val2['url'] = make_substitutions($val2['url'], $substitarray);
+
 						$relurl2=dol_buildpath($val2['url'],1);
-						$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
-						$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
 						//var_dump($val2);
 						print '<li><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
 					}

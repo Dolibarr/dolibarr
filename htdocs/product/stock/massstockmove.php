@@ -113,7 +113,8 @@ if ($action == 'addline')
 			if (empty($batch))
 			{
 				$error++;
-				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData"), null, 'errors');
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $producttmp->ref), null, 'errors');
 			}
 		}
 	}
@@ -328,9 +329,9 @@ llxHeader('', $title);
 print load_fiche_titre($langs->trans("MassStockTransferShort"));
 
 $titletoadd=$langs->trans("Select");
-$titletoaddnoent=$langs->transnoentitiesnoconv("Select");
 $buttonrecord=$langs->trans("RecordMovement");
-$buttonrecordnoent=$langs->trans("RecordMovement");
+$titletoaddnoent=$langs->transnoentitiesnoconv("Select");
+$buttonrecordnoent=$langs->transnoentitiesnoconv("RecordMovement");
 print $langs->trans("SelectProductInAndOutWareHouse",$titletoaddnoent,$buttonrecordnoent).'<br>';
 print '<br>'."\n";
 
@@ -342,7 +343,7 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="addline">';
 
 
-print '<div class="div-table-responsive-no-max">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="liste" width="100%">';
 //print '<div class="tagtable centpercent">';
 
@@ -402,7 +403,7 @@ print '</tr>';
 
 foreach($listofdata as $key => $val)
 {
-	
+
 
 	$productstatic->fetch($val['id_product']);
 	$warehousestatics->fetch($val['id_sw']);
@@ -444,7 +445,7 @@ print '<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
-$codemove=GETPOST('codemove');
+$codemove=(isset($_POST["codemove"])?GETPOST("codemove",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S'));
 $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now,'%Y-%m-%d %H:%M');
 
 print '<table class="border" width="100%">';

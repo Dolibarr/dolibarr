@@ -57,3 +57,4 @@ ErrorInsertingComment=Došlo k chybě při vkládání vašeho komentáře
 MoreChoices=Zadejte více možností pro hlasující
 SurveyExpiredInfo=Doba hlasování pro tuto anketu vypršela.
 EmailSomeoneVoted=%s vyplnilo řádek.\nMůžete si najít své hlasování v odkazu: \n%s
+ShowSurvey=Show survey

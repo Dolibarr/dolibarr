@@ -42,6 +42,8 @@ $typeconst=array('yesno','texte','chaine');
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 
 $type='donation';
 
@@ -199,7 +201,7 @@ else if ($action == 'setart885') {
 
 $dir = "../../core/modules/dons/";
 $form=new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -287,14 +289,14 @@ if (is_resource($handle))
 					else
 					{
 						print "<td align=\"center\">\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 						print '</td>';
 					}
 				}
 				else
 				{
 					print "<td align=\"center\">\n";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 					print "</td>";
 				}
 
@@ -308,7 +310,7 @@ if (is_resource($handle))
 				else
 				{
 					print "<td align=\"center\">";
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 					print '</td>';
 				}
 

@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * @deprecated      Old explorer. Not using Swagger. See instead explorer in htdocs/api/index.php.
  */
 
@@ -106,18 +106,7 @@ foreach ($modulesdir as $dir)
                     {
                         while (($file_searched = readdir($handle_part))!==false)
                         {
-                            // Support of the deprecated API.
-                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
-                            {
-                                $classname = ucwords($reg[1]).'Api';
-                                require_once $dir_part.$file_searched;
-                                if (class_exists($classname))
-                                {
-                                    dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
-                                    $api->r->addAPIClass($classname, '');
-                                }
-                            }
-                            elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
+                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
                             {
                                 $classname = ucwords($reg[1]);
                                 require_once $dir_part.$file_searched;
@@ -126,8 +115,8 @@ foreach ($modulesdir as $dir)
                                     dol_syslog("Found API classname=".$classname." into ".$dir);
                                     $listofapis[] = $classname;
                                 }
-                            }                                
-                        
+                            }
+
                             /*
                             if (is_readable($dir_part.$file_searched) && preg_match("/^(api_.*)\.class\.php$/i",$file_searched,$reg))
                             {
@@ -137,11 +126,11 @@ foreach ($modulesdir as $dir)
                                 $classname = ucfirst($classname);
                                 require_once $dir_part.$file_searched;
 
-                                if (class_exists($classname)) 
+                                if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname);    
+                                    dol_syslog("Found API classname=".$classname);
                                     $api->r->addAPIClass($classname,'');
-                                    
+
 
                                     /*
                                     require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Routes.php';
@@ -151,10 +140,10 @@ foreach ($modulesdir as $dir)
                                     } catch (Exception $e) {
                                         throw new RestException(500, "Error while parsing comments of `$classname` class. " . $e->getMessage());
                                     }*/
-                                    
+
                                     //$listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
                            /*     }
-                                
+
                             }*/
                         }
                     }
@@ -196,7 +185,7 @@ foreach($listofapis['v1'] as $key => $val)
 {
     if ($key == 'login') continue;
     if ($key == 'index') continue;
-    
+
     if ($key)
     {
         foreach($val as $method => $val2)
@@ -204,8 +193,8 @@ foreach($listofapis['v1'] as $key => $val)
             $newclass=$val2['className'];
 
             if (preg_match('/restler/i', $newclass)) continue;
-            
-            if ($oldclass != $newclass) 
+
+            if ($oldclass != $newclass)
             {
                 print "\n<br>\n".$langs->trans("Class").': '.$newclass.'<br>'."\n";
                 $oldclass = $newclass;
@@ -214,7 +203,7 @@ foreach($listofapis['v1'] as $key => $val)
             $url=$urlwithroot.'/api/index.php/'.$key;
             $url.='?api_key=token';
             print img_picto('','object_globe.png').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-        }        
+        }
     }
 }
 

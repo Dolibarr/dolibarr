@@ -71,3 +71,27 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
     exit;
 }
 
+if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'donext')
+{
+	// Increase date
+	$al = new AccountLine($db);
+    $al->dateo_next(GETPOST('rowid','int'));
+    $al->fetch(GETPOST('rowid','int'));
+
+    print '<span>'.dol_print_date($db->jdate($al->dateo),"day").'</span>';
+
+    exit;
+}
+
+if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'doprev')
+{
+	// Decrease date
+	$al =new AccountLine($db);
+    $al->dateo_previous(GETPOST('rowid','int'));
+    $al->fetch(GETPOST('rowid','int'));
+
+    print '<span>'.dol_print_date($db->jdate($al->dateo),"day").'</span>';
+
+    exit;
+}
+

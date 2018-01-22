@@ -14,8 +14,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE CARD_EDIT.TPL.PHP INDIVIDUAL -->
@@ -145,7 +152,7 @@ if ($this->control->tpl['fournisseur']) {
 </tr>
 
 <tr>
-	<td><?php echo $langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':''); ?></td>
+	<td><?php echo $langs->trans('EMail').($conf->global->SOCIETE_EMAIL_MANDATORY?'*':''); ?></td>
 	<td><input type="text" name="email" size="32" value="<?php echo $this->control->tpl['email']; ?>"></td>
 	<td><?php echo $langs->trans('Web'); ?></td>
 	<td><input type="text" name="url" size="32" value="<?php echo $this->control->tpl['url']; ?>"></td>

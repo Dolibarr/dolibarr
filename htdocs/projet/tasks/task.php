@@ -194,7 +194,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 
 /*
  * View
-*/
+ */
 
 
 llxHeader('', $langs->trans("Task"));
@@ -279,6 +279,7 @@ if ($id > 0 || ! empty($ref))
             print '</table>';
 
             print '</div>';
+
             print '<div class="fichehalfright">';
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
@@ -354,11 +355,11 @@ if ($id > 0 || ! empty($ref))
 
 			// Ref
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-			print '<td><input size="12" name="taskref" value="'.$object->ref.'"></td></tr>';
+			print '<td><input class="minwidth100" name="taskref" value="'.$object->ref.'"></td></tr>';
 
 			// Label
 			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-			print '<td><input size="30" name="label" value="'.$object->label.'"></td></tr>';
+			print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
 
 			// Project
 			if (empty($withproject))
@@ -375,7 +376,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Task parent
-			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			print '<tr><td>'.$langs->trans("ChildOfProjectTask").'</td><td>';
 			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
 			print '</td></tr>';
 
@@ -468,9 +469,20 @@ if ($id > 0 || ! empty($ref))
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
+
+			// Task parent
+			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			if ($object->fk_task_parent > 0)
+			{
+				$tasktmp=new Task($db);
+				$tasktmp->fetch($object->fk_task_parent);
+				print $tasktmp->getNomUrl(1);
+			}
+			print '</td></tr>';
 
 			// Date start - Date end
 			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
@@ -490,8 +502,21 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td></tr>';
 
+			// Description
+			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+			print nl2br($object->description);
+			print '</td></tr>';
+
+			print '</table>';
+			print '</div>';
+
+			print '<div class="fichehalfright"><div class="ficheaddleft">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border" width="100%">';
+
 			// Progress declared
-			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			if ($object->progress != '')
 			{
 				print $object->progress.' %';
@@ -506,12 +531,7 @@ if ($id > 0 || ! empty($ref))
 				if ($tmparray['total_duration'] > 0 && ! empty($object->planned_workload)) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
 				else print '0 %';
 			}
-			else print '';
-			print '</td></tr>';
-
-			// Description
-			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-			print nl2br($object->description);
+			else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
 			print '</td></tr>';
 
 			// Other attributes
@@ -522,6 +542,10 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			print '</div>';
+			print '</div>';
+
+			print '</div>';
+			print '<div class="clearboth"></div>';
 
 			dol_fiche_end();
 		}
@@ -587,6 +611,11 @@ if ($id > 0 || ! empty($ref))
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
 
 			print '</div></div></div>';
 		}

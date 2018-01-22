@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal module setup
 PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with credit card or Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Pay with Paypal
 PAYPAL_API_SANDBOX=Mode test/sandbox
 PAYPAL_API_USER=API username
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer payment "integral" (Credit card+Paypal) or "Paypal" only
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=This is id of transaction: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Add the url of Paypal payment when you send a document by mail
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=You are currently in the "sandbox" mode
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+ONLINE_PAYMENT_SENDEMAIL=EMail to warn after a payment (success or not)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Validation of online payment failed 
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

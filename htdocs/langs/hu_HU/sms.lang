@@ -48,4 +48,4 @@ SmsInfoNumero= (Nemzetközi formátum, azaz: 33899701761)
 DelayBeforeSending=Késleltetett küldés előtt (perc)
 SmsNoPossibleSenderFound=A küldő nem elérhető. Ellenőrizze az SMS szolgáltató beállításait.
 SmsNoPossibleRecipientFound=Nincs cél elérhető. Ellenőrizze beállítása az SMS szolgáltató.
-
+DisableStopIfSupported=Disable STOP message (if supported)

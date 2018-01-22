@@ -51,7 +51,3 @@ CheckRejected=Chèque renvoyé
 CheckRejectedAndInvoicesReopened=Chèques retournés et factures rouvertes
 DocumentModelSepaMandate=Modèle de mandat SEPA. Utile pour les pays européens en CEE seulement.
 DocumentModelBan=Modèle pour imprimer une page avec des informations BAN.
-NewVariousPayment=Nouveau paiement varié
-VariousPayment=Paiement varié
-VariousPayments=Différents paiements
-ShowVariousPayment=Afficher divers paiements

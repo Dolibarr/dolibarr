@@ -106,7 +106,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST("cancel") && ! empty($backtopage))
+    if (GETPOST('cancel','alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -251,7 +251,7 @@ if ($object->id > 0)
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
-        // TODO Replace this with same code than into listactions.php
+        // TODO Replace this with same code than into list.php
         //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
     }
 }

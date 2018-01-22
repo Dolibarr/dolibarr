@@ -172,12 +172,12 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.ref","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("NbOfCheques"),$_SERVER["PHP_SELF"],"bc.nbcheque","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"bc.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"bc.statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"bc.ref","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("NbOfCheques",$_SERVER["PHP_SELF"],"bc.nbcheque","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"bc.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"bc.statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -203,7 +203,7 @@ if ($resql)
 
     		// Bank
     		print '<td>';
-    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
+    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
     		else print '&nbsp;';
     		print '</td>';
 

@@ -87,7 +87,6 @@ UseTypeFieldToChange=Use campo Tipo para mudar
 OpenIDURL=URL do OpenID
 LoginUsingOpenID=Usar o OpenID para efetuar o login
 ColorUser=Cor do usuario
-UserAccountancyCode=Código de contabilidade do usuário
 UserLogoff=Usuário desconetado
 UserLogged=Usuário Conectado
 DateEmployment=Data do emprego

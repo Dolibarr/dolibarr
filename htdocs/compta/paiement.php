@@ -102,7 +102,7 @@ if (empty($reshook))
 	    $tmpinvoice=new Facture($db);
 	    foreach ($_POST as $key => $value)
 	    {
-	        if (substr($key,0,7) == 'amount_')
+			if (substr($key,0,7) == 'amount_' && GETPOST($key) != '')
 	        {
 	            $cursorfacid = substr($key,7);
 	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
@@ -251,7 +251,7 @@ if (empty($reshook))
 	    $paiement->datepaye     = $datepaye;
 	    $paiement->amounts      = $amounts;   // Array with all payments dispatching with invoice id
 	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
-	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement');
+	    $paiement->paiementid   = dol_getIdFromCode($db,GETPOST('paiementcode'),'c_paiement','code','id',1);
 	    $paiement->num_paiement = GETPOST('num_paiement');
 	    $paiement->note         = GETPOST('comment');
 
@@ -526,21 +526,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
          * List of unpaid invoices
          */
 
-        $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type, ';
+        $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type,';
         $sql.= ' f.datef as df, f.fk_soc as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-
-		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS)) {
-			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON (f.fk_soc = s.rowid)';
-		}
-
-		$sql.= ' WHERE f.entity = '.$conf->entity;
+		$sql.= ' WHERE f.entity IN ('.getEntity('facture', $conf->entity).')';
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
-
+		// Can pay invoices of all child of parent company
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
 			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->parent.')';
 		}
-
+		// Can pay invoices of all child of myself
+		if(!empty($conf->global->FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES)){
+			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->id.')';
+		}
         $sql.= ') AND f.paye = 0';
         $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
         if ($facture->type != 2)
@@ -585,11 +583,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
                 if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$multicurrencyalreadypayedlabel.'</td>';
                 if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$multicurrencyremaindertopay.'</td>';
+                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
                 print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
                 print '<td align="right">'.$alreadypayedlabel.'</td>';
                 print '<td align="right">'.$remaindertopay.'</td>';
                 print '<td align="right">'.$langs->trans('PaymentAmount').'</td>';
-                if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
@@ -659,6 +657,29 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     				    print '<td align="right">';
     				    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) print price($sign * $multicurrency_remaintopay);
     				    print '</td>';
+
+    				    print '<td align="right">';
+
+    				    // Add remind multicurrency amount
+    				    $namef = 'multicurrency_amount_'.$objp->facid;
+    				    $nameRemain = 'multicurrency_remain_'.$objp->facid;
+
+    				    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
+    				    {
+    				    	if ($action != 'add_paiement')
+    				    	{
+    				    		if (!empty($conf->use_javascript_ajax))
+    				    			print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
+    				    			print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
+    				    			print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+    				    	}
+    				    	else
+    				    	{
+    				    		print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
+    				    		print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+    				    	}
+    				    }
+    				    print "</td>";
 					}
 
 					// Price
@@ -695,33 +716,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     }
                     print "</td>";
 
-					// Multicurrency Price
-					if (! empty($conf->multicurrency->enabled))
-					{
-						print '<td align="right">';
-
-						// Add remind multicurrency amount
-	                    $namef = 'multicurrency_amount_'.$objp->facid;
-	                    $nameRemain = 'multicurrency_remain_'.$objp->facid;
-
-	                    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
-	                    {
-    	                    if ($action != 'add_paiement')
-    	                    {
-    	                        if (!empty($conf->use_javascript_ajax))
-    								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
-    	                        print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-    	                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
-    	                    }
-    	                    else
-    	                    {
-    	                        print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-    	                        print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
-    	                    }
-	                    }
-	                    print "</td>";
-					}
-
                     // Warning
                     print '<td align="center" width="16">';
                     //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
@@ -754,6 +748,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
+					if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
 					print '<td align="right"><b>'.price($sign * $total_ttc).'</b></td>';
                     print '<td align="right"><b>'.price($sign * $totalrecu);
                     if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
@@ -761,7 +756,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     print '</b></td>';
                     print '<td align="right"><b>'.price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT')).'</b></td>';
                     print '<td align="right" id="result" style="font-weight: bold;"></td>';		// Autofilled
-					if (!empty($conf->multicurrency->enabled)) print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
                     print '<td align="center">&nbsp;</td>';
                     print "</tr>\n";
                 }
@@ -833,9 +827,10 @@ if (! GETPOST('action','aZ09'))
 
     $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
     $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'c_paiement as c';
-    $sql.= ' WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id';
-    $sql.= ' AND f.entity = '.$conf->entity;
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement').')';
+    $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
+    $sql.= ' WHERE p.fk_facture = f.rowid';
+    $sql.= ' AND f.entity IN (' . getEntity('facture').')';
     if ($socid)
     {
         $sql.= ' AND f.fk_soc = '.$socid;
@@ -854,10 +849,10 @@ if (! GETPOST('action','aZ09'))
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'facnumber','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
+        print_liste_field_titre('Invoice',$_SERVER["PHP_SELF"],'facnumber','','','',$sortfield,$sortorder);
+        print_liste_field_titre('Date',$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
+        print_liste_field_titre('Type',$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
+        print_liste_field_titre('Amount',$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
 		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
         print "</tr>\n";
 

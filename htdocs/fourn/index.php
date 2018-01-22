@@ -33,7 +33,7 @@ $langs->load("orders");
 $langs->load("companies");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid", 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
@@ -81,7 +81,7 @@ if ($resql)
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
@@ -132,7 +132,7 @@ if (! empty($conf->fournisseur->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-				
+
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td  class="nowrap">';
 				$commandestatic->id=$obj->rowid;
@@ -151,7 +151,7 @@ if (! empty($conf->fournisseur->enabled))
 			}
 			if ($total>0)
 			{
-				
+
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";
@@ -190,7 +190,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
-				
+
 				print '<tr class="oddeven"><td class="nowrap">';
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
@@ -263,7 +263,7 @@ if ($resql)
 
 	while ($obj = $db->fetch_object($resql) )
 	{
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
@@ -300,7 +300,7 @@ if (count($companystatic->SupplierCategories))
 
 	foreach ($companystatic->SupplierCategories as $rowid => $label)
 	{
-		
+
 		print "<tr ".$bc[$var].">\n";
 		print '<td>';
 		$categstatic->id=$rowid;

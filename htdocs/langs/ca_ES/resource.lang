@@ -30,7 +30,7 @@ DictionaryResourceType=Tipus de recurs
 
 SelectResource=Seleccionar recurs
 
-IdResource=Id resource
+IdResource=Id de recurs
 AssetNumber=Número de serie
-ResourceTypeCode=Resource type code
+ResourceTypeCode=Codi de tipus de recurs
 ImportDataset_resource_1=Recursos

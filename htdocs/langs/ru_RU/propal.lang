@@ -4,8 +4,8 @@ Proposal=Коммерческое предложение
 ProposalShort=Предложение
 ProposalsDraft=Проект коммерческого предложения
 ProposalsOpened=Открытые коммерческие предложения
-Prop=Коммерческие предложения
 CommercialProposal=Коммерческое предложение
+PdfCommercialProposalTitle=Коммерческое предложение
 ProposalCard=Карточка предложения
 NewProp=Новое коммерческое предложение
 NewPropal=Новое предложение
@@ -63,6 +63,7 @@ ProposalLine=Предложение линия
 AvailabilityPeriod=Наличие задержки
 SetAvailability=Задержка устанавливается доступность
 AfterOrder=после заказа
+OtherProposals=Другие предложения
 ##### Availability #####
 AvailabilityTypeAV_NOW=Немедленный
 AvailabilityTypeAV_1W=1 неделя

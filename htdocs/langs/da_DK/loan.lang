@@ -37,7 +37,7 @@ MonthlyPaymentDesc=The montly payment is figured out using the following formula
 AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
 AmountFinanced=Amount Financed
 AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
-Totalsforyear=Totals for year
+Totalsforyear=I alt for året
 MonthlyPayment=Monthly Payment
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
 GoToInterest=%s will go towards INTEREST

@@ -4,8 +4,8 @@ Proposal=Komerčné návrh
 ProposalShort=Návrh
 ProposalsDraft=Navrhnúť obchodné návrhy
 ProposalsOpened=Otvoriť komerčnú ponuku
-Prop=Komerčné návrhy
 CommercialProposal=Komerčné návrh
+PdfCommercialProposalTitle=Komerčné návrh
 ProposalCard=Návrh karty
 NewProp=Nový obchodný návrh
 NewPropal=Nový návrh
@@ -63,6 +63,7 @@ ProposalLine=Návrh linky
 AvailabilityPeriod=Dostupnosť meškanie
 SetAvailability=Nastavte si obsadenosť meškanie
 AfterOrder=po objednaní
+OtherProposals=Ďalšie návrhy
 ##### Availability #####
 AvailabilityTypeAV_NOW=Bezprostredný
 AvailabilityTypeAV_1W=1 týždeň

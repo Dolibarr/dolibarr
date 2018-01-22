@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -180,7 +180,7 @@ if ($result > 0)
         print '</td></tr>';
     }
 
-    if ($object->fournisseur)
+    if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         print '<tr><td class="titlefield">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
@@ -210,12 +210,14 @@ if ($result > 0)
     print "\n";
 
     // Help
-    print '<br>'.$langs->trans("NotificationsDesc");
+    print '<div class="opacitymedium">';
+    print $langs->trans("NotificationsDesc");
     print '<br>'.$langs->trans("NotificationsDescUser");
     print '<br>'.$langs->trans("NotificationsDescContact");
     print '<br>'.$langs->trans("NotificationsDescGlobal");
+	print '</div>';
 
-    print '<br><br><br>'."\n";
+    print '<br><br>'."\n";
 
 
     // Add notification form
@@ -230,9 +232,9 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
+    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -305,9 +307,9 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
+    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('','','');
     print '</tr>';
 
@@ -463,11 +465,11 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("Object"),$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"n.daten",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'',$sortfield,$sortorder);
+    //print_liste_field_titre("Object",$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"n.daten",'',$param,'align="right"',$sortfield,$sortorder);
     print '</tr>';
 
     if ($num > 0)

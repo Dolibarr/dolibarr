@@ -53,10 +53,10 @@ AdminLogin=ادخل لDolibarr مدير قاعدة البيانات. تبقي ف
 PasswordAgain=أعد كتابة كلمة المرور مرة ثانية
 AdminPassword=Dolibarr كلمة السر لمدير قاعدة البيانات. تبقي فارغة إذا لم يذكر اسمه في اتصال
 CreateDatabase=إنشاء قاعدة بيانات
-CreateUser=إنشاء مستخدم
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=قاعدة بيانات -- وصول مستخدم الكومبيوتر ذو الصلاحيات العليا
 CheckToCreateDatabase=المربع إذا كان لا وجود قاعدة بيانات ، ويجب تهيئة. <br> في هذه الحالة ، يجب عليك ملء ادخل كلمة السر لحساب المستعملين المتميزين في أسفل هذه الصفحة.
-CheckToCreateUser=المربع اذا ادخل لا وجود له ، ويجب تهيئة. <br> في هذه الحالة ، يجب عليك ملء ادخل كلمة السر لحساب المستعملين المتميزين في أسفل هذه الصفحة.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=ادخل يسمح للمستخدم لإنشاء قواعد بيانات جديدة أو المستخدمين الجدد ، وإذا كانت غير مجدية وقاعدة البيانات وقاعدة البيانات ادخل موجود بالفعل (مثل عندما كنت استضافته استضافة ويب).
 KeepEmptyIfNoPassword=ترك فارغا إذا لم المستخدم كلمة السر (تجنب هذا؟)
 SaveConfigurationFile=إنقاذ القيم
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=يمكنك استخدام معالج الإعداد Dolibar
 KeepDefaultValuesMamp=استخدام معالج الإعداد DoliMamp ، حتى القيم المقترحة هنا بالفعل الأمثل. تغييرها إلا إذا كنت تعرف ما تفعله.
 KeepDefaultValuesProxmox=يمكنك استخدام معالج إعداد Dolibarr من الأجهزة الظاهرية Proxmox، بحيث يتم تحسين بالفعل القيم المقترحة هنا. تغييرها إلا إذا كنت تعرف ما تفعله.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=إصلاح البيانات الذي لم تتم تسويته
@@ -191,9 +193,11 @@ MigrationActioncommElement=تحديث البيانات على الإجراءات
 MigrationPaymentMode=بيانات الهجرة لطريقة الدفع
 MigrationCategorieAssociation=تحديث الفئات
 MigrationEvents=الترحيل من الأحداث لإضافة مالك الحدث في جدول الاحالة
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=إعادة تحديث الوحدات %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=عرض خيارات غير متوفرة
 HideNotAvailableOptions=إخفاء خيارات غير متوفرة
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

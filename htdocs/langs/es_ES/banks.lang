@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banco
 MenuBankCash=Bancos/Cajas
+MenuVariousPayment=Pagos varios
+MenuNewVariousPayment=Nuevo pago varios
 BankName=Nombre del banco
 FinancialAccount=Cuenta
 BankAccount=Cuenta bancaria
@@ -87,6 +89,7 @@ AccountIdShort=Número
 LineRecord=Registro
 AddBankRecord=Añadir registro
 AddBankRecordLong=Añadir registro manual
+Conciliated=Reconciliado
 ConciliatedBy=Conciliado por
 DateConciliating=Fecha conciliación
 BankLineConciliated=Registro conciliado
@@ -152,6 +155,9 @@ BankAccountModelModule=Modelos de documentos para cuentas bancarias
 DocumentModelSepaMandate=Plantilla de mandato SEPA, usable únicamente para paises miembros de la UEE
 DocumentModelBan=Plantilla para imprimir una página con la información IBAN.
 NewVariousPayment=Nuevo pago varios
-VariousPayment=Pago varios
+VariousPayment=Pagos varios
 VariousPayments=Pagos varios
 ShowVariousPayment=Mostrar pago varios
+AddVariousPayment=Añadir pagos varios
+YourSEPAMandate=Su mandato SEPA
+FindYourSEPAMandate=Este es su mandato SEPA para autorizar a nuestra empresa a realizar un petición de débito directo a su banco. Gracias por devolverlo firmado (escaneo del documento firmado) o enviado por correo a

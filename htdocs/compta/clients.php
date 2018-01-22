@@ -69,7 +69,7 @@ if ($action == 'note')
 	$result = $db->query($sql);
 }
 
-if ($mode == 'search') 
+if ($mode == 'search')
 {
 	$resql=$db->query($sql);
 	if ($resql) {
@@ -144,11 +144,11 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"s.town","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("AccountancyCode",$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -178,7 +178,7 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		
+
 
 		print '<tr class="oddeven">';
 		print '<td>';

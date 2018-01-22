@@ -152,7 +152,7 @@ else if (! empty($_ENV["dol_entity"]))							// Entity inside a CLI script
 {
 	$conf->entity = $_ENV["dol_entity"];
 }
-else if (isset($_POST["loginfunction"]) && GETPOST("entity"))	// Just after a login page
+else if (isset($_POST["loginfunction"]) && GETPOST("entity",'int'))	// Just after a login page
 {
 	$conf->entity = GETPOST("entity",'int');
 }
@@ -235,7 +235,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 if (! defined('NOREQUIRETRAN'))
 {
     $langcode=(GETPOST('lang','aZ09')?GETPOST('lang','aZ09',1):(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
-	$langs->setDefaultLang($langcode);
+    if (defined('MAIN_LANG_DEFAULT')) $langcode=constant('MAIN_LANG_DEFAULT');
+    $langs->setDefaultLang($langcode);
 }
 
 
