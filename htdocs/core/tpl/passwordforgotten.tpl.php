@@ -82,6 +82,8 @@ if ($disablenofollow) echo '</a>';
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </div>
 
+<br>
+
 <div id="login_right">
 
 <table summary="Login pass" class="centpercent">
@@ -89,7 +91,8 @@ if ($disablenofollow) echo '</a>';
 <!-- Login -->
 <tr>
 <td valign="bottom" class="nowrap center">
-<span class="span-icon-user">
+<!-- <span class="span-icon-user">-->
+<span class="fa fa-user">
 <input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
 </td>
@@ -125,7 +128,8 @@ if (! empty($morelogincontent)) {
 
 	<table class="login_table_securitycode centpercent"><tr>
 	<td>
-	<span class="span-icon-security">
+	<!-- <span class="span-icon-security"> -->
+	<span class="nofa">
 	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
 	</span>
 	</td>
@@ -146,7 +150,7 @@ if (! empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div align="center" style="margin-top: 8px;">

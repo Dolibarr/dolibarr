@@ -1731,7 +1731,6 @@ form#login {
 	max-width: 530px;
 	color: #aaa !important;
 	padding-bottom: 20px;
-	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1759,7 +1758,7 @@ form#login {
 	border: none;
 	border-bottom: solid 1px rgba(180,180,180,.4);
 	padding: 5px;
-	margin-left: 18px;
+	margin-left: 5px;
 	margin-top: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
@@ -2982,9 +2981,6 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
-	.boxstats, .boxstats130 {
-        width: 90px;
-    }
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;

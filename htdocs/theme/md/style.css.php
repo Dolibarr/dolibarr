@@ -3053,9 +3053,6 @@ div .tdtop {
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
-	.boxstats, .boxstats130 {
-        width: 90px;
-    }
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;

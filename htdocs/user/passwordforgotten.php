@@ -133,12 +133,10 @@ if ($action == 'buildnewpassword' && $username)
                     {
 
                         $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,dolObfuscateEmail($edituser->email)).'</div>';
-                        //$message.=$newpassword;
                         $username='';
                     }
                     else
                     {
-                        //$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
                         $message.= '<div class="error">'.$edituser->error.'</div>';
                     }
                 }
