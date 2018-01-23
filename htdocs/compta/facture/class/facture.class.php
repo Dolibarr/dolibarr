@@ -540,7 +540,7 @@ class Facture extends CommonInvoice
 
 						$newinvoiceline->fk_parent_line=$fk_parent_line;
 
-						if($newinvoiceline->fk_remise_except){
+						if($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except){
                             $discount = new DiscountAbsolute($this->db);
                             $discount->fetch($newinvoiceline->fk_remise_except);
 
