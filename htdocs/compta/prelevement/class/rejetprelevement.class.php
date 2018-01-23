@@ -239,7 +239,7 @@ class RejetPrelevement
 			$subject = $langs->trans("InfoRejectSubject");
 			$sendto = $emuser->getFullName($langs)." <".$emuser->email.">";
 			$from = $this->user->getFullName($langs)." <".$this->user->email.">";
-			$msgishtml=0;
+			$msgishtml=1;
 
 			$arr_file = array();
 			$arr_mime = array();
