@@ -2985,6 +2985,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
         float: left;
     	padding-left: 5px;
     }
+    .boxstats130 {
+    	width: 148px;
+    }
     .boxstats {
         width: 100px;
     }

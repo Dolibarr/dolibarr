@@ -1066,12 +1066,6 @@ function top_httphead($contenttype='text/html')
 		// default-src https://cdn.example.net; object-src 'none'
 		header("Content-Security-Policy: ".$conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY);
 	}
-
-
-	// On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
-	/*if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) {
-        ob_start("ob_gzhandler");
-    }*/
 }
 
 /**

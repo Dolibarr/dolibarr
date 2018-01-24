@@ -3057,6 +3057,9 @@ div .tdtop {
         float: left;
     	padding-left: 5px;
     }
+    .boxstats130 {
+    	width: 148px;
+    }
     .boxstats {
         width: 100px;
     }
