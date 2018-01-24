@@ -1047,9 +1047,10 @@ if (! function_exists("llxHeader"))
  *  Show HTTP header
  *
  *  @param  string  $contenttype    Content type. For example, 'text/html'
+ *  @param	int		$forcenocache	Force disabling of cache for the page
  *  @return	void
  */
-function top_httphead($contenttype='text/html')
+function top_httphead($contenttype='text/html', $forcenocache=0)
 {
 	global $conf;
 
@@ -1065,6 +1066,10 @@ function top_httphead($contenttype='text/html')
 		// For example, to restrict everything to one domain, except object, ...
 		// default-src https://cdn.example.net; object-src 'none'
 		header("Content-Security-Policy: ".$conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY);
+	}
+	if ($forcenocache)
+	{
+		header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
 	}
 }
 
