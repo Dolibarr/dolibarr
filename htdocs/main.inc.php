@@ -212,7 +212,7 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 
 
 // Init session. Name of session is specific to Dolibarr instance.
-// Note: the function dol_getprefix have been redefined to manage another area to protect with a different cookie.
+// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
 $prefix=dol_getprefix('');
 
 $sessionname='DOLSESSID_'.$prefix;
