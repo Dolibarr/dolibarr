@@ -27,7 +27,7 @@ if (empty($conf) || ! is_object($conf))
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-if (GETPOST('dol_hide_topmenu')) $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_topmenu')) $conf->dol_hide_topmenu=1;
 if (GETPOST('dol_hide_leftmenu')) $conf->dol_hide_leftmenu=1;
 if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
@@ -39,7 +39,9 @@ if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 $php_self = $_SERVER['PHP_SELF'];
 $php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
 
-print top_htmlhead('',$langs->trans('SendNewPassword'));
+$titleofpage=$langs->trans('SendNewPassword');
+
+print top_htmlhead('', $titleofpage);
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
@@ -48,7 +50,7 @@ print top_htmlhead('',$langs->trans('SendNewPassword'));
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
-	/* Set focus on correct field */
+	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
