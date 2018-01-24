@@ -386,7 +386,11 @@ class Contrat extends CommonObject
 		$result=$this->thirdparty->set_as_client();
 
 		// Define new ref
-		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		if ($force_number)
+		{
+			$num = $force_number;
+		}
+		else if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$num = $this->getNextNumRef($this->thirdparty);
 		}
