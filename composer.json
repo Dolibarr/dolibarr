@@ -13,7 +13,7 @@
     	"agenda"
     ],
     "homepage": "https://www.dolibarr.org",
-    "license": "GPL-3.0+",
+    "license": "GPL-3.0-or-later",
     "support": {
         "issues": "https://github.com/Dolibarr/dolibarr/issues",
         "forum": "https://www.dolibarr.org/forum",
