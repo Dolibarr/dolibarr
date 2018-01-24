@@ -6,6 +6,7 @@ Permission=Permission
 Permissions=Permissions
 EditPassword=Edit password
 SendNewPassword=Regenerate and send password
+SendNewPasswordLink=Send link to reset password
 ReinitPassword=Regenerate password
 PasswordChangedTo=Password changed to: %s
 SubjectNewPassword=Your new password for %s
