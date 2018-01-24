@@ -4033,10 +4033,13 @@ td.gminorheadingwkend {
 td.gminorheading {
     color: #666 !important;
 }
+.glistlbl, .glistgrid {
+	width: 582px !important;
+}
 .gtaskname div, .gtaskname {
-    min-width: 200px !important;
-    max-width: 200px !important;
-    width: 200px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    width: 250px !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;
