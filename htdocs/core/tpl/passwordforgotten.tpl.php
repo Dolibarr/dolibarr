@@ -81,7 +81,7 @@ if ($disablenofollow) echo '</a>';
 <div id="login_line1">
 
 <div id="login_left">
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+<img alt="" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </div>
 
 <br>
@@ -128,7 +128,7 @@ if (! empty($morelogincontent)) {
 	<tr>
 	<td class="tdtop nowrap none center">
 
-	<table class="login_table_securitycode centpercent"><tr>
+	<table class="login_table_securitycode centpercent"><tr class="valignmiddle">
 	<td>
 	<!-- <span class="span-icon-security"> -->
 	<span class="nofa">
