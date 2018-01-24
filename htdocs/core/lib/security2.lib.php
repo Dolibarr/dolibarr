@@ -445,6 +445,7 @@ function encodedecode_dbpassconf($level=0)
  *
  * @param		boolean		$generic		true=Create generic password (32 chars/numbers), false=Use the configured password generation module
  * @return		string						New value for password
+ * @see dol_hash
  */
 function getRandomPassword($generic=false)
 {

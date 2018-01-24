@@ -76,6 +76,7 @@ function dol_decode($chain)
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
+ *  @getRandomPassword
  */
 function dol_hash($chain, $type='0')
 {
