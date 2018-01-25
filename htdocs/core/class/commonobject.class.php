@@ -4645,11 +4645,11 @@ abstract class CommonObject
 			}
 			else
 			{
-				if ($trigger)
+				if (!$notrigger)
 				{
 					// Call trigger
 					$this->context=array('extrafieldaddupdate'=>1);
-					$result=$this->call_trigger(strtoupper(get_class($this)) . '_EXTRAFIELDS_MODIFY', $userused);
+					$result=$this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
 					if ($result < 0) $error++;
 					// End call trigger
 				}
