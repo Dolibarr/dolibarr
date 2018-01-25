@@ -13,6 +13,7 @@
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2018      Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4503,11 +4504,11 @@ abstract class CommonObject
 	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
 	 *
-	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	bool        $notrigger      false=launch triggers after, true=disable triggers
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
 	 */
-	function insertExtraFields($trigger='',$userused=null)
+	function insertExtraFields($notrigger=false, $userused=null)
 	{
 		global $conf,$langs,$user;
 
@@ -4648,7 +4649,7 @@ abstract class CommonObject
 				{
 					// Call trigger
 					$this->context=array('extrafieldaddupdate'=>1);
-					$result=$this->call_trigger($trigger, $userused);
+					$result=$this->call_trigger(strtoupper(get_class($this)) . '_EXTRAFIELDS_MODIFY', $userused);
 					if ($result < 0) $error++;
 					// End call trigger
 				}
