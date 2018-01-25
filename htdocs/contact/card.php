@@ -607,7 +607,7 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && ($conf->global->MAIN_SHOW_REGION_IN_STATE == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE == 2))
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
                     print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
                 }
@@ -860,7 +860,7 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && ($conf->global->MAIN_SHOW_REGION_IN_STATE == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE == 2))
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
                     print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
