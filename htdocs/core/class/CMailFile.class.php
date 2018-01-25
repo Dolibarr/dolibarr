@@ -395,25 +395,32 @@ class CMailFile
 			// Use Swift Mailer library
 			// ------------------------------------------
 
-			$host = dol_getprefix('email');
+            $host = dol_getprefix('email');
 
-			require_once DOL_DOCUMENT_ROOT.'/includes/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailParser.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailLexer.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/EmailValidator.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Warning/Warning.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Warning/LocalTooLong.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/Parser.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/DomainPart.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Parser/LocalPart.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Validation/EmailValidation.php';
-			require_once DOL_DOCUMENT_ROOT.'/includes/egulias/email-validator/EmailValidator/Validation/RFCValidation.php';
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
+
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailParser.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailLexer.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailValidator.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Warning/Warning.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Warning/LocalTooLong.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Parser/Parser.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Parser/DomainPart.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Parser/LocalPart.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Validation/EmailValidation.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Validation/RFCValidation.php';
+
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/InputByteStream.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/Signer.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/Signers/HeaderSigner.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/Signers/DKIMSigner.php';
+			//require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/classes/Swift/SignedMessage.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 			// Create the message
 			//$this->message = Swift_Message::newInstance();
 			$this->message = new Swift_Message();
-
-			// Adding a trackid header to a message
+            //$this->message = new Swift_SignedMessage();
+            // Adding a trackid header to a message
 			$headers = $this->message->getHeaders();
 			$headers->addTextHeader('X-Dolibarr-TRACKID', $trackid);
 			$headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
@@ -749,7 +756,16 @@ class CMailFile
 				// Create the Mailer using your created Transport
 				$this->mailer = new Swift_Mailer($this->transport);
 
-				if (! empty($conf->global->MAIN_MAIL_DEBUG)) {
+                // DKIM SIGN
+                if ($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED) {
+                    $privateKey = $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
+                    $domainName = $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
+                    $selector = $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+                    $signer = new Swift_Signers_DKIMSigner($privateKey, $domainName, $selector);
+                    $this->message->attachSigner($signer);
+                }
+
+                if (! empty($conf->global->MAIN_MAIL_DEBUG)) {
 					// To use the ArrayLogger
 					$this->logger = new Swift_Plugins_Loggers_ArrayLogger();
 					// Or to use the Echo Logger
