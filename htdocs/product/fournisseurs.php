@@ -595,7 +595,7 @@ if ($id > 0 || $ref)
 				$product_fourn = new ProductFournisseur($db);
 				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
 				$nbtotalofrecords = count($product_fourn_list);
-			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png',0,'','',count($product_fourn_list),1);
 
 				// Suppliers list title
 			    print '<div class="div-table-responsive">';
