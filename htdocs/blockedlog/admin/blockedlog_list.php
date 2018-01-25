@@ -160,7 +160,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"archive-log-" .(GETPOST('yeartoexport','int')>0?GETPOST('yeartoexport','int').'-':'').'-'.$previoushash. ".csv\"");
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport','int')>0?GETPOST('yeartoexport','int').'-':'').$previoushash. ".csv\"");
 
 			print $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
@@ -319,12 +319,12 @@ if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab',
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
 print '<div align="right">';
-print $langs->trans("YearToExport").': ';
-print '<input type="text" name="yeartoexport" class="maxwidth100" value="'.GETPOST('yeartoexport','int').'">';
+print $langs->trans("RestrictYearToExport").': ';
+print '<input type="text" name="yeartoexport" class="maxwidth75" value="'.GETPOST('yeartoexport','int').'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
-print ' </div>';
+print ' </div><br>';
 
 print '</form>';
 
@@ -471,7 +471,7 @@ if (is_array($blocks))
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
 		   	print '<td>';
-		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature);
+		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint');
 		   	print '</td>';
 
 		   	// Status
