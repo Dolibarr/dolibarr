@@ -1790,29 +1790,57 @@ abstract class CommonObject
 	 *  Change the shipping method
 	 *
 	 *  @param      int     $shipping_method_id     Id of shipping method
+     *  @param      bool    $notrigger              false=launch triggers after, true=disable triggers
+     *  @param      User	$userused               Object user
+	 *
 	 *  @return     int              1 if OK, 0 if KO
 	 */
-	function setShippingMethod($shipping_method_id)
+	function setShippingMethod($shipping_method_id, $notrigger=false, $userused=null)
 	{
+        global $user;
+
+        if (empty($userused)) $userused=$user;
+
+        $error = 0;
+
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setShippingMethod was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
+
+        $this->db->begin();
+
 		if ($shipping_method_id<0) $shipping_method_id='NULL';
 		dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " SET fk_shipping_method = ".$shipping_method_id;
 		$sql.= " WHERE rowid=".$this->id;
-
-		if ($this->db->query($sql)) {
-			$this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
-			return 1;
-		} else {
+        $resql = $this->db->query($sql);
+		if (! $resql) {
 			dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
-			$this->error=$this->db->error();
-			return 0;
-		}
+			$this->error = $this->db->lasterror();
+			$error++;
+        } else {
+            if (!$notrigger)
+            {
+                // Call trigger
+                $this->context=array('shippingmethodupdate'=>1);
+                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+                if ($result < 0) $error++;
+                // End call trigger
+            }
+        }
+        if ($error)
+        {
+            $this->db->rollback();
+            return -1;
+        } else {
+            $this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
+            $this->db->commit();
+            return 1;
+        }
+
 	}
 
 
@@ -1904,6 +1932,8 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
+        $this->db->begin();
+
 		if ($fk_account<0) $fk_account='NULL';
 		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
 
