@@ -270,7 +270,7 @@ else
     $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
 }
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttontoshow, $num, $nbtotalofrecords, 'title_setup', 0, '', '', $limit);
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup', 0, $buttontoshow, '', $limit);
 
 
 print $langs->trans('CronInfo').'<br>';
