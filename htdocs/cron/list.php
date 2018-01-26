@@ -140,7 +140,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		$action='';
     	}
 
-    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
+    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a redirect to avoid to run twice the job when using back
     	exit;
     }
 }
