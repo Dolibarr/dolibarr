@@ -840,7 +840,7 @@ else
 					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
-				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
+				else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 				{
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
@@ -903,11 +903,11 @@ else
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
-			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
-			if ($object->statut != 3 && is_numeric($nbemail))
+			$nbemail = ($object->nbemail?$object->nbemail:0);
+			if (is_numeric($nbemail))
 			{
 			    $text='';
-			    if (! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			    if ((! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2))
 			    {
     				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
     				{
@@ -915,9 +915,10 @@ else
     				}
     				else
     				{
-    					$text.=$langs->trans('NotEnoughPermissions');
+    					$text.=$langs->trans('SendingFromWebInterfaceIsNotAllowed');
     				}
 			    }
+			    if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
 				if ($text)
     			{
     			    print $form->textwithpicto($nbemail,$text,1,'warning');
@@ -1008,7 +1009,11 @@ else
 
 				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider)
 				{
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send))
+					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
+					}
+					else if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
 					{
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					}
@@ -1183,15 +1188,30 @@ else
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
-			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
-			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			$nbemail = ($object->nbemail?$object->nbemail:0);
+			if (is_numeric($nbemail))
 			{
-				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-				print $form->textwithpicto($nbemail,$text,1,'warning');
-			}
-			else
-			{
-				print $nbemail;
+				$text='';
+				if ((! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2))
+				{
+					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
+					{
+						$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+					}
+					else
+					{
+						$text.=$langs->trans('SendingFromWebInterfaceIsNotAllowed');
+					}
+				}
+				if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
+				if ($text)
+				{
+					print $form->textwithpicto($nbemail,$text,1,'warning');
+				}
+				else
+				{
+					print $nbemail;
+				}
 			}
 			print '</td></tr>';
 
