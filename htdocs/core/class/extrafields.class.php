@@ -140,15 +140,15 @@ class ExtraFields
 	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
-	 *  @param	int				$list				Visibilty
-	 *  @param	int				$ishidden			Deprecated. Use visibility instead.
+	 *  @param	int				$list				Visibilty (0=never visible, 1=visible on list+forms, 2=list onyl, 3=form only)
+	 *  @param	int				$notused			Deprecated.
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='', $enabled='1')
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $notused=0, $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -165,7 +165,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden, $default, $computed, $entity, $langfile, $enabled);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $notused, $default, $computed, $entity, $langfile, $enabled);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -282,7 +282,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Visibily
-	 *  @param	int				$ishidden		Deprecated. Use visibility instead.
+	 *  @param	int				$notused		Deprecated.
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
 	 *  @param  string          $entity     	Entity of extrafields
@@ -290,7 +290,7 @@ class ExtraFields
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $notused=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
 	{
 		global $conf,$user;
 
@@ -490,7 +490,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Visibility
-	 *  @param	int		$ishidden			Deprecated. Use  visiblity instead.
+	 *  @param	int		$notused			Deprecated.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity	            Entity of extrafields
@@ -498,7 +498,7 @@ class ExtraFields
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $ishidden=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
+	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $notused=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -546,7 +546,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden,$default,$computed,$entity,$langfile,$enabled);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$notused,$default,$computed,$entity,$langfile,$enabled);
 				}
 				if ($result > 0)
 				{
@@ -597,7 +597,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Visiblity
-	 *  @param	int		$ishidden			Deprecated. Use visility instead.
+	 *  @param	int		$notused			Deprecated.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity     		Entity of extrafields
@@ -605,10 +605,10 @@ class ExtraFields
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$notused=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
 	{
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$notused.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
