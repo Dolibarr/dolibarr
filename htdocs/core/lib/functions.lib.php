@@ -2188,7 +2188,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  */
 function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='',$adddivfloat=0)
 {
-	global $conf,$user,$langs,$mysoc;
+	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
@@ -2278,23 +2278,33 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
-	$picto = '';
-	if($withpicto){
-		if($withpicto=='fax'){
-			$picto = 'phoning_fax';
-		}elseif($withpicto=='phone'){
-			$picto = 'phoning';
-		}elseif($withpicto=='mobile'){
-			$picto = 'phoning_mobile';
-		}else{
-			$picto = '';
+	
+	if ($hookmanager) {
+            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
+            $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
+            $rep.=$hookmanager->resPrint;
+        }
+	 if (empty($reshook))
+        {
+		$picto = '';
+		if($withpicto){
+			if($withpicto=='fax'){
+				$picto = 'phoning_fax';
+			}elseif($withpicto=='phone'){
+				$picto = 'phoning';
+			}elseif($withpicto=='mobile'){
+				$picto = 'phoning_mobile';
+			}else{
+				$picto = '';
+			}
 		}
-	}
-	if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
-	else $rep.='<span style="margin-right: 10px;">';
-	$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
-	if ($adddivfloat) $rep.='</div>';
-	else $rep.='</span>';
+		if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
+		else $rep.='<span style="margin-right: 10px;">';
+		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
+		if ($adddivfloat) $rep.='</div>';
+		else $rep.='</span>';
+	  }
+	
 	return $rep;
 }
 
