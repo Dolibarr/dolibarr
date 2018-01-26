@@ -359,7 +359,8 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1);
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+
 print '</td>';
 
 // Actions code
