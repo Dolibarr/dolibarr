@@ -1888,10 +1888,18 @@ abstract class CommonObject
 	 *  Change the bank account
 	 *
 	 *  @param		int		$fk_account		Id of bank account
+	 *  @param      bool    $notrigger      false=launch triggers after, true=disable triggers
+	 *  @param      User	$userused		Object user
 	 *  @return		int				1 if OK, 0 if KO
 	 */
-	function setBankAccount($fk_account)
+	function setBankAccount($fk_account, $notrigger=false, $userused=null)
 	{
+        global $user;
+
+        if (empty($userused)) $userused=$user;
+
+        $error = 0;
+
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
@@ -1903,15 +1911,37 @@ abstract class CommonObject
 		$sql.= " SET fk_account = ".$fk_account;
 		$sql.= " WHERE rowid=".$this->id;
 
-		if ($this->db->query($sql)) {
-			$this->fk_account = ($fk_account=='NULL')?null:$fk_account;
-			return 1;
-		} else {
-			dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
-			$this->error=$this->db->error();
-			return 0;
-		}
-	}
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
+            $this->error = $this->db->lasterror();
+            $error++;
+        }
+        else
+        {
+            if (!$notrigger)
+            {
+                // Call trigger
+                $this->context=array('bankaccountupdate'=>1);
+                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+                if ($result < 0) $error++;
+                // End call trigger
+            }
+        }
+        if ($error)
+        {
+            $this->db->rollback();
+            return -1;
+        }
+        else
+        {
+            $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
+            $this->db->commit();
+            return 1;
+        }
+    }
+
 
 	// TODO: Move line related operations to CommonObjectLine?
 
