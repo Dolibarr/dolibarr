@@ -742,7 +742,9 @@ class BlockedLog
 	}
 
 	/**
-	 * Return a string for signature
+	 * Return a string for signature.
+	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
+	 * and restore it into another database with different id wihtout comprimising checksums
 	 *
 	 * @return string		Key for signature
 	 */

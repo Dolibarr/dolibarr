@@ -618,6 +618,7 @@ function security_prepare_head()
 
 
     // Show permissions lines
+    $nbPerms=0;
     $sql = "SELECT COUNT(r.id) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"

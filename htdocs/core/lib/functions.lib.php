@@ -5634,7 +5634,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 /**
  *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
- *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced
+ *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  Example of usage:
+ *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
+ *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
+ *  $mesg = make_substitutions($mesg, $substitutionarray, $langs);
  *
  *  @param	string		$text	      			Source string in which we must do substitution
  *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
