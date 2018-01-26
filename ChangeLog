@@ -9,6 +9,9 @@ FIX: #7379: Compatibility with PRODUCT_USE_OLD_PATH_FOR_PHOTO variable
 FIX: #7903
 FIX: #7933
 FIX: #8029 Unable to make leave request in holyday module
+FIX: #8093
+FIX: Bad name alias showing in name of third column
+FIX: Cashdesk should not sell to inactive third parties
 FIX: Edit accountancy account and warning message on loan
 FIX: $accounts[$bid] is a label !
 FIX: $oldvatrateclean & $newvatrateclean must be set if preg_match === false
@@ -16,6 +19,10 @@ FIX: product best price on product list
 FIX: search on contact list
 FIX: stats trad for customerinvoice
 FIX: translate unactivate on contractline
+FIX: email sent was not in HTML
+FIX: missing hook invoice index
+FIX: subject mail sepa
+
 
 ***** ChangeLog for 6.0.4 compared to 6.0.3 *****
 FIX: #7737
