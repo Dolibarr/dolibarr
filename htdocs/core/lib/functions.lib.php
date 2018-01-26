@@ -3357,18 +3357,19 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
  *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'xxx'=Other
+ *  @param	string	$morecss		More CSS
  *	@return	string					String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1')
+function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1', $morecss='')
 {
 	global $conf, $langs;
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'info', 'class="hideonsmartphone"');
+		return img_picto($text, 'info', 'class="hideonsmartphone'.($morecss?' '.$morecss:'').'"');
 	}
 
-	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone'.($morecss?' '.$morecss:'').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
 }
 
 
