@@ -426,6 +426,8 @@ if ($object->fetch($id) >= 0)
 		$num = $db->num_rows($resql);
 
 		$param = "&amp;id=".$object->id;
+		//if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 		if ($search_lastname)  $param.= "&amp;search_lastname=".urlencode($search_lastname);
 		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
