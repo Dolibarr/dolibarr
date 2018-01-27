@@ -311,7 +311,7 @@ class ExtraFields
 		{
 			if(is_array($param) && count($param) > 0)
 			{
-				$params = $this->db->escape(serialize($param));
+				$params = serialize($param);
 			}
 			elseif (strlen($param) > 0)
 			{
