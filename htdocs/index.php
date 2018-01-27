@@ -40,6 +40,7 @@ $hookmanager->initHooks(array('index'));
  * Actions
  */
 
+
 // Check if company name is defined (first install)
 if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
 {
