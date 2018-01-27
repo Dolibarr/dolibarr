@@ -78,7 +78,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     }
     else
     {
-        if (dol_hash($edituser->pass_temp) == $passwordhash)
+        if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
             $newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -218,4 +218,3 @@ $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions',$pa
 $moreloginextracontent = $hookmanager->resPrint;
 
 include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
-
