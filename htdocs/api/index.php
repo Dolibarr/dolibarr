@@ -148,6 +148,11 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/resources.json' |
                     $enabled=true;
                     if (empty($conf->$modulenameforenabled->enabled)) $enabled=false;
 
+                    if ($module == 'ficheinter'){
+                        $enabled=true;
+                        $moduledirforclass='fichinter';
+                    }
+
                     if ($enabled)
                     {
                         // If exists, load the API class for enable module
@@ -249,6 +254,7 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/resources.json' 
         $classfile = str_replace('_', '', $module);
         if ($module == 'supplierinvoices') $classfile = 'supplier_invoices';
         if ($module == 'supplierorders')   $classfile = 'supplier_orders';
+        if ($module == 'fichinters') $moduledirforclass = 'fichinter';
         $dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php');
         $classname=ucwords($module);
 

@@ -89,6 +89,13 @@ foreach ($modulesdir as $dir)
 				}
                 if (empty($conf->$module->enabled)) $enabled=false;
 
+                if ($module == 'ficheinter') {
+                                       $obj = 'fichinter';
+                                       $part = 'fichinter';
+                                       $enabled=true;
+                                       $module='fichinter';
+                               }
+
                 if ($enabled)
                 {
                     /*
