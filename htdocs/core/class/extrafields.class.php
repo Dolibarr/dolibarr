@@ -111,6 +111,9 @@ class ExtraFields
 	{
 		$this->db = $db;
 		$this->error = array();
+		$this->attributes = array();
+
+		// For old usage
 		$this->attribute_elementtype = array();
 		$this->attribute_type = array();
 		$this->attribute_label = array();
