@@ -1678,7 +1678,7 @@ class CommandeFournisseur extends CommonOrder
             $this->error='ErrorBadValueForParameterWarehouse';
             return -1;
         }
-        if ($qty <= 0)
+        if ($qty == 0)
         {
             $this->error='ErrorBadValueForParameterQty';
             return -1;

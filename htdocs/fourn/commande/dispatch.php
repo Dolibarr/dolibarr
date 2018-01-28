@@ -237,7 +237,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
 			// We ask to move a qty
-			if (GETPOST($qty) > 0) {
+			if (GETPOST($qty) != 0) {
 				if (! (GETPOST($ent, 'int') > 0)) {
 					dol_syslog('No dispatch for line ' . $key . ' as no warehouse choosed');
 					$text = $langs->transnoentities('Warehouse') . ', ' . $langs->transnoentities('Line') . ' ' . ($numline);
@@ -274,7 +274,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$fk_commandefourndet = 'fk_commandefourndet_' . $reg[1] . '_' . $reg[2];
 
 			// We ask to move a qty
-			if (GETPOST($qty) > 0) {
+			if (GETPOST($qty) != 0) {
 				if (! (GETPOST($ent, 'int') > 0)) {
 					dol_syslog('No dispatch for line ' . $key . ' as no warehouse choosed');
 					$text = $langs->transnoentities('Warehouse') . ', ' . $langs->transnoentities('Line') . ' ' . ($numline) . '-' . ($reg[1] + 1);
