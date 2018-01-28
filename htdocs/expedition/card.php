@@ -250,9 +250,9 @@ if (empty($reshook))
     				while (isset($_POST[$batch]))
     				{
     					// save line of detail into sub_qty
-    				    $sub_qty[$j]['q']=GETPOST($qty,'int');				// the qty we want to move for this stock record
+    				    $sub_qty[$j]['q'] = abs(GETPOST($qty,'int'));				// the qty we want to move for this stock record
     				    $sub_qty[$j]['id_batch']=GETPOST($batch,'int');		// the id into llx_product_batch of stock record to move
-    					$subtotalqty+=$sub_qty[$j]['q'];
+    					$subtotalqty+=$sub_qty[$j]['q']; 
 
     					//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
 
@@ -265,7 +265,7 @@ if (empty($reshook))
     				$batch_line[$i]['qty']=$subtotalqty;
     				$batch_line[$i]['ix_l']=GETPOST($idl,'int');
 
-    				$totalqty+=$subtotalqty;
+    				$totalqty+=$subtotalqty ;
 			    }
 			    else
 			    {
@@ -290,7 +290,7 @@ if (empty($reshook))
 			        $stockLine[$i][$j]['warehouse_id']=GETPOST($stockLocation,'int');
 			        $stockLine[$i][$j]['ix_l']=GETPOST($idl,'int');
 
-			        $totalqty+=GETPOST($qty,'int');
+			        $totalqty += abs(GETPOST($qty,'int'));
 
 			        $j++;
 			        $stockLocation="ent1".$i."_".$j;
@@ -301,7 +301,7 @@ if (empty($reshook))
 			{
 			    //var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
 				//shipment line for product with no batch management and no multiple stock location
-				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+				if (GETPOST($qty,'int') != 0) $totalqty += abs(GETPOST($qty,'int'));
 			}
 
 			// Extrafields
@@ -334,7 +334,7 @@ if (empty($reshook))
 					    $nbstockline = count($stockLine[$i]);
     					for($j = 0; $j < $nbstockline; $j++)
     					{
-    					    if ($stockLine[$i][$j]['qty']>0)
+    					    if ($stockLine[$i][$j]['qty'] != 0)
     					    {
     					        $ret=$object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
     					        if ($ret < 0)
@@ -347,7 +347,7 @@ if (empty($reshook))
 					}
 					else
 					{
-						if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
+						if (GETPOST($qty,'int') != 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 						{
 							$ent = "entl".$i;
 							$idl = "idl".$i;
@@ -367,7 +367,7 @@ if (empty($reshook))
 				else
 				{
 					// batch mode
-					if ($batch_line[$i]['qty']>0)
+					if ($batch_line[$i]['qty'] != 0)
 					{
 						$ret=$object->addline_batch($batch_line[$i],$array_options[$i]);
 						if ($ret < 0)
@@ -719,7 +719,7 @@ if (empty($reshook))
 					$batch_id = GETPOST($batch,'int');
 					$batch_qty = GETPOST($qty, 'int');
 					$lineIdToAddLot = 0;
-					if ($batch_qty > 0 && ! empty($batch_id))
+					if ($batch_qty != 0 && ! empty($batch_id))
 					{
 						if ($lotStock->fetch($batch_id) > 0)
 						{
@@ -1263,7 +1263,7 @@ if ($action == 'create')
 					//ship from preselected location
 					$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
 					$deliverableQty=min($quantityToBeDelivered, $stock);
-					if ($deliverableQty < 0) $deliverableQty = 0;
+					//if ($deliverableQty < 0) $deliverableQty = 0;
 					if (empty($conf->productbatch->enabled) || ! $product->hasbatch())
 					{
 						// Quantity to send
@@ -1380,10 +1380,11 @@ if ($action == 'create')
 								print $detail;
 
 								$quantityToBeDelivered -= $deliverableQty;
+								/*
 								if ($quantityToBeDelivered < 0)
 								{
 									$quantityToBeDelivered = 0;
-								}
+								}*/
 								$subj++;
 								print '</td></tr>';
 							}
@@ -1459,10 +1460,11 @@ if ($action == 'create')
 									print '</td>';
 								}
 								$quantityToBeDelivered -= $deliverableQty;
+								/*
 								if ($quantityToBeDelivered < 0)
 								{
 									$quantityToBeDelivered = 0;
-								}
+								}*/
 								$subj++;
 								print "</tr>\n";
 							}
@@ -1522,7 +1524,7 @@ if ($action == 'create')
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty;		// To get a numeric
 									$deliverableQty = min($quantityToBeDelivered,$batchStock);
-									if ($deliverableQty < 0) $deliverableQty = 0;
+									//if ($deliverableQty < 0) $deliverableQty = 0;
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested)?$bc[$var]:'').'><td colspan="3"></td><td align="center">';
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
@@ -1541,10 +1543,11 @@ if ($action == 'create')
 									else print 'TableLotIncompleteRunRepair';
 									print ' ('.$dbatch->qty.')';
 									$quantityToBeDelivered -= $deliverableQty;
+									/*
 									if ($quantityToBeDelivered < 0)
 									{
 										$quantityToBeDelivered = 0;
-									}
+									}*/
 									//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
 									$subj++;
 									print '</td></tr>';
