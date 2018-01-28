@@ -23,4 +23,4 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 -- For 8.0
-ALTER TABLE llx_societe ADD COLUMN fk_entrepot int DEFAULT 0;
+ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
