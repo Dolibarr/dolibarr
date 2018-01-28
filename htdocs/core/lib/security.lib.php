@@ -82,6 +82,10 @@ function dol_hash($chain, $type='0')
 {
 	global $conf;
 
+	// No need to add salt for password_hash
+	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash'))
+        return password_hash($chain, PASSWORD_DEFAULT);
+
 	// Salt value
 	if (! empty($conf->global->MAIN_SECURITY_SALT)) $chain=$conf->global->MAIN_SECURITY_SALT.$chain;
 
@@ -95,6 +99,32 @@ function dol_hash($chain, $type='0')
 
 	// No particular encoding defined, use default
 	return md5($chain);
+}
+
+/**
+ * 	Compute a hash and compare it to the given one
+ *  For backward compatibility reasons, if the hash is not in the password_hash format, we will try to match against md5 and sha1md5
+ *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function.
+ *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
+ *
+ * 	@param 		string		$chain		String to hash
+ * 	@param 		string		$hash		hash to compare
+ * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@return		bool					True if the computed hash is the same as the given one
+ */
+function dol_verifyHash($chain, $hash, $type='0')
+{
+	global $conf;
+
+	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
+		if ($hash[0] == '$') return password_verify($chain, $hash);
+		else if(strlen($hash) == 32) return dol_verifyHash($chain, $hash, '3'); // md5
+		else if(strlen($hash) == 40) return dol_verifyHash($chain, $hash, '2'); // sha1md5
+
+		return false;
+	}
+
+	return dol_hash($chain, $type) == $hash;
 }
 
 
@@ -607,4 +637,3 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
     if ($printfooter && function_exists("llxFooter")) llxFooter();
     exit(0);
 }
-
