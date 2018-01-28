@@ -391,9 +391,7 @@ if ($action == 'confirm_send' && $id > 0)
     // Si brouillon et créateur
     if($object->statut == Holiday::STATUS_DRAFT && $canedit)
     {
-        $object->statut = Holiday::STATUS_TO_REVIEW;
-
-        $result = $object->update($user);
+        $result = $object->setValidate($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($result > 0)
@@ -487,9 +485,9 @@ if ($action == 'confirm_valid' && $id > 0)
     {
         $object->date_valid = dol_now();
         $object->fk_user_valid = $user->id;
-        $object->statut = 3;
+        $object->statut = Holiday::STATUS_APPROVED;
 
-        $result = $object->update($user);
+        $result = $object->setApprove($user);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if ($result > 0)
@@ -1167,7 +1165,7 @@ else
                 print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
             }
 
-            if ($object->statut == Holiday::STATUS_DRAFT)
+            if ($object->statut == Holiday::STATUS_TO_REVIEW)
             {
                 if ($user->id == $object->fk_validator)
                 {

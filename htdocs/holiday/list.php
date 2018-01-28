@@ -2,7 +2,7 @@
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2018       Frederic France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -436,13 +436,13 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 // Start date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.dol_escape_htmltag($month_start).'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.dol_escape_htmltag($month_start).'">&nbsp;';
 $formother->select_year($year_start,'year_start',1, $min_year, $max_year);
 print '</td>';
 
 // End date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.dol_escape_htmltag($month_end).'">';
+print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.dol_escape_htmltag($month_end).'">&nbsp;';
 $formother->select_year($year_end,'year_end',1, $min_year, $max_year);
 print '</td>';
 
@@ -597,8 +597,10 @@ function showMyBalance($holiday, $user_id)
 	{
 		$nb_type = $holiday->getCPforUser($user_id, $val['rowid']);
 		$nb_holiday += $nb_type;
-		$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+		$out .= '<li>'.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong></li>';
 	}
 	print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+    print '<ul>';
 	print $out;
+    print '</ul>';
 }

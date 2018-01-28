@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018       Frederic France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -669,6 +669,101 @@ class Holiday extends CommonObject
 		}
 	}
 
+    /**
+     * Validate holiday
+     *
+     * @param  User $user           User that modify
+     * @param  int  $notrigger	    0=launch triggers after, 1=disable triggers
+     * @return int                  <0 if KO, >0 if OK
+     */
+    function setValidate($user=null, $notrigger=0)
+    {
+    global $conf, $langs;
+        $error=0;
+
+        // Update request
+        $sql = 'UPDATE ' . MAIN_DB_PREFIX . 'holiday SET';
+        $sql.= ' statut=' . self::STATUS_TO_REVIEW;
+
+        $sql.= " WHERE rowid= ".$this->id;
+
+        $this->db->begin();
+
+        dol_syslog(get_class($this)."::setvalidate", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
+        }
+
+        if (! $error) {
+            if (! $notrigger) {
+                // Call trigger
+                $result = $this->call_trigger('HOLIDAY_VALIDATE', $user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error) {
+            $this->db->rollback();
+            return -1*$error;
+        } else {
+            $this->statut = self::STATUS_TO_REVIEW;
+            $this->db->commit();
+            return 1;
+        }
+    }
+
+    /**
+     * Approve holiday
+     *
+     * @param  User $user           User that modify
+     * @param  int  $notrigger	    0=launch triggers after, 1=disable triggers
+     * @return int                  <0 if KO, >0 if OK
+     */
+    function setApprove($user=null, $notrigger=0)
+    {
+    global $conf, $langs;
+        $error = 0;
+
+        // Update request
+        $sql = 'UPDATE ' . MAIN_DB_PREFIX . 'holiday SET';
+        $sql.= " date_valid='".$this->db->idate(dol_now())."'";
+        $sql.= ', fk_user_valid=' . (int) $user->id;
+        $sql.= ', statut=' . self::STATUS_APPROVED;
+
+        $sql.= " WHERE rowid= ".$this->id;
+
+        $this->db->begin();
+
+        dol_syslog(get_class($this)."::setapprove", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
+        }
+
+        if (! $error) {
+            if (! $notrigger) {
+                // Call trigger
+                $result = $this->call_trigger('HOLIDAY_APPROVE', $user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error) {
+            $this->db->rollback();
+            return -1*$error;
+        } else {
+            $this->statut = self::STATUS_APPROVED;
+            $this->db->commit();
+            return 1;
+        }
+    }
 
 	/**
 	 *   Delete object in database
