@@ -111,6 +111,9 @@ class ExtraFields
 	{
 		$this->db = $db;
 		$this->error = array();
+		$this->attributes = array();
+
+		// For old usage
 		$this->attribute_elementtype = array();
 		$this->attribute_type = array();
 		$this->attribute_label = array();
@@ -308,7 +311,7 @@ class ExtraFields
 		{
 			if(is_array($param) && count($param) > 0)
 			{
-				$params = $this->db->escape(serialize($param));
+				$params = serialize($param);
 			}
 			elseif (strlen($param) > 0)
 			{
