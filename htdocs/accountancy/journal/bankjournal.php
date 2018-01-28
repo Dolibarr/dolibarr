@@ -225,7 +225,7 @@ if ($result) {
 				'accountancy_code' => $compta_user,
 		);
 
-		// Variable bookkeeping
+		// Variable bookkeeping ($obj->rowid is Bank Id)
 		$tabpay[$obj->rowid]["date"] = $obj->do;
 		$tabpay[$obj->rowid]["type_payment"] = $obj->fk_type;		// CHQ, VIR, LIQ, CB, ...
 		$tabpay[$obj->rowid]["ref"] = $obj->label;					// By default. Not unique. May be changed later
@@ -1101,7 +1101,7 @@ function getSourceDocRef($val, $typerecord)
 		$sqlmid = 'SELECT payd.fk_donation as ref';
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_donation as payd";
 		$sqlmid .= " WHERE payd.fk_donation=" . $val["paymentdonationid"];
-		$ref = $langs->trans("Donation").' ';
+		$ref = $langs->trans("Donation");
 	}
 	elseif ($typerecord == 'payment_various')
 	{
@@ -1129,5 +1129,6 @@ function getSourceDocRef($val, $typerecord)
 		else dol_print_error($db);
 	}
 
+	$ref = dol_trunc($langs->trans("BankId").' '.$val['fk_bank'].' - '.$ref, 295);	// 295 + 3 ... i< < than max size of 300
 	return $ref;
 }

@@ -110,6 +110,7 @@ if ($disablenofollow) echo '</a>';
 <img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </div>
 
+<br>
 
 <div id="login_right">
 
@@ -118,7 +119,8 @@ if ($disablenofollow) echo '</a>';
 <tr>
 <td class="nowrap center valignmiddle">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
-<span class="span-icon-user">
+<!-- <span class="span-icon-user">-->
+<span class="fa fa-user">
 <input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
 </td>
@@ -127,7 +129,8 @@ if ($disablenofollow) echo '</a>';
 <tr>
 <td class="nowrap center valignmiddle">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
-<span class="span-icon-password">
+<!--<span class="span-icon-password">-->
+<span class="fa fa-key">
 <input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
 </span>
 </td></tr>

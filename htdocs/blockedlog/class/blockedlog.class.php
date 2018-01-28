@@ -363,9 +363,27 @@ class BlockedLog
 			{
 				if (in_array($key, array('fields'))) continue;	// Discard some properties
 				if (! in_array($key, array(
-				'ref','facnumber','ref_client','ref_supplier','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
 				))) continue;									// Discard if not into a dedicated list
-				if (!is_object($value)) $this->object_data->{$key} = $value;
+				if ($key == 'lines')
+				{
+					$lineid=0;
+					foreach($value as $tmpline)	// $tmpline is object FactureLine
+					{
+						$lineid++;
+						foreach($tmpline as $keyline => $valueline)
+						{
+							if (! in_array($keyline, array(
+							'ref','multicurrency_code','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','qty','product_type','vat_src_code','tva_tx','info_bits','localtax1_tx','localtax2_tx','total_ht','total_tva','total_ttc','total_localtax1','total_localtax2'
+							))) continue;									// Discard if not into a dedicated list
+
+							if (! is_object($this->object_data->invoiceline[$lineid])) $this->object_data->invoiceline[$lineid] = new stdClass();
+
+							$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
+						}
+					}
+				}
+				else if (!is_object($value)) $this->object_data->{$key} = $value;
 			}
 
 			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
@@ -376,7 +394,7 @@ class BlockedLog
 			{
 				if (in_array($key, array('fields'))) continue;	// Discard some properties
 				if (! in_array($key, array(
-				'ref','facnumber','ref_client','ref_supplier','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 				))) continue;									// Discard if not into a dedicated list
 				if (!is_object($value)) $this->object_data->{$key} = $value;
 			}
@@ -467,7 +485,7 @@ class BlockedLog
 				{
 					if (in_array($key, array('fields'))) continue;	// Discard some properties
 					if (! in_array($key, array(
-					'ref','facnumber','ref_client','ref_supplier','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+					'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 					))) continue;									// Discard if not into a dedicated list
 					if (!is_object($value))
 					{
@@ -724,7 +742,9 @@ class BlockedLog
 	}
 
 	/**
-	 * Return a string for signature
+	 * Return a string for signature.
+	 * Note: rowid of line not included as it is not a business data and this allow to make backup of a year
+	 * and restore it into another database with different id wihtout comprimising checksums
 	 *
 	 * @return string		Key for signature
 	 */

@@ -38,7 +38,8 @@ if (! function_exists('json_encode'))
 }
 
 /**
- * Implement json_encode for PHP that does not support it
+ * Implement json_encode for PHP that does not support it.
+ * Use json_encode and json_decode in your code !
  *
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
@@ -221,6 +222,7 @@ if (! function_exists('json_decode'))
 
 /**
  * Implement json_decode for PHP that does not support it
+ * Use json_encode and json_decode in your code !
  *
  * @param	string	$json		Json encoded to PHP Object or Array
  * @param	bool	$assoc		False return an object, true return an array. Try to always use it with true !

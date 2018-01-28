@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Exports area
 AvailableFormats=Available formats

@@ -2,54 +2,255 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 6.0.5 compared to 6.0.4 *****
-FIX: security vulnerability reported by ADLab of Venustech
-     CVE-2017-17897, CVE-2017-17898, CVE-2017-17899, CVE-2017-17900 
-FIX: #7379: Compatibility with PRODUCT_USE_OLD_PATH_FOR_PHOTO variable
-FIX: #7903
-FIX: #7933
-FIX: #8029 Unable to make leave request in holyday module
-FIX: Edit accountancy account and warning message on loan
-FIX: $accounts[$bid] is a label !
-FIX: $oldvatrateclean & $newvatrateclean must be set if preg_match === false
-FIX: product best price on product list
-FIX: search on contact list
-FIX: stats trad for customerinvoice
-FIX: translate unactivate on contractline
-
-***** ChangeLog for 6.0.4 compared to 6.0.3 *****
-FIX: #7737
-FIX: #7751
-FIX: #7756 Add better error message
-FIX: #7786
-FIX: #7806
-FIX: #7824
-FIX: add line bad price and ref
-FIX: A lot of several fix on local taxes and NPR tax
-FIX: createfromorder
-FIX: CSS for IE10
-FIX: external user cannot be set as internal
-FIX: Filter type on actioncomm with multiselect doesn't work
-FIX: list of donation not filtered on multicompany
-FIX: list of module not complete when module mb_strlen not available
-FIX: Locatax were not propagated when cloning order or proposal
-FIX: Searching translation should not be case sensitive
-FIX: Search into language is ok for file into external modules two.
-FIX: test for filter fk_status
-FIX: too much users on holiday list
-FIX: Wrong alias sql
-
-
-***** ChangeLog for 7.0.0 compared to 6.0.* *****
+***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:
+NEW: #5711 Add shipment line deleting and editing for draft shipments.
+NEW: Accept substitution key __[ABC]__ replaced with value of const ABC
+NEW: Accountancy Add variant on sell account for intracommunity sales & export sales
+NEW: Add a button "Activate all services" on contracts
+NEW: Add a confirmation for all mass action 'delete'
+NEW: Add a group task line for tasks on same level on gantt diagram
+NEW: Add and edit country for chart of accounts systems
+NEW: add a new notification for the signed closed event of a proposal.
+NEW: Add a parameter to specify char used as separator for variant product label
+NEW: Add a profile to import product translations
+NEW: Add a protection so we can't journalize non balanced transactions
+NEW: Add a status enabled/disabled on recurring invoices
+NEW: add burger menu to list action comm
+NEW: Add button cancel on shipment creation
+NEW: Add chart of account for england
+NEW: Add Chile accounting plan
+NEW: Add class in societe/card.php
+NEW: add company alias name when create company from member
+NEW: Add date of birth on user card.
+NEW: Add date_valid and date_pointoftax on supplier invoices.
+NEW: Added Region name to state/province form field
+NEW: Added regions to third party/societe lists, can be filtered
+NEW: Add error message
+NEW: Add expense report rules and ik
+NEW: Add filter on event code on automatic filling setup page
+NEW: Add filters on month/year on the accountancy binding tools
+NEW: add fk_unit field into product/service import/export
+NEW: add 'formObjectOptions' hook to the form setting the product selling price
+NEW: Add hidden option PROJECT_DISABLE_UNLINK_FROM_OVERVIEW
+NEW: add image object_phoning_mobile.png
+NEW: Adding Field "First date of expire" + filter on contract list
+NEW: add ldap_rename for avoid password if ldap key changed
+NEW: Add mass action "validate" on supplier invoices.
+NEW: add members types ldap group management
+NEW: Add new property visible dy default on lists on extrafields
+NEW: Add Next/Previous button on operation date of bank line
+NEW: Add option EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS
+NEW: Add option PROPOSAL/ORDER/INVOICE_ALLOW_EXTERNAL_DOWNLOAD
+NEW: Add product unit fields for ODT substitution
+NEW: Add project on a various payment
+NEW: Add project related fields to ODT
+NEW: Add protection to avoid to send to much emails using builk actions
+NEW: Add search field for date on supplier payment page
+NEW: Add search on date and accounting account in various payment list
+NEW: add specific translation for title of documents (Invoice, Order, Proposal)
+NEW: Adds the payment reference to the return of the function getListOfPayements
+NEW: Add supplier proposals into stats of product page.
+NEW: Add tab "Expense report" on user card
+NEW: add the ability to regenerate a pdf for the order module
+NEW: Add The accountancy Switzerland chart of accounts
+NEW: Add The developed French chart of accounts 2014
+NEW: Add The Luxembourg chart of accounts
+NEW: Add The Moroccan chart of accounts
+NEW: Add The Switzerland chart of accounts
+NEW: Add The SYSCOHADA chart of accounts
+NEW: Add the total in the perday view of the time spent form.
+NEW: Add The Tunisia chart of accounts
+NEW: Add toolkit for StockLimit and DesiredStock
+NEW: add translation and possibility to change month and year
+NEW: Add view of status of template invoice
+NEW: All search boxes are available on smartphone
+NEW: All setup of accountancy can be done from menu "Accountancy-Setup"
+NEW: Attaching doc automatically in email is now a parameter of template.
+NEW: automatic activation of external module on country set
+NEW: Better autoselect customer or supplier fields to save clicks
+NEW: Better behaviour when using a text browser
+NEW: Break lines per project on the new timesheet page
+NEW: Bulk action validate on customer invoices
+NEW: Bulk delete actions available on leave requests
+NEW: burger menu and hooks on list action
+NEW: Can add html content on right of tabs
+NEW: Can add link to other element on a donation
+NEW: Can create intervention from a proposal
+NEW: Can create thirdparty from card proposal, order or invoice
+NEW: Can download PDF document from the payment page
+NEW: Can edit the language into the email templates editor.
+NEW: Can edit with delete/insert a forced translation
+NEW: Can export list of stock movements
+NEW: Can filter on date on the page showing existing bindings
+NEW: Can filter on document name in ECM module for automatic tree
+NEW: can filter on status of template invoices
+NEW: Can filter on the "other" column on emailing target list
+NEW: Can filter on type of email template
+NEW: Can filter on user on unalterable log
+NEW: Can import local tax rates in prices
+NEW: Can include extrafields into member card templates
+NEW: Can include tag {uuu} into some numbering masks to replace with user
+NEW: Can make a specific setup for SMTP sending for emailing module
+NEW: Can rename (so reorder) bank receipts
+NEW: Can send email from contract card
+NEW: Can send email from the member card using email templates.
+NEW: Can set a dedicated message on payment forms
+NEW: Can set email of thirdparty as unique and/or mandatory
+NEW: Can setup csv accounting export from admin config
+NEW: Can show currency in list of bank accounts
+NEW: Can show stock in alert even if alter is set to 0
+NEW: Can sort joined files on thirdparty and user card.
+NEW: Can transfer from bank account to bank account with different currencies
+NEW: Can use an url like $conf->global>-MYPARAM for menu urls
+NEW: change description on click
+NEW: Chart of account is loaded when selected into accounting setup
+NEW: Classify the order as invoiced in the REST API
+NEW: comments system on task
+NEW: comment system working with all objects
+NEW: Compatibility with PHP 7.2
+NEW: confirm form style to accept or reject proposal
+NEW: Create an invoice using an existing order
+NEW: Create an order using an existing proposal
+NEW: customizable meteo in value or percentage
+NEW: Days where user is on vacation use different colors in timesheet.
+NEW: Deduct an available credit to an existing invoice
+NEW: Default filter and sort order can use partial list of query
+NEW: Deposit invoice more explicit in invoice line description
+NEW: deposits can be converted even if unpaid
+NEW: detection of edge browser
+NEW: Each user can edit its own email template (menu tools)
+NEW: Enabled sending email in bulk actions for supplier orders
+NEW: Enhance the anti XSS filter
+NEW: extrafield on facture_rec
+NEW: Extrafields "link to object" now use a combo selection and getNomUrl
+NEW: filter date for blockedlog
+NEW: filter on extrafield on product list (as in company list)
+NEW: General ledger : Add field date_creation and selected field
+NEW: generate also document when invoice is build from recurring template
+NEW: Generated files are now indexed in database
+NEW: generate invoice PDF on disount application or payment
+NEW: Get a list of payments terms
+NEW: hrm details output on user
+NEW: If max nb of generation is reached, date for next gen is striked
+NEW: improvements of invoices, orders and proposals in the REST API
+NEW: Include a color syntaxed HTML editor for emailing edition.
+NEW: Introduce code syntax coloration with mode 'ace' for DolEditor.
+NEW: Introduce experimental feature to search dolistore from application
+NEW: jquery date selector become default date selector
+NEW: langs
+NEW: link project from other company conf
+NEW: manageme extrafields with multientity
+NEW: Mass PDF Merging is available on contracts
+NEW: merge categories while merging thirdparties
+NEW: Merge resource/add.php to resource/card.php
+NEW: Module "Product variants" is moved as stable.
+NEW: More picto for phone
+NEW: Move accountancy features into a dedicated menu
+NEW: Move contacts of a thirdparty on tab Contacts/Addresses
+NEW: Move the upload input on top right in ECM module
+NEW: new columns into extrafields table to get update create information
+NEW: new param on load_board() function in ActionComm class to avoid duplicate code
+NEW: On bulk email from a list, can uncheck "Join main document".
+NEW: On reconciliation, show balance including all reconciliated fields
+NEW: Option "one email per recipient" when using bulk actions emails.
+NEW: Option STOCK_SUPPORTS_SERVICES become visible.
+NEW: option to avoid countries to disable there blockedlog
+NEW: option to fix top menu with eldy theme (hidden conf)
+NEW: Popup for preview of image add a button "Original size"
+NEW: post lines of an invoice using the REST API
+NEW: preload comments in task
+NEW: Provide a way to download a file from a public URL for files in ECM
+NEW: Reduce size of HTML page by removing duplicate tooltips
+NEW: Remove background on agenda view when event is a not busy event.
+NEW: Retrieves available discounts and payments details from a specific invoice
+NEW: Revenue stamp can be a percent
+NEW: Search filters in lists are restored when using "back to list"
+NEW: Send by email available in bulk for expense report
+NEW: Set a proposal to draft
+NEW: Show badge with nbr of shipment on shimpen tab of order
+NEW: Show country and vat number into company tooltip
+NEW: Show direct preview link on contract
+NEW: Show expected worked hours on the timesheet form.
+NEW: Show line "other filtered task" when using filter on timesheet.
+NEW: Show list of tracked events into the module config page.
+NEW: Show the supplier ref into supplier cards
+NEW: Show user id of web process in system info - web server
+NEW: Summary of last events on a card are sorted on decreasing date.
+NEW: Support Italian addresses format. Fixes #7785
+NEW: Support visibility on extrafields
+NEW: Template invoices are visible on the customer tab
+NEW: template invoices support substition key
+NEW: The bank account is visible on payment of taxes
+NEW: The comment when closing a proposal is added to commercial proposal
+NEW: The gantt diagram is now sensitive to hours
+NEW: The lot of a product uses the link and picto when shown into list.
+NEW: The "Show detail by account" accepts 3 values: yes, no, if non zero
+NEW: The unalterable log can be browse by any user with he permission
+NEW: Tooltip for substitutions variables on tooltips on admin pages
+NEW: unexistant function load_state_board() on several objects
+NEW: Update availability
+NEW: Update bank account when updating an invoice
+NEW: Update bank account when updating an order
+NEW: Use autocompletion on selection of chart of account
+NEW: view company name if different of fullname in dol_banner
+NEW: warning on module blocked log reset if country code is FR
 
 For developers:
+NEW: Add 2 new automatic classification in workflow module
+NEW: Add API for contracts
+NEW: Add API to activate/unactivate a contract
+NEW: Add api validate and close on contracts
+NEW: add doActions hook in admin ihm
+NEW: add doActions hook in company admin
+NEW: Added functionality to get order customer contact as contact_xx tags
 NEW: Add hook addAdminLdapOptions and doAction in ldap admin page
+NEW: Add method executeCLI and a phpunit
+NEW: add '$moreatt' parameter in picto_from_langcode function
+NEW: Add non intrusive js library to make syntaxic coloring of textarea
+NEW: Add payment line to a specific invoice using the REST API
+NEW: add possibility to disabled the LDAP trigger
+NEW: add possibility to hide LDAP tab for non admin
+NEW: Add possibility to propose last num releve in conciliation
+NEW: add possibility to remove address field
+NEW: Add REST API for supplier proposals
+NEW: Add REST API to add payment line to a specific invoice
+NEW: Add the attribute accept to the input form for file upload
+NEW: add translation column for extrafields list
+NEW: Add performances indexes on calendar events
+NEW: A module can change order of element in the quick search combo
+NEW: Can test signature of a version from API
 NEW: complete_head_from_modules() in ldap_prepare_head()
+NEW: Consolidates REST dictionary APIs into a single tree and a single file
+NEW: Delete a line of invoice using the REST API
+NEW: documents REST API return list of documents by element
+NEW: Download a document using the REST API
+NEW: Enhance framework so we can use html/icons into SELECT options.
+NEW: External module can interact with the customer summary page
+NEW: Generates the document before downloading using REST API
+NEW: get and post lines of an invoice using the REST API
+NEW: Get a payment list of a given invoice using the REST API
+NEW: Get available assets of an invoice using the REST API
+NEW: Get credit notes or deposits of a thirdparty
+NEW: GET lines of an invoice in the REST API
+NEW: get payment types using the REST API + consolidates REST dictionary APIs
+NEW: Get the list of payments terms.
+NEW: hook formObjectOptions in the form setting product selling price
+NEW: hook to enrich homepage open elements dashboard
+NEW: Insert a discount in a specific invoice using the REST API
+NEW: Remove js library fileupload that was not used by core code.
+NEW: Remove tooltip tipTip library replaced with standatd jquery tooltip
+NEW: Set invoices as draft using the REST API
+NEW: Sets an invoice as paid using the REST API
+NEW: Tag the order as validated (opened) in the REST API
+NEW: Update end of validity date of proposal using the API
+NEW: Update in the order REST API
+NEW: Upgrade jquery select2 to 4.0.4
 
-WARNING: 
 
-If you enabled (for test) the experimental BlockedLog module before 7.0, you must purge  the table llx_blockedlog because
+WARNING:
+
+If you enabled (for test) the experimental BlockedLog module before 7.0, you must purge the table llx_blockedlog because
 way to save data for final version has changed.
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
@@ -74,6 +275,51 @@ Following changes may create regressions for some external modules, but were nec
 * Jquery plugin tableDnd updated. You now need to use decodeURI on the return value of tableDnDSerialize() 
   and add 'td.' to the beginning of the dragHandle match string. 
 * IE8 and earlier and Firefox 12 and earlier (< 2012) are no more supported. 
+
+
+***** ChangeLog for 6.0.5 compared to 6.0.4 *****
+FIX: security vulnerability reported by ADLab of Venustech
+     CVE-2017-17897, CVE-2017-17898, CVE-2017-17899, CVE-2017-17900 
+FIX: #7379: Compatibility with PRODUCT_USE_OLD_PATH_FOR_PHOTO variable
+FIX: #7903
+FIX: #7933
+FIX: #8029 Unable to make leave request in holyday module
+FIX: #8093
+FIX: Bad name alias showing in name of third column
+FIX: Cashdesk should not sell to inactive third parties
+FIX: Edit accountancy account and warning message on loan
+FIX: $accounts[$bid] is a label !
+FIX: $oldvatrateclean & $newvatrateclean must be set if preg_match === false
+FIX: product best price on product list
+FIX: search on contact list
+FIX: stats trad for customerinvoice
+FIX: translate unactivate on contractline
+FIX: email sent was not in HTML
+FIX: missing hook invoice index
+FIX: subject mail sepa
+
+
+***** ChangeLog for 6.0.4 compared to 6.0.3 *****
+FIX: #7737
+FIX: #7751
+FIX: #7756 Add better error message
+FIX: #7786
+FIX: #7806
+FIX: #7824
+FIX: add line bad price and ref
+FIX: A lot of several fix on local taxes and NPR tax
+FIX: createfromorder
+FIX: CSS for IE10
+FIX: external user cannot be set as internal
+FIX: Filter type on actioncomm with multiselect doesn't work
+FIX: list of donation not filtered on multicompany
+FIX: list of module not complete when module mb_strlen not available
+FIX: Locatax were not propagated when cloning order or proposal
+FIX: Searching translation should not be case sensitive
+FIX: Search into language is ok for file into external modules two.
+FIX: test for filter fk_status
+FIX: too much users on holiday list
+FIX: Wrong alias sql
 
 
 ***** ChangeLog for 6.0.3 compared to 6.0.2 *****

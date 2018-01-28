@@ -1706,7 +1706,7 @@ else
 			$modelmail='user';
 			$defaulttopic='Information';
 			$diroutput = $conf->user->dir_output;
-			$trackid = 'user'.$object->id;
+			$trackid = 'use'.$object->id;
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 

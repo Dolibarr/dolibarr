@@ -1025,6 +1025,9 @@ select.selectarrowonleft option {
 	div.statusref img {
     	padding-right: 3px !important;
    	}
+	div.statusrefbis {
+    	padding-right: 3px !important;
+   	}
 
    	input.buttonpayment {
 		min-width: 300px;
@@ -1328,6 +1331,11 @@ div.statusref {
 	clear: both;
 }
 div.statusref img {
+    padding-left: 8px;
+   	padding-right: 9px;
+   	vertical-align: text-bottom;
+}
+div.statusrefbis {
     padding-left: 8px;
    	padding-right: 9px;
    	vertical-align: text-bottom;
@@ -1723,7 +1731,6 @@ form#login {
 	max-width: 530px;
 	color: #aaa !important;
 	padding-bottom: 20px;
-	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1751,7 +1758,7 @@ form#login {
 	border: none;
 	border-bottom: solid 1px rgba(180,180,180,.4);
 	padding: 5px;
-	margin-left: 18px;
+	margin-left: 5px;
 	margin-top: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
@@ -2974,12 +2981,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
-	.boxstats, .boxstats130 {
-        width: 90px;
-    }
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
+    }
+    .boxstats130 {
+    	width: 148px;
     }
     .boxstats {
         width: 100px;
@@ -4026,10 +4033,13 @@ td.gminorheadingwkend {
 td.gminorheading {
     color: #666 !important;
 }
+.glistlbl, .glistgrid {
+	width: 582px !important;
+}
 .gtaskname div, .gtaskname {
-    min-width: 200px !important;
-    max-width: 200px !important;
-    width: 200px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    width: 250px !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;

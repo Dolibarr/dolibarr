@@ -277,8 +277,13 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  63,   6, '2.5','0','VAT super-reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (  64,   6,   '0','0','VAT Rate 0',  1);
 
+-- SRI LANKA (id country=207)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2071, 207,   '0','0','VAT 0', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2072, 207,  '15','0','VAT 15%', 1);
+
 -- TAIWAN (id country=213)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2131, 213,   '5','0','VAT 5%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2132, 213,   '0','0','VAT 0', 1);
 
 -- TUNISIA (id country=10)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active,localtax1,localtax1_type,localtax2,localtax2_type) values (101,10,    '6','0','VAT 6%', 1, 1, '4', 0, 0);

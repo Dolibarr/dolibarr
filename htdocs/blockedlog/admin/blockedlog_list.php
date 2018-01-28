@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
-if (! $user->admin) accessforbidden();
+if ((! $user->admin && ! $user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'blockedloglist';   // To manage different context of search
@@ -103,93 +103,147 @@ if ($action === 'downloadblockchain') {
 
 	exit;
 }
-else if($action === 'downloadcsv') {
+else if (GETPOST('downloadcsv','alpha'))
+{
+	$error = 0;
 
-	$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
-	$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
-	$sql.= " WHERE entity = ".$conf->entity;
-	$sql.= " ORDER BY rowid ASC";					// Required so later we can use the parameter $previoushash of checkSignature()
+	$previoushash='';
+	$firstid='';
 
-	$res = $db->query($sql);
-	if($res) {
-
-		$signature = $block_static->getSignature();
-
-		header('Content-Type: application/octet-stream');
-		header("Content-Transfer-Encoding: Binary");
-		header("Content-disposition: attachment; filename=\"archive-log-" .$signature. ".csv\"");
-
-		print $langs->transnoentities('Id')
-			.';'.$langs->transnoentities('Date')
-			.';'.$langs->transnoentities('User')
-			.';'.$langs->transnoentities('Action')
-			.';'.$langs->transnoentities('Element')
-			.';'.$langs->transnoentities('Amounts')
-			.';'.$langs->transnoentities('ObjectId')
-			.';'.$langs->transnoentities('Date')
-			.';'.$langs->transnoentities('Ref')
-			.';'.$langs->transnoentities('Fingerprint')
-			.';'.$langs->transnoentities('Status')
-			.';'.$langs->transnoentities('FullData')
-			."\n";
-
-		$previoushash = '';
-		$loweridinerror = 0;
-
-		while ($obj = $db->fetch_object($res))
+	if (! $error)
+	{
+		// Get ID of first line
+		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
+		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql.= " WHERE entity = ".$conf->entity;
+		if (GETPOST('yeartoexport','int') > 0)
 		{
-			// We set here all data used into signature calculation (see checkSignature method) and more
-			// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
-			$block_static->id = $obj->rowid;
-			$block_static->date_creation = $db->jdate($obj->date_creation);
-			$block_static->date_modification = $db->jdate($obj->tms);
-			$block_static->action = $obj->action;
-			$block_static->fk_object = $obj->fk_object;
-			$block_static->element = $obj->element;
-			$block_static->amounts = (double) $obj->amounts;
-			$block_static->ref_object = $obj->ref_object;
-			$block_static->date_object = $db->jdate($obj->date_object);
-			$block_static->user_fullname = $obj->user_fullname;
-			$block_static->fk_user = $obj->fk_user;
-			$block_static->signature = $obj->signature;
-			$block_static->object_data = unserialize($obj->object_data);
+			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), 1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), 12);
+			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+		}
+		$sql.= " ORDER BY rowid ASC";					// Required so we get the first one
+		$sql.= $db->plimit(1);
 
-			$checksignature = $block_static->checkSignature($previoushash);	// If $previoushash is not defined, checkSignature will search it
+		$res = $db->query($sql);
+		if($res)
+		{
+			// Make the first fetch to get first line
+			$obj = $db->fetch_object($res);
 
-			if ($checksignature)
-			{
-				if ($loweridinerror > 0) $statusofrecord = 'ValidButFoundAPreviousKO';
-				else $statusofrecord = 'Valid';
-			}
-			else
-			{
-				$statusofrecord = 'KO';
-				$loweridinerror = $obj->rowid;
-			}
+			$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
+			$firstid = $obj->rowid;
+		}
+		else
+		{
+			$error++;
+			setEventMessage($db->lasterror, 'errors');
+		}
+	}
 
-			print $obj->rowid
-				.';'.$obj->date_creation
-				.';"'.$obj->user_fullname.'"'
-				.';'.$obj->action
-				.';'.$obj->element
-				.';'.$obj->amounts
-				.';'.$obj->fk_object
-				.';'.$obj->date_object
-				.';"'.$obj->ref_object.'"'
-				.';'.$obj->signature
-				.';'.$statusofrecord
-				.';"'.str_replace('"','""',$obj->object_data).'"'
+	if (! $error)
+	{
+		// Now restart request with all data
+		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
+		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql.= " WHERE entity = ".$conf->entity;
+		if (GETPOST('yeartoexport','int') > 0)
+		{
+			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), 1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), 12);
+			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+		}
+		$sql.= " ORDER BY rowid ASC";					// Required so later we can use the parameter $previoushash of checkSignature()
+
+		$res = $db->query($sql);
+		if($res)
+		{
+			header('Content-Type: application/octet-stream');
+			header("Content-Transfer-Encoding: Binary");
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport','int')>0?GETPOST('yeartoexport','int').'-':'').$previoushash. ".csv\"");
+
+			print $langs->transnoentities('Id')
+				.';'.$langs->transnoentities('Date')
+				.';'.$langs->transnoentities('User')
+				.';'.$langs->transnoentities('Action')
+				.';'.$langs->transnoentities('Element')
+				.';'.$langs->transnoentities('Amounts')
+				.';'.$langs->transnoentities('ObjectId')
+				.';'.$langs->transnoentities('Date')
+				.';'.$langs->transnoentities('Ref')
+				.';'.$langs->transnoentities('Fingerprint')
+				.';'.$langs->transnoentities('Status')
+				.';'.$langs->transnoentities('Note')
+				.';'.$langs->transnoentities('FullData')
 				."\n";
 
-			// Set new previous hash for next fetch
-			$previoushash = $obj->signature;
-		}
+			$loweridinerror = 0;
+			$i = 0;
 
-		exit;
-	}
-	else
-	{
-		setEventMessage($db->lasterror, 'errors');
+			while ($obj = $db->fetch_object($res))
+			{
+				// We set here all data used into signature calculation (see checkSignature method) and more
+				// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
+				$block_static->id = $obj->rowid;
+				$block_static->date_creation = $db->jdate($obj->date_creation);
+				$block_static->date_modification = $db->jdate($obj->tms);
+				$block_static->action = $obj->action;
+				$block_static->fk_object = $obj->fk_object;
+				$block_static->element = $obj->element;
+				$block_static->amounts = (double) $obj->amounts;
+				$block_static->ref_object = $obj->ref_object;
+				$block_static->date_object = $db->jdate($obj->date_object);
+				$block_static->user_fullname = $obj->user_fullname;
+				$block_static->fk_user = $obj->fk_user;
+				$block_static->signature = $obj->signature;
+				$block_static->object_data = unserialize($obj->object_data);
+
+				$checksignature = $block_static->checkSignature($previoushash);	// If $previoushash is not defined, checkSignature will search it
+
+				if ($checksignature)
+				{
+					$statusofrecord = 'Valid';
+					if ($loweridinerror > 0) $statusofrecordnote = 'ValidButFoundAPreviousKO';
+					else $statusofrecordnote = '';
+				}
+				else
+				{
+					$statusofrecord = 'KO';
+					$statusofrecordnote = 'LineCorruptedOrNotMatchingPreviousOne';
+					$loweridinerror = $obj->rowid;
+				}
+
+				if ($i==0)
+				{
+					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote?' - '.$statusofrecordnote:'');
+				}
+				print $obj->rowid
+					.';'.$obj->date_creation
+					.';"'.$obj->user_fullname.'"'
+					.';'.$obj->action
+					.';'.$obj->element
+					.';'.$obj->amounts
+					.';'.$obj->fk_object
+					.';'.$obj->date_object
+					.';"'.$obj->ref_object.'"'
+					.';'.$obj->signature
+					.';'.$statusofrecord
+					.';'.$statusofrecordnote
+					.';"'.str_replace('"','""',$obj->object_data).'"'
+					."\n";
+
+				// Set new previous hash for next fetch
+				$previoushash = $obj->signature;
+
+				$i++;
+			}
+
+			exit;
+		}
+		else
+		{
+			setEventMessage($db->lasterror, 'errors');
+		}
 	}
 }
 
@@ -262,18 +316,22 @@ if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab',
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
 print '<div align="right">';
-//print ' <a href="?all=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsMightBeTooLong').'</a>';
-//print ' | <a href="?all=1&search_showonlyerrors=1'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('ShowAllFingerPrintsErrorsMightBeTooLong').'</a>';
-print ' <a href="?action=downloadcsv'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadLogCSV').'</a>';
+print $langs->trans("RestrictYearToExport").': ';
+print '<input type="text" name="yeartoexport" class="maxwidth75" value="'.GETPOST('yeartoexport','int').'">';
+print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
+print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
-print ' </div>';
+print ' </div><br>';
 
+print '</form>';
+
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -301,7 +359,8 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1);
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+
 print '</td>';
 
 // Actions code
@@ -330,6 +389,9 @@ $array=array("1"=>$langs->trans("OnlyNonValid"));
 print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1);
 print '</td>';
 
+// Status note
+print '<td class="liste_titre"></td>';
+
 // Action column
 print '<td class="liste_titre" align="middle">';
 $searchpicto=$form->showFilterButtons();
@@ -349,6 +411,7 @@ print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'',''
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
 print '</tr>';
 
@@ -386,7 +449,8 @@ if (is_array($blocks))
 	{
 		$object_link = $block->getObjectLink();
 
-		if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
+		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
+		if (empty($search_showonlyerrors) || ! $checkresult[$block->id])
 		{
 		   	print '<tr class="oddeven">';
 		   	// ID
@@ -408,13 +472,14 @@ if (is_array($blocks))
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
 		   	print '<td>';
-		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature);
+		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint');
 		   	print '</td>';
 
+		   	// Status
 		   	print '<td class="center">';
 		   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
 		   	{
-		   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut1');
+		   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut4');
 		   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
 		   	}
 		   	else
@@ -422,10 +487,19 @@ if (is_array($blocks))
 		   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
 		   	}
 
+		   	print '</td>';
+
+		   	// Status note
+		   	print '<td class="center">';
+		   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
+		   	{
+		   		if ($checkresult[$block->id]) print $form->textwithpicto('', $langs->trans('OkCheckFingerprintValidityButChainIsKo'));
+		   	}
+
 		   	if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
 		   		print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') :  img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black') );
 		   	}
-			print '</td>';
+		   	print '</td>';
 
 			print '<td></td>';
 
@@ -437,12 +511,11 @@ if (is_array($blocks))
 
 print '</table>';
 
-print '</form>';
-
 print '</div>';
 
+print '</form>';
 
-
+// Javascript to manage the showinfo popup
 print '<script type="text/javascript">
 
 jQuery(document).ready(function () {
@@ -454,36 +527,19 @@ jQuery(document).ready(function () {
 
 	$("a[rel=show-info]").click(function() {
 
-	    console.log("We click on tooltip");
-
-		jQuery("#dialogforpopup").html(\'<div id="pop-info"><table width="100%" height="80%" class="border"><thead><th width="50%">'.$langs->trans('Field').'</th><th>'.$langs->trans('Value').'</th></thead><tbody></tbody></table></div>\');
+	    console.log("We click on tooltip, we open popup and get content using an ajax call");
 
 		var fk_block = $(this).attr("data-blockid");
 
 		$.ajax({
 			url:"../ajax/block-info.php?id="+fk_block
-			,dataType:"json"
+			,dataType:"html"
 		}).done(function(data) {
-			drawData(data,"");
+			jQuery("#dialogforpopup").html(data);
 		});
 
 		jQuery("#dialogforpopup").dialog("open");
 	});
-
-
-	function drawData(data, prefix) {
-		for(x in data) {
-			value = data[x];
-
-			if (typeof value != "object") {
-				$("#pop-info table tbody").append("<tr><td>"+prefix+x+"</td><td class=\"wordwrap\">"+value+"</td></tr>");
-			}
-			if ((typeof value === "object") && (value !== null)) {
-				drawData(value, prefix+x+" &gt;&gt; ");
-			}
-		}
-	}
-
 })
 </script>'."\n";
 

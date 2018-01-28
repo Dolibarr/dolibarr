@@ -338,7 +338,7 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *	@return     int         <0 if KO, 0=no, 1=yes
 	 */
-	function getVentilExportCompta()
+	public function getVentilExportCompta()
 	{
 		$alreadydispatched = 0;
 

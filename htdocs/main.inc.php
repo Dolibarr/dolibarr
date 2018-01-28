@@ -212,7 +212,7 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 
 
 // Init session. Name of session is specific to Dolibarr instance.
-// Note: the function dol_getprefix have been redefined to manage another area to protect with a different cookie.
+// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
 $prefix=dol_getprefix('');
 
 $sessionname='DOLSESSID_'.$prefix;
@@ -1047,9 +1047,10 @@ if (! function_exists("llxHeader"))
  *  Show HTTP header
  *
  *  @param  string  $contenttype    Content type. For example, 'text/html'
+ *  @param	int		$forcenocache	Force disabling of cache for the page
  *  @return	void
  */
-function top_httphead($contenttype='text/html')
+function top_httphead($contenttype='text/html', $forcenocache=0)
 {
 	global $conf;
 
@@ -1066,12 +1067,10 @@ function top_httphead($contenttype='text/html')
 		// default-src https://cdn.example.net; object-src 'none'
 		header("Content-Security-Policy: ".$conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY);
 	}
-
-
-	// On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
-	/*if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) {
-        ob_start("ob_gzhandler");
-    }*/
+	if ($forcenocache)
+	{
+		header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
+	}
 }
 
 /**
