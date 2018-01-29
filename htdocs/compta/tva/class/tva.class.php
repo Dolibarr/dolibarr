@@ -651,23 +651,42 @@ class Tva extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			link option
+     *  @param	int  	$notooltip		1=Disable tooltip
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='',  $notooltip=0)
 	{
 		global $langs;
 
 		$result='';
         $label=$langs->trans("ShowVatPayment").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+        $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowMyObject");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend ='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
