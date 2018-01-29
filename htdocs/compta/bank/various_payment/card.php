@@ -49,7 +49,7 @@ $sens=GETPOST("sens","int");
 $amount=GETPOST("amount");
 $paymenttype=GETPOST("paymenttype");
 $accountancy_code=GETPOST("accountancy_code","int");
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST('fk_project','int'));
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -96,22 +96,23 @@ if (empty($reshook))
 	{
 		$error=0;
 
-		$datep=dol_mktime(12,0,0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
-		$datev=dol_mktime(12,0,0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+		$datep=dol_mktime(12,0,0, GETPOST("datepmonth",'int'), GETPOST("datepday",'int'), GETPOST("datepyear",'int'));
+		$datev=dol_mktime(12,0,0, GETPOST("datevmonth",'int'), GETPOST("datevday",'int'), GETPOST("datevyear",'int'));
 		if (empty($datev)) $datev=$datep;
 
-		$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
+		$object->ref='';	// TODO
+		$object->accountid=GETPOST("accountid",'int') > 0 ? GETPOST("accountid","int") : 0;
 		$object->datev=$datev;
 		$object->datep=$datep;
-		$object->amount=price2num(GETPOST("amount"));
-		$object->label=GETPOST("label");
-		$object->note=GETPOST("note");
-		$object->type_payment=GETPOST("paymenttype") > 0 ? GETPOST("paymenttype", "int") : 0;
-		$object->num_payment=GETPOST("num_payment");
+		$object->amount=price2num(GETPOST("amount",'alpha'));
+		$object->label=GETPOST("label",'none');
+		$object->note=GETPOST("note",'none');
+		$object->type_payment=GETPOST("paymenttype",'int') > 0 ? GETPOST("paymenttype", "int") : 0;
+		$object->num_payment=GETPOST("num_payment",'alpha');
 		$object->fk_user_author=$user->id;
 		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code","int") : "";
 		$object->sens=GETPOST('sens');
-		$object->fk_project= GETPOST('fk_project');
+		$object->fk_project= GETPOST('fk_project','int');
 
 		if (empty($datep) || empty($datev))
 		{
@@ -411,7 +412,7 @@ if ($id)
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	// Payment date
 	print "<tr>";
