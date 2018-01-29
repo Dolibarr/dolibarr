@@ -99,7 +99,7 @@ $form = new Form($db);
 if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page','int') == '' && ! GETPOST('noreset','int'))
 {
 	$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$query.= " where date_start < '".idate(dol_now())."' and date_end > '".idate(dol_now())."' limit 1";
+	$query.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
 	$res = $db->query($query);
 	if ($res->num_rows > 0) {
 		$fiscalYear = $db->fetch_object($res);
