@@ -920,7 +920,7 @@ if (GETPOST("source") == 'membersubscription')
 	    $valtoshow=GETPOST("newamount",'int');
 	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
+	    print '<input class="flat" class="maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	}
 	else {
 	    $valtoshow=$amount;
