@@ -666,7 +666,7 @@ class Expedition extends CommonObject
 					{
 						$qty = $obj->edbqty;
 					}
-					if ($qty <= 0) continue;
+					if ($qty == 0) continue;
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
 
 					//var_dump($this->lines[$i]);
