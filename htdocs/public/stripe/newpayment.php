@@ -429,7 +429,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found=false;
 $error=0;
@@ -989,7 +989,7 @@ if (GETPOST("source") == 'membersubscription')
         $valtoshow=GETPOST("newamount",'int');
         if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-        print '<input class="flat" class="maxwidth75" type="text" name="newamount" value="'.price($valtoshow).'">';
+        print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price($valtoshow).'">';
     }
     else {
         $valtoshow=$amount;
