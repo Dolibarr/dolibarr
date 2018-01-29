@@ -239,7 +239,7 @@ MinimumRecommendedPrice=El precio mínimo recomendado es: %s
 PriceExpressionEditor=Editor de expresión de precios
 PriceExpressionSelected=Expresión de precios seleccionada
 PriceExpressionEditorHelp1="price = 2 + 2" o "2 + 2" para configurar un precio. Use ; para separar expresiones
-PriceExpressionEditorHelp2=Puede acceder a los atributos adicionales con variables como <b>#extrafield_myextrafieldkey#</b> y variables globales con <b>#global_mycode#</b>
+PriceExpressionEditorHelp2=Puede acceder a los campos adicionales con variables como <b>#extrafield_myextrafieldkey#</b> y variables globales con <b>#global_mycode#</b>
 PriceExpressionEditorHelp3=En productos y servicios, y precios de proveedor están disponibles las siguientes variables<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# #weight# #length# #surface# #price_min#</b>
 PriceExpressionEditorHelp4=Solamente en los precios de productos y servicios: <b>#supplier_min_price#</b><br>In supplier prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
 PriceExpressionEditorHelp5=Valores globales disponibles:
