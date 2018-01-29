@@ -404,7 +404,7 @@ if (! GETPOST("source"))
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -490,7 +490,7 @@ if (GETPOST("source") == 'order')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -600,7 +600,7 @@ if (GETPOST("source") == 'invoice')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -798,7 +798,7 @@ if (GETPOST("source") == 'contractline')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -937,7 +937,7 @@ if (GETPOST("source") == 'membersubscription')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
