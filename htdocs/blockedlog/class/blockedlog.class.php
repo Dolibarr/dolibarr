@@ -150,9 +150,9 @@ class BlockedLog
 		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_DELETE']='logMEMBER_SUBSCRIPTION_DELETE';
 
 
-		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logBlockedLogVariousPaymentCreate';
-		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logBlockedLogVariousPaymentModify';
-		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logBlockedLogVariousPaymentDelete';
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logPAYMENT_VARIOUS_CREATE';
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logPAYMENT_VARIOUS_MODIFY';
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logPAYMENT_VARIOUS_DELETE';
 	}
 
 	/**
