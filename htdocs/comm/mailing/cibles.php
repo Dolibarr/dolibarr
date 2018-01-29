@@ -171,6 +171,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 /*
  * View
  */
+
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $form = new Form($db);
@@ -578,7 +579,7 @@ if ($object->fetch($id) >= 0)
                 }
 				print '</td>';
 
-				// Statut pour l'email destinataire (Attentioon != statut du mailing)
+				// Status of recipient sending email (Warning != status of emailing)
 				if ($obj->statut == 0)
 				{
 					print '<td align="center">&nbsp;</td>';
@@ -589,18 +590,22 @@ if ($object->fetch($id) >= 0)
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
 					print '<td align="right" class="nowrap">';
-					print $object::libStatutDest($obj->statut,2,$obj->error_text);
+					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
 					print '</td>';
 				}
 
 				// Search Icon
 				print '<td align="right">';
-				if ($obj->statut == 0)
+				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {
-						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient"));
+						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}
+				/*if ($obj->statut == -1)	// Sent with error
+				{
+					print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+				}*/
 				print '</td>';
 				print '</tr>';
 
