@@ -155,7 +155,7 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 
 if (GETPOST('action','aZ09') == 'dopayment')
 {
-    $PRICE=price2num(GETPOST("newamount"),'MT');
+    $PRICE=price2num(GETPOST("newamount",'alpha'),'MT');
     $email=GETPOST("email");
 
     $origfulltag=GETPOST("fulltag",'alpha');
@@ -305,7 +305,7 @@ if (! GETPOST("source") && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price(price2num(GETPOST("newamount","alpha"),'MT')).'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -392,7 +392,7 @@ if (GETPOST("source") == 'order' && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price(price2num(GETPOST("newamount","alpha"),'MT')).'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -480,7 +480,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price(price2num(GETPOST("newamount","alpha"),'MT')).'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -656,7 +656,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price(price2num(GETPOST("newamount","alpha"),'MT')).'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -754,7 +754,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
 		print '</td></tr>'."\n";
 
-		if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
+		if (empty($amount) && ! GETPOST('newamount','alpha')) $_GET['newamount']=$member->last_subscription_amount;
 	}
 
 	// Amount
@@ -764,7 +764,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-	    $valtoshow=GETPOST("newamount",'int');
+	    $valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
 	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price($valtoshow).'">';
