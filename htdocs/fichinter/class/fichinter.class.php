@@ -140,7 +140,7 @@ class Fichinter extends CommonObject
 	 */
 	function create($user, $notrigger=0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
