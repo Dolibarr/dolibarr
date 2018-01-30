@@ -1142,14 +1142,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", m.lastname, m.firstname";
         if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", o.ref";
         if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", o.ref";
-        $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe')  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
         if (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql.= ", ".MAIN_DB_PREFIX."adherent as m";
         if (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         if (is_object($filterobj) && get_class($filterobj) == 'Product') $sql.= ", ".MAIN_DB_PREFIX."product as o";
-        $sql.= " WHERE u.rowid = a.fk_user_action";
-        $sql.= " AND a.entity IN (".getEntity('agenda').")";
+        $sql.= " WHERE a.entity IN (".getEntity('agenda').")";
         if (is_object($filterobj) && get_class($filterobj) == 'Societe'  && $filterobj->id) $sql.= " AND a.fk_soc = ".$filterobj->id;
         if (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql.= " AND a.fk_project = ".$filterobj->id;
         if (is_object($filterobj) && get_class($filterobj) == 'Adherent')
@@ -1192,7 +1192,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         if ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         if (is_array($filters) && $filters['search_agenda_label']) $sql.= natural_search('a.label', $filters['search_agenda_label']);
         $sql.= $db->order($sortfield, $sortorder);
-
         dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
@@ -1298,7 +1297,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         }
     }
 
-
     if (! empty($conf->agenda->enabled) || (! empty($conf->mailing->enabled) && ! empty($objcon->email)))
     {
         $delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
@@ -1385,7 +1383,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 
         foreach ($histo as $key=>$value)
         {
-
 			$actionstatic->fetch($histo[$key]['id']);    // TODO Do we need this, we already have a lot of data of line into $histo
 
             $out.='<tr class="oddeven">';
@@ -1407,8 +1404,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$userstatic->id=$histo[$key]['userid'];
             //$userstatic->login=$histo[$key]['login'];
             //$out.=$userstatic->getLoginUrl(1);
-            $userstatic->fetch($histo[$key]['userid']);
-            $out.=$userstatic->getNomUrl(-1);
+            if ($histo[$key]['userid'] > 0)
+            {
+            	$userstatic->fetch($histo[$key]['userid']);
+            	$out.=$userstatic->getNomUrl(-1);
+            }
             $out.='</td>';
 
             // Type
