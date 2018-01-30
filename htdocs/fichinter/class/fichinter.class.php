@@ -128,7 +128,7 @@ class Fichinter extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." fi.entity IN (".getEntity($this->element, 1).")";
+		$sql.= " ".$clause." fi.entity IN (".getEntity($this->element).")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)

@@ -84,7 +84,7 @@ class box_produits extends ModeleBoxes
 		{
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
+			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
 			// Add where from hooks

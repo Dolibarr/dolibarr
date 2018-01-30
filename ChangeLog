@@ -276,6 +276,16 @@ Following changes may create regressions for some external modules, but were nec
   and add 'td.' to the beginning of the dragHandle match string. 
 * IE8 and earlier and Firefox 12 and earlier (< 2012) are no more supported. 
 
+* If you use the external module "multicompany", payment modes and conditions are now specific to each company.
+  It means you will lose, by default, your payment modes and condition currently set on your orders, invoices, 
+  etc, for all companies that are not the first one (list of payment modes and conditions must be defined for each
+  companies, old values are kept into the first company only). You can restore old behaviour by adding setting the
+  following constant to 1 into menu Home - Setup - Other:  
+  MULTICOMPANY_C_PAIEMENT_SHARING_DISABLED
+  MULTICOMPANY_C_PAYMENT_TERM_SHARING_DISABLED
+  With this 2 options set, and if you use a multicompany module compatible with v7, the payment modes and terms will
+  be like in v6 (same for all companies, so old value entered will not be lost). 
+  
 
 ***** ChangeLog for 6.0.5 compared to 6.0.4 *****
 FIX: security vulnerability reported by ADLab of Venustech
