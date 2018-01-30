@@ -1215,18 +1215,22 @@ if ($source == 'membersubscription')
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ')';
 	}
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	$valtoshow='';
 	if (empty($amount) || ! is_numeric($amount))
 	{
 		$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 		// force default subscription amount to value defined into constant...
-		if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-				$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+		if (empty($valtoshow))
+		{
+			if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
 			}
-		}
-		else {
-			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-				$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			else {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
 			}
 		}
 	}
