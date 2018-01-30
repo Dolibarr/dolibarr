@@ -2278,7 +2278,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
-	
+
 	if ($hookmanager) {
             $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
             $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
@@ -2304,7 +2304,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		if ($adddivfloat) $rep.='</div>';
 		else $rep.='</span>';
 	  }
-	
+
 	return $rep;
 }
 
@@ -3520,15 +3520,16 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
+ * @param	string	$morecss		More css
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="center login_main_message"><div class="error">';
+	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
