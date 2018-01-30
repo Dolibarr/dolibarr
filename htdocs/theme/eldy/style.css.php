@@ -357,7 +357,7 @@ input.buttonpayment {
 	background: none;
 	padding-left: 30px;
 	text-align: <?php echo $left; ?>;
-	border: 2px solid #ccc;
+	border: 1px solid #ddd;
 	background-color: #eee;
 	white-space: normal;
 }
