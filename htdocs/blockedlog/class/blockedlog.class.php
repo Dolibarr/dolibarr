@@ -149,11 +149,10 @@ class BlockedLog
 		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY']='logMEMBER_SUBSCRIPTION_MODIFY';
 		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_DELETE']='logMEMBER_SUBSCRIPTION_DELETE';
 
-		/*
-		 $trackedevents['PAYMENT_VARIOUS_CREATE']='BlockedLogVariousPaymentCreate';
-		 $trackedevents['PAYMENT_VARIOUS_MODIFY']='BlockedLogVariousPaymentModify';
-		 $trackedevents['PAYMENT_VARIOUS_DELETE']='BlockedLogVariousPaymentDelete';
-		*/
+
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logPAYMENT_VARIOUS_CREATE';
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logPAYMENT_VARIOUS_MODIFY';
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logPAYMENT_VARIOUS_DELETE';
 	}
 
 	/**
@@ -211,6 +210,17 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 
 			$object = new PaymentDonation($this->db);
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
+		else if($this->element === 'payment_various') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+
+			$object = new PaymentVarious($this->db);
 			if ($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
@@ -299,7 +309,7 @@ class BlockedLog
 		{
 			$this->date_object = $object->datev;
 		}
-		elseif ($object->element == 'payment_donation')
+		elseif ($object->element == 'payment_donation' || $object->element == 'payment_various')
 		{
 			$this->date_object = $object->datepaid?$object->datepaid:$object->datep;
 		}
@@ -401,20 +411,25 @@ class BlockedLog
 
 			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
-		elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation')
+		elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation' || $this->element == 'payment_various')
 		{
 			$datepayment = $object->datepaye?$object->datepaye:($object->datepaid?$object->datepaid:$object->datep);
-			$paymenttypeid = $object->paiementid?$object->paiementid:$object->paymenttype;
+			$paymenttypeid = $object->paiementid?$object->paiementid:($object->paymenttype?$object->paymenttype:$object->type_payment);
 
 			$this->object_data->ref = $object->ref;
 			$this->object_data->date = $datepayment;
 			$this->object_data->type_code = dol_getIdFromCode($this->db, $paymenttypeid, 'c_paiement', 'id', 'code');
-			$this->object_data->payment_num = $object->num_paiement;
+			$this->object_data->payment_num = ($object->num_paiement?$object->num_paiement:$object->num_payment);
 			//$this->object_data->fk_account = $object->fk_account;
 			$this->object_data->note = $object->note;
 			//var_dump($this->object_data);exit;
 
 			$totalamount=0;
+
+			if (! is_array($object->amounts) && $object->amount)
+			{
+				$object->amounts=array($object->id => $object->amount);
+			}
 
 			$paymentpartnumber=0;
 			foreach($object->amounts as $objid => $amount)
@@ -439,26 +454,41 @@ class BlockedLog
 					include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 					$tmpobject = new Don($this->db);
 				}
+				elseif ($this->element == 'payment_various')
+				{
+					include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+					$tmpobject = new PaymentVarious($this->db);
+				}
+
 				if (! is_object($tmpobject))
 				{
 					continue;
 				}
 
 				$result = $tmpobject->fetch($objid);
+
 				if ($result <= 0)
 				{
 					$this->error = $tmpobject->error;
 					$this->errors = $tmpobject->errors;
+					dol_syslog("Failed to fetch object with id ".$objid, LOG_ERR);
 					return -1;
 				}
 
 				$paymentpart = new stdClass();
 				$paymentpart->amount = $amount;
 
-				if ($this->element != 'payment_donation')
+				if (! in_array($this->element, array('payment_donation', 'payment_various')))
 				{
 					$result = $tmpobject->fetch_thirdparty();
-					if ($result <= 0)
+					if ($result == 0)
+					{
+						$this->error='Failed to fetch thirdparty for object with id '.$tmpobject->id;
+						$this->errors[] = $this->error;
+						dol_syslog("Failed to fetch thirdparty for object with id ".$tmpobject->id, LOG_ERR);
+						return -1;
+					}
+					elseif ($result < 0)
 					{
 						$this->error = $tmpobject->error;
 						$this->errors = $tmpobject->errors;
@@ -481,21 +511,25 @@ class BlockedLog
 				if ($this->element == 'payment_donation') $paymentpart->donation = new stdClass();
 				else $paymentpart->invoice = new stdClass();
 
-				foreach($tmpobject as $key=>$value)
+				if ($this->element != 'payment_various')
 				{
-					if (in_array($key, array('fields'))) continue;	// Discard some properties
-					if (! in_array($key, array(
-					'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
-					))) continue;									// Discard if not into a dedicated list
-					if (!is_object($value))
+					foreach($tmpobject as $key=>$value)
 					{
-						if ($this->element == 'payment_donation') $paymentpart->donation->{$key} = $value;
-						else $paymentpart->invoice->{$key} = $value;
+						if (in_array($key, array('fields'))) continue;	// Discard some properties
+						if (! in_array($key, array(
+						'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+						))) continue;									// Discard if not into a dedicated list
+						if (!is_object($value))
+						{
+							if ($this->element == 'payment_donation') $paymentpart->donation->{$key} = $value;
+							elseif ($this->element == 'payment_various') $paymentpart->various->{$key} = $value;
+							else $paymentpart->invoice->{$key} = $value;
+						}
 					}
-				}
 
-				$paymentpartnumber++;
-				$this->object_data->payment_part[$paymentpartnumber] = $paymentpart;
+					$paymentpartnumber++;	// first payment will be 1
+					$this->object_data->payment_part[$paymentpartnumber] = $paymentpart;
+				}
 			}
 
 			$this->object_data->amount = $totalamount;

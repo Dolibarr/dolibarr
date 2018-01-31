@@ -738,7 +738,7 @@ class Societe extends CommonObject
 	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
-	 *		@param	string	$action						'add' or 'update'
+	 *		@param	string	$action						'add' or 'update' or 'merge'
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			<0 if KO, >=0 if OK
 	 */
@@ -867,7 +867,12 @@ class Societe extends CommonObject
 		// Check name is required and codes are ok or unique.
 		// If error, this->errors[] is filled
 		$result = 0;
-		if ($action != 'add') $result = $this->verify();	// We don't check when update called during a create because verify was already done
+		if ($action != 'add' && $action != 'merge')
+		{
+			// We don't check when update called during a create because verify was already done.
+			// For a merge, we suppose source data is clean and a customer code of a deleted thirdparty must be accepted into a target thirdparty with empty code without duplicate error
+			$result = $this->verify();
+		}
 
 		if ($result >= 0)
 		{
@@ -1148,7 +1153,7 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' WHERE s.entity IN ('.getEntity($this->element, 1).')';
+		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)   $sql .= ' AND s.rowid = '.$rowid;
 		if ($ref)     $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
@@ -3767,16 +3772,22 @@ class Societe extends CommonObject
 	 * Function used to replace a thirdparty id with another one.
 	 * It must be used within a transaction to avoid trouble
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$db 		Database handler
+	 * @param 	int 	$origin_id 	Old thirdparty id (will be removed)
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool				True if success, False if error
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
+		if ($origin_id == $id)
+		{
+			dol_syslog('Error: Try to merge a thirdparty into itself');
+			return false;
+		}
+
 		/**
-		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
-		 * Because this function is meant to be executed within a transaction, we won't take care of it.
+		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some to avoid duplicate.
+		 * Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
 		 */
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';

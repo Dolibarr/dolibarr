@@ -424,14 +424,6 @@ class Orders extends DolibarrApi
 		    if ($this->commande->availability($this->commande->availability_id) < 0)
 			throw new RestException(400, 'Error while updating availability');
 		}
-        // update bank account
-        if(!empty($this->commande->fk_account))
-        {
-                if($this->commande->setBankAccount($this->commande->fk_account) == 0)
-                {
-                        throw new RestException(400,$this->commande->error);
-                }
-        }
 
         if ($this->commande->update(DolibarrApiAccess::$user) > 0)
         {

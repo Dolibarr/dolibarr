@@ -88,7 +88,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
-			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
+			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			$sql.= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
