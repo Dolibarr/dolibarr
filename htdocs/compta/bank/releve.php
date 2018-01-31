@@ -185,163 +185,120 @@ if ($action == 'confirm_editbankreceipt' && ! empty($oldbankreceipt) && ! empty(
 if ($action=="dl" && $numref > 0)
 {
 	// TODO Replace this with a standard builddoc action that use a document generation module to build the ZIP
-    $log = '';
-
-    $outdir = $conf->bank->dir_temp.'/'.$numref.'-'.$object->label;
-    $outdirinvoices = $outdir.'/'.$langs->trans("BillsCustomers");
-    $outdirsupplierinvoices = $outdir.'/'.$langs->trans("BillsSuppliers");
-
-    dol_mkdir($outdir);
-    dol_mkdir($outdirinvoices);
-    dol_mkdir($outdirsupplierinvoices);
-
-    //$zipname = $object->label.'-'.$numref . '.zip';
-    //$zip = new ZipArchive();
-    //$zip->open($zipname, ZipArchive::OVERWRITE);
-
+    $log = "bankStatementLine,transactionType,file 1,file 2,file 3,file 4,file 5\n";
+    
+    $zipname = $object->label.'-'.$numref . '.zip';
+    $zip = new ZipArchive();
+    $zip->open($zipname, ZipArchive::OVERWRITE|ZipArchive::CREATE);
     $sql = $sqlrequestforbankline;
-
-    $facturestatic=new Facture($db);
 
     $resd = $db->query($sql);
     if ($resd) {
         $numd = $db->num_rows($resd);
         $i = 0;
-        if ($numd > 0)
+        while ( $i< $numd)
         {
+            $upload_files=array();
             $objd = $db->fetch_object($resd);
-
-            $log.='Transaction '.$objd->rowid;
-            $links = $object->get_url($objd->rowid);
-
-            foreach($links as $key=>$val)
-            {
-                $link = ''; $upload_dir = '';
-
-                switch ($val['type']) {
-                    case "payment":
+            $log.=$i.','.$objd->label;
+                switch ($objd->label) {
+                    case "(CustomerInvoicePayment)":
                         $payment = new Paiement($db);
-                        $payment->fetch($val['url_id']);
+                        $payment->fetch('','',$objd->rowid);
                         $arraybill = $payment->getBillsArray();
+
                         if (is_array($arraybill) && count($arraybill) > 0)
                         {
+                            $facturestatic=new Facture($db);
                             foreach ($arraybill as $billid)
-                            {
+                            {                             
                                 $facturestatic->fetch($billid);
-                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice');
-
+                                $subdir = $facturestatic->getFilesDir();
                                 $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
-                                // TODO Use get_exdir
-                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
-                                $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
-                                // build list of files with full path
-                                $files = array();
-                                foreach($listoffiles as $filefound)
+                                $arrayofinclusion[]=".*\.odt";
+                                $arrayofinclusion[]=".*\.pdf";
+                                $listoffiles = dol_dir_list($subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                foreach($listoffiles as $srcfileobj)
                                 {
-                                    if (strstr($filefound["name"],$facturestatic->ref))
-                                    {
-                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
-                                        break;
-                                    }
-                                }
-                                /*var_dump($files);*/
-                                //var_dump($listoffiles);
-                                foreach($listoffiles as $key => $srcfileobj)
-                                {
-                                    $srcfile = $srcfileobj['fullname'];
-                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
-                                    //var_dump($srcfile.' - '.$destfile);
-                                    dol_copy($srcfile, $destfile);
+                                     $upload_files[]=$srcfileobj;
                                 }
                             }
                         }
                         break;
-                    case "payment_supplier":
+                    case "(SupplierInvoicePayment)":
                         $payment = new PaiementFourn($db);
-                        $payment->fetch($val['url_id']);
+                        $payment->fetch('','',$objd->rowid);
                         $arraybill = $payment->getBillsArray();
+
                         if (is_array($arraybill) && count($arraybill) > 0)
                         {
+                            $facturestatic=new FactureFournisseur($db);
                             foreach ($arraybill as $billid)
                             {
                                 $facturestatic->fetch($billid);
-                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice_supplier');
-
+                                $subdir = $facturestatic->getFilesDir();
                                 $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
-                                // TODO Use get_exdir
-                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf','/');
-                                $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
-                                // build list of files with full path
-                                $files = array();
-                                foreach($listoffiles as $filefound)
+                                $arrayofinclusion[]=".*\.odt";
+                                $arrayofinclusion[]=".*\.pdf";
+                                $listoffiles = dol_dir_list($subdir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+                                dol_syslog('RELEVE::ZIPCREATION::SupplierInvoicePayment::files '.serialize( $listoffiles ), LOG_DEBUG); //REMOVEME
+                                foreach($listoffiles as $srcfileobj)
                                 {
-                                    if (strstr($filefound["name"],$facturestatic->ref))
-                                    {
-                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
-                                        break;
-                                    }
-                                }
-                                /*var_dump($files);*/
-                                //var_dump($listoffiles);
-                                foreach($listoffiles as $key => $srcfileobj)
-                                {
-                                    $srcfile = $srcfileobj['fullname'];
-                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
-                                    //var_dump($srcfile.' - '.$destfile);
-                                    dol_copy($srcfile, $destfile);
+                                    $upload_files[]=$srcfileobj;
                                 }
                             }
                         }
                         break;
-                    case "payment_expensereport":
+                    case "(ExpenseReportPayment)":
                         /*$subdir = dol_sanitizeFileName($objd->refe);
                         $upload_dir = $conf->expensereport->dir_output . '/' . $subdir;*/
                         break;
-                    case "payment_salary":
+                    case "Salary payment":
                         /*$subdir = dol_sanitizeFileName($objd->ids);
                         $upload_dir = $conf->salaries->dir_output . '/' . $subdir;*/
                         break;
-                    case "payment_donation":
+                    case "(DonationPayment)":
                         /*$subdir = get_exdir(null, 2, 0, 1, $objd, 'donation') . '/' . dol_sanitizeFileName($objd->idd);
                         $upload_dir = $conf->don->dir_output . '/' . $subdir;*/
                         break;
                     default:
                         break;
                 }
-            }
-            $log.="\n";
 
-            /*if (! empty($upload_dir))
+            if (is_array($upload_files) && count($upload_files)>0)
             {
-                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
-
-                if (is_array($files)) {
-                    foreach ($files as $file) {
-                        $zip->addFile($file["fullname"], $file["name"]); //
-                        $log .= $key . ',' . $file["name"] . "\n";
-                    }
-                } else {
-                    $log .= $key . ',' . $langs->trans("Nofile") . "\n";
+                $nbFiles=count($upload_files);
+                foreach ($upload_files as $nbFile => $file) {
+                    if(file_exists($file["fullname"])){
+                        $zip->addFile($file["fullname"], $i.'-'.$file["relativename"]); //
+                        $log .= ','.$i.'-'.$file["name"] ;
+                    }else{
+                        $log .= ',ERROR:' . $file["name"] ;
+                    }      
                 }
+            } else {
+                $log .=  ','.$langs->trans("Nofile") ;
+            }
 
-            }*/
+                        $log.="\n";
+            $i++;
         }
     }
 
     $db->free($resd);
 
-
-    //$zip->addFromString('log '.$numref.'.csv', $log);
-    //$zip->close();
-
+    //dol_delete_dir_recursive($outdir);
+    $zip->addFromString('log '.$numref.'.csv', $log);
+    $zip->close();
+    
     // /Then download the zipped file.
-    /*header('Content-Type: application/zip');
+    header('Content-Type: application/zip');
     header('Content-disposition: attachment; filename=' . $zipname);
     header('Content-Length: ' . filesize($zipname));
 
     readfile($zipname);
 
-    exit;*/
+    exit;
 }
 
 

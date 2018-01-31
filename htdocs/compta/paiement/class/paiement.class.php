@@ -873,8 +873,9 @@ class Paiement extends CommonObject
 	function getBillsArray($filter='')
 	{
 		$sql = 'SELECT fk_facture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' WHERE pf.fk_facture = f.rowid AND fk_paiement = '.$this->id;
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf ';
+                $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON pf.fk_facture = f.rowid';
+		$sql.= ' WHERE fk_paiement = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1053,6 +1054,7 @@ class Paiement extends CommonObject
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();
+
             if (is_array($arraybill) && count($arraybill) > 0)
             {
             	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';

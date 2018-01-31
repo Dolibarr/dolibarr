@@ -437,8 +437,9 @@ class PaiementFourn extends Paiement
 	function getBillsArray($filter='')
 	{
 		$sql = 'SELECT fk_facturefourn';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
-		$sql.= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf';
+                $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON  pf.fk_facturefourn = f.rowid';
+		$sql.= ' WHERE  fk_paiementfourn = '.$this->id;
 		if ($filter) $sql.= ' AND '.$filter;
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);
@@ -549,6 +550,20 @@ class PaiementFourn extends Paiement
 			$text=$langs->trans($reg[1]);
 		}
 		$label = $langs->trans("ShowPayment").': '.$text;
+        if ($mode == 'withlistofinvoices')
+        {
+            $arraybill = $this->getBillsArray();
+            if (is_array($arraybill))
+            {
+            	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+            	$facturestatic=new FactureFournisseur($this->db);
+            	foreach ($arraybill as $billid)
+            	{
+            		$facturestatic->fetch($billid);
+            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
+            	}
+            }
+        }
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';

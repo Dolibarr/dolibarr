@@ -3207,6 +3207,24 @@ abstract class CommonObject
 
 		//print $total_discount; exit;
 		return price2num($total_discount);
+	} 
+        
+	/**
+	*  return the directory of the uploaded files
+	*  @param	string		$refparam 	to specify a new reference different from the ref or id of the object 
+	*  @return		int		file dir
+	*/
+	function getFilesDir($refparam=''){
+		global $conf;
+		$idref=$this->ref?$this->ref:$this->id;
+		$ref=($refparam=='')?$idref:$refparam;
+		$ret='';
+		if (!empty($conf->{strtolower($this->module_name)}->{strtolower(get_class($this))}->dir_output)){
+			$ret=$conf->{strtolower($this->module_name)}->{strtolower(get_class($this))}->dir_output.'/'.$ref;
+		}else{
+			$ret=$conf->{strtolower(get_class($this))}->dir_output.'/'.$ref;
+		}
+                return $ret;
 	}
 
 

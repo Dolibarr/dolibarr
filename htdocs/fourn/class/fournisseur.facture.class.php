@@ -971,7 +971,7 @@ class FactureFournisseur extends CommonInvoice
         		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         		$ref = dol_sanitizeFileName($this->ref);
-        		$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoive_supplier').$ref;
+        		$dir = $this->getFilesDir();
         		$file = $dir . "/" . $ref . ".pdf";
         		if (file_exists($file))
         		{
@@ -1227,8 +1227,8 @@ class FactureFournisseur extends CommonInvoice
             		$oldref = dol_sanitizeFileName($this->ref);
             		$newref = dol_sanitizeFileName($num);
 
-            		$dirsource = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$oldref;
-            		$dirdest = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$newref;
+            		$dirsource = $this->getFilesDir($oldref);
+            		$dirdest = $this->getFilesDir($newref);
             		if (file_exists($dirsource))
             		{
             			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
@@ -1237,7 +1237,7 @@ class FactureFournisseur extends CommonInvoice
             			{
             				dol_syslog("Rename ok");
                             // Rename docs starting with $oldref with $newref
-	                        $listoffiles=dol_dir_list($conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id,2,0,0, $this, 'invoice_supplier').$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+	                        $listoffiles=dol_dir_list($this->getFilesDir($newref), 'files', 1, '^'.preg_quote($oldref,'/'));
 	                        foreach($listoffiles as $fileentry)
 	                        {
 	                        	$dirsource=$fileentry['name'];
@@ -2020,7 +2020,19 @@ class FactureFournisseur extends CommonInvoice
         	return false;
         }
     }
-
+                /**
+     *  return the directory of the uploaded files
+     *  @param	string		$refparam 	to specify a new reference different from the ref or id of the object 
+     *  @return		int		file dir
+     */
+    function getFilesDir($refparam=''){
+        global $conf;
+        $ref=($refparam=='')?$this->ref:$refparam;
+        $ret=$conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$ref; 
+        dol_syslog(__METHOD__.'::'.$ret, LOG_DEBUG); 
+        
+        return $ret;
+    }
 
     /**
      *  Initialise an instance with random values.
@@ -2873,4 +2885,6 @@ class SupplierInvoiceLine extends CommonObjectLine
             return -2;
         }
     }
+    
+
  }
