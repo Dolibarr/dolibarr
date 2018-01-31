@@ -47,29 +47,32 @@ $ref = '';  // There is no ref for contacts
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid,'');
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_cti=preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml')));	// Phone number without any special chars
-$search_phone=GETPOST("search_phone");
+$search_phone=GETPOST("search_phone",'alpha');
 
 $search_id=trim(GETPOST("search_id","int"));
-$search_firstlast_only=GETPOST("search_firstlast_only");
-$search_lastname=GETPOST("search_lastname");
-$search_firstname=GETPOST("search_firstname");
-$search_societe=GETPOST("search_societe");
-$search_poste=GETPOST("search_poste");
-$search_phone_perso=GETPOST("search_phone_perso");
-$search_phone_pro=GETPOST("search_phone_pro");
-$search_phone_mobile=GETPOST("search_phone_mobile");
-$search_fax=GETPOST("search_fax");
-$search_email=GETPOST("search_email");
-$search_skype=GETPOST("search_skype");
-$search_priv=GETPOST("search_priv");
+$search_firstlast_only=GETPOST("search_firstlast_only",'alpha');
+$search_lastname=GETPOST("search_lastname",'alpha');
+$search_firstname=GETPOST("search_firstname",'alpha');
+$search_societe=GETPOST("search_societe",'alpha');
+$search_poste=GETPOST("search_poste",'alpha');
+$search_phone_perso=GETPOST("search_phone_perso",'alpha');
+$search_phone_pro=GETPOST("search_phone_pro",'alpha');
+$search_phone_mobile=GETPOST("search_phone_mobile",'alpha');
+$search_fax=GETPOST("search_fax",'alpha');
+$search_email=GETPOST("search_email",'alpha');
+$search_skype=GETPOST("search_skype",'alpha');
+$search_priv=GETPOST("search_priv",'alpha');
 $search_categ=GETPOST("search_categ",'int');
 $search_categ_thirdparty=GETPOST("search_categ_thirdparty",'int');
 $search_categ_supplier=GETPOST("search_categ_supplier",'int');
 $search_status=GETPOST("search_status",'int');
 $search_type=GETPOST('search_type','alpha');
-$search_import_key  = GETPOST("search_import_key","alpha");
+$search_zip=GETPOST('search_zip','alpha');
+$search_town=GETPOST('search_town','alpha');
+$search_import_key=GETPOST("search_import_key","alpha");
+
 if ($search_status=='') $search_status=1; // always display activ customer first
 
 $optioncss = GETPOST('optioncss','alpha');
@@ -88,8 +91,6 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
-
-$langs->load("companies");
 
 $contextpage='contactlist';
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
@@ -160,7 +161,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
    foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
    }
 }
 
@@ -296,7 +297,7 @@ if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_pos
 if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
-if (strlen($search_fax))            $sql.= natural_search('p.phone_fax', $search_fax);
+if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
 if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
@@ -322,19 +323,7 @@ if (! empty($socid))
 	$sql .= " AND s.rowid = ".$socid;
 }
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -406,13 +395,9 @@ if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status
 if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
+
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
@@ -420,8 +405,8 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
@@ -434,6 +419,12 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
 print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit);
+
+$topicmail="Information";
+$modelmail="contact";
+$objecttmp=new Contact($db);
+$trackid='ctc'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
 {
@@ -507,12 +498,6 @@ if (! empty($arrayfields['p.firstname']['checked']))
 	print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['p.poste']['checked']))
-{
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
-	print '</td>';
-}
 if (! empty($arrayfields['p.zip']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -523,6 +508,12 @@ if (! empty($arrayfields['p.town']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="search_town" size="5" value="'.dol_escape_htmltag($search_town).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['p.poste']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))
@@ -575,28 +566,8 @@ if (! empty($arrayfields['p.priv']['checked']))
    print '</td>';
 }
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($arrayfields["ef.".$key]['checked']))
-		{
-			$align=$extrafields->getAlignFlag($key);
-			$typeofextrafield=$extrafields->attribute_type[$key];
-			print '<td class="liste_titre'.($align?' '.$align:'').'">';
-			if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
-			{
-				$crit=$val;
-				$tmpkey=preg_replace('/search_options_/','',$key);
-				$searchclass='';
-				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-			}
-			print '</td>';
-		}
-   }
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 // Fields from hook
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -651,19 +622,7 @@ if (! empty($arrayfields['p.skype']['checked']))               print_liste_field
 if (! empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'],$_SERVER["PHP_SELF"],"s.nom", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'],$_SERVER["PHP_SELF"],"p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-{
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-	   if (! empty($arrayfields["ef.".$key]['checked']))
-	   {
-			$align=$extrafields->getAlignFlag($key);
-			$sortonfield = "ef.".$key;
-			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-	   }
-   }
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -796,23 +755,7 @@ while ($i < min($num,$limit))
 	}
 
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	   foreach($extrafields->attribute_label as $key => $val)
-	   {
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				print '<td';
-				$align=$extrafields->getAlignFlag($key);
-				if ($align) print ' align="'.$align.'"';
-				print '>';
-				$tmpkey='options_'.$key;
-				print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-			}
-	   }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook

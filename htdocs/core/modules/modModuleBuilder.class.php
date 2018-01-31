@@ -46,7 +46,7 @@ class modModuleBuilder extends DolibarrModules
         $this->family = "technic";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "A tool to help developers to build their own module.";
+        $this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -92,7 +92,7 @@ class modModuleBuilder extends DolibarrModules
             'titre'=>'ModuleBuilder',
             'mainmenu'=>'home',
             'leftmenu'=>'admintools_modulebuilder',
-            'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools_modulebuilder',
+            'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools',
             'langs'=>'modulebuilder',
             'position'=>100,
             'perms'=>'1',

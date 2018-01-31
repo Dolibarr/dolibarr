@@ -66,7 +66,7 @@ $step = 0;
 print $langs->trans("AccountancyAreaDescIntro")."<br>\n";
 print "<br>\n";print "<br>\n";
 
-print_fiche_titre($langs->trans("AccountancyAreaDescActionOnce"), '', 'object_calendar')."<br>\n";
+print_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."<br>\n";
 print '<hr>';
 print "<br>\n";
 
@@ -142,7 +142,7 @@ print '<br>';
 
 
 print "<br>\n";
-print_fiche_titre($langs->trans("AccountancyAreaDescActionFreq"), '', 'object_calendarweek');
+print_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '');
 print '<hr>';
 print "<br>\n";
 $step = 0;

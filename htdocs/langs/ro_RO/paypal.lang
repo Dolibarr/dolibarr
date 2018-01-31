@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modul de configurare
 PaypalDesc=Această ofertă modul de pagini pentru a permite plata pe <a href="http://www.paypal.com" target="_blank">PayPal</a> de catre clientii. Acest lucru poate fi folosit pentru o plată gratuit sau pentru o plată pe un anumit obiect Dolibarr (facturi, ordine, ...)
-PaypalOrCBDoPayment=Plata cu card de credit sau Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Plata cu Paypal
 PAYPAL_API_SANDBOX=Mod de încercare / sandbox
 PAYPAL_API_USER=API numele de utilizator
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de plată integral (carte de credit + Paypal) sau Paypal numai
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Numai PayPal
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=Acesta este ID-ul de tranzacţie: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Adăugaţi URL-ul de plată Paypal atunci când trimiteţi un document prin e-mail
 PredefinedMailContentLink=Puteţi da click pe linkul securizat de mai jos pentru a face plata (PayPal), în cazul în care acesta nu este deja făcută. ⏎\n⏎\n% s ⏎\n⏎\n
-YouAreCurrentlyInSandboxMode=Sunteţi în prezent în &quot;sandbox&quot; modul de
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=E-mail pentru avertizare după o plată (realizată sau nu)
+ONLINE_PAYMENT_SENDEMAIL=E-mail pentru avertizare după o plată (realizată sau nu)
 ReturnURLAfterPayment=URL-ul return după plată
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

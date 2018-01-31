@@ -160,6 +160,10 @@ if ($action == 'add')
     				}
     			}
 
+    			// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
+    			$visibility = GETPOST('list', 'alpha');
+				if ($type == 'separate') $visibility=3;
+
                 $result=$extrafields->addExtraField(
                 	GETPOST('attrname', 'alpha'),
                 	GETPOST('label', 'alpha'),
@@ -173,8 +177,8 @@ if ($action == 'add')
                 	$params,
                 	(GETPOST('alwayseditable', 'alpha')?1:0),
                 	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
-                	GETPOST('list', 'alpha'),				// Same as visible -1=not visible by default in list, 1=visible, 0=not visible in list
-					(GETPOST('ishidden', 'alpha')?1:0),
+                	$visibility,
+					0,
                     GETPOST('computed_value','alpha'),
                 	(GETPOST('entitycurrentorall', 'alpha')?0:''),
                 	GETPOST('langfile', 'alpha')
@@ -323,6 +327,10 @@ if ($action == 'update')
     				}
     			}
 
+    			// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
+    			$visibility = GETPOST('list', 'alpha');
+    			if ($type == 'separate') $visibility=3;
+
     			$result=$extrafields->update(
     				GETPOST('attrname', 'alpha'),
     				GETPOST('label', 'alpha'),
@@ -335,8 +343,8 @@ if ($action == 'update')
     				$params,
     				(GETPOST('alwayseditable', 'alpha')?1:0),
     				(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
-                	GETPOST('list', 'alpha'),				// Same as visible -1=not visible by default in list, 1=visible, 0=not visible in list
-					(GETPOST('ishidden', 'alpha')?1:0),
+                	$visibility,
+					0,
     			    GETPOST('default_value','alpha'),
     				GETPOST('computed_value','alpha'),
     				(GETPOST('entitycurrentorall', 'alpha')?0:''),

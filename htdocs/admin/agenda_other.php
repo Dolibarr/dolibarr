@@ -352,6 +352,15 @@ else
 }
 print '</td></tr>'."\n";
 
+// AGENDA_DEFAULT_VIEW
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'."\n";
+$tmplist=array('show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
+print '</td></tr>'."\n";
+
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
 
@@ -379,15 +388,6 @@ print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
 $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
-print '</td></tr>'."\n";
-
-// AGENDA_DEFAULT_VIEW
-print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'."\n";
-$tmplist=array('show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
 print '</td></tr>'."\n";
 
 print '</table>';

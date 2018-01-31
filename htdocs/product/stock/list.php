@@ -32,7 +32,7 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST("sref","alpha")?GETPOST("sref","alpha"):GETPOST("search_ref","alpha");
 $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_label","alpha");
 $search_status=GETPOST("search_status","int");
@@ -40,7 +40,7 @@ $search_status=GETPOST("search_status","int");
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
-if (! $sortfield) $sortfield="e.label";
+if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="ASC";
 $page = GETPOST("page");
 if ($page < 0) $page = 0;
@@ -50,7 +50,7 @@ $year = strftime("%Y",time());
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'e.label'=>"Ref",
+    'e.ref'=>"Ref",
     'e.lieu'=>"LocationSummary",
     'e.description'=>"Description",
     'e.address'=>"Address",
@@ -82,17 +82,17 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 $form=new Form($db);
 $warehouse=new Entrepot($db);
 
-$sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent,";
+$sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent,";
 $sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql.= " WHERE e.entity IN (".getEntity('stock').")";
-if ($search_ref) $sql.= natural_search("e.label", $search_ref);			// ref
+if ($search_ref) $sql.= natural_search("e.ref", $search_ref);			// ref
 if ($search_label) $sql.= natural_search("e.lieu", $search_label);		// label
 if ($search_status != '' && $search_status >= 0) $sql.= " AND e.statut = ".$search_status;
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-$sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
+$sql.= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays, e.fk_parent";
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
@@ -125,10 +125,10 @@ if ($result)
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_ref)	$param.="&search_ref=".$search_ref;
-	if ($search_label)	$param.="&search_label=".$search_label;
-	if ($search_status)	$param.="&search_status=".$search_status;
-	if ($sall)			$param.="&sall=".$sall;
+	if ($search_ref)	$param.="&search_ref=".urlencode($search_ref);
+	if ($search_label)	$param.="&search_label=".urlencode($search_label);
+	if ($search_status)	$param.="&search_status=".urlencode($search_status);
+	if ($sall)			$param.="&sall=".urlencode($sall);
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -176,7 +176,7 @@ if ($result)
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"], "e.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("LocationSummary",$_SERVER["PHP_SELF"], "e.lieu","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty",'',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue",'',$param,'align="right"',$sortfield,$sortorder);
@@ -194,7 +194,8 @@ if ($result)
 			$objp = $db->fetch_object($result);
 
 			$warehouse->id = $objp->rowid;
-            $warehouse->label = $objp->ref;
+			$warehouse->ref = $objp->ref;
+			$warehouse->label = $objp->ref;
             $warehouse->lieu = $objp->lieu;
             $warehouse->fk_parent = $objp->fk_parent;
 

@@ -38,7 +38,7 @@ class ExpenseReport extends CommonObject
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
 
-    var $lignes=array();
+    var $lines=array();
 
     public $date_debut;
 
@@ -215,7 +215,8 @@ class ExpenseReport extends CommonObject
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
-            if (is_array($this->lines) && count($this->lines)>0) {
+            if (is_array($this->lines) && count($this->lines)>0)
+            {
 	            foreach ($this->lines as $i => $val)
 	            {
 	                $newndfline=new ExpenseReportLine($this->db);
@@ -231,6 +232,12 @@ class ExpenseReport extends CommonObject
 	                    break;
 	                }
 	            }
+            }
+
+            if (! $error)
+            {
+            	$result=$this->insertExtraFields();
+           		if ($result < 0) $error++;
             }
 
             if (! $error)
@@ -448,7 +455,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_statut as status, d.fk_c_paiement,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity = " . getEntity('c_paiement');
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity IN (".getEntity('c_paiement').")";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
         //$sql.= $restrict;
@@ -1513,13 +1520,13 @@ class ExpenseReport extends CommonObject
 				$this->error=$obj->error;
 				$this->errors=$obj->errors;
             	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-            	return "";
+            	return -1;
             }
         }
         else
         {
-            print $langs->trans("Error")." ".$langs->trans("Error_EXPENSEREPORT_ADDON_NotDefined");
-            return "";
+            $this->error = "Error_EXPENSEREPORT_ADDON_NotDefined";
+            return -2;
         }
     }
 
@@ -1544,7 +1551,6 @@ class ExpenseReport extends CommonObject
 
         if ($short) return $url;
 
-        $picto='trip';
         $label = '<u>' . $langs->trans("ShowExpenseReport") . '</u>';
         if (! empty($this->ref))
             $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
@@ -1583,8 +1589,11 @@ class ExpenseReport extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
-        $result.=$linkstart.($max?dol_trunc($ref,$max):$ref).$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.=($max?dol_trunc($ref,$max):$ref);
+        $result .= $linkend;
+
         return $result;
     }
 
@@ -1833,13 +1842,13 @@ class ExpenseReport extends CommonObject
 			return false;
 		}
 
-		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) $offset = $range->offset;
-		else $offset = $range->offset / 12; // The amount of offset is a global value for the year
+		if (!empty($conf->global->MAIN_EXPENSE_APPLY_ENTIRE_OFFSET)) $ikoffset = $range->ikoffset;
+		else $ikoffset = $range->ikoffset / 12; // The amount of offset is a global value for the year
 
-		// Test if offset has been applied for the current month
+		// Test if ikoffset has been applied for the current month
 		if (!$this->offsetAlreadyGiven())
 		{
-			$new_up = $range->coef + ($offset / $this->line->qty);
+			$new_up = $range->coef + ($ikoffset / $this->line->qty);
 			$tmp = calcul_price_total($this->line->qty, $new_up, 0, $this->line->vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
 			$this->line->value_unit = $tmp[5];
@@ -1854,7 +1863,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 * If the sql find any rows then the offset is already given (offset is applied at the first expense report line)
+	 * If the sql find any rows then the ikoffset is already given (ikoffset is applied at the first expense report line)
 	 *
 	 * @return bool
 	 */
@@ -1925,7 +1934,7 @@ class ExpenseReport extends CommonObject
 
             $tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
-            // calcul de tous les totaux de la ligne
+            // calcul total of line
             //$total_ttc  = price2num($qty*$value_unit, 'MT');
 
             $tx_tva = $vatrate / 100;
@@ -2317,6 +2326,41 @@ class ExpenseReport extends CommonObject
         else
             return ($this->datevalid?$this->datevalid:$this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
     }
+
+    /**
+     *	Return if an expensereport was dispatched into bookkeeping
+     *
+     *	@return     int         <0 if KO, 0=no, 1=yes
+     */
+    public function getVentilExportCompta()
+    {
+    	$alreadydispatched = 0;
+
+    	$type = 'expense_report';
+
+    	$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$obj = $this->db->fetch_object($resql);
+    		if ($obj)
+    		{
+    			$alreadydispatched = $obj->nb;
+    		}
+    	}
+    	else
+    	{
+    		$this->error = $this->db->lasterror();
+    		return -1;
+    	}
+
+    	if ($alreadydispatched)
+    	{
+    		return 1;
+    	}
+    	return 0;
+    }
+
 }
 
 
@@ -2556,7 +2600,7 @@ class ExpenseReportLine
 
         $this->db->begin();
 
-        // Mise a jour ligne en base
+        // Update line in database
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
         $sql.= ",value_unit=".$this->value_unit;

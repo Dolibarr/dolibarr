@@ -34,8 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
+$langs->loadLangs(array("errors","admin","modulebuilder"));
 
 $mode=GETPOST('mode', 'alpha');
 if (empty($mode)) $mode='common';
@@ -80,9 +79,9 @@ $familyinfo=array(
 
 $param='';
 if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status)  $param.='&search_status='.urlencode($search_status);
-if ($search_nature)  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version) $param.='&search_version='.urlencode($search_version);
+if ($search_status > -1)  $param.='&search_status='.urlencode($search_status);
+if ($search_nature > -1)  $param.='&search_nature='.urlencode($search_nature);
+if ($search_version > -1) $param.='&search_version='.urlencode($search_version);
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
@@ -94,6 +93,8 @@ $hookmanager->initHooks(array('adminmodules','globaladmin'));
 /*
  * Actions
  */
+
+$formconfirm = '';
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -237,8 +238,7 @@ if ($action == 'set' && $user->admin)
     header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
-
-if ($action == 'reset' && $user->admin)
+else if ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
@@ -423,6 +423,22 @@ foreach ($modulesdir as $dir)
 		dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 	}
 }
+
+if ($action == 'reset_confirm' && $user->admin)
+{
+	if(!empty($modules[$value])) {
+		$objMod  = $modules[$value];
+
+		if(!empty($objMod->langfiles)) $langs->loadLangs($objMod->langfiles);
+
+		$form = new Form($db);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
+
+	}
+
+}
+
+print $formconfirm;
 
 asort($orders);
 //var_dump($orders);
@@ -675,20 +691,39 @@ if ($mode == 'common')
         	}
         	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
-        		print $langs->trans("Required");
+        		if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) print $langs->trans("Used");
+        		else print $langs->trans("Required");
         		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
         	}
         	else
         	{
-        		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
-        		print img_picto($langs->trans("Activated"),'switch_on');
-        		print '</a>';
+        		if(!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
+        			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print '</a>';
+
+        		}
+        		else {
+
+        			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
+        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print '</a>';
+
+        		}
+
         	}
         	print '</td>'."\n";
 
         	// Link config
         	if (! empty($objMod->config_page_url) && !$disableSetup)
         	{
+        		$backtourlparam='';
+        		if ($search_keyword != '') $backtourlparam.=($backtourlparam?'&':'?').'search_keyword='.$search_keyword;	// No urlencode here, done later
+        		if ($search_nature > -1)   $backtourlparam.=($backtourlparam?'&':'?').'search_nature='.$search_nature;
+        		if ($search_version > -1)  $backtourlparam.=($backtourlparam?'&':'?').'search_version='.$search_version;
+        		if ($search_status > -1)   $backtourlparam.=($backtourlparam?'&':'?').'search_status='.$search_status;
+        		$backtourl=$_SERVER["PHP_SELF"].$backtourlparam;
+
         		if (is_array($objMod->config_page_url))
         		{
         			print '<td class="tdsetuppicto right" width="60px">';
@@ -705,11 +740,13 @@ if ($mode == 'common')
         				{
         					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
         					{
-        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						$urltouse=dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1);
+        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         					else
         					{
-        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						$urltouse=$urlpage;
+        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         				}
         			}
@@ -717,11 +754,11 @@ if ($mode == 'common')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'?backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'?backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else
@@ -1009,9 +1046,21 @@ if ($mode == 'develop')
 	print '<td>'.$langs->trans("URL").'</td>';
 	print '</tr>';
 
-	print "<tr class=\"oddeven\">\n";
+	print '<tr class="oddeven" height="80">'."\n";
+	print '<td align="left">';
+	//span class="fa fa-bug"></span>
+	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
+	print '<div class="imgmaxheight50 logo_setup"></div>';
+	print '</td>';
+	print '<td>'.$langs->trans("TryToUseTheModuleBuilder").'</td>';
+	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
+	print '</tr>';
+
+	print '<tr class="oddeven" height="80">'."\n";
 	$url='https://partners.dolibarr.org';
-	print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
+	print '<td align="left">';
+	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a>';
+	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 	print '</tr>';

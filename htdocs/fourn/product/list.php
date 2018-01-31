@@ -54,6 +54,8 @@ if (! $sortfield) $sortfield="p.ref"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
+if ($user->societe_id) $fourn_id=$user->societe_id;
+
 $catid = GETPOST('catid', 'intcomma');
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -118,8 +120,8 @@ $arrayofmassactions =  array(
     'presend'=>$langs->trans("SendByMail"),
     'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 
@@ -208,6 +210,12 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
+
+	$topicmail="Information";
+	$modelmail="product";
+	$objecttmp=new Product($db);
+	$trackid='prod'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	print '<table class="liste" width="100%">';
 

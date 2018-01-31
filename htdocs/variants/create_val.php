@@ -128,7 +128,7 @@ dol_fiche_head();
 			<td><input id="ref" type="text" name="ref" value="<?php echo $ref ?>"></td>
 		</tr>
 		<tr>
-			<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
+			<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Label') ?></label></td>
 			<td><input id="value" type="text" name="value" value="<?php echo $value ?>"></td>
 		</tr>
 	</table>

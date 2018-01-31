@@ -78,7 +78,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     }
     else
     {
-        if (dol_hash($edituser->pass_temp) == $passwordhash)
+        if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
             $newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -133,12 +133,10 @@ if ($action == 'buildnewpassword' && $username)
                     {
 
                         $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,dolObfuscateEmail($edituser->email)).'</div>';
-                        //$message.=$newpassword;
                         $username='';
                     }
                     else
                     {
-                        //$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
                         $message.= '<div class="error">'.$edituser->error.'</div>';
                     }
                 }
@@ -167,25 +165,6 @@ else
 {
     $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 }
-
-// Note: $conf->css looks like '/theme/eldy/style.css.php'
-$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
-$themepath=dol_buildpath($conf->css,1);
-if (! empty($conf->modules_parts['theme']))	// This slow down
-{
-	foreach($conf->modules_parts['theme'] as $reldir)
-	{
-		if (file_exists(dol_buildpath($reldir.$conf->css, 0)))
-		{
-			$themepath=dol_buildpath($reldir.$conf->css, 1);
-			break;
-		}
-	}
-}
-$conf_css = $themepath."?lang=".$langs->defaultlang;
-
-$jquerytheme = 'smoothness';
-if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
 if (! $username) $focus_element = 'username';
 else $focus_element = 'password';
@@ -239,4 +218,3 @@ $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions',$pa
 $moreloginextracontent = $hookmanager->resPrint;
 
 include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
-

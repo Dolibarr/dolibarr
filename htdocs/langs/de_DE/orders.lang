@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=2. Bestätigung bereits erledigt
 SupplierOrderReceivedInDolibarr=Lieferantenbestellung %s erhalten %s
 SupplierOrderSubmitedInDolibarr=Lieferantenbestellung %s versendet
 SupplierOrderClassifiedBilled=Bestellung %s als verrechnet markieren
+OtherOrders=Bestellungen Anderer
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Kundenauftrag-Nachbetreuung durch Vertreter
 TypeContact_commande_internal_SHIPPING=Versand-Nachbetreuung durch Vertreter
@@ -151,5 +152,7 @@ OrderCreated=Ihre Bestellungen wurden erstellt
 OrderFail=Ein Fehler trat beim erstellen der Bestellungen auf
 CreateOrders=Erzeuge Bestellungen
 ToBillSeveralOrderSelectCustomer=Um eine Rechnung für verschiedene Bestellungen zu erstellen, klicken Sie erst auf Kunde und wählen Sie dann "%s".
+OptionToSetOrderBilledNotEnabled=Option (Aus dem Workflow Modul) um die Bestellung als 'Verrechnet' zu markieren wenn die Rechnung freigegeben wurde ist deaktiviert, sie müssen den Status der Bestellung manuell auf 'Verrechnet' setzen.
+IfValidateInvoiceIsNoOrderStayUnbilled=Wenn die Rechnungsprüfung "Nein" lautet, bleibt die Bestellung bis zur Validierung der Rechnung im Status 'Nicht ausgefüllt'.
 CloseReceivedSupplierOrdersAutomatically=Schließe die Bestellung nach „%s“ automatisch, wenn alle Produkte empfangen wurden.
 SetShippingMode=Setze die Versandart

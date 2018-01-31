@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 MenuBankCash=Bank/Kasse
+MenuVariousPayment=Diverse utbetalinger
+MenuNewVariousPayment=Ny Diverse betalinger
 BankName=Banknavn
 FinancialAccount=Konto
 BankAccount=Bankkonto
@@ -87,6 +89,7 @@ AccountIdShort=Nummer
 LineRecord=Transaksjon
 AddBankRecord=Legg til oppføringer
 AddBankRecordLong=Legg til oppføring manuelt
+Conciliated=Slått sammen
 ConciliatedBy=Avstemt av
 DateConciliating=Avstemt den
 BankLineConciliated=Oppføring avstemt
@@ -155,3 +158,6 @@ NewVariousPayment=Nye diverse betaling
 VariousPayment=Diverse utbetalinger
 VariousPayments=Diverse utbetalinger
 ShowVariousPayment=Vis diverse betalinger
+AddVariousPayment=Legg til Diverse betalinger
+YourSEPAMandate=Ditt SEPA-mandat
+FindYourSEPAMandate=Dette er ditt SEPA-mandat for å autorisere vårt firma til å gjøre debitering til din bank. Send det i retur signert (skanning av det signerte dokumentet og send det via post) til

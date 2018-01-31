@@ -31,12 +31,12 @@ create table llx_extrafields
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
 	perms			varchar(255),								-- not used yet
+	enabled         varchar(255),
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,							-- 1 if field can be edited whatever is element status
 	param			text,										-- extra parameters to define possible values of field
-	list			integer DEFAULT 1,							-- list of values for field that are combo lists
+	list			integer DEFAULT 1,							-- visibility of field. 0=Never visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing
 	langs			varchar(64),								-- example: fileofmymodule@mymodule
-	ishidden		integer DEFAULT 0,							-- Can be foreign key of external system
 	fk_user_author	integer,									-- user making creation
 	fk_user_modif	integer,	                                -- user making last change
 	datec			datetime,									-- date de creation

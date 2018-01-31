@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Du bruker Dolibarrs konfigureringsveiviser fra en Linux-pak
 KeepDefaultValuesMamp=Du bruker Dolibarrs konfigureringsveiviser fra DoliMamp, så verdiene foreslått her, er allerede optimalisert. Endre dem bare hvis du vet hva du gjør.
 KeepDefaultValuesProxmox=Du bruker Dolibarrs konfigureringsveiviser fra en Proxmox virtual appliance, så verdiene foreslått her, er allerede optimalisert. Endre dem bare hvis du vet hva du gjør.
 UpgradeExternalModule=Kjør dedikert oppgradering av eksterne moduler
-
+SetAtLeastOneOptionAsUrlParameter=Angi minst ett alternativ som et parameter i URL. For eksempel: '... repair.php?standard=confirmed'
+NothingToDelete=Ingenting å rengjøre/slette
+NothingToDo=Ingenting å gjøre
 #########
 # upgrade
 MigrationFixData=Reparasjon av ødelagte data
@@ -191,9 +193,11 @@ MigrationActioncommElement=Oppdater data for handlinger
 MigrationPaymentMode=Datamigrering for betalingsmodus
 MigrationCategorieAssociation=Migrer kategorier
 MigrationEvents=Overføring av hendelser for å legge hendelseseier inn i oppdragstabellen
+MigrationEventsContact=Overføring av hendelser for å legge til hendelseskontakt i oppdragstabell
 MigrationRemiseEntity=Oppdater verdien i enhetsfeltet llx_societe_remise
 MigrationRemiseExceptEntity=Oppdater verdien i enhetsfeltet llx_societe_remise_except
 MigrationReloadModule=Last inn modulen %s på nytt
+MigrationResetBlockedLog=Tilbakestill modul BlockedLog for v7 algoritme
 ShowNotAvailableOptions=Vis utilgjengelige opsjoner
 HideNotAvailableOptions=Gjem utilgjengelige opsjoner
 ErrorFoundDuringMigration=Feil ble rapportert under migrasjonsprosessen, så neste steg er ikke tilgjengelig. For å overse feil, kan du <a href="%s">klikke her</a>, men applikasjoner eller noen funksjoner kanskje ikke fungerer som de skal før de er fikset.

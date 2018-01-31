@@ -102,7 +102,7 @@ class modExpenseReport extends DolibarrModules
 		$r++;
 
 		// Array to add new pages in new tabs
-		$this->tabs = array();
+		$this->tabs[] = array('data'=>'user:+expensereport:ExpenseReport:expensereport:$user->rights->expensereport->lire:/expensereport/list.php?mainmenu=hrm&id=__ID__');  					// To add a new tab identified by code tabname1
 
 		// Boxes
 		$this->boxes = array();			// List of boxes

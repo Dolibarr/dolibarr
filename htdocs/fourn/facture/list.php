@@ -68,7 +68,7 @@ if ($user->societe_id > 0)
 
 $mode=GETPOST("mode");
 
-$search_all = GETPOST('sall', 'alphanohtml');
+$search_all = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_label = GETPOST("search_label","alpha");
 $search_company = GETPOST("search_company","alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax","alpha");
@@ -175,7 +175,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
 	foreach($extrafields->attribute_label as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
 
@@ -255,6 +255,7 @@ $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $facturestatic=new FactureFournisseur($db);
 $formcompany=new FormCompany($db);
+$thirdparty=new Societe($db);
 
 llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
@@ -263,9 +264,10 @@ if ($search_all || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement,";
 $sql.= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
 $sql.= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
-$sql.= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
+$sql.= " s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= " country.code as country_code,";
 $sql.= " p.rowid as project_id, p.ref as project_ref";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
@@ -367,19 +369,7 @@ if ($search_user > 0)
 	$sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='invoice_supplier' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
 }
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	$typ=$extrafields->attribute_type[$tmpkey];
-	$mode=0;
-	if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-	if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-	{
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -390,9 +380,10 @@ if (! $search_all)
 	$sql.= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement, f.fk_mode_reglement,";
 	$sql.= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut, f.libelle, f.datec, f.tms,";
 	$sql.= " f.localtax1, f.localtax2,";
-	$sql.= " s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
+	$sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql.= " typent.code,";
 	$sql.= " state.code_departement, state.nom,";
+	$sql.= ' country.code,';
 	$sql.= " p.rowid, p.ref";
 
 	foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
@@ -457,12 +448,7 @@ if ($resql)
 	if ($option)                $param.="&option=".$option;
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
-		if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
@@ -471,8 +457,8 @@ if ($resql)
 		//'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-	if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$i = 0;
@@ -489,15 +475,11 @@ if ($resql)
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
-	if ($massaction == 'presend')
-	{
-		$topicmail="SendBillRef";
-		$modelmail="supplier_invoice_send";
-		$objecttmp=new FactureFournisseur($db);
-		$trackid='sinv'.$object->id;
-
-		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_form.tpl.php';
-	}
+	$topicmail="SendBillRef";
+	$modelmail="supplier_invoice_send";
+	$objecttmp=new FactureFournisseur($db);
+	$trackid='sinv'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($massaction == 'createbills')
 	{
@@ -722,28 +704,8 @@ if ($resql)
 		print '</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				print '<td class="liste_titre'.($align?' '.$align:'').'">';
-				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-				{
-					$crit=$val;
-					$tmpkey=preg_replace('/search_options_/','',$key);
-					$searchclass='';
-					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-				}
-				print '</td>';
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -798,19 +760,7 @@ if ($resql)
 	if (! empty($arrayfields['dynamount_payed']['checked']))      print_liste_field_titre($arrayfields['dynamount_payed']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['rtp']['checked']))                  print_liste_field_titre($arrayfields['rtp']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$sortonfield = "ef.".$key;
-				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -843,6 +793,17 @@ if ($resql)
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
 
+			$thirdparty->id=$obj->socid;
+			$thirdparty->name=$obj->name;
+			$thirdparty->client=$obj->client;
+			$thirdparty->fournisseur=$obj->fournisseur;
+			$thirdparty->code_client=$obj->code_client;
+			$thirdparty->code_compta_client=$obj->code_compta_client;
+			$thirdparty->code_fournisseur=$obj->code_fournisseur;
+			$thirdparty->code_compta_fournisseur=$obj->code_compta_fournisseur;
+			$thirdparty->email=$obj->email;
+			$thirdparty->country_code=$obj->country_code;
+
 			$paiement = $facturestatic->getSommePaiement();
 			$totalcreditnotes = $facturestatic->getSumCreditNotesUsed();
 			$totaldeposits = $facturestatic->getSumDepositsUsed();
@@ -874,7 +835,7 @@ if ($resql)
 				if (! $i) $totalarray['nbfield']++;
 			}
 
-			// Customer ref
+			// Supplier ref
 			if (! empty($arrayfields['f.ref_supplier']['checked']))
 			{
 				print '<td class="nowrap">';
@@ -931,11 +892,6 @@ if ($resql)
 			if (! empty($arrayfields['s.nom']['checked']))
 			{
 				print '<td class="tdoverflowmax200">';
-				$thirdparty=new Societe($db);
-				$thirdparty->id=$obj->socid;
-				$thirdparty->name=$obj->name;
-				$thirdparty->client=$obj->client;
-				$thirdparty->code_client=$obj->code_client;
 				print $thirdparty->getNomUrl(1,'supplier');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
@@ -1049,23 +1005,7 @@ if ($resql)
 
 
 			// Extra fields
-			if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-			{
-				foreach($extrafields->attribute_label as $key => $val)
-				{
-					if (! empty($arrayfields["ef.".$key]['checked']))
-					{
-						print '<td';
-						$align=$extrafields->getAlignFlag($key);
-						if ($align) print ' align="'.$align.'"';
-						print '>';
-						$tmpkey='options_'.$key;
-						print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-						print '</td>';
-						if (! $i) $totalarray['nbfield']++;
-					}
-				}
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
 			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 			$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
@@ -1166,7 +1106,7 @@ if ($resql)
 
         $filedir=$diroutputmassaction;
         $genallowed=$user->rights->facture->lire;
-        $delallowed=$user->rights->facture->lire;
+        $delallowed=$user->rights->facture->creer;
 
         print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }

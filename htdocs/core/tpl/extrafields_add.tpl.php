@@ -24,6 +24,14 @@
  * $parameters
  * $cols
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_add.tpl.php -->
 <?php
@@ -32,7 +40,7 @@
 $parameters = array();
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label'])) {
 	print $object->showOptionals($extrafields, 'edit');
 }
 

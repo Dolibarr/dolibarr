@@ -39,7 +39,8 @@ class Contact extends CommonObject
 {
 	public $element='contact';
 	public $table_element='socpeople';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $picto = 'contact';
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
@@ -75,17 +76,17 @@ class Contact extends CommonObject
 	public $email;
 	public $skype;
 	public $photo;
-    	public $jabberid;
+	public $jabberid;
 	public $phone_pro;
 	public $phone_perso;
 	public $phone_mobile;
-    	public $fax;
+	public $fax;
 
-    	public $priv;
+	public $priv;
 
 	public $birthday;
 	public $default_lang;
-    	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
+	public $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	public $ref_facturation;       // Reference number of invoice for which it is contact
 	public $ref_contrat;           // Nb de reference contrat pour lequel il est contact
@@ -176,6 +177,8 @@ class Contact extends CommonObject
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
+		$entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
 		$sql.= ", fk_soc";
@@ -186,7 +189,7 @@ class Contact extends CommonObject
 		$sql.= ", statut";
 		$sql.= ", canvas";
 		$sql.= ", entity";
-		$sql.= ",ref_ext";
+		$sql.= ", ref_ext";
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
@@ -198,7 +201,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->priv.",";
 		$sql.= " ".$this->statut.",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$conf->entity.",";
+        $sql.= " ".$entity.",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -266,9 +269,10 @@ class Contact extends CommonObject
 	 *      @param      User	$user        	Objet user making change
 	 *      @param      int		$notrigger	    0=no, 1=yes
 	 *      @param		string	$action			Current action for hookmanager
+	 *      @param		int		$nosyncuser		No sync linked user (external users and contacts are linked)
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($id, $user=null, $notrigger=0, $action='update')
+	function update($id, $user=null, $notrigger=0, $action='update', $nosyncuser=0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -352,12 +356,69 @@ class Contact extends CommonObject
 		    }
 		    else if ($reshook < 0) $error++;
 
+			if (! $error && $this->user_id > 0)
+			{
+				$tmpobj = new User($this->db);
+				$tmpobj->fetch($this->user_id);
+				$usermustbemodified = 0;
+				if ($tmpobj->office_phone != $this->phone_pro)
+				{
+					$tmpobj->office_phone = $this->phone_pro;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->office_fax != $this->fax)
+				{
+					$tmpobj->office_fax = $this->fax;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->address != $this->address)
+				{
+					$tmpobj->address = $this->address;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->town != $this->town)
+				{
+					$tmpobj->town = $this->town;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->zip != $this->zip)
+				{
+					$tmpobj->zip = $this->zip;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->zip != $this->zip)
+				{
+					$tmpobj->state_id=$this->state_id;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->country_id != $this->country_id)
+				{
+					$tmpobj->country_id = $this->country_id;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->email != $this->email)
+				{
+					$tmpobj->email = $this->email;
+					$usermustbemodified++;
+				}
+				if ($tmpobj->skype != $this->skype)
+				{
+					$tmpobj->skype = $this->skype;
+					$usermustbemodified++;
+				}
+				if ($usermustbemodified)
+				{
+					$result=$tmpobj->update($user, 0, 1, 1, 1);
+					if ($result < 0) { $error++; }
+				}
+			}
+
 			if (! $error && ! $notrigger)
 			{
-                // Call trigger
-                $result=$this->call_trigger('CONTACT_MODIFY',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('CONTACT_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			if (! $error)
@@ -583,7 +644,7 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
@@ -612,41 +673,42 @@ class Contact extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id				= $obj->rowid;
+				$this->entity			= $obj->entity;
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
-				$this->civility_code	= $obj->civility_id;
+				$this->civility_code		= $obj->civility_id;
 				$this->lastname			= $obj->lastname;
-				$this->firstname		= $obj->firstname;
+				$this->firstname			= $obj->firstname;
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
 
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
-				$this->departement_code = $obj->state_code;	       // deprecated
-				$this->state_code       = $obj->state_code;
+				$this->departement_code	= $obj->state_code;	       // deprecated
+				$this->state_code		= $obj->state_code;
 				$this->departement		= $obj->state;	           // deprecated
-				$this->state			= $obj->state;
+				$this->state				= $obj->state;
 
 				$this->country_id 		= $obj->country_id;
 				$this->country_code		= $obj->country_id?$obj->country_code:'';
 				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->socid			= $obj->fk_soc;
+				$this->socid				= $obj->fk_soc;
 				$this->socname			= $obj->socname;
-				$this->poste			= $obj->poste;
+				$this->poste				= $obj->poste;
 				$this->statut			= $obj->statut;
 
-				$this->phone_pro		= trim($obj->phone);
+				$this->phone_pro			= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
 				$this->phone_perso		= trim($obj->phone_perso);
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
-				$this->email			= $obj->email;
+				$this->email				= $obj->email;
 				$this->jabberid			= $obj->jabberid;
-        		$this->skype			= $obj->skype;
-                $this->photo			= $obj->photo;
+				$this->skype				= $obj->skype;
+				$this->photo				= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -1053,8 +1115,12 @@ class Contact extends CommonObject
 			$linkend='</a>';
 		}
 
-	        if ($withpicto) $result.=($linkstart.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
-			$result.=$linkstart.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
+
+		$result.=$linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
+		$result.=$linkend;
+
 		return $result;
 	}
 

@@ -108,7 +108,7 @@ class ICal
         if (!stristr($this->file_text[0],'BEGIN:VCALENDAR')) return 'error not VCALENDAR';
 
         $insidealarm=0;
-        $tmpkey='';$tmpvalue='';
+        $tmpkey='';$tmpvalue=''; $type='';
         foreach ($this->file_text as $text)
         {
             $text = trim($text); // trim one line
@@ -162,7 +162,7 @@ class ICal
                         break;
 
                     default: // no special string (SUMMARY, DESCRIPTION, ...)
-						if ($tmpvalue)
+                    	if ($tmpvalue)
 						{
 							$tmpvalue .= $text;
 							if (! preg_match('/=$/',$text))	// No more lines
@@ -219,12 +219,12 @@ class ICal
             }
         }
 
-        if (($key == "DTSTAMP") or ($key == "LAST-MODIFIED") or ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
+        if (($key == "DTSTAMP") || ($key == "LAST-MODIFIED") || ($key == "CREATED")) $value = $this->ical_date_to_unix($value);
         //if ($key == "RRULE" ) $value = $this->ical_rrule($value);
-        
-        if (stristr($key,"DTSTART") or stristr($key,"DTEND") or stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))
+
+        if (stristr($key,"DTSTART") || stristr($key,"DTEND") || stristr($key,"DTSTART;VALUE=DATE") || stristr($key,"DTEND;VALUE=DATE"))
         {
-        	if (stristr($key,"DTSTART;VALUE=DATE") or stristr($key,"DTEND;VALUE=DATE"))
+        	if (stristr($key,"DTSTART;VALUE=DATE") || stristr($key,"DTEND;VALUE=DATE"))
         	{
         		list($key,$value) = array($key,$value);
         	}

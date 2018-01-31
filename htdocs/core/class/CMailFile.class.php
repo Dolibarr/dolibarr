@@ -108,7 +108,7 @@ class CMailFile
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
-	 *  @param  string  $sendcontext      	 'standard', 'emailing', ...
+	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
 	 */
 	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='',$sendcontext='standard')
 	{
@@ -275,7 +275,8 @@ class CMailFile
 			// comme des injections mail par les serveurs de messagerie.
 			$this->headers = preg_replace("/([\r\n]+)$/i","",$this->headers);
 
-			$this->message = $this->eol.'This is a message with multiple parts in MIME format.'.$this->eol;
+			//$this->message = $this->eol.'This is a message with multiple parts in MIME format.'.$this->eol;
+			$this->message = 'This is a message with multiple parts in MIME format.'.$this->eol;
 			$this->message.= $text_body . $files_encoded;
 			$this->message.= "--" . $this->mixed_boundary . "--" . $this->eol;
 		}
@@ -956,13 +957,14 @@ class CMailFile
 			$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol2;
 		}
 
+		if (! empty($_SERVER['REMOTE_ADDR'])) $out.= "X-RemoteAddr: " . $_SERVER['REMOTE_ADDR']. $this->eol2;
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol2;
 		$out.= "Mime-Version: 1.0".$this->eol2;
 
 		//$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
 
-		$out.= "Content-Type: multipart/mixed; boundary=\"".$this->mixed_boundary."\"".$this->eol2;
-		$out.= "Content-Transfer-Encoding: 8bit".$this->eol2;
+		$out.= "Content-Type: multipart/mixed;".$this->eol2." boundary=\"".$this->mixed_boundary."\"".$this->eol2;
+		$out.= "Content-Transfer-Encoding: 8bit".$this->eol2;		// TODO Seems to be ignored. Header is 7bit once received.
 
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
 		return $out;
@@ -1014,23 +1016,23 @@ class CMailFile
 
 		if ($this->atleastoneimage)
 		{
-			$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
+			$out.= "Content-Type: multipart/alternative;".$this->eol." boundary=\"".$this->alternative_boundary."\"".$this->eol;
 			$out.= $this->eol;
 			$out.= "--" . $this->alternative_boundary . $this->eol;
 		}
 
 		// Make RFC821 Compliant, replace bare linefeeds
-		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $msgtext);
+		$strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $msgtext);	// PCRE modifier /s means new lines are common chars
 		if (! empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
 		{
-			$strContent = preg_replace("/\r\n/si", "\n", $strContent);
+			$strContent = preg_replace("/\r\n/si", "\n", $strContent);	// PCRE modifier /s means new lines are common chars
 		}
 
 		$strContentAltText = '';
 		if ($this->msgishtml)
 		{
 			$strContentAltText = html_entity_decode(strip_tags($strContent));
-			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
+			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)?"\r\n":"\n"));
 
 			// Check if html header already in message, if not complete the message
 			$strContent = $this->checkIfHTML($strContent);
@@ -1038,31 +1040,35 @@ class CMailFile
 
 		// Make RFC2045 Compliant, split lines
 		//$strContent = rtrim(chunk_split($strContent));    // Function chunck_split seems ko if not used on a base64 content
-		$strContent = rtrim(wordwrap($strContent));   // TODO Using this method creates unexpected line break on text/plain content.
+		// TODO Encode main content into base64 and use the chunk_split, or quoted-printable
+		$strContent = rtrim(wordwrap($strContent, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)?"\r\n":"\n"));   // TODO Using this method creates unexpected line break on text/plain content.
 
 		if ($this->msgishtml)
 		{
 			if ($this->atleastoneimage)
 			{
 				$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
+				//$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
 				$out.= $this->eol.($strContentAltText?$strContentAltText:strip_tags($strContent)).$this->eol; // Add plain text message
 				$out.= "--" . $this->alternative_boundary . $this->eol;
-				$out.= "Content-Type: multipart/related; boundary=\"".$this->related_boundary."\"".$this->eol;
+				$out.= "Content-Type: multipart/related;".$this->eol." boundary=\"".$this->related_boundary."\"".$this->eol;
 				$out.= $this->eol;
 				$out.= "--" . $this->related_boundary . $this->eol;
 			}
 
 			if (! $this->atleastoneimage && $strContentAltText && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))    // Add plain text message part before html part
 			{
-				$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
+				$out.= "Content-Type: multipart/alternative;".$this->eol." boundary=\"".$this->alternative_boundary."\"".$this->eol;
 				$out.= $this->eol;
 				$out.= "--" . $this->alternative_boundary . $this->eol;
 				$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
+				//$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
 				$out.= $this->eol.$strContentAltText.$this->eol;
 				$out.= "--" . $this->alternative_boundary . $this->eol;
 			}
 
 			$out.= "Content-Type: text/html; charset=".$conf->file->character_set_client.$this->eol;
+			//$out.= "Content-Transfer-Encoding: 7bit".$this->eol;	// TODO Use base64
 			$out.= $this->eol.$strContent.$this->eol;
 
 			if (! $this->atleastoneimage && $strContentAltText && ! empty($conf->global->MAIN_MAIL_USE_MULTI_PART))    // Add plain text message part after html part
@@ -1073,6 +1079,7 @@ class CMailFile
 		else
 		{
 			$out.= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
+			//$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
 			$out.= $this->eol.$strContent.$this->eol;
 		}
 

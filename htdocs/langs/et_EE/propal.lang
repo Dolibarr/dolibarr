@@ -4,7 +4,6 @@ Proposal=Pakkumine
 ProposalShort=Pakkumine
 ProposalsDraft=Koosta pakkumiste mustandeid
 ProposalsOpened=Open commercial proposals
-Prop=Pakkumised
 CommercialProposal=Pakkumine
 PdfCommercialProposalTitle=Pakkumine
 ProposalCard=Pakkumise kaart
@@ -64,6 +63,7 @@ ProposalLine=Pakkumise read
 AvailabilityPeriod=Saadavuse viivitus
 SetAvailability=Määratle saadavuse viivitus
 AfterOrder=pärast tellimist
+OtherProposals=Muud pakkumised
 ##### Availability #####
 AvailabilityTypeAV_NOW=Kohe
 AvailabilityTypeAV_1W=1 näda

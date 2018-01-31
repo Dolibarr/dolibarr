@@ -46,14 +46,14 @@ $confirm=GETPOST('confirm', 'alpha');
 // Security check
 $fieldname = (! empty($ref)?'ref':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldname);
+$result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','fk_user_author',$fieldname);
 
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
 $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="b.dateo,b.rowid";
-if ($page < 0) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
@@ -490,53 +490,55 @@ if ($action == 'new')
 
 		if (count($lines[$bid]))
 		{
-    		foreach ($lines[$bid] as $lid => $value)
-    		{
-    			$account_id = $bid;
-    			if (! isset($accounts[$bid]))
-    				$accounts[$bid]=0;
-    			$accounts[$bid] += 1;
+			foreach ($lines[$bid] as $lid => $value)
+			{
+				//$account_id = $bid; FIXME not used
 
-    			print '<tr class="oddeven">';
-    			print '<td>'.dol_print_date($value["date"],'day').'</td>';
-    			print '<td>'.$value["numero"]."</td>\n";
-    			print '<td>'.$value["emetteur"]."</td>\n";
-    			print '<td>'.$value["banque"]."</td>\n";
-    			print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+				// FIXME $accounts[$bid] is a label !
+				/*if (! isset($accounts[$bid]))
+					$accounts[$bid]=0;
+				$accounts[$bid] += 1;*/
 
-    			// Link to payment
-    			print '<td align="center">';
-    			$paymentstatic->id=$value["paymentid"];
-    			$paymentstatic->ref=$value["paymentid"];
-    			if ($paymentstatic->id)
-    			{
-    				print $paymentstatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
-    			// Link to bank transaction
-    			print '<td align="center">';
-    			$accountlinestatic->rowid=$value["id"];
-    			if ($accountlinestatic->rowid)
-    			{
-    				print $accountlinestatic->getNomUrl(1);
-    			}
-    			else
-    			{
-    				print '&nbsp;';
-    			}
-    			print '</td>';
+				print '<tr class="oddeven">';
+				print '<td>'.dol_print_date($value["date"],'day').'</td>';
+				print '<td>'.$value["numero"]."</td>\n";
+				print '<td>'.$value["emetteur"]."</td>\n";
+				print '<td>'.$value["banque"]."</td>\n";
+				print '<td align="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
 
-    			print '<td align="center">';
-    			print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
-    			print '</td>' ;
-    			print '</tr>';
+				// Link to payment
+				print '<td align="center">';
+				$paymentstatic->id=$value["paymentid"];
+				$paymentstatic->ref=$value["paymentid"];
+				if ($paymentstatic->id)
+				{
+					print $paymentstatic->getNomUrl(1);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
+				// Link to bank transaction
+				print '<td align="center">';
+				$accountlinestatic->rowid=$value["id"];
+				if ($accountlinestatic->rowid)
+				{
+					print $accountlinestatic->getNomUrl(1);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print '</td>';
 
-    			$i++;
-    		}
+				print '<td align="center">';
+				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+				print '</td>' ;
+				print '</tr>';
+
+				$i++;
+			}
 		}
 		print "</table>";
         print '</div>';
@@ -688,10 +690,12 @@ else
         {
     		while ($objp = $db->fetch_object($resql))
     		{
-    			$account_id = $objp->bid;
-    			if (! isset($accounts[$objp->bid]))
+    			//$account_id = $objp->bid; FIXME not used
+
+    			// FIXME $accounts[$objp->bid] is a label
+    			/*if (! isset($accounts[$objp->bid]))
     				$accounts[$objp->bid]=0;
-    			$accounts[$objp->bid] += 1;
+    			$accounts[$objp->bid] += 1;*/
 
     			print '<tr class="oddeven">';
     			print '<td align="center">'.$i.'</td>';

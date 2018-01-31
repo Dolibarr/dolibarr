@@ -40,7 +40,7 @@ if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global-
 
 $langs->load("users");
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_group=GETPOST('search_group');
 $optioncss = GETPOST('optioncss','alpha');
 

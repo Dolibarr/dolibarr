@@ -47,15 +47,16 @@ llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Export
 print load_fiche_titre($langs->trans("ExportsArea"));
 
 print $langs->trans("FormatedExportDesc1").'<br>';
-print $langs->trans("FormatedExportDesc2").' ';
-print $langs->trans("FormatedExportDesc3").'<br>';
+//print $langs->trans("FormatedExportDesc2").' ';
+//print $langs->trans("FormatedExportDesc3").'<br>';
 print '<br>';
 
 
-print '<div class="fichecenter"><div class="fichehalfleft">';
+//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 // List export set
+/*
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
@@ -67,7 +68,7 @@ if (count($export->array_export_code))
 {
 	foreach ($export->array_export_code as $key => $value)
 	{
-		
+
 		print '<tr class="oddeven"><td>';
 		//print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
 		print $export->array_export_module[$key]->getName();
@@ -89,6 +90,7 @@ else
 }
 print '</table>';
 print '<br>';
+*/
 
 print '<div class="center">';
 if (count($export->array_export_code))
@@ -110,7 +112,7 @@ if (count($export->array_export_code))
 print '</div>';
 print '<br>';
 
-print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available export format
@@ -134,7 +136,7 @@ foreach($liste as $key => $val)
     	$liste[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$liste[$key]);
     }
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
@@ -148,7 +150,7 @@ foreach($liste as $key => $val)
 print '</table>';
 
 
-print '</div></div></div>';
+//print '</div></div></div>';
 
 
 llxFooter();

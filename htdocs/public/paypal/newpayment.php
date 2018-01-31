@@ -170,7 +170,11 @@ if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
     {
         $token = $conf->global->PAYPAL_SECURITY_TOKEN;
     }
-	if ($SECUREKEY != $token) $valid=false;
+    if ($SECUREKEY != $token)
+    {
+    	if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) $valid=false;	// PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
+    	else dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+    }
 
 	if (! $valid)
 	{
@@ -282,7 +286,7 @@ if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', '
     exit;
 }
 
-if (! empty($conf->global->PAYPAL_API_SANDBOX))
+if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode'),'','warning');
 }
@@ -296,6 +300,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n"
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 print "\n";
 print '<!-- Form to send a Paypal payment -->'."\n";
 print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
@@ -399,7 +404,7 @@ if (! GETPOST("source"))
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -485,7 +490,7 @@ if (GETPOST("source") == 'order')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -595,7 +600,7 @@ if (GETPOST("source") == 'invoice')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -793,7 +798,7 @@ if (GETPOST("source") == 'contractline')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -915,7 +920,7 @@ if (GETPOST("source") == 'membersubscription')
 	    $valtoshow=GETPOST("newamount",'int');
 	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
+	    print '<input class="flat" class="maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	}
 	else {
 	    $valtoshow=$amount;
@@ -932,7 +937,7 @@ if (GETPOST("source") == 'membersubscription')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";

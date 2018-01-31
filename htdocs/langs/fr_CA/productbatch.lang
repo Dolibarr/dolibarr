@@ -8,7 +8,6 @@ batch_number=Lot / numéro de série
 BatchNumberShort=Lot / série
 SellByDate=La date de péremption
 DetailBatchNumber=Détails du lot / série
-DetailBatchFormat=Lot / série: %s - Mangez par: %s - Vendre par: %s (Qté: %d)
 printBatch=Lot / série: %s
 printSellby=Vendre par: %s
 AddDispatchBatchLine=Ajouter une ligne pour l'expédition de la durée de conservation

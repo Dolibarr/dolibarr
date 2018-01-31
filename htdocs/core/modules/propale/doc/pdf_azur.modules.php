@@ -43,6 +43,7 @@ class pdf_azur extends ModelePDFPropales
 	var $db;
 	var $name;
 	var $description;
+	var $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
 	var $type;
 
 	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
@@ -74,8 +75,9 @@ class pdf_azur extends ModelePDFPropales
 		$this->db = $db;
 		$this->name = "azur";
 		$this->description = $langs->trans('DocModelAzurDescription');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
-		// Dimension page pour format A4
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -386,6 +388,10 @@ class pdf_azur extends ModelePDFPropales
 				}
 				if ($notetoshow)
 				{
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
 					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('','', $default_font_size - 1);
@@ -760,7 +766,7 @@ class pdf_azur extends ModelePDFPropales
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -856,18 +862,18 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
-			$pdf->MultiCell(80, 4, $titre, 0, 'L');
+			$pdf->MultiCell(43, 4, $titre, 0, 'L');
 
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
-			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
+			$pdf->MultiCell(67, 4, $lib_condition_paiement,0,'L');
 
 			$posy=$pdf->GetY()+3;
 		}
 
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND))
+		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMMODE))
 		{
 			// Check a payment mode is defined
 			/* Not required on a proposal

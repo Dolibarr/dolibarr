@@ -56,7 +56,7 @@ $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action','aZ09');
 if ($user->societe_id)
 	$socid = $user->societe_id;
-$result = restrictedArea($user, 'fournisseur', $id, '', 'commande');
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (empty($conf->stock->enabled)) {
 	accessforbidden();
@@ -426,8 +426,8 @@ if ($id > 0 || ! empty($ref)) {
 		}
 	}
 
-	// Auteur
-	print '<tr><td>' . $langs->trans("AuthorRequest") . '</td>';
+	// Author
+	print '<tr><td class="titlefield">' . $langs->trans("AuthorRequest") . '</td>';
 	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
 
@@ -443,11 +443,13 @@ if ($id > 0 || ! empty($ref)) {
 		$disabled = 0;
 
 	// Line of orders
-	if ($object->statut <= 2 || $object->statut >= 6) {
-		print $langs->trans("OrderStatusNotReadyToDispatch");
+	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {
+		print '<span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
 
-	if ($object->statut == 3 || $object->statut == 4 || $object->statut == 5) {
+	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
 
@@ -733,7 +735,7 @@ if ($id > 0 || ! empty($ref)) {
 
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
-	$sql .= " e.rowid as warehouse_id, e.label as entrepot,";
+	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";

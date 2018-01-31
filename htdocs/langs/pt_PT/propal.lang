@@ -4,7 +4,6 @@ Proposal=Orçamento
 ProposalShort=Proposta
 ProposalsDraft=Orçamentos Rascunho
 ProposalsOpened=Orçamentos a clientes abertos
-Prop=Orçamentos
 CommercialProposal=Orçamento
 PdfCommercialProposalTitle=Orçamento
 ProposalCard=Ficha do orçamento
@@ -64,6 +63,7 @@ ProposalLine=Proposta linha
 AvailabilityPeriod=Disponibilidade atraso
 SetAvailability=Definir atraso disponibilidade
 AfterOrder=após a ordem
+OtherProposals=Outros Orçamentos
 ##### Availability #####
 AvailabilityTypeAV_NOW=Imediato
 AvailabilityTypeAV_1W=1 semana

@@ -37,7 +37,7 @@ class Opensurveysondage extends CommonObject
 	public $element='opensurvey_sondage';			//!< Id that identify managed objects
 	public $table_element='opensurvey_sondage';	//!< Name of table without prefix where object is stored
     public $picto = 'opensurvey';
-    
+
 	public $id_sondage;
 	/**
 	 * @deprecated
@@ -75,7 +75,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $allow_spy;
 
-	
+
 	/**
 	 * Draft status (not used)
 	 */
@@ -88,9 +88,9 @@ class Opensurveysondage extends CommonObject
 	 * Closed
 	 */
 	const STATUS_CLOSED = 2;
-	
-	
-	
+
+
+
     /**
      *  Constructor
      *
@@ -110,7 +110,7 @@ class Opensurveysondage extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create(User $user, $notrigger=0)
     {
 		$error=0;
 
@@ -200,7 +200,7 @@ class Opensurveysondage extends CommonObject
      *  @param	string	$numsurvey			Ref of survey (admin or not)
      *  @return int          				<0 if KO, >0 if OK
      */
-    function fetch($id,$numsurvey='')
+    function fetch($id, $numsurvey='')
     {
     	$sql = "SELECT";
 		$sql.= " t.id_sondage,";
@@ -275,7 +275,7 @@ class Opensurveysondage extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user, $notrigger=0)
+    function update(User $user, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -348,7 +348,7 @@ class Opensurveysondage extends CommonObject
      *  @param	string	$numsondage			Num sondage admin to delete
      *  @return	int					 		<0 if KO, >0 if OK
      */
-    function delete($user, $notrigger, $numsondage)
+    function delete(User $user, $notrigger, $numsondage)
     {
 		global $conf, $langs;
 		$error=0;
@@ -400,6 +400,63 @@ class Opensurveysondage extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	function getNomUrl($withpicto=0, $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	{
+		global $db, $conf, $langs;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+
+		$result = '';
+		$companylink = '';
+
+		$label = '<u>' . $langs->trans("ShowSurvey") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref.'<br>';
+		$label.= '<b>' . $langs->trans('Title') . ':</b> ' . $this->title.'<br>';
+
+		$url = DOL_URL_ROOT.'/opensurvey/card.php?id='.$this->id;
+
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+		if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowMyObject");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		}
+		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
+		return $result;
 	}
 
 	/**
@@ -544,8 +601,8 @@ class Opensurveysondage extends CommonObject
 		$this->allow_spy = ($this->allow_spy ? 1 : 0);
 		$this->sujet = trim($this->sujet);
 	}
-	
-	
+
+
 	/**
 	 *	Return status label of Order
 	 *
@@ -556,7 +613,7 @@ class Opensurveysondage extends CommonObject
 	{
 	    return $this->LibStatut($this->status,$mode);
 	}
-	
+
 	/**
 	 *	Return label of status
 	 *
@@ -567,7 +624,7 @@ class Opensurveysondage extends CommonObject
 	function LibStatut($status,$mode)
 	{
 	    global $langs, $conf;
-	
+
 	    //print 'x'.$status.'-'.$billed;
 	    if ($mode == 0)
 	    {
@@ -606,5 +663,5 @@ class Opensurveysondage extends CommonObject
 	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
 	    }
 	}
-	
+
 }

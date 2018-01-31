@@ -482,7 +482,7 @@ print '<td align="center" width="60"></td>';
 print "</tr>\n";
 $var=true;
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
@@ -490,7 +490,7 @@ $htmltext.='</i>';
 
 $var=! $var;
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename='EXPENSEREPORT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -507,7 +507,7 @@ print '</td></tr>'."\n";
 //Use draft Watermark
 
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext).'<br>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '<input size="50" class="flat" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
 

@@ -64,6 +64,7 @@ class modWebServices extends DolibarrModules
         //-------------
         $this->depends = array();
         $this->requiredby = array();
+        //$this->phpmax = array(7,1);					// Maximum version of PHP required by module
         $this->langfiles = array("other");
 
         // Constants
