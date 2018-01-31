@@ -309,7 +309,7 @@ class ExtraFields
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
-			if(is_array($param) && count($param) > 0)
+			if (is_array($param) && count($param) > 0)
 			{
 				$params = serialize($param);
 			}
@@ -627,10 +627,17 @@ class ExtraFields
 		{
 			$this->db->begin();
 
-			if (is_array($param))
+			if (is_array($param) && count($param) > 0)
 			{
-				if (count($param) > 0) $param = $this->db->escape(serialize($param));
-				else $param='';
+				$params = serialize($param);
+			}
+			elseif (strlen($param) > 0)
+			{
+				$params = trim($param);
+			}
+			else
+			{
+				$params='';
 			}
 
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
@@ -674,7 +681,7 @@ class ExtraFields
 			$sql.= " ".($langfile?"'".$this->db->escape($langfile)."'":"null").",";
 			$sql.= " ".$pos.",";
 			$sql.= " '".$this->db->escape($alwayseditable)."',";
-			$sql.= " '".$this->db->escape($param)."',";
+			$sql.= " '".$this->db->escape($params)."',";
 			$sql.= " ".$list.", ";
 			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
