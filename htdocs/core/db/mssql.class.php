@@ -563,7 +563,7 @@ class DoliDBMssql extends DoliDB
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    string	$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	function idate($param)
 	{
@@ -861,6 +861,22 @@ class DoliDBMssql extends DoliDB
 		return -1;
 		else
 		return 1;
+	}
+
+	/**
+	 *	Drop a table into database
+	 *
+	 *	@param	    string	$table 			Name of table
+	 *	@return	    int						<0 if KO, >=0 if OK
+	 */
+	function DDLDropTable($table)
+	{
+		$sql = "DROP TABLE ".$table;
+
+		if (! $this->query($sql))
+			return -1;
+		else
+			return 1;
 	}
 
 	/**

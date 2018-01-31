@@ -79,6 +79,8 @@ HolidaysCancelation=Anulació de dies lliures
 EmployeeLastname=Cognoms de l'empleat
 EmployeeFirstname=Nom de l'empleat
 TypeWasDisabledOrRemoved=El tipus de dia lliure (id %s) ha sigut desactivat o eliminat
+LastHolidays=Les darreres %s sol·licituds de permís
+AllHolidays=Totes les sol·licituds de permís
 
 ## Configuration du Module ##
 LastUpdateCP=Última actualització automàtica de reserva de dies lliures

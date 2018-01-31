@@ -14,13 +14,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * You can call this page with param module=medias to get a filemanager for medias.
  */
 
 /**
  *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';
@@ -31,14 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("users");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("contracts");
+$langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -48,7 +42,6 @@ $result = restrictedArea($user, 'ecm', 0);
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','aZ09');
 $section=GETPOST('section','int')?GETPOST('section','int'):GETPOST('section_id','int');
-$module=GETPOST('module','alpha');
 if (! $section) $section=0;
 $section_dir=GETPOST('section_dir','alpha');
 
@@ -84,8 +77,8 @@ $error=0;
  *	Actions
  */
 
-// Upload file
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
+// Upload file (code similar but different than actions_linkedfiles.inc.php)
+if (GETPOST("sendit",'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Define relativepath and upload_dir
     $relativepath='';
@@ -93,14 +86,20 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	else $relativepath=$section_dir;
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (empty($_FILES['userfile']['tmp_name']))
+	if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
+	else $userfiles=array($_FILES['userfile']['tmp_name']);
+
+	foreach($userfiles as $key => $userfile)
 	{
-		$error++;
-		if($_FILES['userfile']['error'] == 1 || $_FILES['userfile']['error'] == 2){
-			setEventMessages($langs->trans('ErrorFileSizeTooLarge'),null, 'errors');
-		}
-		else {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		if (empty($_FILES['userfile']['tmp_name'][$key]))
+		{
+			$error++;
+			if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
+				setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+			}
+			else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+			}
 		}
 	}
 
@@ -113,8 +112,6 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	    }
 	}
 }
-
-
 
 // Add directory
 if ($action == 'add' && $user->rights->ecm->setup)
@@ -138,18 +135,16 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	clearstatcache();
 }
 
-// Remove file
+// Remove file (code similar but different than actions_linkedfiles.inc.php)
 if ($action == 'confirm_deletefile')
 {
     if (GETPOST('confirm') == 'yes')
     {
     	// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
 		//var_dump(GETPOST('urlfile'));exit;
-    	$langs->load("other");
 
     	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
     	$file = $upload_dir . "/" . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
-		//var_dump($file);exit;
 
     	$ret=dol_delete_file($file);	// This include also the delete from file index in database.
     	if ($ret)
@@ -324,338 +319,29 @@ if ($action == 'refreshmanual')
 //print $_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index_auto.php file
 
+$moreheadcss='';
+$moreheadjs='';
+
 //$morejs=array();
 $morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 
+$moreheadjs.='<script type="text/javascript">'."\n";
+$moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
+$moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
-
-// Add sections to manage
-$rowspan=0;
-$sectionauto=array();
-
-// Confirm remove file (for non javascript users)
-if ($action == 'delete' && empty($conf->use_javascript_ajax))
-{
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
-
-}
-
-if ($module != 'medias')
-{
-	$head = ecm_prepare_dasboard_head('');
-	dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
-}
-
-// Start container of all panels
-?>
-<!-- Begin div id="containerlayout" -->
-<div id="containerlayout">
-<div id="ecm-layout-north" class="toolbar largebutton">
-<?php
-
-// Start top panel, toolbar
-print '<div class="inline-block toolbarbutton centpercent">';
-
-// Toolbar
-if ($user->rights->ecm->setup)
-{
-    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
-}
-else
-{
-    print '<a href="#" class="inline-block valignmiddle toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
-    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
-    print '</a>';
-}
-$url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
-print '</a>';
+$head = ecm_prepare_dasboard_head('');
+dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
 
-// Start Add new file area
-$nameforformuserfile = 'formuserfileecm';
+// Add filemanager component
+$module='ecm';
+include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
-print '<div class="inline-block valignmiddle floatright">';
-
-// To attach new file
-if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || ! empty($section))
-{
-	if ((empty($section) || $section == -1) && ($module != 'medias'))
-	{
-		?>
-		<script type="text/javascript">
-    	jQuery(document).ready(function() {
-			jQuery('#<?php echo $nameforformuserfile ?>').hide();
-    	});
-    	</script>
-		<?php
-	}
-
-    $formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48, null, '', 0, '', 0, $nameforformuserfile);
-}
-else print '&nbsp;';
-
-print '</div>';
-// End Add new file area
-
-
-print '</div>';
-// End top panel, toolbar
-
-?>
-</div>
-<div id="ecm-layout-west" class="inline-block">
-<?php
-// Start left area
-
-
-// Confirmation de la suppression d'une ligne categorie
-if ($action == 'delete_section')
-{
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
-}
-// End confirm
-
-
-if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$action) || $action == 'delete')
-{
-	print '<table width="100%" class="liste noborderbottom">'."\n";
-
-	print '<!-- Title for manual directories -->'."\n";
-	print '<tr class="liste_titre">'."\n";
-    print '<th class="liste_titre" align="left" colspan="6">';
-    print '&nbsp;'.$langs->trans("ECMSections");
-	print '</th></tr>';
-
-    $showonrightsize='';
-
-	// Manual section
-	$htmltooltip=$langs->trans("ECMAreaDesc2");
-
-    if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
-    {
-        print '<tr><td colspan="6">';
-
-    	// Show filemanager tree
-	    print '<div id="filetree" class="ecmfiletree"></div>';
-
-	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
-
-	    print '</td></tr>';
-    }
-    else
-    {
-        print '<tr><td colspan="6" style="padding-left: 20px">';
-        print '<div id="filetree" class="ecmfiletree">';
-        print '<ul class="ecmjqft">';
-
-    	// Load full tree
-    	if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);    // Slow
-
-    	// ----- This section will show a tree from a fulltree array -----
-    	// $section must also be defined
-    	// ----------------------------------------------------------------
-
-    	// Define fullpathselected ( _x_y_z ) of $section parameter
-    	$fullpathselected='';
-    	foreach($sqltree as $key => $val)
-    	{
-    		//print $val['id']."-".$section."<br>";
-    		if ($val['id'] == $section)
-    		{
-    			$fullpathselected=$val['fullpath'];
-    			break;
-    		}
-    	}
-    	//print "fullpathselected=".$fullpathselected."<br>";
-
-    	// Update expandedsectionarray in session
-    	$expandedsectionarray=array();
-    	if (isset($_SESSION['dol_ecmexpandedsectionarray'])) $expandedsectionarray=explode(',',$_SESSION['dol_ecmexpandedsectionarray']);
-
-    	if ($section && GETPOST('sectionexpand') == 'true')
-    	{
-    		// We add all sections that are parent of opened section
-    		$pathtosection=explode('_',$fullpathselected);
-    		foreach($pathtosection as $idcursor)
-    		{
-    			if ($idcursor && ! in_array($idcursor,$expandedsectionarray))	// Not already in array
-    			{
-    				$expandedsectionarray[]=$idcursor;
-    			}
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	if ($section && GETPOST('sectionexpand') == 'false')
-    	{
-    		// We removed all expanded sections that are child of the closed section
-    		$oldexpandedsectionarray=$expandedsectionarray;
-    		$expandedsectionarray=array();	// Reset
-    		foreach($oldexpandedsectionarray as $sectioncursor)
-    		{
-    			// is_in_subtree(fulltree,sectionparent,sectionchild)
-    			if ($sectioncursor && ! is_in_subtree($sqltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
-    		}
-    		$_SESSION['dol_ecmexpandedsectionarray']=join(',',$expandedsectionarray);
-    	}
-    	//print $_SESSION['dol_ecmexpandedsectionarray'].'<br>';
-
-    	$nbofentries=0;
-    	$oldvallevel=0;
-    	$var=true;
-    	foreach($sqltree as $key => $val)
-    	{
-    		$var=false;
-
-    		$ecmdirstatic->id=$val['id'];
-    		$ecmdirstatic->ref=$val['label'];
-
-    		// Refresh cache
-    		if (preg_match('/refresh/i',$action))
-    		{
-    			$result=$ecmdirstatic->fetch($val['id']);
-    			$ecmdirstatic->ref=$ecmdirstatic->label;
-
-    			$result=$ecmdirstatic->refreshcachenboffile(0);
-    			$val['cachenbofdoc']=$result;
-    		}
-
-    		//$fullpathparent=preg_replace('/(_[^_]+)$/i','',$val['fullpath']);
-
-    		// Define showline
-    		$showline=0;
-
-    		// If directory is son of expanded directory, we show line
-    		if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
-    		// If directory is brother of selected directory, we show line
-    		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
-    		// If directory is parent of selected directory or is selected directory, we show line
-    		elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
-    		// If we are level one we show line
-    		elseif ($val['level'] < 2) $showline=1;
-
-    		if ($showline)
-    		{
-    			if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
-    			else $option='indexnotexpanded';
-    			//print $option;
-
-    			print '<li class="directory collapsed">';
-
-    			// Show tree graph pictos
-                $cpt=1;
-    			while ($cpt < $sqltree[$key]['level'])
-    			{
-    			    print ' &nbsp; &nbsp;';
-    			    $cpt++;
-    			}
-    			$resarray=tree_showpad($sqltree,$key,1);
-    			$a=$resarray[0];
-    			$nbofsubdir=$resarray[1];
-    			$nboffilesinsubdir=$resarray[2];
-
-    			// Show link
-    			print $ecmdirstatic->getNomUrl(0,$option,32,'class="fmdirlia jqft ecmjqft"');
-
-    			print '<div class="ecmjqft">';
-
-    			// Nb of docs
-    			print '<table class="nobordernopadding"><tr><td>';
-    			print $val['cachenbofdoc'];
-    			print '</td>';
-    			print '<td align="left">';
-    			if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
-    			print '</td>';
-
-    			// Info
-    			print '<td align="center">';
-    			$userstatic->id=$val['fk_user_c'];
-    			$userstatic->lastname=$val['login_c'];
-    			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-    			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
-    			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
-    			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
-    			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
-    			print "</td>";
-
-    			print '</tr></table>';
-
-    			print '</div>';
-
-    			print "</li>\n";
-    		}
-
-    		$oldvallevel=$val['level'];
-    		$nbofentries++;
-    	}
-
-    	// If nothing to show
-    	if ($nbofentries == 0)
-    	{
-    		print '<li class="directory collapsed">';
-    		print '<div class="ecmjqft">';
-    		print $langs->trans("ECMNoDirectoryYet");
-    		print '</div>';
-   			print "</li>\n";
-    	}
-
-    	print '</ul>';
-    	print '</div>';
-    	print '</td></tr>';
-    }
-
-
-	print "</table>";
-}
-
-
-// End left panel
-?>
-</div>
-<div id="ecm-layout-center" class="inline-block">
-<div class="pane-in ecm-in-layout-center">
-<div id="ecmfileview" class="ecmfileview">
-<?php
-// Start right panel
-
-
-$mode='noajax';
-$url=DOL_URL_ROOT.'/ecm/index.php';
-include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
-
-
-// End right panel
-?>
-</div>
-</div>
-
-</div>
-</div> <!-- End div id="containerlayout" -->
-<?php
 // End of page
-
-
-if ($module != 'medias')
-{
-	dol_fiche_end();
-}
-
-if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
-	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
-}
-
-
+dol_fiche_end();
 
 llxFooter();
 

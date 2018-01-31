@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=あなたは、Linuxパッケージ（Ubuntuのは、Debian
 KeepDefaultValuesMamp=あなたがDoliMampからDolibarrのセットアップウィザードを使用して、ここで提案するので、値がすでに最適化されています。あなたは何をすべきか分かっている場合にのみ、それらを変更してください。
 KeepDefaultValuesProxmox=あなたがProxmox仮想アプライアンスからDolibarrのセットアップウィザードを使用して、ここで提案するので、値がすでに最適化されています。あなたは何をすべきか分かっている場合にのみ、それらを変更してください。
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=非正規化データを修正
@@ -191,9 +193,11 @@ MigrationActioncommElement=アクション上でデータを更新する
 MigrationPaymentMode=支払い·モードのデータ移行
 MigrationCategorieAssociation=カテゴリの移行
 MigrationEvents=イベントを移行して、イベントの所有者を割当て表に追加します
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=llx_societe_remise のエンティティフィールド値を更新
 MigrationRemiseExceptEntity=llx_societe_remise_except のエンティティフィールド値を更新
 MigrationReloadModule=モジュール %s を再読み込み
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=利用できないオプションを表示しない
 HideNotAvailableOptions=利用できないオプションを非表示
 ErrorFoundDuringMigration=移行プロセス中にエラーが報告されたので、次のステップは利用できません。 エラーを無視するには、<a href="%s">ここをクリック</a> してください。ただし、修正されるまでアプリケーションまたは一部の機能が正しく動作しない場合があります。

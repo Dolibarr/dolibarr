@@ -54,7 +54,6 @@ if ($action == 'update')
 
     $i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($label),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($exturl),'chaine',0,'',$conf->entity);
-    //$i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($_POST["EXTERNALSITE_LABEL"]),'chaine',0,'',$conf->entity);
 
     if ($i >= 2)
     {

@@ -161,6 +161,7 @@ if ($object->id)
 
     $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
+    $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

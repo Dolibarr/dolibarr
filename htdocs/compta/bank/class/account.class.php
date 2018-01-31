@@ -386,7 +386,7 @@ class Account extends CommonObject
 	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
 	 *
 	 *  @param	int	        $date			Date operation
-	 *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
+	 *  @param	string		$oper			1,2,3,4... (deprecated) or 'TYP','VIR','PRE','LIQ','VAD','CB','CHQ'...
 	 *  @param	string		$label			Descripton
 	 *  @param	float		$amount			Amount
 	 *  @param	string		$num_chq		Numero cheque ou virement
@@ -414,7 +414,7 @@ class Account extends CommonObject
 		{
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
 			$sql.= " WHERE id=".$oper;
-			$sql.= " AND entity IN (" . getEntity('c_paiement') . ")";
+			$sql.= " AND entity IN (".getEntity('c_paiement').")";
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -854,10 +854,12 @@ class Account extends CommonObject
 		$sql.= " ba.datec as date_creation, ba.tms as date_update,";
 		$sql.= ' c.code as country_code, c.label as country,';
 		$sql.= ' d.code_departement as state_code, d.nom as state';
+        $sql.= ' , aj.code as accountancy_journal';
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON ba.fk_pays = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.state_id = d.rowid';
-		$sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+        $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'accounting_journal as aj ON aj.rowid=ba.fk_accountancy_journal';
+		$sql.= " WHERE ba.entity IN (".getEntity($this->element).")";
 		if ($id)  $sql.= " AND ba.rowid  = ".$id;
 		if ($ref) $sql.= " AND ba.ref = '".$this->db->escape($ref)."'";
 
@@ -900,6 +902,7 @@ class Account extends CommonObject
 
 				$this->account_number = $obj->account_number;
 				$this->fk_accountancy_journal = $obj->fk_accountancy_journal;
+				$this->accountancy_journal = $obj->accountancy_journal;
 
 				$this->currency_code  = $obj->currency_code;
 				$this->account_currency_code  = $obj->currency_code;
@@ -1286,9 +1289,10 @@ class Account extends CommonObject
 	 *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
 	 *  @param  string  $option         			''=Show ref, 'reflabel'=Show ref+label
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param	int  	$notooltip		 			1=Disable tooltip
 	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0, $mode='', $option='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto=0, $mode='', $option='', $save_lastsearch_value=-1, $notooltip=0)
 	{
 		global $conf, $langs;
 
@@ -1324,11 +1328,14 @@ class Account extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link = '<a href="'.$url.$linkclose;
-		$linkend='</a>';
+		$linkstart = '<a href="'.$url.$linkclose;
+		$linkend = '</a>';
 
-		if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '').$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -2136,11 +2143,13 @@ class AccountLine extends CommonObject
 
 		$result='';
 		$label=$langs->trans("ShowTransaction").': '.$this->rowid;
-		$link = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->rowid.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'account'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.=($this->ref?$this->ref:$this->rowid);
+		$result .= $linkend;
 
 		if ($option == 'showall' || $option == 'showconciliated') $result.=' (';
 		if ($option == 'showall')
@@ -2216,6 +2225,41 @@ class AccountLine extends CommonObject
             if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
             if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
         }*/
+	}
+
+
+	/**
+	 *	Return if a bank line was dispatched into bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	public function getVentilExportCompta()
+	{
+		$alreadydispatched = 0;
+
+		$type = 'bank';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$alreadydispatched = $obj->nb;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched)
+		{
+			return 1;
+		}
+		return 0;
 	}
 
 }

@@ -25,7 +25,7 @@ create table llx_bordereau_cheque
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   ref               varchar(30) NOT NULL,					-- ref
-  ref_ext	          varchar(255),							-- ref_ext
+  ref_ext           varchar(255),							-- ref_ext
   datec             datetime NOT NULL,
   date_bordereau    date,
   amount            double(24,8) NOT NULL,

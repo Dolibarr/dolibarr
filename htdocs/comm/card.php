@@ -186,8 +186,12 @@ if (empty($reshook))
         if ($ret < 0) $error++;
         if (! $error)
         {
-            $result = $object->insertExtraFields();
-            if ($result < 0) $error++;
+			$result = $object->insertExtraFields();
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
         if ($error) $action = 'edit_extras';
     }
@@ -207,7 +211,7 @@ if ($id > 0 && empty($object->id))
 {
 	// Load data of third party
 	$res=$object->fetch($id);
-	if ($object->id <= 0) dol_print_error($db,$object->error,$object->errors);
+	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
 }
 
 $title=$langs->trans("CustomerCard");
@@ -216,7 +220,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
 
-if ($id > 0)
+if ($object->id > 0)
 {
 	$head = societe_prepare_head($object);
 
@@ -1267,7 +1271,8 @@ if ($id > 0)
 }
 else
 {
-	dol_print_error($db,'Bad value for socid parameter');
+	$langs->load("errors");
+	print $langs->trans('ErrorRecordNotFound');
 }
 
 // End of page

@@ -341,7 +341,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
 	print_fiche_titre($langs->trans("OtherInfo"), '', '');
 
-	print "<br>\n";
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';

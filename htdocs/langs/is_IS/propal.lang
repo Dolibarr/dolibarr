@@ -4,7 +4,6 @@ Proposal=Auglýsing tillögu
 ProposalShort=Tillaga
 ProposalsDraft=Drög að auglýsing tillögur
 ProposalsOpened=Open commercial proposals
-Prop=Auglýsing tillögur
 CommercialProposal=Auglýsing tillögu
 PdfCommercialProposalTitle=Auglýsing tillögu
 ProposalCard=Tillaga kort
@@ -64,6 +63,7 @@ ProposalLine=Tillaga línu
 AvailabilityPeriod=Framboð töf
 SetAvailability=Setja framboð töf
 AfterOrder=eftir því skyni
+OtherProposals=Aðrar tillögur
 ##### Availability #####
 AvailabilityTypeAV_NOW=Strax
 AvailabilityTypeAV_1W=1 viku

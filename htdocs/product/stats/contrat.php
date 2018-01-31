@@ -119,7 +119,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > '".$db->idate($now)."'",1,0).") as nb_running,";
 		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= '".$db->idate($now)."')",1,0).') as nb_late,';
 		$sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-		$sql.= " c.rowid as rowid, c.date_contrat, c.statut as statut,";
+		$sql.= " c.rowid as rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut as statut,";
 		$sql.= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " AND cd.fk_product =".$product->id;
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid) $sql.= " AND s.rowid = ".$socid;
-		$sql.= " GROUP BY c.rowid, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
+		$sql.= " GROUP BY c.rowid, c.ref, c.ref_customer, c.ref_supplier, c.date_contrat, c.statut, s.nom, s.rowid, s.code_client";
 		$sql.= $db->order($sortfield, $sortorder);
 		$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -168,12 +168,12 @@ if ($id > 0 || ! empty($ref))
 			print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
 			//print_liste_field_titre("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($staticcontratligne->LibStatut(0,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
-			print_liste_field_titre($staticcontratligne->LibStatut(4,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
-			print_liste_field_titre($staticcontratligne->LibStatut(5,3),$_SERVER["PHP_SELF"],"",'','','width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(0,3),$_SERVER["PHP_SELF"],"",'','','align="center" width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(4,3),$_SERVER["PHP_SELF"],"",'','','align="center" width="16"',$sortfield,$sortorder,'maxwidthsearch ');
+			print_liste_field_titre($staticcontratligne->LibStatut(5,3),$_SERVER["PHP_SELF"],"",'','','align="center" width="16"',$sortfield,$sortorder,'maxwidthsearch ');
 			print "</tr>\n";
 
-			$contratstatic=new Contrat($db);
+			$contracttmp=new Contrat($db);
 
 			if ($num > 0)
 			{
@@ -182,11 +182,15 @@ if ($id > 0 || ! empty($ref))
 				{
 					$objp = $db->fetch_object($result);
 
+					$contracttmp->id = $objp->rowid;
+					$contracttmp->ref = $objp->ref;
+					$contracttmp->ref_customer = $objp->ref_customer;
+					$contracttmp->ref_supplier = $objp->ref_supplier;
 
 					print '<tr class="oddeven">';
-					print '<td><a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
-					print $objp->rowid;
-					print "</a></td>\n";
+					print '<td>';
+					print $contracttmp->getNomUrl(1);
+					print "</td>\n";
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->name,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";

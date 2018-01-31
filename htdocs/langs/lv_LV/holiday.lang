@@ -79,6 +79,8 @@ HolidaysCancelation=Leave request cancelation
 EmployeeLastname=Darbinieka uzvārds
 EmployeeFirstname=Darbinieka vārds
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation
@@ -99,6 +101,6 @@ HolidaysRefused=Pieprasījums noraidīts
 HolidaysRefusedBody=Your leave request for %s to %s has been denied for the following reason :
 HolidaysCanceled=Canceled leaved request
 HolidaysCanceledBody=Your leave request for %s to %s has been canceled.
-FollowedByACounter=1: This type of leave need to be followed by a counter. Counter is incremented manually or automatically and when a leave request is validated, counter is decremented.<br>0: Not followed by a counter.
+FollowedByACounter=1: This type of leave need to be followed by a counter. Counter is incremented manually or automatically and when a leave request is validated, counter is decremented.0: Not followed by a counter.
 NoLeaveWithCounterDefined=There is no leave types defined that need to be followed by a counter
 GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leaves</strong> to setup the different types of leaves.

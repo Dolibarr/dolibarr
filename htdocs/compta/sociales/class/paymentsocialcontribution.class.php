@@ -203,10 +203,10 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."paiementcharge as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id AND pt.entity IN (" . getEntity('c_paiement') . ")";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
-		$sql.= " AND pt.entity = " . getEntity('c_paiement');
+		$sql.= " WHERE t.rowid = ".$id;
+		// TODO link on entity of tax;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);

@@ -117,6 +117,7 @@ class box_factures_fourn extends ModeleBoxes
 					$datelimite=$db->jdate($objp->datelimite);
 					$date=$db->jdate($objp->df);
 					$datem=$db->jdate($objp->tms);
+
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->ref;
                     $facturestatic->total_ht = $objp->total_ht;
@@ -124,6 +125,8 @@ class box_factures_fourn extends ModeleBoxes
                     $facturestatic->total_ttc = $objp->total_ttc;
                     $facturestatic->date_echeance = $datelimite;
                     $facturestatic->statut = $objp->fk_statut;
+                    $facturestatic->ref_supplier = $objp->ref_supplier;
+
                     $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;
@@ -144,14 +147,14 @@ class box_factures_fourn extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax50"',
                         'text' => $objp->ref_supplier,
                         'tooltip' => $langs->trans('SupplierInvoice').': '.($objp->ref?$objp->ref:$objp->facid).'<br>'.$langs->trans('RefSupplier').': '.$objp->ref_supplier,
                         'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax50"',
                         'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
                         'asis' => 1,
                     );

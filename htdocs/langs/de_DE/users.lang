@@ -97,6 +97,7 @@ UseTypeFieldToChange=Nutzen sie das Feld "Typ" zum ändern
 OpenIDURL=OpenID URL
 LoginUsingOpenID=Verwende OpenID für Anmeldung
 WeeklyHours=Wochenstunden
+ExpectedWorkedHours=Erwartete Wochenarbeitszeit
 ColorUser=Benutzerfarbe
 DisabledInMonoUserMode=Deaktiviert im Wartungsmodus
 UserAccountancyCode=Buchhaltungscode Benutzer

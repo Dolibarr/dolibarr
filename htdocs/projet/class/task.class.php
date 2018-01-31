@@ -35,7 +35,7 @@ class Task extends CommonObject
 	public $table_element='projet_task';	//!< Name of table without prefix where object is stored
 	public $fk_element='fk_task';
 	public $picto = 'task';
-	protected $childtables=array('projet_task_time','projet_task_comment');    // To test if we can delete object
+	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
 	var $fk_task_parent;
 	var $label;
@@ -187,11 +187,12 @@ class Task extends CommonObject
 	/**
 	 *  Load object in memory from database
 	 *
-	 *  @param	int		$id			Id object
-	 *  @param	int		$ref		ref object
-	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
+	 *  @param	int		$id					Id object
+	 *  @param	int		$ref				ref object
+	 *  @param	int		$loadparentdata		Also load parent data
+	 *  @return int 		        		<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id,$ref='')
+	function fetch($id, $ref='', $loadparentdata=0)
 	{
 		global $langs;
 
@@ -215,7 +216,13 @@ class Task extends CommonObject
 		$sql.= " t.note_private,";
 		$sql.= " t.note_public,";
 		$sql.= " t.rang";
+		if (! empty($loadparentdata))
+		{
+			$sql.=", t2.ref as task_parent_ref";
+			$sql.=", t2.rang as task_parent_position";
+		}
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+		if (! empty($loadparentdata)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t2 ON t.fk_task_parent = t2.rowid";
 		$sql.= " WHERE ";
 		if (!empty($ref)) {
 			$sql.="t.ref = '".$this->db->escape($ref)."'";
@@ -253,14 +260,20 @@ class Task extends CommonObject
 				$this->note_public			= $obj->note_public;
 				$this->rang					= $obj->rang;
 
-				// Retreive all extrafield for thirdparty
+				if (! empty($loadparentdata))
+				{
+					$this->task_parent_ref      = $obj->task_parent_ref;
+					$this->task_parent_position = $obj->task_parent_position;
+				}
+
+				// Retreive all extrafield data
 			   	$this->fetch_optionals();
 			}
 
 			$this->db->free($resql);
 
-			if ($num_rows) {
-				$this->fetchComments();
+			if ($num_rows)
+			{
 				return 1;
 			}else {
 				return 0;
@@ -632,9 +645,12 @@ class Task extends CommonObject
 
 		$picto='projecttask';
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$linkstart.$this->ref.$linkend . (($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+		if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
 		return $result;
 	}
 
@@ -751,8 +767,8 @@ class Task extends CommonObject
 		}
 		if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
 		if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
-		if ($filteronproj) $sql.= " AND (p.ref LIKE '%".$this->db->escape($filteronproj)."%' OR p.title LIKE '%".$this->db->escape($filteronproj)."%')";
-		if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
+		if ($filteronproj) $sql.= natural_search(array("p.ref", "p.title"), $filteronproj);
+		if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql.=$morewherefilter;
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
@@ -1037,17 +1053,21 @@ class Task extends CommonObject
 	/**
 	 *  Calculate total of time spent for task
 	 *
-	 *  @param  int     $userid     Filter on user id. 0=No filter
-	 *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
+	 *  @param  User|int	$userobj			Filter on user. null or 0=No filter
+	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return array		 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
 	 */
-	function getSummaryOfTimeSpent($userid=0)
+	function getSummaryOfTimeSpent($userobj=null, $morewherefilter='')
 	{
 		global $langs;
 
+		if (is_object($userobj)) $userid=$userobj->id;
+		else $userid=$userobj;	// old method
+
 		$id=$this->id;
-		if (empty($id))
+		if (empty($id) && empty($userid))
 		{
-			dol_syslog("getSummaryOfTimeSpent called on a not loaded task", LOG_ERR);
+			dol_syslog("getSummaryOfTimeSpent called on a not loaded task without user param defined", LOG_ERR);
 			return -1;
 		}
 
@@ -1061,7 +1081,9 @@ class Task extends CommonObject
 		$sql.= " COUNT(t.rowid) as nblines,";
 		$sql.= " SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql.= " WHERE t.fk_task = ".$id;
+		$sql.= " WHERE 1 = 1";
+		if ($morewherefilter) $sql.=$morewherefilter;
+		if ($id > 0) $sql.= " AND t.fk_task = ".$id;
 		if ($userid > 0) $sql.=" AND t.fk_user = ".$userid;
 
 		dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
@@ -1196,6 +1218,96 @@ class Task extends CommonObject
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
+	}
+
+	/**
+	 *  Load all records of time spent
+	 *
+	 *  @param	User	$userobj			User object
+	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return int							<0 if KO, array of time spent if OK
+	 */
+	function fetchAllTimeSpent(User $userobj, $morewherefilter='')
+	{
+		global $langs;
+
+		$arrayres=array();
+
+		$sql = "SELECT";
+		$sql.= " s.rowid as socid,";
+		$sql.= " s.nom as thirdparty_name,";
+		$sql.= " s.email as thirdparty_email,";
+		$sql.= " ptt.rowid,";
+		$sql.= " ptt.fk_task,";
+		$sql.= " ptt.task_date,";
+		$sql.= " ptt.task_datehour,";
+		$sql.= " ptt.task_date_withhour,";
+		$sql.= " ptt.task_duration,";
+		$sql.= " ptt.fk_user,";
+		$sql.= " ptt.note,";
+		$sql.= " pt.rowid as task_id,";
+		$sql.= " pt.ref as task_ref,";
+		$sql.= " pt.label as task_label,";
+		$sql.= " p.rowid as project_id,";
+		$sql.= " p.ref as project_ref,";
+		$sql.= " p.title as project_label,";
+		$sql.= " p.public as public";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+		$sql.= " WHERE ptt.fk_task = pt.rowid AND pt.fk_projet = p.rowid";
+		$sql.= " AND ptt.fk_user = ".$userobj->id;
+		$sql.= " AND pt.entity IN (".getEntity('project').")";
+		if ($morewherefilter) $sql.=$morewherefilter;
+
+		dol_syslog(get_class($this)."::fetchAllTimeSpent", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$newobj = new stdClass();
+
+				$newobj->socid              = $obj->socid;
+				$newobj->thirdparty_name    = $obj->thirdparty_name;
+				$newobj->thirdparty_email   = $obj->thirdparty_email;
+
+				$newobj->fk_project			= $obj->project_id;
+				$newobj->project_ref		= $obj->project_ref;
+				$newobj->project_label		= $obj->project_label;
+				$newobj->public				= $obj->project_public;
+
+				$newobj->fk_task			= $obj->task_id;
+				$newobj->task_ref			= $obj->task_ref;
+				$newobj->task_label			= $obj->task_label;
+
+				$newobj->timespent_id		= $obj->rowid;
+				$newobj->timespent_date		= $this->db->jdate($obj->task_date);
+				$newobj->timespent_datehour	= $this->db->jdate($obj->task_datehour);
+				$newobj->timespent_withhour = $obj->task_date_withhour;
+				$newobj->timespent_duration = $obj->task_duration;
+				$newobj->timespent_fk_user	= $obj->fk_user;
+				$newobj->timespent_note		= $obj->note;
+
+				$arrayres[] = $newobj;
+
+				$i++;
+			}
+
+			$this->db->free($resql);
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error="Error ".$this->db->lasterror();
+			return -1;
+		}
+
+		return $arrayres;
 	}
 
 	/**

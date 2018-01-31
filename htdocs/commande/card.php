@@ -735,7 +735,7 @@ if (empty($reshook))
 				$price_min = $prod->price_min;
 				$price_base_type = $prod->price_base_type;
 
-				// multiprix
+				// If price per segment
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
@@ -748,6 +748,7 @@ if (empty($reshook))
 					  if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
 				}
+				// If price per customer
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
@@ -761,16 +762,50 @@ if (empty($reshook))
 					{
 						if (count($prodcustprice->lines) > 0)
 						{
-							$pu_ht = price($prodcustprice->lines [0]->price);
-							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
-							$price_base_type = $prodcustprice->lines [0]->price_base_type;
-							$tva_tx = $prodcustprice->lines [0]->tva_tx;
+							$pu_ht = price($prodcustprice->lines[0]->price);
+							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+							$price_base_type = $prodcustprice->lines[0]->price_base_type;
+							$tva_tx = $prodcustprice->lines[0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 					else
 					{
 						setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					}
+				}
+				// If price per quantity
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				{
+					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
+					{
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						$pqp = GETPOST('pbq','int');
+
+						// Search price into product_price_by_qty from $prod->id
+						foreach($prod->prices_by_qty_list[0] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
+							break;
+						}
+					}
+				}
+				// If price per quantity and customer
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+				{
+					// TODO Same than PRODUIT_CUSTOMER_PRICES_BY_QTY but using $object->thirdparty->price_level
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
@@ -816,12 +851,33 @@ if (empty($reshook))
 				// Add custom code and origin country into description
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code))) {
 					$tmptxt = '(';
-					if (! empty($prod->customcode))
-						$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
-					if (! empty($prod->customcode) && ! empty($prod->country_code))
-						$tmptxt .= ' - ';
-					if (! empty($prod->country_code))
-						$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					// Define output language
+					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (empty($newlang) && GETPOST('lang_id','alpha'))
+							$newlang = GETPOST('lang_id','alpha');
+						if (empty($newlang))
+							$newlang = $object->thirdparty->default_lang;
+						if (! empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						if (! empty($prod->customcode))
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))
+							$tmptxt .= ' - ';
+						if (! empty($prod->country_code))
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+					} else {
+						if (! empty($prod->customcode))
+							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))
+							$tmptxt .= ' - ';
+						if (! empty($prod->country_code))
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					}
 					$tmptxt .= ')';
 					$desc = dol_concatdesc($desc, $tmptxt);
 				}
@@ -1226,7 +1282,9 @@ if (empty($reshook))
 																								  // some hooks
 			if (empty($reshook)) {
 				$result = $object->insertExtraFields();
-				if ($result < 0) {
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
 			} else if ($reshook < 0)
@@ -1260,7 +1318,6 @@ if (empty($reshook))
 	$autocopy='MAIN_MAIL_AUTOCOPY_ORDER_TO';		// used to know the automatic BCC to add
 	$trackid='ord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
 
 
 	if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->commande->creer)
@@ -1567,19 +1624,19 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 
 	// What trigger creation
-	print '<tr><td>' . $langs->trans('Source') . '</td><td>';
+	print '<tr><td>' . $langs->trans('Channel') . '</td><td>';
 	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1);
 	print '</td></tr>';
 
 	// TODO How record was recorded OrderMode (llx_c_input_method)
 
 	// Project
-	if (! empty($conf->projet->enabled) && $socid > 0)
+	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td>';
-		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0);
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td>';
 		print '</tr>';
@@ -2209,7 +2266,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// Source reason (why we have an ordrer)
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Source');
+		print $langs->trans('Channel');
 		print '</td>';
 		if ($action != 'editdemandreason')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';
@@ -2386,7 +2443,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		 */
 		$result = $object->getLinesArray();
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#addline' : '#line_' . GETPOST('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
@@ -2413,8 +2470,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 		{
 			if ($action != 'editline')
 			{
-				$var = true;
-
 				// Add free products/services
 				$object->formAddObjectLine(1, $mysoc, $soc);
 
@@ -2460,12 +2515,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 				}
 				// Create event
-				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
+				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
 																									  // "workflow" action so should appears somewhere else on
 																									  // page.
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
-				}
+				}*/
 
 				// Create intervention
 				if ($conf->ficheinter->enabled) {
@@ -2573,8 +2628,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$relativepath = $comref . '/' . $comref . '.pdf';
 			$filedir = $conf->commande->dir_output . '/' . $comref;
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->commande->creer;
-			$delallowed = $user->rights->commande->supprimer;
+			$genallowed = $user->rights->commande->lire;
+			$delallowed = $user->rights->commande->creer;
 			print $formfile->showdocuments('commande', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 
@@ -2582,6 +2637,23 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			// Show online payment link
+			//$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+			$useonlinepayment = $conf->global->ORDER_SHOW_ONLINE_PAYMENT_ON_ORDER;
+
+			if ($object->statut != Commande::STATUS_DRAFT && $useonlinepayment)
+			{
+				print '<br><!-- Link to pay -->';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				print showOnlinePaymentUrl('order', $object->ref).'<br>';
+			}
+
+			// Show direct download link
+			if ($object->statut != Commande::STATUS_DRAFT && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))
+			{
+				print '<br><!-- Link to download main doc -->'."\n";
+				print showDirectDownloadLink($object).'<br>';
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

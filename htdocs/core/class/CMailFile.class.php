@@ -108,7 +108,7 @@ class CMailFile
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
-	 *  @param  string  $sendcontext      	 'standard', 'emailing', ...
+	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
 	 */
 	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='',$sendcontext='standard')
 	{
@@ -957,6 +957,7 @@ class CMailFile
 			$out.= 'Message-ID: <' . time() . '.phpmail@' . $host . ">" . $this->eol2;
 		}
 
+		if (! empty($_SERVER['REMOTE_ADDR'])) $out.= "X-RemoteAddr: " . $_SERVER['REMOTE_ADDR']. $this->eol2;
 		$out.= "X-Mailer: Dolibarr version " . DOL_VERSION ." (using php mail)".$this->eol2;
 		$out.= "Mime-Version: 1.0".$this->eol2;
 

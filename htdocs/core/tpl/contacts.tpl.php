@@ -21,6 +21,14 @@
  * $withproject (if we are on task contact)
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 

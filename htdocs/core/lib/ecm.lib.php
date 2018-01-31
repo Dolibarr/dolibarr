@@ -68,18 +68,30 @@ function ecm_prepare_dasboard_head($object)
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
+ * @param	string	$module		Module
+ * @param	string	$section	Section
  * @return  array				Array of tabs to show
  */
-function ecm_prepare_head($object)
+function ecm_prepare_head($object, $module='ecm', $section='')
 {
 	global $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/ecm/docmine.php?section='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
+	if ($module == 'ecm')
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$object->id;
+		$head[$h][1] = $langs->trans("Card");
+		$head[$h][2] = 'card';
+		$h++;
+	}
+	else
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$section.'&module='.$module;
+		$head[$h][1] = $langs->trans("Card");
+		$head[$h][2] = 'card';
+		$h++;
+	}
 
 	return $head;
 }
@@ -96,7 +108,7 @@ function ecm_file_prepare_head($object)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/ecm/docfile.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+    $head[$h][0] = DOL_URL_ROOT.'/ecm/file_card.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'card';
     $h++;

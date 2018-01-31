@@ -58,7 +58,7 @@ class modExport extends DolibarrModules
 		$this->dirs = array("/export/temp");
 
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array("export.php");
 
 		// Dependencies
 		$this->depends = array();

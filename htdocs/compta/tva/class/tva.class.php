@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,9 +101,7 @@ class Tva extends CommonObject
 		$sql.= "fk_bank,";
 		$sql.= "fk_user_creat,";
 		$sql.= "fk_user_modif";
-
         $sql.= ") VALUES (";
-
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
@@ -112,7 +111,6 @@ class Tva extends CommonObject
 		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
 		$sql.= " '".$this->db->escape($this->fk_user_creat)."',";
 		$sql.= " '".$this->db->escape($this->fk_user_modif)."'";
-
 		$sql.= ")";
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -496,6 +494,7 @@ class Tva extends CommonObject
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
+		if (empty($this->datec)) $this->datec = dol_now();
 
         // Check parameters
 		if (! $this->label)
@@ -520,8 +519,10 @@ class Tva extends CommonObject
         }
 
         // Insert into llx_tva
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep";
-		$sql.= ", datev";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (";
+        $sql.= "datec";
+        $sql.= ", datep";
+        $sql.= ", datev";
 		$sql.= ", amount";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
@@ -532,7 +533,8 @@ class Tva extends CommonObject
 		$sql.= ", entity";
 		$sql.= ") ";
         $sql.= " VALUES (";
-		$sql.= "'".$this->db->idate($this->datep)."'";
+        $sql.= " '".$this->db->idate($this->datec)."'";
+        $sql.= ", '".$this->db->idate($this->datep)."'";
         $sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
         $sql.= ", '".$this->db->escape($this->type_payment)."'";
@@ -669,6 +671,38 @@ class Tva extends CommonObject
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
+	
+	/**
+     * 	Return amount of payments already done
+     *
+     *	@return		int		Amount of payment already done, <0 if KO
+     */
+    function getSommePaiement()
+    {
+        $table='paiementcharge';
+        $field='fk_charge';
+
+        $sql = 'SELECT sum(amount) as amount';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+        $sql.= ' WHERE '.$field.' = '.$this->id;
+
+        dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $amount=0;
+
+            $obj = $this->db->fetch_object($resql);
+            if ($obj) $amount=$obj->amount?$obj->amount:0;
+
+            $this->db->free($resql);
+            return $amount;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 	/**
 	 *	Informations of vat payment object
@@ -678,7 +712,7 @@ class Tva extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = "SELECT t.rowid, t.tms, t.datec, t.fk_user_creat";
+		$sql = "SELECT t.rowid, t.tms, t.fk_user_modif, t.datec, t.fk_user_creat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql.= " WHERE t.rowid = ".$id;
 

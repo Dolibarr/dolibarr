@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=ທະນາຄານ
 MenuBankCash=ທະນາຄານ/ເງິນສົດ
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=ຊື່ທະນາຄານ
 FinancialAccount=ບັນຊີ
 BankAccount=ບັນຊີທະນາຄານ
@@ -87,6 +89,7 @@ AccountIdShort=Number
 LineRecord=Transaction
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Reconciled by
 DateConciliating=Reconcile date
 BankLineConciliated=Entry reconciled
@@ -155,3 +158,6 @@ NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
 ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

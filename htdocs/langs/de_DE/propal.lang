@@ -4,7 +4,6 @@ Proposal=Angebot
 ProposalShort=Angebot
 ProposalsDraft=Angebotsentwürfe
 ProposalsOpened=Offene Angebote
-Prop=Angebote
 CommercialProposal=Angebot
 PdfCommercialProposalTitle=Angebot
 ProposalCard=Angebot - Karte
@@ -64,6 +63,7 @@ ProposalLine=Angebotsposition
 AvailabilityPeriod=Gültig bis
 SetAvailability=Gültigkeitszeitraum definieren
 AfterOrder=nach Bestellung
+OtherProposals=Andere Angebote
 ##### Availability #####
 AvailabilityTypeAV_NOW=Sofort
 AvailabilityTypeAV_1W=7 Tage

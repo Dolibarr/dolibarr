@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2007-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,35 +39,32 @@ class MyObject extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'myobject';
-
-	/**
-	 * @var array  Does this field is linked to a thirdparty ?
-	 */
-	protected $isnolinkedbythird = 1;
+	public $table_element = 'mymodule_myobject';
 	/**
 	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	protected $ismultientitymanaged = 1;
+	public $ismultientitymanaged = 0;
 	/**
-	 * @var string String with name of icon for myobject
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'myobject@mymodule';
 
 
 	/**
-	 *             'type' if the field format.
-	 *             'label' the translation key.
-	 *             'enabled' is a condition when the filed must be managed.
-	 *             'visible' says if field is visible in list (-1 means not shown by default but can be added into list to be viewed).
-	 *             'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-	 *             'index' if we want an index in database.
-	 *             'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
-	 *             'position' is the sort order of field.
-	 *             'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-	 *             'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *             'help' is a string visible as a tooltip on field
-	 *             'comment' is not used. You can store here any text of your choice.
+	 *  'type' if the field format.
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'position' is the sort order of field.
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'help' is a string visible as a tooltip on field
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+	 *  'showoncombobox' if field must be shown into the label of combobox
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -78,21 +72,23 @@ class MyObject extends CommonObject
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
      */
 	public $fields=array(
-	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'index'=>1, 'position'=>1,  'comment'=>'Id'),
-		'ref'           =>array('type'=>'varchar(64)',  'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'notnull'=>1,  'index'=>1, 'position'=>20),
-	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200'),
-	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Amount'),
-		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>45),
-		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>46),
-		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
-	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-1, 'notnull'=>1,  'position'=>500),
-		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'position'=>500),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValid',        'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-1, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
-	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>1,    'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+	    'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
+	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
+		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
+		'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
+		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+	    'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+	    'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 	);
 
 	public $rowid;
@@ -230,14 +226,14 @@ class MyObject extends CommonObject
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLines()
+	/*public function fetchLines()
 	{
 		$this->lines=array();
 
 		// Load lines with object MyObjectLine
 
 		return count($this->lines)?1:0;
-	}
+	}*/
 
 	/**
 	 * Update object into database
@@ -315,24 +311,13 @@ class MyObject extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto)
-        {
-            $result.=($linkstart.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $linkstart . $this->ref . $linkend;
-		return $result;
-	}
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-	/**
-	 * Return link to download file from a direct external access
-	 *
-	 * @param	int				$withpicto			Add download picto into link
-	 * @return	string			HTML link to file
-	 */
-	function getDirectExternalLink($withpicto=0)
-	{
-		return 'todo';
+		return $result;
 	}
 
 	/**

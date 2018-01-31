@@ -35,6 +35,7 @@
  *  @param	string		$addfieldentry	Array of the field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
  * 	@return	int|object					<=0 if KO, Object if OK
+ *  @see rebuildObjectSql
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='', $addfieldentry=array() ,$delfieldentry='')
 {
@@ -132,9 +133,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
                 $texttoinsert.= " 'notnull'=>".($val['notnull']!=''?$val['notnull']:-1).",";
                 if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
                 if ($val['searchall']) $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
-                if ($val['comment']) $texttoinsert.= " 'comment'=>'".$val['comment']."',";
+                if ($val['comment']) $texttoinsert.= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\",";	// addslashes is escape for PHP
                 if ($val['isameasure']) $texttoinsert.= " 'isameasure'=>'".$val['isameasure']."',";
-                if ($val['help']) $texttoinsert.= " 'help'=>'".$val['help']."',";
+                if ($val['help']) $texttoinsert.= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";			// addslashes is escape for PHP
                 if ($val['arrayofkeyval'])
                 {
                 	$texttoinsert.= " 'arrayofkeyval'=>array(";
@@ -202,6 +203,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	Object		$object			If object was already loaded/known, it is pass to avaoid another include and new.
  * 	@return	int							<=0 if KO, >0 if OK
+ *  @see rebuildObjectClass
  */
 function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='', $object=null)
 {
@@ -215,8 +217,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
     $pathoffiletoclasssrc=$readdir.'/class/'.strtolower($objectname).'.class.php';
 
     // Edit .sql file
-    $pathoffiletoeditsrc=$readdir.'/sql/llx_'.strtolower($objectname).'.sql';
-    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+    $pathoffiletoeditsrc=$readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
 	if (! dol_is_file($pathoffiletoeditsrc))
     {
     	$langs->load("errors");
@@ -251,9 +253,22 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
         foreach($object->fields as $key => $val)
         {
             $i++;
-            $texttoinsert.= "\t".$key." ".$val['type'];
+
+            $type = $val['type'];
+            $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
+            if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
+            $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
+            else
+            {
+            	if ($val['default'] != '')
+            	{
+            		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
+            		else if (preg_match('/varchar/', $val['type'])) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+            		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
+            	}
+            }
             $texttoinsert.= (($val['notnull'] > 0)?' NOT NULL':'');
             if ($i < count($object->fields)) $texttoinsert.=", ";
             $texttoinsert.= "\n";
@@ -274,8 +289,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
     }
 
     // Edit .key.sql file
-    $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql';
-    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
+    $pathoffiletoeditsrc=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
+    $pathoffiletoedittarget=$destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
 
     $contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
@@ -288,7 +303,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             $i++;
             if ($val['index'])
             {
-                $texttoinsert.= "ALTER TABLE llx_".strtolower($objectname)." ADD INDEX idx_".strtolower($objectname)."_".$key." (".$key.");";
+                $texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
                 $texttoinsert.= "\n";
             }
         }

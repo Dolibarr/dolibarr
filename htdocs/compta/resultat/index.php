@@ -121,7 +121,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
@@ -135,7 +135,7 @@ else if ($modecompta=="RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	if (! empty($conf->accounting->enabled)) $calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesAmountWithTaxIncluded");
@@ -698,7 +698,7 @@ if (! empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' 
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
-		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity = " . getEntity('c_paiement');
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport');
 		$sql.= " AND p.fk_statut>=5";
 
@@ -761,8 +761,8 @@ if (! empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
         $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
-		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity = " . getEntity('c_paiement');
-		$sql.= " WHERE p.entity = ".getEntity('donation');
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+		$sql.= " WHERE p.entity IN (".getEntity('donation').")";
    	    $sql.= " AND fk_statut >= 2";
 		if (! empty($date_start) && ! empty($date_end))
 			$sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";

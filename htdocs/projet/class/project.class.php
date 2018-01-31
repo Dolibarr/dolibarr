@@ -37,7 +37,7 @@ class Project extends CommonObject
     public $table_element = 'projet';  //!< Name of table without prefix where object is stored
     public $table_element_line = 'projet_task';
     public $fk_element = 'fk_projet';
-    protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'projectpub';
 
     /**
@@ -388,6 +388,8 @@ class Project extends CommonObject
      */
     function fetch($id, $ref='')
     {
+    	global $conf;
+
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
@@ -443,7 +445,11 @@ class Project extends CommonObject
 
                 // Retreive all extrafield for thirdparty
                 $this->fetch_optionals();
-                $this->fetchComments();
+
+                if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
+                {
+                	$this->fetchComments();
+                }
 
                 return 1;
             }
@@ -1018,15 +1024,18 @@ class Project extends CommonObject
         }
 
         $picto = 'projectpub';
-        if (!$this->public) $picto = 'project';
+        if (! $this->public) $picto = 'project';
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($linkstart . img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1) . $linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$linkstart . $this->ref . $linkend . (($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= $this->ref;
+        $result .= $linkend;
+        if ($withpicto != 2) $result.=(($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+
         return $result;
     }
 
@@ -1649,25 +1658,29 @@ class Project extends CommonObject
 
 
 	/**
-	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project
+	 * Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTask for all day of a week of project.
+	 * Note: array weekWorkLoad and weekWorkLoadPerTask are reset and filled at each call.
 	 *
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
 	 * @param 	int		$userid			Time spent by a particular user
 	 * @return 	int						<0 if OK, >0 if KO
 	 */
-	public function loadTimeSpent($datestart,$taskid=0,$userid=0)
+	public function loadTimeSpent($datestart, $taskid=0, $userid=0)
     {
         $error=0;
 
+        $this->weekWorkLoad=array();
+        $this->weekWorkLoadPerTask=array();
+
         if (empty($datestart)) dol_print_error('','Error datestart parameter is empty');
 
-        $sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.fk_task";
+        $sql = "SELECT ptt.rowid as taskid, ptt.task_duration, ptt.task_date, ptt.task_datehour, ptt.fk_task";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time AS ptt, ".MAIN_DB_PREFIX."projet_task as pt";
         $sql.= " WHERE ptt.fk_task = pt.rowid";
         $sql.= " AND pt.fk_projet = ".$this->id;
         $sql.= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
-        $sql.= " AND ptt.task_date <= '".$this->db->idate($datestart + (7 * 24 * 3600) - 1)."')";
+        $sql.= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'w') - 1)."')";
         if ($task_id) $sql.= " AND ptt.fk_task=".$taskid;
         if (is_numeric($userid)) $sql.= " AND ptt.fk_user=".$userid;
 
@@ -1675,16 +1688,26 @@ class Project extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+				$daylareadyfound=array();
 
                 $num = $this->db->num_rows($resql);
                 $i = 0;
                 // Loop on each record found, so each couple (project id, task id)
-                 while ($i < $num)
+                while ($i < $num)
                 {
                         $obj=$this->db->fetch_object($resql);
-                        $day=$this->db->jdate($obj->task_date);
-                        $this->weekWorkLoad[$day] +=  $obj->task_duration;
-                        $this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+                        $day=$this->db->jdate($obj->task_date);		// task_date is date without hours
+                        if (empty($daylareadyfound[$day]))
+                        {
+                        	$this->weekWorkLoad[$day] = $obj->task_duration;
+                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
+                        }
+                        else
+                        {
+                        	$this->weekWorkLoad[$day] += $obj->task_duration;
+                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+                        }
+                        $daylareadyfound[$day]=1;
                         $i++;
                 }
                 $this->db->free($resql);

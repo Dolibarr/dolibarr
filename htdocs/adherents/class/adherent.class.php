@@ -43,7 +43,7 @@ class Adherent extends CommonObject
 {
 	public $element='member';
 	public $table_element='adherent';
-	protected $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $mesgs;
 
@@ -528,7 +528,10 @@ class Adherent extends CommonObject
 					{
 						//var_dump($this->user_login);exit;
 						//var_dump($this->login);exit;
-						$luser->login=$this->login;
+
+						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
+						if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $luser->login=$this->login;
+
 						$luser->civility_id=$this->civility_id;
 						$luser->firstname=$this->firstname;
 						$luser->lastname=$this->lastname;
@@ -1303,11 +1306,6 @@ class Adherent extends CommonObject
 				$this->last_subscription_amount=$montant;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
-
-				// Call trigger
-				$result=$this->call_trigger('MEMBER_SUBSCRIPTION',$user);
-				if ($result < 0) { $error++; }
-				// End call triggers
 			}
 
 			if (! $error)
@@ -1969,7 +1967,7 @@ class Adherent extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// For avoid ldap error when firstname and lastname are empty
-		if ($this->morphy == 'mor' && empty($this->fullname)) {
+		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->societe)) {
 			$this->fullname = $this->societe;
 			$this->lastname = $this->societe;
 		}

@@ -70,6 +70,8 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 
 		$s=$mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
 		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s,'chaine',0,'',$conf->entity);
+
+		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
@@ -273,17 +275,17 @@ if ($action == 'removelogo')
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$logofile=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-	dol_delete_file($logofile);
+	if ($mysoc->logo != '') dol_delete_file($logofile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO",$conf->entity);
 	$mysoc->logo='';
 
 	$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
-	dol_delete_file($logosmallfile);
+	if ($mysoc->logo_small != '') dol_delete_file($logosmallfile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$conf->entity);
 	$mysoc->logo_small='';
 
 	$logominifile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini;
-	dol_delete_file($logominifile);
+	if ($mysoc->logo_mini != '') dol_delete_file($logominifile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$conf->entity);
 	$mysoc->logo_mini='';
 }
@@ -381,7 +383,6 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '</td></tr>'."\n";
 
 	// Web
-
 	print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
 	print '<input name="web" id="web" class="minwidth300" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
 	print '</td></tr>'."\n";
@@ -395,8 +396,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	}
 
 	// Logo
-
-	print '<tr'.dol_bc($var,'hideonsmartphone').'><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
+	print '<tr class="oddeven hideonsmartphone"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
 	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo">';
 	print '</td><td class="nocellnopadd" valign="middle" align="right">';
@@ -413,7 +413,6 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '</td></tr>';
 
 	// Note
-
 	print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
 	print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOST('note','none') ? GETPOST('note','none') : $conf->global->MAIN_INFO_SOCIETE_NOTE).'</textarea></td></tr>';
 	print '</td></tr>';
@@ -996,12 +995,13 @@ else
 	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td align="right">&nbsp;</td>';
 	print "</tr>\n";
 
 
-	print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optiontva\" id=\"use_vat\" disabled value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</td>";
+	print '<tr class="oddeven"><td class="titlefield">';
+	print "<input class=\"oddeven\" type=\"radio\" name=\"optiontva\" id=\"use_vat\" disabled value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</td>";
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label for=\"use_vat\">".$langs->trans("VATIsUsedDesc")."</label></td></tr>";
@@ -1010,7 +1010,8 @@ else
 	print "</td></tr>\n";
 
 
-	print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optiontva\" id=\"no_vat\" disabled value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</td>";
+	print '<tr class="oddeven"><td class="titlefield">';
+	print "<input class=\"oddeven\" type=\"radio\" name=\"optiontva\" id=\"no_vat\" disabled value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</td>";
 	print '<td colspan="2">';
 	print "<table>";
 	print "<tr><td><label=\"no_vat\">".$langs->trans("VATIsNotUsedDesc")."</label></td></tr>";
@@ -1030,12 +1031,13 @@ else
 		print '<br>';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
+		print '<td class="titlefield">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
-		print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" disabled value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on")?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td>";
+		print "<input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax1\" id=\"lt1\" disabled value=\"localtax1on\"".(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on")?" checked":"")."> ".$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td></label for=\"lt1\">".$langs->transcountry("LocalTax1IsUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -1063,7 +1065,8 @@ else
 		print "</td></tr>\n";
 
 
-		print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" disabled value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off")?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$mysoc->country_code)."</td>";
+		print '<tr class="oddeven"><td>';
+		print "<input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax1\" id=\"nolt1\" disabled value=\"localtax1off\"".((empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1off")?" checked":"")."> ".$langs->transcountry("LocalTax1IsNotUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td><label for=\"no_lt1\">".$langs->transcountry("LocalTax1IsNotUsedDesc",$mysoc->country_code)."</label></td></tr>";
@@ -1080,12 +1083,13 @@ else
 		print '<br>';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
+		print '<td class="titlefield">'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">&nbsp;</td>';
 		print "</tr>\n";
 
 
-		print "<tr class=\"oddeven\"><td width=\"160\"><input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" disabled value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on")?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code)."</td>";
+		print "<tr class=\"oddeven\"><td>";
+		print "<input class=\"oddeven\" type=\"radio\" name=\"optionlocaltax2\" id=\"lt2\" disabled value=\"localtax2on\"".(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on")?" checked":"")."> ".$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code)."</td>";
 		print '<td colspan="2">';
 		print "<table>";
 		print "<tr><td><label for=\"lt2\">".$langs->transcountry("LocalTax2IsUsedDesc",$mysoc->country_code)."</label></td></tr>";

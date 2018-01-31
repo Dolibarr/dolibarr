@@ -36,7 +36,7 @@ class UserGroup extends CommonObject
 {
 	public $element='usergroup';
 	public $table_element='usergroup';
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='group';
 	public $entity;		// Entity of group
 
@@ -49,6 +49,8 @@ class UserGroup extends CommonObject
 	public $datec;			// Creation date of group
 	public $datem;			// Modification date of group
 	public $members=array();	// Array of users
+
+	public $nb_rights;					// Number of rights granted to the user
 
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
@@ -63,8 +65,7 @@ class UserGroup extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-
-		return 0;
+		$this->nb_rights = 0;
 	}
 
 
@@ -345,7 +346,8 @@ class UserGroup extends CommonObject
 
 			if (! $error)
 			{
-			    $this->context = array('audit'=>$langs->trans("PermissionsAdd"));
+				$langs->load("other");
+				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid?' (id='.$rid.')':''));
 
 			    // Call trigger
 			    $result=$this->call_trigger('GROUP_MODIFY',$user);
@@ -458,7 +460,8 @@ class UserGroup extends CommonObject
 
 			if (! $error)
 			{
-		        $this->context = array('audit'=>$langs->trans("PermissionsDelete"));
+				$langs->load("other");
+				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid?' (id='.$rid.')':''));
 
 			    // Call trigger
 			    $result=$this->call_trigger('GROUP_MODIFY',$user);
@@ -534,10 +537,12 @@ class UserGroup extends CommonObject
 					if ($subperms)
 					{
 						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
+						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
 						$this->rights->$module->$perms = 1;
 					}
 				}

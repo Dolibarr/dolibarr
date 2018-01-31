@@ -113,7 +113,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
 			}
-			if (empty($shownb) && empty($showtot)) $showtot=1;
+			if (empty($shownb) && empty($showtot)) { $shownb=1; $showtot=1; }
 			$nowarray=dol_getdate(dol_now(),true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
@@ -126,7 +126,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 
 				$filenamenb = $dir."/".$prefix."ordersnbinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
@@ -164,7 +164,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action','aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
 
 				$filenamenb = $dir."/".$prefix."ordersamountinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';

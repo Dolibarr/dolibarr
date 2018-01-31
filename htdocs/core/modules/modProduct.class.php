@@ -308,7 +308,6 @@ class modProduct extends DolibarrModules
 			if (is_object($mysoc) && $mysoc->useNPR())       $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.recuperableonly'=>'NPR'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
 			if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
-
 			$this->import_convertvalue_array[$r]=array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
@@ -352,30 +351,19 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
 		    $r++;
-			/* FIXME Must be a dedicated import profil. Not working yet
-		    $this->import_code[$r]=$this->rights_class.'_multiprice';
-		    $this->import_label[$r]="ProductTranslations";
+		    $this->import_code[$r]=$this->rights_class.'_languages';
+		    $this->import_label[$r]="ProductsOrServicesTranslations";
 			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
-		    $this->import_tables_array[$r]['l']=MAIN_DB_PREFIX.'product_lang';
+		    $this->import_tables_array[$r]=array('l'=>MAIN_DB_PREFIX.'product_lang');
 			// multiline translation, one line per translation
-			$this->import_fields_array[$r]['l.lang']='Language';
-			$this->import_fields_array[$r]['l.label']='TranslatedLabel';
-			$this->import_fields_array[$r]['l.description']='TranslatedDescription';
-			$this->import_fields_array[$r]['l.note']='TranslatedNote';
-			$this->import_examplevalues_array[$r]['l.lang']='en_US';
-			*/
-			// single line translation, one column per translation
-			/*
-			foreach($langs as $l) {
-				$this->import_tables_array[$r][$l] = MAIN_DB_PREFIX.'product_lang';
-				$this->import_fields_array[$r][$l.'.label']=$l.'_label';
-				$this->import_fields_array[$r][$l.'.description']=$l.'_description';
-				$this->import_fields_array[$r][$l.'.note']=$l.'_note';
-				$this->import_fieldshidden_array[$r][$l.'.lang']="'$l'";
-				$this->import_fieldshidden_array[$r][$l.'.fk_product']='lastrowid-'.MAIN_DB_PREFIX.'product';
-			}
-			*/
+			$this->import_fields_array[$r]=array('l.fk_product'=>'Ref', 'l.lang'=>'Language', 'l.label'=>'TranslatedLabel', 'l.description'=>'TranslatedDescription');
+			//$this->import_fields_array[$r]['l.note']='TranslatedNote';
+			$this->import_convertvalue_array[$r]=array(
+					'l.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
+			);
+			$this->import_examplevalues_array[$r]=array('l.fk_product'=>'MyProductRef','l.lang'=>'en_US','l.label'=>'Label in en_US','l.description'=>'Desc in en_US');
+			$this->import_updatekeys_array[$r]=array('l.fk_product'=>'Ref','l.lang'=>'Language');
 		}
 	}
 

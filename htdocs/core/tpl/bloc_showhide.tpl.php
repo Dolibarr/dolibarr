@@ -16,6 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($blocname))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 $hide = true;	// Hide by default
 if (isset($parameters['showblocbydefault'])) $hide=(empty($parameters['showblocbydefault']) ? true : false);
 if (isset($object->extraparams[$blocname]['showhide'])) $hide = (empty($object->extraparams[$blocname]['showhide']) ? true : false);

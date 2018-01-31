@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -118,13 +118,11 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable nohover" width="100%">';
+    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
     $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     $boxstat.='</tr>';
     $boxstat.='<tr class="impair"><td class="tdboxstats nohover flexcontainer">';
-
-    $var=true;
 
     $object=new stdClass();
     $parameters=array();
@@ -265,23 +263,23 @@ if (empty($user->societe_id))
 	    // Dashboard Link lines
 	    $links=array(
 	        DOL_URL_ROOT.'/user/index.php',
-    	    DOL_URL_ROOT.'/societe/list.php?type=c',
-    	    DOL_URL_ROOT.'/societe/list.php?type=p',
-    	    DOL_URL_ROOT.'/societe/list.php?type=f',
-    	    DOL_URL_ROOT.'/contact/list.php',
+    	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
+    	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
+    	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',
+    	    DOL_URL_ROOT.'/contact/list.php?mainmenu=companies',
     	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
     	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
-    	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
-    	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
-    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
-    	    DOL_URL_ROOT.'/contrat/list.php',
-    	    DOL_URL_ROOT.'/fichinter/list.php',
-    	    DOL_URL_ROOT.'/fourn/commande/list.php',
-	        DOL_URL_ROOT.'/fourn/facture/list.php',
-	        DOL_URL_ROOT.'/supplier_proposal/list.php',
+    	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial&leftmenu=propals',
+    	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial&leftmenu=orders',
+    	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy&leftmenu=customers_bills',
+    	    DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts',
+    	    DOL_URL_ROOT.'/fichinter/list.php?mainmenu=commercial&leftmenu=ficheinter',
+    	    DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers',
+	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=accountancy&leftmenu=suppliers_bills',
+	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
-    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm',
+    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
 			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
@@ -368,14 +366,14 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $dashboardlines=array();
 
 // Do not include sections without management permission
-require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	$board=new ActionComm($db);
-	
+
 	$dashboardlines[] = $board->load_board($user);
 }
 
@@ -500,9 +498,16 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
+$object=new stdClass();
+$parameters=array();
+$action='';
+$reshook=$hookmanager->executeHooks('addOpenElementsDashboardLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook == 0) {
+	$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
+}
+
 // Calculate total nb of late
 $totallate=$totaltodo=0;
-$var=true;
 
 //Remove any invalid response
 //load_board can return an integer if failed or WorkboardResponse if OK
@@ -525,7 +530,7 @@ if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($to
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
-$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
+$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable boxtablenobottom boxworkingboard" width="100%">'."\n";
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre">'.$langs->trans("DolibarrWorkBoard").'</th>';
 $boxwork.='</tr>'."\n";
@@ -551,7 +556,7 @@ if (! empty($valid_dashboardlines))
 	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
     foreach($valid_dashboardlines as $board)
     {
-        if (empty($boad->nbtodo)) $nbworkboardempty++;
+        if (empty($board->nbtodo)) $nbworkboardempty++;
 
         $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
         $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
@@ -609,25 +614,27 @@ print '<div class="fichecenter fichecenterbis">';
  * Show boxes
  */
 
-$boxlist.='<table width="100%" class="notopnoleftnoright">';
-$boxlist.='<tr><td class="notopnoleftnoright">'."\n";
+$boxlist.='<div class="twocolumns">';
 
-$boxlist.='<div class="fichehalfleft">';
-
-//$boxlist.=$boxinfo;
-$boxlist.=$boxstat;
-$boxlist.=$resultboxes['boxlista'];
-
-$boxlist.= '</div><div class="fichehalfright"><div class="ficheaddleft">';
+$boxlist.='<div class="fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 $boxlist.=$boxwork;
+$boxlist.=$resultboxes['boxlista'];
+
+$boxlist.= '</div>';
+
+$boxlist.= '<div class="fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist.= '<div class="ficheaddleft">';
+
+$boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlistb'];
 
-$boxlist.= '</div></div>';
+$boxlist.= '</div>';
+$boxlist.= '</div>';
 $boxlist.= "\n";
 
-$boxlist.= "</td></tr>";
-$boxlist.= "</table>";
+$boxlist.='</div>';
+
 
 print $boxlist;
 
@@ -649,7 +656,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     {
         $langs->load("errors");
         //if (! empty($message)) $message.='<br>';
-        $message.=info_admin($langs->trans("WarningLockFileDoesNotExists",DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+        $message.=info_admin($langs->trans("WarningLockFileDoesNotExists",DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
     }
 
     // Conf files must be in read only mode
@@ -658,7 +665,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
         $langs->load("errors");
         //$langs->load("other");
         //if (! empty($message)) $message.='<br>';
-        $message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+        $message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
     }
 
     if ($message)
@@ -688,13 +695,13 @@ $db->close();
 function showWeather($totallate,$text,$options)
 {
     global $conf;
-    
+
     $out='';
     $offset=0;
     $factor=10; // By default
 
     $used_conf = !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_PERCENTAGE_LEVEL' : 'MAIN_METEO_LEVEL';
-    
+
     $level0=$offset;           if (! empty($conf->global->{$used_conf.'0'})) $level0=$conf->global->{$used_conf.'0'};
     $level1=$offset+1*$factor; if (! empty($conf->global->{$used_conf.'1'})) $level1=$conf->global->{$used_conf.'1'};
     $level2=$offset+2*$factor; if (! empty($conf->global->{$used_conf.'2'})) $level2=$conf->global->{$used_conf.'2'};

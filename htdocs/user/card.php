@@ -9,7 +9,7 @@
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -46,21 +46,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
 $id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
+$action		= GETPOST('action','aZ09');
 $mode		= GETPOST('mode','alpha');
 $confirm		= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
 $cancel		= GETPOST('cancel','alpha');
-
-// Users/Groups management only in master entity if transverse mode
-if (($action == 'create' || $action == 'adduserldap') && ! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-	accessforbidden();
-}
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -107,7 +100,8 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('usercard','globalcard'));
+$contextpage=array('usercard','globalcard');
+$hookmanager->initHooks($contextpage);
 
 
 
@@ -115,7 +109,7 @@ $hookmanager->initHooks(array('usercard','globalcard'));
  * Actions
  */
 
-$parameters=array('id'=>$socid);
+$parameters=array('id' => $id, 'socid' => $socid, 'group' => $group, 'caneditgroup' => $caneditgroup);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -280,7 +274,7 @@ if (empty($reshook)) {
 	}
 
 	// Action add usergroup
-	if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
+	if (($action == 'addgroup' || $action == 'removegroup') && $caneditgroup)
 	{
 		if ($group)
 		{
@@ -290,10 +284,10 @@ if (empty($reshook)) {
 
 			$object->fetch($id);
 			if ($action == 'addgroup') {
-				$result = $object->SetInGroup($group, (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? GETPOST('entity', 'int') : $editgroup->entity));
+				$result = $object->SetInGroup($group, $editgroup->entity);
 			}
 			if ($action == 'removegroup') {
-				$result = $object->RemoveFromGroup($group, (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? GETPOST('entity', 'int') : $editgroup->entity));
+				$result = $object->RemoveFromGroup($group, $editgroup->entity);
 			}
 
 			if ($result > 0) {
@@ -370,9 +364,6 @@ if (empty($reshook)) {
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 				$object->dateemployment = $dateemployment;
 
-				$object->default_range = GETPOST('default_range');
-				$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
-
 				if (! empty($conf->multicompany->enabled))
 				{
 					if (! empty($_POST["superadmin"]))
@@ -421,7 +412,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				if (!$error && GETPOST('contactid', 'int')) {
+				if (!$error && GETPOSTISSET('contactid')) {
 					$contactid = GETPOST('contactid', 'int');
 
 					if ($contactid > 0) {
@@ -774,33 +765,6 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 	print '</td></tr>';
 
-	// Employee
-	$defaultemployee=1;
-	print '<tr>';
-	print '<td>'.$langs->trans('Employee').'</td><td>';
-	print $form->selectyesno("employee",(GETPOST('employee')!=''?GETPOST('employee'):$defaultemployee),1);
-	print '</td></tr>';
-
-	// Position/Job
-	print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
-	print '</td></tr>';
-
-	// Gender
-	print '<tr><td>'.$langs->trans("Gender").'</td>';
-	print '<td>';
-	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-	print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
-	print '</td></tr>';
-
-	// Date employment
-	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
-	print '<td>';
-	echo $form->select_date(GETPOST('birth'),'birth',0,0,1,'createuser',1,0,1);
-	print '</td>';
-	print "</tr>\n";
-
 	// Login
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
 	print '<td>';
@@ -921,8 +885,33 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
 	print '</td></tr>';
 
+	// Gender
+	print '<tr><td>'.$langs->trans("Gender").'</td>';
+	print '<td>';
+	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+	print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
+	print '</td></tr>';
+
+	// Employee
+	$defaultemployee=1;
+	print '<tr>';
+	print '<td>'.$langs->trans('Employee').'</td><td>';
+	print $form->selectyesno("employee",(GETPOST('employee')!=''?GETPOST('employee'):$defaultemployee),1);
+	print '</td></tr>';
+
+	// Hierarchy
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
+	print '<td>';
+	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+	print '</td>';
+	print "</tr>\n";
+
+
+	print '</table><hr><table class="border centpercent">';
+
+
 	// Address
-	print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+	print '<tr><td class="tdtop titlefieldcreate">'.fieldLabel('Address','address').'</td>';
 	print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print $object->address;
 	print '</textarea></td></tr>';
@@ -1033,17 +1022,84 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '</td></tr>';
 	}
 
+	// User color
+	if (! empty($conf->agenda->enabled))
+	{
+		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+		print '<td>';
+		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+		print '</td></tr>';
+	}
+
+	// Categories
+	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+	{
+		print '<tr><td>' . fieldLabel('Categories', 'usercats') . '</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
+		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
+			null, '90%' );
+		print "</td></tr>";
+	}
+
+	// Multicompany
+	// This is now done with hook formObjectOptions
+	/*
+	 if (! empty($conf->multicompany->enabled) && is_object($mc))
+	 {
+	 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+	 {
+	 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+	 print "<td>".$mc->select_entities($conf->entity);
+	 print "</td></tr>\n";
+	 }
+	 else
+	 {
+	 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+	 }
+	 }
+	 */
+
+	// Other attributes
+	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		print $object->showOptionals($extrafields,'edit');
+	}
+
+	// Note
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Note");
+	print '</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,'90%');
+	$doleditor->Create();
+	print "</td></tr>\n";
+
+	// Signature
+	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
+	print '<td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_notes','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
+	print $doleditor->Create(1);
+	print '</td></tr>';
+
+
+	print '</table><hr><table class="border centpercent">';
+
+
 	// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
-	// Hierarchy
-	print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
+	// Position/Job
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
-	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
-	print '</td>';
-	print "</tr>\n";
+	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
+	print '</td></tr>';
+
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
-	   || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
+		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
 	{
 		$langs->load("salaries");
 
@@ -1089,82 +1145,12 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td>';
 	print "</tr>\n";
 
-	// User color
-	if (! empty($conf->agenda->enabled))
-	{
-		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
-		print '<td>';
-		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
-		print '</td></tr>';
-	}
-
-	// Categories
-	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-	{
-		print '<tr><td>' . fieldLabel('Categories', 'usercats') . '</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
-		print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null,
-			null, '90%' );
-		print "</td></tr>";
-	}
-
-	// Multicompany
-	// This is now done with hook formObjectOptions
-	/*
-	 if (! empty($conf->multicompany->enabled) && is_object($mc))
-	 {
-	 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
-	 {
-	 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-	 print "<td>".$mc->select_entities($conf->entity);
-	 print "</td></tr>\n";
-	 }
-	 else
-	 {
-	 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-	 }
-	 }
-	 */
-
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-	{
-		print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
-		print '<td>';
-		print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
-		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-		print '<td>';
-		$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
-		print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
-		print '</td></tr>';
-	}
-
-	// Other attributes
-	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields,'edit');
-	}
-
-	// Note
-	print '<tr><td class="tdtop">';
-	print $langs->trans("Note");
-	print '</td><td>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,'90%');
-	$doleditor->Create();
-	print "</td></tr>\n";
-
-	// Signature
-	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
+	// Date birth
+	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 	print '<td>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('signature',GETPOST('signature'),'',138,'dolibarr_mailings','In',true,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
-	print $doleditor->Create(1);
-	print '</td></tr>';
+	echo $form->select_date(GETPOST('birth'),'birth',0,0,1,'createuser',1,0,1);
+	print '</td>';
+	print "</tr>\n";
 
 	print "</table>\n";
 
@@ -1360,31 +1346,8 @@ else
 			}
 			print '</tr>'."\n";
 
-			// Employee
-			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
-			print yn($object->employee);
-			print '</td></tr>'."\n";
-
-			// Position/Job
-			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>'.$object->job.'</td>';
-			print '</tr>'."\n";
-
-			// Gender
-			print '<tr><td>'.$langs->trans("Gender").'</td>';
-			print '<td>';
-			if ($object->gender) print $langs->trans("Gender".$object->gender);
-			print '</td></tr>';
-
-			// Date of birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
-			print '<td>';
-			print dol_print_date($object->birth, 'day');
-			print '</td>';
-			print "</tr>\n";
-
 			// API key
-			if(! empty($conf->api->enabled) && $user->admin) {
+			if (! empty($conf->api->enabled) && $user->admin) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (! empty($object->api_key)) print preg_replace('/./','*',$object->api_key);
@@ -1426,12 +1389,16 @@ else
 				print '</td></tr>'."\n";
 			}
 
-			// Accountancy code
-			if ($conf->accounting->enabled)
-			{
-				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>'.$object->accountancy_code.'</td></tr>';
-			}
+			// Gender
+			print '<tr><td>'.$langs->trans("Gender").'</td>';
+			print '<td>';
+			if ($object->gender) print $langs->trans("Gender".$object->gender);
+			print '</td></tr>';
+
+			// Employee
+			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
+			print yn($object->employee);
+			print '</td></tr>'."\n";
 
 			// TODO Move this into tab RH, visible when salarie or RH is visible (HierarchicalResponsible must be on both tab)
 
@@ -1446,6 +1413,11 @@ else
 			}
 			print '</td>';
 			print "</tr>\n";
+
+			// Position/Job
+			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>'.$object->job.'</td>';
+			print '</tr>'."\n";
 
 			//$childids = $user->getAllChildIds(1);
 
@@ -1498,6 +1470,20 @@ else
 			print '</td>';
 			print "</tr>\n";
 
+			// Date of birth
+			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			print '<td>';
+			print dol_print_date($object->birth, 'day');
+			print '</td>';
+			print "</tr>\n";
+
+			// Accountancy code
+			if ($conf->accounting->enabled)
+			{
+				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
+				print '<td>'.$object->accountancy_code.'</td></tr>';
+			}
+
 			print '</table>';
 
 			print '</div>';
@@ -1539,19 +1525,6 @@ else
 			print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
 			print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 			print "</tr>\n";
-
-			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-			{
-				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td class="fk_c_exp_tax_cat">';
-				print dol_getIdFromCode($db, $object->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				print $object->default_range;
-				print '</td></tr>';
-			}
 
 			// Multicompany
 			// This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
@@ -1733,86 +1706,11 @@ else
 			$modelmail='user';
 			$defaulttopic='Information';
 			$diroutput = $conf->user->dir_output;
-			$trackid = 'user'.$object->id;
+			$trackid = 'use'.$object->id;
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 
-			/*
-			if ($action == 'presend')
-			{
-				// Show email form
-
-				// By default if $action=='presend'
-				$titreform='SendMail';
-				$topicmail=1;
-				$action='send';
-				$modelmail='user';
-
-				print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-				print '<div id="presend"></div>';
-				print load_fiche_titre($langs->trans($titreform));
-
-				dol_fiche_head();
-
-				// Define output language
-				$outputlangs = $langs;
-				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-					$newlang = $_REQUEST['lang_id'];
-				//if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				//    $newlang = $object->thirdparty->default_lang;
-
-				// Cree l'objet formulaire mail
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-				$formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-				if($formmail->fromtype === 'user'){
-					$formmail->fromid = $user->id;
-
-				}
-				$formmail->trackid='thi'.$object->id;
-				if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-				{
-					include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-					$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
-				}
-				$formmail->withfrom=1;
-				$formmail->withtopic=$topicmail;
-				$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$object->email;
-				$formmail->withtofree=1;
-				$formmail->withtocc=1;
-				$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withfile=2;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				$formmail->withcancel=1;
-				// Tableau des substitutions
-				$formmail->setSubstitFromObject($object, $outputlangs);
-				$formmail->substit['__LASTNAME__']=$object->lastname;
-				$formmail->substit['__FIRSTNAME__']=$object->firstname;
-
-				// Tableau des parametres complementaires du post
-				$formmail->param['action']=$action;
-				$formmail->param['models']=$modelmail;
-				$formmail->param['models_id']=GETPOST('modelmailselected','int');
-				$formmail->param['socid']=$object->id;
-				$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-
-				// Init list of files
-				if (GETPOST("mode")=='init')
-				{
-					$formmail->clear_attached_files();
-					$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-				}
-				print $formmail->get_form();
-
-				dol_fiche_end();
-			}
-			*/
-
-			if (GETPOST('action','aZ09') != 'presend' && GETPOST('action','aZ09') != 'send')
+			if ($action != 'presend' && $action != 'send')
 			{
 				/*
                  * List of groups of user
@@ -1830,12 +1728,9 @@ else
 
 					if (! empty($groupslist))
 					{
-						if (! (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)))
+						foreach($groupslist as $groupforuser)
 						{
-							foreach($groupslist as $groupforuser)
-							{
-								$exclude[]=$groupforuser->id;
-							}
+							$exclude[]=$groupforuser->id;
 						}
 					}
 
@@ -1847,99 +1742,61 @@ else
 					}
 
 					print '<table class="noborder" width="100%">'."\n";
-					print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
-					if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+
+					// Other form for add user to group
+					$parameters=array('caneditgroup' => $caneditgroup, 'groupslist' => $groupslist, 'exclude' => $exclude);
+					$reshook=$hookmanager->executeHooks('formAddUserToGroup',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
+
+					if (empty($reshook))
 					{
-						print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
-					}
-					print '<th align="right">';
-					if ($caneditgroup)
-					{
-						// Users/Groups management only in master entity if transverse mode
-						if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-						{
-							// nothing
-						}
-						else
+						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
+						print '<th class="liste_titre" align="right">';
+						if ($caneditgroup)
 						{
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
 							print ' &nbsp; ';
-							// Multicompany
-							if (! empty($conf->multicompany->enabled))
+							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+							print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
+						}
+						print '</th></tr>'."\n";
+
+						/*
+						 * Groups assigned to user
+						 */
+						if (! empty($groupslist))
+						{
+							foreach($groupslist as $group)
 							{
-								if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
+								print '<tr class="oddeven">';
+								print '<td>';
+								if ($caneditgroup)
 								{
-									print '</td><td>'.$langs->trans("Entity").'</td>';
-									print "<td>".$mc->select_entities($conf->entity);
+									print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->name.'</a>';
 								}
 								else
 								{
-									print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+									print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
 								}
-							}
-							else
-							{
-								print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-							}
-							print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
-						}
-					}
-					print '</th></tr>'."\n";
-
-					/*
-                     * Groups assigned to user
-                     */
-					if (! empty($groupslist))
-					{
-						foreach($groupslist as $group)
-						{
-
-
-							print '<tr class="oddeven">';
-							print '<td>';
-							if ($caneditgroup)
-							{
-								print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->name.'</a>';
-							}
-							else
-							{
-								print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
-							}
-							print '</td>';
-							if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-							{
-								print '<td class="valeur">';
-								if (! empty($group->usergroup_entity))
+								print '</td>';
+								print '<td align="right">';
+								if ($caneditgroup)
 								{
-									$nb=0;
-									foreach($group->usergroup_entity as $group_entity)
-									{
-										$mc->getInfo($group_entity);
-										print ($nb > 0 ? ', ' : '').$mc->label;
-										print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group_entity.'">';
-										print img_delete($langs->trans("RemoveFromGroup"));
-										print '</a>';
-										$nb++;
-									}
+									print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
+									print img_delete($langs->trans("RemoveFromGroup"));
+									print '</a>';
 								}
+								else
+								{
+									print "&nbsp;";
+								}
+								print "</td></tr>\n";
 							}
-							print '<td align="right">';
-							if ($caneditgroup && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-							{
-								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
-								print img_delete($langs->trans("RemoveFromGroup"));
-								print '</a>';
-							}
-							else
-							{
-								print "&nbsp;";
-							}
-							print "</td></tr>\n";
 						}
-					}
-					else
-					{
-						print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+						else
+						{
+							print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+						}
 					}
 
 					print "</table>";
@@ -1970,7 +1827,7 @@ else
 			// Ref/ID
 			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 			{
-				print '<tr><td>'.$langs->trans("Ref").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 				print '<td>';
 				print $object->id;
 				print '</td>';
@@ -1979,7 +1836,7 @@ else
 
 			// Lastname
 			print "<tr>";
-			print '<td class="fieldrequired">'.$langs->trans("Lastname").'</td>';
+			print '<td class="titlefield fieldrequired">'.$langs->trans("Lastname").'</td>';
 			print '<td>';
 			if ($caneditfield && !$object->ldap_sid)
 			{
@@ -2006,40 +1863,6 @@ else
 				print $object->firstname;
 			}
 			print '</td></tr>';
-
-			// Employee
-			print '<tr>';
-			print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-			print $form->selectyesno("employee",$object->employee,1);
-			print '</td></tr>';
-
-			// Position/Job
-			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="job" value="'.$object->job.'">';
-		  		print $object->job;
-			}
-			print '</td></tr>';
-
-			// Gender
-			print '<tr><td>'.$langs->trans("Gender").'</td>';
-			print '<td>';
-			$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-			print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
-			print '</td></tr>';
-
-			// Date birth
-			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
-			print '<td>';
-			echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
-			print '</td>';
-			print "</tr>\n";
 
 			// Login
 			print "<tr>".'<td><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
@@ -2191,8 +2014,42 @@ else
 			}
 		   	print '</td></tr>';
 
+		   	// Gender
+		   	print '<tr><td>'.$langs->trans("Gender").'</td>';
+		   	print '<td>';
+		   	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+		   	print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
+		   	print '</td></tr>';
+
+		   	// Employee
+		   	print '<tr>';
+		   	print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
+		   	print $form->selectyesno("employee",$object->employee,1);
+		   	print '</td></tr>';
+
+		   	// Hierarchy
+		   	print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';
+		   	print '<td>';
+		   	if ($caneditfield)
+		   	{
+		   		print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+		   	}
+		   	else
+		   	{
+		   		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
+		   		$huser=new User($db);
+		   		$huser->fetch($object->fk_user);
+		   		print $huser->getNomUrl(1);
+		   	}
+		   	print '</td>';
+		   	print "</tr>\n";
+
+
+		   	print '</table><hr><table class="border centpercent">';
+
+
 			// Address
-			print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
+			print '<tr><td class="tdtop titlefield">'.fieldLabel('Address','address').'</td>';
 			print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
@@ -2311,6 +2168,8 @@ else
 				print '</td></tr>';
 			}
 
+			print '</table><hr><table class="border centpercent">';
+
 			// Accountancy code
 			if ($conf->accounting->enabled)
 			{
@@ -2329,72 +2188,6 @@ else
 				print '</td>';
 				print "</tr>";
 			}
-
-			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
-
-			// Hierarchy
-			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
-			}
-			else
-			{
-		  		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
-				$huser=new User($db);
-				$huser->fetch($object->fk_user);
-				print $huser->getNomUrl(1);
-			}
-			print '</td>';
-			print "</tr>\n";
-
-			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
-			   || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
-			{
-				$langs->load("salaries");
-
-				// THM
-				print '<tr><td>';
-				$text=$langs->trans("THM");
-				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
-				print '</td>';
-				print '<td>';
-				print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
-				print '</td>';
-				print "</tr>\n";
-
-				// TJM
-				print '<tr><td>';
-				$text=$langs->trans("TJM");
-				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
-				print '</td>';
-				print '<td>';
-				print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
-				print '</td>';
-				print "</tr>\n";
-
-				// Salary
-				print '<tr><td>'.$langs->trans("Salary").'</td>';
-				print '<td>';
-				print '<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary')?GETPOST('salary'):$object->salary).'">';
-				print '</td>';
-				print "</tr>\n";
-			}
-
-			// Weeklyhours
-			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
-			print '<td>';
-			print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
-			print '</td>';
-			print "</tr>\n";
-
-			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
-			print '<td>';
-			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
-			print '</td>';
-			print "</tr>\n";
 
 			// User color
 			if (! empty($conf->agenda->enabled))
@@ -2481,20 +2274,6 @@ else
 				print "</tr>\n";
 			}
 
-			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-			{
-				print '<tr><td>'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td>';
-				print $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
-				print $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
-				print '</td></tr>';
-			}
-
 			// Multicompany
 			// This is now done with hook formObjectOptions
 			/*
@@ -2529,7 +2308,7 @@ else
 			if ($caneditfield)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_mailings','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
+				$doleditor=new DolEditor('signature',$object->signature,'',138,'dolibarr_notes','In',false,true,empty($conf->global->FCKEDITOR_ENABLE_USERSIGN)?0:1,ROWS_4,'90%');
 				print $doleditor->Create(1);
 			}
 			else
@@ -2537,6 +2316,80 @@ else
 				print dol_htmlentitiesbr($object->signature);
 			}
 			print '</td></tr>';
+
+
+			print '</table><hr><table class="border centpercent">';
+
+
+			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
+
+			// Position/Job
+			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="job" value="'.$object->job.'">';
+				print $object->job;
+			}
+			print '</td></tr>';
+
+			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
+			{
+				$langs->load("salaries");
+
+				// THM
+				print '<tr><td>';
+				$text=$langs->trans("THM");
+				print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+				print '</td>';
+				print '<td>';
+				print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
+				print '</td>';
+				print "</tr>\n";
+
+				// TJM
+				print '<tr><td>';
+				$text=$langs->trans("TJM");
+				print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
+				print '</td>';
+				print '<td>';
+				print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
+				print '</td>';
+				print "</tr>\n";
+
+				// Salary
+				print '<tr><td>'.$langs->trans("Salary").'</td>';
+				print '<td>';
+				print '<input size="8" type="text" name="salary" value="'.price2num(GETPOST('salary')?GETPOST('salary'):$object->salary).'">';
+				print '</td>';
+				print "</tr>\n";
+			}
+
+			// Weeklyhours
+			print '<tr><td>'.$langs->trans("WeeklyHours").'</td>';
+			print '<td>';
+			print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
+			print '</td>';
+			print "</tr>\n";
+
+			// Date employment
+			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+			print '<td>';
+			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+			print '</td>';
+			print "</tr>\n";
+
+			// Date birth
+			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
+			print '<td>';
+			echo $form->select_date(GETPOST('birth')?GETPOST('birth'):$object->birth,'birth',0,0,1,'updateuser',1,0,1);
+			print '</td>';
+			print "</tr>\n";
 
 			print '</table>';
 
@@ -2560,8 +2413,8 @@ else
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->user->user->creer;
-			$delallowed = $user->rights->user->user->supprimer;
+			$genallowed = $user->rights->user->user->lire;
+			$delallowed = $user->rights->user->user->creer;
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;

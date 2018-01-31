@@ -51,7 +51,7 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST("search_ref");
 $search_barcode=GETPOST("search_barcode");
 $search_label=GETPOST("search_label");
@@ -183,7 +183,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 {
    foreach($extrafields->attribute_label as $key => $val)
    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
    }
 }
 
@@ -251,7 +251,7 @@ else
 
 	if ($search_type != '' && $search_type != '-1')
 	{
-		if ($search_type==1)
+		if ($search_type == 1)
 		{
 			$texte = $langs->trans("Services");
 		}
@@ -299,19 +299,19 @@ else
 		else $sql.= " AND p.fk_product_type <> 1";
 	}
 	if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
-	if ($search_label)     $sql .= natural_search('p.label', $search_label);
+	if ($search_label)   $sql .= natural_search('p.label', $search_label);
 	if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
 	if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($search_tosell);
 	if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($search_tobuy);
 	if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
-	if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
-	if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
+	if ($catid > 0)     $sql.= " AND cp.fk_categorie = ".$catid;
+	if ($catid == -2)   $sql.= " AND cp.fk_categorie IS NULL";
 	if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
 	if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
-	if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
+	if ($fourn_id > 0)  $sql.= " AND pfp.fk_soc = ".$fourn_id;
 	if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
-	if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
-	if ($search_accountancy_code_buy)   $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
+	if ($search_accountancy_code_sell) $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
+	if ($search_accountancy_code_buy)  $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
 	// Add where from extra fields
 
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
@@ -319,19 +319,8 @@ else
 	}
 
 	// Add where from extra fields
-	foreach ($search_array_options as $key => $val)
-	{
-		$crit=$val;
-		$tmpkey=preg_replace('/search_options_/','',$key);
-		$typ=$extrafields->attribute_type[$tmpkey];
-		$mode=0;
-		if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-		if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-		if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-		{
-			$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 	// Add where from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -413,20 +402,15 @@ else
 		if ($search_accountancy_code_sell) $param="&search_accountancy_code_sell=".urlencode($search_accountancy_code_sell);
 		if ($search_accountancy_code_buy) $param="&search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
 		// Add $param from extra fields
-		foreach ($search_array_options as $key => $val)
-		{
-			$crit=$val;
-			$tmpkey=preg_replace('/search_options_/','',$key);
-			if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 		// List of mass actions available
 		$arrayofmassactions =  array(
 			//'presend'=>$langs->trans("SendByMail"),
 			//'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		if ($user->rights->produit->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-		if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+		if ($user->rights->produit->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
@@ -441,6 +425,12 @@ else
 		if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
 		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, '', '', $limit);
+
+		$topicmail="Information";
+		$modelmail="product";
+		$objecttmp=new Product($db);
+		$trackid='prod'.$object->id;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 		if (! empty($catid))
 		{
@@ -495,15 +485,17 @@ else
 				$moreforfilter.='</div>';
 			}
 
-		 	if ($moreforfilter)
+    		$parameters=array();
+    		$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    		if (empty($reshook)) $moreforfilter.=$hookmanager->resPrint;
+    		else $moreforfilter=$hookmanager->resPrint;
+
+    	 	if ($moreforfilter)
 			{
-				print '<div class="liste_titre liste_titre_bydiv centpercent">';
-				print $moreforfilter;
-				$parameters=array();
-				$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-				print $hookmanager->resPrint;
-				print '</div>';
-			}
+        		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+    		    print $moreforfilter;
+    		    print '</div>';
+    		}
 
 			$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 			$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
@@ -606,32 +598,7 @@ else
 			// Accountancy code sell
 			if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_buy" size="6" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
 			// Extra fields
-			if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-			{
-			   foreach($extrafields->attribute_label as $key => $val)
-			   {
-					if (! empty($arrayfields["ef.".$key]['checked'])) {
-						$align=$extrafields->getAlignFlag($key);
-						$typeofextrafield=$extrafields->attribute_type[$key];
-						print '<td class="liste_titre'.($align?' '.$align:'').'">';
-						if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
-						{
-							$crit=$val;
-							$tmpkey=preg_replace('/search_options_/','',$key);
-							$searchclass='';
-							if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-							if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-							print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-						}
-						else
-						{
-							// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
-							echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
-						}
-						print '</td>';
-					}
-			   }
-			}
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 			// Fields from hook
 			$parameters=array('arrayfields'=>$arrayfields);
 			$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -685,19 +652,8 @@ else
 			if (! empty($arrayfields['p.tobatch']['checked']))  print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"],"p.tobatch","",$param,'align="center"',$sortfield,$sortorder);
 			if (! empty($arrayfields['p.accountancy_code_sell']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_sell","",$param,'',$sortfield,$sortorder);
 			if (! empty($arrayfields['p.accountancy_code_buy']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_buy","",$param,'',$sortfield,$sortorder);
-			if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-			{
-				foreach($extrafields->attribute_label as $key => $val)
-				{
-					if (! empty($arrayfields["ef.".$key]['checked']))
-					{
-						$align=$extrafields->getAlignFlag($key);
-						$sortonfield = "ef.".$key;
-						if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-						print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-					}
-				}
-			}
+			// Extra fields
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 			// Hook fields
 			$parameters=array('arrayfields'=>$arrayfields);
 			$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -760,23 +716,23 @@ else
 				// Ref
 				if (! empty($arrayfields['p.ref']['checked']))
 				{
-					print '<td class="nowrap">';
-					print $product_static->getNomUrl(1,'',24);
+					print '<td class="tdoverflowmax150">';
+					print $product_static->getNomUrl(1);
 					print "</td>\n";
 					if (! $i) $totalarray['nbfield']++;
 				}
 	   			// Ref supplier
 				if (! empty($arrayfields['pfp.ref_fourn']['checked']))
 				{
-					print '<td class="nowrap">';
-					print $product_static->getNomUrl(1,'',24);
+					print '<td class="tdoverflowmax150">';
+					print $product_static->getNomUrl(1);
 					print "</td>\n";
 					if (! $i) $totalarray['nbfield']++;
 				}
 				// Label
 				if (! empty($arrayfields['p.label']['checked']))
 				{
-					print '<td>'.dol_trunc($obj->label,40).'</td>';
+					print '<td class="tdoverflowmax200">'.dol_trunc($obj->label,40).'</td>';
 					if (! $i) $totalarray['nbfield']++;
 				}
 
@@ -825,7 +781,7 @@ else
 				}
 
 				// Better buy price
- 				if (! empty($arrayfields['p.minbuyprice']['checked']))
+				if (! empty($arrayfields['p.minbuyprice']['checked']))
 				{
 					print  '<td align="right">';
 					if ($obj->tobuy && $obj->minsellprice != '')
@@ -838,7 +794,7 @@ else
 								if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 								{
 									$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-									print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+									print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise).' '.$langs->trans("HT"),$htmltext);
 								}
 								else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
 							}
@@ -938,23 +894,7 @@ else
 					if (! $i) $totalarray['nbfield']++;
 				}
 				// Extra fields
-				if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-				{
-				   foreach($extrafields->attribute_label as $key => $val)
-				   {
-						if (! empty($arrayfields["ef.".$key]['checked']))
-						{
-							print '<td';
-							$align=$extrafields->getAlignFlag($key);
-							if ($align) print ' align="'.$align.'"';
-							print '>';
-							$tmpkey='options_'.$key;
-							print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-							print '</td>';
-							if (! $i) $totalarray['nbfield']++;
-						}
-				   }
-				}
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 				// Fields from hook
 				$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 				$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook

@@ -58,7 +58,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	$formactions=new FormActions($db);
 
 	// Filters
-	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
+	//print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="month" value="' . $month . '">';
@@ -135,7 +135,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
-	if ($canedit && ! preg_match('/listaction/', $_SERVER["PHP_SELF"]))
+	if ($canedit && ! preg_match('/list/', $_SERVER["PHP_SELF"]))
 	{
 		// Status
 		print '<tr>';
@@ -199,7 +199,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</div>';	// Close fichecenter
 	print '<div style="clear:both"></div>';
 
-	print '</form>';
+	//print '</form>';
 }
 
 
@@ -239,7 +239,7 @@ function show_array_actions_to_do($max=5)
 
 	    print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo",$max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
 		$var = true;
@@ -336,7 +336,7 @@ function show_array_last_actions_done($max=5)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks",$max).'</th>';
-		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" align="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 		$var = true;
 		$i = 0;
@@ -514,14 +514,14 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php'.($param?'?'.$param:'');
     $head[$h][1] = $langs->trans("ViewList");
     $head[$h][2] = 'cardlist';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewDay");
-    $head[$h][2] = 'cardday';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewCal");
+    $head[$h][2] = 'cardmonth';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param?'&'.$param:'');
@@ -529,9 +529,9 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardweek';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
-    $head[$h][1] = $langs->trans("ViewCal");
-    $head[$h][2] = 'cardmonth';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewDay");
+    $head[$h][2] = 'cardday';
     $h++;
 
     //if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))

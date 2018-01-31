@@ -27,12 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("sms");
-$langs->load("other");
-$langs->load("errors");
+$langs->loadLangs(array("companies","products","admin","sms","other","errors"));
 
 if (!$user->admin) accessforbidden();
 
@@ -210,25 +205,19 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 $param='&mode='.$mode;
 
 $enabledisablehtml='';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml.= $langs->trans("EnableOverwriteTranslation").' ';
 if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
 {
     // Button off, click to enable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
-    //$enabledisablehtml.=img_picto($langs->trans("Disabled"),'switch_off');
-    $enabledisablehtml.='<span class="fa fa-toggle-off valignmiddle" style="font-size: 2em; color: #999;" alt="'.$langs->trans("Disabled").'">';
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("EnableOverwriteTranslation");
-    $enabledisablehtml.='</span>';
+    $enabledisablehtml.=img_picto($langs->trans("Disabled"),'switch_off');
     $enabledisablehtml.='</a>';
 }
 else
 {
     // Button on, click to disable
     $enabledisablehtml.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
-    //$enabledisablehtml.=img_picto($langs->trans("Activated"),'switch_on');
-    $enabledisablehtml.='<span class="fa fa-toggle-on valignmiddle" style="font-size: 2em; color: #227722;" alt="'.$langs->trans("Activated").'">';
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$langs->trans("DisableOverwriteTranslation");
-    $enabledisablehtml.='</span>';
+    $enabledisablehtml.=img_picto($langs->trans("Activated"),'switch_on');
     $enabledisablehtml.='</a>';
 }
 
@@ -269,6 +258,11 @@ if ($mode == 'overwrite')
 {
     //print load_fiche_titre($langs->trans("TranslationOverwriteKey"), '', '')."\n";
 
+	$disabled='';
+	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
+	$disablededit='';
+	if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disablededit=' disabled';
+
 	print '<div class="justify"><span class="opacitymedium">';
     print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
     $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
@@ -297,16 +291,13 @@ if ($mode == 'overwrite')
     // Line to add new record
     print "\n";
 
-    $disablededit='';
-    if ($action == 'edit') $disablededit=' disabled';
-
     print '<tr class="oddeven"><td>';
     print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, $disablededit?1:0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
+    print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" id="transkey" value="'.(!empty($transkey)?$transkey:"").'">';
     print '</td><td>';
-    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
+    print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" id="transvalue" value="'.(!empty($transvalue)?$transvalue:"").'">';
     print '</td>';
     // Limit to superadmin
     /*if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -321,9 +312,7 @@ if ($mode == 'overwrite')
     	print '<td align="center">';
     	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
     //}
-    $disabled='';
-    if ($action == 'edit' || empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION)) $disabled=' disabled="disabled"';
-    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
+    print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
     print "</td>\n";
     print '</tr>';
 
@@ -409,6 +398,10 @@ if ($mode == 'searchkey')
 
     $recordtoshow=array();
 
+    // Search modules dirs
+    $modulesdir = dolGetModulesDirs();
+
+    $nbtotaloffiles=0;
     $nbempty=0;
     /*var_dump($langcode);
      var_dump($transkey);
@@ -422,29 +415,40 @@ if ($mode == 'searchkey')
     }
     else
     {
-        // Load all translations keys
-        foreach($conf->file->dol_document_root as $keydir => $searchdir)
+        // Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
+        $i=0;
+        foreach($modulesdir as $keydir => $tmpsearchdir)
         {
-            // Directory of translation files
-            $dir_lang = $searchdir."/langs/".$langcode;
-            $dir_lang_osencoded=dol_osencode($dir_lang);
+        	$searchdir = $tmpsearchdir;		// $searchdir can be '.../htdocs/core/modules/' or '.../htdocs/custom/mymodule/core/modules/'
 
-            $filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+        	// Directory of translation files
+        	$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode;	// The 2 dirname is to go up in dir for 2 levels
+        	$dir_lang_osencoded=dol_osencode($dir_lang);
 
-            foreach($filearray as $file)
-            {
-                $tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
-                $newlang->load($tmpfile, 0, 0, '', 0);                              // Load translation files + database overwrite
-                $newlangfileonly->load($tmpfile, 0, 0, '', 1);                      // Load translation files only
-                //print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
-            }
+        	$filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+        	foreach($filearray as $file)
+        	{
+				$tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
+				$moduledirname =(basename(dirname(dirname($dir_lang))));
+
+				$langkey=$tmpfile;
+				if ($i > 0) $langkey.='@'.$moduledirname;
+				//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
+
+				$result = $newlang->load($langkey, 0, 0, '', 0);                              // Load translation files + database overwrite
+				$result = $newlangfileonly->load($langkey, 0, 0, '', 1);                      // Load translation files only
+				if ($result < 0) print 'Failed to load language file '.$tmpfile.'<br>'."\n";
+				else $nbtotaloffiles++;
+				//print 'After loading lang '.$langkey.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
+        	}
+        	$i++;
         }
 
         // Now search into translation array
         foreach($newlang->tab_translate as $key => $val)
         {
-            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/', $key)) continue;
-            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/', $val)) continue;
+            if ($transkey && ! preg_match('/'.preg_quote($transkey,'/').'/i', $key)) continue;
+            if ($transvalue && ! preg_match('/'.preg_quote($transvalue,'/').'/i', $val)) continue;
             $recordtoshow[$key]=$val;
         }
     }
@@ -457,7 +461,7 @@ if ($mode == 'searchkey')
 
     //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
     $title = $langs->trans("TranslationKeySearch");
-    if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.')';
+    if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
     print print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
 
     print '<input type="hidden" id="action" name="action" value="search">';
@@ -572,6 +576,10 @@ dol_fiche_end();
 
 print "</form>\n";
 
+if (! empty($langcode))
+{
+	dol_set_focus('#transvalue');
+}
 
 llxFooter();
 

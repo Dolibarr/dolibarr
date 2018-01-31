@@ -103,7 +103,7 @@ class Categories extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -217,10 +217,14 @@ class Categories extends DolibarrApi
             $this->category->$field = $value;
         }
 
-        if($this->category->update(DolibarrApiAccess::$user))
+        if ($this->category->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get ($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $this->category->error);
+        }
     }
 
     /**

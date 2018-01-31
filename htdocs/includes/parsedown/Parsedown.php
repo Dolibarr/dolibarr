@@ -141,7 +141,11 @@ class Parsedown
 
                 foreach ($parts as $part)
                 {
-                    $shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+                	// @CHANGE LDR Fix when mb_strlen is not available
+                	//$shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+                	if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
+                	else $len = strlen($line);
+                	$shortage = 4 - $len % 4;
 
                     $line .= str_repeat(' ', $shortage);
                     $line .= $part;
@@ -515,10 +519,10 @@ class Parsedown
                 ),
             );
 
-            if($name === 'ol') 
+            if($name === 'ol')
             {
                 $listStart = stristr($matches[0], '.', true);
-                
+
                 if($listStart !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $listStart);
@@ -1176,7 +1180,9 @@ class Parsedown
                 'name' => 'img',
                 'attributes' => array(
                     'src' => $Link['element']['attributes']['href'],
-                    'alt' => $Link['element']['text'],
+                	'alt' => $Link['element']['text'],
+                	// @CHANGE LDR
+                	'class' => $Link['element']['attributes']['class']
                 ),
             ),
         );
@@ -1227,6 +1233,13 @@ class Parsedown
             }
 
             $extent += strlen($matches[0]);
+
+            // @CHANGE LDR
+            if (preg_match('/{([^}]+)}/', $remainder, $matches2))
+            {
+            	$Element['attributes']['class'] = $matches2[1];
+            	$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+            }
         }
         else
         {
@@ -1422,7 +1435,9 @@ class Parsedown
 
             if (isset($Element['handler']))
             {
-                $markup .= $this->{$Element['handler']}($Element['text']);
+            	// @CHANGE LDR
+            	//$markup .= $this->{$Element['handler']}($Element['text']);
+            	$markup .= preg_replace('/>{[^}]+}/', '>', $this->{$Element['handler']}($Element['text']));
             }
             else
             {

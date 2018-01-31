@@ -3,7 +3,7 @@
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -56,9 +56,10 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
-$cancel     = GETPOST('cancel','alpha');
-$backtopage = GETPOST('backtopage','alpha');
-$confirm	= GETPOST('confirm');
+$cancel		= GETPOST('cancel','alpha');
+$backtopage	= GETPOST('backtopage','alpha');
+$confirm		= GETPOST('confirm');
+
 $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
@@ -146,15 +147,16 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-				    'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-				    'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-				    'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
-				    'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				    'model_pdf', 'fk_projet'
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+					'model_pdf', 'fk_projet'
 				);
 				foreach ($listofproperties as $property)
 				{
-				    if (empty($object->$property)) $object->$property = $soc_origin->$property;
+					if (empty($object->$property)) $object->$property = $soc_origin->$property;
 				}
 
 				// Concat some data
@@ -175,10 +177,15 @@ if (empty($reshook))
 					}
 				}
 
-				// TODO Merge categories
+				// Merge categories
+				$static_cat = new Categorie($db);
+				$custcats = $static_cat->containing($soc_origin->id, 'customer', 'id');
+				$object->setCategories($custcats, 'customer');
+				$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+				$object->setCategories($suppcats, 'supplier');
 
-
-				$object->update($object->id, $user);
+				// Update
+				$object->update($object->id, $user, 0);
 
 				// Move links
 				$objects = array(
@@ -230,6 +237,21 @@ if (empty($reshook))
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$errors++;
 					}
+				}
+
+
+				if (! $error)
+				{
+					$object->context=array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+
+					// Call trigger
+					$result=$object->call_trigger('COMPANY_MODIFY',$user);
+					if ($result < 0)
+					{
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+					}
+					// End call triggers
 				}
 
 				if (!$errors)
@@ -290,11 +312,17 @@ if (empty($reshook))
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
         if ($ret < 0) $error++;
+
         if (! $error)
         {
             $result = $object->insertExtraFields();
-            if ($result < 0) $error++;
+   			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
+
         if ($error) $action = 'edit_extras';
     }
 
@@ -323,82 +351,83 @@ if (empty($reshook))
 
         if (! $error)
         {
-        	if ($action == 'update')
+        		if ($action == 'update')
 	        {
-	        	$ret=$object->fetch($socid);
+	        		$ret=$object->fetch($socid);
 				$object->oldcopy = clone $object;
 	        }
 			else $object->canvas=$canvas;
 
 	        if (GETPOST("private") == 1)	// Ask to create a contact
 	        {
-	            $object->particulier       = GETPOST("private");
+	            $object->particulier			= GETPOST("private");
 
-	            $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
-	            $object->civility_id       = GETPOST('civility_id');	// Note: civility id is a code, not an int
+	            $object->name				= dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
+	            $object->civility_id			= GETPOST('civility_id');	// Note: civility id is a code, not an int
 	            // Add non official properties
-	            $object->name_bis          = GETPOST('name','alpha');
-	            $object->firstname         = GETPOST('firstname','alpha');
+	            $object->name_bis			= GETPOST('name','alpha');
+	            $object->firstname			= GETPOST('firstname','alpha');
 	        }
 	        else
 	        {
-	            $object->name              = GETPOST('name', 'alpha');
+	            $object->name				= GETPOST('name', 'alpha');
 	        }
-	        $object->name_alias            = GETPOST('name_alias');
-	        $object->address               = GETPOST('address');
-	        $object->zip                   = GETPOST('zipcode', 'alpha');
-	        $object->town                  = GETPOST('town', 'alpha');
-	        $object->country_id            = GETPOST('country_id', 'int');
-	        $object->state_id              = GETPOST('state_id', 'int');
-	        $object->skype                 = GETPOST('skype', 'alpha');
-	        $object->phone                 = GETPOST('phone', 'alpha');
-	        $object->fax                   = GETPOST('fax','alpha');
-	        $object->email                 = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
-	        $object->url                   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
-	        $object->idprof1               = trim(GETPOST('idprof1', 'alpha'));
-	        $object->idprof2               = trim(GETPOST('idprof2', 'alpha'));
-	        $object->idprof3               = trim(GETPOST('idprof3', 'alpha'));
-	        $object->idprof4               = trim(GETPOST('idprof4', 'alpha'));
-	        $object->idprof5               = trim(GETPOST('idprof5', 'alpha'));
-	        $object->idprof6               = trim(GETPOST('idprof6', 'alpha'));
-	        $object->prefix_comm           = GETPOST('prefix_comm', 'alpha');
-	        $object->code_client           = GETPOST('code_client', 'alpha');
-	        $object->code_fournisseur      = GETPOST('code_fournisseur', 'alpha');
-	        $object->capital               = GETPOST('capital', 'alpha');
-	        $object->barcode               = GETPOST('barcode', 'alpha');
+	        $object->entity					= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
+	        $object->name_alias				= GETPOST('name_alias');
+	        $object->address					= GETPOST('address');
+	        $object->zip						= GETPOST('zipcode', 'alpha');
+	        $object->town					= GETPOST('town', 'alpha');
+	        $object->country_id				= GETPOST('country_id', 'int');
+	        $object->state_id				= GETPOST('state_id', 'int');
+	        $object->skype					= GETPOST('skype', 'alpha');
+	        $object->phone					= GETPOST('phone', 'alpha');
+	        $object->fax						= GETPOST('fax','alpha');
+	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+	        $object->url						= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+	        $object->idprof1					= trim(GETPOST('idprof1', 'alpha'));
+	        $object->idprof2					= trim(GETPOST('idprof2', 'alpha'));
+	        $object->idprof3					= trim(GETPOST('idprof3', 'alpha'));
+	        $object->idprof4					= trim(GETPOST('idprof4', 'alpha'));
+	        $object->idprof5					= trim(GETPOST('idprof5', 'alpha'));
+	        $object->idprof6					= trim(GETPOST('idprof6', 'alpha'));
+	        $object->prefix_comm				= GETPOST('prefix_comm', 'alpha');
+	        $object->code_client				= GETPOST('code_client', 'alpha');
+	        $object->code_fournisseur		= GETPOST('code_fournisseur', 'alpha');
+	        $object->capital					= GETPOST('capital', 'alpha');
+	        $object->barcode					= GETPOST('barcode', 'alpha');
 
-	        $object->tva_intra             = GETPOST('tva_intra', 'alpha');
-	        $object->tva_assuj             = GETPOST('assujtva_value', 'alpha');
-	        $object->status                = GETPOST('status', 'alpha');
+	        $object->tva_intra				= GETPOST('tva_intra', 'alpha');
+	        $object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
+	        $object->status					= GETPOST('status', 'alpha');
 
 	        // Local Taxes
-	        $object->localtax1_assuj       = GETPOST('localtax1assuj_value', 'alpha');
-	        $object->localtax2_assuj       = GETPOST('localtax2assuj_value', 'alpha');
+	        $object->localtax1_assuj			= GETPOST('localtax1assuj_value', 'alpha');
+	        $object->localtax2_assuj			= GETPOST('localtax2assuj_value', 'alpha');
 
-	        $object->localtax1_value	   = GETPOST('lt1', 'alpha');
-	        $object->localtax2_value	   = GETPOST('lt2', 'alpha');
+	        $object->localtax1_value			= GETPOST('lt1', 'alpha');
+	        $object->localtax2_value			= GETPOST('lt2', 'alpha');
 
-	        $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
-	        $object->effectif_id           = GETPOST('effectif_id', 'int');
-	        $object->typent_id             = GETPOST('typent_id','int');
+	        $object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
+	        $object->effectif_id				= GETPOST('effectif_id', 'int');
+	        $object->typent_id				= GETPOST('typent_id','int');
 
-	        $object->typent_code           = dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
+	        $object->typent_code				= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
 
-	        $object->client                = GETPOST('client', 'int');
-	        $object->fournisseur           = GETPOST('fournisseur', 'int');
+	        $object->client					= GETPOST('client', 'int');
+	        $object->fournisseur				= GETPOST('fournisseur', 'int');
 
-	        $object->commercial_id         = GETPOST('commercial_id', 'int');
-	        $object->default_lang          = GETPOST('default_lang');
+	        $object->commercial_id			= GETPOST('commercial_id', 'int');
+	        $object->default_lang			= GETPOST('default_lang');
 
 	        // Webservices url/key
-	        $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
-	        $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
+	        $object->webservices_url			= GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+	        $object->webservices_key			= GETPOST('webservices_key', 'san_alpha');
 
 			// Incoterms
 			if (!empty($conf->incoterm->enabled))
 			{
-				$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
-				$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
+				$object->fk_incoterms		= GETPOST('incoterm_id', 'int');
+				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 			}
 
 			// Multicurrency
@@ -471,17 +500,17 @@ if (empty($reshook))
                 $result = $object->create($user);
 
 				if ($result >= 0)
-                {
-                    if ($object->particulier)
-                    {
-                        dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
-                        $result=$object->create_individual($user);
-                        if ($result < 0)
-                        {
-                            setEventMessages($object->error, $object->errors, 'errors');
-                        	$error++;
-                        }
-                    }
+				{
+					if ($object->particulier)
+					{
+						dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
+						$result=$object->create_individual($user);
+						if ($result < 0)
+						{
+							setEventMessages($object->error, $object->errors, 'errors');
+							$error++;
+						}
+					}
 
 					// Customer categories association
 					$custcats = GETPOST('custcats', 'array');
@@ -1114,7 +1143,15 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+            {
+                print '<tr><td>'.fieldLabel('Region-State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            }
+            else
+            {
+                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            }
+
             if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code);
             else print $countrynotdefined;
             print '</td></tr>';
@@ -1671,7 +1708,15 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<tr><td>'.fieldLabel('Region-State','state_id').'</td><td colspan="3">';
+                }
+                else
+                {
+                    print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                }
+
                 print $formcompany->select_state($object->state_id,$object->country_code);
                 print '</td></tr>';
             }
@@ -1967,7 +2012,7 @@ else
 			    )
 		    );
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 200);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
 	    }
 
         dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
@@ -1988,10 +2033,13 @@ else
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
 
-    	// Prospect/Customer
-    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-    	print yn($object->fournisseur);
-    	print '</td></tr>';
+    	// Supplier
+    	if (! empty($conf->fournisseur->enabled))
+    	{
+    		print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+    		print yn($object->fournisseur);
+    		print '</td></tr>';
+    	}
 
     	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -2426,82 +2474,6 @@ else
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
 		}
-		/*if ($action == 'presend')
-		{
-			// By default if $action=='presend'
-			$titreform='SendMail';
-			$topicmail='';
-			$action='send';
-			$modelmail='thirdparty';
-
-    		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-    		print '<div class="clearboth"></div>';
-    		print '<br>';
-			print load_fiche_titre($langs->trans($titreform));
-
-			dol_fiche_head();
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->default_lang;
-
-			// Cree l'objet formulaire mail
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-            if($formmail->fromtype === 'user'){
-                $formmail->fromid = $user->id;
-
-            }
-			$formmail->trackid='thi'.$object->id;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-			{
-				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
-			}
-			$formmail->withfrom=1;
-			$formmail->withtopic=1;
-			$liste=array();
-			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
-			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-			$formmail->withtofree=1;
-			$formmail->withtocc=$liste;
-			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withfile=2;
-			$formmail->withbody=1;
-			$formmail->withdeliveryreceipt=1;
-			$formmail->withcancel=1;
-			// Array of substitutions
-			$formmail->setSubstitFromObject($object, $outputlangs);
-			$formmail->substit['__THIRDPARTY_ID__']=$object->id;		// substit in setSubstitFromObject was wrong for this one
-			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;	// substit in setSubstitFromObject was wrong for this one
-			$formmail->substit['__PERSONALIZED__']='';					// deprecated
-			$formmail->substit['__CONTACTCIVNAME__']='';
-
-
-			// Tableau des parametres complementaires du post
-			$formmail->param['action']=$action;
-			$formmail->param['models']=$modelmail;
-			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['socid']=$object->id;
-			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
-
-			// Init list of files
-			if (GETPOST("mode")=='init')
-			{
-				$formmail->clear_attached_files();
-				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-			}
-			print $formmail->get_form();
-
-			dol_fiche_end();
-		}*/
 
 		if ($action != 'presend')
 		{
@@ -2516,23 +2488,21 @@ else
 	             */
 	            $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
 	            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-	            $genallowed=$user->rights->societe->creer;
-	            $delallowed=$user->rights->societe->supprimer;
-
-	            $var=true;
+	            $genallowed=$user->rights->societe->lire;
+	            $delallowed=$user->rights->societe->creer;
 
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 	        }
 
-	        // Subsidiaries list
-	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
-	        {
-	        	$result=show_subsidiaries($conf,$langs,$db,$object);
-	        }
+			// Subsidiaries list
+			if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
+			{
+				$result=show_subsidiaries($conf,$langs,$db,$object);
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			$MAX = 10;
+			$MAXEVENT = 10;
 
 			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id.'">';
 			$morehtmlright.= $langs->trans("SeeAll");
@@ -2541,9 +2511,24 @@ else
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAX, '', $morehtmlright);		// Show all action for thirdparty
+			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for thirdparty
 
 			print '</div></div></div>';
+
+			if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD))
+			{
+				// Contacts list
+				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+				{
+					$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+
+				// Addresses list
+				if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+				{
+					$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+			}
 		}
 
 		// Presend form

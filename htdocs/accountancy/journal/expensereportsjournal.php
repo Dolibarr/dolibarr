@@ -77,7 +77,7 @@ if ($pastmonth == 0) {
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
@@ -101,10 +101,15 @@ $sql .= " AND erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 if ($date_start && $date_end)
 	$sql .= " AND er.date_debut >= '" . $db->idate($date_start) . "' AND er.date_debut <= '" . $db->idate($date_end) . "'";
+// Already in bookkeeping or not
 if ($in_bookkeeping == 'already')
+{
     $sql .= " AND er.rowid IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
+}
 if ($in_bookkeeping == 'notyet')
+{
     $sql .= " AND er.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab  WHERE ab.doc_type='expense_report')";
+}
 $sql .= " ORDER BY er.date_debut";
 
 dol_syslog('accountancy/journal/expensereportsjournal.php', LOG_DEBUG);
@@ -183,6 +188,9 @@ if ($action == 'writebookkeeping') {
 	{
 		$errorforline = 0;
 
+		$totalcredit = 0;
+		$totaldebit = 0;
+
 		$db->begin();
 
 		// Thirdparty
@@ -208,6 +216,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
@@ -254,6 +265,9 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
+
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
 
 						$result = $bookkeeping->create($user);
 						if ($result < 0) {
@@ -307,6 +321,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
 
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
 						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
@@ -327,6 +344,13 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
+		if ($totaldebit != $totalcredit)
+		{
+			$error++;
+			$errorforline++;
+			setEventMessages('Try to insert a non balanced transaction in book for '.$val["ref"].'. Canceled. Surely a bug.', null, 'errors');
+		}
+
 		if (! $errorforline)
 		{
 			$db->commit();
@@ -342,6 +366,8 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 	}
+
+	$tabpay = $taber;
 
 	if (empty($error) && count($tabpay) > 0) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
@@ -367,7 +393,7 @@ if ($action == 'writebookkeeping') {
 		$param.='&date_endday='.$date_endday;
 		$param.='&date_endmonth='.$date_endmonth;
 		$param.='&date_endyear='.$date_endyear;
-		$param.='&in_bookeeping='.$in_bookeeping;
+		$param.='&in_bookkeeping='.$in_bookkeeping;
 		header("Location: ".$_SERVER['PHP_SELF'].($param?'?'.$param:''));
 		exit;
 	}
@@ -502,7 +528,7 @@ if (empty($action) || $action == 'view') {
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
-	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("AlreadyInGeneralLedger").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 
@@ -510,15 +536,16 @@ if (empty($action) || $action == 'view') {
 
 	// Button to write into Ledger
 	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
-	    print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-	    print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
-	    print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
+		print '<input type="button" class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
-	   print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+		else print '<a href="#" class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	}
 	//print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	print '</div>';
@@ -527,14 +554,15 @@ if (empty($action) || $action == 'view') {
 	print '
 	<script type="text/javascript">
 		function launch_export() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("exportcsv");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche form input[name=\"action\"]").val("exportcsv");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			console.log("click on writebookkeeping");
+			$("div.fiche form input[name=\"action\"]").val("writebookkeeping");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 	</script>';
 
@@ -544,7 +572,7 @@ if (empty($action) || $action == 'view') {
 	print '<br>';
 
 	$i = 0;
-    print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print "<td></td>";
