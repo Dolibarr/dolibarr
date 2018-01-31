@@ -779,7 +779,7 @@ if ($object->id > 0)
 	print '</div>';
 
 
-	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+	if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD))
 	{
     	print '<br>';
     	// List of contacts
