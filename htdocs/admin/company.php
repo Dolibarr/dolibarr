@@ -742,7 +742,7 @@ else
 
 	print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
 	if ($mysoc->state_id) {
-		print getState($mysoc->state_id,$conf->global->MAIN_SHOW_STATE_CODE,0,$conf->global->MAIN_SHOW_REGION_IN_STATE);
+		print getState($mysoc->state_id,$conf->global->MAIN_SHOW_STATE_CODE,0,$conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 	}
 	else print '&nbsp;';
 	print '</td></tr>';

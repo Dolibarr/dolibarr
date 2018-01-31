@@ -507,7 +507,7 @@ abstract class CommonObject
 		$out='<!-- BEGIN part to show address block -->';
 
 		$outdone=0;
-		$coords = $this->getFullAddress(1,', ',$conf->global->MAIN_SHOW_REGION_IN_STATE);
+		$coords = $this->getFullAddress(1,', ',$conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 		if ($coords)
 		{
 			if (! empty($conf->use_javascript_ajax))
@@ -525,7 +525,7 @@ abstract class CommonObject
 		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
 				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state)
 		{
-            if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1 && $this->region) {
+            if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
                 $out.=($outdone?' - ':'').$this->region.' - '.$this->state;
             }
             else {
