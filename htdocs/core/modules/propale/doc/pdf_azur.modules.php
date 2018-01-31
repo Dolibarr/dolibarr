@@ -515,10 +515,19 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->MultiCell($this->posxup-$this->posxtva+4, 3, $vat_rate, 0, 'R');
 					}
 
+					// Unit price VAT before discount
+					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);					
+ 					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
+ 					$up_excl_tax += $up_excl_tax * $vat_rate / 100;
+					$pdf->SetXY($this->posxup, $curY);
+					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
+
+					/*
 					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
+					*/
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
@@ -552,6 +561,8 @@ class pdf_azur extends ModelePDFPropales
 
 					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+ 					$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
+ 					$total_excl_tax += $total_excl_tax * $vat_rate / 100;
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
@@ -1007,6 +1018,7 @@ class pdf_azur extends ModelePDFPropales
 		$index = 0;
 
 		// Total HT
+		/*
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
@@ -1014,6 +1026,7 @@ class pdf_azur extends ModelePDFPropales
 		$total_ht = ($conf->multicurrency->enabled && $object->mylticurrency_tx != 1 ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (! empty($object->remise)?$object->remise:0), 0, $outputlangs), 0, 'R', 1);
+		*/
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -1100,26 +1113,26 @@ class pdf_azur extends ModelePDFPropales
 				// VAT
 				foreach($this->tva as $tvakey => $tvaval)
 				{
-					if ($tvakey != 0)    // On affiche pas taux 0
-					{
-						$this->atleastoneratenotnull++;
+					// if ($tvakey != 0)    // On affiche pas taux 0
+					// {
+					// 	$this->atleastoneratenotnull++;
 
-						$index++;
-						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					// 	$index++;
+					// 	$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
-						$tvacompl='';
-						if (preg_match('/\*/',$tvakey))
-						{
-							$tvakey=str_replace('*','',$tvakey);
-							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-						}
-						$totalvat =$outputlangs->transcountrynoentities("TotalVAT",$mysoc->country_code).' ';
-						$totalvat.=vatrate($tvakey,1).$tvacompl;
-						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+					// 	$tvacompl='';
+					// 	if (preg_match('/\*/',$tvakey))
+					// 	{
+					// 		$tvakey=str_replace('*','',$tvakey);
+					// 		$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+					// 	}
+					// 	$totalvat =$outputlangs->transcountrynoentities("TotalVAT",$mysoc->country_code).' ';
+					// 	$totalvat.=vatrate($tvakey,1).$tvacompl;
+					// 	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-					}
+					// 	$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					// 	$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+					//  }
 				}
 
 				//Local tax 1 after VAT
@@ -1370,7 +1383,7 @@ class pdf_azur extends ModelePDFPropales
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->postotalht-1, $tab_top+1);
-			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
+			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalTTC"),'','C');
 		}
 	}
 
