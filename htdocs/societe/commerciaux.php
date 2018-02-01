@@ -32,6 +32,20 @@ $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("banks");
 
+$search_name=GETPOST('search_name');
+$search_login=GETPOST('search_login');
+
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield=GETPOST("sortfield",'alpha');
+$sortorder=GETPOST("sortorder",'alpha');
+$page=GETPOST("page",'int');
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="u.lastname";
+if (empty($page) || $page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -224,6 +238,13 @@ if (! empty($socid))
 		 * Liste
 		 *
 		 */
+		
+		if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+		{
+			$search_name='';
+			$search_login='';
+		}
+		
 
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
@@ -240,23 +261,74 @@ if (! empty($socid))
 		else
 			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
-		$sql.= " ORDER BY u.lastname ASC ";
-
+		
+		if ($search_name!= '') {
+			$param.='&amp;search_name='.urlencode($search_name);
+			$sql.= ' AND ('.natural_search("u.lastname",$search_name,0,1);
+			$sql.= ' OR ' . natural_search("u.firstname",$search_name,0,1).')';
+		}
+		if ($search_login!= '') {
+			$param.='&amp;search_login='.urlencode($search_login);
+			$sql.= natural_search("u.login",$search_login);
+		}
+		
+		$sql.= $db->order($sortfield,$sortorder);
+		
+		// Count total nb of records
+		$nbtotalofrecords = '';
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+		{
+			$result = $db->query($sql);
+			$nbtotalofrecords = $db->num_rows($result);
+		}
+		
+		$sql.= $db->plimit($limit+1, $offset);
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0;
 
-			print load_fiche_titre($title);
-
+			$param = '&amp;socid='.$object->id;
+			
+			if ($search_name!= '') $param.='&amp;search_name='.urlencode($search_name);
+			if ($search_login!= '') $param.='&amp;search_login='.urlencode($search_login);
+			
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+			if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+			print '<input type="hidden" name="socid" value="'.$object->id.'">';
+			print '<input type="hidden" name="page" value="'.$page.'">';
+			
+			print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_commercial', 0, '', '', $limit);
+			
 			// Lignes des titres
 			print '<table class="noborder" width="100%">';
+
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Name").'</td>';
+			print_liste_field_titre($langs->trans("Name"), $_SERVER["PHP_SELF"],"u.lastname","",$param,"",$sortfield,$sortorder);
 			print '<td>'.$langs->trans("Login").'</td>';
 			print '<td>'.$langs->trans("Status").'</td>';
 			print '<td>&nbsp;</td>';
+			print "</tr>\n";
+			
+			print '<tr class="liste_titre_filter">';
+			print '<td class="liste_titre">';
+			print '<input class="flat searchstring" type="text" name="search_name" size="20" value="'.dol_escape_htmltag($search_name).'">';
+			print '</td>';
+			print '<td class="liste_titre">';
+			print '<input class="flat searchstring" type="text" name="search_login" size="20" value="'.dol_escape_htmltag($search_login).'">';
+			print '</td>';
+			print '<td class="liste_titre">&nbsp;</td>';
+			// Action column
+			print '<td class="liste_titre" align="right">';
+			$searchpicto=$form->showFilterButtons();
+			print $searchpicto;
+			print '</td>';
 			print "</tr>\n";
 
 			$var=True;
@@ -286,6 +358,9 @@ if (! empty($socid))
 			}
 
 			print "</table>";
+			
+			print "</form>";
+			
 			$db->free($resql);
 		}
 		else
