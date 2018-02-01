@@ -551,6 +551,139 @@ class Thirdparties extends DolibarrApi
     }
 
 
+
+    /**
+     * Get outstanding proposals of thirdparty
+     *
+     * @param 	int 	$id			ID of the thirdparty
+     * @param 	string 	$mode		'customer' or 'supplier'
+     *
+     * @url     GET {id}/outstandingproposals
+     *
+     * @return array  				List of outstandings proposals of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     */
+    function getOutStandingProposals($id, $mode='customer')
+    {
+    	$obj_ret = array();
+
+    	if(! DolibarrApiAccess::$user->rights->societe->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+		$result = $this->company->getOutstandingProposals($mode);
+
+		unset($result['total_ht']);
+		unset($result['total_ttc']);
+
+		return $result;
+    }
+
+
+    /**
+     * Get outstanding orders of thirdparty
+     *
+     * @param 	int 	$id			ID of the thirdparty
+     * @param 	string 	$mode		'customer' or 'supplier'
+     *
+     * @url     GET {id}/outstandingorders
+     *
+     * @return array  				List of outstandings orders of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     */
+    function getOutStandingOrder($id, $mode='customer')
+    {
+    	$obj_ret = array();
+
+    	if(! DolibarrApiAccess::$user->rights->societe->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+    	$result = $this->company->getOutstandingOrders($mode);
+
+    	unset($result['total_ht']);
+    	unset($result['total_ttc']);
+
+    	return $result;
+    }
+
+    /**
+     * Get outstanding invoices of thirdparty
+     *
+     * @param 	int 	$id			ID of the thirdparty
+     * @param 	string 	$mode		'customer' or 'supplier'
+     *
+     * @url     GET {id}/outstandinginvoices
+     *
+     * @return array  				List of outstandings invoices of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     */
+    function getOutStandingInvoices($id, $mode='customer')
+    {
+    	$obj_ret = array();
+
+    	if(! DolibarrApiAccess::$user->rights->societe->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+    	$result = $this->company->getOutstandingBills($mode);
+
+    	unset($result['total_ht']);
+    	unset($result['total_ttc']);
+
+    	return $result;
+    }
+
+
+
      /**
      * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
      *
