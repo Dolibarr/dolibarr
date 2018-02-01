@@ -78,7 +78,7 @@ abstract class CommonObject
 	 */
 	public $array_options=array();
 	/**
-	 * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
 	/**
