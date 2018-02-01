@@ -303,16 +303,9 @@ class Project extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                if (!$notrigger)
+                // Update extrafield
+                if (! $error)
                 {
-                    // Call trigger
-                    $result=$this->call_trigger('PROJECT_MODIFY',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
-                }
-
-                //Update extrafield
-                if (!$error) {
                 	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
                 	{
                 		$result=$this->insertExtraFields();
@@ -321,6 +314,14 @@ class Project extends CommonObject
                 			$error++;
                 		}
                 	}
+                }
+
+                if (! $error && !$notrigger)
+                {
+                	// Call trigger
+                	$result=$this->call_trigger('PROJECT_MODIFY',$user);
+                	if ($result < 0) { $error++; }
+                	// End call triggers
                 }
 
                 if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
