@@ -153,8 +153,8 @@ if (empty($reshook))
 			$object->socid           = GETPOST('socid','int');
 			$object->description     = GETPOST('description','none'); // Do not use 'alpha' here, we want field as it is
 			$object->public          = GETPOST('public','alpha');
-			$object->opp_amount      = price2num(GETPOST('opp_amount'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount'));
+			$object->opp_amount      = price2num(GETPOST('opp_amount','alpha'));
+			$object->budget_amount   = price2num(GETPOST('budget_amount','alpha'));
 			$object->datec           = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
@@ -251,13 +251,14 @@ if (empty($reshook))
 
 			$object->ref          = GETPOST('ref','alpha');
 			$object->title        = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
+			$object->statut       = GETPOST('status','int');
 			$object->socid        = GETPOST('socid','int');
 			$object->description  = GETPOST('description','none');	// Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public','alpha');
 			$object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 			$object->date_end     = empty($_POST["projectend"])?'':$date_end;
-			if (isset($_POST['opp_amount']))    $object->opp_amount   = price2num(GETPOST('opp_amount'));
-			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount'));
+			if (isset($_POST['opp_amount']))    $object->opp_amount   = price2num(GETPOST('opp_amount','alpha'));
+			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount','alpha'));
 			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
 
@@ -737,6 +738,16 @@ elseif ($object->id > 0)
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
 		print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
 
+		// Status
+		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
+		print '<select class="flat" name="status">';
+		foreach($object->statuts_short as $key => $val)
+		{
+			print '<option value="'.$key.'"'.((GETPOSTISSET('status')?GETPOST('status'):$object->statut) == $key ? ' selected="selected"':'').'>'.$langs->trans($val).'</option>';
+		}
+		print '</select>';
+		print '</td></tr>';
+
 		// Thirdparty
 		if ($conf->societe->enabled)
 		{
@@ -764,9 +775,6 @@ elseif ($object->id > 0)
 		if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
 		print $form->selectarray('public',$array,$object->public);
 		print '</td></tr>';
-
-		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
@@ -1205,7 +1213,7 @@ elseif ($object->id > 0)
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, 'project', 0, 1, '', $MAXEVENT, '', $morehtmlright);
 
 		print '</div></div></div>';
 	}
