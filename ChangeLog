@@ -4,6 +4,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:
+NEW: When payment is registered, PDF of invoices are also regenerated so payments
+     appears with no need to click on regenerate.
 NEW: #5711 Add shipment line deleting and editing for draft shipments.
 NEW: Accept substitution key __[ABC]__ replaced with value of const ABC
 NEW: Accountancy Add variant on sell account for intracommunity sales & export sales
