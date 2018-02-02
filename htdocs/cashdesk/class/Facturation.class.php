@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jeremie Ollivier		 <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * Copyright (C) 2010-2018 Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2010      Juanjo Menent    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,12 +117,7 @@ class Facturation
         }
 
         // Define part of HT, VAT, TTC
-
-		// Local Taxes
-		$localtax1_tx = get_localtax($txtva, 1, $societe);
-		$localtax2_tx = get_localtax($txtva, 2, $societe);
-
-        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $txtva, $localtax1_tx, $localtax2_tx, 0, 'HT', $use_npr, $product->type, $mysoc, $localtaxarray);
+        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $txtva, -1, -1, 0, 'HT', $use_npr, $product->type, $mysoc, $localtaxarray);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];
