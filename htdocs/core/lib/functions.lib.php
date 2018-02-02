@@ -550,7 +550,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
 		case 'nohtml':
-			$out=dol_string_nohtmltag($out);
+			$out=dol_string_nohtmltag($out, 0);
 			break;
 		case 'alphanohtml':	// Recommended for search params
 			if (! is_array($out))

@@ -1621,8 +1621,8 @@ class ExtraFields
 		{
 			$out='';
 
-			// only if something to display (perf)
-			if ($value)
+			// Only if something to display (perf)
+			if ($value)		// If we have -1 here, pb is into sert, not into ouptu
 			{
 				$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 

@@ -153,6 +153,7 @@ class Orders extends DolibarrApi
         {
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
+            $i=0;
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
@@ -276,7 +277,7 @@ class Orders extends DolibarrApi
                         $request_data->product_type,
                         $request_data->rang,
                         $request_data->special_code,
-                        $fk_parent_line,
+                        $request_data->fk_parent_line,
                         $request_data->fk_fournprice,
                         $request_data->pa_ht,
                         $request_data->label,

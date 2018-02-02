@@ -78,7 +78,7 @@ abstract class CommonObject
 	 */
 	public $array_options=array();
 	/**
-	 * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
 	/**
@@ -4391,7 +4391,7 @@ abstract class CommonObject
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
 	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 */
-	function fetch_optionals($rowid=null,$optionsArray=null)
+	function fetch_optionals($rowid=null, $optionsArray=null)
 	{
 		if (empty($rowid)) $rowid=$this->id;
 
@@ -4536,16 +4536,30 @@ abstract class CommonObject
 
 			foreach($new_array_options as $key => $value)
 			{
-			   	$attributeKey = substr($key,8);   // Remove 'options_' prefix
-			   	$attributeType  = $extrafields->attribute_type[$attributeKey];
-			   	$attributeLabel = $extrafields->attribute_label[$attributeKey];
-			   	$attributeParam = $extrafields->attribute_param[$attributeKey];
+			   	$attributeKey      = substr($key,8);   // Remove 'options_' prefix
+			   	$attributeType     = $extrafields->attribute_type[$attributeKey];
+			   	$attributeLabel    = $extrafields->attribute_label[$attributeKey];
+			   	$attributeParam    = $extrafields->attribute_param[$attributeKey];
+			   	$attributeRequired = $extrafields->attribute_required[$attributeKey];
+
+			   	if ($attributeRequired)
+			   	{
+			   		$mandatorypb=false;
+			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb=true;
+			   		if ($this->array_options[$key] === '') $mandatorypb=true;
+			   		if ($mandatorypb)
+			   		{
+			   			$this->errors[]=$langs->trans('ErrorFieldRequired', $attributeLabel);
+			   			return -1;
+			   		}
+			   	}
+
 			   	switch ($attributeType)
 			   	{
 			   		case 'int':
 			  			if (!is_numeric($value) && $value!='')
 			   			{
-			   				$this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
+			   				$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 			   				return -1;
 			  			}
 			   			elseif ($value=='')
@@ -4569,23 +4583,27 @@ abstract class CommonObject
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
 		   			case 'link':
-						$param_list=array_keys($attributeParam ['options']);
+						$param_list=array_keys($attributeParam['options']);
 						// 0 : ObjectName
 						// 1 : classPath
 						$InfoFieldList = explode(":", $param_list[0]);
 						dol_include_once($InfoFieldList[1]);
 						if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 						{
-							$object = new $InfoFieldList[0]($this->db);
-							if ($value)
+							if ($value == '-1')	// -1 is key for no defined in combo list of objects
 							{
+								$new_array_options[$key]='';
+							}
+							elseif ($value)
+							{
+								$object = new $InfoFieldList[0]($this->db);
 								if (is_numeric($value)) $res=$object->fetch($value);
 								else $res=$object->fetch('',$value);
 
 								if ($res > 0) $new_array_options[$key]=$object->id;
 								else
 								{
-									$this->error="Ref '".$value."' for object '".$object->element."' not found";
+									$this->error="Id/Ref '".$value."' for object '".$object->element."' not found";
 									$this->db->rollback();
 									return -1;
 								}
@@ -4598,6 +4616,7 @@ abstract class CommonObject
 						break;
 			   	}
 			}
+
 			$this->db->begin();
 
 			$table_element = $this->table_element;
@@ -4730,9 +4749,9 @@ abstract class CommonObject
 					// 1 : classPath
 					$InfoFieldList = explode(":", $param_list[0]);
 					dol_include_once($InfoFieldList[1]);
-					$object = new $InfoFieldList[0]($this->db);
 					if ($value)
 					{
+						$object = new $InfoFieldList[0]($this->db);
 						$object->fetch(0,$value);
 						$this->array_options["options_".$key]=$object->id;
 					}
@@ -6254,12 +6273,14 @@ abstract class CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 		}
 
+		// Create extrafields
 		if (! $error)
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0) $error++;
 		}
 
+		// Triggers
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
@@ -6321,13 +6342,13 @@ abstract class CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  User $user      	User that modifies
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @return int             	<0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -6375,7 +6396,22 @@ abstract class CommonObject
 			}
 		}
 
-		if (! $error && ! $notrigger) {
+		// Update extrafield
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+		}
+
+		// Triggers
+		if (! $error && ! $notrigger)
+		{
 			// Call triggers
 			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
@@ -6411,6 +6447,19 @@ abstract class CommonObject
 				$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 				// End call triggers
+			}
+		}
+
+		if (! $error)
+		{
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element."_extrafields";
+			$sql.= " WHERE fk_object=" . $this->id;
+
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				$this->errors[] = $this->db->lasterror();
+				$error++;
 			}
 		}
 

@@ -131,7 +131,7 @@ if ($nolinesbefore) {
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>
-	<td class="linecolnum" align="center" width="5">
+	<td class="nobottom linecolnum" align="center" width="5">
 	<?php
 }
 else {
@@ -403,9 +403,6 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 {
 	$colspan = 6;
 
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-		$colspan++;
-	}
 	if ($this->situation_cycle_ref) {
 		$colspan++;
 	}
@@ -447,6 +444,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	?>
 
 	<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
 	<td colspan="<?php echo $colspan; ?>">
 	<?php
 	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
