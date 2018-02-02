@@ -402,7 +402,9 @@ if (! $error && $action == 'writebookkeeping') {
 	$now = dol_now();
 
 	$error = 0;
-	foreach ( $tabpay as $key => $val ) {	  // $key is rowid into llx_bank
+	foreach ( $tabpay as $key => $val )		// $key is rowid into llx_bank
+	{
+		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
@@ -450,31 +452,8 @@ if (! $error && $action == 'writebookkeeping') {
 					$bookkeeping->date_create = $now;
 
 					// No subledger_account value for the bank line but add a specific label_operation
-					if ($tabtype[$key] == 'payment') {
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->label_operation = $tabcompany[$key]['name'] . ' - ' . $ref;
-					} else if ($tabtype[$key] == 'payment_supplier') {
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->label_operation = $tabcompany[$key]['name'] . ' - ' . $ref;
-					} else if ($tabtype[$key] == 'payment_expensereport') {
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->label_operation = $tabuser[$key]['name'] . ' - ' . $ref;
-					} else if ($tabtype[$key] == 'payment_salary') {
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->label_operation = $tabuser[$key]['name'] . ' - ' . $ref;
-					} else if ($tabtype[$key] == 'payment_vat') {
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->label_operation = $ref;
-					} else if ($tabtype[$key] == 'payment_donation') {
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->label_operation = $ref;
-					} else if ($tabtype[$key] == 'payment_various') {
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->label_operation = $ref;
-					} else if ($tabtype[$key] == 'unknown') {
-						// ???
-						$bookkeeping->subledger_account = '';
-					}
+					$bookkeeping->subledger_account = '';
+					$bookkeeping->label_operation = $reflabel;
 
 					$totaldebit += $bookkeeping->debit;
 					$totalcredit += $bookkeeping->credit;
@@ -713,11 +692,6 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
-	$companystatic = new Client($db);
-	$userstatic = new User($db);
-
-//var_dump($langs);exit;
-
 	// CSV header line
 	print '"' . $langs->trans("BankId").'"' . $sep;
 	print '"' . $langs->trans("Date") . '"' . $sep;
@@ -732,34 +706,11 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print "\n";
 
 
-	foreach ( $tabpay as $key => $val ) {
+	foreach ( $tabpay as $key => $val )
+	{
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
-
-		// Third party (company or user)
-		if (! empty($tabcompany[$key]['id']))
-		{
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-		}
-		else
-		{
-			$companystatic->id = 0;
-			$companystatic->name = '';
-		}
-		if (! empty($tabuser[$key]['id']))
-		{
-			$userstatic->id = $tabuser[$key]['id'];
-			$userstatic->lastname = $tabuser[$key]['lastname'];
-			$userstatic->firstname = $tabuser[$key]['firstname'];
-		}
-		else
-		{
-			$userstatic->id = 0;
-			$userstatic->lastname = '';
-			$userstatic->firstname = '';
-		}
 
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) {

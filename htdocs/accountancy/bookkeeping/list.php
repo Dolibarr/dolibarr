@@ -87,7 +87,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
-if ($sortfield == "") $sortfield = "t.rowid";
+if ($sortfield == "") $sortfield = "t.piece_num,t.rowid";
 
 
 $object = new BookKeeping($db);
@@ -98,25 +98,30 @@ $form = new Form($db);
 
 if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page','int') == '' && ! GETPOST('noreset','int'))
 {
-	$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$query.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
-	$res = $db->query($query);
-	if ($res->num_rows > 0) {
-		$fiscalYear = $db->fetch_object($res);
-		$search_date_start = strtotime($fiscalYear->date_start);
-		$search_date_end = strtotime($fiscalYear->date_end);
-	} else {
-		$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-		$year_start = dol_print_date(dol_now(), '%Y');
-		$year_end = $year_start + 1;
-		$month_end = $month_start - 1;
-		if ($month_end < 1)
-		{
-			$month_end = 12;
-			$year_end--;
+	if (empty($search_date_start) && empty($search_date_end))
+	{
+		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+		$query.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
+		$res = $db->query($query);
+
+		if ($res->num_rows > 0) {
+			$fiscalYear = $db->fetch_object($res);
+			$search_date_start = strtotime($fiscalYear->date_start);
+			$search_date_end = strtotime($fiscalYear->date_end);
+		} else {
+			$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+			$year_start = dol_print_date(dol_now(), '%Y');
+			if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;	// If current month is lower that starting fiscal month, we start last year
+			$year_end = $year_start + 1;
+			$month_end = $month_start - 1;
+			if ($month_end < 1)
+			{
+				$month_end = 12;
+				$year_end--;
+			}
+			$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+			$search_date_end = dol_get_last_day($year_end, $month_end);
 		}
-		$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-		$search_date_end = dol_get_last_day($year_end, $month_end);
 	}
 }
 
@@ -430,7 +435,7 @@ else $button.= $langs->trans("ExportList");
 $button.= '</a>';
 
 
-$groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php"">' . $langs->trans("GroupByAccountAccounting") . '</a>';
+$groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
 $addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$addbutton, '', $limit);
@@ -704,6 +709,7 @@ if ($num > 0)
 	if (isset($totalarray['totaldebitfield']) || isset($totalarray['totalcreditfield']))
 	{
 		$i=0;
+		print '<tr class="liste_total">';
 		while ($i < $totalarray['nbfield'])
 		{
 			$i++;
