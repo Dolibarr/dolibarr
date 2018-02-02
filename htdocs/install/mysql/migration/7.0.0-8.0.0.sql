@@ -22,5 +22,12 @@
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
 
+
+
+
+
 -- For 8.0
+
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
+
+ALTER TABLE llx_projet ADD COLUMN bill_time integer DEFAULT 0;
