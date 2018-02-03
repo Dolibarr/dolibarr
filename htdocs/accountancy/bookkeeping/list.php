@@ -35,9 +35,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 // Langs
 $langs->load("accountancy");
 
-$page = GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
 $action = GETPOST('action', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type");
@@ -49,7 +46,7 @@ $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmo
 $search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
 $search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
 $search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
-
+//var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
 	$action = 'delbookkeepingyear';
 }
@@ -85,7 +82,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->AC
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page','int');
-if ($page < 0) { $page = 0; }
+if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -99,21 +96,30 @@ $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-
-if ($action != 'export_file' && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && empty($page))
+if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page','int') == '' && ! GETPOST('noreset','int'))
 {
-	$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
-	$year_start = dol_print_date(dol_now(), '%Y');
-	$year_end = $year_start + 1;
-	$month_end = $month_start - 1;
-	if ($month_end < 1)
-	{
-		$month_end = 12;
-		$year_end--;
+	$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	$query.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
+	$res = $db->query($query);
+	if ($res->num_rows > 0) {
+		$fiscalYear = $db->fetch_object($res);
+		$search_date_start = strtotime($fiscalYear->date_start);
+		$search_date_end = strtotime($fiscalYear->date_end);
+	} else {
+		$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		$year_start = dol_print_date(dol_now(), '%Y');
+		$year_end = $year_start + 1;
+		$month_end = $month_start - 1;
+		if ($month_end < 1)
+		{
+			$month_end = 12;
+			$year_end--;
+		}
+		$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+		$search_date_end = dol_get_last_day($year_end, $month_end);
 	}
-	$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-	$search_date_end = dol_get_last_day($year_end, $month_end);
 }
+
 
 $arrayfields=array(
 	't.piece_num'=>array('label'=>$langs->trans("TransactionNumShort"), 'checked'=>1),
@@ -316,7 +322,8 @@ if ($action == 'delmouvconfirm') {
 		{
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
-		Header("Location: list.php");
+
+		Header("Location: list.php?noreset=1".($param?'&'.$param:''));
 		exit;
 	}
 }
@@ -368,7 +375,7 @@ if ($result < 0) {
 $num=count($object->lines);
 
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
@@ -448,11 +455,11 @@ if (! empty($arrayfields['t.doc_date']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
+	print $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
+	print $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }

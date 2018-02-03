@@ -106,7 +106,6 @@ ListOfProductsWithoutAccountingAccount=Lista de produtos não vinculados a qualq
 ChangeBinding=Alterar a vinculação
 AccountingJournals=Relatórios da contabilidade
 AccountingJournalType2=De vendas
-OptionsDeactivatedForThisExportModel=Para este modelo de exportação, as opções são desativadas
 Selectmodelcsv=Escolha um modelo de exportação
 Modelcsv_CEGID=Exportação em direção CEGID Especialista em Contabilidade
 Modelcsv_COALA=Exportar para Sage Coala

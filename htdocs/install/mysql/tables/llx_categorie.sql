@@ -2,6 +2,7 @@
 -- Copyright (C) 2005		Brice Davoleau		<e1davole@iu-vannes.fr>
 -- Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
 -- Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>		
+-- Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@ create table llx_categorie
 	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
 	entity          integer DEFAULT 1 NOT NULL,			-- multi company id
 	fk_parent		integer DEFAULT 0 NOT NULL,
-	label 		    varchar(255) NOT NULL,				-- category name
+	label 		    varchar(180) NOT NULL,				-- category name
 	type	        tinyint DEFAULT 1 NOT NULL,			-- category type (product, supplier, customer, member)
 	description 	text,								-- description of the category
     color           varchar(8),                         -- color

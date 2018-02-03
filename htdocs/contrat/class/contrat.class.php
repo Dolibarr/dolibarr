@@ -44,8 +44,17 @@ class Contrat extends CommonObject
 	public $table_element='contrat';
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='contract';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     * @var integer
+     */
+    public $restrictiononfksoc = 1;
 
 	/**
 	 * {@inheritdoc}
@@ -377,7 +386,11 @@ class Contrat extends CommonObject
 		$result=$this->thirdparty->set_as_client();
 
 		// Define new ref
-		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		if ($force_number)
+		{
+			$num = $force_number;
+		}
+		else if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$num = $this->getNextNumRef($this->thirdparty);
 		}
@@ -1331,6 +1344,13 @@ class Contrat extends CommonObject
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits, $rang");
 
+		// Check parameters
+		if ($fk_product <= 0 && empty($desc))
+		{
+			$this->error="DescRequiredForFreeProductLines";
+			return -1;
+		}
+
 		if ($this->statut >= 0)
 		{
 			$this->db->begin();
@@ -1749,6 +1769,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 	}

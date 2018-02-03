@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Kifizetések nem kapcsolódik semmilyen számlát, í
 PaymentsNotLinkedToUser=Kifizetések nem kapcsolódnak egyetlen felhasználó
 Profit=Nyereség
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Egyenleg
 Debit=Tartozik
 Credit=Hitel

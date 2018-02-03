@@ -89,6 +89,7 @@ AccountIdShort=عدد
 LineRecord=المعاملات
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=طريق التصالح
 DateConciliating=التوفيق التاريخ
 BankLineConciliated=Entry reconciled

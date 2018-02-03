@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012-2013 Cédric Salvador      <csalvador@gpcsolutions.fr>
@@ -62,7 +62,7 @@ create table llx_product
   duration                      varchar(6),
   seuil_stock_alerte            integer      DEFAULT NULL,
   url                           varchar(255),
-  barcode                       varchar(255) DEFAULT NULL,          -- barcode
+  barcode                       varchar(180) DEFAULT NULL,          -- barcode
   fk_barcode_type               integer      DEFAULT NULL,          -- barcode type
   accountancy_code_sell         varchar(32),                        -- Selling accountancy code
   accountancy_code_sell_intra   varchar(32),                        -- Selling accountancy code for vat intracommunity

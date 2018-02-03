@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuració del mòdul Stripe
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Mòdul per oferir una pàgina de pagament en línia que accepti pagaments amb targeta de crèdit/dèbit mitjançant <a href="http://www.stripe.com" target="_blank">Stripe</a>. Això es pot utilitzar per permetre als vostres clients fer pagaments oberts o el pagament d'un objecte particular de Dolibarr (factura, comanda, ...)
 StripeOrCBDoPayment=Pagar amb targeta de crèdit o Stripe
 FollowingUrlAreAvailableToMakePayments=Les següents URL estan disponibles per a permetre a un client fer un cobrament en objectes de Dolibarr
 PaymentForm=Formulari de pagament
@@ -12,7 +12,7 @@ YourEMail=E-mail de confirmació de pagament
 STRIPE_PAYONLINE_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
 Creditor=Beneficiari
 PaymentCode=Codi de pagament
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Pagament amb targeta de crèdit o dèbit (Stripe)
 YouWillBeRedirectedOnStripe=Se us redirigirà a la pàgina de Stripe assegurada per introduir la informació de la vostra targeta de crèdit
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL de pagament %s

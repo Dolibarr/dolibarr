@@ -196,6 +196,7 @@ CurrentProductPrice=Current price
 AlwaysUseNewPrice=Always use current price of product/service
 AlwaysUseFixedPrice=Use the fixed price
 PriceByQuantity=Different prices by quantity
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Quantity range
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

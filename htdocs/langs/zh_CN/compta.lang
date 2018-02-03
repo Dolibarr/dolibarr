@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=付款未链接到任何发票，所以无法与任�
 PaymentsNotLinkedToUser=付款不链接到任何用户
 Profit=利润
 AccountingResult=会计结果
+BalanceBefore=Balance (before)
 Balance=平衡
 Debit=借方
 Credit=贷方

@@ -123,7 +123,7 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
-	// Set incoterm
+	// Reopen
 	if ($action == 'reopen' && $user->rights->expedition->creer)
 	{
 	    $object->fetch($id);
@@ -501,8 +501,8 @@ if (empty($reshook))
 	    }
 	}
 
-	// Action update description of emailing
-	else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
+	// Action update
+	else if ($action == 'settracking_number' || $action == 'settracking_url'
 	|| $action == 'settrueWeight'
 	|| $action == 'settrueWidth'
 	|| $action == 'settrueHeight'
@@ -511,8 +511,8 @@ if (empty($reshook))
 	{
 	    $error=0;
 
-	    if ($action == 'settrackingnumber')		$object->tracking_number = trim(GETPOST('trackingnumber','alpha'));
-	    if ($action == 'settrackingurl')		$object->tracking_url = trim(GETPOST('trackingurl','int'));
+	    if ($action == 'settracking_number')		$object->tracking_number = trim(GETPOST('tracking_number','alpha'));
+	    if ($action == 'settracking_url')		$object->tracking_url = trim(GETPOST('tracking_url','int'));
 	    if ($action == 'settrueWeight')	{
 	    	$object->trueWeight = trim(GETPOST('trueWeight','int'));
 			$object->weight_units = GETPOST('weight_units','int');
@@ -1989,8 +1989,8 @@ else if ($id || $ref)
 		print '</tr>';
 
 		// Tracking Number
-		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber",'trackingnumber',$object->tracking_number,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("TrackingNumber",'trackingnumber',$object->tracking_url,$object,$user->rights->expedition->creer,'string',$object->tracking_number);
+		print '<tr><td class="titlefield">'.$form->editfieldkey("TrackingNumber",'tracking_number',$object->tracking_number,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print $form->editfieldval("TrackingNumber",'tracking_number',$object->tracking_url,$object,$user->rights->expedition->creer,'string',$object->tracking_number);
 		print '</td></tr>';
 
 		// Incoterms

@@ -196,6 +196,7 @@ CurrentProductPrice=Aktuális ár
 AlwaysUseNewPrice=Mindig a termék/szolgáltatás aktuális árát használja
 AlwaysUseFixedPrice=Használja a fix árat
 PriceByQuantity=Mennyiségtől függő ár
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Mennyiségi intervallum
 MultipriceRules=Árazási szabályok
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

@@ -401,7 +401,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre_filter">';
 
 // Line numbering
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
@@ -552,10 +552,7 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
-{
-	print '<td colspan="1" align="center">'.$langs->trans("NumberingShort").'</td>';
-}
+if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))       print_liste_field_titre("ID",$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'],$_SERVER["PHP_SELF"],'d.rowid','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['d.firstname']['checked']))      print_liste_field_titre($arrayfields['d.firstname']['label'],$_SERVER["PHP_SELF"],'d.firstname','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['d.lastname']['checked']))       print_liste_field_titre($arrayfields['d.lastname']['label'],$_SERVER["PHP_SELF"],'d.lastname','',$param,'',$sortfield,$sortorder);
@@ -611,9 +608,9 @@ while ($i < min($num, $limit))
 
 	print '<tr class="oddeven">';
 
-	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+	if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
 	{
-		print '<td align="center">'.($i+1).'</td>';
+		print '<td align="center">'.$obj->rowid.'</td>';
 	}
 
 	// Ref

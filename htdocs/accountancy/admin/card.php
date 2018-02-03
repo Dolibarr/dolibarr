@@ -39,6 +39,7 @@ $mesg = '';
 $action = GETPOST('action','aZ09');
 $backtopage = GETPOST('backtopage','alpha');
 $id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel','alpha');
 
@@ -261,8 +262,10 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</form>';
-} else if ($id) {
-	$result = $object->fetch($id);
+}
+else if ($id > 0 || $ref) {
+
+	$result = $object->fetch($id, $ref, 1);
 
 	if ($result > 0) {
 		dol_htmloutput_mesg($mesg);
@@ -329,17 +332,18 @@ if ($action == 'create') {
 			// View mode
 			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php">' . $langs->trans("BackToList") . '</a>';
 
-			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
+			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
+
+			dol_banner_tab($object, 'ref', $linkback, 1, 'account_number', 'ref');
+
+
+			print '<div class="fichecenter">';
+			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border" width="100%">';
 
-			// Account number
-			print '<tr><td class="titlefield">' . $langs->trans("AccountNumber") . '</td>';
-			print '<td>' . $object->account_number . '</td>';
-			print '<td align="right" width="25%">' . $linkback . '</td></tr>';
-
 			// Label
-			print '<tr><td>' . $langs->trans("Label") . '</td>';
+			print '<tr><td class="titlefield">' . $langs->trans("Label") . '</td>';
 			print '<td colspan="2">' . $object->label . '</td></tr>';
 
 			// Account parent
@@ -361,19 +365,9 @@ if ($action == 'create') {
 			print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 			print '<td colspan="2">' . $object->pcg_subtype . '</td></tr>';
 
-			// Active
-			print '<tr><td>' . $langs->trans("Status") . '</td>';
-			print '<td colspan="2">';
-			print $object->getLibStatut(4);
-			/*if (empty($object->active)) {
-				print img_picto($langs->trans("Disabled"), 'switch_off');
-			} else {
-				print img_picto($langs->trans("Activated"), 'switch_on');
-			}*/
-
-			print '</td></tr>';
-
 			print '</table>';
+
+			print '</div>';
 
 			dol_fiche_end();
 
@@ -397,7 +391,7 @@ if ($action == 'create') {
 			print '</div>';
 		}
 	} else {
-		dol_print_error($db);
+		dol_print_error($db, $object->error, $object->errors);
 	}
 }
 

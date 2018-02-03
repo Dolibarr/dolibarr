@@ -196,6 +196,7 @@ CurrentProductPrice=Preţ curent
 AlwaysUseNewPrice=Întotdeauna foloseşte preţul curent al produsului/serviciului
 AlwaysUseFixedPrice=Foloseşte preţul fix
 PriceByQuantity=Preţuri diferite pe cantitate
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Interval cantitate
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

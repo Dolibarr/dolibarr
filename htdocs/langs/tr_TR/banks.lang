@@ -89,6 +89,7 @@ AccountIdShort=Numarası
 LineRecord=İşlem
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Uzlaştıran
 DateConciliating=Uzlaştırma tarihi
 BankLineConciliated=Entry reconciled

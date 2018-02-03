@@ -89,6 +89,7 @@ AccountIdShort=Aantal
 LineRecord=Transactie
 AddBankRecord=Item toevoegen
 AddBankRecordLong=Item handmatig toevoegen
+Conciliated=Reconciled
 ConciliatedBy=Afgestemd door
 DateConciliating=Afgestemd op
 BankLineConciliated=Item afgestemd

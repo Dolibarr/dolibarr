@@ -49,27 +49,30 @@ $result = restrictedArea($user, 'contact', $contactid,'');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_cti=preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml')));	// Phone number without any special chars
-$search_phone=GETPOST("search_phone");
+$search_phone=GETPOST("search_phone",'alpha');
 
 $search_id=trim(GETPOST("search_id","int"));
-$search_firstlast_only=GETPOST("search_firstlast_only");
-$search_lastname=GETPOST("search_lastname");
-$search_firstname=GETPOST("search_firstname");
-$search_societe=GETPOST("search_societe");
-$search_poste=GETPOST("search_poste");
-$search_phone_perso=GETPOST("search_phone_perso");
-$search_phone_pro=GETPOST("search_phone_pro");
-$search_phone_mobile=GETPOST("search_phone_mobile");
-$search_fax=GETPOST("search_fax");
-$search_email=GETPOST("search_email");
-$search_skype=GETPOST("search_skype");
-$search_priv=GETPOST("search_priv");
+$search_firstlast_only=GETPOST("search_firstlast_only",'alpha');
+$search_lastname=GETPOST("search_lastname",'alpha');
+$search_firstname=GETPOST("search_firstname",'alpha');
+$search_societe=GETPOST("search_societe",'alpha');
+$search_poste=GETPOST("search_poste",'alpha');
+$search_phone_perso=GETPOST("search_phone_perso",'alpha');
+$search_phone_pro=GETPOST("search_phone_pro",'alpha');
+$search_phone_mobile=GETPOST("search_phone_mobile",'alpha');
+$search_fax=GETPOST("search_fax",'alpha');
+$search_email=GETPOST("search_email",'alpha');
+$search_skype=GETPOST("search_skype",'alpha');
+$search_priv=GETPOST("search_priv",'alpha');
 $search_categ=GETPOST("search_categ",'int');
 $search_categ_thirdparty=GETPOST("search_categ_thirdparty",'int');
 $search_categ_supplier=GETPOST("search_categ_supplier",'int');
 $search_status=GETPOST("search_status",'int');
 $search_type=GETPOST('search_type','alpha');
-$search_import_key  = GETPOST("search_import_key","alpha");
+$search_zip=GETPOST('search_zip','alpha');
+$search_town=GETPOST('search_town','alpha');
+$search_import_key=GETPOST("search_import_key","alpha");
+
 if ($search_status=='') $search_status=1; // always display activ customer first
 
 $optioncss = GETPOST('optioncss','alpha');
@@ -88,8 +91,6 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
-
-$langs->load("companies");
 
 $contextpage='contactlist';
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
@@ -296,7 +297,7 @@ if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_pos
 if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
-if (strlen($search_fax))            $sql.= natural_search('p.phone_fax', $search_fax);
+if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
 if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
@@ -394,6 +395,7 @@ if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status
 if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=".urlencode($search_priv);
 if ($search_import_key != '') $param.='&search_import_key='.urlencode($search_import_key);
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -496,12 +498,6 @@ if (! empty($arrayfields['p.firstname']['checked']))
 	print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['p.poste']['checked']))
-{
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
-	print '</td>';
-}
 if (! empty($arrayfields['p.zip']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -512,6 +508,12 @@ if (! empty($arrayfields['p.town']['checked']))
 {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="search_town" size="5" value="'.dol_escape_htmltag($search_town).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['p.poste']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))

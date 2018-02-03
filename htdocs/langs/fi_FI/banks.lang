@@ -89,6 +89,7 @@ AccountIdShort=Numero
 LineRecord=Tapahtuma
 AddBankRecord=Lisää merkintä
 AddBankRecordLong=Lisää mernkintä manuaalisesti
+Conciliated=Täsmäytetty
 ConciliatedBy=Sovetteli
 DateConciliating=Sovittelupäivä
 BankLineConciliated=Merkintä täsmäytetty

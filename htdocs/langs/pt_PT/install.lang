@@ -141,6 +141,7 @@ KeepDefaultValuesProxmox=Você usa o assistente de configuração Dolibarr de um
 UpgradeExternalModule=Corra o processo de atualização dedicado dos módulos externos
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Correção para os dados não normalizados
@@ -196,6 +197,7 @@ MigrationEventsContact=Migration of events to add event contact into assignement
 MigrationRemiseEntity=Atualize o valor do campo entity da tabela llx_societe_remise
 MigrationRemiseExceptEntity=Atualize o valor do campo entity da tabela llx_societe_remise_except
 MigrationReloadModule=Recarregar módulo %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Mostrar opções indisponíveis
 HideNotAvailableOptions=Ocultar opções indisponíveis
 ErrorFoundDuringMigration=Não pode proceder ao próximo passo porque foram reportados erros durante o processo de migração. Para ignorar os erros, pode <a href="%s">clicar aqui</a>, mas a aplicação ou algumas funcionalidades desta poderão não funcionar corretamente.

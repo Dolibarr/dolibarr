@@ -12,7 +12,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FI8TNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -349,7 +349,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 300px;
+	min-width: 320px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -357,8 +357,9 @@ input.buttonpayment {
 	background: none;
 	padding-left: 30px;
 	text-align: <?php echo $left; ?>;
-	border: 2px solid #ccc;
+	border: 1px solid #ddd;
 	background-color: #eee;
+	white-space: normal;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
@@ -790,7 +791,7 @@ ul.attendees li {
     min-height: 0.01%;
 }
 .div-table-responsive {
-    line-height: 100%;
+    line-height: 120%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -858,6 +859,7 @@ select.selectarrowonleft option {
     .minwidth400imp { min-width: 400px !important; }
     .minwidth500imp { min-width: 500px !important; }
 }
+.width25  { width: 25px; }
 .width50  { width: 50px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
@@ -1023,6 +1025,13 @@ select.selectarrowonleft option {
 	div.statusref img {
     	padding-right: 3px !important;
    	}
+	div.statusrefbis {
+    	padding-right: 3px !important;
+   	}
+
+   	input.buttonpayment {
+		min-width: 300px;
+   	}
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -1162,7 +1171,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
 	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
 }
@@ -1276,6 +1285,9 @@ div.nopadding {
 .pictoedit, .pictowarning, .pictodelete {
     vertical-align: text-bottom;
 }
+.fiche img.pictoedit {
+    opacity: 0.7;
+}
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -1323,10 +1335,15 @@ div.statusref img {
    	padding-right: 9px;
    	vertical-align: text-bottom;
 }
+div.statusrefbis {
+    padding-left: 8px;
+   	padding-right: 9px;
+   	vertical-align: text-bottom;
+}
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    -webkit-box-shadow: 2px 2px 4px #ccc;
+    box-shadow: 2px 2px 4px #ccc;
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -1480,7 +1497,7 @@ div.tmenuleft
 	margin-top: 0px;
 	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	width: 5px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat;
+	/* background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat; */
 	<?php } ?>
 	<?php if ($disableimages) { ?>
 	height: 26px;
@@ -1714,7 +1731,6 @@ form#login {
 	max-width: 530px;
 	color: #aaa !important;
 	padding-bottom: 20px;
-	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1742,7 +1758,7 @@ form#login {
 	border: none;
 	border-bottom: solid 1px rgba(180,180,180,.4);
 	padding: 5px;
-	margin-left: 18px;
+	margin-left: 5px;
 	margin-top: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
@@ -1754,10 +1770,10 @@ form#login {
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
-	margin-bottom: 10px;
+	margin-bottom: 22px;
 }
 .login_main_message .error {
-	border: 1px solid #caa;
+	/* border: 1px solid #caa; */
 	padding: 10px;
 }
 div#login_left, div#login_right {
@@ -2125,7 +2141,7 @@ div.tabsElem {
 	margin-top: 1px;
 }	/* To avoid overlap of tabs when not browser */
 div.tabsElem a {
-    font-weight: normal !important;
+    /* font-weight: normal !important; */
 }
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
@@ -2488,7 +2504,7 @@ table.liste td, table.noborder td, div.noborder form div {
 	line-height: 1.2em;
 }
 div.liste_titre_bydiv .divsearchfield {
-	padding: 2px 1px 2px 0px;			/* t r b l */
+	padding: 2px 1px 2px 7px;			/* t r b l */
 }
 
 tr.box_titre .nobordernopadding td {
@@ -2535,7 +2551,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #868;
+  	color: #625;
   	font-size: 160%;
 }
 div.refidno  {
@@ -2922,9 +2938,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
  *  Boxes
  */
 
-.ficheaddleft div.boxstats {
-    border: none;
+.box {
+    overflow-x: auto;
+    min-height: 40px;
 }
+/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+    border: none;
+}*/
 .boxstatsborder {
     border: 1px solid #CCC !important;
 }
@@ -2961,12 +2981,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
-	.boxstats, .boxstats130 {
-        width: 90px;
-    }
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
+    }
+    .boxstats130 {
+    	width: 148px;
     }
     .boxstats {
         width: 100px;
@@ -3116,35 +3136,42 @@ div.ok {
   color: #114466;
 }
 
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
+    padding-top: 8px;
+    padding-left: 10px;
+    padding-right: 4px;
+    padding-bottom: 8px;
+    margin: 0.5em 0em 0.5em 0em;
+    background: #eff8fc;
+}
+
 /* Warning message */
 div.warning {
-  color: #302020;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  border: 2px solid #805000;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
+    background: #fcf8e3;
+}
+div.warning a, div.info a, div.error a {
+	color: rgb(<?php echo $colortext; ?>);
 }
 
 /* Error message */
 div.error {
+    border-<?php print $left; ?>: solid 5px #f28787;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
   background: #EFCFCF;
 }
 
-/* Info admin */
-div.info {
-  color: #fff;
-  padding: 0.4em 0.4em 0.4em 0.4em;
-  margin: 0.5em 0em 0.5em 0em;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background: #798080;
-}
-
-div.warning a, div.info a, div.error a {
-	color: rgb(<?php echo $colortext; ?>);
-}
 
 /*
  *   Liens Payes/Non payes
@@ -3167,7 +3194,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  */
 
 .product_line_stock_ok { color: #002200; }
-.product_line_stock_too_low { color: #664400; }
+.product_line_stock_too_low { color: #884400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
@@ -3227,7 +3254,7 @@ div.titre {
     padding-bottom: 5px;
 }
 
-#dolpaymenttable { min-width: 310px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
+#dolpaymenttable { min-width: 300px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -3314,20 +3341,19 @@ div#card-errors {
 /* ============================================================================== */
 
 table.valid {
-    border-top: solid 1px #E6E6E6;
-    border-<?php print $left; ?>: solid 1px #E6E6E6;
-    border-<?php print $right; ?>: solid 1px #444444;
-    border-bottom: solid 1px #555555;
-	padding-top: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
+    /* border-top: solid 1px #E6E6E6; */
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+    /* border-<?php print $right; ?>: solid 1px #444444;
+    border-bottom: solid 1px #555555; */
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 4px;
 	margin: 0px 0px;
-    background: #D5BAA8;
+    background: #fcf8e3;
 }
 
 .validtitre {
-    background: #D5BAA8;
 	font-weight: bold;
 }
 
@@ -3605,17 +3631,22 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 
 
 /* ============================================================================== */
-/*  jQuery - jeditable                                                            */
+/*  jQuery - jeditable for inline edit                                            */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
+	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editkey_datepicker {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
+	margin-right: 3px;
 	cursor: pointer;
+	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
@@ -3771,6 +3802,12 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 
 
 /* Style to overwrites JQuery styles */
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    border: 1px solid #888;
+    background: rgb(<?php echo $colorbacktitle1; ?>);
+    color: unset;
+}
+
 .ui-menu .ui-menu-item a {
     text-decoration:none;
     display:block;
@@ -3784,7 +3821,8 @@ A.none, A.none:active, A.none:visited, A.none:hover {
     font-family:<?php echo $fontlist; ?>;
     font-size:<?php echo $fontsize; ?>px;
 }
-.ui-button { margin-left: -2px; <?php print (preg_match('/chrome/',$conf->browser->name)?'padding-top: 1px;':''); ?> }
+/* .ui-button { margin-left: -2px; <?php print (preg_match('/chrome/',$conf->browser->name)?'padding-top: 1px;':''); ?> } */
+.ui-button { margin-left: -2px; }
 .ui-button-icon-only .ui-button-text { height: 8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
 .ui-button-text
@@ -3995,10 +4033,13 @@ td.gminorheadingwkend {
 td.gminorheading {
     color: #666 !important;
 }
+.glistlbl, .glistgrid {
+	width: 582px !important;
+}
 .gtaskname div, .gtaskname {
-    min-width: 200px !important;
-    max-width: 200px !important;
-    width: 200px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    width: 250px !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;
@@ -4927,7 +4968,7 @@ div.tabsElem a.tab {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.9, 0) + 24; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 24; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 	    width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
@@ -4939,6 +4980,7 @@ div.tabsElem a.tab {
 	.mainmenuaspan {
     	/*display: none;*/
   		font-size: 10px;
+  		padding-right: 0;
     }
     .topmenuimage {
     	background-size: 22px auto;
@@ -4975,6 +5017,7 @@ div.tabsElem a.tab {
 	.mainmenuaspan {
     	/*display: none;*/
   		font-size: 10px;
+  		padding-right: 0;
     }
     .topmenuimage {
     	background-size: 20px auto;
@@ -4987,12 +5030,12 @@ div.tabsElem a.tab {
 {
 	.side-nav {
 		z-index: 200;
-    	background: #FFF;
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
 		padding-top: 70px;
     }
 	#id-left {
     	z-index: 201;
-        background: #FFF;
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
 	}
 
     .login_vertical_align {
@@ -5035,7 +5078,9 @@ div.tabsElem a.tab {
 		left: 0 !important;
 		text-align: center;
         vertical-align: middle;
-        background: #FFF;
+
+		background: rgb(<?php echo $colorbackvmenu1; ?>);
+
         height: 50px;
 
     	z-index: 202;

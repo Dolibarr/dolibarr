@@ -135,7 +135,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
-	if ($canedit && ! preg_match('/listaction/', $_SERVER["PHP_SELF"]))
+	if ($canedit && ! preg_match('/list/', $_SERVER["PHP_SELF"]))
 	{
 		// Status
 		print '<tr>';

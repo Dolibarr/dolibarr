@@ -48,8 +48,17 @@ class Propal extends CommonObject
 	public $table_element='propal';
 	public $table_element_line='propaldet';
 	public $fk_element='fk_propal';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto='propal';
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+	/**
+	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer
+	 */
+	public $restrictiononfksoc = 1;
 
 	/**
 	 * {@inheritdoc}
@@ -515,8 +524,8 @@ class Propal extends CommonObject
 
 			$this->line->vat_src_code=$vat_src_code;
 			$this->line->tva_tx=$txtva;
-			$this->line->localtax1_tx=$txlocaltax1;
-			$this->line->localtax2_tx=$txlocaltax2;
+			$this->line->localtax1_tx=($total_localtax1?$localtaxes_type[1]:0);
+			$this->line->localtax2_tx=($total_localtax2?$localtaxes_type[3]:0);
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 			$this->line->fk_product=$fk_product;
@@ -795,6 +804,8 @@ class Propal extends CommonObject
 
 		if ($this->statut == self::STATUS_DRAFT)
 		{
+			$this->db->begin();
+
 			$line=new PropaleLigne($this->db);
 
 			// For triggers
@@ -804,15 +815,18 @@ class Propal extends CommonObject
 			{
 				$this->update_price(1);
 
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->db->rollback();
 				return -1;
 			}
 		}
 		else
 		{
+			$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 	}
@@ -1559,6 +1573,7 @@ class Propal extends CommonObject
 		$sql.= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql.= ' d.fk_unit,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
+		$sql.= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql.= ' d.date_start, d.date_end';
 		$sql.= ' ,d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as d';
@@ -1624,6 +1639,10 @@ class Propal extends CommonObject
 				$line->product_desc     = $objp->product_desc; 		// Description produit
 				$line->fk_product_type  = $objp->fk_product_type;
 				$line->fk_unit          = $objp->fk_unit;
+				$line->weight = $objp->weight;
+				$line->weight_units = $objp->weight_units;
+				$line->volume = $objp->volume;
+				$line->volume_units = $objp->volume_units;
 
 				$line->date_start  		= $this->db->jdate($objp->date_start);
 				$line->date_end  		= $this->db->jdate($objp->date_end);

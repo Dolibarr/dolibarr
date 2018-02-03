@@ -141,13 +141,13 @@ class Paiement extends CommonObject
 	/**
 	 *    Create payment of invoices into database.
 	 *    Use this->amounts to have list of invoices for the payment.
-	 *    For payment of a customer invoice, amounts are postive, for payment of credit note, amounts are negative
+	 *    For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
 	 *    @param	User	$user                	Object user
 	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
 	 *    @return   int                 			id of created payment, < 0 if error
 	 */
-	function create($user,$closepaidinvoices=0)
+	function create($user, $closepaidinvoices=0)
 	{
 		global $conf, $langs;
 
@@ -190,6 +190,7 @@ class Paiement extends CommonObject
 		// Check parameters
         if (empty($totalamount) && empty($atleastonepaymentnotnull))	 // We accept negative amounts for withdraw reject but not empty arrays
         {
+        	$this->errors[]='TotalAmountEmpty';
         	$this->error='TotalAmountEmpty';
         	return -1;
         }
@@ -232,11 +233,12 @@ class Paiement extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
+						$invoice=new Facture($this->db);
+						$invoice->fetch($facid);
+
 						// If we want to closed payed invoices
 					    if ($closepaidinvoices)
 					    {
-					        $invoice=new Facture($this->db);
-					        $invoice->fetch($facid);
                             $paiement = $invoice->getSommePaiement();
                             $creditnotes=$invoice->getSumCreditNotesUsed();
                             $deposits=$invoice->getSumDepositsUsed();
@@ -338,25 +340,24 @@ class Paiement extends CommonObject
                                     }
                                 }
                             }
-
-                            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-                            {
-                            	$outputlangs = $langs;
-                            	if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
-                            	if (! empty($newlang)) {
-                            		$outputlangs = new Translate("", $conf);
-                            		$outputlangs->setDefaultLang($newlang);
-                            	}
-                            	$ret = $invoice->fetch($id); // Reload to get new records
-
-                            	$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
-                            	if ($result < 0) {
-                            		setEventMessages($invoice->error, $invoice->errors, 'errors');
-                            		$error++;
-                            	}
-
-                            }
 					    }
+
+					    // Regenerate documents of invoices
+                        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+                        {
+                            $outputlangs = $langs;
+                            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                            if (! empty($newlang)) {
+                            	$outputlangs = new Translate("", $conf);
+                            	$outputlangs->setDefaultLang($newlang);
+                            }
+                            $ret = $invoice->fetch($facid); // Reload to get new records
+                            $result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+                            if ($result < 0) {
+                            	setEventMessages($invoice->error, $invoice->errors, 'errors');
+                            	$error++;
+                            }
+                        }
 					}
 					else
 					{
@@ -1133,4 +1134,29 @@ class Paiement extends CommonObject
 		return '';
 	}
 
+	/**
+	 *    	Load the third party of object, from id into this->thirdparty
+	 *
+	 *		@param		int		$force_thirdparty_id	Force thirdparty id
+	 *		@return		int								<0 if KO, >0 if OK
+	 */
+	function fetch_thirdparty($force_thirdparty_id=0)
+	{
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
+		if (empty($force_thirdparty_id))
+		{
+			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first supplier invoice to get him
+			if (!empty($billsarray))
+			{
+				$invoice = new Facture($this->db);
+				if ($invoice->fetch($billsarray[0]) > 0)
+				{
+					$force_thirdparty_id = $invoice->fk_soc;
+				}
+			}
+		}
+
+		return parent::fetch_thirdparty($force_thirdparty_id);
+	}
 }

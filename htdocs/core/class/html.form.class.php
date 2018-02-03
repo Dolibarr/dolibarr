@@ -135,7 +135,7 @@ class Form
 	 * @param	string	$value			Value to show/edit
 	 * @param	object	$object			Object
 	 * @param	boolean	$perm			Permission to allow button to edit parameter
-	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datepickerhour', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols%', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datepickerhour', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
 	 * @param	object	$extObject		External object
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -190,7 +190,7 @@ class Form
 						$morealt=' style="width: '.$cols.'"';
 						$cols='';
 					}
-					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'').$morealt.'">'.($editvalue?$editvalue:$value).'</textarea>';
+					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'class="quatrevingtpercent"').$morealt.'">'.($editvalue?$editvalue:$value).'</textarea>';
 				}
 				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
 				{
@@ -212,7 +212,7 @@ class Form
 				}
 				else if (preg_match('/^ckeditor/',$typeofdata))
 				{
-					$tmp=explode(':',$typeofdata);
+					$tmp=explode(':',$typeofdata);		// Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					$doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), true, true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
 					$ret.=$doleditor->Create(1);
@@ -523,8 +523,13 @@ class Form
 			}
 		}
 
-		// If info or help with smartphone, show only text (tooltip can't works)
-		if (! empty($conf->dol_no_mouse_hover))
+		// If info or help with smartphone, show only text (tooltip hover can't works)
+		if (! empty($conf->dol_no_mouse_hover) && empty($tooltiptrigger))
+		{
+			if ($type == 'info' || $type == 'help') return $text;
+		}
+		// If info or help with smartphone, show only text (tooltip on lick does not works with dialog on smaprtphone)
+		if (! empty($conf->dol_no_mouse_hover) && ! empty($tooltiptrigger))
 		{
 			if ($type == 'info' || $type == 'help') return $text;
 		}
@@ -1442,7 +1447,7 @@ class Form
 	 *  @param  array	$exclude        Array list of users id to exclude
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that other must be disabled
+	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
 	 *  @param	int		$force_entity	0 or Id of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
@@ -1481,7 +1486,7 @@ class Form
 
 		$out='';
 
-		// On recherche les utilisateurs
+		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
@@ -1721,7 +1726,7 @@ class Form
 	 *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
-	 *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 *  @param		int			$status					Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
 	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
 	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
@@ -1735,7 +1740,7 @@ class Form
 	 *										            'warehouseopen' = select products from open warehouses,
 	 *										            'warehouseclosed' = select products from closed warehouses,
 	 *										            'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @return		void
 	 */
 	function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0, $morecss='', $hidepriceinlabel=0, $warehouseStatus='', $selected_combinations = array())
@@ -1909,8 +1914,9 @@ class Form
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
 		//Price by customer
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
-			$sql.=' ,pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid))
+		{
+			$sql.=', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
 			$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
 			$selectFields.= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx";
 		}
@@ -1925,11 +1931,11 @@ class Form
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$sql.= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
-			if ($price_level >= 1 && !empty($conf->global->PRODUIT_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
+			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
 			$sql.= " ORDER BY date_price";
 			$sql.= " DESC LIMIT 1) as price_rowid";
-			$sql.= ", (SELECT pp.price_by_qty FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
-			if ($price_level >= 1 && !empty($conf->global->PRODUIT_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
+			$sql.= ", (SELECT pp.price_by_qty FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";	// price_by_qty is 1 if some prices by qty exists in subtable
+			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
 			$sql.= " ORDER BY date_price";
 			$sql.= " DESC LIMIT 1) as price_by_qty";
 			$selectFields.= ", price_rowid, price_by_qty";
@@ -2045,7 +2051,7 @@ class Form
 
 				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
-					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
+					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 					$sql.= " WHERE fk_product_price=".$objp->price_rowid;
 					$sql.= " ORDER BY quantity ASC";
@@ -2059,12 +2065,17 @@ class Form
 						while ($nb_prices && $j < $nb_prices) {
 							$objp2 = $this->db->fetch_object($result2);
 
+							$objp->price_by_qty_rowid = $objp2->rowid;
+							$objp->price_by_qty_price_base_type = $objp2->price_base_type;
+							$objp->price_by_qty_quantity = $objp2->quantity;
+							$objp->price_by_qty_unitprice = $objp2->unitprice;
+							$objp->price_by_qty_remise_percent = $objp2->remise_percent;
+							// For backward compatibility
 							$objp->quantity = $objp2->quantity;
 							$objp->price = $objp2->price;
 							$objp->unitprice = $objp2->unitprice;
 							$objp->remise_percent = $objp2->remise_percent;
 							$objp->remise = $objp2->remise;
-							$objp->price_by_qty_rowid = $objp2->rowid;
 
 							$this->constructProductListOption($objp, $opt, $optJson, 0, $selected, $hidepriceinlabel);
 
@@ -2164,7 +2175,10 @@ class Form
 
 		$opt = '<option value="'.$objp->rowid.'"';
 		$opt.= ($objp->rowid == $selected)?' selected':'';
-		$opt.= (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)?' pbq="'.$objp->price_by_qty_rowid.'"':'';
+		if (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)
+		{
+			$opt.= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
+		}
 		if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
 		{
 			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
@@ -2376,7 +2390,7 @@ class Form
 	 *	Return list of suppliers products
 	 *
 	 *	@param	int		$socid   		Id societe fournisseur (0 pour aucun filtre)
-	 *	@param  int		$selected       Produit pre-selectionne
+	 *	@param  int		$selected       Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
 	 *	@param  string	$htmlname       Nom de la zone select
 	 *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	@param  string	$filtre         Pour filtre sql
@@ -5261,7 +5275,7 @@ class Form
 		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
 
 		$fieldstoshow='t.ref';
-		if (! empty($objecttmp->fields))
+		if (! empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields ( like societe, contact, ...)
 		{
 			$tmpfieldstoshow='';
 			foreach($objecttmp->fields as $key => $val)
@@ -5281,7 +5295,11 @@ class Form
 		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE t.entity IN (".getEntity($objecttmp->table_element).")";
-		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->societe_id)) $sql.= " AND t.fk_soc = ".$user->societe_id;
+		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->societe_id))
+		{
+			if ($objecttmp->element == 'societe') $sql.= " AND t.rowid = ".$user->societe_id;
+				else $sql.= " AND t.fk_soc = ".$user->societe_id;
+		}
 		if ($searchkey != '') $sql.=natural_search(explode(',',$fieldstoshow), $searchkey);
 		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND t.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -6221,7 +6239,6 @@ class Form
 			$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters, $object);    // Note that $action and $object may have been modified by hook
 			$object->next_prev_filter.=$hookmanager->resPrint;
 		}
-
 		$previous_ref = $next_ref = '';
 		if ($shownav)
 		{
@@ -6235,8 +6252,11 @@ class Form
 				$navurl = preg_replace('/\/tasks\/(task|contact|time|note|document)\.php/','/tasks.php',$navurl);
 				$paramid='ref';
 			}
-			$previous_ref = $object->ref_previous?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-			$next_ref     = $object->ref_next?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
+
+			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+			// accesskey is for Mac:               CTRL + key for all browsers
+			$previous_ref = $object->ref_previous?'<a accesskey="p" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+			$next_ref     = $object->ref_next?'<a accesskey="n" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 		}
 
 		//print "xx".$previous_ref."x".$next_ref;

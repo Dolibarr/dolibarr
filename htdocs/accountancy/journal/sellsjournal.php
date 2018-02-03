@@ -81,7 +81,7 @@ if ($pastmonth == 0) {
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
@@ -89,7 +89,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 
 $idpays = $mysoc->country_id;
 
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr,";
+$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
@@ -115,10 +115,12 @@ if ($date_start && $date_end)
 if ($in_bookkeeping == 'already')
 {
 	$sql .= " AND f.rowid IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
+	//	$sql .= " AND fd.rowid IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 if ($in_bookkeeping == 'notyet')
 {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
+//	$sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 $sql .= " ORDER BY f.datef";
 
@@ -188,6 +190,7 @@ if ($result) {
 		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
 		$tabfac[$obj->rowid]["description"] = $obj->label_compte;
+		$tabfac[$obj->rowid]["close_code"] = $obj->close_code;		// close_code = 'replaced' for replacement invoices (not used in most european countries)
 		//$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
 
 		// Avoid warnings
@@ -220,6 +223,9 @@ if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
+	$companystatic = new Societe($db);
+	$invoicestatic = new Facture($db);
+
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 
 		$errorforline = 0;
@@ -229,19 +235,35 @@ if ($action == 'writebookkeeping') {
 
 		$db->begin();
 
-		$companystatic = new Societe($db);
-		$invoicestatic = new Facture($db);
-
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
-		$companystatic->client = $tabcompany[$key]['code_client'];
+		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
 		$invoicestatic->ref = (string) $val["ref"];
+		$invoicestatic->type = $val["type"];
+		$invoicestatic->close_code = $val["close_code"];
+
+		$date = dol_print_date($val["date"], 'day');
+
+		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		$replacedinvoice = 0;
+		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED)
+		{
+			$replacedinvoice = 1;
+			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
+			if ($alreadydispatched) $replacedinvoice = 2;
+		}
+
+		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
+		if ($replacedinvoice == 1)
+		{
+			continue;
+		}
 
 		// Thirdparty
 		if (! $errorforline)
@@ -478,12 +500,33 @@ if ($action == 'exportcsv') {
 	{
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->client = $tabcompany[$key]['code_client'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
+		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
-		$invoicestatic->ref = $val["ref"];
+		$invoicestatic->ref = (string) $val["ref"];
+		$invoicestatic->type = $val["type"];
+		$invoicestatic->close_code = $val["close_code"];
 
 		$date = dol_print_date($val["date"], 'day');
+
+		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		$replacedinvoice = 0;
+		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED)
+		{
+			$replacedinvoice = 1;
+			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
+			if ($alreadydispatched) $replacedinvoice = 2;
+		}
+
+		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
+		if ($replacedinvoice == 1)
+		{
+			continue;
+		}
 
 		// Third party
 		foreach ($tabttc[$key] as $k => $mt) {
@@ -569,7 +612,7 @@ if (empty($action) || $action == 'view') {
 		$description .= $langs->trans("DepositsAreIncluded");
 
 	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
-	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
 
@@ -600,6 +643,7 @@ if (empty($action) || $action == 'view') {
 			$("div.fiche form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
+			console.log("click on writebookkeeping");
 			$("div.fiche form input[name=\"action\"]").val("writebookkeeping");
 			$("div.fiche form input[type=\"submit\"]").click();
 			$("div.fiche form input[name=\"action\"]").val("");
@@ -627,25 +671,64 @@ if (empty($action) || $action == 'view') {
 
 	$r = '';
 
-	$invoicestatic = new Facture($db);
 	$companystatic = new Client($db);
+	$invoicestatic = new Facture($db);
 
-	foreach ( $tabfac as $key => $val ) {
+	foreach ( $tabfac as $key => $val )
+	{
+		$companystatic->id = $tabcompany[$key]['id'];
+		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
+		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
+		$companystatic->client = 3;
+
 		$invoicestatic->id = $key;
-		$invoicestatic->ref = $val["ref"];
+		$invoicestatic->ref = (string) $val["ref"];
 		$invoicestatic->type = $val["type"];
+		$invoicestatic->close_code = $val["close_code"];
 
 		$date = dol_print_date($val["date"], 'day');
 
+		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		$replacedinvoice = 0;
+		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED)
+		{
+			$replacedinvoice = 1;
+			$alreadydispatched = $invoicestatic->getVentilExportCompta();	// Test if replaced invoice already into bookkeeping.
+			if ($alreadydispatched) $replacedinvoice = 2;
+		}
+
+		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
+		if ($replacedinvoice == 1)
+		{
+			print '<tr class="oddeven">';
+			print "<td><!-- Replaced invoice --></td>";
+			print "<td>" . $date . "</td>";
+			print "<td><strike>" . $invoicestatic->getNomUrl(1) . "</strike></td>";
+			// Account
+			print "<td>";
+			print $langs->trans("Replaced");
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			print '</td>';
+			print "<td>";
+			print "</td>";
+			print '<td align="right"></td>';
+			print '<td align="right"></td>';
+			print "</tr>";
+			continue;
+		}
+
 		// Third party
-		foreach ( $tabttc[$key] as $k => $mt ) {
+		foreach ($tabttc[$key] as $k => $mt)
+		{
 			print '<tr class="oddeven">';
 			print "<td><!-- Thirdparty --></td>";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-			$companystatic->id = $tabcompany[$key]['id'];
-			$companystatic->name = $tabcompany[$key]['name'];
-			$companystatic->customer_code = $tabcompany[$key]['code_client'];
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
@@ -671,7 +754,8 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Product / Service
-		foreach ( $tabht[$key] as $k => $mt ) {
+		foreach ($tabht[$key] as $k => $mt)
+		{
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 
@@ -703,7 +787,8 @@ if (empty($action) || $action == 'view') {
 
 		// VAT
 		$listoftax = array(0, 1, 2);
-		foreach ($listoftax as $numtax) {
+		foreach ($listoftax as $numtax)
+		{
 			$arrayofvat = $tabtva;
 			if ($numtax == 1) $arrayofvat = $tablocaltax1;
 			if ($numtax == 2) $arrayofvat = $tablocaltax2;

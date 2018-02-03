@@ -89,6 +89,7 @@ AccountIdShort=数
 LineRecord=トランザクション
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=による和解
 DateConciliating=日付を調整する
 BankLineConciliated=Entry reconciled

@@ -158,7 +158,7 @@ NumPiece=Del nummer
 TransactionNumShort=Transaksjonsnummer
 AccountingCategory=Personlige grupper
 GroupByAccountAccounting=Grupper etter regnskapskonto
-AccountingAccountGroupsDesc=Her kan du definere noen grupper av regnskapskontoer. Den blir brukt i rapporten <b> %s</b> for å vise inntekt/utgift med data gruppert i henhold til disse gruppene.
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=Etter kontoer
 ByPredefinedAccountGroups=Etter forhåndsdefinerte grupper
 ByPersonalizedAccountGroups=Etter personlige grupper
@@ -191,6 +191,7 @@ DescThirdPartyReport=Liste over kunder og leverandører og deres regnskapskontoe
 ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
 
 Pcgtype=Kontogruppe
 Pcgsubtype=Konto-undergruppe
@@ -244,7 +245,6 @@ ErrorAccountingJournalIsAlreadyUse=Denne journalen er allerede i bruk
 ## Export
 ExportDraftJournal=Eksporter utkastjournal
 Modelcsv=Eksportmodell
-OptionsDeactivatedForThisExportModel=For denne eksportmodellen er opsjoner deaktivert
 Selectmodelcsv=Velg eksportmodell
 Modelcsv_normal=Klassisk eksport
 Modelcsv_CEGID=Eksport til CEGID Expert Comptabilité
@@ -254,7 +254,7 @@ Modelcsv_ciel=Eksport til Sage Ciel Compta eller Compta Evolution
 Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
 Modelcsv_ebp=Eksporter mot EBP
 Modelcsv_cogilog=Eksport mot Cogilog
-Modelcsv_agiris=Eksport mot Agiris (Test)
+Modelcsv_agiris=Export mot Agiris
 Modelcsv_configurable=Eksport konfigurerbar
 ChartofaccountsId=Kontoplan ID
 

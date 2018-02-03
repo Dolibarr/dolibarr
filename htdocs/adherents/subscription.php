@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
@@ -36,17 +36,27 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("members");
-$langs->load("users");
-$langs->load("mails");
-$langs->load('other');
+$langs->loadLangs(array("companies","bills","members","users","mails",'other'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$rowid=GETPOST('rowid','int');
+$rowid=GETPOST('rowid','int')?GETPOST('rowid','int'):GETPOST('id','int');
 $typeid=GETPOST('typeid','int');
+
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+// Default sort order (if not yet defined by previous GETPOST)
+if (! $sortfield) $sortfield="c.rowid";
+if (! $sortorder) $sortorder="DESC";
+
 
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'','cotisation');
@@ -97,6 +107,7 @@ $hookmanager->initHooks(array('subscription'));
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
 
 /*
  * 	Actions
@@ -582,6 +593,16 @@ $title=$langs->trans("Member") . " - " . $langs->trans("Subscriptions");
 $helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
 llxHeader("",$title,$helpurl);
 
+
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+$param.= '&id='.$rowid;
+if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
+// Add $param from extra fields
+//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+
 if ($rowid > 0)
 {
     $res=$object->fetch($rowid);
@@ -776,7 +797,7 @@ if ($rowid > 0)
 
 
     /*
-     * Hotbar
+     * Action buttons
      */
 
     // Button to create a new subscription if member no draft neither resiliated
@@ -810,6 +831,7 @@ if ($rowid > 0)
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
         $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
+		$sql.= $db->order($sortfield, $sortorder);
 
         $result = $db->query($sql);
         if ($result)
@@ -822,7 +844,7 @@ if ($rowid > 0)
             print '<table class="noborder" width="100%">'."\n";
 
             print '<tr class="liste_titre">';
-            print '<td>'.$langs->trans("Ref").'</td>';
+            print_liste_field_titre('Ref',$_SERVER["PHP_SELF"],'c.rowid','',$param,'',$sortfield,$sortorder);
             print '<td align="center">'.$langs->trans("DateCreation").'</td>';
             print '<td align="center">'.$langs->trans("DateStart").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
@@ -1016,8 +1038,9 @@ if ($rowid > 0)
             $paymentdate=dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
         }
 
+        print '<tr>';
         // Date start subscription
-        print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
+        print '<td class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
         if (GETPOST('reday'))
         {
             $datefrom=dol_mktime(0,0,0,GETPOST('remonth'),GETPOST('reday'),GETPOST('reyear'));

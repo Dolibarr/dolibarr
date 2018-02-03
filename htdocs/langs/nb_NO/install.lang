@@ -141,6 +141,7 @@ KeepDefaultValuesProxmox=Du bruker Dolibarrs konfigureringsveiviser fra en Proxm
 UpgradeExternalModule=Kjør dedikert oppgradering av eksterne moduler
 SetAtLeastOneOptionAsUrlParameter=Angi minst ett alternativ som et parameter i URL. For eksempel: '... repair.php?standard=confirmed'
 NothingToDelete=Ingenting å rengjøre/slette
+NothingToDo=Ingenting å gjøre
 #########
 # upgrade
 MigrationFixData=Reparasjon av ødelagte data
@@ -196,6 +197,7 @@ MigrationEventsContact=Overføring av hendelser for å legge til hendelseskontak
 MigrationRemiseEntity=Oppdater verdien i enhetsfeltet llx_societe_remise
 MigrationRemiseExceptEntity=Oppdater verdien i enhetsfeltet llx_societe_remise_except
 MigrationReloadModule=Last inn modulen %s på nytt
+MigrationResetBlockedLog=Tilbakestill modul BlockedLog for v7 algoritme
 ShowNotAvailableOptions=Vis utilgjengelige opsjoner
 HideNotAvailableOptions=Gjem utilgjengelige opsjoner
 ErrorFoundDuringMigration=Feil ble rapportert under migrasjonsprosessen, så neste steg er ikke tilgjengelig. For å overse feil, kan du <a href="%s">klikke her</a>, men applikasjoner eller noen funksjoner kanskje ikke fungerer som de skal før de er fikset.

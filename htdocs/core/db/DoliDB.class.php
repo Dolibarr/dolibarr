@@ -85,10 +85,11 @@ abstract class DoliDB implements Database
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    int		$param      	Date TMS to convert
-	 *   @return	string      			Date in a string YYYYMMDDHHMMSS
+	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	function idate($param)
 	{
+		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
 		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
 	}
 
@@ -279,6 +280,7 @@ abstract class DoliDB implements Database
 	 */
 	function jdate($string, $gm=false)
 	{
+		// TODO GMT must set param gm to true by default
 		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
 		$string=preg_replace('/([^0-9])/i','',$string);
 		$tmp=$string.'000000';

@@ -30,6 +30,13 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande')))
@@ -49,7 +56,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
-if (in_array($object->element,array('propal', 'supplier_proposal','facture','facturerec','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 ?>
 
@@ -69,7 +76,7 @@ if ($nolinesbefore) {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td class="linecolrefsupplier" align="right"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierProposalRefFourn'); ?></span></td>
+		<td class="linecolrefsupplier" align="right"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
 	<?php } ?>
 	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
@@ -124,7 +131,7 @@ if ($nolinesbefore) {
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>
-	<td class="linecolnum" align="center" width="5">
+	<td class="nobottom linecolnum" align="center" width="5">
 	<?php
 }
 else {
@@ -135,49 +142,54 @@ else {
 	<td class="nobottom linecoldescription minwidth500imp">
 
 	<?php
-
-	$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
-	if ($object->element == 'contrat')
+	
+	$freelines = false;
+	if (empty($conf->global->MAIN_DISABLE_FREE_LINES))
 	{
-		if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
-		else $forceall=0;
-	}
-
-	// Free line
-	echo '<span class="prod_entry_mode_free">';
-	// Show radio free line
-	if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-	{
-		echo '<label for="prod_entry_mode_free">';
-		echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
-		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
-		echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
-		echo '> ';
-		// Show type selector
-		echo $langs->trans("FreeLineOfType");
-		echo '</label>';
-		echo ' ';
-	}
-	else
-	{
-		echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
-		// Show type selector
-		if ($forceall >= 0)
+		$freelines = true;
+		$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
+		if ($object->element == 'contrat')
 		{
-		    if (empty($conf->product->enabled) || empty($conf->service->enabled)) echo $langs->trans("Type");
-			else echo $langs->trans("FreeLineOfType");
+			if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
+			else $forceall=0;
+		}
+	
+		// Free line
+		echo '<span class="prod_entry_mode_free">';
+		// Show radio free line
+		if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+		{
+			echo '<label for="prod_entry_mode_free">';
+			echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
+			//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
+			echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
+			echo '> ';
+			// Show type selector
+			echo $langs->trans("FreeLineOfType");
+			echo '</label>';
 			echo ' ';
 		}
+		else
+		{
+			echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
+			// Show type selector
+			if ($forceall >= 0)
+			{
+			    if (empty($conf->product->enabled) || empty($conf->service->enabled)) echo $langs->trans("Type");
+				else echo $langs->trans("FreeLineOfType");
+				echo ' ';
+			}
+		}
+	
+		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
+	
+		echo '</span>';
 	}
-
-	echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
-
-	echo '</span>';
 
 	// Predefined product/service
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
-		if ($forceall >= 0) echo '<br>';
+		if ($forceall >= 0 && $freelines) echo '<br>';
 		echo '<span class="prod_entry_mode_predef">';
 		echo '<label for="prod_entry_mode_predef">';
 		echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
@@ -201,14 +213,14 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			if ($conf->global->ENTREPOT_EXTRA_STATUS)
+			if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 			{
 				// hide products in closed warehouse, but show products for internal transfer
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id, '1', 0, '', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 			}
 			else
 			{
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(),$buyer->id, '1', 0, '', 0, '', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
 			}
 		}
 		else
@@ -231,6 +243,7 @@ else {
 
 			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice);
 		}
+		echo '<input type="hidden" name="pbq" id="pbq" value="">';
 		echo '</span>';
 	}
 
@@ -277,7 +290,7 @@ else {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td class="nobottom linecolresupplier" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" size="10" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
+		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref",'alpha',2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat" align="right"><?php
@@ -395,9 +408,6 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 {
 	$colspan = 6;
 
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-		$colspan++;
-	}
 	if ($this->situation_cycle_ref) {
 		$colspan++;
 	}
@@ -439,6 +449,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	?>
 
 	<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
 	<td colspan="<?php echo $colspan; ?>">
 	<?php
 	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
@@ -584,6 +595,13 @@ jQuery(document).ready(function() {
 		setforpredef();
 		jQuery('#trlinefordates').show();
 	});
+	
+	<?php
+	if(!$freelines) { ?>
+		$("#prod_entry_mode_predef").click();
+	<?php
+	}
+	?>
 
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
@@ -701,6 +719,28 @@ jQuery(document).ready(function() {
   		<?php
         }
         ?>
+
+        /* To process customer price per quantity */
+        var pbq = $('option:selected', this).attr('data-pbq');
+        var pbqqty = $('option:selected', this).attr('data-pbqqty');
+        var pbqpercent = $('option:selected', this).attr('data-pbqpercent');
+        if (jQuery('#idprod').val() > 0 && typeof pbq !== "undefined")
+        {
+            console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
+            jQuery("#pbq").val(pbq);
+            if (jQuery("#qty").val() < pbqqty)
+            {
+                    jQuery("#qty").val(pbqqty);
+            }
+            if (jQuery("#remise_percent").val() < pbqpercent)
+            {
+                    jQuery("#remise_percent").val(pbqpercent);
+            }
+        }
+        else
+        {
+            jQuery("#pbq").val('');
+        }
 
   		/* To set focus */
   		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)

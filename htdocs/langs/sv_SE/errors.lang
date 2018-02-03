@@ -156,6 +156,7 @@ ErrorPriceExpression20=Tomma uttryck
 ErrorPriceExpression21=Tomt resultat '%s'
 ErrorPriceExpression22=Negativt resultat '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=Internt fel '%s'
 ErrorPriceExpressionUnknown=Okänt fel '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Källa och mål lager måste skiljer

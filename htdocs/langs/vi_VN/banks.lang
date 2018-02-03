@@ -89,6 +89,7 @@ AccountIdShort=Số
 LineRecord=Giao dịch
 AddBankRecord=Thêm kê khai
 AddBankRecordLong=Thêm kê khai thủ công
+Conciliated=Đã đối chiếu
 ConciliatedBy=Đối chiếu bởi
 DateConciliating=Ngày đối chiếu
 BankLineConciliated=Kê khai đã đối chiếu

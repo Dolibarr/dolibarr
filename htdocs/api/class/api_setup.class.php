@@ -628,7 +628,6 @@ class Setup extends DolibarrApi
     		else
     		{
     			throw new RestException(500, $langs->trans('XmlNotFound') . ': ' . $xmlfile);
-    			$error++;
     		}
     	}
     	else
@@ -646,13 +645,12 @@ class Setup extends DolibarrApi
     		{
     			$errormsg=$langs->trans('XmlNotFound') . ': ' . $xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
     			throw new RestException(500, $errormsg);
-    			$error++;
     		}
     	}
 
 
 
-    	if (! $error && $xml)
+    	if ($xml)
     	{
     		$checksumconcat = array();
     		$file_list = array();
@@ -873,7 +871,6 @@ class Setup extends DolibarrApi
     		else
     		{
     			throw new RestException(500, 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile);
-    			$error++;
     		}
 
 

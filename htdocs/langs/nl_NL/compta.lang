@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Betalingen niet gekoppeld aan een factuur, dus niet g
 PaymentsNotLinkedToUser=Betalingen niet gekoppeld aan een gebruiker
 Profit=Winst
 AccountingResult=Boekhoudkundig resultaat
+BalanceBefore=Balance (before)
 Balance=Saldo
 Debit=Debet
 Credit=Credit

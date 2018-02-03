@@ -344,7 +344,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 300px;
+	min-width: 320px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -354,6 +354,7 @@ input.buttonpayment {
 	text-align: <?php echo $left; ?>;
 	border: 2px solid #ccc;
 	background-color: #eee;
+	white-space: normal;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
@@ -794,7 +795,7 @@ input > ul.attendees {
     min-height: 0.01%;
 }
 .div-table-responsive {
-    line-height: 100%;
+    line-height: 120%;
 }
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
@@ -859,6 +860,7 @@ select.selectarrowonleft option {
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
 }
+.width25  { width: 25px; }
 .width50  { width: 50px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
@@ -1012,6 +1014,13 @@ select.selectarrowonleft option {
    	}
 	div.statusref img {
     	padding-right: 3px !important;
+   	}
+	div.statusrefbis {
+    	padding-right: 3px !important;
+   	}
+
+   	input.buttonpayment {
+		min-width: 300px;
    	}
 }
 .linkobject { cursor: pointer; }
@@ -1338,6 +1347,11 @@ div.statusref img {
     padding-left: 8px;
     padding-right: 9px;
     vertical-align: text-bottom;
+}
+div.statusrefbis {
+    padding-left: 8px;
+   	padding-right: 9px;
+   	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
@@ -2200,7 +2214,7 @@ a.tabTitle {
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 7px 9px 7px;
+	padding: 12px 9px 12px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -2999,9 +3013,13 @@ div .tdtop {
  *  Boxes
  */
 
-.ficheaddleft div.boxstats {
-    border: none;
+.box {
+    overflow-x: auto;
+    min-height: 40px;
 }
+/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+    border: none;
+}*/
 .boxstatsborder {
     border: 1px solid #CCC !important;
 }
@@ -3020,6 +3038,7 @@ div .tdtop {
 .boxstats {
     padding: 3px;
     width: 100px;
+    min-height: 40px;
 }
 .boxstats130 {
     width: 135px;
@@ -3034,12 +3053,12 @@ div .tdtop {
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
-	.boxstats, .boxstats130 {
-        width: 90px;
-    }
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
+    }
+    .boxstats130 {
+    	width: 148px;
     }
     .boxstats {
         width: 100px;
@@ -3175,43 +3194,42 @@ div.ok {
   color: #114466;
 }
 
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
+    padding-top: 8px;
+    padding-left: 10px;
+    padding-right: 4px;
+    padding-bottom: 8px;
+    margin: 0.5em 0em 0.5em 0em;
+    background: #eff8fc;
+}
+
 /* Warning message */
 div.warning {
-  color: #302020;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  /* border: 1px solid #e0d0b0; */
-  border: 2px solid #805000
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  /* background: #EFDF9A; */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
+    background: #fcf8e3;
+}
+div.warning a, div.info a, div.error a {
+	color: rgb(<?php echo $colortext; ?>);
 }
 
 /* Error message */
 div.error {
-  color: #550000; font-weight: bold;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DC9CAB;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+    border-<?php print $left; ?>: solid 5px #f28787;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
   background: #EFCFCF;
 }
 
-/* Info admin */
-div.info {
-  color: #fff;
-  padding: 0.4em 0.4em 0.4em 0.4em;
-  margin: 0.5em 0em 0.5em 0em;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background: #989;
-}
-
-div.warning a, div.info a, div.error a {
-	color: rgb(<?php echo $colortext; ?>);
-}
 
 /*
  *   Liens Payes/Non payes
@@ -3234,7 +3252,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  */
 
 .product_line_stock_ok { color: #002200; }
-.product_line_stock_too_low { color: #664400; }
+.product_line_stock_too_low { color: #884400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
@@ -3296,7 +3314,7 @@ div.titre {
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
+#dolpaymenttable { min-width: 300px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -3372,20 +3390,19 @@ div#card-errors {
 /* ============================================================================== */
 
 table.valid {
-    border-top: solid 1px #E6E6E6;
-    border-<?php print $left; ?>: solid 1px #E6E6E6;
-    border-<?php print $right; ?>: solid 1px #444444;
-    border-bottom: solid 1px #555555;
-	padding-top: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
+    /* border-top: solid 1px #E6E6E6; */
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+    /* border-<?php print $right; ?>: solid 1px #444444;
+    border-bottom: solid 1px #555555; */
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 4px;
 	margin: 0px 0px;
-    background: #D5BAA8;
+    background: #fcf8e3;
 }
 
 .validtitre {
-    background: #D5BAA8;
 	font-weight: bold;
 }
 
@@ -3678,17 +3695,21 @@ td.gtaskname {
 
 
 /* ============================================================================== */
-/*  jQuery - jeditable                                                            */
+/*  jQuery - jeditable for inline edit                                            */
 /* ============================================================================== */
 
 .editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
+	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editkey_datepicker {
 	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/calendar.png',1) ?>) right center no-repeat;
 	cursor: pointer;
+	margin-right: 3px;
+	margin-top: 3px;
 }
 
 .editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
@@ -3844,6 +3865,12 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 
 
 /* Style to overwrites JQuery styles */
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    border: 1px solid #888;
+    background: rgb(<?php echo $colorbacktitle1; ?>);
+    color: unset;
+}
+
 .ui-menu .ui-menu-item a {
     text-decoration:none;
     display:block;
@@ -3988,6 +4015,48 @@ pre#editfilecontentaceeditorid {
 div.scroll2 {
 	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
+
+.gtaskname div, .gtaskname {
+	font-size: unset !important;
+}
+div.gantt, .gtaskheading, .gmajorheading, .gminorheading, .gminorheadingwkend {
+	font-size: unset !important;
+	font-weight: normal !important;
+	color: #000 !important;
+}
+div.gTaskInfo {
+    background: #f0f0f0 !important;
+}
+.gtaskblue {
+	background: rgb(108,152,185) !important;
+}
+.gtaskgreen {
+    background: rgb(160,173,58) !important;
+}
+td.gtaskname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+td.gminorheadingwkend {
+    color: #888 !important;
+}
+td.gminorheading {
+    color: #666 !important;
+}
+.glistlbl, .glistgrid {
+	width: 582px !important;
+}
+.gtaskname div, .gtaskname {
+    min-width: 250px !important;
+    max-width: 250px !important;
+    width: 250px !important;
+}
+.gpccomplete div, .gpccomplete {
+    min-width: 40px !important;
+    max-width: 40px !important;
+    width: 40px !important;
+}
+
 
 
 /* ============================================================================== */

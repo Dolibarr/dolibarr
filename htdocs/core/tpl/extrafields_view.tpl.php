@@ -24,6 +24,14 @@
  * $parameters
  * $cols
  */
+
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
@@ -123,7 +131,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			}
 			else
 			{
-				print $extrafields->showOutputField($key, $value);
+				print $extrafields->showOutputField($key, $value, '', (empty($extrafieldsobjectkey)?'':$extrafieldsobjectkey));
 			}
 			print '</td></tr>' . "\n";
 

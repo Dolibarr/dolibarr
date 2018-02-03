@@ -225,6 +225,8 @@ IfAmountHigherThan=如果数额高于 <strong>%s</strong>
 SourcesRepository=源库
 Chart=图表
 PassEncoding=Password encoding
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions removed
 
 ##### Export #####
 ExportsArea=导出区

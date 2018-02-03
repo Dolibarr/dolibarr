@@ -127,7 +127,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     	$res = $object->reprogram_jobs($user->login, $now);
     	if ($res > 0)
     	{
-    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported
+    		if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
     		{
     		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
     		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
@@ -140,7 +140,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		$action='';
     	}
 
-    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
+    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a redirect to avoid to run twice the job when using back
     	exit;
     }
 }
@@ -270,7 +270,7 @@ else
     $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
 }
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttontoshow, $num, $nbtotalofrecords, 'title_setup', 0, '', '', $limit);
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup', 0, $buttontoshow, '', $limit);
 
 
 print $langs->trans('CronInfo').'<br>';

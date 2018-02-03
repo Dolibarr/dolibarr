@@ -523,9 +523,6 @@ class Expedition extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				$file = $conf->expedition->dir_output . "/" .get_exdir($this->id, 2, 0, 0, $this, 'shipment') . "/" . $this->id.".pdf";
-				$this->pdf_filename = $file;
-
 				// Tracking url
 				$this->GetUrlTrackingStatus($obj->tracking_number);
 
@@ -1456,6 +1453,47 @@ class Expedition extends CommonObject
 			return -3;
 		}
 	}
+
+	/**
+	 *  Delete detail line
+	 *
+	 *  @param		User	$user			User making deletion
+	 *  @param		int		$lineid			Id of line to delete
+	 *  @return     int         			>0 if OK, <0 if KO
+	 */
+	function deleteline($user, $lineid)
+	{
+		global $user;
+
+		if ($this->statut == self::STATUS_DRAFT)
+		{
+			$this->db->begin();
+
+			$line=new ExpeditionLigne($this->db);
+
+			// For triggers
+			$line->fetch($lineid);
+
+			if ($line->delete($user) > 0)
+			{
+				//$this->update_price(1);
+
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+	}
+
 
 	/**
 	 *	Return clicable link of object (with eventually picto)

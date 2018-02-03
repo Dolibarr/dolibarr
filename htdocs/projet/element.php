@@ -103,8 +103,8 @@ $socid=$object->socid;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $projectid, 'projet&project');
 
-
 $hookmanager->initHooks(array('projectOverview'));
+
 
 /*
  *	View
@@ -302,7 +302,7 @@ $listofreferent=array(
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
 	'datefieldname'=>'date_commande',
-    'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id,		// No socid parameter here, the socid is often the customer and we create a supplier object
     'lang'=>'suppliers',
     'buttonnew'=>'AddSupplierOrder',
     'testnew'=>$user->rights->fournisseur->commande->creer,
@@ -314,7 +314,7 @@ $listofreferent=array(
 	'margin'=>'minus',
 	'table'=>'facture_fourn',
 	'datefieldname'=>'datef',
-    'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id,
+	'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id,		// No socid parameter here, the socid is often the customer and we create a supplier object
     'lang'=>'suppliers',
     'buttonnew'=>'AddSupplierInvoice',
     'testnew'=>$user->rights->fournisseur->facture->creer,
@@ -470,7 +470,7 @@ $listofreferent=array(
 );
 
 $parameters=array('listofreferent'=>$listofreferent);
-$resHook = $hookmanager->executeHooks('completeListOfReferent',$parameters,$object,$action);
+$resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
 if(!empty($hookmanager->resArray)) {
 

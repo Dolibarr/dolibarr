@@ -159,7 +159,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive)
 						{
-							$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename?$relativename.'/':'').$file));
+							$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename!=''?$relativename.'/':'').$file));
 						}
 					}
 					else if (! $isdir && (($types == "files") || ($types == "all")))
@@ -1273,10 +1273,12 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 
 
 /**
- *  Delete all preview files linked to object instance
+ *  Delete all preview files linked to object instance.
+ *  Note that preview image of PDF files is generated when required, by dol_banner_tab() for example.
  *
  *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
+ *  @see dol_convert_file
  */
 function dol_delete_preview($object)
 {
@@ -1297,19 +1299,39 @@ function dol_delete_preview($object)
 
 	$refsan = dol_sanitizeFileName($object->ref);
 	$dir = $dir . "/" . $refsan ;
-	$file = $dir . "/" . $refsan . ".pdf.png";
-	$multiple = $file . ".";
+	$filepreviewnew = $dir . "/" . $refsan . ".pdf_preview.png";
+	$filepreviewnewbis = $dir . "/" . $refsan . ".pdf_preview-0.png";
+	$filepreviewold = $dir . "/" . $refsan . ".pdf.png";
 
-	if (file_exists($file) && is_writable($file))
+	// For new preview files
+	if (file_exists($filepreviewnew) && is_writable($filepreviewnew))
 	{
-		if (! dol_delete_file($file,1))
+		if (! dol_delete_file($filepreviewnew,1))
 		{
-			$object->error=$langs->trans("ErrorFailedToDeleteFile",$file);
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$filepreviewnew);
+			return 0;
+		}
+	}
+	if (file_exists($filepreviewnewbis) && is_writable($filepreviewnewbis))
+	{
+		if (! dol_delete_file($filepreviewnewbis,1))
+		{
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$filepreviewnewbis);
+			return 0;
+		}
+	}
+	// For old preview files
+	if (file_exists($filepreviewold) && is_writable($filepreviewold))
+	{
+		if (! dol_delete_file($filepreviewold,1))
+		{
+			$object->error=$langs->trans("ErrorFailedToDeleteFile",$filepreviewold);
 			return 0;
 		}
 	}
 	else
 	{
+		$multiple = $filepreviewold . ".";
 		for ($i = 0; $i < 20; $i++)
 		{
 			$preview = $multiple.$i;
@@ -1684,7 +1706,15 @@ function dol_convert_file($fileinput, $ext='png', $fileoutput='')
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
 				$count = $image->getNumberImages();
-				$ret = $image->writeImages($fileoutput, true);
+
+				if (! dol_is_file($fileoutput) || is_writeable($fileoutput))
+				{
+					$ret = $image->writeImages($fileoutput, true);
+				}
+				else
+				{
+					dol_syslog("Warning: Failed to write cache preview file '.$fileoutput.'. Check permission on file/dir", LOG_ERR);
+				}
 				if ($ret) return $count;
 				else return -3;
 			}
@@ -1947,14 +1977,18 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser='', $refname='', $mode='read')
 {
-	global $user, $conf, $db;
+	global $conf, $db, $user;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
 
 	if (! is_object($fuser)) $fuser=$user;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
-	if (empty($entity)) $entity=0;
-	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file);
+	if (empty($entity))
+	{
+		if (empty($conf->multicompany->enabled)) $entity=1;
+		else $entity=0;
+	}
+	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
@@ -1975,6 +2009,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for miscellaneous medias files
 	if ($modulepart == 'medias' && !empty($dolibarr_main_data_root))
 	{
+		if (empty($entity) || empty($conf->medias->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		$accessallowed=1;
 		$original_file=$conf->medias->multidir_output[$entity].'/'.$original_file;
 	}
@@ -2133,6 +2168,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for categories
 	elseif ($modulepart == 'category' && !empty($conf->categorie->dir_output))
 	{
+		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->categorie->{$lire}) $accessallowed=1;
 		$original_file=$conf->categorie->multidir_output[$entity].'/'.$original_file;
 	}
@@ -2202,6 +2238,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for third parties
 	else if (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
 	{
+		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
@@ -2213,6 +2250,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping for contact
 	else if ($modulepart == 'contact' && !empty($conf->societe->dir_output))
 	{
+		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire})
 		{
 			$accessallowed=1;
@@ -2463,6 +2501,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// Wrapping pour les produits et services
 	else if ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
 	{
+		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;

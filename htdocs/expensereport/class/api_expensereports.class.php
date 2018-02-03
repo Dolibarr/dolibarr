@@ -361,7 +361,9 @@ class ExpenseReports extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-			$request_data = (object) $request_data;
+
+      // TODO Check the lineid $lineid is a line of ojbect
+
       $updateRes = $this->expensereport->deleteline($lineid);
       if ($updateRes == 1) {
         return $this->get($id);
@@ -402,7 +404,7 @@ class ExpenseReports extends DolibarrApi
 		}
 		else
 		{
-			throw new RestException(500, $this->task->error);
+			throw new RestException(500, $this->expensereport->error);
 		}
     }
 

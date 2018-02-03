@@ -23,6 +23,14 @@
  * $elementtype
  */
 
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $langs->load("modulebuilder");
 
 ?>
@@ -53,7 +61,6 @@ print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td align="center">'.$langs->trans("AlwaysEditable").'</td>';
 print '<td align="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
-if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center">'.$langs->trans("Hidden").'</td>';
 if ($conf->multicompany->enabled)  {
 	print '<td align="center">'.$langs->trans("Entities").'</td>';
 }
@@ -92,7 +99,6 @@ if (count($extrafields->attributes[$elementtype]['type']))
 else
 {
 	$colspan=9;
-	if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) $colspan++;
 
 	print '<tr class="oddeven">';
 	print '<td class="opacitymedium" colspan="'.$colspan.'">';

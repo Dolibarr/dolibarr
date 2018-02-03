@@ -102,7 +102,8 @@ if (GETPOST('removAll','alpha'))
  */
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
-	$trackid = GETPOST('trackid','aZ09');
+	if (empty($trackid)) $trackid = GETPOST('trackid','aZ09');
+
 	$subject='';$actionmsg='';$actionmsg2='';
 
 	$langs->load('mails');
@@ -112,7 +113,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
@@ -287,6 +288,51 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
+
+			// Feature to push mail sent into Sent folder
+			/* This code must be now included into the hook mail, method sendMailAfter
+			if (! empty($conf->dolimail->enabled))
+			{
+				$mailfromid = explode("#", $_POST['frommail'],3);	// $_POST['frommail'] = 'aaa#Sent# <aaa@aaa.com>'	// TODO Use a better way to define Sent dir.
+				if (count($mailfromid)==0) $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				else
+				{
+					$mbid = $mailfromid[1];
+
+					// IMAP Postbox
+					$mailboxconfig = new IMAP($db);
+					$mailboxconfig->fetch($mbid);
+					if ($mailboxconfig->mailbox_imap_host) $ref=$mailboxconfig->get_ref();
+
+					$mailboxconfig->folder_id=$mailboxconfig->mailbox_imap_outbox;
+					$mailboxconfig->userfolder_fetch();
+
+					if ($mailboxconfig->mailbox_save_sent_mails == 1)
+					{
+
+						$folder=str_replace($ref, '', $mailboxconfig->folder_cache_key);
+						if (!$folder) $folder = "Sent";	// Default Sent folder
+
+						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
+						if (FALSE === $mailboxconfig->mbox)
+						{
+							$info = FALSE;
+							$err = $langs->trans('Error3_Imap_Connection_Error');
+							setEventMessages($err,$mailboxconfig->element, null, 'errors');
+						}
+						else
+						{
+							$mailboxconfig->mailboxid=$_POST['frommail'];
+							$mailboxconfig->foldername=$folder;
+							$from = $mailfromid[0] . $mailfromid[2];
+							$imap=1;
+						}
+
+					}
+				}
+			}
+			*/
+
 			// Make substitution in email content
 			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
 			$substitutionarray['__EMAIL__'] = $sendto;
@@ -320,6 +366,27 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$error=0;
 
+					// Two hooks are available into method $mailfile->sendfile, so dedicated code is no more required
+					/*
+					if (! empty($conf->dolimail->enabled))
+					{
+						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
+						if ($mid)
+						{
+							// set imap flag answered if it is an answered mail
+							$dolimail=new DoliMail($db);
+							$dolimail->id = $mid;
+							$res=$dolimail->set_prop($user, 'answered',1);
+						}
+						if ($imap==1)
+						{
+							// write mail to IMAP Server
+							$movemail = $mailboxconfig->putMail($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$folder,$deliveryreceipt,$mailfile);
+							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
+							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings');
+						}
+					}*/
+
 					// Initialisation of datas
 					if (is_object($object))
 					{
@@ -344,7 +411,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     						$interface=new Interfaces($db);
     						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 							if ($result < 0) {
-    							$error++; $errors=$interface->errors;
+    							setEventMessages($interface->error, $interface->errors, 'errors');
     						}
 						}
 					}
@@ -359,8 +426,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessages($mesg, null, 'mesgs');
-						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
-						exit;
+
+  					$moreparam='';
+	  				if (isset($paramname2) || isset($paramval2)) $moreparam.= '&'.($paramname2?$paramname2:'mid').'='.$paramval2;
+		  			header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').$moreparam);
+			  		exit;
 					}
 				}
 				else

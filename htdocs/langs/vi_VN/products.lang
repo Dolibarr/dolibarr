@@ -196,6 +196,7 @@ CurrentProductPrice=Giá hiện tại
 AlwaysUseNewPrice=Luôn sử dụng giá hiện tại của sản phẩm / dịch vụ
 AlwaysUseFixedPrice=Sử dụng giá cố định
 PriceByQuantity=Giá thay đổi theo số lượng
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Phạm vi số lượng
 MultipriceRules=Quy tắc giá thành phần
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

@@ -78,7 +78,7 @@ abstract class CommonObject
 	 */
 	public $array_options=array();
 	/**
-	 * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
 	/**
@@ -505,17 +505,17 @@ abstract class CommonObject
 		if (! empty($this->phone_perso)) {
 			$out.=dol_print_phone($this->phone_perso,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePerso")); $outdone++;
 		}
-		if (! empty($this->fax)) {
-			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
-		}
 		if (! empty($this->office_phone)) {
 			$out.=dol_print_phone($this->office_phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
 		if (! empty($this->user_mobile)) {
 			$out.=dol_print_phone($this->user_mobile,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','mobile',$langs->trans("PhoneMobile")); $outdone++;
 		}
-		if (! empty($this->office_fax)) {
+		if (! empty($this->fax)) {
 			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
+		}
+		if (! empty($this->office_fax)) {
+			$out.=dol_print_phone($this->office_fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
 		}
 
 		$out.='<div style="clear: both;"></div>';
@@ -1414,6 +1414,10 @@ abstract class CommonObject
 		}
 		if ($fieldid == 'none') return 1;
 
+		// Security on socid
+		$socid = 0;
+		if ($user->societe_id > 0) $socid = $user->societe_id;
+
 		// this->ismultientitymanaged contains
 		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 		$alias = 's';
@@ -1422,18 +1426,25 @@ abstract class CommonObject
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
+		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id.' OR te.fk_soc IS NULL)';
 		if (! empty($filter))
 		{
 			if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
 			$sql.=$filter;
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql.= ' AND te.fk_soc = ' . $socid;
+		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql.= ' AND (te.fk_soc = ' . $socid.' OR te.fk_soc IS NULL)';
+		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') $sql.= ' AND te.rowid = ' . $socid;
+		//print 'socid='.$socid.' restrictiononfksoc='.$this->restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 
-		//print 'filter = '.$filter.' -> '.$sql."<br>";
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -1447,19 +1458,26 @@ abstract class CommonObject
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
+		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
+		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
 		$sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";  // ->ref must always be defined (set to id if field does not exists)
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id.' OR te.fk_soc IS NULL)';
 		if (! empty($filter))
 		{
 			if (! preg_match('/^\s*AND/i', $filter)) $sql.=" AND ";   // For backward compatibility
 			$sql.=$filter;
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
+		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql.= ' AND te.fk_soc = ' . $socid;
+		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql.= ' AND (te.fk_soc = ' . $socid.' OR te.fk_soc IS NULL)';
+		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') $sql.= ' AND te.rowid = ' . $socid;
+		//print 'socid='.$socid.' restrictiononfksoc='.$this->restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
-		//print $sql."<br>";
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -3506,7 +3524,7 @@ abstract class CommonObject
 
 			if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier')
 			{
-				print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierProposalRefFourn").'</span></td>';
+				print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
 			}
 
 			// VAT
@@ -4373,7 +4391,7 @@ abstract class CommonObject
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
 	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 */
-	function fetch_optionals($rowid=null,$optionsArray=null)
+	function fetch_optionals($rowid=null, $optionsArray=null)
 	{
 		if (empty($rowid)) $rowid=$this->id;
 
@@ -4518,16 +4536,30 @@ abstract class CommonObject
 
 			foreach($new_array_options as $key => $value)
 			{
-			   	$attributeKey = substr($key,8);   // Remove 'options_' prefix
-			   	$attributeType  = $extrafields->attribute_type[$attributeKey];
-			   	$attributeLabel = $extrafields->attribute_label[$attributeKey];
-			   	$attributeParam = $extrafields->attribute_param[$attributeKey];
+			   	$attributeKey      = substr($key,8);   // Remove 'options_' prefix
+			   	$attributeType     = $extrafields->attribute_type[$attributeKey];
+			   	$attributeLabel    = $extrafields->attribute_label[$attributeKey];
+			   	$attributeParam    = $extrafields->attribute_param[$attributeKey];
+			   	$attributeRequired = $extrafields->attribute_required[$attributeKey];
+
+			   	if ($attributeRequired)
+			   	{
+			   		$mandatorypb=false;
+			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb=true;
+			   		if ($this->array_options[$key] === '') $mandatorypb=true;
+			   		if ($mandatorypb)
+			   		{
+			   			$this->errors[]=$langs->trans('ErrorFieldRequired', $attributeLabel);
+			   			return -1;
+			   		}
+			   	}
+
 			   	switch ($attributeType)
 			   	{
 			   		case 'int':
 			  			if (!is_numeric($value) && $value!='')
 			   			{
-			   				$this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
+			   				$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 			   				return -1;
 			  			}
 			   			elseif ($value=='')
@@ -4551,23 +4583,27 @@ abstract class CommonObject
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
 		   			case 'link':
-						$param_list=array_keys($attributeParam ['options']);
+						$param_list=array_keys($attributeParam['options']);
 						// 0 : ObjectName
 						// 1 : classPath
 						$InfoFieldList = explode(":", $param_list[0]);
 						dol_include_once($InfoFieldList[1]);
 						if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 						{
-							$object = new $InfoFieldList[0]($this->db);
-							if ($value)
+							if ($value == '-1')	// -1 is key for no defined in combo list of objects
 							{
+								$new_array_options[$key]='';
+							}
+							elseif ($value)
+							{
+								$object = new $InfoFieldList[0]($this->db);
 								if (is_numeric($value)) $res=$object->fetch($value);
 								else $res=$object->fetch('',$value);
 
 								if ($res > 0) $new_array_options[$key]=$object->id;
 								else
 								{
-									$this->error="Ref '".$value."' for object '".$object->element."' not found";
+									$this->error="Id/Ref '".$value."' for object '".$object->element."' not found";
 									$this->db->rollback();
 									return -1;
 								}
@@ -4580,6 +4616,7 @@ abstract class CommonObject
 						break;
 			   	}
 			}
+
 			$this->db->begin();
 
 			$table_element = $this->table_element;
@@ -4712,9 +4749,9 @@ abstract class CommonObject
 					// 1 : classPath
 					$InfoFieldList = explode(":", $param_list[0]);
 					dol_include_once($InfoFieldList[1]);
-					$object = new $InfoFieldList[0]($this->db);
 					if ($value)
 					{
+						$object = new $InfoFieldList[0]($this->db);
 						$object->fetch(0,$value);
 						$this->array_options["options_".$key]=$object->id;
 					}
@@ -4745,13 +4782,13 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array   $val		       Array of properties for field to show
-	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  $moreparam      To add more parametes on html input tag
-	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   $showsize       Value for css to define size. May also be a numeric.
+	 * @param  array   		$val	       Array of properties for field to show
+	 * @param  string  		$key           Key of attribute
+	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  		$moreparam     To add more parametes on html input tag
+	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string|int	$showsize      Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
 	function showInputField($val, $key, $value, $moreparam='', $keysuffix='', $keyprefix='', $showsize=0)
@@ -4803,6 +4840,11 @@ abstract class CommonObject
 			else return '';
 		}
 
+		// Use in priorit showsize from parameters, then $val['css'] then autodefine
+		if (empty($showsize) && ! empty($val['css']))
+		{
+			$showsize = $val['css'];
+		}
 		if (empty($showsize))
 		{
 			if ($type == 'date')
@@ -5826,7 +5868,7 @@ abstract class CommonObject
 	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
-	 * @return bool
+	 * @return bool						  True if success, False if error
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors=0)
 	{
@@ -6198,7 +6240,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
+			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
@@ -6231,12 +6273,14 @@ abstract class CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 		}
 
+		// Create extrafields
 		if (! $error)
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0) $error++;
 		}
 
+		// Triggers
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
@@ -6276,23 +6320,15 @@ abstract class CommonObject
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			if ($obj = $this->db->fetch_object($res))
+			$obj = $this->db->fetch_object($res);
+			if ($obj)
 			{
-				if ($obj)
-				{
-					$this->setVarsFromFetchObj($obj);
-					return $this->id;
-				}
-				else
-				{
-					return 0;
-				}
+				$this->setVarsFromFetchObj($obj);
+				return $this->id;
 			}
 			else
 			{
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
-				return -1;
+				return 0;
 			}
 		}
 		else
@@ -6306,13 +6342,13 @@ abstract class CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  User $user      	User that modifies
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @return int             	<0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -6360,7 +6396,22 @@ abstract class CommonObject
 			}
 		}
 
-		if (! $error && ! $notrigger) {
+		// Update extrafield
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+		}
+
+		// Triggers
+		if (! $error && ! $notrigger)
+		{
 			// Call triggers
 			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
@@ -6396,6 +6447,19 @@ abstract class CommonObject
 				$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 				// End call triggers
+			}
+		}
+
+		if (! $error)
+		{
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element."_extrafields";
+			$sql.= " WHERE fk_object=" . $this->id;
+
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				$this->errors[] = $this->db->lasterror();
+				$error++;
 			}
 		}
 

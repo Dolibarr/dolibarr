@@ -156,6 +156,7 @@ ErrorPriceExpression20=Puste wyrażenie
 ErrorPriceExpression21=Pusty wynik '%s'
 ErrorPriceExpression22=Wynik negatywny '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=Wewnętrzny błąd '%s'
 ErrorPriceExpressionUnknown=Nieznany błąd '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Magazyn źródłowy i docelowy musi być różny

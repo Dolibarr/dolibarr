@@ -83,9 +83,9 @@ MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
 MailingModuleDescContactsByCompanyCategory=Contacts by third party category
 MailingModuleDescContactsByCategory=Contacts by categories
 MailingModuleDescContactsByFunction=Contacts by position
-MailingModuleDescEmailsFromFile=Emails from file
+MailingModuleDescEmailsFromFile=E-pasti no faila
 MailingModuleDescEmailsFromUser=Emails input by user
-MailingModuleDescDolibarrUsers=Users with Emails
+MailingModuleDescDolibarrUsers=Lietotāji ar e-pastu
 MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
 
 # Libelle des modules de liste de destinataires mailing
@@ -150,7 +150,7 @@ RemoveAll=Dzēst visu
 ItemsCount=Vienība(-s)
 AdvTgtNameTemplate=Filtra nosaukums
 AdvTgtAddContact=Add emails according to criterias
-AdvTgtLoadFilter=Load filter
+AdvTgtLoadFilter=Ielādēt filtru
 AdvTgtDeleteFilter=Dzēst filtru
 AdvTgtSaveFilter=Saglabāt filtru
 AdvTgtCreateFilter=Izveidot filtru

@@ -46,8 +46,17 @@ class Commande extends CommonOrder
     public $table_element_line = 'commandedet';
     public $class_element_line = 'OrderLine';
     public $fk_element = 'fk_commande';
-    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'order';
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    public $ismultientitymanaged = 1;
+    /**
+     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     * @var integer
+     */
+    public $restrictiononfksoc = 1;
 
     /**
      * {@inheritdoc}
@@ -1329,6 +1338,14 @@ class Commande extends CommonOrder
 
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
+            /*var_dump($txlocaltax1);
+            var_dump($txlocaltax2);
+            var_dump($localtaxes_type);
+            var_dump($tabprice);
+            var_dump($tabprice[9]);
+            var_dump($tabprice[10]);
+            exit;*/
+
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -1370,12 +1387,12 @@ class Commande extends CommonOrder
             $this->line->desc=$desc;
             $this->line->qty=$qty;
 
-			$this->line->vat_src_code=$vat_src_code;
+            $this->line->vat_src_code=$vat_src_code;
             $this->line->tva_tx=$txtva;
-            $this->line->localtax1_tx=$localtaxes_type[1];
-            $this->line->localtax2_tx=$localtaxes_type[3];
-			$this->line->localtax1_type=$localtaxes_type[0];
-			$this->line->localtax2_type=$localtaxes_type[2];
+            $this->line->localtax1_tx=($total_localtax1?$localtaxes_type[1]:0);
+            $this->line->localtax2_tx=($total_localtax2?$localtaxes_type[3]:0);
+            $this->line->localtax1_type=$localtaxes_type[0];
+            $this->line->localtax2_type=$localtaxes_type[2];
             $this->line->fk_product=$fk_product;
 			$this->line->product_type=$product_type;
             $this->line->fk_remise_except=$fk_remise_except;
@@ -2065,7 +2082,6 @@ class Commande extends CommonOrder
      */
     function deleteline($user=null, $lineid=0)
     {
-
         if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
@@ -2128,7 +2144,8 @@ class Commande extends CommonOrder
         }
         else
         {
-            return -1;
+        	$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
+        	return -1;
         }
     }
 
@@ -3019,6 +3036,8 @@ class Commande extends CommonOrder
 	 */
 	function update(User $user, $notrigger=0)
 	{
+		global $conf;
+
 		$error=0;
 
 		// Clean parameters
@@ -3052,6 +3071,7 @@ class Commande extends CommonOrder
 		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
 		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
+		$sql.= " fk_account=".($this->fk_account>0?$this->fk_account:"null").",";
 		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";

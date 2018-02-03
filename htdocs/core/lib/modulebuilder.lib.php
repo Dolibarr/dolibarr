@@ -35,6 +35,7 @@
  *  @param	string		$addfieldentry	Array of the field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
  * 	@return	int|object					<=0 if KO, Object if OK
+ *  @see rebuildObjectSql
  */
 function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='', $addfieldentry=array() ,$delfieldentry='')
 {
@@ -202,6 +203,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	Object		$object			If object was already loaded/known, it is pass to avaoid another include and new.
  * 	@return	int							<=0 if KO, >0 if OK
+ *  @see rebuildObjectClass
  */
 function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='', $object=null)
 {
@@ -254,7 +256,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
 
             $type = $val['type'];
             $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
-
+            if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';

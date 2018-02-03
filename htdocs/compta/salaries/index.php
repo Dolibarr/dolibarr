@@ -100,7 +100,7 @@ $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 $accountstatic = new Account($db);
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
 $sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
@@ -222,6 +222,7 @@ if ($result)
         $userstatic->login=$obj->login;
         $userstatic->email=$obj->email;
         $userstatic->societe_id=$obj->fk_soc;
+        $userstatic->statut=$obj->status;
 
         $salstatic->id=$obj->rowid;
 		$salstatic->ref=$obj->rowid;

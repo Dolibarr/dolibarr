@@ -52,8 +52,17 @@ class Facture extends CommonInvoice
 	public $table_element='facture';
 	public $table_element_line = 'facturedet';
 	public $fk_element = 'fk_facture';
-	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto='bill';
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+	/**
+	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer
+	 */
+	public $restrictiononfksoc = 1;
 
 	/**
 	 * {@inheritdoc}
@@ -205,10 +214,10 @@ class Facture extends CommonInvoice
 	 */
 	const STATUS_ABANDONED = 3;
 
-	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
-	const CLOSECODE_BADDEBT = 'badcustomer';
-	const CLOSECODE_ABANDONED = 'abandon';
-	const CLOSECODE_REPLACED = 'replaced';
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat';	// Abandonned remain - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer';		// Abandonned - bad
+	const CLOSECODE_ABANDONED = 'abandon';			// Abandonned - other
+	const CLOSECODE_REPLACED = 'replaced';			// Closed after doing a replacement invoice
 
 	/**
 	 * 	Constructor
@@ -522,6 +531,7 @@ class Facture extends CommonInvoice
 				else dol_print_error($resqlcontact);
 			}
 
+
 			/*
 			 *  Insert lines of invoices into database
 			 */
@@ -646,11 +656,20 @@ class Facture extends CommonInvoice
 						$prod = new Product($this->db);
 						$res=$prod->fetch($_facrec->lines[$i]->fk_product);
 					}
+
+					// For line from template invoice, we use data from template invoice
+					/*
 					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
 					$tva_npr = get_default_npr($mysoc,$soc,$prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
 					$localtax1_tx=get_localtax($tva_tx,1,$soc,$mysoc,$tva_npr);
 					$localtax2_tx=get_localtax($tva_tx,2,$soc,$mysoc,$tva_npr);
+					*/
+					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
+					$tva_npr = $_facrec->lines[$i]->info_bits;
+					if (empty($tva_tx)) $tva_npr=0;
+					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
+					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
 					$result_insert = $this->addline(
 						$_facrec->lines[$i]->desc,
@@ -661,7 +680,11 @@ class Facture extends CommonInvoice
 						$localtax2_tx,
 						$_facrec->lines[$i]->fk_product,
 						$_facrec->lines[$i]->remise_percent,
-						'','',0,$tva_npr,'','HT',0,
+						'','',0,
+						$tva_npr,
+						'',
+						'HT',
+						0,
 						$_facrec->lines[$i]->product_type,
 						$_facrec->lines[$i]->rang,
 						$_facrec->lines[$i]->special_code,
@@ -1140,9 +1163,9 @@ class Facture extends CommonInvoice
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
                 $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-            if (! empty($this->total_tva))
+            if (! empty($this->total_localtax1))
                 $label.= '<br><b>' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
-            if (! empty($this->total_tva))
+            if (! empty($this->total_localtax2))
                 $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
                 $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
@@ -1333,7 +1356,7 @@ class Facture extends CommonInvoice
 			}
 			else
 			{
-				$this->error='Bill with id '.$rowid.' or ref '.$ref.' not found';
+				$this->error='Bill with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
 				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 				return 0;
 			}
@@ -2044,11 +2067,11 @@ class Facture extends CommonInvoice
 	 *  of no payment even if merchandises were sent).
 	 *
 	 *	@param	User	$user        	Object user making change
-	 *	@param	string	$close_code		Code de fermeture
+	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
 	 *	@param	string	$close_note		Comment
 	 *	@return int         			<0 if KO, >0 if OK
 	 */
-	function set_canceled($user,$close_code='',$close_note='')
+	function set_canceled($user, $close_code='', $close_note='')
 	{
 
 		dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
@@ -2178,7 +2201,7 @@ class Facture extends CommonInvoice
 				return -12;
 			}
 
-			$result=$facreplaced->set_canceled($user,'replaced','');
+			$result=$facreplaced->set_canceled($user, self::CLOSECODE_REPLACED, '');
 			if ($result < 0)
 			{
 				$this->error=$facreplaced->error;
@@ -2533,7 +2556,7 @@ class Facture extends CommonInvoice
 
 		global $mysoc, $conf, $langs;
 
-		dol_syslog(get_class($this)."::addline facid=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline id=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Clean parameters
@@ -2641,8 +2664,8 @@ class Facture extends CommonInvoice
 
 			$this->line->vat_src_code=$vat_src_code;
 			$this->line->tva_tx=$txtva;
-			$this->line->localtax1_tx=$txlocaltax1;
-			$this->line->localtax2_tx=$txlocaltax2;
+			$this->line->localtax1_tx=($total_localtax1?$localtaxes_type[1]:0);
+			$this->line->localtax2_tx=($total_localtax2?$localtaxes_type[3]:0);
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 
@@ -3000,7 +3023,7 @@ class Facture extends CommonInvoice
 
 		if (! $this->brouillon)
 		{
-			$this->error='ErrorBadStatus';
+			$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
 			return -1;
 		}
 

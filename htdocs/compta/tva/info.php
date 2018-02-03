@@ -51,7 +51,7 @@ $object->info($id);
 
 $head = vat_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("VATPayment"), 0, 'payment');
+dol_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
 

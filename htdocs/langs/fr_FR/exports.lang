@@ -131,3 +131,7 @@ KeysToUseForUpdates=Clé à utiliser pour mettre à jour les données
 NbInsert=Nombre de lignes insérées: %s
 NbUpdate=Nombre de lignes mises à jour: %s
 MultipleRecordFoundWithTheseFilters=Plusieurs enregistrements ont été trouvés avec ces filtres: %s
+## setup page
+ExportSetup=Configuration du module Export
+ExportModel = Modèle d'export
+set_EXPORTS_SHARE_MODELS = Partager tous les profils d'export

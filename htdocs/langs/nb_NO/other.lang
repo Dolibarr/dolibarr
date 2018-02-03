@@ -225,6 +225,8 @@ IfAmountHigherThan=Hvis beløpet er høyere enn<strong>%s</strong>
 SourcesRepository=Oppbevaring av kilder
 Chart=Diagram
 PassEncoding=Passordkoding
+PermissionsAdd=Tillatelser lagt til
+PermissionsDelete=Tillatelser fjernet
 
 ##### Export #####
 ExportsArea=Eksportområde

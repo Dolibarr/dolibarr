@@ -188,7 +188,7 @@ if (! empty($conf->paypal->enabled))
 		if ($PAYPALTOKEN)
 		{
 		    // Get on url call
-		    $onlinetoken              = $PAYPALTOKEN;
+		    $onlinetoken        = $PAYPALTOKEN;
 		    $fulltag            = $FULLTAG;
 		    $payerID            = $PAYPALPAYERID;
 		    // Set by newpayment.php
@@ -291,6 +291,8 @@ if ($ispaymentok)
     $sendemail = '';
     if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 
+    $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+
 	// Send an email
     if ($sendemail)
 	{
@@ -316,7 +318,6 @@ if ($ispaymentok)
 
 		$urlback=$_SERVER["REQUEST_URI"];
 		$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
-		$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 		$content="";
 		if (! empty($tmptag['MEM']))
 		{
@@ -387,6 +388,8 @@ else
     if ($paymentmethod == 'paypal' && ! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
     if ($paymentmethod == 'paybox' && ! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
     if ($paymentmethod == 'stripe' && ! empty($conf->global->STRIPE_PAYONLINE_SENDEMAIL)) $sendemail=$conf->global->STRIPE_PAYONLINE_SENDEMAIL;
+
+    $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
     // Send an email
     if ($sendemail)

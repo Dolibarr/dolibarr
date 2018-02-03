@@ -44,6 +44,7 @@ class User extends CommonObject
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	public $id=0;
+	public $statut;
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
@@ -56,7 +57,7 @@ class User extends CommonObject
 	public $address;
 	public $zip;
 	public $town;
-	public $state_id;
+	public $state_id;		// The state/department
 	public $state_code;
 	public $state;
 	public $office_phone;
@@ -101,7 +102,6 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
-	public $statut;
 	public $photo;
 	public $lang;
 
@@ -1011,7 +1011,7 @@ class User extends CommonObject
 	 *  @param  int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return int			         	<0 if KO, id of created user if OK
 	 */
-	function create($user,$notrigger=0)
+	function create($user, $notrigger=0)
 	{
 		global $conf,$langs;
 		global $mysoc;
@@ -1337,9 +1337,10 @@ class User extends CommonObject
 	 *    	@param  int		$notrigger			1 ne declenche pas les triggers, 0 sinon
 	 *		@param	int		$nosyncmember		0=Synchronize linked member (standard info), 1=Do not synchronize linked member
 	 *		@param	int		$nosyncmemberpass	0=Synchronize linked member (password), 1=Do not synchronize linked member
+	 *		@param	int		$nosynccontact		0=Synchronize linked contact, 1=Do not synchronize linked contact
 	 *    	@return int 		        		<0 si KO, >=0 si OK
 	 */
-	function update($user,$notrigger=0,$nosyncmember=0,$nosyncmemberpass=0)
+	function update($user, $notrigger=0, $nosyncmember=0, $nosyncmemberpass=0, $nosynccontact=0)
 	{
 		global $conf, $langs;
 
@@ -1474,7 +1475,7 @@ class User extends CommonObject
 
 					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-					// This user is linked with a member, so we also update members informations
+					// This user is linked with a member, so we also update member information
 					// if this is an update.
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
@@ -1496,8 +1497,6 @@ class User extends CommonObject
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 
-						$adh->note=$this->note;
-
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
 
@@ -1514,6 +1513,61 @@ class User extends CommonObject
 					{
 						$this->error=$adh->error;
 						$this->errors=$adh->errors;
+						$error++;
+					}
+				}
+
+				if ($this->contact_id > 0 && ! $nosynccontact)
+				{
+					dol_syslog(get_class($this)."::update user is linked with a contact. We try to update contact too.", LOG_DEBUG);
+
+					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+					// This user is linked with a contact, so we also update contact information
+					// if this is an update.
+					$tmpobj=new Contact($this->db);
+					$result=$tmpobj->fetch($this->contact_id);
+
+					if ($result >= 0)
+					{
+						$tmpobj->firstname=$this->firstname;
+						$tmpobj->lastname=$this->lastname;
+						$tmpobj->login=$this->login;
+						$tmpobj->gender=$this->gender;
+						$tmpobj->birth=$this->birth;
+
+						//$tmpobj->pass=$this->pass;
+
+						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
+
+						$tmpobj->email=$this->email;
+						$tmpobj->skype=$this->skype;
+						$tmpobj->phone_pro=$this->office_phone;
+						$tmpobj->phone_mobile=$this->user_mobile;
+						$tmpobj->fax=$this->office_fax;
+
+						$tmpobj->address=$this->address;
+						$tmpobj->town=$this->town;
+						$tmpobj->zip=$this->zip;
+						$tmpobj->state_id=$this->state_id;
+						$tmpobj->country_id=$this->country_id;
+
+						$tmpobj->user_id=$this->id;
+						$tmpobj->user_login=$this->login;
+
+						$result=$tmpobj->update($tmpobj->id, $user, 0, 'update', 1);
+						if ($result < 0)
+						{
+							$this->error=$tmpobj->error;
+							$this->errors=$tmpobj->errors;
+							dol_syslog(get_class($this)."::update error after calling adh->update to sync it with user: ".$this->error, LOG_ERR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$tmpobj->error;
+						$this->errors=$tmpobj->errors;
 						$error++;
 					}
 				}
@@ -1730,7 +1784,7 @@ class User extends CommonObject
 	 *
 	 *  @param	User	$user           Object user that send email
 	 *  @param	string	$password       New password
-	 *	@param	int		$changelater	1=Change password only after clicking on confirm email
+	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @TODO Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
 	 */
 	function send_password($user, $password='', $changelater=0)
@@ -1805,7 +1859,7 @@ class User extends CommonObject
 		$mailfile = new CMailFile(
 			$subject,
 			$this->email,
-			$conf->notification->email_from,
+			$conf->global->MAIN_MAIL_EMAIL_FROM,
 			$mesg,
 			array(),
 			array(),
@@ -2102,6 +2156,7 @@ class User extends CommonObject
 		}
 		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
+		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
 
 		// Info Login
