@@ -697,12 +697,13 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"' . $langs->trans("Date") . '"' . $sep;
 	print '"' . $langs->trans("PaymentMode") . '"' . $sep;
 	print '"' . $langs->trans("AccountAccounting") . '"' . $sep;
-	print '"' . $langs->trans("GeneralAccount") . '"' . $sep;
+	print '"' . $langs->trans("LedgerAccount") . '"' . $sep;
 	print '"' . $langs->trans("SubledgerAccount") . '"' . $sep;
 	print '"' . $langs->trans("Label"). '"' . $sep;
 	print '"' . $langs->trans("Amount") . '"' . $sep;
 	print '"' . $langs->trans("Amount") . '"' . $sep;
 	print '"' . $langs->trans("Journal")  . '"' . $sep;
+	print '"' . $langs->trans("Note")  . '"' . $sep;
 	print "\n";
 
 
@@ -732,6 +733,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 				print '"' . $journal . '"' . $sep;
+				print '"' . dol_string_nohtmltag($ref) . '"' . $sep;
 				print "\n";
 			}
 		}
@@ -763,6 +765,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 					print '"' . $journal . '"' . $sep;
+					print '"' . dol_string_nohtmltag($ref) . '"' . $sep;
 					print "\n";
 				}
 			}
@@ -782,6 +785,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 					print '"' . $journal . '"' . $sep;
+					print '"' . dol_string_nohtmltag($ref) . '"' . $sep;
 					print "\n";
 				}
 			}
