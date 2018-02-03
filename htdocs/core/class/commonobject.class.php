@@ -1273,14 +1273,15 @@ abstract class CommonObject
 	}
 
 	/**
-	 *    	Load object from specific field
-	 *
-	 *    	@param	string	$table		Table element or element line
-	 *    	@param	string	$field		Field selected
-	 *    	@param	string	$key		Import key
-	 *		@return	int					<0 if KO, >0 if OK
-	 */
-	function fetchObjectFrom($table,$field,$key)
+     *  Load object from specific field
+     *
+     *  @param	string	$table		Table element or element line
+     *  @param	string	$field		Field selected
+     *  @param	string	$key		Import key
+     *  @param	string	$element	Element name
+     *	@return	int					<0 if KO, >0 if OK
+     */
+	function fetchObjectFrom($table, $field, $key, $element = null)
 	{
 		global $conf;
 
@@ -1288,7 +1289,11 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
 		$sql.= " WHERE ".$field." = '".$key."'";
-		$sql.= " AND entity = ".$conf->entity;
+		if (! empty($element)) {
+			$sql.= " AND entity IN (".getEntity($element).")";
+		} else {
+			$sql.= " AND entity = ".$conf->entity;
+		}
 
 		dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
 		$resql = $this->db->query($sql);
