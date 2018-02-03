@@ -2911,22 +2911,14 @@ class ContratLigne extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$contrat=new Contrat($this->db);
-			$contrat->fetch($this->fk_contrat);
-			$result=$contrat->update_statut($user);
-		}
-		else
+		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
 			$error++;
-			//return -1;
 		}
 
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
 		{
-
 			$result=$this->insertExtraFields();
 			if ($result < 0)
 			{
@@ -2934,19 +2926,37 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
-		if (empty($error)) {
-		if (! $notrigger)
+		// Sync dates of all services
+		if (! $error && ! empty($conf->global->CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES))
 		{
-            // Call trigger
-            $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
-		}
+			$sql ='UPDATE '.MAIN_DB_PREFIX.'contratdet SET';
+			$sql.= " date_ouverture_prevue = ".($this->date_ouverture_prevue!=''?"'".$this->db->idate($this->date_ouverture_prevue)."'":"null").",";
+			$sql.= " date_fin_validite = ".($this->date_fin_validite!=''?"'".$this->db->idate($this->date_fin_validite)."'":"null");
+			$sql.= " WHERE fk_contrat = ".$this->fk_contrat;
+
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error="Error ".$this->db->lasterror();
+			}
 		}
 
-		if (empty($error)) {
-        $this->db->commit();
-		return 1;
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Call trigger
+	            $result=$this->call_trigger('LINECONTRACT_UPDATE', $user);
+	            if ($result < 0) { $error++; $this->db->rollback(); }
+	            // End call triggers
+			}
+		}
+
+		if (! $error)
+		{
+        	$this->db->commit();
+			return 1;
 		} else {
 			$this->db->rollback();
 			$this->errors[]=$this->error;
