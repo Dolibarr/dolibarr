@@ -122,7 +122,6 @@ abstract class ModeleNumRefExpenseReport
 	/**
 	 *	Renvoie prochaine valeur attribuee
 	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
