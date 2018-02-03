@@ -52,8 +52,8 @@ create table llx_propaldet
   buy_price_ht						double(24,8) DEFAULT 0,          -- buying price
   fk_product_fournisseur_price		integer      DEFAULT NULL,       -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
   
-  special_code						integer      DEFAULT 0,          -- code pour les lignes speciales
-  rang								integer      DEFAULT 0,           -- ordre affichage sur la propal
+  special_code						integer      DEFAULT 0,          -- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
+  rang								integer      DEFAULT 0,          -- ordre affichage sur la propal
   fk_unit           integer      DEFAULT NULL,           -- lien vers table des unités
   
   fk_multicurrency			integer,

@@ -57,7 +57,7 @@ create table llx_facturedet
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
   
-  special_code					integer    DEFAULT 0,			    -- code pour les lignes speciales
+  special_code					integer    DEFAULT 0,				-- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
   rang							integer    DEFAULT 0,				-- position of line
   fk_contract_line  			integer NULL,						-- id of contract line when invoice comes from contract lines
   import_key					varchar(14),
