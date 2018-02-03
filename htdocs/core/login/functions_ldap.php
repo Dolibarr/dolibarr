@@ -98,12 +98,12 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		$resultFetchLdapUser=0;
 
 		// Define $userSearchFilter
-        $userSearchFilter = "";
-        if (empty($dolibarr_main_auth_ldap_filter)) {
-            $userSearchFilter = "(" . $ldapuserattr . "=" . $usertotest . ")";
-        } else {
-            $userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
-        }
+		$userSearchFilter = "";
+		if (empty($dolibarr_main_auth_ldap_filter)) {
+			$userSearchFilter = "(" . $ldapuserattr . "=" . $usertotest . ")";
+		} else {
+			$userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
+		}
 
 		// If admin login provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
@@ -127,7 +127,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 			}
 			else
 			{
-			     if ($ldapdebug) print "DEBUG: ".$ldap->error."<br>\n";
+				 if ($ldapdebug) print "DEBUG: ".$ldap->error."<br>\n";
 			}
 			$ldap->close();
 		}
@@ -135,15 +135,15 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		// Forge LDAP user and password to test with them
 		// If LDAP need a dn with login like "uid=jbloggs,ou=People,dc=foo,dc=com", default dn may work even if previous code with
 		// admin login no exectued.
-        $ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;  // Default dn (will work if LDAP accept a dn with login value inside)
+		$ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;  // Default dn (will work if LDAP accept a dn with login value inside)
 		// But if LDAP need a dn with name like "cn=Jhon Bloggs,ou=People,dc=foo,dc=com", previous part must have been executed to have
 		// dn detected into ldapUserDN.
-		if ($resultFetchLdapUser AND !empty($ldap->ldapUserDN)) $ldap->searchUser = $ldap->ldapUserDN;
-        $ldap->searchPassword=$passwordtotest;
+		if ($resultFetchLdapUser && !empty($ldap->ldapUserDN)) $ldap->searchUser = $ldap->ldapUserDN;
+		$ldap->searchPassword=$passwordtotest;
 
 		// Test with this->seachUser and this->searchPassword
-        //print $resultFetchLdapUser."-".$ldap->ldapUserDN."-".$ldap->searchUser.'-'.$ldap->searchPassword;exit;
-        $result=$ldap->connect_bind();
+		//print $resultFetchLdapUser."-".$ldap->ldapUserDN."-".$ldap->searchUser.'-'.$ldap->searchPassword;exit;
+		$result=$ldap->connect_bind();
 		if ($result > 0)
 		{
 			if ($result == 2)	// Connection is ok for user/pass into LDAP
@@ -214,7 +214,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		}
 		else
 		{
-            /* Login failed. Return false, together with the error code and text from
+			/* Login failed. Return false, together with the error code and text from
              ** the LDAP server. The common error codes and reasons are listed below :
              ** (for iPlanet, other servers may differ)
              ** 19 - Account locked out (too many invalid login attempts)
@@ -222,13 +222,13 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
              ** 49 - Wrong password
              ** 53 - Account inactive (manually locked out by administrator)
              */
-            dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$usertotest."'");
-            if (is_resource($ldap->connection))    // If connection ok but bind ko
-		    {
-                $ldap->ldapErrorCode = ldap_errno($ldap->connection);
-                $ldap->ldapErrorText = ldap_error($ldap->connection);
-                dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
-		    }
+			dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$usertotest."'");
+			if (is_resource($ldap->connection))    // If connection ok but bind ko
+			{
+				$ldap->ldapErrorCode = ldap_errno($ldap->connection);
+				$ldap->ldapErrorText = ldap_error($ldap->connection);
+				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
+			}
 			sleep(2);      // Anti brut force protection
 			$langs->load('main');
 			$langs->load('other');

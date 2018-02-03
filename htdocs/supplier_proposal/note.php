@@ -75,7 +75,7 @@ if ($id > 0 || ! empty($ref))
 	if ($object->fetch($id, $ref))
 	{
 	    $object->fetch_thirdparty();
-	    
+
 		$societe = new Societe($db);
 		if ( $societe->fetch($object->socid) )
 		{
@@ -84,9 +84,9 @@ if ($id > 0 || ! empty($ref))
 
 
 			// Supplier proposal card
-			$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-			
-			
+			$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
 			$morehtmlref='<div class="refidno">';
 			// Ref supplier
 			//$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $user->rights->fournisseur->commande->creer, 'string', '', 0, 1);
@@ -127,17 +127,17 @@ if ($id > 0 || ! empty($ref))
 			    }
 			}
 			$morehtmlref.='</div>';
-			
-			
+
+
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-				
-			
+
+
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
-				
+
 			$cssclass="titlefield";
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-			
+
 			print '</div>';
 
 			dol_fiche_end();

@@ -4,7 +4,6 @@ Proposal=Offerte
 ProposalShort=Offerte
 ProposalsDraft=Conceptofferte
 ProposalsOpened=Geen open commerciële voorstellen
-Prop=Offertes
 CommercialProposal=Offerte
 PdfCommercialProposalTitle=Offerte
 ProposalCard=Offertedetailkaart
@@ -64,6 +63,7 @@ ProposalLine=Offerteregel
 AvailabilityPeriod=Leveringstermijn
 SetAvailability=Bepaal leveringstermijn
 AfterOrder=na bestelling
+OtherProposals=Andere offertes
 ##### Availability #####
 AvailabilityTypeAV_NOW=Onmiddellijk
 AvailabilityTypeAV_1W=1 week

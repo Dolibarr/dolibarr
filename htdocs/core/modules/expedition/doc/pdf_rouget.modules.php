@@ -567,6 +567,8 @@ class pdf_rouget extends ModelePdfExpedition
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;	// No error
 			}
 			else

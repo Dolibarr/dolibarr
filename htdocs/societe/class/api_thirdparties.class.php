@@ -53,7 +53,7 @@ class Thirdparties extends DolibarrApi
 
         $this->company = new Societe($this->db);
 
-        if (! empty($conf->global->SOCIETE_MAIL_REQUIRED)) {
+        if (! empty($conf->global->SOCIETE_EMAIL_MANDATORY)) {
             static::$FIELDS[] = 'email';
         }
     }
@@ -82,6 +82,13 @@ class Thirdparties extends DolibarrApi
       if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
+
+      $filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%'))";
+      $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+      $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
+      $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+      $this->company->absolute_discount = price2num($absolute_discount, 'MT');
+      $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
 		  return $this->_cleanObjectDatas($this->company);
     }
@@ -237,6 +244,218 @@ class Thirdparties extends DolibarrApi
     }
 
     /**
+     * Merge a thirdparty into another one.
+     *
+     * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a thirdparty into a target thirdparty,
+     * then delete the merged thirdparty.
+     * If a property has a defined value both in thirdparty to delete and thirdparty to keep, the value into the thirdparty to
+     * delete will be ignored, the value of target thirdparty will remain, except for notes (content is concatenated).
+     *
+     * @param int   $id             ID of thirdparty to keep (the target thirdparty)
+     * @param int   $idtodelete     ID of thirdparty to remove (the thirdparty to delete), once data has been merged into the target thirdparty.
+     * @return int
+     *
+     * @url PUT {id}/merge/{idtodelete}
+     */
+    function merge($id, $idtodelete)
+    {
+    	global $db, $hookmanager;
+
+    	if ($id == $idtodelete)
+    	{
+    		throw new RestException(400, 'Try to merge a thirdparty into itself');
+    	}
+
+    	if(! DolibarrApiAccess::$user->rights->societe->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->company->fetch($id);	// include the fetch of extra fields
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$this->companytoremove = new Societe($db);
+
+    	$result = $this->companytoremove->fetch($idtodelete);	// include the fetch of extra fields
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$this->companytoremove->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$soc_origin = $this->companytoremove;
+    	$object = $this->company;
+    	$user = DolibarrApiAccess::$user;
+
+
+    	// Call same code than into action 'confirm_merge'
+
+
+    	$db->begin();
+
+    	// Recopy some data
+    	$object->client = $object->client | $soc_origin->client;
+    	$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
+    	$listofproperties=array(
+    	'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+    	'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+    	'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+    	'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+    	'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+    	'model_pdf', 'fk_projet'
+    	);
+    	foreach ($listofproperties as $property)
+    	{
+    		if (empty($object->$property)) $object->$property = $soc_origin->$property;
+    	}
+
+    	// Concat some data
+    	$listofproperties=array(
+    	'note_public', 'note_private'
+    	);
+    	foreach ($listofproperties as $property)
+    	{
+    		$object->$property = dol_concatdesc($object->$property, $soc_origin->$property);
+    	}
+
+    	// Merge extrafields
+    	if (is_array($soc_origin->array_options))
+    	{
+    		foreach ($soc_origin->array_options as $key => $val)
+    		{
+    			if (empty($object->array_options[$key])) $object->array_options[$key] = $val;
+    		}
+    	}
+
+    	// Merge categories
+    	$static_cat = new Categorie($db);
+    	$custcats = $static_cat->containing($soc_origin->id, 'customer', 'id');
+    	$object->setCategories($custcats, 'customer');
+    	$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+    	$object->setCategories($suppcats, 'supplier');
+
+    	// If thirdparty has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
+    	if ($soc_origin->code_client == $object->code_client
+    		|| $soc_origin->code_fournisseur == $object->code_fournisseur
+    		|| $soc_origin->barcode == $object->barcode)
+    	{
+	    	dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
+	    	$soc_origin->code_client = '';
+	    	$soc_origin->code_fournisseur = '';
+	    	$soc_origin->barcode = '';
+	    	$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
+    	}
+
+    	// Update
+    	$result = $object->update($object->id, $user, 0, 1, 1, 'merge');
+    	if ($result < 0)
+    	{
+    		$error++;
+    	}
+
+    	// Move links
+    	if (! $error)
+    	{
+	    	$objects = array(
+	    	'Adherent' => '/adherents/class/adherent.class.php',
+	    	'Societe' => '/societe/class/societe.class.php',
+	    	'Categorie' => '/categories/class/categorie.class.php',
+	    	'ActionComm' => '/comm/action/class/actioncomm.class.php',
+	    	'Propal' => '/comm/propal/class/propal.class.php',
+	    	'Commande' => '/commande/class/commande.class.php',
+	    	'Facture' => '/compta/facture/class/facture.class.php',
+	    	'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+	    	'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
+	    	'Contact' => '/contact/class/contact.class.php',
+	    	'Contrat' => '/contrat/class/contrat.class.php',
+	    	'Expedition' => '/expedition/class/expedition.class.php',
+	    	'Fichinter' => '/fichinter/class/fichinter.class.php',
+	    	'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+	    	'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+	    	'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+	    	'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+	    	'Livraison' => '/livraison/class/livraison.class.php',
+	    	'Product' => '/product/class/product.class.php',
+	    	'Project' => '/projet/class/project.class.php',
+	    	'User' => '/user/class/user.class.php',
+	    	);
+
+	    	//First, all core objects must update their tables
+	    	foreach ($objects as $object_name => $object_file)
+	    	{
+	    		require_once DOL_DOCUMENT_ROOT.$object_file;
+
+	    		if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
+	    		{
+	    			$errors++;
+	    			//setEventMessages($db->lasterror(), null, 'errors');
+	    		}
+	    	}
+    	}
+
+    	// External modules should update their ones too
+    	if (!$errors)
+    	{
+    		$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+    		'soc_origin' => $soc_origin->id,
+    		'soc_dest' => $object->id
+    		), $soc_dest, $action);
+
+    		if ($reshook < 0)
+    		{
+    			//setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    			$errors++;
+    		}
+    	}
+
+
+    	if (! $error)
+    	{
+    		$object->context=array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+
+    		// Call trigger
+    		$result=$object->call_trigger('COMPANY_MODIFY',$user);
+    		if ($result < 0)
+    		{
+    			//setEventMessages($object->error, $object->errors, 'errors');
+    			$error++;
+    		}
+    		// End call triggers
+    	}
+
+    	if (! $error)
+    	{
+    		//We finally remove the old thirdparty
+    		if ($soc_origin->delete($soc_origin->id, $user) < 1)
+    		{
+    			$errors++;
+    		}
+    	}
+
+    	// End of merge
+
+    	if ($error)
+    	{
+    		$db->rollback();
+
+    		throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
+    	}
+		else
+		{
+			$db->commit();
+		}
+
+    	return $this->get($id);
+    }
+
+    /**
      * Delete thirdparty
      *
      * @param int $id   Thirparty ID
@@ -270,10 +489,25 @@ class Thirdparties extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-    	require_once DOL_DOCUMENT_ROOT.'/categories/class/api_categories.class.php';
-    	$categories = new Categories();	// TODO Use Categories object not API object
-        return $categories->getListForItem($sortfield, $sortorder, $limit, $page, 'customer', $id);
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
     }
 
     /**
@@ -316,6 +550,285 @@ class Thirdparties extends DolibarrApi
       return $this->company;
     }
 
+
+
+    /**
+     * Get outstanding proposals of thirdparty
+     *
+     * @param 	int 	$id			ID of the thirdparty
+     * @param 	string 	$mode		'customer' or 'supplier'
+     *
+     * @url     GET {id}/outstandingproposals
+     *
+     * @return array  				List of outstandings proposals of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     */
+    function getOutStandingProposals($id, $mode='customer')
+    {
+    	$obj_ret = array();
+
+    	if(! DolibarrApiAccess::$user->rights->societe->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+		$result = $this->company->getOutstandingProposals($mode);
+
+		unset($result['total_ht']);
+		unset($result['total_ttc']);
+
+		return $result;
+    }
+
+
+    /**
+     * Get outstanding orders of thirdparty
+     *
+     * @param 	int 	$id			ID of the thirdparty
+     * @param 	string 	$mode		'customer' or 'supplier'
+     *
+     * @url     GET {id}/outstandingorders
+     *
+     * @return array  				List of outstandings orders of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     */
+    function getOutStandingOrder($id, $mode='customer')
+    {
+    	$obj_ret = array();
+
+    	if(! DolibarrApiAccess::$user->rights->societe->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+    	$result = $this->company->getOutstandingOrders($mode);
+
+    	unset($result['total_ht']);
+    	unset($result['total_ttc']);
+
+    	return $result;
+    }
+
+    /**
+     * Get outstanding invoices of thirdparty
+     *
+     * @param 	int 	$id			ID of the thirdparty
+     * @param 	string 	$mode		'customer' or 'supplier'
+     *
+     * @url     GET {id}/outstandinginvoices
+     *
+     * @return array  				List of outstandings invoices of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     */
+    function getOutStandingInvoices($id, $mode='customer')
+    {
+    	$obj_ret = array();
+
+    	if(! DolibarrApiAccess::$user->rights->societe->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+    	$result = $this->company->getOutstandingBills($mode);
+
+    	unset($result['total_ht']);
+    	unset($result['total_ttc']);
+
+    	return $result;
+    }
+
+
+
+     /**
+     * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
+     *
+     * @param 	int 	$id             ID of the thirdparty
+     * @param 	string 	$filter    	Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
+     * @param   string  $sortfield  	Sort field
+     * @param   string  $sortorder  	Sort order
+     *
+     * @url     GET {id}/fixedamountdiscounts
+     *
+     * @return array  List of fixed discount of thirdparty
+     *
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 503
+     */
+    function getFixedAmountDiscounts($id, $filter="none", $sortfield = "f.type", $sortorder = 'ASC')
+    {
+    	$obj_ret = array();
+
+      if(! DolibarrApiAccess::$user->rights->societe->lire) {
+        throw new RestException(401);
+      }
+
+      if(empty($id)) {
+        throw new RestException(400, 'Thirdparty ID is mandatory');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+
+      $result = $this->company->fetch($id);
+      if( ! $result ) {
+          throw new RestException(404, 'Thirdparty not found');
+      }
+
+
+      $sql = "SELECT f.facnumber, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
+      $sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".$id;
+      if ($filter == "available")  $sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
+      if ($filter == "used")  $sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+
+      $sql.= $this->db->order($sortfield, $sortorder);
+
+      $result = $this->db->query($sql);
+      if( ! $result ) {
+          throw new RestException(503, $this->db->lasterror());
+      } else {
+          $num = $this->db->num_rows($result);
+          while ( $obj = $this->db->fetch_object($result) ) {
+              $obj_ret[] = $obj;
+          }
+      }
+
+      return $obj_ret;
+    }
+
+
+
+    /**
+     * Return list of invoices qualified to be replaced by another invoice.
+     *
+     * @param int   $id             Id of thirdparty
+     *
+     * @url     GET {id}/getinvoicesqualifiedforreplacement
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function getInvoicesQualifiedForReplacement($id) {
+
+    	if(! DolibarrApiAccess::$user->rights->facture->lire) {
+    		throw new RestException(401);
+    	}
+    	if(empty($id)) {
+    		throw new RestException(400, 'Thirdparty ID is mandatory');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	/*$result = $this->thirdparty->fetch($id);
+    	 if( ! $result ) {
+    	 throw new RestException(404, 'Thirdparty not found');
+    	 }*/
+
+    	$invoice = new Facture($this->db);
+    	$result = $invoice->list_replacable_invoices($id);
+    	if( $result < 0) {
+    		throw new RestException(405, $this->thirdparty->error);
+    	}
+
+    	return $result;
+    }
+
+    /**
+     * Return list of invoices qualified to be corrected by a credit note.
+     * Invoices matching the following rules are returned
+     * (validated + payment on process) or classified (payed completely or payed partialy) + not already replaced + not already a credit note
+     *
+     * @param int   $id             Id of thirdparty
+     *
+     * @url     GET {id}/getinvoicesqualifiedforcreditnote
+     *
+     * @return array
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function getInvoicesQualifiedForCreditNote($id) {
+
+        if(! DolibarrApiAccess::$user->rights->facture->lire) {
+                throw new RestException(401);
+        }
+        if(empty($id)) {
+                throw new RestException(400, 'Thirdparty ID is mandatory');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('societe',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        /*$result = $this->thirdparty->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Thirdparty not found');
+        }*/
+
+    	$invoice = new Facture($this->db);
+        $result = $invoice->list_qualified_avoir_invoices($id);
+        if( $result < 0) {
+                throw new RestException(405, $this->thirdparty->error);
+        }
+
+        return $result;
+    }
+
+
 	/**
 	 * Clean sensible object datas
 	 *
@@ -326,11 +839,16 @@ class Thirdparties extends DolibarrApi
 
 	    $object = parent::_cleanObjectDatas($object);
 
+	    unset($object->nom);	// ->name already defined and nom deprecated
+
 	    unset($object->total_ht);
 	    unset($object->total_tva);
 	    unset($object->total_localtax1);
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
+
+	    unset($object->lines);
+	    unset($object->thirdparty);
 
 	    return $object;
 	}

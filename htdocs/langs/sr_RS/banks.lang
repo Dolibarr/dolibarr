@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banka
 MenuBankCash=Banka/Gotovina
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Ime banke
 FinancialAccount=Račun
 BankAccount=Račun u banci
@@ -87,6 +89,7 @@ AccountIdShort=Broj
 LineRecord=Transakcija
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Poravnjaj sa
 DateConciliating=Datum poravnanja
 BankLineConciliated=Entry reconciled
@@ -155,3 +158,6 @@ NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
 ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

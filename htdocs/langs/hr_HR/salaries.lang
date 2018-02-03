@@ -13,3 +13,5 @@ TJM=Prosječna dnevnica
 CurrentSalary=Trenutna plaća
 THMDescription=Ova vrijednost može se koristiti za izračun troškova utrošenog vremena na projektu unesenog od korisnika ako se korisit modul projekt
 TJMDescription=Ova vrijednost je informativna i ne koristi se niti u jednom izračunu
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

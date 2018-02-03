@@ -15,7 +15,6 @@ DeleteInterventionLine=Eingriffszeile löschen
 CloneIntervention=Einsatz duplizieren
 DocumentModelStandard=Standard-Dokumentvorlage für Arbeitseinsätze
 InterventionCardsAndInterventionLines=Einsatzkarte und Einsatzzeilen
-ShowIntervention=Zeige Kundeneinsatz
 SendInterventionRef=Einreichung von Eingriffen %s
 SendInterventionByMail=Eingriff per E-Mail versenden
 InterventionCreatedInDolibarr=Eingriff %s erstellt

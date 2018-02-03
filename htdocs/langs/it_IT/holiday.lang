@@ -16,7 +16,7 @@ CancelCP=Cancellato
 RefuseCP=Rifiutato
 ValidatorCP=Approvato da
 ListeCP=Elenco delle assenze
-ReviewedByCP=Will be approved by
+ReviewedByCP=Sarà approvato da
 DescCP=Descrizione
 SendRequestCP=Inserisci richiesta di assenza
 DelayToRequestCP=Le richieste devono essere inserite almeno <b>%s giorni</b> prima dell'inizio.
@@ -76,9 +76,11 @@ BoxTitleLastLeaveRequests=Ultime %s richieste di assenza modificate
 HolidaysMonthlyUpdate=Aggiornamento mensile
 ManualUpdate=Aggiornamento manuale
 HolidaysCancelation=Cancellazione ferie
-EmployeeLastname=Employee last name
-EmployeeFirstname=Employee first name
-TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+EmployeeLastname=Cognome dipendente
+EmployeeFirstname=Nome dipendente
+TypeWasDisabledOrRemoved=Permesso di tipo (ID %s) è stato disabilitato o rimosso
+LastHolidays=Ultime %s richieste di permesso
+AllHolidays=Tutte le richieste di permesso
 
 ## Configuration du Module ##
 LastUpdateCP=Ultimo aggiornamento automatico dell'assegnazione ferie

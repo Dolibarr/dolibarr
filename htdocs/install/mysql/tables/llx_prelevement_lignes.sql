@@ -24,7 +24,7 @@ create table llx_prelevement_lignes
   statut              smallint DEFAULT 0,
 
   client_nom          varchar(255),
-  amount              real DEFAULT 0,
+  amount              double(24,8) DEFAULT 0,
   code_banque         varchar(128),
   code_guichet        varchar(6),
   number              varchar(255),

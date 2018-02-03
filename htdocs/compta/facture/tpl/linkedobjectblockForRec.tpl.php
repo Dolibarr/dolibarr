@@ -51,13 +51,17 @@ foreach($linkedObjectBlock as $key => $objectlink)
     <td><?php echo $langs->trans("RepeatableInvoice"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td align="center"></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
+	<td align="center"><?php echo dol_print_date($objectlink->date_when,'day'); ?></td>
 	<td align="right"><?php
 		if ($user->rights->facture->lire) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
-	<td align="right"></td>
+	<td align="right">
+	<?php
+		print $objectlink->getLibStatut(3);
+	?>
+	</td>
 	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>
 <?php

@@ -23,9 +23,6 @@
  *	\brief      Main page for ECM section area
  */
 
-if (! defined('REQUIRE_JQUERY_LAYOUT'))  define('REQUIRE_JQUERY_LAYOUT','1');
-if (! defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
@@ -34,14 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("users");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("contracts");
+$langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -50,10 +40,12 @@ $result = restrictedArea($user, 'ecm', 0);
 // Get parameters
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','aZ09');
-$section=GETPOST("section")?GETPOST("section","int"):GETPOST("section_id","int");
-$module=GETPOST("module");
+$section=GETPOST('section','int')?GETPOST('section','int'):GETPOST('section_id','int');
+$module=GETPOST('module','alpha');
 if (! $section) $section=0;
-$section_dir=GETPOST('section_dir');
+$section_dir=GETPOST('section_dir','alpha');
+
+$search_doc_ref=GETPOST('search_doc_ref','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -88,54 +80,12 @@ $error=0;
  *	Actions
  */
 
-// Upload file
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-	// Define relativepath and upload_dir
-    $relativepath='';
-	if ($ecmdir->id) $relativepath=$ecmdir->getRelativePath();
-	else $relativepath=$section_dir;
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-
-	if (empty($_FILES['userfile']['tmp_name']))
-	{
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-	}
-
-	if (! $error)
-	{
-		if (dol_mkdir($upload_dir) >= 0)
-		{
-			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
-				$result=$ecmdir->changeNbOfFiles('+');
-			}
-			else
-			{
-				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
-					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-				}
-				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-				{
-					setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-				}
-				else	// Known error
-				{
-					setEventMessages($langs->trans($resupload), null, 'errors');
-				}
-			}
-		}
-		else
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFailToCreateDir",$upload_dir), null, 'errors');
-		}
-	}
+	$search_doc_ref='';
 }
+
 
 
 
@@ -154,7 +104,6 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	}
 	else
 	{
-		//TODO: Translate
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
@@ -203,6 +152,8 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 }
 
 // Refresh directory view
+// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual')
 {
     $ecmdirtmp = new EcmDirectory($db);
@@ -348,9 +299,16 @@ if ($action == 'refreshmanual')
 //print $_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index.php file
 
-$morejs=array();
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
+$moreheadcss='';
+$moreheadjs='';
 
+//$morejs=array();
+$morejs=array('includes/jquery/plugins/blockUI/jquery.blockUI.js','core/js/blockUI.js');	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+
+$moreheadjs.='<script type="text/javascript">'."\n";
+$moreheadjs.='var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
+$moreheadjs.='</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
@@ -362,10 +320,11 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 {
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))	{ $langs->load("products"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts")); }
 	if (! empty($conf->societe->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-	if (! empty($conf->propal->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Prop"), 'desc'=>$langs->trans("ECMDocsByProposals")); }
+	if (! empty($conf->propal->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsByProposals")); }
 	if (! empty($conf->contrat->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsByContracts")); }
 	if (! empty($conf->commande->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled, 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsByOrders")); }
 	if (! empty($conf->facture->enabled))		{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsByInvoices")); }
+	if (! empty($conf->supplier_proposal->enabled))	{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'supplier_proposal', 'test'=>$conf->supplier_proposal->enabled, 'label'=>$langs->trans("SupplierProposals"), 'desc'=>$langs->trans("ECMDocsBySupplierProposals")); }
 	if (! empty($conf->fournisseur->enabled))	{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsByOrders")); }
 	if (! empty($conf->fournisseur->enabled))	{ $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice_supplier', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsByInvoices")); }
 	if (! empty($conf->tax->enabled))			{ $langs->load("compta"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBySocialContributions")); }
@@ -375,13 +334,10 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	$rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsByUsers"));
 }
 
-//print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+$head = ecm_prepare_dasboard_head('');
+dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), -1, '');
 
-$helptext1=''; $helptext2='';
-$helptext1.=$langs->trans("ECMAreaDesc");
-$helptext1.=$langs->trans("ECMAreaDesc2");
-$helptext2.=$langs->trans("ECMAreaDesc");
-$helptext2.=$langs->trans("ECMAreaDesc2");
+
 
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
@@ -389,15 +345,6 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 
 }
-
-//if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
-//else $classviewhide='visible';
-$classviewhide='inline-block';
-
-
-$head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
-
 
 // Start container of all panels
 ?>
@@ -407,11 +354,11 @@ dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans
 <?php
 
 // Start top panel, toolbar
-print '<div class="toolbarbutton">';
+print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 $url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
-print '<a href="'.$url.'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
@@ -420,7 +367,7 @@ print '</div>';
 
 ?>
 </div>
-<div id="ecm-layout-west" class="<?php echo $classviewhide; ?>">
+<div id="ecm-layout-west" class="inline-block">
 <?php
 // Start left area
 
@@ -497,10 +444,10 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 }
 
 
-// End left banner
+// End left panel
 ?>
 </div>
-<div id="ecm-layout-center" class="<?php echo $classviewhide; ?>">
+<div id="ecm-layout-center" class="inline-block">
 <div class="pane-in ecm-in-layout-center">
 <div id="ecmfileview" class="ecmfileview">
 <?php
@@ -522,15 +469,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 <?php
 // End of page
 
-
-dol_fiche_end(1);
-
-
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }
 
 
+dol_fiche_end();
 
 llxFooter();
 

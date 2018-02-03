@@ -13,3 +13,5 @@ TJM=Average daily rate
 CurrentSalary=Aktualne wynagrodzenie
 THMDescription=Ta wartość może być użyta do obliczenia kosztów poniesionych przy projekcie do którego przystąpili użytkownicy jeżeli moduł projektów jest używany
 TJMDescription=Ta wartość jest aktualnie jedynie informacją i nie jest wykorzystywana do jakichkolwiek obliczeń
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

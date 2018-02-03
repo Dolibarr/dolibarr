@@ -14,4 +14,3 @@ ECMSectionOfDocuments=Dokumentenordner
 ECMDocsBySocialContributions=Verlinke Dokumente zu Sozialabgaben oder Steuerinformationen
 ECMDocsByThirdParties=Mit Geschäftspartnern verknüpfte Dokumente
 ECMDocsByInterventions=Mit Eingriffen verknüpfte Dokumente
-DirNotSynchronizedSyncFirst=Dieses Verzeichnis scheint ausserhalb des ECM Moduls erstellt oder verändert worden zu sein. Sie müssten auf den "Refresh"-Button klicken um den Inhalt der Festplatte mit der Datenbank zu synchronisieren.

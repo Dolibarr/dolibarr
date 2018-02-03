@@ -31,13 +31,13 @@ $langs->load("stocks");
 // Security check
 $result=restrictedArea($user,'stock');
 
-$sref=GETPOST("sref");
-$snom=GETPOST("snom");
-$sall=GETPOST('sall', 'alphanohtml');
+$sref=GETPOST("sref",'alpha');
+$snom=GETPOST("snom",'alpha');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
-if (! $sortfield) $sortfield="e.label";
+if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 if ($page < 0) $page = 0;
@@ -51,25 +51,22 @@ $year = strftime("%Y",time());
  *	View
  */
 
-$sql = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
+$sql = "SELECT e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays,";
 $sql.= " SUM(ps.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql.= " WHERE e.entity IN (".getEntity('stock').")";
-if ($sref)
-{
-    $sql.= " AND e.label LIKE '%".$db->escape($sref)."%'";
-}
+if ($sref) $sql.= natural_search("e.ref", $sref);
 if ($sall)
 {
-    $sql.= " AND (e.label LIKE '%".$db->escape($sall)."%'";
+    $sql.= " AND (e.ref LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.description LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.address LIKE '%".$db->escape($sall)."%'";
     $sql.= " OR e.town LIKE '%".$db->escape($sall)."%')";
 }
-$sql.= " GROUP BY e.rowid, e.label, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
+$sql.= " GROUP BY e.rowid, e.ref, e.statut, e.lieu, e.address, e.zip, e.town, e.fk_pays";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
@@ -87,7 +84,7 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);
+    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref","","","",$sortfield,$sortorder);
     print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu","","","",$sortfield,$sortorder);
     print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
     print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);

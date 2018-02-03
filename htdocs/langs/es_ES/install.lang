@@ -53,10 +53,10 @@ AdminLogin=Usuario del administrador de la base de datos Dolibarr. Deje vacío s
 PasswordAgain=Verificación de la contraseña
 AdminPassword=Contraseña del administrador de la base de datos Dolibarr. Deje vacío si se conecta en anonymous
 CreateDatabase=Crear la base de datos
-CreateUser=Create owner or grant him permission on database
+CreateUser=Crear propietario o concederle permiso en la base de datos
 DatabaseSuperUserAccess=Base de datos - Acceso super usuario
 CheckToCreateDatabase=Seleccione esta opción si la base de datos no existe y debe crearse. En este caso, es necesario indicar usuario/contraseña del superusuario más adelante en esta página.
-CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
+CheckToCreateUser=Seleccione esta opción si el propietario de la base de datos no existe y debe ser creado, o si existe pero la base de datos no existe y se deben conceder permisos.<br> En este caso, debes elegir el login y contraseña y también rellenar el login/contraseña para la cuenta de superusuario en la parte inferior de esta página. Si esta opción no está seleccionada, el propietario de la base de datos y su contraseña deben existir.
 DatabaseRootLoginDescription=Usuario de la base que tiene los derechos de creación de bases de datos o cuenta para la base de datos, inútil si la base de datos y su usuario ya existen (como cuando están en un anfitrión).
 KeepEmptyIfNoPassword=Deje vacío si el usuario no tiene contraseña
 SaveConfigurationFile=Grabación del archivo de configuración
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Está utilizando el asistente de instalación Dolibarr de u
 KeepDefaultValuesMamp=Está utilizando el asistente de instalación DoliMamp, los valores propuestos aquí están optimizados. Cambielos solamente si está seguro de ello.
 KeepDefaultValuesProxmox=Está utilizando el asistente de instalación Dolibarr desde una máquina virtual Proxmox, los valores propuestos aquí están optimizados. Cambielos solamente si está seguro de ello.
 UpgradeExternalModule=Ejecutar proceso dedicado para actualizar módulos externos
-
+SetAtLeastOneOptionAsUrlParameter=Establezca al menos una opción como parámetro en URL. Por ejemplo: '... repair.php?standard=confirmed'
+NothingToDelete=Nada para limpiar/eliminar
+NothingToDo=Nada que hacer
 #########
 # upgrade
 MigrationFixData=Corrección de datos desnormalizados
@@ -191,9 +193,11 @@ MigrationActioncommElement=Actualización de los datos de acciones sobre element
 MigrationPaymentMode=Actualización de los modos de pago
 MigrationCategorieAssociation=Actualización de las categorías
 MigrationEvents=Migración de eventos para agregar propietario de evento en la tabla de asignacion
+MigrationEventsContact=Migración de eventos para agregar contacto de evento en la tabla de asignación
 MigrationRemiseEntity=Actualizando el campo entity de llx_societe_remise
 MigrationRemiseExceptEntity=Actualizando el campo entity de llx_societe_remise_except
 MigrationReloadModule=Recargar módulo %s
+MigrationResetBlockedLog=Restablecer el módulo BlockedLog para el algoritmo v7
 ShowNotAvailableOptions=Mostrar opciones no disponibles
 HideNotAvailableOptions=Ocultar opciones no disponibles
 ErrorFoundDuringMigration=Se ha producido un error durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar errores puede <a href="%s">hacer clic aquí</a>, pero la aplicación a algunas funcionalidades pueden no funcionar correctamente mientras no se arregle el problema.

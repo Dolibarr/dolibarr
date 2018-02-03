@@ -4,7 +4,6 @@ Proposal=商業建議
 ProposalShort=建議
 ProposalsDraft=商業建議草案
 ProposalsOpened=Open commercial proposals
-Prop=商業建議
 CommercialProposal=商業建議
 PdfCommercialProposalTitle=商業建議
 ProposalCard=建議卡
@@ -64,6 +63,7 @@ ProposalLine=建議行
 AvailabilityPeriod=可用性延遲
 SetAvailability=設置可用性延遲
 AfterOrder=訂單後
+OtherProposals=其他建議
 ##### Availability #####
 AvailabilityTypeAV_NOW=即時
 AvailabilityTypeAV_1W=1個星期

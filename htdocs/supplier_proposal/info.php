@@ -62,7 +62,7 @@ $head = supplier_proposal_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
 // Supplier proposal card
-$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/supplier_proposal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 $morehtmlref='<div class="refidno">';

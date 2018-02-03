@@ -33,11 +33,11 @@ require_once $dolibarr_main_document_root . '/core/lib/security.lib.php'; // for
 
 global $langs;
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
+$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
-$action=GETPOST('action', 'alpha');
+$versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
+$action=GETPOST('action','alpha');
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
@@ -342,7 +342,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 // Create lock file
 
 // If first install
-if ($action == "set" && $success) {
+if ($action == "set" && $success)
+{
     if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
     {
         // Install is finished
@@ -350,14 +351,14 @@ if ($action == "set" && $success) {
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Install is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));
@@ -400,14 +401,14 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Upgrade is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));
