@@ -44,7 +44,7 @@ create table llx_propaldet
   total_localtax1					double(24,8) DEFAULT 0,          -- Total localtax1
   total_localtax2					double(24,8) DEFAULT 0,          -- Total localtax2
   total_ttc							double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  product_type						integer    DEFAULT 0,
+  product_type						integer    DEFAULT 0,            -- 0 or 1. Value 9 may be used by some modules (amount of line may not be included into generated discount if value is 9).
   date_start						datetime   DEFAULT NULL,         -- date debut si service
   date_end							datetime   DEFAULT NULL,         -- date fin si service
   info_bits							integer      DEFAULT 0,          -- TVA NPR ou non
