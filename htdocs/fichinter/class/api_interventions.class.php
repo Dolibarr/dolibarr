@@ -26,7 +26,7 @@
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Fichinters extends DolibarrApi
+class Interventions extends DolibarrApi
 {
 
     /**
@@ -42,7 +42,6 @@ class Fichinters extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDSLINE = array(
-      'fk_fichinter',
       'description',
       'date',
       'duree'
@@ -64,9 +63,38 @@ class Fichinters extends DolibarrApi
     }
 
     /**
-     * List fichinters
+     * Get properties of a Expense Report object
      *
-     * Get a list of fichinters
+     * Return an array with Expense Report informations
+     *
+     * @param       int         $id         ID of Expense Report
+     * @return 	    array|mixed             Data without useless information
+     *
+     * @throws 	RestException
+     */
+    function get($id)
+    {
+    	if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->fichinter->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Intervention report not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$this->fichinter->fetchObjectLinked();
+    	return $this->_cleanObjectDatas($this->fichinter);
+    }
+
+    /**
+     * List of interventions
+     *
+     * Return a list of interventions
      *
      * @param string	       $sortfield	        Sort field
      * @param string	       $sortorder	        Sort order
@@ -139,7 +167,7 @@ class Fichinters extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $fichinter_static = new Fichinter($db);
                 if($fichinter_static->fetch($obj->rowid)) {
-                    $obj_ret[] = $fichinter_static;
+                	$obj_ret[] = $this->_cleanObjectDatas($fichinter_static);
                 }
                 $i++;
             }
@@ -154,10 +182,10 @@ class Fichinters extends DolibarrApi
     }
 
     /**
-     * Create fichinter object
+     * Create intervention object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of fichinter
+     * @return  int     ID of intervention
      */
     function post($request_data = NULL)
     {
@@ -177,16 +205,50 @@ class Fichinters extends DolibarrApi
         return $this->fichinter->id;
     }
 
+
     /**
-     * Create fichinter line object
+     * Get lines of an intervention
      *
+     * @param int   $id             Id of intervention
+     *
+     * @url	GET {id}/lines
+     *
+     * @return int
+     */
+    /* TODO
+    function getLines($id) {
+    	if(! DolibarrApiAccess::$user->rights->ficheinter->lire) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->fichinter->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Intervention not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+    	$this->fichinter->getLinesArray();
+    	$result = array();
+    	foreach ($this->fichinter->lines as $line) {
+    		array_push($result,$this->_cleanObjectDatas($line));
+    	}
+    	return $result;
+    }
+	*/
+
+    /**
+     * Add a line to given intervention
+     *
+     * @param 	int   	$id             Id of intervention to update
      * @param   array   $request_data   Request data
      *
-     * @url     POST /line
+     * @url     POST {id}/lines
      *
-     * @return  boolean Create line fichinter work
+     * @return  int
      */
-    function postLine($request_data = NULL)
+    function postLine($id, $request_data = NULL)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
                           throw new RestException(401, "Insuffisant rights");
@@ -199,96 +261,107 @@ class Fichinters extends DolibarrApi
         }
 
         if( ! $result ) {
-            throw new RestException(404, 'Fichinter not found');
+            throw new RestException(404, 'Intervention not found');
         }
 
                 if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
                         throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
                 }
 
-        if ($this->fichinter->addLine(
+        $updateRes = $this->fichinter->addLine(
                 DolibarrApiAccess::$user,
-                $this->fichinter->fk_fichinter,
+                $id,
                 $this->fichinter->description,
                 $this->fichinter->date,
-                $this->fichinter->duree) < 0) {
-            throw new RestException(500, "Error creating fichinter line", array_merge(array($this->fichinter->error), $this->fichinter->errors));
-        }
+                $this->fichinter->duree
+        );
 
-        return $this->fichinter;
+        if ($updateRes > 0) {
+        	return $updateRes;
+        }
+        else {
+        	throw new RestException(400, $this->fichinter->error);
+        }
     }
 
     /**
-     * Validate a fichinter
+     * Validate an intervention
      *
-     * @param   int $id             fichinter ID
+     * If you get a bad value for param notrigger check, provide this in body
+     * {
+     *   "notrigger": 0
+     * }
      *
-     * @url POST    validate
+     * @param   int $id             Intervention ID
+     * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+     *
+     * @url POST    {id}/validate
      *
      * @return  array
-     *
      */
-    function validFichinter($id)
+    function validate($id, $notrigger=0)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
                           throw new RestException(401, "Insuffisant rights");
                   }
         $result = $this->fichinter->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Fichinter not found');
+            throw new RestException(404, 'Intervention not found');
         }
 
-                if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
-                        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-                }
-
-        if( ! $this->fichinter->setValid(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when validate fichinter');
+        if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => 'Fichinter validated'
-            )
-        );
+        $result = $this->fichinter->setValid(DolibarrApiAccess::$user, $notrigger);
+        if ($result == 0) {
+        	throw new RestException(304, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+        	throw new RestException(500, 'Error when validating Intervention: '.$this->commande->error);
+        }
+
+        $this->fichinter->fetchObjectLinked();
+
+        return $this->_cleanObjectDatas($this->fichinter);
     }
 
     /**
-     * Close a fichinter
+     * Close an intervention
      *
-     * @param   int $id             fichinter ID
+     * @param   int 	$id             Intervention ID
      *
-     * @url POST    close
+     * @url POST    {id}/close
      *
      * @return  array
-     *
      */
-
     function closeFichinter($id)
     {
-        if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
-                          throw new RestException(401, "Insuffisant rights");
-                  }
+        if(! DolibarrApiAccess::$user->rights->ficheinter->creer)
+        {
+            throw new RestException(401, "Insuffisant rights");
+        }
         $result = $this->fichinter->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Fichinter not found');
+        if (! $result) {
+            throw new RestException(404, 'Intervention not found');
         }
 
-                if( ! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
-                        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-                }
-
-        if(! $this->fichinter->setStatut(3) ) {
-            throw new RestException(500, 'Error when closed fichinter');
+        if (! DolibarrApi::_checkAccessToResource('fichinter',$this->fichinter->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        return array(
-            'success' => array(
-                'code' => 200,
-                'message' => 'Fichinter closed'
-            )
-        );
+        $result = $this->fichinter->setStatut(3);
+
+        if ($result == 0) {
+        	throw new RestException(304, 'Error nothing done. May be object is already closed');
+        }
+        if ($result < 0) {
+        	throw new RestException(500, 'Error when closing Intervention: '.$this->fichinter->error);
+        }
+
+        $this->fichinter->fetchObjectLinked();
+
+        return $this->_cleanObjectDatas($this->fichinter);
     }
 
     /**
@@ -302,12 +375,30 @@ class Fichinters extends DolibarrApi
     function _validate($data)
     {
         $fichinter = array();
-        foreach (Fichinters::$FIELDS as $field) {
+        foreach (Interventions::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $fichinter[$field] = $data[$field];
         }
         return $fichinter;
+    }
+
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->statuts_short);
+    	unset($object->statuts_logo);
+    	unset($object->statuts);
+
+    	return $object;
     }
 
     /**
@@ -321,7 +412,7 @@ class Fichinters extends DolibarrApi
     function _validateLine($data)
     {
         $fichinter = array();
-        foreach (Fichinters::$FIELDSLINE as $field) {
+        foreach (Interventions::$FIELDSLINE as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $fichinter[$field] = $data[$field];
