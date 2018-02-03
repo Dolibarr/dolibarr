@@ -144,7 +144,7 @@ else {
 	<?php
 	
 	$freelines = false;
-	if(empty($conf->global->MAIN_DISABLE_FREE_LINES))
+	if (empty($conf->global->MAIN_DISABLE_FREE_LINES))
 	{
 		$freelines = true;
 		$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
