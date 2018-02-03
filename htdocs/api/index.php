@@ -152,11 +152,6 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
                     $enabled=true;
                     if (empty($conf->$modulenameforenabled->enabled)) $enabled=false;
 
-                    if ($module == 'ficheinter'){
-                        $enabled=true;
-                        $moduledirforclass='fichinter';
-                    }
-
                     if ($enabled)
                     {
                         // If exists, load the API class for enable module
