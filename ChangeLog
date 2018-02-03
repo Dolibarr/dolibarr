@@ -2,6 +2,16 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 8.0.0 compared to 7.0.0 *****
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Hook 'maildao' was renamed into 'mail' into the method sendfile that send emails, and method was renamed from
+  'doaction' into 'sendMail'. 
+  
+
 ***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:
 NEW: When payment is registered, PDF of invoices are also regenerated so payments
