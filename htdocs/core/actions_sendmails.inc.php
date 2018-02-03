@@ -364,8 +364,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
-					$error=0;
-
 					// Two hooks are available into method $mailfile->sendfile, so dedicated code is no more required
 					/*
 					if (! empty($conf->dolimail->enabled))
