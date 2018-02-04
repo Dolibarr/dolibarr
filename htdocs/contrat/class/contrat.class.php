@@ -2872,6 +2872,9 @@ class ContratLigne extends CommonObjectLine
 
 		$this->db->begin();
 
+		$this->oldcopy = new ContratLigne($this->db);
+		$this->oldcopy->fetch($this->id);
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " fk_contrat=".$this->fk_contrat.",";
@@ -2926,19 +2929,34 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
-		// Sync dates of all services
+		// If we change a planned date (start or end), sync dates for all services
 		if (! $error && ! empty($conf->global->CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES))
 		{
-			$sql ='UPDATE '.MAIN_DB_PREFIX.'contratdet SET';
-			$sql.= " date_ouverture_prevue = ".($this->date_ouverture_prevue!=''?"'".$this->db->idate($this->date_ouverture_prevue)."'":"null").",";
-			$sql.= " date_fin_validite = ".($this->date_fin_validite!=''?"'".$this->db->idate($this->date_fin_validite)."'":"null");
-			$sql.= " WHERE fk_contrat = ".$this->fk_contrat;
-
-			$resql = $this->db->query($sql);
-			if (! $resql)
+			if ($this->date_ouverture_prevue != $this->oldcopy->date_ouverture_prevue)
 			{
-				$error++;
-				$this->error="Error ".$this->db->lasterror();
+				$sql ='UPDATE '.MAIN_DB_PREFIX.'contratdet SET';
+				$sql.= " date_ouverture_prevue = ".($this->date_ouverture_prevue!=''?"'".$this->db->idate($this->date_ouverture_prevue)."'":"null");
+				$sql.= " WHERE fk_contrat = ".$this->fk_contrat;
+
+				$resql = $this->db->query($sql);
+				if (! $resql)
+				{
+					$error++;
+					$this->error="Error ".$this->db->lasterror();
+				}
+			}
+			if ($this->date_fin_validite != $this->oldcopy->date_fin_validite)
+			{
+				$sql ='UPDATE '.MAIN_DB_PREFIX.'contratdet SET';
+				$sql.= " date_fin_validite = ".($this->date_fin_validite!=''?"'".$this->db->idate($this->date_fin_validite)."'":"null");
+				$sql.= " WHERE fk_contrat = ".$this->fk_contrat;
+
+				$resql = $this->db->query($sql);
+				if (! $resql)
+				{
+					$error++;
+					$this->error="Error ".$this->db->lasterror();
+				}
 			}
 		}
 
