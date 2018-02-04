@@ -2258,6 +2258,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'users') {
         $moduledirforclass = 'user';
     }
+    elseif ($module == 'ficheinter' || $module == 'interventions') {
+    	$moduledirforclass = 'fichinter';
+    }
 
     return $moduledirforclass;
 }

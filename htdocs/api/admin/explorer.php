@@ -87,7 +87,13 @@ foreach ($modulesdir as $dir)
                     $part = 'compta/facture';
 					$obj = 'facture';
 				}
-                if (empty($conf->$module->enabled)) $enabled=false;
+                if ($module == 'ficheinter') {
+                                       $obj = 'fichinter';
+                                       $part = 'fichinter';
+                                       $module='fichinter';
+                               }
+
+		if (empty($conf->$module->enabled)) $enabled=false;
 
                 if ($enabled)
                 {

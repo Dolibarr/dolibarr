@@ -472,7 +472,7 @@ class Orders extends DolibarrApi
     /**
      * Validate an order
      *
-	 * If you get a bad value for param notrigger check that ou provide this in body
+	 * If you get a bad value for param notrigger check, provide this in body
      * {
      *   "idwarehouse": 0,
      *   "notrigger": 0
