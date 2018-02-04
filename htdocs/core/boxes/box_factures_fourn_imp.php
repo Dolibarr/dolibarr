@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2017 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
+            $sql.= " s.email, s.code_compta_fournisseur, s.logo,";
 			$sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.date_lim_reglement as datelimite,";
 			$sql.= " f.amount, f.datef as df,";
             $sql.= " f.total_ht as total_ht,";
@@ -121,9 +122,11 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$facturestatic->date_echeance = $datelimite;
 					$facturestatic->statut = $objp->fk_statut;
 					$thirdpartytmp->id = $objp->socid;
-					$thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->email = $objp->email;
 					$thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
+                    $thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
 
 					$late='';

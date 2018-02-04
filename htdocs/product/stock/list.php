@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2017      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,6 +198,8 @@ if ($result)
 			$warehouse->ref = $objp->ref;
 			$warehouse->label = $objp->ref;
             $warehouse->lieu = $objp->lieu;
+            $warehouse->zip = $objp->zip;
+            $warehouse->town = $objp->town;
             $warehouse->fk_parent = $objp->fk_parent;
 
             print '<tr class="oddeven">';

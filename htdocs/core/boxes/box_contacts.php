@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2017 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +78,14 @@ class box_contacts extends ModeleBoxes
 		if ($user->rights->societe->lire)
 		{
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
-			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile";
+            $sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile";
+            $sql.= ", sp.email as spemail";
 			$sql.= ", s.nom as socname, s.name_alias";
+            $sql.= ", s.email as socemail";
+            $sql.= ", s.logo";
             $sql.= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+            $sql.= ", s.code_compta";
+            $sql.= ", s.code_compta_fournisseur";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -108,6 +113,7 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->lastname=$objp->lastname;
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civility_id=$objp->civility_id;
+                    $contactstatic->email = $objp->spemail;
 					$contactstatic->statut=$objp->status;
                     $contactstatic->phone_pro = $objp->phone;
                     $contactstatic->phone_perso = $objp->phone_perso;
@@ -118,11 +124,15 @@ class box_contacts extends ModeleBoxes
 
 					$societestatic->id = $objp->fk_soc;
                     $societestatic->name = $objp->socname;
+                    $societestatic->email = $objp->socemail;
                     $societestatic->name_alias = $objp->name_alias;
                     $societestatic->code_client = $objp->code_client;
+                    $societestatic->code_compta_client = $objp->code_compta;
                     $societestatic->code_fournisseur = $objp->code_fournisseur;
+                    $societestatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
                     $societestatic->client = $objp->client;
                     $societestatic->fournisseur = $objp->fournisseur;
+                    $societestatic->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',

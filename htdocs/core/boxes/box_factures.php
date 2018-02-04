@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2017 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,8 +89,13 @@ class box_factures extends ModeleBoxes
             $sql.= ", f.datef as df";
 			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
             $sql.= ", s.nom as name";
+            $sql.= ", s.email";
+            $sql.= ", s.client";
+            $sql.= ", s.code_client";
+            $sql.= ", s.code_compta";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
+            $sql.= ", s.logo";
 			$sql.= ", f.date_lim_reglement as datelimite";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -128,8 +133,12 @@ class box_factures extends ModeleBoxes
 
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
+                    $societestatic->email = $objp->email;
+                    $societestatic->client = $objp->client;
                     $societestatic->code_client = $objp->code_client;
-
+                    $societestatic->code_compta_client = $objp->code_compta;
+                    $societestatic->logo = $objp->logo;
+                    
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {

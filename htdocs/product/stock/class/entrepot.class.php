@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
+ * Copyright (C) 2017      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -588,6 +589,10 @@ class Entrepot extends CommonObject
         $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->ref)?(empty($this->label)?$this->libelle:$this->label):$this->ref);
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
+        if (! empty($this->zip))
+            $label.= '<br><b>' . $langs->trans('Zip').':</b> '.$this->zip;
+        if (! empty($this->town))
+            $label.= '<br><b>' . $langs->trans('Town').':</b> '.$this->town;
 
         $url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
 

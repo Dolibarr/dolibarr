@@ -5,6 +5,7 @@
  * Copyright (C) 2014      Charles-Fr Benke	    <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2017      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,6 +262,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=15;
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.fournisseur";
+$sql.= ", s.email";
+$sql.= ", s.code_compta";
+$sql.= ", s.code_compta_fournisseur";
 $sql.= ", s.code_client";
 $sql.= ", s.code_fournisseur";
 $sql.= ", s.logo";
@@ -300,6 +304,7 @@ if ($result)
 
             $thirdparty_static->id=$objp->rowid;
             $thirdparty_static->name=$objp->name;
+            $thirdparty_static->email = $objp->email;
             $thirdparty_static->client=$objp->client;
             $thirdparty_static->fournisseur=$objp->fournisseur;
             $thirdparty_static->logo = $objp->logo;
@@ -307,6 +312,8 @@ if ($result)
             $thirdparty_static->status=$objp->status;
             $thirdparty_static->code_client = $objp->code_client;
             $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
+            $thirdparty_static->code_compta_client = $objp->code_compta;
+            $thirdparty_static->code_compta_fournisseur = $objp->code_compta_fournisseur;
             $thirdparty_static->canvas=$objp->canvas;
 
             print '<tr class="oddeven">';
