@@ -789,18 +789,18 @@ elseif ($object->id > 0)
 			print '</td>';
 			print '</tr>';
 
-			// Opportunity probability
-			print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-			print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %';
-			print '<span id="oldopppercent"></span>';
-			print '</td>';
-			print '</tr>';
+		    // Opportunity probability
+		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?vatrate($object->opp_percent):'')).'"> %';
+            print '<span id="oldopppercent"></span>';
+		    print '</td>';
+		    print '</tr>';
 
-			// Opportunity amount
-			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-			print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount,0,$langs,1,0):'')).'"></td>';
-			print '</tr>';
-		}
+		    // Opportunity amount
+		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price2num($object->opp_amount):'')).'"></td>';
+		    print '</tr>';
+	    }
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
