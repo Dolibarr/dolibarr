@@ -1893,6 +1893,7 @@ else
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
+					$arrayselected=array();
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
@@ -1907,6 +1908,7 @@ else
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+					$arrayselected=array();
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
