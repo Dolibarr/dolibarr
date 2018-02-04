@@ -133,10 +133,10 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->posxdesc=$this->marge_gauche+1;
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			$this->posxtva=99;
-			$this->posxup=114;
-			$this->posxqty=130;
-			$this->posxunit=147;
+			$this->posxtva=101;
+			$this->posxup=118;
+			$this->posxqty=135;
+			$this->posxunit=151;
 		}
 		else
 		{
