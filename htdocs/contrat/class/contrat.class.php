@@ -1268,13 +1268,10 @@ class Contrat extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+				// Call triggers
+				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 				}
 			}
 
