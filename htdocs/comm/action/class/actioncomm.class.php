@@ -1633,6 +1633,7 @@ class ActionComm extends CommonObject
 
     	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
     	{
+    		$langs->load("agenda");
     		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
     		return 0;
     	}
