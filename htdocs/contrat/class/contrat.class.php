@@ -1268,26 +1268,14 @@ class Contrat extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+				// Call triggers
+				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 				}
 			}
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
