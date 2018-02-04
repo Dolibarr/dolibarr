@@ -168,7 +168,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $notused, $default, $computed, $entity, $langfile, $enabled);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $notused, $default_value, $computed, $entity, $langfile, $enabled);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
