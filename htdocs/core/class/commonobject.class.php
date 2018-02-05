@@ -4708,7 +4708,7 @@ abstract class CommonObject
 			{
 				// Call trigger
 				$this->context=array('extrafieldaddupdate'=>1);
-				$result=$this->call_trigger(strtoupper($trigger, $userused);
+				$result=$this->call_trigger($trigger, $userused);
 				if ($result < 0) $error++;
 				// End call trigger
 			}
