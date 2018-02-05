@@ -172,10 +172,10 @@ class pdf_baleine extends ModelePDFProjects
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
-                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
-                {
-                    $tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
-                }
+				if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
+				{
+					$tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
+				}
 
 				$object->lines=$tasksarray;
 				$nblignes=count($object->lines);
@@ -463,7 +463,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		$heightoftitleline = 10;
 
-        $default_font_size = pdf_getPDFFontSize($outputlangs);
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetDrawColor(128,128,128);
 
@@ -586,7 +586,6 @@ class pdf_baleine extends ModelePDFProjects
 	    	}
 	    }
         */
-
 	}
 
 	/**
@@ -606,4 +605,3 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 }
-
