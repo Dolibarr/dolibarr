@@ -655,9 +655,11 @@ class Tva extends CommonObject
      *  @param	int  	$notooltip		1=Disable tooltip
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0, $option='',  $notooltip=0)
+	function getNomUrl($withpicto=0, $option='', $notooltip=0)
 	{
-		global $langs;
+		global $langs, $conf;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
         $label=$langs->trans("ShowVatPayment").': '.$this->ref;
@@ -690,7 +692,7 @@ class Tva extends CommonObject
 
 		return $result;
 	}
-	
+
 	/**
      * 	Return amount of payments already done
      *
