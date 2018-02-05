@@ -285,6 +285,39 @@ class Interventions extends DolibarrApi
     }
 
     /**
+     * Delete order
+     *
+     * @param   int     $id         Order ID
+     * @return  array
+     */
+    function delete($id)
+    {
+    	if(! DolibarrApiAccess::$user->rights->ficheinter->supprimer) {
+    		throw new RestException(401);
+    	}
+    	$result = $this->fichinter->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Intervention not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('commande',$this->fichinter->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	if( ! $this->fichinter->delete(DolibarrApiAccess::$user)) {
+    		throw new RestException(500, 'Error when delete intervention : '.$this->fichinter->error);
+    	}
+
+    	return array(
+	    	'success' => array(
+		    	'code' => 200,
+		    	'message' => 'Intervention deleted'
+	    	)
+    	);
+
+    }
+
+    /**
      * Validate an intervention
      *
      * If you get a bad value for param notrigger check, provide this in body
