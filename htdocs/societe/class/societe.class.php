@@ -462,8 +462,8 @@ class Societe extends CommonObject
 		$this->db->begin();
 
 		// For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-		if ($this->code_client == -1)      $this->get_codeclient($this,0);
-		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this,1);
+		if ($this->code_client == -1 || $this->code_client === 'auto')           $this->get_codeclient($this,0);
+		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') $this->get_codefournisseur($this,1);
 
 		// Check more parameters (including mandatory setup
 		// If error, this->errors[] is filled
@@ -471,8 +471,10 @@ class Societe extends CommonObject
 
 		if ($result >= 0)
 		{
+			$entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
-			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$conf->entity.", '".$this->db->idate($now)."'";
+			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$entity.", '".$this->db->idate($now)."'";
 			$sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
 			$sql.= ", ".(! empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'":"null");
 			$sql.= ", ".$this->status;
@@ -698,11 +700,12 @@ class Societe extends CommonObject
 			}
 			else
 			{
+				//var_dump($conf->global->SOCIETE_EMAIL_UNIQUE);
 				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL')
 				{
 					// Check for unicity
-					if ($vallabel)
+					if ($vallabel && ! empty($conf->global->SOCIETE_EMAIL_UNIQUE))
 					{
 						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0)))
 						{
@@ -735,7 +738,7 @@ class Societe extends CommonObject
 	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
-	 *		@param	string	$action						'add' or 'update'
+	 *		@param	string	$action						'add' or 'update' or 'merge'
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			<0 if KO, >=0 if OK
 	 */
@@ -811,8 +814,8 @@ class Societe extends CommonObject
 		$this->barcode=trim($this->barcode);
 
 		// For automatic creation
-		if ($this->code_client == -1) $this->get_codeclient($this,0);
-		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this,1);
+		if ($this->code_client == -1 || $this->code_client === 'auto')           $this->get_codeclient($this,0);
+		if ($this->code_fournisseur == -1 || $this->code_fournisseur === 'auto') $this->get_codefournisseur($this,1);
 
 		$this->code_compta=trim($this->code_compta);
 		$this->code_compta_fournisseur=trim($this->code_compta_fournisseur);
@@ -864,7 +867,12 @@ class Societe extends CommonObject
 		// Check name is required and codes are ok or unique.
 		// If error, this->errors[] is filled
 		$result = 0;
-		if ($action != 'add') $result = $this->verify();	// We don't check when update called during a create because verify was already done
+		if ($action != 'add' && $action != 'merge')
+		{
+			// We don't check when update called during a create because verify was already done.
+			// For a merge, we suppose source data is clean and a customer code of a deleted thirdparty must be accepted into a target thirdparty with empty code without duplicate error
+			$result = $this->verify();
+		}
 
 		if ($result >= 0)
 		{
@@ -1145,7 +1153,8 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' WHERE s.entity IN ('.getEntity($this->element, 1).')';
+
+		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)   $sql .= ' AND s.rowid = '.$rowid;
 		if ($ref)     $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
@@ -3458,7 +3467,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 			return array();
@@ -3498,7 +3507,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 			return array();
@@ -3569,7 +3578,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 		{
@@ -3764,16 +3773,22 @@ class Societe extends CommonObject
 	 * Function used to replace a thirdparty id with another one.
 	 * It must be used within a transaction to avoid trouble
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$db 		Database handler
+	 * @param 	int 	$origin_id 	Old thirdparty id (will be removed)
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool				True if success, False if error
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
+		if ($origin_id == $id)
+		{
+			dol_syslog('Error: Try to merge a thirdparty into itself');
+			return false;
+		}
+
 		/**
-		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
-		 * Because this function is meant to be executed within a transaction, we won't take care of it.
+		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some to avoid duplicate.
+		 * Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
 		 */
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';

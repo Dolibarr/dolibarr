@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Thanh toán không liên quan đến bất kỳ hóa 
 PaymentsNotLinkedToUser=Thanh toán không liên quan đến bất kỳ người dùng
 Profit=Lợi nhuận
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Cân bằng
 Debit=Nợ
 Credit=Tín dụng

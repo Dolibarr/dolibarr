@@ -225,6 +225,8 @@ IfAmountHigherThan=Eğer tutar <strong>%s</strong> den büyükse
 SourcesRepository=Kaynaklar için havuz
 Chart=Çizelge
 PassEncoding=Password encoding
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions removed
 
 ##### Export #####
 ExportsArea=Dışaaktar alanı

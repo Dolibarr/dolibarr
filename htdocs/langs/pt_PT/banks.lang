@@ -89,6 +89,7 @@ AccountIdShort=Número
 LineRecord=Registo
 AddBankRecord=Adicionar entrada
 AddBankRecordLong=Adicionar entrada manualmente
+Conciliated=Reconciled
 ConciliatedBy=Conciliado por
 DateConciliating=Data Conciliação
 BankLineConciliated=Entrada reconciliada

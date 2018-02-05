@@ -107,7 +107,6 @@ Modelcsv_ciel=Export to Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export to Quadratus QuadraCompta
 Modelcsv_ebp=Export to EBP
 Modelcsv_cogilog=Export to Cogilog
-Modelcsv_agiris=Export to Agiris (Test)
 ChartofaccountsId=Chart of accounts ID
 DefaultBindingDesc=This page can be used to set a default account for linking transaction records about payments, salaries, donations, taxes and vat when no specific finance account had already been set.
 OptionModeProductSell=Type of sale

@@ -21,7 +21,8 @@
 --
 
 --
--- Descriptif des plans comptables UK ENG-BASE id 7xxxx
+-- Descriptif des plans comptables UK ENG-BASE 
+-- ID 70000 - 79999
 --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (71501, 'ENG-BASE', 'CAPIT',  'XXXXXX', '1', '0', 'Equity, provisions for liabilities and charges and liabilities at more than one year', 1);
@@ -237,7 +238,7 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70305, 'ENG-BASE', 'FINAN', 'XXXXXX', '511', '70304', 'Cash values', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70306, 'ENG-BASE', 'FINAN', 'BANK', '512', '70304', 'Banks', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70307, 'ENG-BASE', 'FINAN', 'XXXXXX', '514', '70304', 'Postal checks', 1);
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70308, 'ENG-BASE', 'FINAN', 'XXXXXX', '515', '70304', '\"Caisses\" of the Treasury and public institutions', 1);
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70308, 'ENG-BASE', 'FINAN', 'XXXXXX', '515', '70304', 'Caisses of the Treasury and public institutions', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70309, 'ENG-BASE', 'FINAN', 'XXXXXX', '516', '70304', 'Exchange companies', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70310, 'ENG-BASE', 'FINAN', 'XXXXXX', '517', '70304', 'Other financial institutions', 1);
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (70311, 'ENG-BASE', 'FINAN', 'XXXXXX', '518', '70304', 'Accrued interest', 1);

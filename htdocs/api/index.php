@@ -79,6 +79,9 @@ if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($
 }
 
 
+// This 2 lines are usefull only if we want to exclude some Urls from the explorer
+//use Luracast\Restler\Explorer;
+//Explorer::$excludedPaths = array('/categories');
 
 
 // Analyze URLs
@@ -142,6 +145,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
                     $modulenameforenabled = $module;
                     if ($module == 'propale') { $modulenameforenabled='propal'; }
                     if ($module == 'supplierproposal') { $modulenameforenabled='supplier_proposal'; }
+                    if ($module == 'ficheinter') { $modulenameforenabled='ficheinter'; }
 
                     dol_syslog("Found module file ".$file." - module=".$module." - modulenameforenabled=".$modulenameforenabled." - moduledirforclass=".$moduledirforclass);
 
@@ -214,7 +218,7 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
     $moduledirforclass = getModuleDirForApiClass($module);
 
     // Load a dedicated API file
-    dol_syslog("Load a dedicated API file moduledirforclass=".$moduledirforclass);
+    dol_syslog("Load a dedicated API file module=".$module." moduledirforclass=".$moduledirforclass);
 
 	$tmpmodule = $module;
 	if ($tmpmodule != 'api')
@@ -226,6 +230,11 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
 		$classfile = 'supplier_orders';
 	if ($module == 'supplierinvoices')
 		$classfile = 'supplier_invoices';
+	if ($module == 'ficheinter')
+		$classfile = 'interventions';
+	if ($module == 'interventions')
+		$classfile = 'interventions';
+
 	$dir_part_file = dol_buildpath('/' . $moduledirforclass . '/class/api_' . $classfile . '.class.php', 0, 2);
 
 	$classname = ucwords($module);

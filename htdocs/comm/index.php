@@ -470,7 +470,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 2, 3)";
-	$sql.= " AND s.entity IN (".getEntity($companystatic->element, 1).")";
+	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
@@ -534,7 +534,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
-	$sql.= " AND s.entity IN (".getEntity($companystatic->element, 1).")";
+	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
 	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY s.datec DESC";
@@ -768,7 +768,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.entity IN (".getEntity('commande').")";
-	$sql.= " AND c.fk_statut = 1";
+	$sql.= " AND (c.fk_statut = ".Commande::STATUS_VALIDATED." or c.fk_statut = ".Commande::STATUS_SHIPMENTONPROCESS.")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY c.rowid DESC";

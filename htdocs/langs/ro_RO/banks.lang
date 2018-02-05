@@ -89,6 +89,7 @@ AccountIdShort=Cod
 LineRecord=Tranzacţie
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Decontat de
 DateConciliating=Data Decontare
 BankLineConciliated=Entry reconciled

@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Plaćanja nisu povezana ni sa jednom fakturom, niti s
 PaymentsNotLinkedToUser=Plaćanja nisu povezana ni sa jednim korisnikom
 Profit=Dobit
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Stanje
 Debit=Duguje
 Credit=Potražuje

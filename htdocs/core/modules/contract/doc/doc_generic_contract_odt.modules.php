@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -280,14 +281,14 @@ class doc_generic_contract_odt extends ModelePDFContract
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
 					else {
-                        			$socobject = $object->client;
+                        			$socobject = $object->thirdparty;
                         			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
                         			$contactobject = $object->contact;
                     			}
 				}
 				else
 				{
-					$socobject=$object->client;
+					$socobject=$object->thirdparty;
 				}
 				// Make substitution
 				$substitutionarray=array(

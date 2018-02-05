@@ -108,9 +108,9 @@ if (empty($reshook))
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('dynamicprices','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','workflow');  // Module we never want
+	$alwaysuncheckedmodules=array('dynamicprices','incoterm','loan','multicurrency','paybox','paypal','stripe','google','printing','scanner','skype','workflow');  // Module we dont want by default
 	// Not visible
-	$alwayshiddencheckedmodules=array('accounting','api','barcode','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
+	$alwayshiddencheckedmodules=array('accounting','api','barcode','blockedlog','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
 									'mailmanspip','notification','oauth','syslog','user','webservices',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');

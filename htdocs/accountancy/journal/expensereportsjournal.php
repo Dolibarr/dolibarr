@@ -554,14 +554,15 @@ if (empty($action) || $action == 'view') {
 	print '
 	<script type="text/javascript">
 		function launch_export() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("exportcsv");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			$("div.fiche form input[name=\"action\"]").val("exportcsv");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 		function writebookkeeping() {
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("writebookkeeping");
-			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-			$("div.fiche div.tabBar form input[name=\"action\"]").val("");
+			console.log("click on writebookkeeping");
+			$("div.fiche form input[name=\"action\"]").val("writebookkeeping");
+			$("div.fiche form input[type=\"submit\"]").click();
+			$("div.fiche form input[name=\"action\"]").val("");
 		}
 	</script>';
 

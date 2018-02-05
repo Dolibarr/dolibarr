@@ -196,6 +196,7 @@ CurrentProductPrice=Huidige prijs
 AlwaysUseNewPrice=Gebruik altijd huidige product/diensten prijs
 AlwaysUseFixedPrice=Gebruik vaste prijs
 PriceByQuantity=Verschillende prijzen per hoeveelheid
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Aantal bereik
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

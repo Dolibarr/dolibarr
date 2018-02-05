@@ -470,14 +470,15 @@ class Productlot extends CommonObject
 	 *  Return a link to the a lot card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int		$withpicto				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option					On what the link point to
+     *  @param	integer	$notooltip				1=Disable tooltip
+     *  @param	int		$maxlen					Max length of visible user name
+     *  @param  string  $morecss            	Add more css on link
+     *  @param  int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string							String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='', $save_lastsearch_value=-1)
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;

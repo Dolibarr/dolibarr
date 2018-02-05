@@ -89,6 +89,7 @@ AccountIdShort=จำนวน
 LineRecord=การซื้อขาย
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=โดยคืนดี
 DateConciliating=วันที่ตกลงกัน
 BankLineConciliated=Entry reconciled

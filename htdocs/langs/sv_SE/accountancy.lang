@@ -158,7 +158,7 @@ NumPiece=Piece number
 TransactionNumShort=Num. transaction
 AccountingCategory=Personalized groups
 GroupByAccountAccounting=Group by accounting account
-AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
@@ -191,6 +191,7 @@ DescThirdPartyReport=Consult here the list of the third party customers and supp
 ListAccounts=Förteckning över redovisningskonton
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
@@ -244,7 +245,6 @@ ErrorAccountingJournalIsAlreadyUse=This journal is already use
 ## Export
 ExportDraftJournal=Export draft journal
 Modelcsv=Modell av export
-OptionsDeactivatedForThisExportModel=För denna exportmodell är tillval inaktiverade
 Selectmodelcsv=Välj en modell av export
 Modelcsv_normal=Klassisk export
 Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
@@ -254,7 +254,7 @@ Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
 Modelcsv_cogilog=Export towards Cogilog
-Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_agiris=Export towards Agiris
 Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Chart of accounts Id
 

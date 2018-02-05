@@ -54,15 +54,18 @@ class Products extends DolibarrApi
     /**
      * Get properties of a product object
      *
-     * Return an array with product informations
+     * Return an array with product information.
+     * TODO implement getting a product by ref or by $ref_ext
      *
-     * @param 	int 	$id     ID of product
+     * @param 	int 	$id     			ID of product
+     * @param	int		$includestockdata	Load also information about stock (slower)
      * @return 	array|mixed data without useless information
 	 *
-     * @throws 	RestException
-     * TODO implement getting a product by ref or by $ref_ext
+     * @throws RestException
+     * @throws 401
+     * @throws 404
      */
-    function get($id)
+    function get($id, $includestockdata=0)
     {
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
@@ -77,7 +80,10 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $this->product->load_stock();
+		if ($includestockdata)
+		{
+        	$this->product->load_stock();
+		}
 
         return $this->_cleanObjectDatas($this->product);
     }
@@ -191,14 +197,21 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Update product
+     * Update product.
+     * Price will be updated by this API only if option is set on "One price per product". See other APIs for other price modes.
      *
      * @param int   $id             Id of product to update
      * @param array $request_data   Datas
      * @return int
+     *
+     * @throws RestException
+     * @throws 401
+     * @throws 404
      */
     function put($id, $request_data = NULL)
     {
+    	global $conf;
+
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
 			throw new RestException(401);
 		}
@@ -212,15 +225,63 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$oldproduct = dol_clone($this->product, 0);
+
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->product->$field = $value;
         }
 
-        if($this->product->update($id, DolibarrApiAccess::$user,1,'update'))
-            return $this->get ($id);
+        $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update');
 
-        return false;
+        // If price mode is 1 price per product
+        if ($result > 0 && ! empty($conf->global->PRODUCT_PRICE_UNIQ))
+        {
+        	// We update price only if it was changed
+        	$pricemodified = false;
+        	if ($this->product->price_base_type != $oldproduct->price_base_type) $pricemodified = true;
+        	else
+        	{
+        		if ($this->product->tva_tx != $oldproduct->tva_tx) $pricemodified = true;
+        		if ($this->product->tva_npr != $oldproduct->tva_npr) $pricemodified = true;
+        		if ($this->product->default_vat_code != $oldproduct->default_vat_code) $pricemodified = true;
+
+        		if ($this->product->price_base_type == 'TTC')
+	        	{
+	        		if ($this->product->price_ttc != $oldproduct->price_ttc) $pricemodified = true;
+	        		if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) $pricemodified = true;
+	        	}
+	        	else
+	        	{
+	        		if ($this->product->price != $oldproduct->price) $pricemodified = true;
+	        		if ($this->product->price_min != $oldproduct->price_min) $pricemodified = true;
+		      	}
+        	}
+
+        	if ($pricemodified)
+        	{
+        		$newvat = $this->product->tva_tx;
+        		$newnpr = $this->product->tva_npr;
+        		$newvatsrccode = $this->product->default_vat_code;
+
+        		$newprice = $this->product->price;
+        		$newpricemin = $this->product->price_min;
+        		if ($this->product->price_base_type == 'TTC')
+        		{
+        			$newprice = $this->product->price_ttc;
+        			$newpricemin = $this->product->price_min_ttc;
+        		}
+
+        		$result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
+        	}
+        }
+
+        if ($result <= 0)
+        {
+			throw new RestException(500, "Error updating product", array_merge(array($this->product->error), $this->product->errors));
+		}
+
+		return $this->get($id);
     }
 
     /**
@@ -249,6 +310,7 @@ class Products extends DolibarrApi
 
         return $this->product->delete(DolibarrApiAccess::$user);
     }
+
 
     /**
      * Get categories for a product
@@ -285,6 +347,121 @@ class Products extends DolibarrApi
     }
 
     /**
+     * Get prices per segment for a product
+     *
+     * @param int		$id         ID of product
+     *
+     * @return mixed
+     *
+     * @url GET {id}/selling_multiprices/per_segment
+     */
+    function getCustomerPricesPerSegment($id)
+    {
+    	global $conf;
+
+    	if (! DolibarrApiAccess::$user->rights->produit->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if (empty($conf->global->PRODUIT_MULTIPRICES))
+    	{
+    		throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
+    	}
+
+    	$result = $this->product->fetch($id);
+    	if ( ! $result ) {
+    		throw new RestException(404, 'Product not found');
+    	}
+
+    	if ($result < 0) {
+    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    	}
+
+    	return array(
+    	'multiprices'=>$this->product->multiprices,
+    	'multiprices_inc_tax'=>$this->product->multiprices_ttc,
+    	'multiprices_min'=>$this->product->multiprices_min,
+    	'multiprices_min_inc_tax'=>$this->product->multiprices_min_ttc,
+    	'multiprices_vat'=>$this->product->multiprices_tva_tx,
+    	'multiprices_base_type'=>$this->product->multiprices_base_type,
+    	//'multiprices_default_vat_code'=>$this->product->multiprices_default_vat_code
+    	);
+    }
+
+    /**
+     * Get prices per customer for a product
+     *
+     * @param int		$id         ID of product
+     *
+     * @return mixed
+     *
+     * @url GET {id}/selling_multiprices/per_customer
+     */
+    function getCustomerPricesPerCustomer($id)
+    {
+    	global $conf;
+
+    	if (! DolibarrApiAccess::$user->rights->produit->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if (empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+    	{
+    		throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
+    	}
+
+    	$result = $this->product->fetch($id);
+    	if ( ! $result ) {
+    		throw new RestException(404, 'Product not found');
+    	}
+
+    	if ($result < 0) {
+    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    	}
+
+    	throw new RestException(501, 'Feature not yet available');
+    	//return $result;
+    }
+
+    /**
+     * Get prices per quantity for a product
+     *
+     * @param int		$id         ID of product
+     *
+     * @return mixed
+     *
+     * @url GET {id}/selling_multiprices/per_quantity
+     */
+    function getCustomerPricesPerQuantity($id)
+    {
+    	global $conf;
+
+    	if (! DolibarrApiAccess::$user->rights->produit->lire) {
+    		throw new RestException(401);
+    	}
+
+    	if (empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+    	{
+    		throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
+    	}
+
+    	$result = $this->product->fetch($id);
+    	if ( ! $result ) {
+    		throw new RestException(404, 'Product not found');
+    	}
+
+    	if ($result < 0) {
+    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    	}
+
+    	return array(
+    		'prices_by_qty'=>$this->product->prices_by_qty[0],				// 1 if price by quantity was activated for the product
+    		'prices_by_qty_list'=>$this->product->prices_by_qty_list[0]
+    	);
+    }
+
+
+    /**
      * Clean sensible object datas
      *
      * @param   object  $object    Object to clean
@@ -295,6 +472,17 @@ class Products extends DolibarrApi
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->regeximgext);
+        unset($object->price_by_qty);
+        unset($object->prices_by_qty_id);
+        unset($object->libelle);
+        unset($object->product_id_already_linked);
+
+        unset($object->name);
+        unset($object->firstname);
+        unset($object->lastname);
+        unset($object->civility_id);
+
+        unset($object->recuperableonly);
 
         return $object;
     }

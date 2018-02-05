@@ -162,7 +162,6 @@ if ($action == 'presend')
 	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
-
 	$parameters = array(
 		'mode' => 'formemail'
 	);

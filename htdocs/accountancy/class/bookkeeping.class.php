@@ -628,12 +628,14 @@ class BookKeeping extends CommonObject
 	 * @param array $filter filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int <0 if KO, >=0 if OK
 	 */
 	public function fetchAllByAccount($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
 		global $conf;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$this->lines = array();
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
@@ -695,7 +697,6 @@ class BookKeeping extends CommonObject
 		if (! empty($limit)) {
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
-		$this->lines = array ();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -737,7 +738,7 @@ class BookKeeping extends CommonObject
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -780,7 +781,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
-		$sql .= " t.date_creation";
+		$sql .= " t.date_creation,";
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
 		$sqlwhere = array ();
@@ -848,7 +850,8 @@ class BookKeeping extends CommonObject
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
-				$line->date_creation = $obj->date_creation;
+				$line->date_creation = $this->db->jdate($obj->date_creation);
+				$line->date_modification = $this->db->jdate($obj->date_modification);
 
 				$this->lines[] = $line;
 			}

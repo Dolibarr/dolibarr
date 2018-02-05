@@ -127,7 +127,7 @@ $arrayfields=array(
 	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>1),
-	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>$checkedsuppliercode, 'enabled'=>(! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
+	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>0, 'enabled'=>(! empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
 	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 
 );
@@ -427,7 +427,7 @@ if ($resql)
 	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
-	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" name="search_title" value="'.$search_title.'"></td>';
+	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
 		print '<td class="liste_titre" align="center">';
 		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
@@ -454,6 +454,7 @@ if ($resql)
     if (! empty($arrayfields['a.percent']['checked']))	{
 		print '<td class="liste_titre center">';
     	print $formactions->form_select_status_action('formaction',$status,1,'status',1,2);
+    	print ajax_combobox('selectstatus');
     	print '</td>';
     }
 	// Action column
@@ -560,14 +561,14 @@ if ($resql)
 
 		// Label
 		if (! empty($arrayfields['a.label']['checked'])) {
-			print '<td class="tdoverflowmax300">';
+			print '<td class="tdoverflowmax200">';
 			print $actionstatic->label;
 			print '</td>';
 		}
 
 		// Start date
 		if (! empty($arrayfields['a.datep']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td align="center">';
 			print dol_print_date($db->jdate($obj->dp),"dayhour");
 			$late=0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
@@ -580,7 +581,7 @@ if ($resql)
 
 		// End date
 		if (! empty($arrayfields['a.datep2']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td align="center">';
 			print dol_print_date($db->jdate($obj->dp2),"dayhour");
 			print '</td>';
 		}

@@ -141,6 +141,7 @@ KeepDefaultValuesProxmox=Si sta utilizzando la configurazione guidata di una vir
 UpgradeExternalModule=Run dedicated upgrade process of external modules
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix per i dati denormalizzati
@@ -196,6 +197,7 @@ MigrationEventsContact=Migration of events to add event contact into assignement
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Ricarica modulo %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Mostra opzioni non disponibili
 HideNotAvailableOptions=Nascondi opzioni non disponibili
 ErrorFoundDuringMigration=L'errore si è verificato durante il processo di migrazione quindi il prossimo step non sarà disponibile. Per ignorare gli errori puoi <a href="%s">cliccare qui</a>, ma l'applicazione o qualche funzionalità potrebbe non funzionare correttamente fino alla correzione dell'errore.

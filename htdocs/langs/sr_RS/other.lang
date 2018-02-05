@@ -225,6 +225,8 @@ IfAmountHigherThan=Ukoliko je iznos veći od <strong>%s</strong>
 SourcesRepository=Repository koda
 Chart=Tabela
 PassEncoding=Password encoding
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions removed
 
 ##### Export #####
 ExportsArea=Oblast exporta

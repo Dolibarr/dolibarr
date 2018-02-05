@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2015 	Charlie Benke           <charlies@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  *
@@ -308,7 +308,7 @@ if (empty($reshook))
 										$outputlangs = $langs;
 										$newlang='';
 										if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-										if (empty($newlang)) $newlang=$srcobject->client->default_lang;
+										if (empty($newlang)) $newlang=$srcobject->thirdparty->default_lang;
 										if (! empty($newlang)) {
 											$outputlangs = new Translate("",$conf);
 											$outputlangs->setDefaultLang($newlang);
@@ -316,7 +316,7 @@ if (empty($reshook))
 										$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
 									} else {
 										$prod->fetch($lines[$i]->fk_product);
-										$label .= $lines[$i]->product_label;
+										$label = $lines[$i]->product_label;
 									}
 
 									if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
@@ -887,7 +887,7 @@ if ($action == 'create')
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
-			$soc = $objectsrc->client;
+			$soc = $objectsrc->thirdparty;
 
 			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private','none')));
 			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public','none'));

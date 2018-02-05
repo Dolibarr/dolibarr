@@ -139,8 +139,9 @@ KeepDefaultValuesDeb=Używasz kreatora instalacji Dolibarr z pakietu Linux (Ubut
 KeepDefaultValuesMamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 KeepDefaultValuesProxmox=Możesz skorzystać z kreatora konfiguracji Dolibarr z urządzeniem wirtualnym Proxmox, więc wartości zaproponowane tutaj są już zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 UpgradeExternalModule=Uruchom dedykowany proces uaktualniania modułów zewnętrznych
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
-NothingToDelete=Nothing to clean/delete
+SetAtLeastOneOptionAsUrlParameter=Ustaw przynajmniej jedną opcję jako parametr w adresie URL. Na przykład: '...repair.php?standard=confirmed'
+NothingToDelete=Nic do wyczyszczenia/usunięcia
+NothingToDo=Nic do zrobienia
 #########
 # upgrade
 MigrationFixData=Napraw nieznormalizowane dane
@@ -192,10 +193,11 @@ MigrationActioncommElement=Aktualizacja danych na temat działań
 MigrationPaymentMode=Migracji danych w trybie płatności
 MigrationCategorieAssociation=Migracja kategorii
 MigrationEvents=Przenieś wydarzenie by dodać nowego właściciela do przypisanej tabeli.
-MigrationEventsContact=Migration of events to add event contact into assignement table
+MigrationEventsContact=Migracja zdarzeń w celu dodania kontaktu zdarzenia do tabeli przydziału
 MigrationRemiseEntity=Zaktualizuj wartość pola podmiotu llx_societe_remise
 MigrationRemiseExceptEntity=Zaktualizuj wartość pola podmiotu llx_societe_remise_except
 MigrationReloadModule=Odśwież moduł %s
+MigrationResetBlockedLog=Zresetuj moduł BlockedLog dla algorytmu v7
 ShowNotAvailableOptions=Pokaż niedostępne opcje.
 HideNotAvailableOptions=Ukryj niedostępne opcje.
 ErrorFoundDuringMigration=Wystąpiły błędy podczas procesu migracji więc następny krok jest nie dostępny. Żeby zignorować błędy, możesz <a href="%s">kliknąć tutaj</a>, ale aplikacja bądź jakieś jej funkcje mogą działać niepoprawnie do póki nie zostaną naprawione.

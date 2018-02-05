@@ -196,6 +196,7 @@ CurrentProductPrice=Gjeldende pris
 AlwaysUseNewPrice=Bruk alltid gjeldende pris på vare/tjeneste
 AlwaysUseFixedPrice=Bruk den faste prisen
 PriceByQuantity=Prisen varierer med mengde
+DisablePriceByQty=Deaktiver mengderabatt
 PriceByQuantityRange=Kvantumssatser
 MultipriceRules=Prissegment-regler
 UseMultipriceRules=Bruk prissegment-regler (definert i oppsettet i Varemodulen) for automatisk å kalkulere prisene til alle andre segmenter i forhold til første segment

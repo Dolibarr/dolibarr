@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=المدفوعات ليست مرتبطة بأي ال�
 PaymentsNotLinkedToUser=المدفوعات ليست مرتبطة بأي مستخدم
 Profit=الأرباح
 AccountingResult=نتيجة المحاسبة
+BalanceBefore=Balance (before)
 Balance=التوازن
 Debit=الخصم
 Credit=الائتمان

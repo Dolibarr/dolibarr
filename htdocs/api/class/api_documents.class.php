@@ -388,14 +388,14 @@ class Documents extends DolibarrApi
 	 * Upload a file.
 	 *
 	 * Test sample 1: { "filename": "mynewfile.txt", "modulepart": "facture", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
-	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
+	 * Test sample 2: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
 	 *
 	 * @param   string  $filename           Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         Name of module or area concerned by file upload ('facture', 'project', 'project_task', ...)
 	 * @param   string  $ref                Reference of object (This will define subdir automatically and store submited file into it)
 	 * @param   string  $subdir       		Subdirectory (Only if ref not provided)
 	 * @param   string  $filecontent        File content (string with file content. An empty file will be created if this parameter is not provided)
-	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64)
+	 * @param   string  $fileencoding       File encoding (''=no encoding, 'base64'=Base 64) {@example '' or 'base64'}
 	 * @param   int 	$overwriteifexists  Overwrite file if exists (1 by default)
 	 *
 	 * @throws 200

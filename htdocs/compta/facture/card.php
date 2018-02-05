@@ -685,7 +685,7 @@ if (empty($reshook))
 			$i = 0;
 			foreach ($object->lines as $line)
 			{
-				if ($line->total_ht!=0)
+				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
 				{ 	// no need to create discount if amount is null
 					$amount_ht[$line->tva_tx] += $line->total_ht;
 					$amount_tva[$line->tva_tx] += $line->total_tva;
@@ -842,8 +842,8 @@ if (empty($reshook))
 
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
-				$object->note_public		= trim($_POST['note_public']);
-				$object->note				= trim($_POST['note']);
+				$object->note_public		= trim(GETPOST('note_public','none'));
+				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int			= $_POST['ref_int'];
 				$object->modelpdf			= $_POST['model'];
@@ -856,7 +856,7 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Proprietes particulieres a facture de remplacement
 				$object->fk_facture_source = $_POST['fac_replacement'];
@@ -894,8 +894,8 @@ if (empty($reshook))
 				$object->number				= $_POST['facnumber'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
-				$object->note_public		= trim($_POST['note_public']);
-				$object->note				= trim($_POST['note']);
+				$object->note_public		= trim(GETPOST('note_public','none'));
+				// We do not copy the private note
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int			= $_POST['ref_int'];
 				$object->modelpdf			= $_POST['model'];
@@ -908,7 +908,7 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Proprietes particulieres a facture avoir
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
@@ -991,17 +991,17 @@ if (empty($reshook))
 
 			if (! $error)
 			{
-				$object->socid			= GETPOST('socid','int');
-				$object->type           = $_POST['type'];
-				$object->number         = $_POST['facnumber'];
+				$object->socid			 = GETPOST('socid','int');
+				$object->type            = $_POST['type'];
+				$object->number          = $_POST['facnumber'];
 				$object->date            = $dateinvoice;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public	= trim($_POST['note_public']);
-				$object->note_private   = trim($_POST['note_private']);
-				$object->ref_client     = $_POST['ref_client'];
-				$object->ref_int     	= $_POST['ref_int'];
-				$object->modelpdf       = $_POST['model'];
-				$object->fk_project		= $_POST['projectid'];
+				$object->note_public	 = trim(GETPOST('note_public','none'));
+				$object->note_private    = trim(GETPOST('note_private','none'));
+				$object->ref_client      = $_POST['ref_client'];
+				$object->ref_int     	 = $_POST['ref_int'];
+				$object->modelpdf        = $_POST['model'];
+				$object->fk_project		 = $_POST['projectid'];
 				$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
 				$object->fk_account         = GETPOST('fk_account', 'int');
@@ -1011,12 +1011,12 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Source facture
-				$object->fac_rec = GETPOST('fac_rec');
+				$object->fac_rec = GETPOST('fac_rec', 'int');
 
-				$id = $object->create($user);       // This include recopy of links from recurring invoice
+				$id = $object->create($user);       // This include recopy of links from recurring invoice and invoice lines
 			}
 		}
 
@@ -1046,8 +1046,8 @@ if (empty($reshook))
 				$object->number				= $_POST['facnumber'];
 				$object->date				= $dateinvoice;
 				$object->date_pointoftax	= $date_pointoftax;
-				$object->note_public		= trim($_POST['note_public']);
-				$object->note_private		= trim($_POST['note_private']);
+				$object->note_public		= trim(GETPOST('note_public','none'));
+				$object->note_private		= trim(GETPOST('note_private','none'));
 				$object->ref_client			= $_POST['ref_client'];
 				$object->ref_int			= $_POST['ref_int'];
 				$object->modelpdf			= $_POST['model'];
@@ -1061,7 +1061,7 @@ if (empty($reshook))
 				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				if (GETPOST('type') == Facture::TYPE_SITUATION)
 				{
@@ -1572,7 +1572,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && (($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
@@ -1645,7 +1645,7 @@ if (empty($reshook))
 				$price_min = $prod->price_min;
 				$price_base_type = $prod->price_base_type;
 
-				// We define price for product
+				// If price per segment
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
@@ -1659,6 +1659,7 @@ if (empty($reshook))
 						if (empty($tva_tx)) $tva_npr=0;
 					}
 				}
+				// If price per customer
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
@@ -1679,6 +1680,37 @@ if (empty($reshook))
 							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
+				}
+				// If price per quantity
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				{
+					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
+					{
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						$pqp = GETPOST('pbq','int');
+
+						// Search price into product_price_by_qty from $prod->id
+						foreach($prod->prices_by_qty_list[0] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
+							break;
+						}
+					}
+				}
+				// If price per quantity and customer
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+				{
+					// TODO Same than PRODUIT_CUSTOMER_PRICES_BY_QTY but using $object->thirdparty->price_level
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
@@ -1875,8 +1907,7 @@ if (empty($reshook))
 
 		// Define info_bits
 		$info_bits = 0;
-		if (preg_match('/\*/', $vat_rate))
-			$info_bits |= 0x01;
+		if (preg_match('/\*/', $vat_rate)) $info_bits |= 0x01;
 
 		// Define vat_rate
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -3018,10 +3049,10 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	// Confirmation de la validation
+	// Confirmation of validation
 	if ($action == 'valid')
 	{
-		// on verifie si l'objet est en numerotation provisoire
+		// we check object has a draft number
 		$objectref = substr($object->ref, 1, 4);
 		if ($objectref == 'PROV') {
 			$savdate = $object->date;
@@ -3137,7 +3168,7 @@ else if ($id > 0 || ! empty($ref))
 		$i ++;
 		// Texte
 		$i = 0;
-		$close [$i] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscountVat", $resteapayer, $langs->trans("Currency" . $conf->currency)), $close [$i] ['label'], 1);
+		$close [$i] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscount", $resteapayer, $langs->trans("Currency" . $conf->currency)), $close [$i] ['label'], 1);
 		$i ++;
 		$close [$i] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency" . $conf->currency)), $close [$i] ['label'], 1);
 		$i ++;
@@ -4190,8 +4221,6 @@ else if ($id > 0 || ! empty($ref))
 	{
 		if ($action != 'editline')
 		{
-			$var = true;
-
 			// Add free products/services
 			$object->formAddObjectLine(1, $mysoc, $soc);
 
@@ -4500,6 +4529,7 @@ else if ($id > 0 || ! empty($ref))
 			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
 		}
 
+		// Show direct download link
 		if ($object->statut != Facture::STATUS_DRAFT && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))
 		{
 			print '<br><!-- Link to download main doc -->'."\n";

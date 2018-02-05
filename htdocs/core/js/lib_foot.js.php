@@ -119,7 +119,7 @@ if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
 // Wrapper to manage document_preview
 if ($conf->browser->layout != 'phone')
 {
-	print "\n/* JS CODE TO ENABLE document_preview */\n";
+	print "\n/* JS CODE TO ENABLE document_preview */\n";	// Function document_preview is into header
 	print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {

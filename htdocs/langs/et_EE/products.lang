@@ -196,6 +196,7 @@ CurrentProductPrice=Hetkehind
 AlwaysUseNewPrice=Kasuta alati toote/teenuse hetkehinda
 AlwaysUseFixedPrice=Kasuta fikseeritud hinda
 PriceByQuantity=Different prices by quantity
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Koguse ulatus
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

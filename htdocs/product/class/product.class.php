@@ -754,12 +754,12 @@ class Product extends CommonObject
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units)
 		{
 			$this->surface = $this->length * $this->width;
-			$this->surface_units = $this->length_units + $this->width_units;
+			$this->surface_units = measuring_units_squared($this->length_units);
 		}
 		if (empty($this->volume) && !empty($this->surface_units) && !empty($this->height) && $this->length_units == $this->height_units)
 		{
 			$this->volume =  $this->surface * $this->height;
-			$this->volume_units = $this->surface_units + $this->height_units;
+			$this->volume_units = measuring_units_cubed($this->height_units);
 		}
 
 		$this->surface = price2num($this->surface);
@@ -1963,7 +1963,7 @@ class Product extends CommonObject
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				// Load multiprices array
-				if (! empty($conf->global->PRODUIT_MULTIPRICES))
+				if (! empty($conf->global->PRODUIT_MULTIPRICES))				// prices per segment
 				{
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
@@ -1990,6 +1990,7 @@ class Product extends CommonObject
 							$this->multiprices_recuperableonly[$i]=$result["recuperableonly"];
 
 							// Price by quantity
+							/*
 							$this->prices_by_qty[$i]=$result["price_by_qty"];
 							$this->prices_by_qty_id[$i]=$result["rowid"];
 							// Récuperation de la liste des prix selon qty si flag positionné
@@ -2022,7 +2023,7 @@ class Product extends CommonObject
 									dol_print_error($this->db);
 									return -1;
 								}
-							}
+							}*/
 						}
 						else
 						{
@@ -2031,7 +2032,11 @@ class Product extends CommonObject
 						}
 					}
 				}
-				else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))			// prices per customers
+				{
+					// Nothing loaded by default. List may be very long.
+				}
+				else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))	// prices per quantity
 				{
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 					$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
@@ -2066,7 +2071,7 @@ class Product extends CommonObject
 									$resultat[$ii]["unitprice"]= $result["unitprice"];
 									$resultat[$ii]["quantity"]= $result["quantity"];
 									$resultat[$ii]["remise_percent"]= $result["remise_percent"];
-									$resultat[$ii]["remise"]= $result["remise"];					// deprecated
+									//$resultat[$ii]["remise"]= $result["remise"];					// deprecated
 									$resultat[$ii]["price_base_type"]= $result["price_base_type"];
 									$ii++;
 								}
@@ -2085,6 +2090,10 @@ class Product extends CommonObject
 						return -1;
 					}
 				}
+				else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))	// prices per customer and quantity
+				{
+					// Not yet implemented
+				}
 
                 if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression))
                 {
@@ -2101,8 +2110,7 @@ class Product extends CommonObject
                 }
 
 				// We should not load stock during the fetch. If someone need stock of product, he must call load_stock after fetching product.
-				//$res=$this->load_stock();
-				// instead we just init the stock_warehouse array
+				// Instead we just init the stock_warehouse array
 				$this->stock_warehouse = array();
 
 				return 1;

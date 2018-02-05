@@ -89,6 +89,7 @@ AccountIdShort=Fjöldi
 LineRecord=Færsla
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Sáttir við
 DateConciliating=Samræmdu dagsetningu
 BankLineConciliated=Entry reconciled

@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Greiðslur ekki tengd við hvaða nótum svo ekki ten
 PaymentsNotLinkedToUser=Greiðslur tengist ekki allir notandi
 Profit=Hagnaður
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Jafnvægi
 Debit=Debit
 Credit=Greiðslukort

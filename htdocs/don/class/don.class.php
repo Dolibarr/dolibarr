@@ -687,6 +687,7 @@ class Don extends CommonObject
      *
      *    @param	int		$id   		id of donation
      *    @param  	int		$userid  	User who validate the donation/promise
+     *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
     function valid_promesse($id, $userid, $notrigger=0)

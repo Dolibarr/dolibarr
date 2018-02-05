@@ -139,10 +139,10 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->posxdesc=$this->marge_gauche+1;
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			$this->posxtva=99;
-			$this->posxup=114;
-			$this->posxqty=130;
-			$this->posxunit=147;
+			$this->posxtva=101;
+			$this->posxup=118;
+			$this->posxqty=135;
+			$this->posxunit=151;
 		}
 		else
 		{
@@ -348,6 +348,10 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 				if ($notetoshow)
 				{
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
 					$tab_top = 88 + $height_incoterms;
 
 					$pdf->SetFont('','', $default_font_size - 1);
@@ -419,9 +423,11 @@ class pdf_einstein extends ModelePDFCommandes
 					{
 						$pdf->commitTransaction();
 					}
+					$posYAfterDescription=$pdf->GetY();
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
+
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
@@ -610,13 +616,13 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 			else
 			{
-				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$langs->trans("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
 			return 0;
 		}
 	}

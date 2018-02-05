@@ -1012,6 +1012,7 @@ class FormFile
 	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
 	 *  @param	 int	$addfilterfields	Add line with filters
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
+	 *  @see list_of_autoecmfiles
 	 */
 	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permonobject=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='', $showrelpart=0, $permtoeditline=-1,$upload_dir='',$sortfield='',$sortorder='ASC', $disablemove=1, $addfilterfields=0)
 	{
@@ -1183,7 +1184,7 @@ class FormFile
 					// Preview link
 					if (! $editline) print $this->showPreview($file, $modulepart, $filepath);
 					// Public share link
-					if (! $editline && ! empty($filearray[$key]['hashp'])) print 'ee';
+					//if (! $editline && ! empty($filearray[$key]['hashp'])) print pictowithlinktodirectdownload;
 
 					print "</td>\n";
 
@@ -1304,7 +1305,7 @@ class FormFile
 			print "</table>";
 			print '</div>';
 
-			if (! $editline && $nboflines > 1 && is_object($object)) {
+			if ($nboflines > 1 && is_object($object)) {
 				if (! empty($conf->use_javascript_ajax) && $permtoeditline) {
 					$table_element_line = 'ecm_files';
 					include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
@@ -1337,6 +1338,7 @@ class FormFile
 	 *  @param	string 	$url				Full url to use for click links ('' = autodetect)
 	 *  @param	int		$addfilterfields	Add line with filters
 	 *  @return int                 		<0 if KO, nb of files shown if OK
+	 *  @see list_of_documents
 	 */
 	function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload=0, $relativepath='', $permtodelete=1, $useinecm=0, $textifempty='', $maxlength=0, $url='', $addfilterfields=0)
 	{
@@ -1543,7 +1545,8 @@ class FormFile
 				print dol_trunc($file['name'],$maxlength,'middle');
 				print '</a>';
 
-				print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
+				//print $this->getDocumentsLink($modulepart, $modulesubdir, $filedir, '^'.preg_quote($file['name'],'/').'$');
+				print $this->showPreview($file, $modulepart, $file['relativename']);
 
 				print "</td>\n";
 				print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
@@ -1745,7 +1748,7 @@ class FormFile
 	/**
 	 * Show detail icon with link for preview
 	 *
-	 * @param   array     $file           File
+	 * @param   array     $file           Array with data of file. Example: array('name'=>...)
 	 * @param   string    $modulepart     propal, facture, facture_fourn, ...
 	 * @param   string    $relativepath   Relative path of docs
 	 * @param   string    $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file)

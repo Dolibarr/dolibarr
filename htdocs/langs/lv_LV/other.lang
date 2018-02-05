@@ -24,7 +24,7 @@ MessageOK=Ziņu kopā ar apstiprinātu maksājuma atgriešanās lapā
 MessageKO=Ziņa par atcelto maksājumu atgriešanās lapā
 
 YearOfInvoice=Rēķina datums
-PreviousYearOfInvoice=Previous year of invoice date
+PreviousYearOfInvoice=Iepriekšējā rēķina datuma gads
 NextYearOfInvoice=Following year of invoice date
 DateNextInvoiceBeforeGen=Date of next invoice (before generation)
 DateNextInvoiceAfterGen=Date of next invoice (after generation)
@@ -225,6 +225,8 @@ IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
 Chart=Diagramma
 PassEncoding=Password encoding
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions removed
 
 ##### Export #####
 ExportsArea=Eksportēšanas sadaļa

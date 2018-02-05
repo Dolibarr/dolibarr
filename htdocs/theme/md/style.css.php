@@ -344,7 +344,7 @@ input.buttongen {
 	vertical-align: middle;
 }
 input.buttonpayment {
-	min-width: 300px;
+	min-width: 320px;
 	margin-bottom: 15px;
 	background-image: none;
 	line-height: 24px;
@@ -354,6 +354,7 @@ input.buttonpayment {
 	text-align: <?php echo $left; ?>;
 	border: 2px solid #ccc;
 	background-color: #eee;
+	white-space: normal;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
@@ -589,6 +590,9 @@ textarea.centpercent {
 }
 .wordwrap {
 	word-wrap: break-word;
+}
+.wordbreak {
+	word-break: break-all;
 }
 .nobold {
 	font-weight: normal !important;
@@ -1014,6 +1018,13 @@ select.selectarrowonleft option {
 	div.statusref img {
     	padding-right: 3px !important;
    	}
+	div.statusrefbis {
+    	padding-right: 3px !important;
+   	}
+
+   	input.buttonpayment {
+		min-width: 300px;
+   	}
 }
 .linkobject { cursor: pointer; }
 <?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
@@ -1339,6 +1350,11 @@ div.statusref img {
     padding-left: 8px;
     padding-right: 9px;
     vertical-align: text-bottom;
+}
+div.statusrefbis {
+    padding-left: 8px;
+   	padding-right: 9px;
+   	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
@@ -3000,9 +3016,13 @@ div .tdtop {
  *  Boxes
  */
 
-.ficheaddleft div.boxstats {
-    border: none;
+.box {
+    overflow-x: auto;
+    min-height: 40px;
 }
+/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+    border: none;
+}*/
 .boxstatsborder {
     border: 1px solid #CCC !important;
 }
@@ -3021,6 +3041,7 @@ div .tdtop {
 .boxstats {
     padding: 3px;
     width: 100px;
+    min-height: 40px;
 }
 .boxstats130 {
     width: 135px;
@@ -3035,12 +3056,12 @@ div .tdtop {
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
-	.boxstats, .boxstats130 {
-        width: 90px;
-    }
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
+    }
+    .boxstats130 {
+    	width: 148px;
     }
     .boxstats {
         width: 100px;
@@ -3176,43 +3197,42 @@ div.ok {
   color: #114466;
 }
 
+/* Info admin */
+div.info {
+	border-<?php print $left; ?>: solid 5px #87cfd2;
+    padding-top: 8px;
+    padding-left: 10px;
+    padding-right: 4px;
+    padding-bottom: 8px;
+    margin: 0.5em 0em 0.5em 0em;
+    background: #eff8fc;
+}
+
 /* Warning message */
 div.warning {
-  color: #302020;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  /* border: 1px solid #e0d0b0; */
-  border: 2px solid #805000
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  /* background: #EFDF9A; */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
+    background: #fcf8e3;
+}
+div.warning a, div.info a, div.error a {
+	color: rgb(<?php echo $colortext; ?>);
 }
 
 /* Error message */
 div.error {
-  color: #550000; font-weight: bold;
-  padding: 0.3em 0.3em 0.3em 0.3em;
-  margin: 0.5em 0em 0.5em 0em;
-  border: 1px solid #DC9CAB;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+    border-<?php print $left; ?>: solid 5px #f28787;
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 8px;
+	margin: 0.5em 0em 0.5em 0em;
   background: #EFCFCF;
 }
 
-/* Info admin */
-div.info {
-  color: #fff;
-  padding: 0.4em 0.4em 0.4em 0.4em;
-  margin: 0.5em 0em 0.5em 0em;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background: #989;
-}
-
-div.warning a, div.info a, div.error a {
-	color: rgb(<?php echo $colortext; ?>);
-}
 
 /*
  *   Liens Payes/Non payes
@@ -3297,7 +3317,7 @@ div.titre {
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
-#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
+#dolpaymenttable { min-width: 300px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -3373,20 +3393,19 @@ div#card-errors {
 /* ============================================================================== */
 
 table.valid {
-    border-top: solid 1px #E6E6E6;
-    border-<?php print $left; ?>: solid 1px #E6E6E6;
-    border-<?php print $right; ?>: solid 1px #444444;
-    border-bottom: solid 1px #555555;
-	padding-top: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
+    /* border-top: solid 1px #E6E6E6; */
+    border-<?php print $left; ?>: solid 5px #f2cf87;
+    /* border-<?php print $right; ?>: solid 1px #444444;
+    border-bottom: solid 1px #555555; */
+	padding-top: 8px;
+	padding-left: 10px;
+	padding-right: 4px;
+	padding-bottom: 4px;
 	margin: 0px 0px;
-    background: #D5BAA8;
+    background: #fcf8e3;
 }
 
 .validtitre {
-    background: #D5BAA8;
 	font-weight: bold;
 }
 
@@ -3999,6 +4018,48 @@ pre#editfilecontentaceeditorid {
 div.scroll2 {
 	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
+
+.gtaskname div, .gtaskname {
+	font-size: unset !important;
+}
+div.gantt, .gtaskheading, .gmajorheading, .gminorheading, .gminorheadingwkend {
+	font-size: unset !important;
+	font-weight: normal !important;
+	color: #000 !important;
+}
+div.gTaskInfo {
+    background: #f0f0f0 !important;
+}
+.gtaskblue {
+	background: rgb(108,152,185) !important;
+}
+.gtaskgreen {
+    background: rgb(160,173,58) !important;
+}
+td.gtaskname {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+td.gminorheadingwkend {
+    color: #888 !important;
+}
+td.gminorheading {
+    color: #666 !important;
+}
+.glistlbl, .glistgrid {
+	width: 582px !important;
+}
+.gtaskname div, .gtaskname {
+    min-width: 250px !important;
+    max-width: 250px !important;
+    width: 250px !important;
+}
+.gpccomplete div, .gpccomplete {
+    min-width: 40px !important;
+    max-width: 40px !important;
+    width: 40px !important;
+}
+
 
 
 /* ============================================================================== */
