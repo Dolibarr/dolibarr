@@ -271,7 +271,8 @@ if ($result) {
 
 				if ($links[$key]['type'] == 'payment') {
 					$paymentstatic->id = $links[$key]['url_id'];
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2);
+					$paymentstatic->ref = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentstatic->getNomUrl(2, '', '');		// TODO Do not include list of invoice in tooltip, the dol_string_nohtmltag is ko with this
 					$tabpay[$obj->rowid]["paymentid"] = $paymentstatic->id;
 				} else if ($links[$key]['type'] == 'payment_supplier') {
 					$paymentsupplierstatic->id = $links[$key]['url_id'];
@@ -320,11 +321,12 @@ if ($result) {
 					}
 				} else if ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonstatic->id = $links[$key]['url_id'];
+					$paymentdonstatic->ref = $links[$key]['url_id'];
 					$paymentdonstatic->fk_donation = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentdonstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
 					$tabtp[$obj->rowid][$account_pay_donation] += $obj->amount;
-				} else if ($links[$key]['type'] == 'payment_vat') {
+				} else if ($links[$key]['type'] == 'payment_vat') {				// Payment VAT
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
 					$paymentvatstatic->label = $links[$key]['label'];
@@ -428,11 +430,10 @@ if (! $error && $action == 'writebookkeeping') {
 			{
 				if ($mt)
 				{
-					$reflabel = $langs->trans("Bank");
-					$reflabel.= ' '.$val['bank_account_ref'];
-					if (! empty($val['soclib'])) {
-						$reflabel .= " - " . dol_string_nohtmltag($val['soclib']);
-					}
+					$reflabel = '';
+					if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . " - ";
+					$reflabel.= $langs->trans("Bank").' '.dol_string_nohtmltag($val['bank_account_ref']);
+					if (! empty($val['soclib'])) $reflabel .= " - " . dol_string_nohtmltag($val['soclib']);
 
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -486,7 +487,9 @@ if (! $error && $action == 'writebookkeeping') {
 				foreach ( $tabtp[$key] as $k => $mt ) {
 					if ($mt)
 					{
-						$reflabel = dol_string_nohtmltag($val['soclib']);
+						$reflabel = '';
+						if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . ($val['soclib']?" - ":"");
+						$reflabel.= dol_string_nohtmltag($val['soclib']);
 
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -586,7 +589,9 @@ if (! $error && $action == 'writebookkeeping') {
 				foreach ( $tabbq[$key] as $k => $mt ) {
 					if ($mt)
 					{
-						$reflabel = 'WaitingAccount';
+						$reflabel = '';
+						if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . " - ";
+						$reflabel.= dol_string_nohtmltag('WaitingAccount');
 
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -717,11 +722,10 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		foreach ( $tabbq[$key] as $k => $mt ) {
 			if ($mt)
 			{
-				$reflabel = $langs->trans("Bank");
-				$reflabel.= ' '.$val['bank_account_ref'];
-				if (! empty($val['soclib'])) {
-					$reflabel .= " - " . dol_string_nohtmltag($val['soclib']);
-				}
+				$reflabel = '';
+				if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . " - ";
+				$reflabel.= $langs->trans("Bank").' '.dol_string_nohtmltag($val['bank_account_ref']);
+				if (! empty($val['soclib'])) $reflabel .= " - " . dol_string_nohtmltag($val['soclib']);
 
 				print '"' . $key . '"' . $sep;
 				print '"' . $date . '"' . $sep;
@@ -743,7 +747,9 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($mt)
 				{
-					$reflabel = dol_string_nohtmltag($val['soclib']);
+					$reflabel = '';
+					if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . ($val['soclib']?" - ":"");
+					$reflabel.= dol_string_nohtmltag($val['soclib']);
 
 					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
@@ -773,7 +779,9 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				if ($mt)
 				{
-					$reflabel = 'WaitingAccount';
+					$reflabel = '';
+					if (! empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']) . " - ";
+					$reflabel.= dol_string_nohtmltag('WaitingAccount');
 
 					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
@@ -904,11 +912,10 @@ if (empty($action) || $action == 'view') {
 		{
 			if ($mt)
 			{
-				$reflabel = $langs->trans("Bank");
-				$reflabel.= ' '.$val['bank_account_ref'];
-				if (! empty($val['soclib'])) {
-					$reflabel .= " - " . $val['soclib'];
-				}
+				$reflabel = '';
+				if (! empty($val['lib'])) $reflabel .= $val['lib'] . " - ";
+				$reflabel.= $langs->trans("Bank").' '.$val['bank_account_ref'];
+				if (! empty($val['soclib'])) $reflabel .= " - " . $val['soclib'];
 
 				//var_dump($tabpay[$key]);
 				print '<!-- Bank bank.rowid='.$key.' type='.$tabpay[$key]['type'].' ref='.$tabpay[$key]['ref'].'-->';
@@ -949,7 +956,9 @@ if (empty($action) || $action == 'view') {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($mt)
 				{
-					$reflabel = $val['soclib'];
+					$reflabel = '';
+					if (! empty($val['lib'])) $reflabel .= $val['lib'] . ($val['soclib']?" - ":"");
+					$reflabel.= $val['soclib'];
 
 					print '<!-- Thirdparty bank.rowid='.$key.' -->';
 					print '<tr class="oddeven">';
@@ -1024,7 +1033,9 @@ if (empty($action) || $action == 'view') {
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				if ($mt)
 				{
-					$reflabel = 'WaitingAccount';
+					$reflabel = '';
+					if (! empty($val['lib'])) $reflabel .= $val['lib'] . " - ";
+					$reflabel.= 'WaitingAccount';
 
 					print '<!-- Wait bank.rowid='.$key.' -->';
 					print '<tr class="oddeven">';
