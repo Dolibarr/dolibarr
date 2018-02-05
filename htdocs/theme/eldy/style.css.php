@@ -589,6 +589,9 @@ textarea.centpercent {
 .wordwrap {
 	word-wrap: break-word;
 }
+.wordbreak {
+	word-break: break-all;
+}
 .nobold {
 	font-weight: normal !important;
 }
