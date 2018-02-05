@@ -881,7 +881,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $sql .= " WHERE t.fk_soc = ".$object->id;
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name)       $sql .= " AND (t.lastname LIKE '%".$db->escape($search_name)."%' OR t.firstname LIKE '%".$db->escape($search_name)."%')";
-    $sql.= " ORDER BY $sortfield $sortorder";
+    if ($sortfield == "t.name") $sql.=" ORDER BY t.lastname $sortorder, t.firstname $sortorder";
+    else $sql.= " ORDER BY $sortfield $sortorder";
 
     dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
     $result = $db->query($sql);
