@@ -4564,11 +4564,11 @@ abstract class CommonObject
 	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
 	 *
-	 *  @param	bool        $notrigger      false=launch triggers after, true=disable triggers
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
 	 */
-	function insertExtraFields($notrigger=false, $userused=null)
+	function insertExtraFields($trigger='', $userused=null)
 	{
 		global $conf,$langs,$user;
 
@@ -4703,16 +4703,14 @@ abstract class CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-			else
+
+			if (!$error && !$trigger)
 			{
-				if (!$notrigger)
-				{
-					// Call trigger
-					$this->context=array('extrafieldaddupdate'=>1);
-					$result=$this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
-					if ($result < 0) $error++;
-					// End call trigger
-				}
+				// Call trigger
+				$this->context=array('extrafieldaddupdate'=>1);
+				$result=$this->call_trigger(strtoupper($trigger, $userused);
+				if ($result < 0) $error++;
+				// End call trigger
 			}
 
 			if ($error)
