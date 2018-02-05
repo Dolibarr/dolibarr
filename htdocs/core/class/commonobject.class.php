@@ -13,6 +13,7 @@
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2018      Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1795,29 +1796,57 @@ abstract class CommonObject
 	 *  Change the shipping method
 	 *
 	 *  @param      int     $shipping_method_id     Id of shipping method
+     *  @param      bool    $notrigger              false=launch triggers after, true=disable triggers
+     *  @param      User	$userused               Object user
+	 *
 	 *  @return     int              1 if OK, 0 if KO
 	 */
-	function setShippingMethod($shipping_method_id)
+	function setShippingMethod($shipping_method_id, $notrigger=false, $userused=null)
 	{
+        global $user;
+
+        if (empty($userused)) $userused=$user;
+
+        $error = 0;
+
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setShippingMethod was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
+
+        $this->db->begin();
+
 		if ($shipping_method_id<0) $shipping_method_id='NULL';
 		dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " SET fk_shipping_method = ".$shipping_method_id;
 		$sql.= " WHERE rowid=".$this->id;
-
-		if ($this->db->query($sql)) {
-			$this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
-			return 1;
-		} else {
+        $resql = $this->db->query($sql);
+		if (! $resql) {
 			dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
-			$this->error=$this->db->error();
-			return 0;
-		}
+			$this->error = $this->db->lasterror();
+			$error++;
+        } else {
+            if (!$notrigger)
+            {
+                // Call trigger
+                $this->context=array('shippingmethodupdate'=>1);
+                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+                if ($result < 0) $error++;
+                // End call trigger
+            }
+        }
+        if ($error)
+        {
+            $this->db->rollback();
+            return -1;
+        } else {
+            $this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
+            $this->db->commit();
+            return 1;
+        }
+
 	}
 
 
@@ -1893,14 +1922,24 @@ abstract class CommonObject
 	 *  Change the bank account
 	 *
 	 *  @param		int		$fk_account		Id of bank account
+	 *  @param      bool    $notrigger      false=launch triggers after, true=disable triggers
+	 *  @param      User	$userused		Object user
 	 *  @return		int				1 if OK, 0 if KO
 	 */
-	function setBankAccount($fk_account)
+	function setBankAccount($fk_account, $notrigger=false, $userused=null)
 	{
+        global $user;
+
+        if (empty($userused)) $userused=$user;
+
+        $error = 0;
+
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
+        $this->db->begin();
+
 		if ($fk_account<0) $fk_account='NULL';
 		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
 
@@ -1908,15 +1947,37 @@ abstract class CommonObject
 		$sql.= " SET fk_account = ".$fk_account;
 		$sql.= " WHERE rowid=".$this->id;
 
-		if ($this->db->query($sql)) {
-			$this->fk_account = ($fk_account=='NULL')?null:$fk_account;
-			return 1;
-		} else {
-			dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
-			$this->error=$this->db->error();
-			return 0;
-		}
-	}
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
+            $this->error = $this->db->lasterror();
+            $error++;
+        }
+        else
+        {
+            if (!$notrigger)
+            {
+                // Call trigger
+                $this->context=array('bankaccountupdate'=>1);
+                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+                if ($result < 0) $error++;
+                // End call trigger
+            }
+        }
+        if ($error)
+        {
+            $this->db->rollback();
+            return -1;
+        }
+        else
+        {
+            $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
+            $this->db->commit();
+            return 1;
+        }
+    }
+
 
 	// TODO: Move line related operations to CommonObjectLine?
 
@@ -4514,7 +4575,7 @@ abstract class CommonObject
 	 *  @return int 						-1=error, O=did nothing, 1=OK
 	 *  @see updateExtraField, setValueFrom
 	 */
-	function insertExtraFields($trigger='',$userused=null)
+	function insertExtraFields($trigger='', $userused=null)
 	{
 		global $conf,$langs,$user;
 
