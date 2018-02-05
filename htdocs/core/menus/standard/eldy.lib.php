@@ -811,15 +811,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 				$newmenu->add("/compta/facture/invoicetemplate_list.php",$langs->trans("ListOfTemplates"),1,$user->rights->facture->creer);    // No need to see recurring invoices, if user has no permission to create invoice.
 
-				$newmenu->add("/compta/paiement/list.php",$langs->trans("Payments"),1,$user->rights->facture->lire);
+				$newmenu->add("/compta/paiement/list.php?leftmenu=customer_bills_payment",$langs->trans("Payments"),1,$user->rights->facture->lire);
 
 				if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 				{
 					$newmenu->add("/compta/paiement/avalider.php",$langs->trans("MenuToValid"),2,$user->rights->facture->lire);
 				}
-				$newmenu->add("/compta/paiement/rapport.php",$langs->trans("Reportings"),2,$user->rights->facture->lire);
+				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customer_bills_reports",$langs->trans("Reportings"),2,$user->rights->facture->lire);
 
-				$newmenu->add("/compta/facture/stats/index.php", $langs->trans("Statistics"),1,$user->rights->facture->lire);
+				$newmenu->add("/compta/facture/stats/index.php?leftmenu=customer_bills_stats", $langs->trans("Statistics"),1,$user->rights->facture->lire);
 			}
 
 			// Suppliers invoices
