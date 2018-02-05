@@ -131,7 +131,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			}
 			else
 			{
-				print $extrafields->showOutputField($key, $value);
+				print $extrafields->showOutputField($key, $value, '', (empty($extrafieldsobjectkey)?'':$extrafieldsobjectkey));
 			}
 			print '</td></tr>' . "\n";
 

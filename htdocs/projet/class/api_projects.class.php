@@ -205,7 +205,8 @@ class Projects extends DolibarrApi
     }
 
     /**
-     * Get tasks of a project
+     * Get tasks of a project.
+     * See also API /tasks
      *
      * @param int   $id                     Id of project
      * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)

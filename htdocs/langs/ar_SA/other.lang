@@ -225,6 +225,8 @@ IfAmountHigherThan=إذا قدر أعلى <strong>من٪ الصورة</strong>
 SourcesRepository=مستودع للمصادر
 Chart=Chart
 PassEncoding=Password encoding
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions removed
 
 ##### Export #####
 ExportsArea=صادرات المنطقة

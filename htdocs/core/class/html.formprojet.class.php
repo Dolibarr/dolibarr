@@ -47,7 +47,7 @@ class FormProjets
 	 *	Output a combo list with projects qualified for a third party / user
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   	Id project preselected
+	 *	@param  string	$selected   	Id project preselected ('' or id of project)
 	 *	@param  string	$htmlname   	Name of HTML field
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag

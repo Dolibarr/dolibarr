@@ -1,5 +1,6 @@
 --
 -- Descriptif plan comptable fr_MA PCG
+-- ID 7000 - 7999
 --
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (7000,'PCG','CAPIT','XXXXXX','1','','Comptes de Financement Permanent','1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (7001,'PCG','CAPIT','XXXXXX','11',7000,'Capitaux Propres','1');

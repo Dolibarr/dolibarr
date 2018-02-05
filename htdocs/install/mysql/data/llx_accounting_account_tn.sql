@@ -1,5 +1,6 @@
 --
 -- Descriptif plan comptable TN PCT
+-- ID 9000 - 9999
 --
 
 INSERT INTO llx_accounting_account(rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (9000,'PCT','CAPIT','XXXXXX','1','','Comptes de Financement Permanent','1');

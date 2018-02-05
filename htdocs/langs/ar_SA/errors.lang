@@ -156,6 +156,7 @@ ErrorPriceExpression20=التعبير فارغة
 ErrorPriceExpression21=نتيجة فارغة '٪ ق'
 ErrorPriceExpression22=نتيجة سلبية '٪ ق'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=خطأ داخلي '٪ ق'
 ErrorPriceExpressionUnknown=خطأ غير معروف '٪ ق'
 ErrorSrcAndTargetWarehouseMustDiffers=يجب المصدر والهدف يختلف المستودعات

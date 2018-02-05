@@ -210,8 +210,11 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 	if (empty($cookievalue)) unset($_COOKIE[$cookiename]);
 }
 
+
 // Init session. Name of session is specific to Dolibarr instance.
+// Note: the function dol_getprefix may have been redefined to return a different key to manage another area to protect.
 $prefix=dol_getprefix('');
+
 $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
@@ -375,12 +378,19 @@ $login='';
 if (! defined('NOLOGIN'))
 {
 	// $authmode lists the different means of identification to be tested in order of preference.
-	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser'
+	// Example: 'http', 'dolibarr', 'ldap', 'http,forceuser', '...'
 
-	// Authentication mode
-	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
-	// Authentication mode: forceuser
-	if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+	if (defined('MAIN_AUTHENTICATION_MODE'))
+	{
+		$dolibarr_main_authentication = constant('MAIN_AUTHENTICATION_MODE');
+	}
+	else
+	{
+		// Authentication mode
+		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
+		// Authentication mode: forceuser
+		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+	}
 	// Set authmode
 	$authmode=explode(',',$dolibarr_main_authentication);
 
@@ -1037,9 +1047,10 @@ if (! function_exists("llxHeader"))
  *  Show HTTP header
  *
  *  @param  string  $contenttype    Content type. For example, 'text/html'
+ *  @param	int		$forcenocache	Force disabling of cache for the page
  *  @return	void
  */
-function top_httphead($contenttype='text/html')
+function top_httphead($contenttype='text/html', $forcenocache=0)
 {
 	global $conf;
 
@@ -1056,12 +1067,10 @@ function top_httphead($contenttype='text/html')
 		// default-src https://cdn.example.net; object-src 'none'
 		header("Content-Security-Policy: ".$conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY);
 	}
-
-
-	// On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
-	/*if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) {
-        ob_start("ob_gzhandler");
-    }*/
+	if ($forcenocache)
+	{
+		header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
+	}
 }
 
 /**

@@ -30,6 +30,21 @@
  */
 class AccountingAccount extends CommonObject
 {
+	public $element='accounting_account';
+	public $table_element='accounting_account';
+	public $picto = 'billr';
+
+	/**
+	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int
+	 */
+	public $ismultientitymanaged = 1;
+	/**
+	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 * @var integer
+	 */
+	public $restrictiononfksoc = 1;
+
 	var $db;
 	var $error;
 	var $errors;
@@ -48,13 +63,17 @@ class AccountingAccount extends CommonObject
 	var $active;       // duplicate with status
 	var $status;
 
+
 	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handle
 	 */
 	function __construct($db) {
+		global $conf;
+
 		$this->db = $db;
+		$this->next_prev_filter='fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';		// Used to add a filter in Form::showrefnav method
 	}
 
 	/**
@@ -63,7 +82,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	int 	$rowid 				   Id
 	 * @param 	string 	$account_number 	   Account number
 	 * @param 	int 	$limittocurrentchart   1=Do not load record if it is into another accounting system
-	 * @return 	int                            <0 if KO, Id of record if OK and found
+	 * @return 	int                            <0 if KO, 0 if not found, Id of record if OK and found
 	 */
 	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0) {
 		global $conf;
@@ -91,6 +110,7 @@ class AccountingAccount extends CommonObject
 				if ($obj) {
 					$this->id = $obj->rowid;
 					$this->rowid = $obj->rowid;
+					$this->ref = $obj->account_number;
 					$this->datec = $obj->datec;
 					$this->tms = $obj->tms;
 					$this->fk_pcg_version = $obj->fk_pcg_version;
@@ -115,7 +135,7 @@ class AccountingAccount extends CommonObject
 				$this->errors[] = "Error " . $this->db->lasterror();
 			}
 		}
-		return - 1;
+		return -1;
 	}
 
 	/**

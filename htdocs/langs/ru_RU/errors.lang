@@ -156,6 +156,7 @@ ErrorPriceExpression20=Пустое выражение
 ErrorPriceExpression21=Пустой результат  '%s'
 ErrorPriceExpression22=Отрицательный результат  '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=Внутренняя ошибка '%s'
 ErrorPriceExpressionUnknown=Неизвестная ошибка '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Исходящий и входящий склад должны отличаться

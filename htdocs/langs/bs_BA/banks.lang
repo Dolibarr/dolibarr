@@ -89,6 +89,7 @@ AccountIdShort=Broj
 LineRecord=Transakcija
 AddBankRecord=Dodaj unos
 AddBankRecordLong=Dodaj unos ručno
+Conciliated=Izmireno
 ConciliatedBy=Izmireno od strane
 DateConciliating=Datum izmirivanja
 BankLineConciliated=Transakcija izmirena

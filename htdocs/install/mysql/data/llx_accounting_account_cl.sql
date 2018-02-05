@@ -30,6 +30,7 @@
 
 --
 -- Descriptif des plans comptables CL PC-MIPYME
+-- ID 4785 - 4999
 --
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES(4785, 'PC-MIPYME', 'Activo', 'Circulante', '1.1', '0', 'Activo Circulante', 1);

@@ -27,7 +27,7 @@ if (empty($conf) || ! is_object($conf))
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-if (GETPOST('dol_hide_topmenu')) $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_topmenu')) $conf->dol_hide_topmenu=1;
 if (GETPOST('dol_hide_leftmenu')) $conf->dol_hide_leftmenu=1;
 if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
@@ -39,7 +39,9 @@ if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 $php_self = $_SERVER['PHP_SELF'];
 $php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
 
-print top_htmlhead('',$langs->trans('SendNewPassword'));
+$titleofpage=$langs->trans('SendNewPassword');
+
+print top_htmlhead('', $titleofpage);
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
@@ -48,7 +50,7 @@ print top_htmlhead('',$langs->trans('SendNewPassword'));
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
-	/* Set focus on correct field */
+	// Set focus on correct field
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
@@ -79,8 +81,10 @@ if ($disablenofollow) echo '</a>';
 <div id="login_line1">
 
 <div id="login_left">
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+<img alt="" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </div>
+
+<br>
 
 <div id="login_right">
 
@@ -89,7 +93,8 @@ if ($disablenofollow) echo '</a>';
 <!-- Login -->
 <tr>
 <td valign="bottom" class="nowrap center">
-<span class="span-icon-user">
+<!-- <span class="span-icon-user">-->
+<span class="fa fa-user">
 <input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
 </td>
@@ -123,9 +128,10 @@ if (! empty($morelogincontent)) {
 	<tr>
 	<td class="tdtop nowrap none center">
 
-	<table class="login_table_securitycode centpercent"><tr>
+	<table class="login_table_securitycode centpercent"><tr class="valignmiddle">
 	<td>
-	<span class="span-icon-security">
+	<!-- <span class="span-icon-security"> -->
+	<span class="nofa">
 	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
 	</span>
 	</td>
@@ -146,7 +152,7 @@ if (! empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div align="center" style="margin-top: 8px;">

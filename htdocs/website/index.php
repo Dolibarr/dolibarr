@@ -144,12 +144,14 @@ $diroutput = $conf->medias->multidir_output[$conf->entity];
 $relativepath=$section_dir;
 $upload_dir = $diroutput.'/'.$relativepath;
 
-$htmlheadercontentdefault ='<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />'."\n";
-$htmlheadercontentdefault.='<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>'."\n";
-$htmlheadercontentdefault.='<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>'."\n";
-$htmlheadercontentdefault.='<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
-$htmlheadercontentdefault.='<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
-$htmlheadercontentdefault.='<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
+$htmlheadercontentdefault = '';
+$htmlheadercontentdefault.='<link rel="stylesheet" id="google-fonts-css"  href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />'."\n";
+$htmlheadercontentdefault.='<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />'."\n";
+$htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>'."\n";
+$htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>'."\n";
+$htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
+$htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
+$htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=relativepathtomyfile.js"></script>'."\n";
 
 
@@ -524,7 +526,9 @@ if ($action == 'addcontainer')
 
 		$substitutionarray=array();
 		$substitutionarray['__WEBSITE_CREATE_BY__']=$user->getFullName($langs);
-		$objectpage->content = make_substitutions(file_get_contents(DOL_DOCUMENT_ROOT.'/website/pagetemplate.html'), $substitutionarray);
+
+		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
+		$objectpage->content = make_substitutions(@file_get_contents(DOL_DOCUMENT_ROOT.'/website/'.$objectpage->type_container.'template.html'), $substitutionarray);
 	}
 
 	if (! $error)

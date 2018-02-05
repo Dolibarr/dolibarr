@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Platby nepropojené s jakoukoli fakturu, takže nejso
 PaymentsNotLinkedToUser=Platby nepropojené s libovolným uživatelem
 Profit=Zisk
 AccountingResult=Účetní výsledek
+BalanceBefore=Balance (before)
 Balance=Zůstatek
 Debit=Debet
 Credit=Kredit

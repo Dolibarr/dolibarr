@@ -468,9 +468,11 @@ class ProductFournisseur extends Product
      *    @param    int		$prodid	    Id of product
      *    @param	string	$sortfield	Sort field
      *    @param	string	$sortorder	Sort order
+     *    @param	int		$limit		Limit
+     *    @param	int		$offset		Offset
      *    @return	array				Array of Products with new properties to define supplier price
      */
-    function list_product_fournisseur_price($prodid, $sortfield='', $sortorder='')
+    function list_product_fournisseur_price($prodid, $sortfield='', $sortorder='', $limit=0, $offset=0)
     {
         global $conf;
 
@@ -484,7 +486,8 @@ class ProductFournisseur extends Product
         $sql.= " AND s.status=1"; // only enabled company selected
         $sql.= " AND pfp.fk_product = ".$prodid;
         if (empty($sortfield)) $sql.= " ORDER BY s.nom, pfp.quantity, pfp.price";
-        else $sql.= $this->db->order($sortfield,$sortorder);
+        else $sql.= $this->db->order($sortfield, $sortorder);
+        $sql.=$this->db->plimit($limit, $offset);
         dol_syslog(get_class($this)."::list_product_fournisseur_price", LOG_DEBUG);
 
         $resql = $this->db->query($sql);
@@ -516,7 +519,7 @@ class ProductFournisseur extends Product
                 $prodfourn->id						= $prodid;
                 $prodfourn->fourn_tva_npr					= $record["info_bits"];
                 $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
-		$prodfourn->supplier_reputation    = $record["supplier_reputation"];
+				$prodfourn->supplier_reputation    = $record["supplier_reputation"];
 
                 if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
                     $priceparser = new PriceParser($this->db);

@@ -202,7 +202,7 @@ class FactureRec extends CommonInvoice
                         $facsrc->lines[$i]->fk_product,
                         $facsrc->lines[$i]->remise_percent,
                         'HT',
-                        0,
+						$facsrc->lines[$i]->info_bits,
                         '',
                         0,
                         $facsrc->lines[$i]->product_type,
@@ -596,7 +596,7 @@ class FactureRec extends CommonInvoice
      *	@param    	int			$fk_product      	Id du produit/service predefini
      *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
      *	@param		string		$price_base_type	HT or TTC
-     *	@param    	int			$info_bits			Bits de type de lignes
+     *	@param    	int			$info_bits			VAT npr or not ?
      *	@param    	int			$fk_remise_except	Id remise
      *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
      *	@param		int			$type				Type of line (0=product, 1=service)
@@ -635,7 +635,6 @@ class FactureRec extends CommonInvoice
 			$remise_percent=price2num($remise_percent);
 			if (empty($remise_percent)) $remise_percent=0;
 			$qty=price2num($qty);
-			if (! $info_bits) $info_bits=0;
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
 			$txtva = price2num($txtva);
@@ -644,6 +643,7 @@ class FactureRec extends CommonInvoice
 			if (empty($txtva)) $txtva=0;
 			if (empty($txlocaltax1)) $txlocaltax1=0;
 			if (empty($txlocaltax2)) $txlocaltax2=0;
+			if (empty($info_bits)) $info_bits=0;
 
 			if ($price_base_type=='HT')
 			{
@@ -703,6 +703,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", total_localtax1";
 			$sql.= ", total_localtax2";
 			$sql.= ", total_ttc";
+			$sql.= ", info_bits";
 			$sql.= ", rang";
 			$sql.= ", special_code";
 			$sql.= ", fk_unit";
@@ -729,6 +730,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".price2num($total_localtax1);
 			$sql.= ", ".price2num($total_localtax2);
 			$sql.= ", ".price2num($total_ttc);
+			$sql.= ", ".$info_bits;
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code;
 			$sql.= ", ".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
@@ -811,7 +813,7 @@ class FactureRec extends CommonInvoice
 	        // Clean parameters
 	        $remise_percent=price2num($remise_percent);
 	        $qty=price2num($qty);
-	        if (! $info_bits) $info_bits=0;
+	        if (empty($info_bits)) $info_bits=0;
 	        $pu_ht=price2num($pu_ht);
 	        $pu_ttc=price2num($pu_ttc);
 	        $txtva=price2num($txtva);
@@ -884,6 +886,7 @@ class FactureRec extends CommonInvoice
 	        $sql.= ", total_localtax1='".price2num($total_localtax1)."'";
 	        $sql.= ", total_localtax2='".price2num($total_localtax2)."'";
 	        $sql.= ", total_ttc='".price2num($total_ttc)."'";
+	        $sql.= ", info_bits=".$info_bits;
 	        $sql.= ", rang=".$rang;
 	        $sql.= ", special_code=".$special_code;
 	        $sql.= ", fk_unit=".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");

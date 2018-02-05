@@ -386,7 +386,11 @@ class Contrat extends CommonObject
 		$result=$this->thirdparty->set_as_client();
 
 		// Define new ref
-		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		if ($force_number)
+		{
+			$num = $force_number;
+		}
+		else if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$num = $this->getNextNumRef($this->thirdparty);
 		}
@@ -1264,26 +1268,14 @@ class Contrat extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+				// Call triggers
+				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 				}
 			}
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -2868,6 +2860,9 @@ class ContratLigne extends CommonObjectLine
 
 		$this->db->begin();
 
+		$this->oldcopy = new ContratLigne($this->db);
+		$this->oldcopy->fetch($this->id);
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " fk_contrat=".$this->fk_contrat.",";
@@ -2907,22 +2902,14 @@ class ContratLigne extends CommonObjectLine
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$contrat=new Contrat($this->db);
-			$contrat->fetch($this->fk_contrat);
-			$result=$contrat->update_statut($user);
-		}
-		else
+		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
 			$error++;
-			//return -1;
 		}
 
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
 		{
-
 			$result=$this->insertExtraFields();
 			if ($result < 0)
 			{
@@ -2930,19 +2917,52 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
-		if (empty($error)) {
-		if (! $notrigger)
+		// If we change a planned date (start or end), sync dates for all services
+		if (! $error && ! empty($conf->global->CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES))
 		{
-            // Call trigger
-            $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
-		}
+			if ($this->date_ouverture_prevue != $this->oldcopy->date_ouverture_prevue)
+			{
+				$sql ='UPDATE '.MAIN_DB_PREFIX.'contratdet SET';
+				$sql.= " date_ouverture_prevue = ".($this->date_ouverture_prevue!=''?"'".$this->db->idate($this->date_ouverture_prevue)."'":"null");
+				$sql.= " WHERE fk_contrat = ".$this->fk_contrat;
+
+				$resql = $this->db->query($sql);
+				if (! $resql)
+				{
+					$error++;
+					$this->error="Error ".$this->db->lasterror();
+				}
+			}
+			if ($this->date_fin_validite != $this->oldcopy->date_fin_validite)
+			{
+				$sql ='UPDATE '.MAIN_DB_PREFIX.'contratdet SET';
+				$sql.= " date_fin_validite = ".($this->date_fin_validite!=''?"'".$this->db->idate($this->date_fin_validite)."'":"null");
+				$sql.= " WHERE fk_contrat = ".$this->fk_contrat;
+
+				$resql = $this->db->query($sql);
+				if (! $resql)
+				{
+					$error++;
+					$this->error="Error ".$this->db->lasterror();
+				}
+			}
 		}
 
-		if (empty($error)) {
-        $this->db->commit();
-		return 1;
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+	            // Call trigger
+	            $result=$this->call_trigger('LINECONTRACT_UPDATE', $user);
+	            if ($result < 0) { $error++; $this->db->rollback(); }
+	            // End call triggers
+			}
+		}
+
+		if (! $error)
+		{
+        	$this->db->commit();
+			return 1;
 		} else {
 			$this->db->rollback();
 			$this->errors[]=$this->error;

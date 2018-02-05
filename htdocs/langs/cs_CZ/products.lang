@@ -196,6 +196,7 @@ CurrentProductPrice=Aktuální cena
 AlwaysUseNewPrice=Vždy používejte aktuální cenu produktu/služby
 AlwaysUseFixedPrice=Použijte pevnou cenu
 PriceByQuantity=Různé ceny podle množství
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Množstevní rozsah
 MultipriceRules=Pravidla segmentu cen
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

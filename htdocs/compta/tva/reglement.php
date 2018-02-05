@@ -217,8 +217,11 @@ if ($result)
 
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
+
+		// Ref
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
-        print "<td>".dol_trunc($obj->label,40)."</td>\n";
+        // Label
+		print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="center">'.dol_print_date($db->jdate($obj->dv),'day')."</td>\n";
         print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
         // Type

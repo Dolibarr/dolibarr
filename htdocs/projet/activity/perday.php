@@ -326,12 +326,14 @@ if ($id)
 
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
-if ($search_task_ref)   $morewherefilter.=natural_search("t.ref", $search_task_ref);
-if ($search_task_label) $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
-if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
+
+if ($search_project_ref) $morewherefilter.=natural_search("p.ref", $search_project_ref);
+if ($search_task_ref)    $morewherefilter.=natural_search("t.ref", $search_task_ref);
+if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
+if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
 
 $tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
-if ($morewherefilter)	// Get all task with no filter so we can show total of time spent for not visible tasks
+if ($morewherefilter)	// Get all task without any filter, so we can show total of time spent for not visible tasks
 {
 	$tasksarraywithoutfilter=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 }
@@ -499,7 +501,12 @@ $isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek
 
 if (count($tasksarray) > 0)
 {
+	//var_dump($tasksarray);				// contains only selected tasks
+	//var_dump($tasksarraywithoutfilter);	// contains all tasks (if there is a filter, not defined if no filter)
+	//var_dump($tasksrole);
+
 	$j=0;
+	$level=0;
 	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0);
 	//var_dump($totalforvisibletasks);
 
@@ -518,7 +525,6 @@ if (count($tasksarray) > 0)
 	$totalforeachday=array();
 	foreach($listofdistinctprojectid as $tmpprojectid)
 	{
-		$lineother='';
 		$projectstatic->id=$tmpprojectid;
 		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		for ($idw = 0; $idw < 7; $idw++)
@@ -527,15 +533,25 @@ if (count($tasksarray) > 0)
 			$totalforeachday[$tmpday]+=$projectstatic->weekWorkLoad[$tmpday];
 		}
 	}
-	$lineother='';
 	//var_dump($totalforeachday);
+
+	// Is there a diff between selected/filtered tasks and all tasks ?
+	$isdiff = 0;
+	if (count($totalforeachday))
+	{
+		$timeonothertasks=($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
+		if ($timeonothertasks)
+		{
+			$isdiff=1;
+		}
+	}
 
 	$colspan = 8;
 
 	// There is a diff between total shown on screen and total spent by user, so we add a line with all other cumulated time of user
-	if (count($totalforeachday))
+	if ($isdiff)
 	{
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven othertaskwithtime">';
         print '<td colspan="'.$colspan.'">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';

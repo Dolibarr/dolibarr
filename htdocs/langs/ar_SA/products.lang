@@ -196,6 +196,7 @@ CurrentProductPrice=السعر الحالي
 AlwaysUseNewPrice=دائما استخدم السعر الحالي للمنتج / الخدمة
 AlwaysUseFixedPrice=استخدم السعر الثابت
 PriceByQuantity=أسعار مختلفة حسب الكمية
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=مدى الكمية
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

@@ -1106,11 +1106,11 @@ else
             print "</td></tr>";
         //}
 
-		if($conf->categorie->enabled) {
+		if ($conf->categorie->enabled) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
 			print "</td></tr>";
 		}
 
@@ -1464,6 +1464,7 @@ else
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
+				$arrayselected=array();
 				foreach($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
@@ -1633,20 +1634,20 @@ else
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
                 {
-			$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
-			if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+					$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+					if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
 
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="setbarcode">';
-			print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-			print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
-			print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="action" value="setbarcode">';
+					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
+					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+					print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+					print '</form>';
                 }
                 else
                 {
-                    print $object->barcode;
+					print $object->barcode;
                 }
                 print '</td></tr>'."\n";
             }

@@ -215,10 +215,11 @@ class Website extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql .= ' WHERE t.entity IN ('.getEntity('website').')';
 		if (null !== $ref) {
-			$sql .= " WHERE t.ref = '" . $this->db->escape($ref) . "'";
+			$sql .= " AND t.ref = '" . $this->db->escape($ref) . "'";
 		} else {
-			$sql .= ' WHERE t.rowid = ' . $id;
+			$sql .= ' AND t.rowid = ' . $id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -304,7 +305,7 @@ class Website extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-
+		$sql .= ' WHERE t.entity IN ('.getEntity('website').')';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -313,7 +314,7 @@ class Website extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {

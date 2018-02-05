@@ -76,7 +76,7 @@ $tablib[1] = "Websites";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.status FROM ".MAIN_DB_PREFIX."website as f";
+$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.status FROM ".MAIN_DB_PREFIX.'website as f WHERE f.entity IN ('.getEntity('website').')';
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -520,7 +520,6 @@ if ($id)
 
     print '</table>';
     print '</form>';
-
 
 
     // List of websites in database

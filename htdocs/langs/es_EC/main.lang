@@ -238,7 +238,6 @@ ContactsAddressesForCompany=Contactos/direcciones de clientes
 AddressesForCompany=Direcciones de clientes
 ActionsOnCompany=Eventos sobre clientes
 ActionsOnMember=Eventos sobre miembros
-ActionsOnProduct=Eventos sobre este producto
 NActionsLate=%s tarde
 RequestAlreadyDone=La solicitud ya se registró
 Filter=Filtrar

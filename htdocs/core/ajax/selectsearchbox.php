@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ if (! empty($conf->societe->enabled) && empty($conf->global->MAIN_SEARCHFORM_CON
 
 if (! empty($conf->adherent->enabled) && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DISABLED) && $user->rights->adherent->lire)
 {
-	$arrayresult['searchintomember']=array('position'=>20, 'shortcut'=>'M', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue?',sall='.urlencode($search_boxvalue):''));
+	$arrayresult['searchintomember']=array('position'=>20, 'shortcut'=>'M', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue?'?sall='.urlencode($search_boxvalue):''));
 }
 
 if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))

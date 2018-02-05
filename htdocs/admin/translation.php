@@ -428,14 +428,14 @@ if ($mode == 'searchkey')
         	$filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
         	foreach($filearray as $file)
         	{
-        		$tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
-        		$moduledirname =(basename(dirname(dirname($dir_lang))));
+				$tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
+				$moduledirname =(basename(dirname(dirname($dir_lang))));
 
-        		$langkey=$tmpfile;
-        		if ($i > 0) $langkey.='@'.$moduledirname;
-        		//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
+				$langkey=$tmpfile;
+				if ($i > 0) $langkey.='@'.$moduledirname;
+				//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
 
-        		$result = $newlang->load($langkey, 0, 0, '', 0);                              // Load translation files + database overwrite
+				$result = $newlang->load($langkey, 0, 0, '', 0);                              // Load translation files + database overwrite
 				$result = $newlangfileonly->load($langkey, 0, 0, '', 1);                      // Load translation files only
 				if ($result < 0) print 'Failed to load language file '.$tmpfile.'<br>'."\n";
 				else $nbtotaloffiles++;
@@ -447,8 +447,8 @@ if ($mode == 'searchkey')
         // Now search into translation array
         foreach($newlang->tab_translate as $key => $val)
         {
-            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/i', $key)) continue;
-            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/i', $val)) continue;
+            if ($transkey && ! preg_match('/'.preg_quote($transkey,'/').'/i', $key)) continue;
+            if ($transvalue && ! preg_match('/'.preg_quote($transvalue,'/').'/i', $val)) continue;
             $recordtoshow[$key]=$val;
         }
     }

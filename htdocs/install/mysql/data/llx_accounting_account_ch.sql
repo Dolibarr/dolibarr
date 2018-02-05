@@ -1,5 +1,6 @@
 --
 -- Descriptif plan comptable Suisse
+-- ID 13000 - 13299
 --
 INSERT INTO llx_const (name, value, type, note, visible, entity) values ('ACCOUNTING_MANAGE_ZERO','1','chaine','Manage the  0 for the accountancy account',1,0);
 

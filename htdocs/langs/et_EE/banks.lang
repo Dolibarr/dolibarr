@@ -89,6 +89,7 @@ AccountIdShort=Number
 LineRecord=Tehing
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Tehingu kandis sisse
 DateConciliating=Vastavusse viimise kuupäev
 BankLineConciliated=Entry reconciled

@@ -156,6 +156,7 @@ ErrorPriceExpression20=Expresie goală
 ErrorPriceExpression21=Rezultat gol '%s'
 ErrorPriceExpression22=Rezultat negativ '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=Eroare internă '%s'
 ErrorPriceExpressionUnknown=Eroare Necunoscută '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere

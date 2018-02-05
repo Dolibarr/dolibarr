@@ -158,7 +158,7 @@ NumPiece=počet kusů
 TransactionNumShort=Num. transakce
 AccountingCategory=Personalized groups
 GroupByAccountAccounting=Skupina účetním účtu
-AccountingAccountGroupsDesc=You can define here some groups of accounting account. It will be used in the report <b>%s</b> to show your income/expense with data grouped according to these groups.
+AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
 ByAccounts=By accounts
 ByPredefinedAccountGroups=By predefined groups
 ByPersonalizedAccountGroups=By personalized groups
@@ -191,6 +191,7 @@ DescThirdPartyReport=Konzultujte zde seznam třetích stran, zákazníky a dodav
 ListAccounts=Seznam účetních účtů
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
@@ -244,7 +245,6 @@ ErrorAccountingJournalIsAlreadyUse=Tento deník se již používá
 ## Export
 ExportDraftJournal=Export draft journal
 Modelcsv=Model exportu
-OptionsDeactivatedForThisExportModel=Možnosti pro tento exportní model jsou deaktivovány
 Selectmodelcsv=Vyberte způsob exportu
 Modelcsv_normal=Klasický export
 Modelcsv_CEGID=Export směrem CEGID Expert Comptabilité
@@ -254,7 +254,7 @@ Modelcsv_ciel=Export na Sage Ciel Compta nebo Compta Evolution
 Modelcsv_quadratus=Export směrem quadratus QuadraCompta
 Modelcsv_ebp=Export na EBP
 Modelcsv_cogilog=Export směrem Cogilog
-Modelcsv_agiris=Export towards Agiris (Test)
+Modelcsv_agiris=Export towards Agiris
 Modelcsv_configurable=Export Configurable
 ChartofaccountsId=Schéma Id účtů
 

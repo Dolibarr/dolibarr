@@ -519,6 +519,9 @@ class BonPrelevement extends CommonObject
                      */
 					if ($error == 0)
 					{
+						$this->date_credit = $date;
+						$this->statut = 1;
+
 						$this->db->commit();
 						return 0;
 					}
@@ -584,13 +587,16 @@ class BonPrelevement extends CommonObject
 				// TODO Call trigger to create a notification using notification module
 			}
 			else
-		   {
+			{
 				$error++;
 			}
 
 			if ($error == 0)
 			{
+				$this->date_trans = $date;
+				$this->statut = 1;
 				$this->db->commit();
+
 				return 0;
 			}
 			else
@@ -849,15 +855,22 @@ class BonPrelevement extends CommonObject
 				foreach ($factures as $key => $fac)
 				{
 					$fact = new Facture($this->db);
-					if ($fact->fetch($fac[0]) >= 0)		// Field 0 of $fac is rowid of invoice
+					$resfetch = $fact->fetch($fac[0]);
+					if ($resfetch >= 0)		// Field 0 of $fac is rowid of invoice
 					{
 						if ($soc->fetch($fact->socid) >= 0)
 						{
 							$bac = new CompanyBankAccount($this->db);
 							$bac->fetch(0, $soc->id);
 
-							if ($format == 'FRST' && $bac->frstrecur != 'FRST') continue;
-							if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR')) continue;
+							if ($format == 'FRST' && $bac->frstrecur != 'FRST')
+							{
+								continue;
+							}
+							if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR'))
+							{
+								continue;
+							}
 
 							if ($bac->verif() >= 1)
 							{
@@ -865,28 +878,29 @@ class BonPrelevement extends CommonObject
 								/* second tableau necessaire pour BonPrelevement */
 								$factures_prev_id[$i] = $fac[0];
 								$i++;
+								//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 							}
 							else
 							{
-								dol_syslog(__METHOD__."::Check RIB Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_ERR);
+								dol_syslog(__METHOD__."::Check RIB Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_WARNING);
 								$this->invoice_in_error[$fac[0]]="Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 								$this->thirdparty_in_error[$soc->id]="Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 							}
 						}
 						else
 						{
-							dol_syslog(__METHOD__."::Check RIB Failed to read company", LOG_ERR);
+							dol_syslog(__METHOD__."::Check RIB Failed to read company", LOG_WARNING);
 						}
 					}
 					else
 					{
-						dol_syslog(__METHOD__."::Check RIB Failed to read invoice", LOG_ERR);
+						dol_syslog(__METHOD__."::Check RIB Failed to read invoice", LOG_WARNING);
 					}
 				}
 			}
 			else
 			{
-				dol_syslog(__METHOD__."::Check RIB No invoice to process", LOG_ERR);
+				dol_syslog(__METHOD__."::Check RIB No invoice to process", LOG_WARNING);
 			}
 		}
 

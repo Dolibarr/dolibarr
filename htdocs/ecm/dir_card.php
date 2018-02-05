@@ -73,14 +73,28 @@ if ($module == 'ecm')
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
-	$relativepath=$ecmdir->getRelativePath();
 
+	$relativepath=$ecmdir->getRelativePath();
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 }
 else	// For example $module == 'medias'
 {
 	$relativepath = $section;
 	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
+}
+
+// Permissions
+$permtoadd = 0;
+$permtoupload = 0;
+if ($module == 'ecm')
+{
+	$permtoadd = $user->rights->ecm->setup;
+	$permtoupload = $user->rights->ecm->upload;
+}
+if ($module == 'medias')
+{
+	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
 
@@ -165,55 +179,88 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 	}
 }
 
-// Update description
+// Update dirname or description
 if ($action == 'update' && ! GETPOST('cancel','alpha'))
 {
 	$error=0;
 
-    $db->begin();
+    if ($module == 'ecm')
+    {
+    	$oldlabel=$ecmdir->label;
+		$olddir=$ecmdir->getRelativePath(0);
+		$olddir=$conf->ecm->dir_output.'/'.$olddir;
+    }
+    else
+    {
+    	$olddir=GETPOST('section','alpha');
+    	$olddir=$conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
+    }
 
-	$oldlabel=$ecmdir->label;
-	$olddir=$ecmdir->getRelativePath(0);
-	$olddir=$conf->ecm->dir_output.'/'.$olddir;
+    if ($module == 'ecm')
+    {
+    	$db->begin();
 
-	// Fetch was already done
-	$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
-	$ecmdir->description = GETPOST("description");
-	$result=$ecmdir->update($user);
-	if ($result > 0)
-	{
-		// Try to rename file if changed
-		if ($oldlabel != $ecmdir->label	&& file_exists($olddir))
+		// Fetch was already done
+		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
+		$ecmdir->description = GETPOST("description");
+		$result=$ecmdir->update($user);
+		if ($result > 0)
 		{
-			$newdir=$ecmdir->getRelativePath(1);		// return "xxx/zzz/" from ecm directory
-			$newdir=$conf->ecm->dir_output.'/'.$newdir;
-			//print $olddir.'-'.$newdir;
-			$result=@rename($olddir,$newdir);
-			if (! $result)
+			// Try to rename file if changed
+			if ($oldlabel != $ecmdir->label	&& file_exists($olddir))
 			{
-				$langs->load('errors');
-				setEventMessages($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), null, 'errors');
-				$error++;
+				$newdir=$ecmdir->getRelativePath(1);		// return "xxx/zzz/" from ecm directory
+				$newdir=$conf->ecm->dir_output.'/'.$newdir;
+				//print $olddir.'-'.$newdir;
+				$result=@rename($olddir,$newdir);
+				if (! $result)
+				{
+					$langs->load('errors');
+					setEventMessages($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), null, 'errors');
+					$error++;
+				}
 			}
-		}
 
-		if (! $error)
-		{
-			$db->commit();
+			if (! $error)
+			{
+				$db->commit();
 
-			$relativepath=$ecmdir->getRelativePath();
-			$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+				// Set new value after renaming
+				$relativepath=$ecmdir->getRelativePath();
+				$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+			}
+			else
+			{
+				$db->rollback();
+			}
 		}
 		else
 		{
 			$db->rollback();
+			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 		}
-	}
-	else
-	{
-		$db->rollback();
-		setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
-	}
+    }
+    else
+    {
+    	$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir','alpha').'/'.GETPOST('label','alpha');
+
+    	$result=@rename($olddir,$newdir);
+    	if (! $result)
+    	{
+    		$langs->load('errors');
+    		setEventMessages($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), null, 'errors');
+    		$error++;
+    	}
+
+    	if (! $error)
+    	{
+    		// Set new value after renaming
+    		$relativepath=GETPOST('oldrelparentdir','alpha').'/'.GETPOST('label','alpha');
+    		$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
+    		$section = $relativepath;
+    	}
+
+    }
 }
 
 
@@ -224,8 +271,12 @@ if ($action == 'update' && ! GETPOST('cancel','alpha'))
 
 $form=new Form($db);
 
-$object=new EcmDirectory($db);	// Need to create a new one
-$object->fetch($ecmdir->id);
+$object=new EcmDirectory($db);	// Need to create a new one instance
+
+if ($module == 'ecm')
+{
+	$object->fetch($ecmdir->id);
+}
 
 llxHeader();
 
@@ -285,7 +336,33 @@ if ($module == 'ecm')
 
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
 }
+if ($module == 'medias')
+{
+	$s='medias -> ';
+	$result = 1;
+	$subdirs=explode('/', $section);
+	$i=0;
+	foreach($subdirs as $subdir)
+	{
+		if ($i == (count($subdirs) - 1))
+		{
+			if ($action == 'edit')
+			{
+				$s.='<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$subdir.'">';
+				$s.='<input type="hidden" name="oldrelparentdir" value="'.dirname($section).'">';
+				$s.='<input type="hidden" name="oldreldir" value="'.basename($section).'">';
+			}
+			else $s.=$subdir;
+		}
+		if ($i < (count($subdirs) - 1))
+		{
+			$s.=$subdir.' -> ';
+		}
+		$i++;
+	}
 
+	$morehtmlref = $s;
+}
 
 
 dol_banner_tab($object, '', $morehtml, 0, '', '', $morehtmlref);
@@ -378,12 +455,12 @@ if ($action != 'edit' && $action != 'delete')
 {
 	print '<div class="tabsAction">';
 
-	if ($user->rights->ecm->setup)
+	if ($permtoadd)
 	{
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit'.($module?'&module='.$module:'').'&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
 
-	if ($user->rights->ecm->setup)
+	if ($permtoadd)
 	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create'.($module?'&module='.$module:'').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	}
@@ -394,7 +471,7 @@ if ($action != 'edit' && $action != 'delete')
 
 	if (count($filearray) == 0)
 	{
-		if ($user->rights->ecm->setup)
+		if ($permtoadd)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir'.($module?'&module='.$module:'').'&section='.$section.'">'.$langs->trans('Delete').'</a>';
 		}

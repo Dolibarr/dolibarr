@@ -72,8 +72,7 @@ if ($action == 'create')
 	}
 	elseif ($result == 0)
 	{
-		$mesg='';
-		$mesg=$langs->trans("NoInvoiceCouldBeWithdrawed");
+		$mesg=$langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 		setEventMessages($mesg, null, 'errors');
 		$mesg.='<br>'."\n";
 		foreach($bprev->invoice_in_error as $key => $val)

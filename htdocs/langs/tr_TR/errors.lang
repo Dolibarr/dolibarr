@@ -156,6 +156,7 @@ ErrorPriceExpression20=Boş ifade
 ErrorPriceExpression21=Boş sonuç '%s'
 ErrorPriceExpression22=Eksi sonuç '%s'
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=İç hata '%s'
 ErrorPriceExpressionUnknown=Bilinmeyen hata '%s'
 ErrorSrcAndTargetWarehouseMustDiffers=Kaynak ve hedef depolar farklı olmalı

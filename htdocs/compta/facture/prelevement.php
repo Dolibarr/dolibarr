@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -516,20 +516,16 @@ if ($object->id > 0)
 	dol_fiche_end();
 
 
-	$numopen = 0; $numclosed = 0;
+	$numopen = 0; $pending = 0; $numclosed = 0;
 
-	/*
-	 * Withdrawal opened requests
-	 */
+
+	// How many Direct debit opened requests ?
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
 	$sql .= " , pfd.date_traite as date_traite";
 	$sql .= " , pfd.amount";
-	$sql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	$sql .= " , ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE fk_facture = ".$object->id;
-	$sql .= " AND pfd.fk_user_demande = u.rowid";
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
@@ -539,11 +535,34 @@ if ($object->id > 0)
 		$num = $db->num_rows($result_sql);
 		$numopen = $num;
 	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+	// For wich amount ?
+
+	$sql = "SELECT SUM(pfd.amount) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql .= " WHERE fk_facture = ".$object->id;
+	$sql .= " AND pfd.traite = 0";
+
+	$result_sql = $db->query($sql);
+	if ($result_sql)
+	{
+		$obj = $db->fetch_object($result_sql);
+		if ($obj) $pending = $obj->amount;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 
 
 	/*
 	 * Buttons
 	 */
+
 	print "\n<div class=\"tabsAction\">\n";
 
 	// Add a transfer request
@@ -553,11 +572,13 @@ if ($object->id > 0)
 	    {
     		if ($user->rights->prelevement->bons->creer)
     		{
+    			$remaintopaylesspendingdebit = $resteapayer - $pending;
+
     			print '<form method="POST" action="">';
     			print '<input type="hidden" name="id" value="' . $object->id . '" />';
     			print '<input type="hidden" name="action" value="new" />';
     			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
-    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
+    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $remaintopaylesspendingdebit . '" size="10" />';
     			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
     			print '</form>';
     		}
@@ -604,10 +625,24 @@ if ($object->id > 0)
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+	$sql.= " , pfd.date_traite as date_traite, pfd.amount,";
+	$sql.= " u.rowid as user_id, u.lastname, u.firstname, u.login";
+	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql.= " WHERE fk_facture = ".$object->id;
+	$sql.= " AND pfd.traite = 0";
+	$sql.= " ORDER BY pfd.date_demande DESC";
+
+	$result_sql = $db->query($sql);
+
+	$num = 0;
 	if ($result_sql)
 	{
 		$i = 0;
 
+		$num = $db->num_rows($result);
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
@@ -637,18 +672,16 @@ if ($object->id > 0)
 		dol_print_error($db);
 	}
 
-	// Closed requests
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande,";
-	$sql.= " pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
+	// Past requests
+
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql.= " pb.ref,";
 	$sql.= " u.rowid as user_id, u.lastname, u.firstname, u.login";
-	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd,";
-	$sql.= " ".MAIN_DB_PREFIX."prelevement_bons as pb,";
-	$sql.= " ".MAIN_DB_PREFIX."user as u";
+	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
 	$sql.= " WHERE fk_facture = ".$object->id;
-	$sql.= " AND pfd.fk_user_demande = u.rowid";
-	$sql.= " AND pb.rowid = pfd.fk_prelevement_bons";
 	$sql.= " AND pfd.traite = 1";
 	$sql.= " ORDER BY pfd.date_demande DESC";
 
@@ -672,10 +705,13 @@ if ($object->id > 0)
 			print '<td align="center">'.price($obj->amount).'</td>';
 
 			print '<td align="center">';
-			$withdrawreceipt=new BonPrelevement($db);
-			$withdrawreceipt->id=$obj->fk_prelevement_bons;
-			$withdrawreceipt->ref=$obj->ref;
-			print $withdrawreceipt->getNomUrl(1);
+			if ($obj->fk_prelevement_bons > 0)
+			{
+				$withdrawreceipt=new BonPrelevement($db);
+				$withdrawreceipt->id=$obj->fk_prelevement_bons;
+				$withdrawreceipt->ref=$obj->ref;
+				print $withdrawreceipt->getNomUrl(1);
+			}
 			print "</td>\n";
 
 			print '<td>&nbsp;</td>';

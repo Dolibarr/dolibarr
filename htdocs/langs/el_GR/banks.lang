@@ -89,6 +89,7 @@ AccountIdShort=Αριθμός
 LineRecord=Συναλλαγή
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Πραγματοποίηση Συναλλαγής από
 DateConciliating=Ημερομ. Πραγματοποίησης Συναλλαγής
 BankLineConciliated=Entry reconciled

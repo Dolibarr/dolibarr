@@ -44,7 +44,7 @@ CreateDatabase=Crear base de datos
 CreateUser=Crear propietario u otorgarle permiso en la base de datos
 DatabaseSuperUserAccess=Servidor de base de datos: acceso de superusuario
 CheckToCreateDatabase=Marque la casilla si la base de datos no existe y debe crearse. <br> En este caso, debe completar el nombre de usuario / contraseña para la cuenta de superusuario en la parte inferior de esta página.
-CheckToCreateUser=Marque la casilla si el propietario de la base de datos no existe y debe crearse, o si existe, pero la base de datos no existe y se deben otorgar permisos. En este caso, debe elegir su nombre de usuario y contraseña y también completar el nombre de usuario / contraseña para la cuenta de superusuario en la parte inferior de esta página. Si esta casilla no está marcada, la base de datos del propietario y sus contraseñas deben existir.
+CheckToCreateUser=Marque la casilla si el propietario de la base de datos no existe y debe crearse, o si existe, pero la base de datos no existe y se deben otorgar permisos.<br> En este caso, debe elegir su nombre de usuario y contraseña y también completar el nombre de usuario/contraseña para la cuenta de superusuario en la parte inferior de esta página. Si esta casilla no está marcada, la base de datos del propietario y sus contraseñas deben existir.
 DatabaseRootLoginDescription=El inicio de sesión del usuario le permite crear nuevas bases de datos o nuevos usuarios, obligatorio si su base de datos o su propietario aún no existe.
 KeepEmptyIfNoPassword=Déjelo en blanco si el usuario no tiene contraseña (evítelo)
 SaveConfigurationFile=Guardar valores
@@ -168,7 +168,6 @@ MigrationActioncommElement=Actualizar datos sobre acciones
 MigrationPaymentMode=Migración de datos para el modo de pago
 MigrationCategorieAssociation=Migración de categorías
 MigrationEvents=Migración de eventos para agregar el propietario del evento a la tabla de asignación
-MigrationEventsContact=Migración de eventos para agregar contacto de evento en la tabla de asignación
 MigrationRemiseEntity=Actualizar el valor del campo de entidad de llx_societe_remise
 MigrationRemiseExceptEntity=Actualizar el valor del campo de entidad de llx_societe_remise_except
 ErrorFoundDuringMigration=Se informó un error durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s"> hacer clic aquí </a>, pero la aplicación o algunas características pueden no funcionar correctamente hasta que se solucionen.

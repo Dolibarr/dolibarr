@@ -314,6 +314,10 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				}
 				if ($notetoshow)
 				{
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);
@@ -380,11 +384,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$curX = $this->posxdesc-1;
 
 					$pdf->startTransaction();
-					if ($posYAfterImage > 0) 
+					if ($posYAfterImage > 0)
 					{
 						$descWidth = $this->posxpicture-$curX;
-					} 
-					else 
+					}
+					else
 					{
 						$descWidth = $this->posxtva-$curX;
 					}
@@ -606,7 +610,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else
