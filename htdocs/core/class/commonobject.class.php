@@ -1345,6 +1345,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser		Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *	@return	int						<0 if KO, >0 if OK
+	 *  @see updateExtraField
 	 */
 	function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='')
 	{
@@ -4511,6 +4512,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
+	 *  @see updateExtraField, setValueFrom
 	 */
 	function insertExtraFields($trigger='',$userused=null)
 	{
@@ -4666,16 +4668,14 @@ abstract class CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-			else
+
+			if (! $error && $trigger)
 			{
-				if ($trigger)
-				{
-					// Call trigger
-					$this->context=array('extrafieldaddupdate'=>1);
-					$result=$this->call_trigger($trigger, $userused);
-					if ($result < 0) $error++;
-					// End call trigger
-				}
+				// Call trigger
+				$this->context=array('extrafieldaddupdate'=>1);
+				$result=$this->call_trigger($trigger, $userused);
+				if ($result < 0) $error++;
+				// End call trigger
 			}
 
 			if ($error)
@@ -4694,15 +4694,19 @@ abstract class CommonObject
 
 	/**
 	 *	Update an exta field value for the current object.
-	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 *  This function delte record with all extrafields and insert them again from the array $this->array_options.
+	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
-	 *  @param  string      $key    Key of the extrafield
-	 *  @return int                 -1=error, O=did nothing, 1=OK
+	 *  @param  string      $key    		Key of the extrafield
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	User		$userused		Object user
+	 *  @return int                 		-1=error, O=did nothing, 1=OK
+	 *  @see setValueFrom
 	 */
-	function updateExtraField($key)
+	function updateExtraField($key, $trigger, $userused)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$user;
+
+		if (empty($userused)) $userused=$user;
 
 		$error=0;
 
@@ -4769,7 +4773,21 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
+				$error++;
 				$this->error=$this->db->lasterror();
+			}
+
+			if (! $error && $trigger)
+			{
+				// Call trigger
+				$this->context=array('extrafieldupdate'=>1);
+				$result=$this->call_trigger($trigger, $userused);
+				if ($result < 0) $error++;
+				// End call trigger
+			}
+
+			if ($error)
+			{
 				$this->db->rollback();
 				return -1;
 			}
