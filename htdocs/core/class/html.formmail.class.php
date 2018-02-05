@@ -993,7 +993,7 @@ class FormMail extends Form
 		$sql = "SELECT label, topic, joinfiles, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
@@ -1065,7 +1065,7 @@ class FormMail extends Form
 		$sql = "SELECT label, topic, content, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		$sql.= $this->db->order("lang,label","ASC");
@@ -1102,7 +1102,7 @@ class FormMail extends Form
 		$sql = "SELECT rowid, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 1).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";		// See all public templates or templates I own.
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";	// Return all languages

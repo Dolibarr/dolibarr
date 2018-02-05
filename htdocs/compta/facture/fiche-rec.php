@@ -1056,7 +1056,7 @@ if ($action == 'create')
 		print '<td class="tdtop">';
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic');
 		print '</td>';
-		print '<td colspan="2">';
+		print '<td>';
 		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
@@ -1067,7 +1067,7 @@ if ($action == 'create')
 			print '<td class="tdtop">';
 			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext, 1, 'help', '', 0, 2, 'noteprivate');
 			print '</td>';
-			print '<td valign="top" colspan="2">';
+			print '<td>';
 			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
@@ -1396,7 +1396,7 @@ else
 		// Note public
 		print '<tr><td>';
 		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->rights->facture->creer);
-		print '</td><td>';
+		print '</td><td class="wordbreak">';
 		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
 		print '</td>';
 		print '</tr>';
@@ -1404,7 +1404,7 @@ else
 		// Note private
 		print '<tr><td>';
 		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
-		print '</td><td>';
+		print '</td><td class="wordbreak">';
 		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
 		print '</td>';
 		print '</tr>';

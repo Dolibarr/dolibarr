@@ -92,8 +92,22 @@ class modStripe extends DolibarrModules
         $r=0;
 
         // Main menu entries
-        $this->menus = array();			// List of menus to add
         $r=0;
+        $this->menu[$r]=array(
+        	'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+	        'mainmenu'=>'billing',
+        	'leftmenu'=>'customers_bills_payment_stripe',
+        	'type'=>'left',			                // This is a Left menu entry
+	        'titre'=>'StripeImportPayment',
+	        'url'=>'/stripe/importpayments.php',
+	        'langs'=>'stripe',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+	        'position'=>500,
+	        'enabled'=>'$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 1',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+	        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+	        'target'=>'',
+	        'user'=>2
+        );				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 
         // Exports
         $r=1;

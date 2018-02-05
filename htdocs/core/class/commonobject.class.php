@@ -79,7 +79,7 @@ abstract class CommonObject
 	 */
 	public $array_options=array();
 	/**
-	 * @var int[]		Array of linked objects ids. Loaded by ->fetchObjectLinked
+	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
 	/**
@@ -1274,14 +1274,15 @@ abstract class CommonObject
 	}
 
 	/**
-	 *    	Load object from specific field
-	 *
-	 *    	@param	string	$table		Table element or element line
-	 *    	@param	string	$field		Field selected
-	 *    	@param	string	$key		Import key
-	 *		@return	int					<0 if KO, >0 if OK
-	 */
-	function fetchObjectFrom($table,$field,$key)
+     *  Load object from specific field
+     *
+     *  @param	string	$table		Table element or element line
+     *  @param	string	$field		Field selected
+     *  @param	string	$key		Import key
+     *  @param	string	$element	Element name
+     *	@return	int					<0 if KO, >0 if OK
+     */
+	function fetchObjectFrom($table, $field, $key, $element = null)
 	{
 		global $conf;
 
@@ -1289,7 +1290,11 @@ abstract class CommonObject
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
 		$sql.= " WHERE ".$field." = '".$key."'";
-		$sql.= " AND entity = ".$conf->entity;
+		if (! empty($element)) {
+			$sql.= " AND entity IN (".getEntity($element).")";
+		} else {
+			$sql.= " AND entity = ".$conf->entity;
+		}
 
 		dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1341,6 +1346,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser		Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *	@return	int						<0 if KO, >0 if OK
+	 *  @see updateExtraField
 	 */
 	function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='')
 	{
@@ -4452,7 +4458,7 @@ abstract class CommonObject
 	 *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label(). Deprecated. Function must be called without parameters.
 	 *  @return	int						<0 if error, 0 if no values of extrafield to find nor found, 1 if an attribute is found and value loaded
 	 */
-	function fetch_optionals($rowid=null,$optionsArray=null)
+	function fetch_optionals($rowid=null, $optionsArray=null)
 	{
 		if (empty($rowid)) $rowid=$this->id;
 
@@ -4567,6 +4573,7 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
+	 *  @see updateExtraField, setValueFrom
 	 */
 	function insertExtraFields($trigger='', $userused=null)
 	{
@@ -4597,16 +4604,30 @@ abstract class CommonObject
 
 			foreach($new_array_options as $key => $value)
 			{
-			   	$attributeKey = substr($key,8);   // Remove 'options_' prefix
-			   	$attributeType  = $extrafields->attribute_type[$attributeKey];
-			   	$attributeLabel = $extrafields->attribute_label[$attributeKey];
-			   	$attributeParam = $extrafields->attribute_param[$attributeKey];
+			   	$attributeKey      = substr($key,8);   // Remove 'options_' prefix
+			   	$attributeType     = $extrafields->attribute_type[$attributeKey];
+			   	$attributeLabel    = $extrafields->attribute_label[$attributeKey];
+			   	$attributeParam    = $extrafields->attribute_param[$attributeKey];
+			   	$attributeRequired = $extrafields->attribute_required[$attributeKey];
+
+			   	if ($attributeRequired)
+			   	{
+			   		$mandatorypb=false;
+			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb=true;
+			   		if ($this->array_options[$key] === '') $mandatorypb=true;
+			   		if ($mandatorypb)
+			   		{
+			   			$this->errors[]=$langs->trans('ErrorFieldRequired', $attributeLabel);
+			   			return -1;
+			   		}
+			   	}
+
 			   	switch ($attributeType)
 			   	{
 			   		case 'int':
 			  			if (!is_numeric($value) && $value!='')
 			   			{
-			   				$this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
+			   				$this->errors[]=$langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 			   				return -1;
 			  			}
 			   			elseif ($value=='')
@@ -4630,23 +4651,27 @@ abstract class CommonObject
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
 		   			case 'link':
-						$param_list=array_keys($attributeParam ['options']);
+						$param_list=array_keys($attributeParam['options']);
 						// 0 : ObjectName
 						// 1 : classPath
 						$InfoFieldList = explode(":", $param_list[0]);
 						dol_include_once($InfoFieldList[1]);
 						if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 						{
-							$object = new $InfoFieldList[0]($this->db);
-							if ($value)
+							if ($value == '-1')	// -1 is key for no defined in combo list of objects
 							{
+								$new_array_options[$key]='';
+							}
+							elseif ($value)
+							{
+								$object = new $InfoFieldList[0]($this->db);
 								if (is_numeric($value)) $res=$object->fetch($value);
 								else $res=$object->fetch('',$value);
 
 								if ($res > 0) $new_array_options[$key]=$object->id;
 								else
 								{
-									$this->error="Ref '".$value."' for object '".$object->element."' not found";
+									$this->error="Id/Ref '".$value."' for object '".$object->element."' not found";
 									$this->db->rollback();
 									return -1;
 								}
@@ -4659,6 +4684,7 @@ abstract class CommonObject
 						break;
 			   	}
 			}
+
 			$this->db->begin();
 
 			$table_element = $this->table_element;
@@ -4704,7 +4730,7 @@ abstract class CommonObject
 				$error++;
 			}
 
-			if (!$error && !$trigger)
+			if (! $error && $trigger)
 			{
 				// Call trigger
 				$this->context=array('extrafieldaddupdate'=>1);
@@ -4729,15 +4755,19 @@ abstract class CommonObject
 
 	/**
 	 *	Update an exta field value for the current object.
-	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 *  This function delte record with all extrafields and insert them again from the array $this->array_options.
+	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
-	 *  @param  string      $key    Key of the extrafield
-	 *  @return int                 -1=error, O=did nothing, 1=OK
+	 *  @param  string      $key    		Key of the extrafield
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	User		$userused		Object user
+	 *  @return int                 		-1=error, O=did nothing, 1=OK
+	 *  @see setValueFrom
 	 */
-	function updateExtraField($key)
+	function updateExtraField($key, $trigger, $userused)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$user;
+
+		if (empty($userused)) $userused=$user;
 
 		$error=0;
 
@@ -4789,9 +4819,9 @@ abstract class CommonObject
 					// 1 : classPath
 					$InfoFieldList = explode(":", $param_list[0]);
 					dol_include_once($InfoFieldList[1]);
-					$object = new $InfoFieldList[0]($this->db);
 					if ($value)
 					{
+						$object = new $InfoFieldList[0]($this->db);
 						$object->fetch(0,$value);
 						$this->array_options["options_".$key]=$object->id;
 					}
@@ -4804,7 +4834,21 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
+				$error++;
 				$this->error=$this->db->lasterror();
+			}
+
+			if (! $error && $trigger)
+			{
+				// Call trigger
+				$this->context=array('extrafieldupdate'=>1);
+				$result=$this->call_trigger($trigger, $userused);
+				if ($result < 0) $error++;
+				// End call trigger
+			}
+
+			if ($error)
+			{
 				$this->db->rollback();
 				return -1;
 			}
@@ -5908,7 +5952,7 @@ abstract class CommonObject
 	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
-	 * @return bool
+	 * @return bool						  True if success, False if error
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors=0)
 	{
@@ -6313,12 +6357,14 @@ abstract class CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 		}
 
+		// Create extrafields
 		if (! $error)
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0) $error++;
 		}
 
+		// Triggers
 		if (! $error && ! $notrigger)
 		{
 			// Call triggers
@@ -6380,13 +6426,13 @@ abstract class CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  User $user      	User that modifies
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @return int             	<0 if KO, >0 if OK
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -6434,7 +6480,22 @@ abstract class CommonObject
 			}
 		}
 
-		if (! $error && ! $notrigger) {
+		// Update extrafield
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+		}
+
+		// Triggers
+		if (! $error && ! $notrigger)
+		{
 			// Call triggers
 			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
 			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
@@ -6470,6 +6531,19 @@ abstract class CommonObject
 				$result=$this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 				if ($result < 0) { $error++; } // Do also here what you must do to rollback action if trigger fail
 				// End call triggers
+			}
+		}
+
+		if (! $error)
+		{
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element."_extrafields";
+			$sql.= " WHERE fk_object=" . $this->id;
+
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				$this->errors[] = $this->db->lasterror();
+				$error++;
 			}
 		}
 

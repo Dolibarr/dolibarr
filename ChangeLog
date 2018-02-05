@@ -2,8 +2,20 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 8.0.0 compared to 7.0.0 *****
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Hook 'maildao' was renamed into 'mail' into the method sendfile that send emails, and method was renamed from
+  'doaction' into 'sendMail'. 
+  
+
 ***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:
+NEW: When payment is registered, PDF of invoices are also regenerated so payments
+     appears with no need to click on regenerate.
 NEW: #5711 Add shipment line deleting and editing for draft shipments.
 NEW: Accept substitution key __[ABC]__ replaced with value of const ABC
 NEW: Accountancy Add variant on sell account for intracommunity sales & export sales
@@ -275,6 +287,12 @@ Following changes may create regressions for some external modules, but were nec
 * Jquery plugin tableDnd updated. You now need to use decodeURI on the return value of tableDnDSerialize() 
   and add 'td.' to the beginning of the dragHandle match string. 
 * IE8 and earlier and Firefox 12 and earlier (< 2012) are no more supported. 
+
+* If you use the external module "multicompany", you must also upgrade the module. Multicompany module for
+  Dolibarr v7 is required because with Dolibarr v7, payment modes and payment conditions are management as data
+  that are dedicated to each company. If you keep your old version of multicompany module, mode and
+  condition of payments will appears empty in all companies that are not the first one. By upgrading the 
+  multicompany module to a version that support Dolibarr v7, everything should work as expected. 
 
 
 ***** ChangeLog for 6.0.5 compared to 6.0.4 *****

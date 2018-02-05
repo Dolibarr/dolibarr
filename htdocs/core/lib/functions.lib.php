@@ -111,7 +111,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
- *									'c_paiement', ...
+ *									'c_paiement', 'c_payment_term', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
  *  @param	int		$forceentity	Entity id
@@ -550,7 +550,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
 		case 'nohtml':
-			$out=dol_string_nohtmltag($out);
+			$out=dol_string_nohtmltag($out, 0);
 			break;
 		case 'alphanohtml':	// Recommended for search params
 			if (! is_array($out))
@@ -2278,7 +2278,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
-	
+
 	if ($hookmanager) {
             $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
             $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
@@ -2304,7 +2304,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		if ($adddivfloat) $rep.='</div>';
 		else $rep.='</span>';
 	  }
-	
+
 	return $rep;
 }
 
@@ -3520,15 +3520,16 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
+ * @param	string	$morecss		More css
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="center login_main_message"><div class="error">';
+	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
@@ -6309,7 +6310,7 @@ function dol_validElement($element)
  * 	Return img flag of country for a language code or country code
  *
  * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
- *  @param	string	$moreatt		Add more attribute on img tag (For example 'style="float: right"')
+ *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  * 	@return	string				HTML img string with flag.
  */
 function picto_from_langcode($codelang, $moreatt = '')
@@ -6322,7 +6323,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 
 	if ($codelang == 'auto')
 	{
-		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png', $moreatt);
+		return '<span class="fa fa-globe"></span>';
 	}
 
 	$langtocountryflag = array(

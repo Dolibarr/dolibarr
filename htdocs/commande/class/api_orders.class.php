@@ -153,6 +153,7 @@ class Orders extends DolibarrApi
         {
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
+            $i=0;
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
@@ -276,7 +277,7 @@ class Orders extends DolibarrApi
                         $request_data->product_type,
                         $request_data->rang,
                         $request_data->special_code,
-                        $fk_parent_line,
+                        $request_data->fk_parent_line,
                         $request_data->fk_fournprice,
                         $request_data->pa_ht,
                         $request_data->label,
@@ -424,14 +425,6 @@ class Orders extends DolibarrApi
 		    if ($this->commande->availability($this->commande->availability_id) < 0)
 			throw new RestException(400, 'Error while updating availability');
 		}
-        // update bank account
-        if(!empty($this->commande->fk_account))
-        {
-                if($this->commande->setBankAccount($this->commande->fk_account) == 0)
-                {
-                        throw new RestException(400,$this->commande->error);
-                }
-        }
 
         if ($this->commande->update(DolibarrApiAccess::$user) > 0)
         {
@@ -479,7 +472,7 @@ class Orders extends DolibarrApi
     /**
      * Validate an order
      *
-	 * If you get a bad value for param notrigger check that ou provide this in body
+	 * If you get a bad value for param notrigger check, provide this in body
      * {
      *   "idwarehouse": 0,
      *   "notrigger": 0

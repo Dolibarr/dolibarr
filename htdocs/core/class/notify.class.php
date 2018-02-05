@@ -404,13 +404,13 @@ class Notify
 								break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$object->ref);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
 								break;
@@ -664,8 +664,9 @@ class Notify
 					}
 					dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
 					$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
-					$sendto = preg_replace('/^[\s,]+/','',$sendto);	// Clean start of string
-					$sendto = preg_replace('/[\s,]+$/','',$sendto);	// Clean end of string
+					$sendto = preg_replace('/,\s*,/', ',', $sendto);	// in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
+					$sendto = preg_replace('/^[\s,]+/', '', $sendto);	// Clean start of string
+					$sendto = preg_replace('/[\s,]+$/', '', $sendto);	// Clean end of string
 				}
 
 				if ($sendto)

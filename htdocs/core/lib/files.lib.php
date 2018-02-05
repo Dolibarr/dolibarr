@@ -1706,7 +1706,15 @@ function dol_convert_file($fileinput, $ext='png', $fileoutput='')
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
 				$count = $image->getNumberImages();
-				$ret = $image->writeImages($fileoutput, true);
+
+				if (! dol_is_file($fileoutput) || is_writeable($fileoutput))
+				{
+					$ret = $image->writeImages($fileoutput, true);
+				}
+				else
+				{
+					dol_syslog("Warning: Failed to write cache preview file '.$fileoutput.'. Check permission on file/dir", LOG_ERR);
+				}
 				if ($ret) return $count;
 				else return -3;
 			}

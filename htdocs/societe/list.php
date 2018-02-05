@@ -142,6 +142,9 @@ if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != 
 if (($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof5']='ProfId5';
 if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != "ProfId6".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof6']='ProfId6';
 if (!empty($conf->barcode->enabled)) $fieldstosearchall['s.barcode']='Gencod';
+// Personalized search criterias. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
+if (! empty($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall=dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
+
 
 // Define list of fields to show into list
 $checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
@@ -513,7 +516,7 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_all != '')     $param = "&sall=".urlencode($search_all);
-if ($sall != '')           $param .= "&sall=".urlencode($sall);
+if ($sall != '')           $param.= "&sall=".urlencode($sall);
 if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
 if ($search_categ_sup > 0) $param.='&search_categ_sup='.urlencode($search_categ_sup);
 if ($search_sale > 0)	   $param.='&search_sale='.urlencode($search_sale);
@@ -995,16 +998,7 @@ while ($i < min($num, $limit))
 		$savalias = $obj->name_alias;
 		if (! empty($arrayfields['s.name_alias']['checked'])) $companystatic->name_alias='';
 		print '<td class="tdoverflowmax200">';
-		//if (! empty($arrayfields['s.name_alias']['checked']))	// Hide alias from output
-		//{
-			$savalias=$companystatic->name_alias;
-			$companystatic->name_alias='';
-		//}
 		print $companystatic->getNomUrl(1,'',100);
-		//if (! empty($arrayfields['s.name_alias']['checked']))	// Hide alias from output
-		//{
-			$companystatic->name_alias=$savalias;
-		//}
 		print "</td>\n";
 		$companystatic->name_alias = $savalias;
         if (! $i) $totalarray['nbfield']++;
