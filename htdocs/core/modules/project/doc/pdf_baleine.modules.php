@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
-
+ * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -223,7 +224,7 @@ class pdf_baleine extends ModelePDFProjects
 
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
-					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+					$pdf->Rect($this->marge_gauche, $tab_top-2, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+2);
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY+6;
