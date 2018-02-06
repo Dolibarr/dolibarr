@@ -465,10 +465,10 @@ abstract class CommonObject
     	{
     		require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
     		$tmparray=getState($this->state_id,'all',0,1);
-    		$this->state_code   =$tmparray['code'];
-            $this->state        =$tmparray['label'];
-            $this->region_code  =$tmparray['region_code'];
-            $this->region       =$tmparray['region'];
+			$this->state_code   =$tmparray['code'];
+			$this->state        =$tmparray['label'];
+			$this->region_code  =$tmparray['region_code'];
+			$this->region       =$tmparray['region'];
         }
 
 		return dol_format_address($this, $withcountry, $sep);

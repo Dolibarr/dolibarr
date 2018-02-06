@@ -78,19 +78,8 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("address",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("town",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("zipcode",'alpha'),'chaine',0,'',$conf->entity);
-
-	//dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", GETPOST("state_id",'alpha'),'chaine',0,'',$conf->entity);
-	$tmparray=getState(GETPOST('state_id','int'),'all','',$db,$langs,0);
-	if (! empty($tmparray['id']))
-	{
-		$mysoc->state_id   =$tmparray['id'];
-		$mysoc->state_code =$tmparray['code'];
-		$mysoc->state_label=$tmparray['label'];
-
-		$s=$mysoc->state_id.':'.$mysoc->state_code.':'.$mysoc->state_label;
-		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", $s,'chaine',0,'',$conf->entity);
-	}
-
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", GETPOST("state_id",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL", GETPOST("tel",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX", GETPOST("fax",'alpha'),'chaine',0,'',$conf->entity);
@@ -359,7 +348,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
 
 	print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
-	$formcompany->select_departement($mysoc->state_id,$mysoc->country_code,'state_id');
+	$formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_STATE,$mysoc->country_code,'state_id');
 	print '</td></tr>'."\n";
 
 
@@ -741,9 +730,7 @@ else
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
-	if ($mysoc->state_id) {
-		print getState($mysoc->state_id,$conf->global->MAIN_SHOW_STATE_CODE,0,$conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
-	}
+	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print getState($conf->global->MAIN_INFO_SOCIETE_STATE,$conf->global->MAIN_SHOW_STATE_CODE,0,$conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 	else print '&nbsp;';
 	print '</td></tr>';
 
