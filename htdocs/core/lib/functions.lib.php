@@ -111,7 +111,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
- *									'c_paiement', ...
+ *									'c_paiement', 'c_payment_term', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
  *  @param	int		$forceentity	Entity id
@@ -550,7 +550,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
 		case 'nohtml':
-			$out=dol_string_nohtmltag($out);
+			$out=dol_string_nohtmltag($out, 0);
 			break;
 		case 'alphanohtml':	// Recommended for search params
 			if (! is_array($out))

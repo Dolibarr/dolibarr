@@ -995,7 +995,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     else dol_print_error($db);
 
     // Check if we must force counter to maskoffset
-    if (empty($counter) || preg_match('/[^0-9]/i',$counter)) $counter=$maskoffset;
+    if (empty($counter)) $counter=$maskoffset;
+    else if (preg_match('/[^0-9]/i',$counter))
+    {
+    	$counter=0;
+    	dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
+    }
     else if ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter=$maskoffset;
 
     if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
@@ -1503,7 +1508,7 @@ function dol_print_reduction($reduction,$langs)
     }
     else
     {
-        $string = price($reduction).'%';
+    	$string = vatrate($reduction,true);
     }
 
     return $string;
@@ -2252,6 +2257,9 @@ function getModuleDirForApiClass($module)
     }
     elseif ($module == 'users') {
         $moduledirforclass = 'user';
+    }
+    elseif ($module == 'ficheinter' || $module == 'interventions') {
+    	$moduledirforclass = 'fichinter';
     }
 
     return $moduledirforclass;

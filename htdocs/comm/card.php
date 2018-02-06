@@ -773,7 +773,7 @@ if ($object->id > 0)
 	}
 
     /*
-     *   Last sendings
+     *   Last shipments
      */
     if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
         $sendingstatic = new Expedition($db);
@@ -1245,7 +1245,7 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+	if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_CUSTOMER_CARD))
 	{
 		// List of contacts
 		show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);

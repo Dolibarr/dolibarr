@@ -51,7 +51,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
         if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
 
 		// Test if event/record is qualified
-		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription');
+		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription','payment_various');
 		if (! in_array($object->element, $listofqualifiedelement)) return 1;
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -120,9 +120,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		$res = $b->create($user);
 
-		if ($res<0)
+		if ($res < 0)
 		{
-			setEventMessages($b->error, $b->errors, 'errors');
+			$this->error = $b->error;
+			$this->errors = $b->errors;
 			return -1;
 		}
 		else

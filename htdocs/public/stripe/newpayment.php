@@ -202,7 +202,7 @@ else if (! empty($conf->global->ONLINE_PAYMENT_CREDITOR)) $creditor=$conf->globa
 
 if ($action == 'dopayment')    // We click on button Create payment
 {
-    if (GETPOST('newamount')) $amount = GETPOST('newamount');
+    if (GETPOST('newamount','alpha')) $amount = price2num(GETPOST('newamount','alpha'),'MT');
     else
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
@@ -429,7 +429,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found=false;
 $error=0;
@@ -455,7 +455,7 @@ if (! GETPOST("source"))
     if (empty($amount) || ! is_numeric($amount))
     {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+        print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
     }
     else {
         print '<b>'.price($amount).'</b>';
@@ -541,7 +541,7 @@ if (GETPOST("source") == 'order')
     if (empty($amount) || ! is_numeric($amount))
     {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+        print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
     }
     else {
         print '<b>'.price($amount).'</b>';
@@ -652,7 +652,7 @@ if (GETPOST("source") == 'invoice')
     if (empty($amount) || ! is_numeric($amount))
     {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+        print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
     }
     else {
         print '<b>'.price($amount).'</b>';
@@ -852,7 +852,7 @@ if (GETPOST("source") == 'contractline')
     if (empty($amount) || ! is_numeric($amount))
     {
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-        print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+        print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
     }
     else {
         print '<b>'.price($amount).'</b>';
@@ -971,7 +971,7 @@ if (GETPOST("source") == 'membersubscription')
         print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
         print '</td></tr>'."\n";
 
-        if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
+        if (empty($amount) && ! GETPOST('newamount','alpha')) $_GET['newamount']=$member->last_subscription_amount;
     }
 
     // Amount
@@ -984,12 +984,31 @@ if (GETPOST("source") == 'membersubscription')
         print ')';
     }
     print '</td><td class="CTableRow'.($var?'1':'2').'">';
+    $valtoshow='';
     if (empty($amount) || ! is_numeric($amount))
     {
-        $valtoshow=GETPOST("newamount",'int');
+    	$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
+    	// force default subscription amount to value defined into constant...
+    	if (empty($valtoshow))
+    	{
+    		if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+    			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+    				$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+    			}
+    		}
+    		else {
+    			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+    				$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+    			}
+    		}
+    	}
+    }
+    if (empty($amount) || ! is_numeric($amount))
+    {
+        //$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
         if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-        print '<input class="flat" class="maxwidth75" type="text" name="newamount" value="'.price($valtoshow).'">';
+        print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
     }
     else {
         $valtoshow=$amount;

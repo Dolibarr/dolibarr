@@ -39,8 +39,7 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters SALARIES_*
 $list = array (
-		'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
-		'SALARIES_ACCOUNTING_ACCOUNT_CHARGE'
+		'SALARIES_XXX',
 );
 
 /*
@@ -97,7 +96,7 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	
+
 
 	print '<tr class="oddeven value">';
 
