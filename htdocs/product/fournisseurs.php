@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne			<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2012	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014		Ion Agorria			<ion@agorria.com>
+ * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,8 +76,10 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
 
+// Initialize hook context
+$contextpage = array('pricesuppliercard','globalcard');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('pricesuppliercard','globalcard'));
+$hookmanager->initHooks($contextpage);
 
 $object = new ProductFournisseur($db);
 if ($id > 0 || $ref)
@@ -603,7 +605,7 @@ if ($id > 0 || $ref)
 			if ($user->rights->fournisseur->lire)
 			{
 				$param='';
-				if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+				//if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage); // FIXME $contextpage is not defined
 				if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 				$param.='&ref='.urlencode($object->ref);
 

@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005		Brice Davoleau		<brice.davoleau@gmail.com>
+ * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
+ * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +63,10 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='a.datep,a.id';
 if (! $sortorder) $sortorder='DESC,DESC';
 
+// Initialize hook context
+$contextpage = array('agendathirdparty','globalcard');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('agendathirdparty'));
+$hookmanager->initHooks($contextpage);
 
 
 /*

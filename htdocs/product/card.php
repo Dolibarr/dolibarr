@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
+ * Copyright (C) 2005-2018	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2006		Auguria SARL				<info@auguria.org>
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2017	Alexandre Spangaro		<aspangaro@zendsi.com>
- * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Cédric Gross				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
@@ -113,8 +113,10 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($id) ? 'rowid' : 'ref');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
+// Initialize hook context
+$contextpage = array('productcard','globalcard');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productcard','globalcard'));
+$hookmanager->initHooks($contextpage);
 
 
 
