@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_line) $sql.= " AND pl.rowid = '".$db->escape($search_line)."'";
 if ($search_bon) $sql.= natural_search("p.ref", $search_bon);
 if ($search_code) $sql.= natural_search("s.code_client", $search_code);
-if ($search_company) natural_search("s.nom", $search_company);
+if ($search_company) $sql.= natural_search("s.nom", $search_company);
 
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -123,13 +123,14 @@ if ($result)
 
     $urladd = "&amp;statut=".$statut;
     $urladd .= "&amp;search_bon=".$search_bon;
-
-    print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+	if ($limit > 0 && $limit != $conf->liste_limit) $urladd.='&limit='.urlencode($limit);
 
     print"\n<!-- debut table -->\n";
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-    $moreforfilter='';
+	print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+
+	$moreforfilter='';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
