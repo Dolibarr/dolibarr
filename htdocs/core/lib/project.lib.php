@@ -1421,7 +1421,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
-	$sql.= " WHERE p.entity = ".$conf->entity;
+	$sql.= " WHERE p.entity IN (".getEntity('project').")";
 	$sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	if ($mytasks)

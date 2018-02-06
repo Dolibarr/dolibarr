@@ -284,7 +284,7 @@ class BonPrelevement extends CommonObject
 		$sql.= ", p.fk_user_credit";
 		$sql.= ", p.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity IN (".getEntity('facture').")";
 		if ($rowid > 0) $sql.= " AND p.rowid = ".$rowid;
 		else $sql.= " AND p.ref = '".$this->db->escape($ref)."'";
 
