@@ -431,7 +431,7 @@ $moreforfilter='';
 
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
+$moreforfilter.=$langs->trans('User'). ': ';
 $includeonly='hierachyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
