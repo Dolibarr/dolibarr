@@ -162,11 +162,11 @@ SizeUnitinch=polegada
 SizeUnitfoot=pé
 SizeUnitpoint=ponto
 BugTracker=Incidencias
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Voltar à página de iniciar a sessão
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=o modo de autenticação de Dolibarr está configurado como "<b>%s</b>".<br>em este modo Dolibarr não pode conocer ni modificar a sua palavra-passe<br>Contacte com a sua administrador para conocer as modalidades de alterar.
 EnableGDLibraryDesc=Instale ou ative a biblioteca GD na instalação do PHP para usar esta opção.
-ProfIdShortDesc=<b>Prof Id %s</b> é uma informação dePendente do país do Terceiro.<br>Por Exemplo, para o país  <b>%s</b>, é o código <b>%s</b>.
+ProfIdShortDesc=<b>ID Prof. %s</b> é uma informação dependente do país do Terceiro.<br>Por Exemplo, para o país  <b>%s</b>, é o código <b>%s</b>.
 DolibarrDemo=Demo de Dolibarr ERP/CRM
 StatsByNumberOfUnits=Estatísticas para o somatório da quantidade de produtos/serviços
 StatsByNumberOfEntities=Estatísticas em número de entidades referentes (número de fatura, ou ordem...)
@@ -227,7 +227,9 @@ Chart=Gráfico
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Área de Exportações
 AvailableFormats=Formatos disponiveis

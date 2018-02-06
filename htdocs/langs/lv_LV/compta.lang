@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Norēķini / Maksājumi
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Iet uz <a href="%s">Nodokļi moduļa uzstādīšanas</a> mainīt aprēķināšanas noteikumus
 TaxModuleSetupToModifyRulesLT=Iet uz <a href="%s">Kompānijas iestatījumiem</a> lai labotu aprēķina noteikumus
 OptionMode=Variants grāmatvedības

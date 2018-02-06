@@ -162,9 +162,9 @@ SizeUnitinch=дюйм
 SizeUnitfoot=фут
 SizeUnitpoint=point
 BugTracker=Ошибка Tracker
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Перейти на страницу входа
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Аутентификация <b>режим %s.</b> <br> В этом режиме Dolibarr можете не знать, ни изменить свой пароль. <br> Обратитесь к системному администратору, если вы хотите изменить свой пароль.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>Проф Id %s</b> является информация в зависимости от сторонних страны. <br> Например, для страны <b>с%,</b> то <b>с кодом%.</b>
 DolibarrDemo=Dolibarr ERP / CRM демо
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Экспорт области
 AvailableFormats=Доступные форматы

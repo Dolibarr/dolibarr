@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=錯誤，已經使用優惠
 ErrorInvoiceAvoirMustBeNegative=錯誤的，正確的發票必須有一個負數
 ErrorInvoiceOfThisTypeMustBePositive=錯誤，這種類型的發票必須有一個正數
 ErrorCantCancelIfReplacementInvoiceNotValidated=錯誤，無法取消一個已經被另一個發票仍處於草案狀態取代發票
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=From
 BillTo=Bill To
 ActionsOnBill=行動對發票

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Ga naar <a href="%s">Belastingen module setup</a> om regels voor de berekening wijzigen
 TaxModuleSetupToModifyRulesLT=Ga naar <a href="%s">Bedrijf instellingen</a> om regels voor de berekening wijzigen
 OptionMode=Optie voor boekhouding
@@ -213,9 +213,9 @@ CalculationRuleDescSupplier=According to supplier, choose appropriate method to 
 TurnoverPerProductInCommitmentAccountingNotRelevant=Omzet rapport per product, bij gebruik van een <b>kas boukhoudings-modus</b> is dit niet relevant. Dit rapport is alleen beschikbaar bij gebruik van <b>betrokkenheid accountancy-modus</b> (zie setup van boukhoud module).
 CalculationMode=Berekeningswijze
 AccountancyJournal=Accounting code journal
-ACCOUNTING_VAT_SOLD_ACCOUNT=Accounting account by default for collecting VAT - VAT on sales (used if not defined on VAT dictionary setup)
-ACCOUNTING_VAT_BUY_ACCOUNT=Accounting account by default for recovered VAT - VAT on purchases (used if not defined on VAT dictionary setup)
-ACCOUNTING_VAT_PAY_ACCOUNT=Accounting account by default for paying VAT
+ACCOUNTING_VAT_SOLD_ACCOUNT=Standaard grootboekrekening BTW te verrekenen - BTW op verkopen (indien niet opgegeven bij BTW instellingen)
+ACCOUNTING_VAT_BUY_ACCOUNT=Standaard grootboekrekening BTW inkopen (indien niet opgegeven bij BTW instellingen)
+ACCOUNTING_VAT_PAY_ACCOUNT=Standaard grootboekrekening BTW af te dragen
 ACCOUNTING_ACCOUNT_CUSTOMER=Accounting account used for customer third parties
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=The dedicated accounting account defined on third party card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated customer accouting account on third party is not defined.
 ACCOUNTING_ACCOUNT_SUPPLIER=Accounting account used for supplier third parties

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=الذهاب إلى <a href="%s">الإعداد حدة الضرائب</a> لتعديل قواعد حساب
 TaxModuleSetupToModifyRulesLT=الذهاب إلى <a href="%s">إعداد الشركة</a> لتعديل قواعد حساب
 OptionMode=الخيار المحاسبة

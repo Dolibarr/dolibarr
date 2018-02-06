@@ -25,8 +25,8 @@ Chartofaccounts=Kontenplan
 CurrentDedicatedAccountingAccount=Aktuelles dediziertes Konto
 AssignDedicatedAccountingAccount=Neues Konto zuweisen
 InvoiceLabel=Rechnungsanschrift
-OverviewOfAmountOfLinesNotBound=Übersicht über die Anzahl der nicht an ein Buchhaltungskonto zugeordneten Zeilen
-OverviewOfAmountOfLinesBound=Übersicht über die Anzahl der bereits an ein Buchhaltungskonto zugeordneten Zeilen
+OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to an accounting account
+OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to an accounting account
 OtherInfo=Zusatzinformationen
 DeleteCptCategory=Buchhaltungskonto aus Gruppe entfernen
 ConfirmDeleteCptCategory=Soll dieses Buchhaltungskonto wirklich aus der Gruppe entfernt werden?
@@ -36,7 +36,7 @@ NotYetInGeneralLedger=Noch nicht ins Hauptbuch übernommen
 GroupIsEmptyCheckSetup=Gruppe ist leer, kontrollieren Sie die persönlichen Kontogruppen
 DetailByAccount=Detail pro Konto zeigen
 AccountWithNonZeroValues=Konto mit Werten != 0
-ListOfAccounts=Kontenplan
+ListOfAccounts=Kontenpläne
 
 MainAccountForCustomersNotDefined=Standardkonto für Kunden im Setup nicht definiert
 MainAccountForSuppliersNotDefined=Standardkonto für Lieferanten ist im Setup nicht definiert
@@ -173,7 +173,7 @@ DelBookKeeping=Eintrag im Hauptbuch löschen
 FinanceJournal=Finanzjournal
 ExpenseReportsJournal=Spesenabrechnungsjournal
 DescFinanceJournal=Finanzjournal inklusive aller Arten von Zahlungen mit Bankkonto
-DescJournalOnlyBindedVisible=Ansicht der Datensätze, die an ein Produkt- / Dienstleistungskonto gebunden sind und in das Hauptbuch übernommen werden können.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Steuerkonto nicht definiert
 ThirdpartyAccountNotDefined=Konto für Adresse nicht definiert
 ProductAccountNotDefined=Konto für Produkt nicht definiert
@@ -224,6 +224,8 @@ GeneralLedgerSomeRecordWasNotRecorded=Einige der Buchungen konnten nicht überno
 NoNewRecordSaved=Keine weiteren Einträge zum Übernehmen
 ListOfProductsWithoutAccountingAccount=Liste der Produkte, die nicht an ein Buchhaltungskonto gebunden sind
 ChangeBinding=Ändern der Zuordnung
+Accounted=Gebucht im Hauptbuch
+NotYetAccounted=ungebucht
 
 ## Admin
 ApplyMassCategories=Massenaktualisierung der Kategorien

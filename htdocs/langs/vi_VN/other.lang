@@ -162,9 +162,9 @@ SizeUnitinch=inch
 SizeUnitfoot=chân
 SizeUnitpoint=điểm
 BugTracker=Theo dõi lỗi
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Trở lại trang đăng nhập
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Chế độ xác thực <b>là% s.</b> <br> Trong chế độ này, Dolibarr không thể biết và cũng không thay đổi mật khẩu của bạn. <br> Liên hệ quản trị hệ thống của bạn nếu bạn muốn thay đổi mật khẩu của bạn.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>Id Giáo sư% s</b> là một thông tin phụ thuộc vào quốc gia của bên thứ ba. <br> Ví dụ, đối với đất <b>nước% s,</b> đó là <b>mã% s.</b>
 DolibarrDemo=Giới thiệu Dolibarr ERP / CRM
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Khu vực xuất khẩu
 AvailableFormats=Định dạng có sẵn

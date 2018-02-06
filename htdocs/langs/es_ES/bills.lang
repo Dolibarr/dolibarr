@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Error, la remesa está ya asignada
 ErrorInvoiceAvoirMustBeNegative=Error, una factura de tipo Abono debe tener un importe negativo
 ErrorInvoiceOfThisTypeMustBePositive=Error, una factura de este tipo debe tener un importe positivo
 ErrorCantCancelIfReplacementInvoiceNotValidated=Error, no es posible cancelar una factura que ha sido sustituida por otra que se encuentra en el estado 'borrador '.
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Emisor
 BillTo=Enviar a
 ActionsOnBill=Eventos sobre la factura

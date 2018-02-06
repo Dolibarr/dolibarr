@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Ada kesalahan, diskonto sudah digunakan
 ErrorInvoiceAvoirMustBeNegative=Ada kesalahan, tagihan yang sudah terkoreksi  harus punya setidaknya satu jumlah negatif
 ErrorInvoiceOfThisTypeMustBePositive=Ada kesalahan, tagihan jenis ini harus punya setidaknya satu jumlah positif
 ErrorCantCancelIfReplacementInvoiceNotValidated=Ada kesalahan, tagihan yang pernah diganti dengan tagihan lain tidak bisa digantikan kalau masih dalam status konsep
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Dari
 BillTo=Kepada
 ActionsOnBill=Tindak lanjut tagihan

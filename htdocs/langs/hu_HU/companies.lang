@@ -56,6 +56,7 @@ Address=Cím
 State=Állam / Tartomány
 StateShort=Állam/Megye
 Region=Régió
+Region-State=Region - State
 Country=Ország
 CountryCode=Az ország hívószáma
 CountryId=Ország id

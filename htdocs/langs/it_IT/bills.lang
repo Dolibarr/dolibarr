@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Errore, sconto già utilizzato
 ErrorInvoiceAvoirMustBeNegative=Errore, la fattura a correzione deve avere un importo negativo
 ErrorInvoiceOfThisTypeMustBePositive=Errore, questo tipo di fattura deve avere importo positivo
 ErrorCantCancelIfReplacementInvoiceNotValidated=Errore, non si può annullare una fattura che è stato sostituita da un'altra fattura non ancora convalidata
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Da
 BillTo=A
 ActionsOnBill=Azioni su fattura

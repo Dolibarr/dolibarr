@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=Emaily ze souboru
 MailingModuleDescEmailsFromUser=Emaily zadávané uživatelem
 MailingModuleDescDolibarrUsers=Uživatelé s e-maily
 MailingModuleDescThirdPartiesByCategories=Subjekty (podle kategorií)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Řádek  %s v souboru
