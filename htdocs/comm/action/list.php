@@ -140,6 +140,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
+
 /*
  *	Actions
  */
@@ -353,15 +354,15 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	$nav='';
-	if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	//if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-	if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
-	if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-	if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-	if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-	if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-	if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-	if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+
+	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
+	if ($filter)          $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+	if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+	if ($showbirthday)    $nav.='<input type="hidden" name="showbirthday" value="1">';
+	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+	//if ($usergroup)       $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 	print $nav;
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
