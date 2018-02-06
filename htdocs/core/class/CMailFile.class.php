@@ -482,7 +482,7 @@ class CMailFile
 
 
 	/**
-	 * Send mail that was prepared by constructor
+	 * Send mail that was prepared by constructor.
 	 *
 	 * @return    boolean     True if mail sent, false otherwise
 	 */
@@ -495,18 +495,24 @@ class CMailFile
 
 		$res=false;
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) || !empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			$hookmanager->initHooks(array('maildao'));
-			$reshook = $hookmanager->executeHooks('doactions', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-			if (! empty($reshook))
+			$hookmanager->initHooks(array('mail'));
+
+			$parameters=array(); $action='';
+			$reshook = $hookmanager->executeHooks('sendMail', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0)
 			{
-				$this->error = "Error in hook maildao doactions " . $reshook;
+				$this->error = "Error in hook maildao sendMail " . $reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_ERR);
 
 				return $reshook;
+			}
+			if ($reshook == 1)	// Hook replace standard code
+			{
+				return true;
 			}
 
 			// Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
@@ -556,6 +562,12 @@ class CMailFile
 				$keyforsmtppw    ='MAIN_MAIL_SMTPS_PW_EMAILING';
 				$keyfortls       ='MAIN_MAIL_EMAIL_TLS_EMAILING';
 				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
+			}
+			
+			if(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+				$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
+				$this->addr_cc = '';
+				$this->addr_bcc = '';
 			}
 
 			// Action according to choosed sending method
@@ -760,13 +772,21 @@ class CMailFile
 			}
 			else
 			{
-
 				// Send mail method not correctly defined
 				// --------------------------------------
 
 				return 'Bad value for sendmode';
 			}
 
+			$parameters=array(); $action='';
+			$reshook = $hookmanager->executeHooks('sendMailAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0)
+			{
+				$this->error = "Error in hook maildao sendMailAfter " . $reshook;
+				dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_ERR);
+
+				return $reshook;
+			}
 		}
 		else
 		{

@@ -453,24 +453,36 @@ if (is_array($blocks))
 		if (empty($search_showonlyerrors) || ! $checkresult[$block->id])
 		{
 		   	print '<tr class="oddeven">';
+
 		   	// ID
 		   	print '<td>'.$block->id.'</td>';
+
 		   	// Date
 		   	print '<td>'.dol_print_date($block->date_creation,'dayhour').'</td>';
+
 			// User
 		   	print '<td>';
+
 		   	//print $block->getUser()
 		   	print $block->user_fullname;
 		   	print '</td>';
+
 		   	// Action
 		   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
+
 		   	// Ref
 		   	print '<td class="nowrap">'.$block->ref_object.'</td>';
+
 		   	// Link to source object
 		   	print '<td>'.$object_link.'</td>';
+
+		   	// Amount
 		   	print '<td align="right">'.price($block->amounts).'</td>';
+
+		   	// Details link
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
+		   	// Fingerprint
 		   	print '<td>';
 		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint');
 		   	print '</td>';

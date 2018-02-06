@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@capnetworks.com>
- * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
- *
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -36,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  *	Class to manage generation of project document Baleine
  */
 
-class pdf_baleine extends ModelePDFProjects
+class pdf_timespent extends ModelePDFProjects
 {
 	var $emetteur;	// Objet societe qui emet
 
@@ -54,8 +53,8 @@ class pdf_baleine extends ModelePDFProjects
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "baleine";
-		$this->description = $langs->trans("DocumentModelBaleine");
+		$this->name = "timespent";
+		$this->description = $langs->trans("DocumentModelTimeSpent");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -79,16 +78,16 @@ class pdf_baleine extends ModelePDFProjects
 		// Defini position des colonnes
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
-		$this->posxworkload=$this->marge_gauche+120;
-		$this->posxprogress=$this->marge_gauche+140;
+		$this->posxtimespent=$this->marge_gauche+120;
+		//$this->posxprogress=$this->marge_gauche+140;
 		$this->posxdatestart=$this->marge_gauche+152;
 		$this->posxdateend=$this->marge_gauche+170;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxref-=20;
 			$this->posxlabel-=20;
-			$this->posxworkload-=20;
-			$this->posxprogress-=20;
+			$this->posxtimespent-=20;
+			//$this->posxprogress-=20;
 			$this->posxdatestart-=20;
 			$this->posxdateend-=20;
 		}
@@ -172,10 +171,10 @@ class pdf_baleine extends ModelePDFProjects
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
 
-				if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
-				{
-					$tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
-				}
+                if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
+                {
+                    $tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
+                }
 
 				$object->lines=$tasksarray;
 				$nblignes=count($object->lines);
@@ -224,7 +223,7 @@ class pdf_baleine extends ModelePDFProjects
 
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
-					$pdf->Rect($this->marge_gauche, $tab_top-2, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+2);
+					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY+6;
@@ -253,17 +252,17 @@ class pdf_baleine extends ModelePDFProjects
 					// Description of line
 					$ref=$object->lines[$i]->ref;
 					$libelleline=$object->lines[$i]->label;
-					$progress=($object->lines[$i]->progress?$object->lines[$i]->progress.'%':'');
+					//$progress=($object->lines[$i]->progress?$object->lines[$i]->progress.'%':'');
 					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
 					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
-					$planned_workload=convertSecondToTime((int) $object->lines[$i]->planned_workload,'allhourmin');
+					$planned_timespent=convertSecondToTime((int) $object->lines[$i]->planned_timespent,'allhourmin');
 
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
 					// Label
 					$pdf->SetXY($this->posxlabel, $curY);
-					$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->MultiCell($this->posxtimespent-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -274,7 +273,7 @@ class pdf_baleine extends ModelePDFProjects
 						// Label
 						$pdf->SetXY($this->posxlabel, $curY);
 						$posybefore=$pdf->GetY();
-						$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+						$pdf->MultiCell($this->posxtimespent-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
 						$pageposafter=$pdf->getPage();
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
@@ -312,7 +311,7 @@ class pdf_baleine extends ModelePDFProjects
 								// Label
 								$pdf->SetXY($this->posxlabel, $curY);
 								$posybefore=$pdf->GetY();
-								$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+								$pdf->MultiCell($this->posxtimespent-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
 								$pageposafter=$pdf->getPage();
 								$posyafter=$pdf->GetY();
 							}
@@ -342,12 +341,12 @@ class pdf_baleine extends ModelePDFProjects
 					// Ref of task
 					$pdf->SetXY($this->posxref, $curY);
 					$pdf->MultiCell($this->posxlabel-$this->posxref, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
-					// Workload
-					$pdf->SetXY($this->posxworkload, $curY);
-					$pdf->MultiCell($this->posxprogress-$this->posxworkload, 3, $planned_workload?$planned_workload:'', 0, 'R');
+					// timespent
+					$pdf->SetXY($this->posxtimespent, $curY);
+					$pdf->MultiCell($this->posxdatestart-$this->posxtimespent, 3, $planned_timespent?$planned_timespent:'', 0, 'R');
 					// Progress
-					$pdf->SetXY($this->posxprogress, $curY);
-					$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');
+					//$pdf->SetXY($this->posxprogress, $curY);
+					//$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');
 					// Date
 					$pdf->SetXY($this->posxdatestart, $curY);
 					$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, $datestart, 0, 'C');
@@ -463,7 +462,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		$heightoftitleline = 10;
 
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
+        $default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetDrawColor(128,128,128);
 
@@ -480,16 +479,16 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->MultiCell($this->posxlabel-$this->posxref,3, $outputlangs->transnoentities("Tasks"),'','L');
 
 		$pdf->SetXY($this->posxlabel, $tab_top+1);
-		$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
+		$pdf->MultiCell($this->posxtimespent-$this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
 
-		$pdf->SetXY($this->posxworkload, $tab_top+1);
-		$pdf->MultiCell($this->posxprogress-$this->posxworkload, 3, $outputlangs->transnoentities("PlannedWorkloadShort"), 0, 'R');
+		$pdf->SetXY($this->posxtimespent, $tab_top+1);
+		$pdf->MultiCell($this->posxdatestart-$this->posxtimespent, 3, $outputlangs->transnoentities("TimeSpent"), 0, 'R');
 
-		$pdf->SetXY($this->posxprogress, $tab_top+1);
-		$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, '%', 0, 'R');
+		//$pdf->SetXY($this->posxprogress, $tab_top+1);
+		//$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, '%', 0, 'R');
 
 		$pdf->SetXY($this->posxdatestart, $tab_top+1);
-		$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, '', 0, 'C');
+		$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, $outputlangs->transnoentities("Date"), 0, 'C');
 
 		$pdf->SetXY($this->posxdateend, $tab_top+1);
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
@@ -586,6 +585,7 @@ class pdf_baleine extends ModelePDFProjects
 	    	}
 	    }
         */
+
 	}
 
 	/**
@@ -605,3 +605,4 @@ class pdf_baleine extends ModelePDFProjects
 	}
 
 }
+

@@ -387,7 +387,7 @@ if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-
+$options = array();
 
 if ($id > 0 || ! empty($ref))
 {
@@ -398,7 +398,6 @@ if ($id > 0 || ! empty($ref))
     // Load bank groups
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
     $bankcateg = new BankCateg($db);
-    $options = array();
 
     foreach ($bankcateg->fetchAll() as $bankcategory) {
         $options[$bankcategory->id] = $bankcategory->label;
@@ -531,7 +530,6 @@ dol_syslog('compta/bank/bankentries_list.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$var=True;
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
@@ -569,14 +567,12 @@ if ($resql)
 	// Form to reconcile
 	if ($user->rights->banque->consolidate && $action == 'reconcile')
 	{
-//	    print '<table class="noborder" width="100%">';
-//	    print '<tr '.$bcnd[false].'>';
-//	    print '<td>';
 	    print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
 	    print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
 	    print '<input class="flat" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
 	    print '</div>';
-	    if ($options) {
+	    if (is_array($options) && count($options))
+	    {
 	        print $langs->trans("EventualyAddCategory").': ';
 	        print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 	    }
@@ -629,7 +625,6 @@ if ($resql)
     ';
         }
 	    print '<br><br>';
-//	    print '</td></tr></table>';
 	}
 
 	// Form to add a transaction with no invoice
@@ -663,7 +658,8 @@ if ($resql)
 		print '<tr>';
 		print '<td>';
 		print '<input name="label" class="flat minwidth200" type="text" value="'.GETPOST("label","alpha").'">';
-		if (is_array($options) && count($options)) {
+		if (is_array($options) && count($options))
+		{
 			print '<br>'.$langs->trans("Rubrique").': ';
 			print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
 		}

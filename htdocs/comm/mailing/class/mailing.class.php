@@ -34,7 +34,7 @@ class Mailing extends CommonObject
 	public $element='mailing';
 	public $table_element='mailing';
 	public $picto='email';
-	
+
 	var $titre;
 	var $sujet;
 	var $body;
@@ -43,7 +43,7 @@ class Mailing extends CommonObject
 	var $bgimage;
 
 	var $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
-	
+
 	var $email_from;
 	var $email_replyto;
 	var $email_errorsto;
@@ -431,7 +431,7 @@ class Mailing extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *  Delete targets emailing
 	 *
@@ -481,11 +481,11 @@ class Mailing extends CommonObject
 		}
 	}
 
-	
+
 	/**
 	 *  Count number of target with status
 	 *
-	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error) 
+	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error, 'alreadysentok' = Sent success, 'alreadysentko' = Sent error)
 	 *  @return int        		Nb of target with status
 	 */
 	function countNbOfTargets($mode)
@@ -493,12 +493,14 @@ class Mailing extends CommonObject
 	    $sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
 	    $sql.= " WHERE fk_mailing = ".$this->id;
 	    if ($mode == 'alreadysent') $sql.= " AND statut <> 0";
-	    else 
+	    elseif ($mode == 'alreadysentok') $sql.= " AND statut > 0";
+	    elseif ($mode == 'alreadysentko') $sql.= " AND statut = -1";
+	    else
 	    {
 	        $this->error='BadValueForParameterMode';
 	        return -2;
 	    }
-	     
+
 	    $resql=$this->db->query($sql);
 	    if ($resql)
 	    {
@@ -512,10 +514,10 @@ class Mailing extends CommonObject
 	    }
 	    return 0;
 	}
-	
+
 
 	/**
-	 *  Retourne le libelle du statut d'un mailing (brouillon, validee, ...
+	 *  Return label of status of emailing (draft, validated, ...)
 	 *
 	 *  @param	int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *  @return string        			Label

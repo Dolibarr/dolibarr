@@ -171,6 +171,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 /*
  * View
  */
+
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $form = new Form($db);
@@ -185,7 +186,16 @@ if ($object->fetch($id) >= 0)
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlright='';
-	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+	$nbtry = $nbok = 0;
+	if ($object->statut == 2 || $object->statut == 3)
+	{
+		$nbtry = $object->countNbOfTargets('alreadysent');
+		$nbko  = $object->countNbOfTargets('alreadysentko');
+
+		$morehtmlright.=' ('.$nbtry.'/'.$object->nbemail;
+		if ($nbko) $morehtmlright.=' - '.$nbko.' '.$langs->trans("Error");
+		$morehtmlright.=') &nbsp; ';
+	}
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
 
@@ -206,15 +216,30 @@ if ($object->fetch($id) >= 0)
 	print '<tr><td>';
 	print $langs->trans("TotalNbOfDistinctRecipients");
 	print '</td><td colspan="3">';
-	$nbemail = ($object->nbemail?$object->nbemail:'0');
-	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && ($conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2))
+	$nbemail = ($object->nbemail?$object->nbemail:0);
+	if (is_numeric($nbemail))
 	{
-		$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-		print $form->textwithpicto($nbemail,$text,1,'warning');
-	}
-	else
-	{
-		print $nbemail;
+		$text='';
+		if ((! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail)))
+		{
+			if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
+			{
+				$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+			}
+			else
+			{
+				$text.=$langs->trans('SendingFromWebInterfaceIsNotAllowed');
+			}
+		}
+		if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
+		if ($text)
+		{
+			print $form->textwithpicto($nbemail,$text,1,'warning');
+		}
+		else
+		{
+			print $nbemail;
+		}
 	}
 	print '</td></tr>';
 
@@ -411,6 +436,8 @@ if ($object->fetch($id) >= 0)
 		$num = $db->num_rows($resql);
 
 		$param = "&amp;id=".$object->id;
+		//if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 		if ($search_lastname)  $param.= "&amp;search_lastname=".urlencode($search_lastname);
 		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
@@ -552,7 +579,7 @@ if ($object->fetch($id) >= 0)
                 }
 				print '</td>';
 
-				// Statut pour l'email destinataire (Attentioon != statut du mailing)
+				// Status of recipient sending email (Warning != status of emailing)
 				if ($obj->statut == 0)
 				{
 					print '<td align="center">&nbsp;</td>';
@@ -563,18 +590,22 @@ if ($object->fetch($id) >= 0)
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
 					print '<td align="right" class="nowrap">';
-					print $object::libStatutDest($obj->statut,2,$obj->error_text);
+					print $object::libStatutDest($obj->statut, 2, $obj->error_text);
 					print '</td>';
 				}
 
 				// Search Icon
 				print '<td align="right">';
-				if ($obj->statut == 0)
+				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {
-						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient"));
+						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}
+				/*if ($obj->statut == -1)	// Sent with error
+				{
+					print '<a href="'.$_SERVER['PHP_SELF'].'?action=retry&rowid='.$obj->rowid.$param.'">'.$langs->trans("Retry").'</a>';
+				}*/
 				print '</td>';
 				print '</tr>';
 
