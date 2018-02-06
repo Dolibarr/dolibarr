@@ -73,7 +73,7 @@ $object = new Expedition($db);
 if ($object->fetch($id))
 {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->expedition->dir_output . "/sending/" . dol_sanitizeFileName($object->ref);
 }
 
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref)){
 	if ($object->fetch($id, $ref)){
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->expedition->dir_output.'/sending/'.dol_sanitizeFileName($object->ref);
 
 		$head = shipping_prepare_head($object);
 		dol_fiche_head($head, 'documents', $langs->trans("Shipment"), -1, 'sending');
@@ -171,9 +171,9 @@ if ($id > 0 || ! empty($ref)){
 
 		print dol_fiche_end();
 
-		$modulepart = 'commande';
-		$permission = $user->rights->commande->creer;
-		$permtoedit = $user->rights->commande->creer;
+		$modulepart = 'expedition';
+		$permission = $user->rights->expedition->creer;
+		$permtoedit = $user->rights->expedition->creer;
 		$param = '&id=' . $object->id;
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 	}
