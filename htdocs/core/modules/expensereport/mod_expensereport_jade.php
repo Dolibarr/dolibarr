@@ -142,6 +142,14 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
 			$newref = str_replace(' ','_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut,'%y%m%d');
 
+			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
+			$resqlbis = $db->query($sqlbis);
+			if (! $resqlbis)
+			{
+				dol_print_error($resqlbis);
+				exit;
+			}
+
 			dol_syslog("mod_expensereport_jade::getNextValue return ".$newref);
 			return $newref;
 		}
