@@ -518,7 +518,12 @@ function getState($id,$withcode='',$dbtouse=0,$withregion='',$outputlangs='',$en
                 }
             }
             else {
-                return $label;
+                if ($withregion == 1) {
+                    return $label = $obj->region_name . ' - ' . $label;
+                }
+                else {
+                    return $label;
+                }
             }
         }
         else
