@@ -729,7 +729,7 @@ else
 	print '</td></tr>';
 
 
-	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print '<tr class="oddeven"><td>'.$langs->trans("Region-State").'</td><td>';
+	if (! empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT)) print '<tr class="oddeven"><td>'.$langs->trans("Region-State").'</td><td>';
 	else print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
 	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print getState($conf->global->MAIN_INFO_SOCIETE_STATE,$conf->global->MAIN_SHOW_STATE_CODE,0,$conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 	else print '&nbsp;';
