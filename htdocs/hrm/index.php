@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Frederic France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,20 +135,21 @@ if (! empty($conf->holiday->enabled))
 
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-    print "<tr ".$bc[0].">";
+    print '<tr class="oddeven">';
     print '<td colspan="3">';
 
-    $out='';
+    $out = '';
     $typeleaves=$holiday->getTypes(1,1);
     foreach($typeleaves as $key => $val)
     {
     	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
     	$nb_holiday += $nb_type;
-    	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+    	$out.= '<li>'.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong></li>';
     }
-    print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+    print $langs->trans('SoldeCPUser', round($nb_holiday,5));
+    print '<ul>';
     print $out;
-
+    print '</ul>';
     print '</td>';
     print '</tr>';
     print '</table><br>';
@@ -184,7 +186,10 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         $holidaystatic=new Holiday($db);
         $userstatic=new User($db);
 
-        $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
+        $listhalfday=array(
+            'morning'=>$langs->trans("Morning"),
+            "afternoon"=>$langs->trans("Afternoon"),
+        );
         $typeleaves=$holidaystatic->getTypes(1,-1);
 
         $i = 0;

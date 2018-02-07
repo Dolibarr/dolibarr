@@ -25,7 +25,7 @@
 
 require('../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Protection if external user
@@ -41,7 +41,7 @@ if (empty($year))
 	$year=$tmpdate['year'];
 }
 
-$langs->load('users');
+$langs->loadLangs(array('users', 'holiday', 'hrm', 'other'));
 
 
 /*

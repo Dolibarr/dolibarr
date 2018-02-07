@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,32 @@ class Holiday extends CommonObject
 	var $optName = '';
 	var $optValue = '';
 	var $optRowid = '';
+
+    /**
+     * Draft status
+     */
+    const STATUS_DRAFT = 1;
+
+    /**
+     * To review status
+     */
+    const STATUS_TO_REVIEW = 2;
+
+    /**
+     * Approved status
+     */
+    const STATUS_APPROVED = 3;
+
+    /**
+     * Canceled status
+     */
+    const STATUS_CANCELED = 4;
+
+    /**
+     * Refused status
+     */
+    const STATUS_REFUSED = 5;
+
 
 
 	/**
@@ -263,7 +290,10 @@ class Holiday extends CommonObject
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_type = $obj->fk_type;
 				$this->entity = $obj->entity;
-			}
+			} else {
+                $this->error = $langs->trans('CPIDNotExist');
+                return -1;
+            }
 			$this->db->free($resql);
 
 			return 1;
@@ -639,6 +669,101 @@ class Holiday extends CommonObject
 		}
 	}
 
+    /**
+     * Validate holiday
+     *
+     * @param  User $user           User that modify
+     * @param  int  $notrigger	    0=launch triggers after, 1=disable triggers
+     * @return int                  <0 if KO, >0 if OK
+     */
+    function setValidate($user=null, $notrigger=0)
+    {
+    global $conf, $langs;
+        $error=0;
+
+        // Update request
+        $sql = 'UPDATE ' . MAIN_DB_PREFIX . 'holiday SET';
+        $sql.= ' statut=' . self::STATUS_TO_REVIEW;
+
+        $sql.= " WHERE rowid= ".$this->id;
+
+        $this->db->begin();
+
+        dol_syslog(get_class($this)."::setvalidate", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
+        }
+
+        if (! $error) {
+            if (! $notrigger) {
+                // Call trigger
+                $result = $this->call_trigger('HOLIDAY_VALIDATE', $user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error) {
+            $this->db->rollback();
+            return -1*$error;
+        } else {
+            $this->statut = self::STATUS_TO_REVIEW;
+            $this->db->commit();
+            return 1;
+        }
+    }
+
+    /**
+     * Approve holiday
+     *
+     * @param  User $user           User that modify
+     * @param  int  $notrigger	    0=launch triggers after, 1=disable triggers
+     * @return int                  <0 if KO, >0 if OK
+     */
+    function setApprove($user=null, $notrigger=0)
+    {
+    global $conf, $langs;
+        $error = 0;
+
+        // Update request
+        $sql = 'UPDATE ' . MAIN_DB_PREFIX . 'holiday SET';
+        $sql.= " date_valid='".$this->db->idate(dol_now())."'";
+        $sql.= ', fk_user_valid=' . (int) $user->id;
+        $sql.= ', statut=' . self::STATUS_APPROVED;
+
+        $sql.= " WHERE rowid= ".$this->id;
+
+        $this->db->begin();
+
+        dol_syslog(get_class($this)."::setapprove", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) {
+            $error++;
+            $this->errors[] = "Error ".$this->db->lasterror();
+        }
+
+        if (! $error) {
+            if (! $notrigger) {
+                // Call trigger
+                $result = $this->call_trigger('HOLIDAY_APPROVE', $user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+            }
+        }
+
+        // Commit or rollback
+        if ($error) {
+            $this->db->rollback();
+            return -1*$error;
+        } else {
+            $this->statut = self::STATUS_APPROVED;
+            $this->db->commit();
+            return 1;
+        }
+    }
 
 	/**
 	 *   Delete object in database
@@ -903,51 +1028,51 @@ class Holiday extends CommonObject
 
 		if ($mode == 0)
 		{
-			if ($statut == 1) return $langs->trans('DraftCP');
-			if ($statut == 2) return $langs->trans('ToReviewCP');
-			if ($statut == 3) return $langs->trans('ApprovedCP');
-			if ($statut == 4) return $langs->trans('CancelCP');
-			if ($statut == 5) return $langs->trans('RefuseCP');
+			if ($statut == self::STATUS_DRAFT) return $langs->trans('DraftCP');
+			if ($statut == self::STATUS_TO_REVIEW) return $langs->trans('ToReviewCP');
+			if ($statut == self::STATUS_APPROVED) return $langs->trans('ApprovedCP');
+			if ($statut == self::STATUS_CANCELED) return $langs->trans('CancelCP');
+			if ($statut == self::STATUS_REFUSED) return $langs->trans('RefuseCP');
 		}
 		if ($mode == 2)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
+			if ($statut == self::STATUS_DRAFT) return img_picto($langs->trans('DraftCP'),'statut0').' '.$langs->trans('DraftCP');				// Draft
+			if ($statut == self::STATUS_TO_REVIEW) return img_picto($langs->trans('ToReviewCP'),'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
+			if ($statut == self::STATUS_APPROVED) return img_picto($langs->trans('ApprovedCP'),$pictoapproved).' '.$langs->trans('ApprovedCP');
+			if ($statut == self::STATUS_CANCELED) return img_picto($langs->trans('CancelCP'),'statut5').' '.$langs->trans('CancelCP');
+			if ($statut == self::STATUS_REFUSED) return img_picto($langs->trans('RefuseCP'),'statut5').' '.$langs->trans('RefuseCP');
 		}
 		if ($mode == 3)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'),'statut0');
-			if ($statut == 2) return img_picto($langs->trans('ToReviewCP'),'statut1');
-			if ($statut == 3) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return img_picto($langs->trans('RefuseCP'),'statut5');
+			if ($statut == self::STATUS_DRAFT) return img_picto($langs->trans('DraftCP'),'statut0');
+			if ($statut == self::STATUS_TO_REVIEW) return img_picto($langs->trans('ToReviewCP'),'statut1');
+			if ($statut == self::STATUS_APPROVED) return img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			if ($statut == self::STATUS_CANCELED) return img_picto($langs->trans('CancelCP'),'statut5');
+			if ($statut == self::STATUS_REFUSED) return img_picto($langs->trans('RefuseCP'),'statut5');
 		}
 		if ($mode == 5)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			if ($statut == self::STATUS_DRAFT) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
+			if ($statut == self::STATUS_TO_REVIEW) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			if ($statut == self::STATUS_APPROVED) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			if ($statut == self::STATUS_CANCELED) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			if ($statut == self::STATUS_REFUSED) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
 		if ($mode == 6)
 		{
 			$pictoapproved='statut6';
 			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
-			if ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
-			if ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
-			if ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
-			if ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
+			if ($statut == self::STATUS_DRAFT) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'),'statut0');				// Draft
+			if ($statut == self::STATUS_TO_REVIEW) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'),'statut1');		// Waiting approval
+			if ($statut == self::STATUS_APPROVED) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'),$pictoapproved);
+			if ($statut == self::STATUS_CANCELED) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'),'statut5');
+			if ($statut == self::STATUS_REFUSED) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'),'statut5');
 		}
 
 		return $statut;
@@ -964,31 +1089,31 @@ class Holiday extends CommonObject
 
 		global $langs;
 
-		// Liste des statuts
-		$name = array('DraftCP','ToReviewCP','ApprovedCP','CancelCP','RefuseCP');
-		$nb = count($name)+1;
+		// List of status
+		$name = array(
+            self::STATUS_DRAFT => 'DraftCP',
+            self::STATUS_TO_REVIEW => 'ToReviewCP',
+            self::STATUS_APPROVED => 'ApprovedCP',
+            self::STATUS_CANCELED => 'CancelCP',
+            self::STATUS_REFUSED => 'RefuseCP',
+        );
 
 		// Select HTML
-		$statut = '<select name="select_statut" class="flat">'."\n";
-		$statut.= '<option value="-1">&nbsp;</option>'."\n";
+		$html = '<select name="select_statut" class="flat">'."\n";
+		$html.= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
-		for($i=1; $i < $nb; $i++) {
-			if($i==$selected) {
-				$statut.= '<option value="'.$i.'" selected>'.$langs->trans($name[$i-1]).'</option>'."\n";
-			}
-			else {
-				$statut.= '<option value="'.$i.'">'.$langs->trans($name[$i-1]).'</option>'."\n";
-			}
+		foreach ($name as $key => $value) {
+			$html.= '<option value="'.$key.'"' . ($key==$selected?" selected":"") . '>'.$langs->trans($value).'</option>'."\n";
 		}
 
-		$statut.= '</select>'."\n";
-		print $statut;
+		$html.= '</select>'."\n";
+		return $html;
 
 	}
 
 	/**
-	 *  Met à jour une option du module Holiday Payés
+	 *  Met à jour une option du module Paid Holidays
 	 *
 	 *  @param	string	$name       name du paramètre de configuration
 	 *  @param	string	$value      vrai si mise à jour OK sinon faux
@@ -1002,11 +1127,8 @@ class Holiday extends CommonObject
 
 		dol_syslog(get_class($this).'::updateConfCP name='.$name.'', LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if($result) {
-			return true;
-		}
 
-		return false;
+		return $result?true:false;
 	}
 
 	/**
@@ -1525,7 +1647,6 @@ class Holiday extends CommonObject
 						$tab_result[$i]['employee'] = $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
 						$tab_result[$i]['fk_user'] = $obj->fk_user;
-
 						$tab_result[$i]['type'] = $obj->type;
 						$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
