@@ -796,7 +796,6 @@ class UserGroup extends CommonObject
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	string	$option						On what the link point to ('nolink', )
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
-	 *  @param  string  $mode               		''=Show firstname and lastname, 'firstname'=Show only firstname, 'login'=Show login
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
