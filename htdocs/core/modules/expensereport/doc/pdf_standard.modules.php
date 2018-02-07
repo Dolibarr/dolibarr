@@ -108,8 +108,8 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxdate=88;
 		$this->posxtype=107;
 		$this->posxprojet=120;
-		$this->posxtva=136;
-		$this->posxup=152;
+		$this->posxtva=138;
+		$this->posxup=154;
 		$this->posxqty=168;
 		$this->postotalttc=178;
         if (empty($conf->projet->enabled)) {
@@ -328,7 +328,7 @@ class pdf_standard extends ModeleExpenseReport
                         $nextColumnPosX = $this->posxprojet;
                     }
 
-					$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
+					$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 10), 0, 'C');
 
                     // Project
 					if (! empty($conf->projet->enabled))

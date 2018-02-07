@@ -1970,7 +1970,7 @@ else
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
 
-				print '<div class="div-table-responsive">';
+				print '<div class="div-table-responsive-no-min">';
 				print '<table id="tablelines" class="noborder" width="100%">';
 
 				if (!empty($object->lines))
@@ -2029,7 +2029,10 @@ else
 								print '</td>';
 							}
 							// print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
-							print '<td style="text-align:center;">'.($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans(($line->type_fees_code))).'</td>';
+							print '<td style="text-align:center;">';
+							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
+							print $labeltype;
+							print '</td>';
 							print '<td style="text-align:left;">'.$line->comments.'</td>';
 							print '<td style="text-align:right;">'.vatrate($line->vatrate,true).'</td>';
 							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
