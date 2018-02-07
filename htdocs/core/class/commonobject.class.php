@@ -1301,7 +1301,10 @@ abstract class CommonObject
 		if ($resql)
 		{
 			$row = $this->db->fetch_row($resql);
-			$result = $this->fetch($row[0]);
+			// Test for avoid error -1
+			if ($row[0] > 0) {
+				$result = $this->fetch($row[0]);
+			}
 		}
 
 		return $result;
