@@ -79,6 +79,17 @@ function shipping_prepare_head($object)
     	$h++;
 	}
 
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	$head[$h][2] = 'documents';
+	$h++;
+
     $nbNote = 0;
     if (!empty($object->note_private)) $nbNote++;
     if (!empty($object->note_public)) $nbNote++;
