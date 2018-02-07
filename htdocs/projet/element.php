@@ -550,8 +550,6 @@ foreach ($listofreferent as $key => $value)
 	$margin = $value['margin'];
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
 	{
-		$element = new $classname($db);
-
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
 
 		if (count($elementarray)>0 && is_array($elementarray))
@@ -565,6 +563,8 @@ foreach ($listofreferent as $key => $value)
 				$tmp=explode('_',$elementarray[$i]);
 				$idofelement=$tmp[0];
 				$idofelementuser=$tmp[1];
+        
+        $element = new $classname($db);
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
@@ -718,8 +718,6 @@ foreach ($listofreferent as $key => $value)
 
 	    if ($langtoload) $langs->load($langtoload);
 
-		$element = new $classname($db);
-
 		$addform='';
 
 		$idtofilterthirdparty=0;
@@ -823,6 +821,8 @@ foreach ($listofreferent as $key => $value)
 				$tmp=explode('_',$elementarray[$i]);
 				$idofelement=$tmp[0];
 				$idofelementuser=$tmp[1];
+
+        $element = new $classname($db);
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
