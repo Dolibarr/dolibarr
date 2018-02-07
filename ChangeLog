@@ -277,7 +277,9 @@ Following changes may create regressions for some external modules, but were nec
 * Jquery plugin tableDnd updated. You now need to use decodeURI on the return value of tableDnDSerialize() 
   and add 'td.' to the beginning of the dragHandle match string. 
 * IE8 and earlier and Firefox 12 and earlier (< 2012) are no more supported. 
-
+* The module ExpenseReport use numbering rules that you can setup (like other modules do). If you need to 
+  keep the hard coded numbering rule of expenses report used in 6.0, just add constant
+  EXPENSEREPORT_USE_OLD_NUMBERING_RULE to 1.
 * If you use the external module "multicompany", you must also upgrade the module. Multicompany module for
   Dolibarr v7 is required because with Dolibarr v7, payment modes and payment conditions are management as data
   that are dedicated to each company. If you keep your old version of multicompany module, mode and

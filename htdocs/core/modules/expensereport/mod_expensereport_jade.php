@@ -102,7 +102,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		global $db,$conf;
 
 		// For backward compatibility and restore old behavior to get ref of expense report
-		if ($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)
+		if ($conf->global->)
 		{
 			$fuser = null;
 			if ($object->fk_user_author > 0)
