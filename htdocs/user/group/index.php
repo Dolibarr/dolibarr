@@ -181,7 +181,7 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
-        $grouptemp->id = $obj->id;
+        $grouptemp->id = $obj->rowid;
         $grouptemp->name = $obj->name;
         $grouptemp->note = $obj->note;
 
