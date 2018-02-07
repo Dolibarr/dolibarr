@@ -315,11 +315,16 @@ if (empty($reshook))
 
     if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
     {
+    	$error = 0;
+
+    	$db->begin();
+
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
+
     	$result = $object->setValidate($user);
 
-    	if ($result > 0)
+    	if ($result >= 0)
     	{
     		// Define output language
     		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -338,8 +343,13 @@ if (empty($reshook))
     			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		}
     	}
+    	else
+    	{
+    		setEventMessages($object->error, $object->errors, 'errors');
+    		$error++;
+    	}
 
-    	if ($result > 0 && $object->fk_user_validator > 0)
+    	if (! $error && $result > 0 && $object->fk_user_validator > 0)
     	{
     		$langs->load("mails");
 
@@ -418,10 +428,15 @@ if (empty($reshook))
     			$action='';
     		}
     	}
-    	else
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-    	}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
     }
 
     if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
