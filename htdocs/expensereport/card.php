@@ -397,8 +397,6 @@ if (empty($reshook))
     				{
     					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
     					setEventMessages($mesg, null, 'mesgs');
-    					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    					exit;
     				}
     				else
     				{
@@ -432,6 +430,8 @@ if (empty($reshook))
 		if (! $error)
 		{
 			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			exit;
 		}
 		else
 		{
