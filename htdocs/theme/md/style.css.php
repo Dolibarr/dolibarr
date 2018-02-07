@@ -2483,6 +2483,12 @@ td.border, div.tagtable div div.border {
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
+div.colorback
+{
+	background: rgb(<?php echo $colorbacktitle1; ?>);
+	padding: 10px;
+	margin-top: 5px;
+}
 .liste_titre_bydiv {
     border-right: 1px solid #ccc;
     border-left: 1px solid #ccc;
