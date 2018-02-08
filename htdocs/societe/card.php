@@ -635,7 +635,7 @@ if (empty($reshook))
                 {
                     $error = $object->error; $errors = $object->errors;
                 }
-				//Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire
+				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
 				if(!empty($user->rights->categorie->lire)){ 
 					// Customer categories association
 					$categories = GETPOST( 'custcats', 'array' );
