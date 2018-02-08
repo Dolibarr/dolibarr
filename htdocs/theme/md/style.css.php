@@ -3266,6 +3266,16 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 
 /*
+ *  External web site
+ */
+
+.framecontent iframe {
+    width: 100%;
+    height: 100%;
+}
+
+
+/*
  *  Other
  */
 
