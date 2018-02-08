@@ -68,7 +68,7 @@ $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "t.rowid";
 
-if (empty($search_date_start)) {
+if (empty($search_date_start) && empty($search_date_end)) {
 	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	$sql.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
 	$sql.= $db->plimit(1);
@@ -81,6 +81,7 @@ if (empty($search_date_start)) {
 	} else {
 		$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
 		$year_start = dol_print_date(dol_now(), '%Y');
+		if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;	// If current month is lower that starting fiscal month, we start last year
 		$year_end = $year_start + 1;
 		$month_end = $month_start - 1;
 		if ($month_end < 1)
@@ -225,14 +226,13 @@ if ($action == 'delbookkeepingyear') {
 }
 
 
-
+$param=$options;
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-$viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans("ViewFlatList") . '</a>';
+$viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param.'">' . $langs->trans("ViewFlatList") . '</a>';
 $addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 
-$param=$options;
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 

@@ -111,6 +111,9 @@ class ExtraFields
 	{
 		$this->db = $db;
 		$this->error = array();
+		$this->attributes = array();
+
+		// For old usage
 		$this->attribute_elementtype = array();
 		$this->attribute_type = array();
 		$this->attribute_label = array();
@@ -140,15 +143,15 @@ class ExtraFields
 	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
-	 *  @param	int				$list				Visibilty
-	 *  @param	int				$ishidden			Deprecated. Use visibility instead.
+	 *  @param	int				$list				Visibilty (0=never visible, 1=visible on list+forms, 2=list onyl, 3=form only)
+	 *  @param	int				$notused			Deprecated.
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='', $enabled='1')
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $notused=0, $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -165,7 +168,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden, $default, $computed, $entity, $langfile, $enabled);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $notused, $default_value, $computed, $entity, $langfile, $enabled);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -282,7 +285,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Visibily
-	 *  @param	int				$ishidden		Deprecated. Use visibility instead.
+	 *  @param	int				$notused		Deprecated.
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
 	 *  @param  string          $entity     	Entity of extrafields
@@ -290,7 +293,7 @@ class ExtraFields
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $notused=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
 	{
 		global $conf,$user;
 
@@ -306,9 +309,9 @@ class ExtraFields
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname) && ! is_numeric($attrname))
 		{
-			if(is_array($param) && count($param) > 0)
+			if (is_array($param) && count($param) > 0)
 			{
-				$params = $this->db->escape(serialize($param));
+				$params = serialize($param);
 			}
 			elseif (strlen($param) > 0)
 			{
@@ -490,7 +493,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Visibility
-	 *  @param	int		$ishidden			Deprecated. Use  visiblity instead.
+	 *  @param	int		$notused			Deprecated.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity	            Entity of extrafields
@@ -498,7 +501,7 @@ class ExtraFields
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $ishidden=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
+	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $notused=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -546,7 +549,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden,$default,$computed,$entity,$langfile,$enabled);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$notused,$default,$computed,$entity,$langfile,$enabled);
 				}
 				if ($result > 0)
 				{
@@ -597,7 +600,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Visiblity
-	 *  @param	int		$ishidden			Deprecated. Use visility instead.
+	 *  @param	int		$notused			Deprecated.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity     		Entity of extrafields
@@ -605,10 +608,10 @@ class ExtraFields
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$notused=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
 	{
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$notused.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -624,10 +627,17 @@ class ExtraFields
 		{
 			$this->db->begin();
 
-			if (is_array($param))
+			if (is_array($param) && count($param) > 0)
 			{
-				if (count($param) > 0) $param = $this->db->escape(serialize($param));
-				else $param='';
+				$params = serialize($param);
+			}
+			elseif (strlen($param) > 0)
+			{
+				$params = trim($param);
+			}
+			else
+			{
+				$params='';
 			}
 
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
@@ -671,7 +681,7 @@ class ExtraFields
 			$sql.= " ".($langfile?"'".$this->db->escape($langfile)."'":"null").",";
 			$sql.= " ".$pos.",";
 			$sql.= " '".$this->db->escape($alwayseditable)."',";
-			$sql.= " '".$this->db->escape($param)."',";
+			$sql.= " '".$this->db->escape($params)."',";
 			$sql.= " ".$list.", ";
 			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
@@ -1341,28 +1351,48 @@ class ExtraFields
 	/**
 	 * Return HTML string to put an output field into a page
 	 *
-	 * @param   string	$key            Key of attribute
-	 * @param   string	$value          Value to show
-	 * @param	string	$moreparam		To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @return	string					Formated value
+	 * @param   string	$key            		Key of attribute
+	 * @param   string	$value          		Value to show
+	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
+	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
+	 * @return	string							Formated value
 	 */
-	function showOutputField($key,$value,$moreparam='')
+	function showOutputField($key, $value, $moreparam='', $extrafieldsobjectkey='')
 	{
 		global $conf,$langs;
 
-		$elementtype=$this->attribute_elementtype[$key];	// seems not used
-		$label=$this->attribute_label[$key];
-		$type=$this->attribute_type[$key];
-		$size=$this->attribute_size[$key];
-		$default=$this->attribute_default[$key];
-		$computed=$this->attribute_computed[$key];
-		$unique=$this->attribute_unique[$key];
-		$required=$this->attribute_required[$key];
-		$param=$this->attribute_param[$key];
-		$perms=$this->attribute_perms[$key];
-		$langfile=$this->attribute_langfile[$key];
-		$list=$this->attribute_list[$key];
-		$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		if (! empty($extrafieldsobjectkey))
+		{
+			$elementtype=$this->attributes[$extrafieldsobjectkey]['elementtype'][$key];	// seems not used
+			$label=$this->attributes[$extrafieldsobjectkey]['label'][$key];
+			$type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
+			$size=$this->attributes[$extrafieldsobjectkey]['size'][$key];
+			$default=$this->attributes[$extrafieldsobjectkey]['default'][$key];
+			$computed=$this->attributes[$extrafieldsobjectkey]['computed'][$key];
+			$unique=$this->attributes[$extrafieldsobjectkey]['unique'][$key];
+			$required=$this->attributes[$extrafieldsobjectkey]['required'][$key];
+			$param=$this->attributes[$extrafieldsobjectkey]['param'][$key];
+			$perms=$this->attributes[$extrafieldsobjectkey]['perms'][$key];
+			$langfile=$this->attributes[$extrafieldsobjectkey]['langfile'][$key];
+			$list=$this->attributes[$extrafieldsobjectkey]['list'][$key];
+			$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		}
+		else
+		{
+			$elementtype=$this->attribute_elementtype[$key];	// seems not used
+			$label=$this->attribute_label[$key];
+			$type=$this->attribute_type[$key];
+			$size=$this->attribute_size[$key];
+			$default=$this->attribute_default[$key];
+			$computed=$this->attribute_computed[$key];
+			$unique=$this->attribute_unique[$key];
+			$required=$this->attribute_required[$key];
+			$param=$this->attribute_param[$key];
+			$perms=$this->attribute_perms[$key];
+			$langfile=$this->attribute_langfile[$key];
+			$list=$this->attribute_list[$key];
+			$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		}
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
 
@@ -1590,8 +1620,9 @@ class ExtraFields
 		elseif ($type == 'link')
 		{
 			$out='';
-			// only if something to display (perf)
-			if ($value)
+
+			// Only if something to display (perf)
+			if ($value)		// If we have -1 here, pb is into sert, not into ouptu
 			{
 				$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 
@@ -1638,14 +1669,16 @@ class ExtraFields
 	/**
 	 * Return tag to describe alignement to use for this extrafield
 	 *
-	 * @param   string	$key            Key of attribute
-	 * @return	string					Formated value
+	 * @param   string	$key            		Key of attribute
+	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
+	 * @return	string							Formated value
 	 */
-	function getAlignFlag($key)
+	function getAlignFlag($key, $extrafieldsobjectkey='')
 	{
 		global $conf,$langs;
 
-		$type=$this->attribute_type[$key];
+		if (! empty($extrafieldsobjectkey)) $type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
+		else $type=$this->attribute_type[$key];
 
 		$align='';
 

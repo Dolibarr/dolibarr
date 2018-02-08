@@ -42,7 +42,7 @@ foreach($object->fields as $key => $val)
 	if (abs($val['visible']) != 1) continue;
 
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
-	if ($key == 'status') continue;	// Status is already in dol_banner
+	if (in_array($key, array('ref','status'))) continue;	// Ref and status are already in dol_banner
 
 	$value=$object->$key;
 
@@ -79,7 +79,7 @@ foreach($object->fields as $key => $val)
 
 	if (abs($val['visible']) != 1) continue;	// Discard such field from form
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) continue;	// We don't want this field
-	if ($key == 'status') continue;	// Status is alreadt in dol_banner
+	if (in_array($key, array('ref','status'))) continue;	// Ref and status are already in dol_banner
 
 	$value=$object->$key;
 

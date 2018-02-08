@@ -111,7 +111,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
- *									'c_paiement', ...
+ *									'c_paiement', 'c_payment_term', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
  *  @param	int		$forceentity	Entity id
@@ -550,7 +550,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
 		case 'nohtml':
-			$out=dol_string_nohtmltag($out);
+			$out=dol_string_nohtmltag($out, 0);
 			break;
 		case 'alphanohtml':	// Recommended for search params
 			if (! is_array($out))
@@ -1494,7 +1494,20 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3) || $conf->browser->layout=='phone') $tmptxt=$object->getLibStatut(5);
 		$morehtmlstatus.=$tmptxt;
 	}
-	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
+
+	// Add if object was dispatched "into accountancy"
+	if (! empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'facture', 'invoice', 'invoice_supplier', 'expensereport')))
+	{
+		if (method_exists($object, 'getVentilExportCompta'))
+		{
+			$accounted = $object->getVentilExportCompta();
+			$langs->load("accountancy");
+			$morehtmlstatus.='</div><div class="statusref statusrefbis">'.($accounted > 0 ? $langs->trans("Accounted") : $langs->trans("NotYetAccounted"));
+		}
+	}
+
+	// Add alias for thirdparty
+	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';
 
 	// Add label
 	if ($object->element == 'product' || $object->element == 'bank_account' || $object->element == 'project_task')
@@ -2175,7 +2188,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  */
 function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='',$adddivfloat=0)
 {
-	global $conf,$user,$langs,$mysoc;
+	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
@@ -2265,23 +2278,33 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
-	$picto = '';
-	if($withpicto){
-		if($withpicto=='fax'){
-			$picto = 'phoning_fax';
-		}elseif($withpicto=='phone'){
-			$picto = 'phoning';
-		}elseif($withpicto=='mobile'){
-			$picto = 'phoning_mobile';
-		}else{
-			$picto = '';
+
+	if ($hookmanager) {
+            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
+            $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
+            $rep.=$hookmanager->resPrint;
+        }
+	 if (empty($reshook))
+        {
+		$picto = '';
+		if($withpicto){
+			if($withpicto=='fax'){
+				$picto = 'phoning_fax';
+			}elseif($withpicto=='phone'){
+				$picto = 'phoning';
+			}elseif($withpicto=='mobile'){
+				$picto = 'phoning_mobile';
+			}else{
+				$picto = '';
+			}
 		}
-	}
-	if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
-	else $rep.='<span style="margin-right: 10px;">';
-	$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
-	if ($adddivfloat) $rep.='</div>';
-	else $rep.='</span>';
+		if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
+		else $rep.='<span style="margin-right: 10px;">';
+		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
+		if ($adddivfloat) $rep.='</div>';
+		else $rep.='</span>';
+	  }
+
 	return $rep;
 }
 
@@ -3344,18 +3367,19 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
  *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'xxx'=Other
+ *  @param	string	$morecss		More CSS
  *	@return	string					String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1')
+function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1', $morecss='')
 {
 	global $conf, $langs;
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'info', 'class="hideonsmartphone"');
+		return img_picto($text, 'info', 'class="hideonsmartphone'.($morecss?' '.$morecss:'').'"');
 	}
 
-	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone'.($morecss?' '.$morecss:'').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -3496,15 +3520,16 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
+ * @param	string	$morecss		More css
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="center login_main_message"><div class="error">';
+	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
@@ -5607,7 +5632,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			'__USER_LASTNAME__' => (string) $user->lastname,
 			'__USER_FIRSTNAME__' => (string) $user->firstname,
 			'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-			'__USER_SUPERVISOR_ID__' => (string) $user->fk_user
+			'__USER_SUPERVISOR_ID__' => (string) $user->fk_user,
+			'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
 			)
 		);
 	}
@@ -5620,10 +5646,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 }
 
 /**
- *  Make substition into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
+ *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
+ *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  Example of usage:
+ *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
+ *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
+ *  $mesg = make_substitutions($mesg, $substitutionarray, $langs);
  *
  *  @param	string		$text	      			Source string in which we must do substitution
- *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal')
+ *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
  *  @param	Translate	$outputlangs			Output language
  * 	@return string  		    				Output string after substitutions
  *  @see	complete_substitutions_array
@@ -6279,7 +6310,7 @@ function dol_validElement($element)
  * 	Return img flag of country for a language code or country code
  *
  * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
- *  @param	string	$moreatt		Add more attribute on img tag (For example 'style="float: right"')
+ *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  * 	@return	string				HTML img string with flag.
  */
 function picto_from_langcode($codelang, $moreatt = '')
@@ -6292,7 +6323,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 
 	if ($codelang == 'auto')
 	{
-		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png', $moreatt);
+		return '<span class="fa fa-globe"></span>';
 	}
 
 	$langtocountryflag = array(

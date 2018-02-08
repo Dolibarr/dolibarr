@@ -220,7 +220,7 @@ if ($id > 0 && empty($object->id))
 {
 	// Load data of third party
 	$res=$object->fetch($id);
-	if ($object->id <= 0) dol_print_error($db,$object->error,$object->errors);
+	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
 }
 
 $title=$langs->trans("CustomerCard");
@@ -229,7 +229,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
 
-if ($id > 0)
+if ($object->id > 0)
 {
 	$head = societe_prepare_head($object);
 
@@ -792,7 +792,7 @@ if ($id > 0)
 	}
 
     /*
-     *   Last sendings
+     *   Last shipments
      */
     if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
         $sendingstatic = new Expedition($db);
@@ -1264,7 +1264,7 @@ if ($id > 0)
 
 	print '</div>';
 
-	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+	if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_CUSTOMER_CARD))
 	{
 		// List of contacts
 		show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
@@ -1290,7 +1290,8 @@ if ($id > 0)
 }
 else
 {
-	dol_print_error($db,'Bad value for socid parameter');
+	$langs->load("errors");
+	print $langs->trans('ErrorRecordNotFound');
 }
 
 // End of page

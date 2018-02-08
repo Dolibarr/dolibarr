@@ -127,6 +127,8 @@ if ($ispaymentok)
     $sendemail = '';
     if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 
+    $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+
 	// Send an email
     if ($sendemail)
 	{
@@ -152,7 +154,6 @@ if ($ispaymentok)
 
     	$urlback=$_SERVER["REQUEST_URI"];
 		$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
-		$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 		$content="";
 		if (! empty($tmptag['MEM']))
 		{

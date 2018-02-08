@@ -253,17 +253,31 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-
-$sql.= $db->plimit($limit+1, $offset);
-
-$resql=$db->query($sql);
-if (! $resql)
+// if total resultset is smaller then paging size (filtering), goto and load page 0 
+if (($page * $limit) > $nbtotalofrecords) 
 {
-	dol_print_error($db);
-	exit;
+	$page = 0;
+	$offset = 0; 
 }
+// if total resultset is smaller the limit, no need to do paging.
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
+{
+	$resql = $result;
+	$num = $nbtotalofrecords;
+} 
+else 
+{
+	$sql.= $db->plimit($limit+1, $offset);
 
-$num = $db->num_rows($resql);
+	$resql=$db->query($sql);
+	if (! $resql)
+	{
+		dol_print_error($db);
+		exit;
+	}
+
+	$num = $db->num_rows($resql);
+}
 
 // Direct jump if only one record found
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
