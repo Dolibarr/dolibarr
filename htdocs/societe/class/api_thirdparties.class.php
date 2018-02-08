@@ -261,6 +261,8 @@ class Thirdparties extends DolibarrApi
     {
     	global $db, $hookmanager;
 
+    	$error = 0;
+
     	if ($id == $idtodelete)
     	{
     		throw new RestException(400, 'Try to merge a thirdparty into itself');

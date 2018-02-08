@@ -1047,7 +1047,7 @@ class Paiement extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $mode='withlistofinvoices', $notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
