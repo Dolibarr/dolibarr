@@ -176,7 +176,7 @@ if (empty($reshook))
 		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	// update order min amount
 	if ($action == 'setorder_min_amount')
 	{
@@ -412,7 +412,7 @@ if ($object->id > 0)
 
 	    print '</td>';
 	    print '</tr>';
-		
+
 		print '<tr class="nowrap">';
 	    print '<td>';
 	    print $form->editfieldkey("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer);
@@ -422,7 +422,7 @@ if ($object->id > 0)
 	    print '</td>';
 	    print '</tr>';
 	}
-	
+
 
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
