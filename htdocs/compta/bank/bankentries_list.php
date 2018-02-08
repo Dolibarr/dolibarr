@@ -924,6 +924,7 @@ if ($resql)
 
     $balance = 0;    // For balance
 	$balancecalculated = false;
+	$posconciliatecol = 0;
 
 	// Loop on each record
 	$sign = 1;
@@ -1347,7 +1348,11 @@ if ($resql)
             	}
         	}
         	print '</td>';
-            if (! $i) $totalarray['nbfield']++;
+            if (! $i)
+            {
+            	$totalarray['nbfield']++;
+            	$posconciliatecol = $totalarray['nbfield'];
+            }
     	}
 
         if (! empty($arrayfields['b.conciliated']['checked']))
@@ -1430,6 +1435,12 @@ if ($resql)
 	        }
 	        elseif ($totalarray['totaldebfield'] == $i) print '<td align="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
+	        elseif ($i == $posconciliatecol)
+	        {
+	        	print '<td>';
+	        	if ($user->rights->banque->consolidate && $action == 'reconcile') print '<input class="button" name="confirm_reconcile" type="submit" value="' . $langs->trans("Conciliate") . '">';
+	        	print '</td>';
+	        }
 	        else print '<td></td>';
 	    }
 	    print '</tr>';
