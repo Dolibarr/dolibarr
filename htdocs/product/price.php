@@ -73,8 +73,10 @@ if ($id > 0 || ! empty($ref))
 // Clean param
 if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) $conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
 
+// Initialize hook context
+$contextpage = array('productpricecard','globalcard');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productpricecard','globalcard'));
+$hookmanager->initHooks($contextpage);
 
 
 /*
