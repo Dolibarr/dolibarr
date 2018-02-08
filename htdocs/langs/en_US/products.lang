@@ -27,6 +27,7 @@ ProductAccountancySellExportCode=Accounting code (sale export)
 ProductOrService=Product or Service
 ProductsAndServices=Products and Services
 ProductsOrServices=Products or Services
+ProductsPipeServices=Products | Services
 ProductsOnSaleOnly=Products for sale only
 ProductsOnPurchaseOnly=Products for purchase only
 ProductsNotOnSell=Products not for sale and not for purchase
