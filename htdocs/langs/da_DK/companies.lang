@@ -56,6 +56,7 @@ Address=Adresse
 State=Stat/provins
 StateShort=Stat
 Region=Region
+Region-State=Region - State
 Country=Land
 CountryCode=Landekode
 CountryId=Land id

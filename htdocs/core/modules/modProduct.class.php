@@ -299,15 +299,18 @@ class modProduct extends DolibarrModules
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
 			$this->import_tables_creator_array[$r]=array('sp'=>'fk_user');
-			$this->import_fields_array[$r]=array('sp.fk_product'=>"ProductOrService*",
-					'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate',
+			$this->import_fields_array[$r]=array(
+					'sp.fk_product'=>"ProductOrService*",
+					'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate', 'sp.default_vat_code'=>'VATCode'
+			);
+			if (is_object($mysoc) && $mysoc->useNPR())       $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.recuperableonly'=>'VATNPR'));
+			if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
+			if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
+			$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array(
 					'sp.price'=>"PriceQtyMinHT*",
 					'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this field not required and calculate it from price and qty
 					'sp.remise_percent'=>'DiscountQtyMin'
-			);
-			if (is_object($mysoc) && $mysoc->useNPR())       $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.recuperableonly'=>'NPR'));
-			if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
-			if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
+			));
 			$this->import_convertvalue_array[$r]=array(
 					'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
 					'sp.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')

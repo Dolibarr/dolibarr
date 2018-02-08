@@ -56,6 +56,7 @@ Address=Adresse
 State=Fylke(delstat)
 StateShort=Stat
 Region=Region
+Region-State=Region - Stat
 Country=Land
 CountryCode=Landskode
 CountryId=Land-ID

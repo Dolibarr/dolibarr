@@ -162,9 +162,9 @@ SizeUnitinch=inch(英吋)
 SizeUnitfoot=foot(英呎)
 SizeUnitpoint=point
 BugTracker=臭蟲追蹤系統
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=回到登錄頁面
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=認證模式為<b>%s。</b> <br>在這種模式下，Dolibarr不能知道，也不更改密碼。 <br>聯系您的系統管理員，如果您想更改您的密碼。
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>教授ID為%s</b>是一個國家的信息取決於第三方。 <br>例如，對於國家的<b>%s，</b>它的代碼<b>的%s。</b>
 DolibarrDemo=Dolibarr的ERP / CRM的演示
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=出口地區
 AvailableFormats=可用的格式

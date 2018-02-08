@@ -162,9 +162,9 @@ SizeUnitinch=инч
 SizeUnitfoot=фут
 SizeUnitpoint=точка
 BugTracker=Регистър на бъгове
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Назад към страницата за вход
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Режимът за удостоверяване е <b>%s.</b> <br> В този режим, системата не може да знае, нито да промени паролата ви. <br> Свържете се с вашия системен администратор, ако искате да смените паролата си.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>Проф. Id %s</b> е информация, в зависимост от трета държава, която е страна. <br> Например, за страната <b>%s,</b> това е код <b>%s.</b>
 DolibarrDemo=Dolibarr ERP/CRM демо
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Секция за експорт
 AvailableFormats=Налични формати

@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=خطأ الخصم المستخدمة بالفعل
 ErrorInvoiceAvoirMustBeNegative=خطأ ، والصحيح يجب أن يكون للفاتورة بمبلغ سلبي
 ErrorInvoiceOfThisTypeMustBePositive=خطأ ، وهذا النوع من فاتورة يجب أن يكون إيجابيا المبلغ
 ErrorCantCancelIfReplacementInvoiceNotValidated=خطأ ، لا يمكن إلغاء الفاتورة التي حلت محلها اخرى الفاتورة التي لا تزال في حالة مشروع
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=من
 BillTo=مشروع قانون ل
 ActionsOnBill=الإجراءات على فاتورة

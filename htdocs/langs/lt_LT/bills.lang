@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Klaida, nuolaida jau panaudota
 ErrorInvoiceAvoirMustBeNegative=Klaida, teisinga sąskaita-faktūra turi turėti neigiamą sumą
 ErrorInvoiceOfThisTypeMustBePositive=Klaida, šis sąskaitos-faktūros tipas turi turėti teigiamą sumą
 ErrorCantCancelIfReplacementInvoiceNotValidated=Klaida negalima atšaukti sąskaitos-faktūros, kuri buvo pakeista kita sąskaita-faktūra, kuri vis dar yra projektinėje būklėje
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Iš
 BillTo=Į
 ActionsOnBill=Veiksmai sąskaitoje-faktūroje

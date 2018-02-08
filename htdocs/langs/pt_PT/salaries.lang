@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Conta contabilística usada para terceiros
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A conta contabilidade definida na ficha do utilizador será usada apenas para o Livro Auxiliar de contabilidade. Este será usado para o Livro Razão e como valor padrão da contabilidade do Livro Auxiliar se a conta de contabilidade do utilizador não estiver definida.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Conta contabilística usada por defeito para despesas de pessoal
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
 Salary=Salário
 Salaries=Salários
 NewSalaryPayment=Novo Pagamento de Salário

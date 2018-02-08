@@ -56,6 +56,7 @@ Address=Διεύθυνση
 State=Πολιτεία/Επαρχία
 StateShort=Κατάσταση
 Region=Περιοχή
+Region-State=Region - State
 Country=Χώρα
 CountryCode=Κωδικός χώρας
 CountryId=Id Χώρας

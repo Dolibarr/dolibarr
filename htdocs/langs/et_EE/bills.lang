@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Viga: allahindlust on juba kasutatud
 ErrorInvoiceAvoirMustBeNegative=Viga: õige arve peab olema negatiivse summaga
 ErrorInvoiceOfThisTypeMustBePositive=Viga: sellist tüüpi arve peab olema positiivse summaga
 ErrorCantCancelIfReplacementInvoiceNotValidated=Viga: ei saa tühistada arvet, mis on asendatud arvega, mis on veel mustandi staatuses
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Kellelt
 BillTo=Kellele
 ActionsOnBill=Tegevused arvel

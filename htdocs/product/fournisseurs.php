@@ -76,6 +76,8 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
 
+$contextpage='pricesuppliercard';
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('pricesuppliercard','globalcard'));
 

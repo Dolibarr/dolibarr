@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Hiba, a kedvezmény már használt
 ErrorInvoiceAvoirMustBeNegative=Hiba, a helyetesítő számlátnak negatív összegűnek kell lennie
 ErrorInvoiceOfThisTypeMustBePositive=Hiba, az ilyen típusú számlán pozitív összegnek kell szerepelnie
 ErrorCantCancelIfReplacementInvoiceNotValidated=Hiba, nem lehet törölni egy számlát, a helyébe egy másik számlát, amelyet még mindig vázlat
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Feladó
 BillTo=Címzett
 ActionsOnBill=Műveletek a számlán

@@ -217,6 +217,7 @@ if (empty($reshook))
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($id); // Reload to get new records
@@ -529,6 +530,7 @@ if (empty($reshook))
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
 					$model=$object->modelpdf;
 					$ret = $object->fetch($id); // Reload to get new records
@@ -606,7 +608,6 @@ if (empty($reshook))
 					$result=$object->set_draft($user, $idwarehouse);
 					if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
 
-
 					// Define output language
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 					{
@@ -617,6 +618,7 @@ if (empty($reshook))
 						if (! empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
 						}
 						$model=$object->modelpdf;
 						$ret = $object->fetch($id); // Reload to get new records
@@ -1495,6 +1497,7 @@ if (empty($reshook))
 				if (! empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('products');
 				}
 				$model=$object->modelpdf;
 				$ret = $object->fetch($id); // Reload to get new records
@@ -1747,6 +1750,7 @@ if (empty($reshook))
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
 
 					$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
@@ -1770,6 +1774,7 @@ if (empty($reshook))
 						if (! empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
 						}
 						if (! empty($prod->customcode))
 							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
@@ -1835,6 +1840,7 @@ if (empty($reshook))
 						if (! empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
 						}
 						$model=$object->modelpdf;
 						$ret = $object->fetch($id); // Reload to get new records
@@ -2012,6 +2018,7 @@ if (empty($reshook))
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
 
 					$ret = $object->fetch($id); // Reload to get new records

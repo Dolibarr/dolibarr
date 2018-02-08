@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=E-Mailadressen aus Datei
 MailingModuleDescEmailsFromUser=E-Mailadressen Eingabe durch Benutzer
 MailingModuleDescDolibarrUsers=Benutzer mit E-Mailadresse
 MailingModuleDescThirdPartiesByCategories=Partner (nach Kategorien)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Zeile %s in der Datei

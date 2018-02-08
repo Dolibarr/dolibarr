@@ -56,6 +56,7 @@ Address=ವಿಳಾಸ
 State=ರಾಜ್ಯ / ಪ್ರಾಂತ್ಯ
 StateShort=State
 Region=ಪ್ರದೇಶ
+Region-State=Region - State
 Country=ದೇಶ
 CountryCode=ದೇಶ ಕೋಡ್
 CountryId=ದೇಶ ಐಡಿ

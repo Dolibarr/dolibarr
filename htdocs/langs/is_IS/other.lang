@@ -162,9 +162,9 @@ SizeUnitinch=tomma
 SizeUnitfoot=fótur
 SizeUnitpoint=point
 BugTracker=Bug rekja spor einhvers
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Til baka innskráningarsíðu
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Auðkenning háttur <b>er %s .</b> <br> Í þessum ham, Dolibarr geta ekki veit né breyta lykilorðinu þínu. <br> Hafðu samband við kerfisstjóra ef þú vilt breyta lykilorðinu þínu.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>Prof Id %s </b> er upplýsingamiðstöð ráðast á þriðja aðila land. <br> Til dæmis, þegar <b>landið %s , kóði%</b> það <b>er.</b>
 DolibarrDemo=Dolibarr ERP / CRM kynningu
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Útflutningur area
 AvailableFormats=Laus snið

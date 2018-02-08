@@ -41,15 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if (! empty($conf->projet->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load('companies');
-$langs->load('propal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('products');
+$langs->loadLangs(array('companies','propal','compta','bills','orders','products'));
 
 $socid=GETPOST('socid','int');
 
@@ -141,7 +135,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
 	'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'p.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-	'pr.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
+	'pr.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled)?0:1)),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
 	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
@@ -237,6 +231,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $companystatic=new Societe($db);
+$projectstatic=new Project($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';

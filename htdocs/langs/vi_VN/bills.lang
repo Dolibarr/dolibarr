@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Lỗi, giảm giá đã được sử dụng
 ErrorInvoiceAvoirMustBeNegative=Lỗi, chỉnh sửa hóa đơn phải có một số tiền âm.
 ErrorInvoiceOfThisTypeMustBePositive=Lỗi, hóa đơn loại này phải có một số tiền dương
 ErrorCantCancelIfReplacementInvoiceNotValidated=Lỗi, không thể hủy bỏ một hóa đơn đã được thay thế bằng hóa đơn khác mà vẫn còn trong tình trạng dự thảo
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Từ
 BillTo=Đến
 ActionsOnBill=Hành động trên hoá đơn

@@ -26,18 +26,16 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translations files required by page
-$langs->load("resource");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("resource","companies","other"));
 
 // Get parameters
-$id                     = GETPOST('id','int');
+$id             = GETPOST('id','int');
 $action         = GETPOST('action','alpha');
 
-$lineid                         = GETPOST('lineid','int');
-$element                        = GETPOST('element','alpha');
-$element_id                     = GETPOST('element_id','int');
-$resource_id            = GETPOST('resource_id','int');
+$lineid         = GETPOST('lineid','int');
+$element        = GETPOST('element','alpha');
+$element_id     = GETPOST('element_id','int');
+$resource_id    = GETPOST('resource_id','int');
 
 $sortorder      = GETPOST('sortorder','alpha');
 $sortfield      = GETPOST('sortfield','alpha');
@@ -89,7 +87,7 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 $hookmanager->initHooks(array('resource_list'));
 
 if (empty($sortorder)) $sortorder="ASC";
-if (empty($sortfield)) $sortfield="t.rowid";
+if (empty($sortfield)) $sortfield="t.ref";
 if (empty($arch)) $arch = 0;
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;

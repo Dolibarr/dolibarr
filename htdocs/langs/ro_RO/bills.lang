@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Eroare, reducerea a fost deja utilizată
 ErrorInvoiceAvoirMustBeNegative=Eroare, factura de corecţie trebuie să aibă o valoare negativă
 ErrorInvoiceOfThisTypeMustBePositive=Eroare, acest tip de factură trebuie să aibă o valoare pozitivă
 ErrorCantCancelIfReplacementInvoiceNotValidated=Eroare, nu se poate anula o factură care a fost înlocuită cu o altă factură, şi care este încă schiţă
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=De la
 BillTo=La
 ActionsOnBill=Evenimente pe factura

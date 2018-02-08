@@ -56,6 +56,7 @@ Address=地址
 State=州/省
 StateShort=State
 Region=地區
+Region-State=Region - State
 Country=國家
 CountryCode=國家代碼
 CountryId=國家編號

@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=Emails from file
 MailingModuleDescEmailsFromUser=Emails input by user
 MailingModuleDescDolibarrUsers=Users with Emails
 MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Rivi %s tiedosto

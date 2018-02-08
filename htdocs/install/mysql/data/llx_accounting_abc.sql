@@ -28,12 +28,13 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('VT', 'Sale Journal', 2, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Purchase Journal', 3, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Bank Journal', 4, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Other Journal', 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Has new Journal', 9, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('ER', 'Expense Report Journal', 5, 1);
+
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT', 'Sale Journal',           2, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC', 'Purchase Journal',       3, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ', 'Bank Journal',           4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD', 'Other Journal',          1, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN', 'Has new Journal',        9, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER', 'Expense Report Journal', 5, 1, 1);
 
 
 -- Description of chart of account FR PCG99-ABREGE

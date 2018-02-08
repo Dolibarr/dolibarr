@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=E-poster fra fil
 MailingModuleDescEmailsFromUser=E-postmeldinger innlagt av bruker
 MailingModuleDescDolibarrUsers=Brukere med e-post
 MailingModuleDescThirdPartiesByCategories=Tredjeparter (etter kategorier)
+SendingFromWebInterfaceIsNotAllowed=Det er ikke tillatt å sende fra webgrensesnitt.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Antall linjer i filen: %s

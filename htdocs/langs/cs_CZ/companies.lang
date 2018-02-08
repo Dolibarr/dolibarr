@@ -56,6 +56,7 @@ Address=Adresa
 State=Stát/Okres
 StateShort=State
 Region=Kraj
+Region-State=Region - State
 Country=Země
 CountryCode=Kód země
 CountryId=ID země

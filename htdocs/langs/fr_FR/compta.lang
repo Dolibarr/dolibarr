@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Facturation
+MenuFinancial=Facturation | Paiement
 TaxModuleSetupToModifyRules=Aller dans la <a href="%s">configuration du module Taxes</a> pour modifier les règles de calcul
 TaxModuleSetupToModifyRulesLT=Aller dans la <a href="%s">configuration de l'institution</a> pour modifier les règles de calcul
 OptionMode=Option de tenue de comptabilité
@@ -24,7 +24,7 @@ PaymentsNotLinkedToInvoice=Paiements liés à aucune facture, donc aucun tiers
 PaymentsNotLinkedToUser=Paiements non liés à un utilisateur
 Profit=Bénéfice
 AccountingResult=Résultat comptable
-BalanceBefore=Balance (before)
+BalanceBefore=Solde (avant)
 Balance=Solde
 Debit=Débit
 Credit=Crédit

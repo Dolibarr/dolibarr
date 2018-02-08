@@ -740,7 +740,7 @@ else
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 			$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 			$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
-			$sql.= " WHERE p.entity = ".$conf->entity;
+			$sql.= " WHERE p.entity IN (".getEntity('payment_salary').")";
 			if (! empty($date_start) && ! empty($date_end))
 				$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 
@@ -813,7 +813,7 @@ else
 				$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
-				$sql.= " WHERE p.entity = ".getEntity('expensereport');
+				$sql.= " WHERE p.entity IN (".getEntity('expensereport').")";
 				$sql.= " AND p.fk_statut>=5";
 
 				$column='p.date_valid';
@@ -823,7 +823,7 @@ else
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
-				$sql.= " WHERE p.entity = ".getEntity('expensereport');
+				$sql.= " WHERE p.entity IN (".getEntity('expensereport').")";
 				$sql.= " AND p.fk_statut>=5";
 
 				$column='pe.datep';
@@ -898,7 +898,7 @@ else
 			{
 		    	$sql = "SELECT p.societe as name, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
 		    	$sql.= " FROM ".MAIN_DB_PREFIX."don as p";
-		    	$sql.= " WHERE p.entity = ".$conf->entity;
+		    	$sql.= " WHERE p.entity IN (".getEntity('donation').")";
 		    	$sql.= " AND fk_statut in (1,2)";
 			}
 			else
