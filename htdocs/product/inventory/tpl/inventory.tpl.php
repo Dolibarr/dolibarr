@@ -209,7 +209,7 @@ if (empty($conf) || ! is_object($conf))
 	<?php } ?>
 </form>
 <p>Date de création : <?php echo $object->getDate('datec') ?>
-<br />Dernière mise à jour : <?php echo $object->getDate('tms') ?></p>
+<br>Dernière mise à jour : <?php echo $object->getDate('tms') ?></p>
 
 
 

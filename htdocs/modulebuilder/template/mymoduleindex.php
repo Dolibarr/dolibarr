@@ -41,13 +41,13 @@ if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-if (! $user->rights->mymodule->read) accessforbidden();
-
-$langs->load("mymodule@mymodule");
+$langs->loadLangs(array("mymodule@mymodule"));
 
 $action=GETPOST('action', 'alpha');
 
+
 // Securite acces client
+if (! $user->rights->mymodule->read) accessforbidden();
 $socid=GETPOST('socid','int');
 if (isset($user->societe_id) && $user->societe_id > 0)
 {
@@ -175,7 +175,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 2, 3)";
-	$sql.= " AND s.entity IN (".getEntity($companystatic->element, 1).")";
+	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";

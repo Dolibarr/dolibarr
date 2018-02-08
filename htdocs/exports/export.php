@@ -64,7 +64,8 @@ $entitytoicon = array(
     'virtualproduct'=>'product',
 	'subproduct'   => 'product',
     'warehouse'    => 'stock',
-    'batch'        => 'stock',
+	'batch'        => 'stock',
+	'stockbatch'   => 'stock',
 	'category'     => 'category',
 	'shipment'     => 'sending',
     'shipment_line'=> 'sending',
@@ -99,7 +100,9 @@ $entitytolang = array(
 	'subproduct'      => 'SubProduct',
     'service'      => 'Service',
     'stock'        => 'Stock',
-    'batch'        => 'Batch',
+	'movement'	   => 'StockMovement',
+	'batch'        => 'Batch',
+	'stockbatch'   => 'StockDetailPerBatch',
 	'warehouse'    => 'Warehouse',
 	'category'     => 'Category',
 	'other'        => 'Other',
@@ -444,7 +447,7 @@ if ($step == 1 || ! $datatoexport)
 
     print '<table class="notopnoleftnoright" width="100%">';
 
-    print $langs->trans("SelectExportDataSet").'<br>';
+    print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
 
     // Affiche les modules d'exports
     print '<table class="noborder" width="100%">';
@@ -548,7 +551,8 @@ if ($step == 2 && $datatoexport)
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectExportFields").' ';
-    $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+    if(empty($conf->global->EXPORTS_SHARE_MODELS))$htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1,$user->id);
+	else $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
     print ' ';
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
@@ -591,7 +595,7 @@ if ($step == 2 && $datatoexport)
         $i++;
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td class="nowrap">';
@@ -783,7 +787,7 @@ if ($step == 3 && $datatoexport)
 
 		$i++;
 		$entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-		$entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+		$entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
 		$entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
 		print '<td class="nowrap">';
@@ -978,7 +982,7 @@ if ($step == 4 && $datatoexport)
         print '<tr class="oddeven">';
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
-        $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
+        $entityicon=strtolower(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
         $entitylang=(! empty($entitytolang[$entity])?$entitytolang[$entity]:$entity);
 
         print '<td class="nowrap">';
@@ -1079,6 +1083,7 @@ if ($step == 4 && $datatoexport)
     	$sql = "SELECT rowid, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql.= " WHERE type = '".$datatoexport."'";
+		if(empty($conf->global->EXPORTS_SHARE_MODELS))$sql.=" AND fk_user=".$user->id;
 		$sql.= " ORDER BY rowid";
 		$resql = $db->query($sql);
 		if ($resql)
@@ -1227,7 +1232,7 @@ if ($step == 5 && $datatoexport)
     $var=true;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
+    print '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
     print '<td>'.$langs->trans("LibraryUsed").'</td>';
     print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
     print '</tr>'."\n";
@@ -1244,11 +1249,13 @@ if ($step == 5 && $datatoexport)
 
 
         print '<tr class="oddeven">';
-        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
+        print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
-	    print '<td>'.$form->textwithpicto($label,$text).'</td>';
-        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td><td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td></tr>'."\n";
+	    print $form->textwithpicto($label,$text).'</td>';
+        print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td>';
+        print '<td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td>';
+        print '</tr>'."\n";
     }
     print '</table>';
 

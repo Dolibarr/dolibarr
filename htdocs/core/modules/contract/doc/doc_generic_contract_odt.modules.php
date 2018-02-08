@@ -455,6 +455,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

@@ -57,3 +57,4 @@ ErrorInsertingComment=Beim Eintragen Ihres Kommentars ist ein Fehler aufgetreten
 MoreChoices=Geben Sie weitere Wahlmöglichkeiten ein
 SurveyExpiredInfo=Die Umfrage ist geschlossen oder beendet.
 EmailSomeoneVoted=%s hat eine Zeile gefüllt. Sie können Ihre Umfrage unter dem Link  finden: %s
+ShowSurvey=Umfrage anzeigen

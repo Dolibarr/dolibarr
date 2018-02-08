@@ -31,3 +31,4 @@ DONATION_ART200=Visar artikel 200 från CGI om du är orolig
 DONATION_ART238=Visar artikel 238 från CGI om du är orolig
 DONATION_ART885=Visar artikel 885 från CGI om du är orolig
 DonationPayment=Donation payment
+DonationValidated=Donation %s validated

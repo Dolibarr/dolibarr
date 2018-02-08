@@ -98,6 +98,8 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 
+		$error = 0;
+
 		$this->libelle = trim($this->libelle);
 
 		// Si libelle non defini, erreur
@@ -111,8 +113,8 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label, fk_parent)";
-		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."', ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent)";
+		$sql .= " VALUES ('".$this->db->escape($this->libelle)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -123,7 +125,16 @@ class Entrepot extends CommonObject
 			{
 				$this->id = $id;
 
-				if ($this->update($id, $user) > 0)
+				if (! $error)
+				{
+					$result = $this->update($id, $user);
+					if ($result <= 0)
+					{
+						$error++;
+					}
+				}
+
+				if (! $error)
 				{
 					$this->db->commit();
 					return $id;
@@ -185,7 +196,7 @@ class Entrepot extends CommonObject
 		$this->country_id=($this->country_id > 0 ? $this->country_id : 0);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
+		$sql .= " SET ref = '" . $this->db->escape($this->libelle) ."'";
 		$sql .= ", fk_parent = " . (($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", description = '" . $this->db->escape($this->description) ."'";
 		$sql .= ", statut = " . $this->statut;
@@ -297,7 +308,7 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 
-		$sql  = "SELECT rowid, fk_parent, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id)
 		{
@@ -306,7 +317,7 @@ class Entrepot extends CommonObject
 		else
 		{
 			$sql.= " WHERE entity = " .$conf->entity;
-			if ($ref) $sql.= " AND label = '".$this->db->escape($ref)."'";
+			if ($ref) $sql.= " AND ref = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -319,8 +330,8 @@ class Entrepot extends CommonObject
 
 				$this->id             = $obj->rowid;
 				$this->fk_parent      = $obj->fk_parent;
-				$this->ref            = $obj->rowid;
-				$this->label          = $obj->label;
+				$this->ref            = $obj->label;
+				$this->label          = $obj->label;			// deprecated
 				$this->libelle        = $obj->label;            // deprecated
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
@@ -409,7 +420,7 @@ class Entrepot extends CommonObject
 	{
 		$liste = array();
 
-		$sql = "SELECT rowid, label";
+		$sql = "SELECT rowid, ref as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot";
 		$sql.= " WHERE entity IN (".getEntity('stock').")";
 		$sql.= " AND statut = ".$status;
@@ -431,7 +442,7 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *	Return number of unique different product into a warehosue
+	 *	Return number of unique different product into a warehouse
 	 *
 	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
 	 */
@@ -574,7 +585,7 @@ class Entrepot extends CommonObject
         $label = '';
 
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
-        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->label)?$this->libelle:$this->label);
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->ref)?(empty($this->label)?$this->libelle:$this->label):$this->ref);
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
@@ -596,8 +607,11 @@ class Entrepot extends CommonObject
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'stock', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend.' ');
-		$result.=$linkstart.($showfullpath ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label)).$linkend;
+        $result .= $linkstart;
+        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+        if ($withpicto != 2) $result.= ($showfullpath ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label));
+        $result .= $linkend;
+
 		return $result;
 	}
 

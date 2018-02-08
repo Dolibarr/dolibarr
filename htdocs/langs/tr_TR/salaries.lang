@@ -13,3 +13,5 @@ TJM=Ortalama günlük ücret
 CurrentSalary=Güncel maaş
 THMDescription=Bu değer, eğer proje modülü kullanılıyorsa kullanıcılar tarafından girilen bir projede tüketilen sürenin maliyetinin hesaplanması için kullanılır
 TJMDescription=Bu değer yalnızca bilgi amaçlı olup hiçbir hesaplamada kulanılmaz
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments

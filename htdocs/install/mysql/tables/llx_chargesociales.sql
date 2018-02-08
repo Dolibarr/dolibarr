@@ -20,25 +20,25 @@
 
 create table llx_chargesociales
 (
-  rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  ref               varchar(16),				   -- 'TX....'
-  date_ech			datetime NOT NULL,             -- date echeance
-  libelle			varchar(80) NOT NULL,
-  entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
-  tms				timestamp,
-  date_creation		datetime,						-- date de creation 
-  date_valid		datetime,						-- date de validation
-  fk_user_author	integer,						-- user making creation
-  fk_user_modif		integer,                        -- user making last change
-  fk_user_valid		integer,						-- user validating
-  fk_type			integer NOT NULL,
-  fk_account		integer,                       -- bank account
-  fk_mode_reglement	integer,                -- mode de reglement
-  amount			real     default 0 NOT NULL,
-  paye				smallint default 0 NOT NULL,
-  periode			date,
-  fk_projet			integer DEFAULT NULL,
-  import_key		varchar(14)
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  ref               varchar(16),                    -- 'TX....'
+  date_ech          datetime NOT NULL,              -- date echeance
+  libelle           varchar(80) NOT NULL,
+  entity            integer DEFAULT 1 NOT NULL,     -- multi company id
+  tms               timestamp,
+  date_creation     datetime,                       -- date de creation 
+  date_valid        datetime,                       -- date de validation
+  fk_user_author    integer,                        -- user making creation
+  fk_user_modif     integer,                        -- user making last change
+  fk_user_valid     integer,                        -- user validating
+  fk_type           integer NOT NULL,
+  fk_account        integer,                        -- bank account
+  fk_mode_reglement integer,                        -- mode de reglement
+  amount            double(24,8) default 0 NOT NULL,
+  paye              smallint default 0 NOT NULL,
+  periode           date,
+  fk_projet         integer DEFAULT NULL,
+  import_key        varchar(14)
 )ENGINE=innodb;
 
 -- 

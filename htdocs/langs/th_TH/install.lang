@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=คุณสามารถใช้ตัวช่วย�
 KeepDefaultValuesMamp=คุณสามารถใช้ตัวช่วยสร้างการติดตั้ง Dolibarr จาก DoliMamp ดังนั้นค่าที่นำเสนอในที่นี้จะดีที่สุดแล้ว เปลี่ยนพวกเขาเท่านั้นถ้าคุณรู้ว่าสิ่งที่คุณทำ
 KeepDefaultValuesProxmox=คุณสามารถใช้ตัวช่วยสร้างการติดตั้ง Dolibarr จาก Proxmox เสมือนเครื่องเพื่อให้ค่าที่นำเสนอในที่นี้จะดีที่สุดแล้ว เปลี่ยนพวกเขาเท่านั้นถ้าคุณรู้ว่าสิ่งที่คุณทำ
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=แก้ไขข้อมูล denormalized
@@ -191,9 +193,11 @@ MigrationActioncommElement=ปรับปรุงข้อมูลเกี�
 MigrationPaymentMode=การโยกย้ายข้อมูลสำหรับโหมดการชำระเงิน
 MigrationCategorieAssociation=การย้ายถิ่นของประเภท
 MigrationEvents=การย้ายถิ่นของเหตุการณ์ที่จะเพิ่มเจ้าของเหตุการณ์ลงในตาราง assignement
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=แสดงตัวเลือกที่มีอยู่ไม่ได้
 HideNotAvailableOptions=ซ่อนตัวเลือกที่มีอยู่ไม่ได้
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

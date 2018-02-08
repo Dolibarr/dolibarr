@@ -69,8 +69,8 @@ $hookmanager->initHooks(array('admindefaultvalues','globaladmin'));
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -248,8 +248,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 // Page
 $texthelp=$langs->trans("PageUrlForDefaultValues");
-if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php');
-else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php');
+if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php', 'societe/card.php?abc=val1&def=val2');
+else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php', 'societe/card.php?abc=val1&def=val2');
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl,$_SERVER["PHP_SELF"],'page,param','',$param,'',$sortfield,$sortorder);
 // Field
@@ -269,14 +269,14 @@ if ($mode != 'focus')
 {
     if ($mode != 'sortorder')
     {
-        $substitutionarray=getCommonSubstitutionArray($langs, 0, array('object')); // Must match list into GETPOST
-        $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+        $substitutionarray=getCommonSubstitutionArray($langs, 2, array('object','objectamount')); // Must match list into GETPOST
+		unset($substitutionarray['__USER_SIGNATURE__']);
         $texthelp=$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
         foreach($substitutionarray as $key => $val)
         {
-            $texthelp.=$key.'<br>';
+            $texthelp.=$key.' -> '.$val.'<br>';
         }
-        $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, '');    // No tooltip on click, this also triggers the sort click
+        $textvalue=$form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, 'subsitutiontooltip');
     }
     else
     {

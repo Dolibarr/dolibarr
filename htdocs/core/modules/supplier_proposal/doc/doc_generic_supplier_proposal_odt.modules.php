@@ -486,6 +486,8 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

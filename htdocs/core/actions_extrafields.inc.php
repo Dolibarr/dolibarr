@@ -160,11 +160,15 @@ if ($action == 'add')
     				}
     			}
 
+    			// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
+    			$visibility = GETPOST('list', 'alpha');
+				if ($type == 'separate') $visibility=3;
+
                 $result=$extrafields->addExtraField(
                 	GETPOST('attrname', 'alpha'),
                 	GETPOST('label', 'alpha'),
                 	$type,
-                	GETPOST('pos', 'alpha'),
+                	GETPOST('pos', 'int'),
                 	$extrasize,
                 	$elementtype,
                 	(GETPOST('unique', 'alpha')?1:0),
@@ -173,9 +177,11 @@ if ($action == 'add')
                 	$params,
                 	(GETPOST('alwayseditable', 'alpha')?1:0),
                 	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
-                	(GETPOST('list', 'alpha')?1:0),
-					(GETPOST('ishidden', 'alpha')?1:0),
-                    GETPOST('computed_value','alpha')
+                	$visibility,
+					0,
+                    GETPOST('computed_value','alpha'),
+                	(GETPOST('entitycurrentorall', 'alpha')?0:''),
+                	GETPOST('langfile', 'alpha')
                 );
     			if ($result > 0)
     			{
@@ -321,6 +327,10 @@ if ($action == 'update')
     				}
     			}
 
+    			// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
+    			$visibility = GETPOST('list', 'alpha');
+    			if ($type == 'separate') $visibility=3;
+
     			$result=$extrafields->update(
     				GETPOST('attrname', 'alpha'),
     				GETPOST('label', 'alpha'),
@@ -333,10 +343,12 @@ if ($action == 'update')
     				$params,
     				(GETPOST('alwayseditable', 'alpha')?1:0),
     				(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
-                	(GETPOST('list', 'alpha')?1:0),
-					(GETPOST('ishidden', 'alpha')?1:0),
+                	$visibility,
+					0,
     			    GETPOST('default_value','alpha'),
-    			    GETPOST('computed_value','alpha')
+    				GETPOST('computed_value','alpha'),
+    				(GETPOST('entitycurrentorall', 'alpha')?0:''),
+    				GETPOST('langfile')
     			);
     			if ($result > 0)
     			{

@@ -707,9 +707,10 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
+ * @param	User		$objuser		Object user we need data from.
  * @return 	string						New value (numeric) or error message
  */
-function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true)
+function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true, $objuser=null)
 {
     global $conf,$user;
 
@@ -722,6 +723,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // but we should use local year and month of user
 
     // For debugging
+    //dol_syslog("mask=".$mask, LOG_DEBUG);
     //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
     //$mask='FA{yy}{mm}-{0000@99}';
     //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
@@ -780,6 +782,22 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	$masktype_value='';
     }
 
+    // Extract value for user
+    if (preg_match('/\{(u+)\}/i',$mask,$regType))
+    {
+    	$lastname = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+    	if (is_object($objuser)) $lastname = $objuser->lastname;
+
+    	$maskuser=$regType[1];
+    	$maskuser_value=substr($lastname,0,dol_strlen($regType[1]));// get n first characters of user firstname (where n is length in mask)
+    	$maskuser_value=str_pad($maskuser_value,dol_strlen($regType[1]),"#",STR_PAD_RIGHT);				 // we fill on right with # to have same number of char than into mask
+    }
+    else
+    {
+    	$maskuser='';
+    	$maskuser_value='';
+    }
+
     // Personalized field {XXX-1} à {XXX-9}
     /*$maskperso=array();
     $maskpersonew=array();
@@ -805,6 +823,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(u+)\}/i',$maskuser_value,$maskwithonlyymcode);
     /*foreach($maskperso as $key => $val)
     {
         $maskwithonlyymcode=preg_replace('/'.$val.'/i', $maskpersonew[$key], $maskwithonlyymcode);
@@ -951,6 +970,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
     if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
+    if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'),$maskuser_value,$maskLike);
 
     // Get counter in database
     $counter=0;
@@ -975,7 +995,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     else dol_print_error($db);
 
     // Check if we must force counter to maskoffset
-    if (empty($counter) || preg_match('/[^0-9]/i',$counter)) $counter=$maskoffset;
+    if (empty($counter)) $counter=$maskoffset;
+    else if (preg_match('/[^0-9]/i',$counter))
+    {
+    	$counter=0;
+    	dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
+    }
     else if ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter=$maskoffset;
 
     if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
@@ -994,6 +1019,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),$counterpadded,$maskLike);
         if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
         if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
+        if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'),$maskuser_value,$maskLike);
 
         $ref='';
         $sql = "SELECT ".$field." as ref";
@@ -1114,11 +1140,20 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $masktype_maskafter=$masktype_value;
             $numFinal = str_replace($masktype_maskbefore,$masktype_maskafter,$numFinal);
         }
+
+        // Now we replace the user
+        if ($maskuser)
+        {
+        	$maskuser_maskbefore='{'.$maskuser.'}';
+        	$maskuser_maskafter=$maskuser_value;
+        	$numFinal = str_replace($maskuser_maskbefore,$maskuser_maskafter,$numFinal);
+        }
     }
 
     dol_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
     return $numFinal;
 }
+
 function get_string_between($string, $start, $end){
     $string = " ".$string;
      $ini = strpos($string,$start);
@@ -1127,12 +1162,13 @@ function get_string_between($string, $start, $end){
      $len = strpos($string,$end,$ini) - $ini;
      return substr($string,$ini,$len);
 }
+
 /**
  * Check value
  *
  * @param 	string	$mask		Mask to use
  * @param 	string	$value		Value
- * @return	int     		    <0 if KO, 0 if OK
+ * @return	int|string		    <0 or error string if KO, 0 if OK
  */
 function check_value($mask,$value)
 {
@@ -1218,6 +1254,7 @@ function check_value($mask,$value)
     if (dol_strlen($value) != $len) $result=-1;
 
     // Define $maskLike
+    /* seems not used
     $maskLike = dol_string_nospecial($mask);
     $maskLike = str_replace("%","_",$maskLike);
     // Replace protected special codes with matching number of _ as wild card caracter
@@ -1228,7 +1265,7 @@ function check_value($mask,$value)
     $maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
     $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
-
+	*/
 
     dol_syslog("functions2::check_value result=".$result,LOG_DEBUG);
     return $result;
@@ -1575,7 +1612,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.od(s|t)$','','name',SORT_ASC,0);
+			// all type of template is allowed
+			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }
@@ -1954,7 +1992,7 @@ function getElementProperties($element_type)
         $module 	= $regs[2];
     }
 
-    //print '<br />1. element : '.$element.' - module : '.$module .'<br />';
+    //print '<br>1. element : '.$element.' - module : '.$module .'<br>';
     if ( preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
     {
         $module = $element = $regs[1];
@@ -2161,18 +2199,18 @@ function cartesianArray(array $input) {
 function getModuleDirForApiClass($module)
 {
     $moduledirforclass=$module;
+    if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i','',$moduledirforclass);
 
-    if (in_array($module, array('login', 'access', 'status', 'documents'))) {
+    if ($module == 'contracts') {
+    	$moduledirforclass = 'contrat';
+    }
+    elseif (in_array($module, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents'))) {
         $moduledirforclass = 'api';
     }
-    if (preg_match('/^dictionary/', $module)) {
-        $moduledirforclass = 'api';
-    }
-
-    if ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
+    elseif ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
         $moduledirforclass = 'societe';
     }
-    if ($module == 'propale' || $module == 'proposals') {
+    elseif ($module == 'propale' || $module == 'proposals') {
         $moduledirforclass = 'comm/propal';
     }
     elseif ($module == 'agenda' || $module == 'agendaevents') {
@@ -2190,6 +2228,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'order' || $module == 'orders') {
         $moduledirforclass = 'commande';
     }
+    elseif ($module == 'shipments') {
+    	$moduledirforclass = 'expedition';
+    }
     elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
         $moduledirforclass = 'compta/facture';
     }
@@ -2205,6 +2246,9 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
         $moduledirforclass = 'product/stock';
     }
+    elseif ($module == 'supplierproposals' || $module == 'supplierproposal' || $module == 'supplier_proposal') {
+    	$moduledirforclass = 'supplier_proposal';
+    }
     elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
         $moduledirforclass = 'fourn';
     }
@@ -2214,7 +2258,31 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'users') {
         $moduledirforclass = 'user';
     }
+    elseif ($module == 'ficheinter' || $module == 'interventions') {
+    	$moduledirforclass = 'fichinter';
+    }
 
     return $moduledirforclass;
 }
 
+/*
+ * Return 2 hexa code randomly
+ *
+ * @param	$min	int	Between 0 and 255
+ * @param	$max	int	Between 0 and 255
+ * @return String
+ */
+function random_color_part($min=0,$max=255) {
+	return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
+}
+
+/*
+ * Return hexadecimal color randomly
+ *
+ * @param	$min	int	Between 0 and 255
+ * @param	$max	int	Between 0 and 255
+ * @return String
+ */
+function random_color($min=0, $max=255) {
+	return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
+}

@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,8 @@
 create table llx_actioncomm
 (
   id				integer AUTO_INCREMENT PRIMARY KEY,
-  ref_ext			varchar(128),
-  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
+  ref_ext			varchar(255),					-- reference into an external system (not used by dolibarr). Example: An id coming from google calendar has length between 5 and 1024 chars. An event id must follow rule: chars used in base32hex encoding (i.e. lowercase letters a-v and digits 0-9, see section 3.1.2 in RFC2938)
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   datep				datetime,						-- date start
   datep2			datetime,						-- date end
 
@@ -52,19 +52,19 @@ create table llx_actioncomm
   location			varchar(128),
   durationp			real,							-- planed duration
 
-  label				varchar(256) NOT NULL,			-- label/title of event or topic of email
+  label				varchar(255) NOT NULL,			-- label/title of event or topic of email
   note				text,							-- note of event or content of email
   
-  email_subject		varchar(256),					-- when event was an email, we store here the subject. content is stored into note.
-  email_msgid		varchar(256),					-- when event was an email, we store here the msgid
-  email_from		varchar(256),					-- when event was an email, we store here the from
-  email_sender		varchar(256),					-- when event was an email, we store here the sender
-  email_to			varchar(256),					-- when event was an email, we store here the email_to
-  email_tocc		varchar(256),					-- when event was an email, we store here the email_tocc
-  email_tobcc		varchar(256),					-- when event was an email, we store here the email_tobcc
-  errors_to			varchar(256),					-- when event was an email, we store here the erros_to
+  email_subject		varchar(255),					-- when event was an email, we store here the subject. content is stored into note.
+  email_msgid		varchar(255),					-- when event was an email, we store here the msgid
+  email_from		varchar(255),					-- when event was an email, we store here the from
+  email_sender		varchar(255),					-- when event was an email, we store here the sender
+  email_to			varchar(255),					-- when event was an email, we store here the email_to
+  email_tocc		varchar(255),					-- when event was an email, we store here the email_tocc
+  email_tobcc		varchar(255),					-- when event was an email, we store here the email_tobcc
+  errors_to			varchar(255),					-- when event was an email, we store here the erros_to
   
-  recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record
+  recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the 'iCalUID' as in RFC5545 (an id similar for all the same serie)
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
      

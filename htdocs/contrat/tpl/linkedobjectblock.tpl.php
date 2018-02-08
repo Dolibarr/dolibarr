@@ -50,7 +50,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
     <td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_contrat,'day'); ?></td>
-	<td align="right">&nbsp;</td>
+	<td align="right"><?php // var_dump($objectlink->total_ttc); ?></td>
 	<td align="right"><?php echo $objectlink->getLibStatut(7); ?></td>
 	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
 </tr>

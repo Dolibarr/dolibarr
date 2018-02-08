@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Másod jóváhagyás már elvégezve
 SupplierOrderReceivedInDolibarr=Beszállítói megrendelés %s megérkezett %s
 SupplierOrderSubmitedInDolibarr=Beszállítói megrendelés %s küldve
 SupplierOrderClassifiedBilled=Beszállítói megrendelés %s számlázandóra állítva
+OtherOrders=Egyéb megrendelések
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Reprezentatív nyomon követése az ügyfelek érdekében
 TypeContact_commande_internal_SHIPPING=Képviselő-up a következő hajózási
@@ -151,5 +152,7 @@ OrderCreated=A megrendelései elkészültek
 OrderFail=Hiba történt a megrendelések készítése közben
 CreateOrders=Megrendelések készítése
 ToBillSeveralOrderSelectCustomer=Több megrendeléshez tartozó számla elkészítéséhez először kattintson a partnerre, majd válassza ki: "%s"
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Zárja le a megrendelést erre "%s" automatikusan, ha az összes tétel megérkezett.
 SetShippingMode=Szállítási mód beállítása

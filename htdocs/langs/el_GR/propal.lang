@@ -4,7 +4,6 @@ Proposal=Προσφορά
 ProposalShort=Προσφορά
 ProposalsDraft=Σχέδιο Προσφοράς
 ProposalsOpened=Open commercial proposals
-Prop=Προσφορές
 CommercialProposal=Προσφορά
 PdfCommercialProposalTitle=Προσφορά
 ProposalCard=Καρτέλα Προσφοράς
@@ -64,6 +63,7 @@ ProposalLine=Γραμμή Προσφοράς
 AvailabilityPeriod=Καθυστέρηση Διαθεσιμότητα
 SetAvailability=Ορισμός καθυστέρησης διαθεσιμότητα
 AfterOrder=μετά την παραγγελία
+OtherProposals=Άλλες Προσφορές
 ##### Availability #####
 AvailabilityTypeAV_NOW=Άμεση
 AvailabilityTypeAV_1W=1 εβδομάδα

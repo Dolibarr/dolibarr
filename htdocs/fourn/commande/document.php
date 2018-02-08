@@ -75,7 +75,7 @@ if ($object->fetch($id,$ref) < 0)
 	exit;
 }
 
-$upload_dir = $conf->fournisseur->dir_output.'/commande/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $object->fetch_thirdparty();
 
 

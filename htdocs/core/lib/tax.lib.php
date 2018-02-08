@@ -528,20 +528,16 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql='';
 
 		// Count on payments date
-		$sql = "SELECT e.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
 		$sql .=" d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql.= " e.date_debut as date_start, e.date_fin as date_end,";
-		$sql.= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, s.nom as company_name, s.rowid as company_id, d.fk_c_type_fees as type,";
+		$sql.= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
 		$sql.= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
-		$sql.= " ".MAIN_DB_PREFIX."expensereport_det as d,";
-		$sql.= " ".MAIN_DB_PREFIX."expensereport as e,";
-		$sql.= " ".MAIN_DB_PREFIX."payment_expensereport as p";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e ";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
 		$sql.= " WHERE e.entity = " . $conf->entity;
-		$sql.= " AND e.fk_statut in (6)"; 
-		$sql.= " AND e.rowid = p.fk_expensereport";
-		$sql.= " AND s.rowid = e.entity";
-		$sql.= " AND d.fk_expensereport = e.rowid";
+		$sql.= " AND e.fk_statut in (6)";
 		if ($y && $m)
 		{
 			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -591,8 +587,8 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 					$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
 					$list[$assoc['rate']]['dtype'][] = 'ExpenseReportPayment';
 					$list[$assoc['rate']]['datef'][] = $assoc['datef'];
-					$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
-					$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
+					$list[$assoc['rate']]['company_name'][] = '';
+					$list[$assoc['rate']]['company_id'][] = '';
 					$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 					$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 

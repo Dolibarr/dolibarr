@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Configuration
-OAuthServices=OAuth services
+ConfigOAuth=Konfigurimi Oauth
+OAuthServices=Shërbimet OAuth
 ManualTokenGeneration=Manual token generation
 TokenManager=Token manager
 IsTokenGenerated=Is token generated ?
@@ -15,14 +15,14 @@ UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when c
 ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
 OAuthSetupForLogin=Page to generate an OAuth token
 SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
+OAuthIDSecret=OAuth ID dhe Fjalëkalimi
 TOKEN_REFRESH=Token Refresh Present
 TOKEN_EXPIRED=Token expired
 TOKEN_EXPIRE_AT=Token expire at
 TOKEN_DELETE=Delete saved token
 OAUTH_GOOGLE_NAME=Oauth Google service
 OAUTH_GOOGLE_ID=Oauth Google Id
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
+OAUTH_GOOGLE_SECRET=Fjalëkalimi Google Oauth
 OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
 OAUTH_GITHUB_NAME=Oauth GitHub service
 OAUTH_GITHUB_ID=Oauth GitHub Id

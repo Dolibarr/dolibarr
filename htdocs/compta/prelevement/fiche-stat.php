@@ -29,9 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("withdrawals");
+$langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
@@ -60,14 +58,16 @@ $object = new BonPrelevement($db,"");
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id)
+if ($prev_id > 0 || $ref)
 {
-	if ($object->fetch($prev_id) == 0)
+	if ($object->fetch($prev_id, $ref) >= 0)
 	{
 		$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
@@ -146,7 +146,7 @@ if ($prev_id)
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql.= " WHERE pl.fk_prelevement_bons = ".$prev_id;
+	$sql.= " WHERE pl.fk_prelevement_bons = ".$object->id;
 	$sql.= " GROUP BY pl.statut";
 
 	$resql=$db->query($sql);

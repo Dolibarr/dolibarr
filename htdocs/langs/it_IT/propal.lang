@@ -4,7 +4,6 @@ Proposal=Preventivo/Proposta commerciale
 ProposalShort=Proposta
 ProposalsDraft=Bozza di proposte commerciali
 ProposalsOpened=Proposte commerciali aperte
-Prop=Preventivi/Prop. commerciali
 CommercialProposal=Preventivo/Proposta commerciale
 PdfCommercialProposalTitle=Preventivo/Proposta commerciale
 ProposalCard=Proposta di carta
@@ -64,6 +63,7 @@ ProposalLine=Linea della proposta
 AvailabilityPeriod=Tempi di consegna
 SetAvailability=Imposta i tempi di consegna
 AfterOrder=dopo ordine
+OtherProposals=Altre proposte
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immediato
 AvailabilityTypeAV_1W=1 settimana

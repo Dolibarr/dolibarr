@@ -55,5 +55,6 @@ ErrorOpenSurveyFillFirstSection=Jūs neužpildėte apklausos kūrimo pirmos sekc
 ErrorOpenSurveyOneChoice=Įveskite bent vieną pasirinkimą
 ErrorInsertingComment=Įterpiant komentarą įvyko klaida
 MoreChoices=Įveskite daugiau pasirinkimų balsuotojams
-SurveyExpiredInfo=The poll has been closed or voting delay has expired.
+SurveyExpiredInfo=Apklausa uždaryta arba baigiasi balsavimo laikas.
 EmailSomeoneVoted=%s užpildė eilutę.\nJūs galite rasti savo apklausą:\n%s
+ShowSurvey=Rodyti apklausą
