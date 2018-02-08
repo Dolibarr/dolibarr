@@ -3793,7 +3793,7 @@ class Societe extends CommonObject
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
-		if ($origin_id == $id)
+		if ($origin_id == $dest_id)
 		{
 			dol_syslog('Error: Try to merge a thirdparty into itself');
 			return false;
