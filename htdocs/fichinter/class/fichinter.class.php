@@ -1169,6 +1169,8 @@ class Fichinter extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		$this->lines = array();
+
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;
