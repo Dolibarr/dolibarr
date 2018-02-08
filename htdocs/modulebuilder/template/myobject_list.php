@@ -260,7 +260,7 @@ if (($page * $limit) > $nbtotalofrecords)
 	$offset = 0; 
 }
 // if total resultset is smaller the limit, no need to do paging.
-if ($limit > $nbtotalofrecords)
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$resql = $result;
 	$num = $nbtotalofrecords;
