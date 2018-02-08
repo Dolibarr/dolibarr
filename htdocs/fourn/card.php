@@ -101,6 +101,16 @@ if (empty($reshook))
 		$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
 		if ($result < 0) dol_print_error($db,$object->error);
 	}
+	
+	// update supplier order min amount
+	if ($action == 'setsupplier_order_min_amount')
+	{
+		$object->fetch($id);
+		$object->supplier_order_min_amount=GETPOST('supplier_order_min_amount');
+		$result=$object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
 	if ($action == 'update_extras') {
         $object->fetch($id);
 
@@ -244,6 +254,16 @@ if ($object->id > 0)
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'none');
 	}
 	print "</td>";
+	print '</tr>';
+	
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("OrderMinAmount",'supplier_order_min_amount',$object->supplier_order_min_amount,$object,$user->rights->societe->creer);
+	print '</td><td>';
+	$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+	print $form->editfieldval("OrderMinAmount",'supplier_order_min_amount',$object->supplier_order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->supplier_order_min_amount != '' ? price($object->supplier_order_min_amount) : ''));
+	
+	print '</td>';
 	print '</tr>';
 
 	// Categories
