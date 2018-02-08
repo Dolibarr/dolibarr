@@ -1214,6 +1214,12 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
+div.firstcolumn div.box {
+	padding-right: 10px;
+}
+div.secondcolumn div.box {
+	padding-left: 10px;
+}
 /* Force values on one colum for small screen */
 @media only screen and (max-width: 1000px)
 {
@@ -1251,6 +1257,12 @@ div.ficheaddleft {
     	<?php print "padding-".$left.": 0px;\n"; ?>
     	margin-top: 10px;
     }
+    div.firstcolumn div.box {
+		padding-right: 0px;
+	}
+	div.secondcolumn div.box {
+		padding-left: 0px;
+	}
 }
 
 /* For table into table into card */

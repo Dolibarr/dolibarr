@@ -616,20 +616,18 @@ print '<div class="fichecenter fichecenterbis">';
 
 $boxlist.='<div class="twocolumns">';
 
-$boxlist.='<div class="fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 $boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
 
-$boxlist.= '<div class="fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist.= '<div class="ficheaddleft">';
+$boxlist.= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlistb'];
 
-$boxlist.= '</div>';
 $boxlist.= '</div>';
 $boxlist.= "\n";
 
