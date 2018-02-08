@@ -1022,7 +1022,7 @@ if ($resql)
 				print '<td align="right">';
             	print price(price2num($balance, 'MT'), 1, $langs);
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance+3).'">';
 				print '</td>';
             	print '</tr>';
             }
