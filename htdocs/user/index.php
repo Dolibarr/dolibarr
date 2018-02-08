@@ -435,7 +435,7 @@ while ($i < min($num,$limit))
 	$userstatic->employee=$obj->employee;
 	$userstatic->photo=$obj->photo;
 
-	$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login');
+	$li=$userstatic->getNomUrl(-1,'',0,0,24,1,'login','',1);
 
 	print "<tr>";
 	if (! empty($arrayfields['u.login']['checked']))
@@ -541,7 +541,7 @@ while ($i < min($num,$limit))
 			$user2->admin=$obj->admin2;
 			$user2->email=$obj->email2;
 			$user2->socid=$obj->fk_soc2;
-			print $user2->getNomUrl(-1,'',0,0,24,0,'');
+			print $user2->getNomUrl(-1,'',0,0,24,0,'','',1);
 			if (! empty($conf->multicompany->enabled) && $obj->admin2 && ! $obj->entity2)
 			{
 			  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');

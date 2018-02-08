@@ -330,7 +330,9 @@ else
 		{
 			dol_fiche_head($head, 'group', $title, -1, 'group');
 
-			dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+			dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
