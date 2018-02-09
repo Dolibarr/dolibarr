@@ -568,7 +568,7 @@ if ($object->id > 0)
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllProposals");
-		$link='';
+		$link=DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -580,13 +580,13 @@ if ($object->id > 0)
 
 	if (! empty($conf->commande->enabled))
 	{
-		// Box proposals
+		// Box commandes
 		$tmp = $object->getOutstandingOrders();
 		$outstandingOpened=$tmp['opened'];
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllOrders");
-		$link='';
+		$link=DOL_URL_ROOT.'/commande/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -598,12 +598,13 @@ if ($object->id > 0)
 
 	if (! empty($conf->facture->enabled))
 	{
+		// Box factures
 		$tmp = $object->getOutstandingBills();
 		$outstandingOpened=$tmp['opened'];
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllInvoices");
-		$link='';
+		$link=DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
