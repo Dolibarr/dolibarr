@@ -69,8 +69,9 @@ $entitytoicon = array(
 	'category'     => 'category',
 	'shipment'     => 'sending',
     'shipment_line'=> 'sending',
-    'expensereport'=> 'trip',
+	'expensereport'=> 'trip',
     'expensereport_line'=> 'trip',
+	'holiday'      => 'holiday',
     'contract_line' => 'contract',
     'translation'  => 'generic'
 );
@@ -115,7 +116,8 @@ $entitytolang = array(
 	'action'       => 'Event',
 	'expensereport'=> 'ExpenseReport',
 	'expensereport_line'=> 'ExpenseReportLine',
-    'contract'     => 'Contract',
+	'holiday'      => 'TitreRequestCP',
+	'contract'     => 'Contract',
     'contract_line'=> 'ContractLine',
     'translation'  => 'Translation'
 );
