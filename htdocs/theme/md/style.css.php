@@ -408,6 +408,10 @@ td.onholidayallday {
 td.actionbuttons a {
     padding-left: 6px;
 }
+td.leftborder, td.hide0 {
+	border-left: 1px solid #ccc;
+}
+
 select.flat, form.flat select {
 	font-weight: normal;
 	font-size: unset;
@@ -593,6 +597,9 @@ textarea.centpercent {
 }
 .wordbreak {
 	word-break: break-all;
+}
+.bold {
+	font-weight: bold !important;
 }
 .nobold {
 	font-weight: normal !important;

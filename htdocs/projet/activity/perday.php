@@ -345,7 +345,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 
 llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
+//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 $param='';
 $param.=($mode?'&mode='.$mode:'');
@@ -375,7 +375,7 @@ print '<input type="hidden" name="addtimemonth" value="'.$tmp['mon'].'">';
 print '<input type="hidden" name="addtimeday" value="'.$tmp['mday'].'">';
 
 $head=project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputperday', '', -1, 'task');
+dol_fiche_head($head, 'inputperday', $langs->trans('TimeSpent'), -1, 'task');
 
 // Show description of content
 print '<div class="hideonsmartphone">';
@@ -474,7 +474,7 @@ print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("ThirdParty").'</td>';
 //print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
-print '<td align="right" class="maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
+print '<td align="right" class="leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right" class="maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
 /*print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
@@ -516,6 +516,32 @@ print '<td class="center'.($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("D
 print '<td class="center">'.$langs->trans("Note").'</td>';
 print '<td class="center"></td>';
 print "</tr>\n";
+
+$colspan = 8;
+
+if ($conf->use_javascript_ajax)
+{
+	print '<tr class="liste_total">';
+	print '<td class="liste_total" colspan="'.$colspan.'">';
+	print $langs->trans("Total");
+	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+	print '</td>';
+
+	$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+	$idw = $tmparray['wday'];
+
+	$cssweekend='';
+	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+	{
+		$cssweekend='weekend';
+	}
+
+	print '<td class="liste_total center'.($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
+
+	print '<td class="liste_total"></td>
+                <td class="liste_total"></td>
+                </tr>';
+}
 
 
 if (count($tasksarray) > 0)
@@ -565,8 +591,6 @@ if (count($tasksarray) > 0)
 		}
 	}
 
-	$colspan = 8;
-
 	// There is a diff between total shown on screen and total spent by user, so we add a line with all other cumulated time of user
 	if ($isdiff)
 	{
@@ -605,7 +629,7 @@ if (count($tasksarray) > 0)
 			$cssweekend='weekend';
 		}
 
-		print '<td class="liste_total hide0 center'.($cssweekend?' '.$cssweekend:'').'"><div id="totalDay[0]">&nbsp;</div></td>';
+		print '<td class="liste_total center'.($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
 
 		print '<td class="liste_total"></td>
                 <td class="liste_total"></td>

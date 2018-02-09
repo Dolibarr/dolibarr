@@ -404,6 +404,9 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.leftborder, td.hide0 {
+	border-left: 1px solid #ccc;
+}
 
 td.actionbuttons a {
     padding-left: 6px;
@@ -596,6 +599,9 @@ textarea.centpercent {
 }
 .wordbreak {
 	word-break: break-all;
+}
+.bold {
+	font-weight: bold !important;
 }
 .nobold {
 	font-weight: normal !important;

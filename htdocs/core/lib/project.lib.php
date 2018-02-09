@@ -940,7 +940,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td align="right">';
+				print '<td align="right" class="leftborder plannedworkload">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				else print '--:--';
 				print '</td>';
@@ -1224,7 +1224,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td align="right">';
+				print '<td align="right" class="leftborder plannedworkload">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				else print '--:--';
 				print '</td>';
