@@ -481,7 +481,7 @@ if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth100
 else print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
 print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
-print '<td class="center">'.$langs->trans("HourStart").'</td>';
+print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);

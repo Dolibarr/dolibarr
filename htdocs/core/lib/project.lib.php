@@ -986,7 +986,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				}
 
 				// Form to add new time
-				print '<td class="nowrap" align="center">';
+				print '<td class="nowrap leftborder" align="center">';
 				$tableCell=$form->select_date($preselectedday,$lines[$i]->id,1,1,2,"addtime",0,0,1,$disabledtask);
 				print $tableCell;
 				print '</td>';
