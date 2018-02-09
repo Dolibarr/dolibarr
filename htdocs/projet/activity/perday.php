@@ -365,7 +365,6 @@ $nav.=' <input type="submit" name="submitdateselect" class="button valignmiddle"
 
 $picto='calendarweek';
 
-
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].($project->id > 0 ? '?id='.$project->id : '').'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addtime">';
@@ -482,22 +481,42 @@ if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth100
 else print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
 print '<td align="right" class="maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
-print '<td align="center">'.$langs->trans("HourStart").'</td>';
-print '<td align="center">'.$langs->trans("Duration").'</td>';
-print '<td align="center">'.$langs->trans("Note").'</td>';
-print '<td align="center"></td>';
-print "</tr>\n";
-
+print '<td class="center">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
 
 // Get if user is available or not for each day
 $holiday = new Holiday($db);
+
 $isavailable=array();
+if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
+{
+	$tmparray=explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	if (count($tmparray) >= 2)
+	{
+		$numstartworkingday = $tmparray[0];
+		$numendworkingday = $tmparray[1];
+	}
+}
 
 $isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse);	// $daytoparse is a date with hours = 0
 $isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
+
+$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+$idw = $tmparray['wday'];
+
+$cssweekend='';
+if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+{
+	$cssweekend='weekend';
+}
+
+print '<td class="center'.($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
+print '<td class="center">'.$langs->trans("Note").'</td>';
+print '<td class="center"></td>';
+print "</tr>\n";
+
 
 if (count($tasksarray) > 0)
 {
@@ -571,13 +590,24 @@ if (count($tasksarray) > 0)
 
 	if ($conf->use_javascript_ajax)
 	{
-		print '<tr class="liste_total">
-                <td class="liste_total" colspan="'.$colspan.'">';
-				print $langs->trans("Total");
-				//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
-				print '</td>
-                <td class="liste_total hide0" align="center"><div id="totalDay[0]">&nbsp;</div></td>
-                <td class="liste_total"></td>
+		print '<tr class="liste_total">';
+		print '<td class="liste_total" colspan="'.$colspan.'">';
+		print $langs->trans("Total");
+		//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+		print '</td>';
+
+		$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+		$idw = $tmparray['wday'];
+
+		$cssweekend='';
+		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		{
+			$cssweekend='weekend';
+		}
+
+		print '<td class="liste_total hide0 center'.($cssweekend?' '.$cssweekend:'').'"><div id="totalDay[0]">&nbsp;</div></td>';
+
+		print '<td class="liste_total"></td>
                 <td class="liste_total"></td>
                 </tr>';
 	}

@@ -388,11 +388,15 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
 }
+
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
+}
+td.weekend {
+	background-color: #eee;
 }
 td.onholidaymorning, td.onholidayafternoon {
 	background-color: #fdf6f2;
@@ -400,6 +404,7 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+
 td.actionbuttons a {
     padding-left: 6px;
 }

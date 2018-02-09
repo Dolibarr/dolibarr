@@ -996,9 +996,19 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				elseif (! $isavailable[$preselectedday]['morning'])   $cssonholiday.='onholidaymorning ';
 				elseif (! $isavailable[$preselectedday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
-				// Duration
-				print '<td align="center" class="duration'.($cssonholiday?' '.$cssonholiday:'').'">';
+				global $daytoparse;
+				$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+				$idw = $tmparray['wday'];
 
+				global $numstartworkingday, $numendworkingday;
+				$cssweekend='';
+				if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+				{
+					$cssweekend='weekend';
+				}
+
+				// Duration
+				print '<td class="center duration'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">';
 				$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
 				$totalforeachday[$preselectedday]+=$dayWorkLoad;
 
@@ -1280,7 +1290,14 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
 					$alttitle=$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']);
 
-					$tableCell ='<td align="center" class="hide'.$idw.($cssonholiday?' '.$cssonholiday:'').'">';
+					global $numstartworkingday, $numendworkingday;
+					$cssweekend='';
+					if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+					{
+						$cssweekend='weekend';
+					}
+
+					$tableCell ='<td align="center" class="hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">';
 					if ($alreadyspent)
 					{
 						$tableCell.='<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
