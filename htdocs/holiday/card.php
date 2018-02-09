@@ -1180,6 +1180,7 @@ else
 	                print '</tr>';
                 }
 
+                // Validator
                 if (!$edit) {
                     print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
@@ -1189,7 +1190,7 @@ else
                     print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>';
-        			print $form->select_dolusers($object->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
+        			print $form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
                     print '</td>';
                     print '</tr>';
                 }
