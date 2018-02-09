@@ -540,10 +540,10 @@ if ($conf->use_javascript_ajax)
 	for ($idw = 0; $idw < 7; $idw++)
 	{
 		$cssweekend='';
-		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 		{
 			$cssweekend='weekend';
-		}
+		}*/
 
 		print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
@@ -651,10 +651,10 @@ if (count($tasksarray) > 0)
 				for ($idw = 0; $idw < 7; $idw++)
 				{
 					$cssweekend='';
-					if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+					/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 					{
 						$cssweekend='weekend';
-					}
+					}*/
 
 					print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 				}

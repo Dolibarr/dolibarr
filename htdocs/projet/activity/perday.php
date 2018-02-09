@@ -507,10 +507,10 @@ $tmparray = dol_getdate($daytoparse,true);	// detail of current day
 $idw = $tmparray['wday'];
 
 $cssweekend='';
-if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 {
 	$cssweekend='weekend';
-}
+}*/
 
 print '<td class="center'.($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
 print '<td class="center">'.$langs->trans("Note").'</td>';
@@ -531,10 +531,10 @@ if ($conf->use_javascript_ajax)
 	$idw = $tmparray['wday'];
 
 	$cssweekend='';
-	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+	/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 	{
 		$cssweekend='weekend';
-	}
+	}*/
 
 	print '<td class="liste_total center'.($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
 
@@ -624,10 +624,10 @@ if (count($tasksarray) > 0)
 		$idw = $tmparray['wday'];
 
 		$cssweekend='';
-		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 		{
 			$cssweekend='weekend';
-		}
+		}*/
 
 		print '<td class="liste_total center'.($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
 
