@@ -64,3 +64,5 @@ BackToListOfThirdParty=Back to list for Third Party
 DisableSiteFirst=Disable website first
 MyContainerTitle=My web site title
 AnotherContainer=Another container
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the web site account table
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store web site accounts (login/pass) for each website / thirdparty
