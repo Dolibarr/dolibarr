@@ -1705,8 +1705,8 @@ class Product extends CommonObject
 
 				if (is_numeric($newminprice) || $newminprice == '0')
 				{
-					$price_min = price2num($newminprice,'MU');var_dump($newminprice);
-					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));var_dump($newvat);
+					$price_min = price2num($newminprice,'MU');
+					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc,'MU');
 					//print 'X'.$newminprice.'-'.$price_min;
 				}
