@@ -1588,15 +1588,16 @@ else
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
 
-            // Type
-            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
-            {
-            	// TODO change for compatibility with edit in place
-            	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-                print '<tr><td class="titlefield">'.$form->editfieldkey("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
-                print $form->editfieldval("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat);
-                print '</td></tr>';
-            }
+			// Type
+			if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
+			{
+				// TODO change for compatibility with edit in place
+				$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				$perm = ($object->type==Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type==Product::TYPE_SERVICE && $user->rights->service->creer);
+				print '<tr><td class="titlefield">'.$form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $perm, $typeformat).'</td><td colspan="2">';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $perm, $typeformat);
+				print '</td></tr>';
+			}
 
             if ($showbarcode)
             {
