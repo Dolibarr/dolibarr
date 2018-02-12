@@ -222,6 +222,8 @@ if ($action == 'writebookkeeping') {
 	$companystatic = new Societe($db);
 	$invoicestatic = new FactureFournisseur($db);
 
+	$errorforinvoice = array();
+
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 
 		$errorforline = 0;
@@ -257,9 +259,10 @@ if ($action == 'writebookkeeping') {
 			if ($alreadydispatched) $replacedinvoice = 2;
 		}
 
-		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
+		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating replacement not possible if invoice is accounted)
 		if ($replacedinvoice == 1)
 		{
+			$db->rollback();
 			continue;
 		}
 
@@ -267,7 +270,7 @@ if ($action == 'writebookkeeping') {
 		if (! $errorforline)
 		{
 			foreach ( $tabttc[$key] as $k => $mt ) {
-				if ($mt) {
+				//if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->date_lim_reglement = $val["datereg"];
@@ -298,16 +301,18 @@ if ($action == 'writebookkeeping') {
 						{
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key]=1;
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
 						else
 						{
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key]=1;
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
-				}
+				//}
 			}
 		}
 
@@ -315,7 +320,7 @@ if ($action == 'writebookkeeping') {
 		if (! $errorforline)
 		{
 			foreach ( $tabht[$key] as $k => $mt ) {
-				if ($mt) {
+				//if ($mt) {
 					// get compte id and label
 					$accountingaccount = new AccountingAccount($db);
 					if ($accountingaccount->fetch(null, $k, true)) {
@@ -349,17 +354,19 @@ if ($action == 'writebookkeeping') {
 							{
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key]=1;
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
 							else
 							{
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key]=1;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
 					}
-				}
+				//}
 			}
 		}
 
@@ -406,12 +413,14 @@ if ($action == 'writebookkeeping') {
 							{
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key]=1;
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
 							else
 							{
 								$error++;
 								$errorforline++;
+								$errorforinvoice[$key]=1;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -456,12 +465,14 @@ if ($action == 'writebookkeeping') {
 						{
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key]=1;
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
 						else
 						{
 							$error++;
 							$errorforline++;
+							$errorforinvoice[$key]=1;
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
@@ -469,12 +480,19 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
-		if ($totaldebit != $totalcredit)
+		// Protection against a bug on line before
+		if (price2num($totaldebit) != price2num($totalcredit))
 		{
 			$error++;
 			$errorforline++;
+			$errorforinvoice[$key]=1;
 			setEventMessages('Try to insert a non balanced transaction in book for '.$invoicestatic->ref.'. Canceled. Surely a bug.', null, 'errors');
 		}
+
+		// Check totaldebit is also same than total of invoice. If not, some record are not yet ready to be journalized
+
+
+
 
 		if (! $errorforline)
 		{
@@ -567,7 +585,7 @@ if ($action == 'exportcsv') {
 			if ($alreadydispatched) $replacedinvoice = 2;
 		}
 
-		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
+		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating replacement not possible if invoice is accounted)
 		if ($replacedinvoice == 1)
 		{
 			continue;
@@ -575,26 +593,28 @@ if ($action == 'exportcsv') {
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-			print '"' . $key . '"' . $sep;
-			print '"' . $date . '"' . $sep;
-			print '"' . $val["refsologest"] . '"' . $sep;
-			print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
-			print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-			print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
-			print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-			print '"' . $langs->trans("Code_tiers") . '"' . $sep;
-			print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
-			print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-			print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
-			print '"' . $journal . '"' ;
-			print "\n";
+			//if ($mt) {
+				print '"' . $key . '"' . $sep;
+				print '"' . $date . '"' . $sep;
+				print '"' . $val["refsologest"] . '"' . $sep;
+				print '"' . utf8_decode ( dol_trunc($companystatic->name, 32) ). '"' . $sep;
+				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+				print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
+				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+				print '"' . $langs->trans("Code_tiers") . '"' . $sep;
+				print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
+				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+				print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
+				print '"' . $journal . '"' ;
+				print "\n";
+			//}
 		}
 
 		// Product / Service
 		foreach ( $tabht[$key] as $k => $mt ) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
-			if ($mt) {
+			//if ($mt) {
 				print '"' . $key . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["refsologest"] . '"' . $sep;
@@ -608,7 +628,7 @@ if ($action == 'exportcsv') {
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"'. $sep;
 				print '"' . $journal . '"' ;
 				print "\n";
-			}
+			//}
 		}
 
 		// VAT
@@ -787,37 +807,40 @@ if (empty($action) || $action == 'view') {
 			print '<td align="right"></td>';
 			print '<td align="right"></td>';
 			print "</tr>";
+
 			continue;
 		}
 
 		// Third party
 		foreach ( $tabttc[$key] as $k => $mt ) {
-			print '<tr class="oddeven">';
-			print "<td><!-- Thirdparty --></td>";
-			print "<td>" . $date . "</td>";
-			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-			// Account
-			print "<td>";
-			$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
-			if (empty($accountoshow) || $accountoshow == 'NotDefined')
-			{
-				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
-			}
-			else print $accountoshow;
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			$accountoshow = length_accounta($k);
-			if (empty($accountoshow) || $accountoshow == 'NotDefined')
-			{
-				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			}
-			else print $accountoshow;
-			print '</td>';
-			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-			print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
-			print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-			print "</tr>";
+			//if ($mt) {
+				print '<tr class="oddeven">';
+				print "<td><!-- Thirdparty --></td>";
+				print "<td>" . $date . "</td>";
+				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+				// Account
+				print "<td>";
+				$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
+				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				{
+					print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
+				}
+				else print $accountoshow;
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				$accountoshow = length_accounta($k);
+				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				{
+					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				}
+				else print $accountoshow;
+				print '</td>';
+				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
+				print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print "</tr>";
+			//}
 		}
 
 		// Product / Service
@@ -825,7 +848,7 @@ if (empty($action) || $action == 'view') {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 
-			if ($mt) {
+			//if ($mt) {
 				print '<tr class="oddeven">';
 				print "<td><!-- Product --></td>";
 				print "<td>" . $date . "</td>";
@@ -848,7 +871,7 @@ if (empty($action) || $action == 'view') {
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
-			}
+			//}
 		}
 
 		// VAT
@@ -890,27 +913,28 @@ if (empty($action) || $action == 'view') {
 		if (is_array($tabother[$key]))
 		{
 			foreach ( $tabother[$key] as $k => $mt ) {
-
-				print '<tr class="oddeven">';
-				print "<td><!-- VAT counterpart NPR --></td>";
-				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-				// Account
-				print "<td>";
-				$accountoshow = length_accountg($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
-				{
-					print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
+				if ($mt) {
+					print '<tr class="oddeven">';
+					print "<td><!-- VAT counterpart NPR --></td>";
+					print "<td>" . $date . "</td>";
+					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+					// Account
+					print "<td>";
+					$accountoshow = length_accountg($k);
+					if (empty($accountoshow) || $accountoshow == 'NotDefined')
+					{
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
+					}
+					else print $accountoshow;
+					print '</td>';
+					// Subledger account
+					print "<td>";
+					print '</td>';
+					print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT") . " NPR (counterpart)</td>";
+					print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+					print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print "</tr>";
 				}
-				else print $accountoshow;
-				print '</td>';
-				// Subledger account
-				print "<td>";
-				print '</td>';
-				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT") . " NPR (counterpart)</td>";
-				print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
-				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print "</tr>";
 			}
 		}
 	}
