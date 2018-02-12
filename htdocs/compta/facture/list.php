@@ -717,7 +717,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Project
-	if (! empty($arrayfields['p.ref']['checked']))
+	if (! empty($conf->projet->enabled) && ! empty($arrayfields['p.ref']['checked']))
 	{
 		print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_project" value="'.$search_project.'"></td>';
 	}
@@ -843,7 +843,9 @@ if ($resql)
 	if (! empty($arrayfields['f.type']['checked']))               print_liste_field_titre($arrayfields['f.type']['label'],$_SERVER["PHP_SELF"],'f.type','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.date']['checked']))               print_liste_field_titre($arrayfields['f.date']['label'],$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.date_lim_reglement']['checked'])) print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'],$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['p.ref']['checked']))                print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER['PHP_SELF'],"p.ref",'',$param,'',$sortfield,$sortorder);
+	if (! empty($conf->projet->enabled)) {
+		if (! empty($arrayfields['p.ref']['checked']))                print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER['PHP_SELF'],"p.ref",'',$param,'',$sortfield,$sortorder);
+	}
 	if (! empty($arrayfields['s.nom']['checked']))                print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))               print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))                print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
@@ -870,7 +872,9 @@ if ($resql)
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
-	$projectstatic=new Project($db);
+	if (! empty($conf->projet->enabled)) {
+		$projectstatic=new Project($db);
+	}
 
 	if ($num > 0)
 	{
@@ -971,7 +975,7 @@ if ($resql)
 			}
 
 			// Project
-			if (! empty($arrayfields['p.ref']['checked']))
+			if (! empty($conf->projet->enabled) && ! empty($arrayfields['p.ref']['checked']))
 			{
 				print '<td class="nowrap">';
 				if ($obj->project_id > 0)
