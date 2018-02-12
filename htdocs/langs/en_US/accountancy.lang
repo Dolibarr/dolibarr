@@ -220,7 +220,7 @@ ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting accoun
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
-GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be dispatched. If there is no other error message, this is probably because they were already dispatched.
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
 NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=List of products not bound to any accounting account
 ChangeBinding=Change the binding
@@ -284,6 +284,8 @@ Formula=Formula
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
+ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
 NoJournalDefined=No journal defined
