@@ -98,14 +98,12 @@ $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.libelle,f.ref_supplier, 
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 $sql .= " p.accountancy_code_buy , aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
-//$sql .= " ct.accountancy_code_buy as account_tva";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
-//$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
-$sql .= " WHERE f.fk_statut > 0"; // TODO Facture annulée ?
+$sql .= " WHERE f.fk_statut > 0";
 $sql .= " AND fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";  // We don't share object for accountancy
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -214,6 +212,29 @@ if ($result) {
 	dol_print_error($db);
 }
 
+$errorforinvoice = array();
+
+// Loop in invoices to detect lines with not binding lines
+foreach ($tabfac as $key => $val) {		// Loop on each invoice
+	$sql = "SELECT COUNT(fd.rowid) as nb";
+	$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
+	$sql.= " WHERE fd.product_type <= 2 AND fd.fk_code_ventilation <= 0";
+	$sql.= " AND fd.total_ttc <> 0 AND fk_facture_fourn = ".$key;
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb > 0)
+		{
+			$errorforinvoice[$key]='somelinesarenotbound';
+		}
+	}
+	else dol_print_error($db);
+}
+//var_dump($errorforinvoice);exit;
+
+
+
 // Bookkeeping Write
 if ($action == 'writebookkeeping') {
 	$now = dol_now();
@@ -221,8 +242,6 @@ if ($action == 'writebookkeeping') {
 
 	$companystatic = new Societe($db);
 	$invoicestatic = new FactureFournisseur($db);
-
-	$errorforinvoice = array();
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 
@@ -301,14 +320,14 @@ if ($action == 'writebookkeeping') {
 						{
 							$error++;
 							$errorforline++;
-							$errorforinvoice[$key]=1;
+							$errorforinvoice[$key]='alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
 						else
 						{
 							$error++;
 							$errorforline++;
-							$errorforinvoice[$key]=1;
+							$errorforinvoice[$key]='other';
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
@@ -354,14 +373,14 @@ if ($action == 'writebookkeeping') {
 							{
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key]=1;
+								$errorforinvoice[$key]='alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
 							else
 							{
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key]=1;
+								$errorforinvoice[$key]='other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -413,14 +432,14 @@ if ($action == 'writebookkeeping') {
 							{
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key]=1;
+								$errorforinvoice[$key]='alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 							}
 							else
 							{
 								$error++;
 								$errorforline++;
-								$errorforinvoice[$key]=1;
+								$errorforinvoice[$key]='other';
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						}
@@ -431,7 +450,7 @@ if ($action == 'writebookkeeping') {
 
 		// Counterpart of VAT for VAT NPR
 		// var_dump($tabother);
-		if (! $errorforline)
+		if (! $errorforline && is_array($tabother[$key]))
 		{
 			foreach ( $tabother[$key] as $k => $mt ) {
 				if ($mt) {
@@ -465,14 +484,14 @@ if ($action == 'writebookkeeping') {
 						{
 							$error++;
 							$errorforline++;
-							$errorforinvoice[$key]=1;
+							$errorforinvoice[$key]='alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
 						}
 						else
 						{
 							$error++;
 							$errorforline++;
-							$errorforinvoice[$key]=1;
+							$errorforinvoice[$key]='other';
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
@@ -485,14 +504,17 @@ if ($action == 'writebookkeeping') {
 		{
 			$error++;
 			$errorforline++;
-			$errorforinvoice[$key]=1;
+			$errorforinvoice[$key]='amountsnotbalanced';
 			setEventMessages('Try to insert a non balanced transaction in book for '.$invoicestatic->ref.'. Canceled. Surely a bug.', null, 'errors');
 		}
 
-		// Check totaldebit is also same than total of invoice. If not, some record are not yet ready to be journalized
-
-
-
+		// Error if some lines are not binded/ready to be journalized
+		if ($errorforinvoice[$key] == 'somelinesarenotbound')
+		{
+			$error++;
+			$errorforline++;
+			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
+		}
 
 		if (! $errorforline)
 		{
@@ -809,6 +831,25 @@ if (empty($action) || $action == 'view') {
 			print "</tr>";
 
 			continue;
+		}
+		if ($errorforinvoice[$key] == 'somelinesarenotbound')
+		{
+			print '<tr class="oddeven">';
+			print "<td><!-- Some lines are not bound --></td>";
+			print "<td>" . $date . "</td>";
+			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+			// Account
+			print "<td>";
+			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $val['ref']).'</span>';
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			print '</td>';
+			print "<td>";
+			print "</td>";
+			print '<td align="right"></td>';
+			print '<td align="right"></td>';
+			print "</tr>";
 		}
 
 		// Third party
