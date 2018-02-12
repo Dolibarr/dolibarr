@@ -655,7 +655,7 @@ class Tva extends CommonObject
      *  @param	string	$morecss		More CSS
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, morecss='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
 	{
 		global $langs, $conf;
 
