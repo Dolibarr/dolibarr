@@ -378,7 +378,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		if ($feature == 'task') $feature='projet_task';
 
 		$check = array('adherent','banque','user','usergroup','produit','service','produit|service','categorie'); // Test on entity only (Objects with no link to company)
-		$checksoc = array('societe','fournisseur');	 // Test for societe object
+		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object
 		$checktask = array('projet_task');
