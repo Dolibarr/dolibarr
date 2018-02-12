@@ -1649,7 +1649,7 @@ class Product extends CommonObject
      *  @param      string  $newdefaultvatcode  Default vat code
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpbq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice=0, $level=0, $newnpr=0, $newpbq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
 	{
 		global $conf,$langs;
 
@@ -1677,7 +1677,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		if ($newprice!='' || $newprice==0)
+		if ($newprice != '' || $newprice == 0)
 		{
 			if ($newpricebase == 'TTC')
 			{
@@ -1685,7 +1685,7 @@ class Product extends CommonObject
 				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
 
-				if ($newminprice!='' || $newminprice==0)
+				if ($newminprice != '' || $newminprice == 0)
 				{
 					$price_min_ttc = price2num($newminprice,'MU');
 					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
@@ -1703,7 +1703,7 @@ class Product extends CommonObject
 				$price_ttc = ( $newnpr != 1 ) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = price2num($price_ttc,'MU');
 
-				if ($newminprice!='' || $newminprice==0)
+				if ($newminprice != '' || $newminprice == 0)
 				{
 					$price_min = price2num($newminprice,'MU');
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
