@@ -552,7 +552,45 @@ class Thirdparties extends DolibarrApi
       return $this->company;
     }
 
+    /**
+     * Delete category to a thirdparty
+     *
+     * @param int		$id	Id of thirdparty
+     * @param array     $request_data   Request datas
+     *
+     * @return mixed
+     *
+     * @url POST {id}/deleteCategory
+     */
+    function deleteCategory($id, $request_data = NULL) {
+        if (!isset($request_data["category_id"]))
+            throw new RestException(400, "category_id field missing");
+        $category_id = $request_data["category_id"];
 
+      if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			  throw new RestException(401);
+      }
+
+      $result = $this->company->fetch($id);
+      if( ! $result ) {
+          throw new RestException(404, 'Thirdparty not found');
+      }
+      $category = new Categorie($this->db);
+      $result = $category->fetch($category_id);
+      if( ! $result ) {
+          throw new RestException(404, 'category not found');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+      if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+
+      $category->del_type($this->company,'customer');
+      return $this->company;
+    }
 
     /**
      * Get outstanding proposals of thirdparty
