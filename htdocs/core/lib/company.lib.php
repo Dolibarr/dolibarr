@@ -573,7 +573,7 @@ function getFormeJuridiqueLabel($code)
 }
 
 /**
- *  Return if a country is inside the EEC (European Economic Community)
+ *  Return if a country of an object is inside the EEC (European Economic Community)
  *  TODO Add a field into country dictionary.
  *
  *  @param      Object      $object    Object

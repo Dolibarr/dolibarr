@@ -1230,7 +1230,7 @@ else
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
-        if (empty($conf->global->MAIN_DISABLEVATCHECK))
+        if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
         {
             $s.=' ';
 
@@ -1849,7 +1849,7 @@ else
             print '<td colspan="3">';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
-            if (empty($conf->global->MAIN_DISABLEVATCHECK))
+            if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
             {
                 $s.=' &nbsp; ';
 
