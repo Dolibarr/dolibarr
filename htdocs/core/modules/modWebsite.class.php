@@ -80,7 +80,7 @@ class modWebsite extends DolibarrModules
 
         // New pages on tabs
         // -----------------
-       	//$this->tabs[] = array('data'=>'thirdparty:+website:WebSites:website:($conf->societe->enabled && $user->rights->societe->lire):/societe/website.php?mainmenu=home&id=__ID__');  					// To add a new tab identified by code tabname1
+       	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
         // Boxes
         //------

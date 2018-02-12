@@ -206,7 +206,7 @@ function societe_prepare_head(Societe $object)
         $h++;
     }
 
-    if (! empty($conf->website->enabled) && (!empty($user->rights->societe->lire) ))
+    if (! empty($conf->website->enabled) && (! empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire)))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.$object->id;
     	$head[$h][1] = $langs->trans("WebSiteAccounts");
