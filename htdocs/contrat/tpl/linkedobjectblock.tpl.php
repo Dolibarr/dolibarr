@@ -52,7 +52,11 @@ foreach($linkedObjectBlock as $key => $objectlink)
     <td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_contrat,'day'); ?></td>
     <td align="right"><?php
-		if ($user->rights->contrat->lire) {
+		// Price of contract is not shown by default because a contract is a list of service with 
+		// start and end date that change with time andd that may be different that the period of reference for price.
+		// So price of a contract does often means nothing. Prices is on the different invoices done on same contract.
+		if ($user->rights->contrat->lire && empty($conf->global->CONTRACT_SHOW_TOTAL_OF_PRODUCT_AS_PRICE)) 
+		{
 			$totalcontrat = 0;
 			foreach ($objectlink->lines as $linecontrat) {
 				$totalcontrat = $totalcontrat + $linecontrat->total_ht;
