@@ -1511,9 +1511,11 @@ else
 
 		// Title line for service
 		$cursorline=1;
-		while ($cursorline <= $nbofservices)
+		print '<div id="contrat-lines-container" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
+        	while ($cursorline <= $nbofservices)
 		{
-			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+			print '<div id="contrat-line-container'.$object->lines[$cursorline-1]->id.'" data-contratlineid = "'.$object->lines[$cursorline-1]->id.'" data-element="'.$object->lines[$cursorline-1]->element.'" >';
+            		print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline-1]->id.'">';
@@ -2027,9 +2029,10 @@ else
 
 				print '</form>';
 			}
-
+			print '</div>';
 			$cursorline++;
 		}
+		print '</div>';
 
 		// Form to add new line
 		if ($user->rights->contrat->creer && ($object->statut == 0))
