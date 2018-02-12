@@ -155,6 +155,7 @@ class ChargeSociales extends CommonObject
     function create($user)
     {
     	global $conf;
+		$error=0;
 
         $now=dol_now();
 
@@ -190,8 +191,17 @@ class ChargeSociales extends CommonObject
             $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."chargesociales");
 
             //dol_syslog("ChargesSociales::create this->id=".$this->id);
-            $this->db->commit();
-            return $this->id;
+			$result=$this->call_trigger('PAYMENTSOCIALECONTRIBUTION_CREATE',$user);
+			if ($result < 0) $error++;
+
+			if(empty($error)) {
+				$this->db->commit();
+				return $this->id;
+			}
+			else {
+				$this->db->rollback();
+				return -1*$error;
+			}
         }
         else
         {
