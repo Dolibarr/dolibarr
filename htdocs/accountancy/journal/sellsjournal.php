@@ -286,6 +286,14 @@ if ($action == 'writebookkeeping') {
 			continue;
 		}
 
+		// Error if some lines are not binded/ready to be journalized
+		if ($errorforinvoice[$key] == 'somelinesarenotbound')
+		{
+			$error++;
+			$errorforline++;
+			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
+		}
+
 		// Thirdparty
 		if (! $errorforline)
 		{
@@ -448,21 +456,13 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
-		// Protection against a bug on line before
-		if (price2num($totaldebit) != price2num($totalcredit))
+		// Protection against a bug on lines before
+		if (! $errorforline && (price2num($totaldebit) != price2num($totalcredit)))
 		{
 			$error++;
 			$errorforline++;
 			$errorforinvoice[$key]='amountsnotbalanced';
 			setEventMessages('Try to insert a non balanced transaction in book for '.$invoicestatic->ref.'. Canceled. Surely a bug.', null, 'errors');
-		}
-
-		// Error if some lines are not binded/ready to be journalized
-		if ($errorforinvoice[$key] == 'somelinesarenotbound')
-		{
-			$error++;
-			$errorforline++;
-			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
 		}
 
 		if (! $errorforline)
