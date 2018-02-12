@@ -3434,7 +3434,7 @@ abstract class CommonObject
 
 	/**
 	 *  Return if a country is inside the EEC (European Economic Community)
-	 *  @deprecated
+	 *  @deprecated	Use function isInEEC function instead
 	 *
 	 *  @return     boolean		true = country inside EEC, false = country outside EEC
 	 */
