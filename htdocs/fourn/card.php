@@ -325,7 +325,7 @@ if ($object->id > 0)
 	    $outstandingTotal=$tmp['total_ht'];
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 	    $text=$langs->trans("OverAllSupplierProposals");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -343,7 +343,7 @@ if ($object->id > 0)
 	    $outstandingTotal=$tmp['total_ht'];
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 	    $text=$langs->trans("OverAllOrders");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -361,7 +361,7 @@ if ($object->id > 0)
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 
 	    $text=$langs->trans("OverAllInvoices");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
