@@ -896,8 +896,12 @@ class Categorie extends CommonObject
 
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
-		if ($type=="customer" || $type=="supplier") {
+		if ($type=="customer") {
 			$sub_type="societe";
+			$subcol_name="fk_soc";
+		}
+		if ($type=="supplier") {
+			$sub_type="fournisseur";
 			$subcol_name="fk_soc";
 		}
 		if ($type=="contact") {
