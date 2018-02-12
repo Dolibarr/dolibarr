@@ -881,7 +881,6 @@ class Contrat extends CommonObject
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
-
 			// Load object modContract
 			$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
@@ -3054,7 +3053,16 @@ class ContratLigne extends CommonObjectLine
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
-			// FIXME Missing insert of extrafields
+			// Insert of extrafields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+			{
+				$result = $this->insertExtraFields();
+				if ($result < 0)
+				{
+					$this->db->rollback();
+					return -1;
+				}
+			}
 
 			if (!$notrigger)
 			{
