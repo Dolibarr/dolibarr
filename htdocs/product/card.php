@@ -2150,7 +2150,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $filedir = $conf->produit->dir_output . '/' . $objectref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$usercanread;
-    $delallowed=$usercandelete;
+    $delallowed=$usercancreate;
 
     $var=true;
 
