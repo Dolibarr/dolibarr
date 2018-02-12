@@ -90,7 +90,7 @@ class Thirdparties extends DolibarrApi
       $this->company->absolute_discount = price2num($absolute_discount, 'MT');
       $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
-		  return $this->_cleanObjectDatas($this->company);
+      return $this->_cleanObjectDatas($this->company);
     }
 
     /**
@@ -238,7 +238,7 @@ class Thirdparties extends DolibarrApi
         }
 
         if($this->company->update($id, DolibarrApiAccess::$user,1,'','','update'))
-            return $this->get ($id);
+            return $this->get($id);
 
         return false;
     }
@@ -479,7 +479,7 @@ class Thirdparties extends DolibarrApi
     }
 
     /**
-     * Get categories for a thirdparty
+     * Get customer categories for a thirdparty
      *
      * @param int		$id         ID of thirdparty
      * @param string	$sortfield	Sort field
@@ -497,36 +497,41 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		$result = $this->company->fetch($id);
+		if( ! $result )
+		{
+			throw new RestException(404, 'Thirdparty not found');
+		}
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
 
-		if (empty($result)) {
-			throw new RestException(404, 'No category found');
+		if (is_numeric($result) && $result < 0)
+		{
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
 		}
 
-		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		if (is_numeric($result) && $result == 0)	// To fix a return of 0 instead of empty array of method getListForItem
+		{
+			return array();
 		}
 
 		return $result;
     }
 
     /**
-     * Add category to a thirdparty
+     * Add a customer category to a thirdparty
      *
-     * @param int		$id	Id of thirdparty
-     * @param array     $request_data   Request datas
+     * @param int		$id				Id of thirdparty
+     * @param int       $category_id	Id of category
      *
      * @return mixed
      *
-     * @url POST {id}/addCategory
+     * @url POST {id}/categories/{category_id}
      */
-    function addCategory($id, $request_data = NULL) {
-        if (!isset($request_data["category_id"]))
-            throw new RestException(400, "category_id field missing");
-        $category_id = $request_data["category_id"];
-
+    function addCategory($id, $category_id)
+    {
       if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			  throw new RestException(401);
       }
@@ -549,24 +554,22 @@ class Thirdparties extends DolibarrApi
       }
 
       $category->add_type($this->company,'customer');
-      return $this->company;
+
+      return $this->_cleanObjectDatas($this->company);
     }
 
     /**
-     * Delete category to a thirdparty
+     * Remove the link between a customer category and the thirdparty
      *
-     * @param int		$id	Id of thirdparty
-     * @param array     $request_data   Request datas
+     * @param int		$id				Id of thirdparty
+     * @param int		$category_id	Id of category
      *
      * @return mixed
      *
-     * @url POST {id}/deleteCategory
+     * @url DELETE {id}/categories/{category_id}
      */
-    function deleteCategory($id, $request_data = NULL) {
-        if (!isset($request_data["category_id"]))
-            throw new RestException(400, "category_id field missing");
-        $category_id = $request_data["category_id"];
-
+    function deleteCategory($id, $category_id)
+    {
       if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			  throw new RestException(401);
       }
@@ -589,8 +592,128 @@ class Thirdparties extends DolibarrApi
       }
 
       $category->del_type($this->company,'customer');
-      return $this->company;
+
+      return $this->_cleanObjectDatas($this->company);
     }
+
+    /**
+     * Get supplier categories for a thirdparty
+     *
+     * @param int		$id         ID of thirdparty
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/supplier_categories
+     */
+    function getSupplierCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    {
+    	if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result )
+    	{
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+
+    	$categories = new Categorie($this->db);
+
+    	$result = $categories->getListForItem($id, 'supplier', $sortfield, $sortorder, $limit, $page);
+
+    	if (is_numeric($result) && $result < 0)
+    	{
+    		throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+    	}
+
+    	if (is_numeric($result) && $result == 0)	// To fix a return of 0 instead of empty array of method getListForItem
+    	{
+    		return array();
+    	}
+
+    	return $result;
+    }
+
+    /**
+     * Add a supplier category to a thirdparty
+     *
+     * @param int		$id				Id of thirdparty
+     * @param int       $category_id	Id of category
+     *
+     * @return mixed
+     *
+     * @url POST {id}/supplier_categories/{category_id}
+     */
+    function addSupplierCategory($id, $category_id)
+    {
+    	if(! DolibarrApiAccess::$user->rights->societe->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+    	$category = new Categorie($this->db);
+    	$result = $category->fetch($category_id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'category not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+    	if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$category->add_type($this->company,'supplier');
+
+    	return $this->_cleanObjectDatas($this->company);
+    }
+
+    /**
+     * Remove the link between a category and the thirdparty
+     *
+     * @param int		$id				Id of thirdparty
+     * @param int		$category_id	Id of category
+     *
+     * @return mixed
+     *
+     * @url DELETE {id}/supplier_categories/{category_id}
+     */
+    function deleteSupplierCategory($id, $category_id)
+    {
+    	if(! DolibarrApiAccess::$user->rights->societe->creer) {
+    		throw new RestException(401);
+    	}
+
+    	$result = $this->company->fetch($id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'Thirdparty not found');
+    	}
+    	$category = new Categorie($this->db);
+    	$result = $category->fetch($category_id);
+    	if( ! $result ) {
+    		throw new RestException(404, 'category not found');
+    	}
+
+    	if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+    	if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+    		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+    	}
+
+    	$category->del_type($this->company,'supplier');
+
+    	return $this->_cleanObjectDatas($this->company);
+    }
+
 
     /**
      * Get outstanding proposals of thirdparty
