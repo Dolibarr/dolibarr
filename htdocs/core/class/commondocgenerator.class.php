@@ -529,10 +529,13 @@ abstract class CommonDocGenerator
 		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
 	
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
-		$product = new Product($this->db);
-		$result = $product->fetch(null, $line->product_ref);
-		foreach($product->array_options as $key=>$label)
-			$resarray["line_".$key] = $label;
+		if (isset($line->product_ref))
+		{
+			$product = new Product($this->db);
+			$result = $product->fetch(null, $line->product_ref);
+			foreach($product->array_options as $key=>$label)
+				$resarray["line_".$key] = $label;
+		}		
 		
 		return $resarray;
 	}
