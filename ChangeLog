@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:
+NEW: Add a preview icon after files that can be previewed (pdf + images)
 NEW: When payment is registered, PDF of invoices are also regenerated so payments
      appears with no need to click on regenerate.
 NEW: #5711 Add shipment line deleting and editing for draft shipments.
