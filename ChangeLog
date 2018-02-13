@@ -10,7 +10,7 @@ NEW: When payment is registered, PDF of invoices are also regenerated so payment
 NEW: #5711 Add shipment line deleting and editing for draft shipments.
 NEW: Accept substitution key __(ABC)__ replaced with value of translation of key ABC
 NEW: Accept substitution key __[ABC]__ replaced with value of const ABC
-NEW: Accountancy Add variant on sell account for intracommunity sales & export sales
+NEW: Accountancy Add fields for sale accounting account for intracommunity sales & export sales
 NEW: Add a button "Activate all services" on contracts
 NEW: Add a confirmation for all mass action 'delete'
 NEW: Add a group task line for tasks on same level on gantt diagram
