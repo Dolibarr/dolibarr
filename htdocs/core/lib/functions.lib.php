@@ -6844,7 +6844,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
 
 	if (empty($conf->use_javascript_ajax)) return '';
 
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css');
+	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'svg+xml');
 	//$mime_preview[]='vnd.oasis.opendocument.presentation';
 	//$mime_preview[]='archive';
 	$num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
@@ -6950,6 +6950,7 @@ function dol_mimetype($file, $default='application/octet-stream', $mode=0)
 	if (preg_match('/\.gif$/i',$tmpfile))					   { $mime='image/gif';    $imgmime='image.png'; $famime='file-image-o'; }
 	if (preg_match('/\.bmp$/i',$tmpfile))					   { $mime='image/bmp';    $imgmime='image.png'; $famime='file-image-o'; }
 	if (preg_match('/\.(tif|tiff)$/i',$tmpfile))			   { $mime='image/tiff';   $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.svg$/i',$tmpfile))					   { $mime='image/svg+xml';$imgmime='image.png'; $famime='file-image-o'; }
 	// Calendar
 	if (preg_match('/\.vcs$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
 	if (preg_match('/\.ics$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
