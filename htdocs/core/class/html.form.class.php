@@ -646,9 +646,10 @@ class Form
 	 *  @param	integer	$maxlength		Max length for labels (0=no limit)
 	 *  @param	string	$morecss		More css class
 	 *  @param	string	$usecodeaskey	'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	int		$showempty		Show empty choice
 	 *  @return string           		HTML string with select
 	 */
-	function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0,$morecss='minwidth300',$usecodeaskey='')
+	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1)
 	{
 		global $conf,$langs;
 
@@ -693,20 +694,22 @@ class Form
 
 				foreach ($countryArray as $row)
 				{
+					if (empty($showempty) && empty($row['rowid'])) continue;
+
 					if ($row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option a value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
+						$out.= '<option value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
 					}
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
 					{
 						$foundselected=true;
-						$out.= '<option b value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
+						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
 					}
 					else
 					{
-						$out.= '<option c value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
+						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
 					}
 					if ($row['label']) $out.= dol_trunc($row['label'],$maxlength,'middle');
 					else $out.= '&nbsp;';
