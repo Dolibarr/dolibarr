@@ -225,7 +225,8 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
 {
 	global $conf, $db;
 
-	$sql=" SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m, acl, position";
+	$sql =" SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m,";
+	$sql.=" acl, position, share";
 	if ($mode) $sql.=", description";
 	$sql.=" FROM ".MAIN_DB_PREFIX."ecm_files";
 	$sql.=" WHERE filepath = '".$db->escape($path)."'";
@@ -258,7 +259,8 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
 					"keywords" => $obj->keywords,
 					"cover" => $obj->cover,
 					"position" => (int) $obj->position,
-					"acl" => $obj->acl
+					"acl" => $obj->acl,
+					"share" => $obj->share
 				);
 			}
 			$i++;
@@ -318,6 +320,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$filearray[$key]['acl']=$filearrayindatabase[$key2]['acl'];
 				$filearray[$key]['rowid']=$filearrayindatabase[$key2]['rowid'];
 				$filearray[$key]['label']=$filearrayindatabase[$key2]['label'];
+				$filearray[$key]['share']=$filearrayindatabase[$key2]['share'];
 				$found=1;
 				break;
 			}
