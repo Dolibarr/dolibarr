@@ -6862,6 +6862,25 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
 
 
 /**
+ * Make content of an input box selected when we click into input field.
+ *
+ * @param string	$htmlname	Id of html object
+ * @param string	$addlink	Add a 'link to' after
+ */
+function ajax_autoselect($htmlname, $addlink='')
+{
+	global $langs;
+	$out = '<script type="text/javascript">
+               jQuery(document).ready(function () {
+				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
+				});
+		    </script>';
+	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+	return $out;
+}
+
+
+/**
  *	Return mime type of a file
  *
  *	@param	string	$file		Filename we looking for MIME type
