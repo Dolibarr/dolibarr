@@ -1297,8 +1297,8 @@ class FormFile
 		if (! empty($addfilterfields))
 		{
 			print '<tr class="liste_titre nodrag nodrop">';
-			print '<td><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
 			print '<td></td>';
+			print '<td><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
 			print '<td></td>';
 			print '<td></td>';
 			// Action column
