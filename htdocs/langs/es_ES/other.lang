@@ -227,9 +227,9 @@ Chart=Gráfico
 PassEncoding=Cifrado de contraseña
 PermissionsAdd=Permisos añadidos
 PermissionsDelete=Permisos eliminados
-YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
-YourPasswordHasBeenReset=Your password has been reset successfully
-ApplicantIpAddress=IP address of applicant
+YourPasswordMustHaveAtLeastXChars=Su contraseña debe contener al menos <strong>%s</strong>  caracteres
+YourPasswordHasBeenReset=Su contraseña ha sido restablecida con éxito
+ApplicantIpAddress=Dirección IP del solicitante
 ##### Export #####
 ExportsArea=Área de exportaciones
 AvailableFormats=Formatos disponibles

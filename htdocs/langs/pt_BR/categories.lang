@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Tag/Categoria
 Rubriques=Tags/Categorias
+RubriquesTransactions=Tags/Categorias de transações
 categories=tags/categorias
 NoCategoryYet=Nenhuma tag/categoria deste tipo foi criada
 In=Em
