@@ -188,15 +188,6 @@ if ($action == 'adddir' && $permtouploadfile)
 }
 */
 
-// Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
-{
-	//$result=$ecmdir->delete($user);
-	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
-
-	clearstatcache();
-}
-
 
 if (GETPOST('refreshsite'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
@@ -656,6 +647,8 @@ if ($action == 'addcontainer')
 // Delete page
 if ($action == 'delete')
 {
+	$error = 0;
+
 	$db->begin();
 
 	$res = $object->fetch(0, $website);
@@ -665,27 +658,24 @@ if ($action == 'delete')
 	if ($res > 0)
 	{
 		$res = $objectpage->delete($user);
-		if (! $res > 0)
+		if ($res <= 0)
 		{
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 		}
+	}
 
-		if (! $error)
-		{
-			$db->commit();
-			setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
 
-			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
-			exit;
-		}
-		else
-		{
-			$db->rollback();
-		}
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
+		exit;
 	}
 	else
 	{
+		$db->rollback();
 		dol_print_error($db);
 	}
 }

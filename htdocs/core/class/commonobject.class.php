@@ -6458,7 +6458,7 @@ abstract class CommonObject
 			}
 		}
 
-		/*if (! $error)
+		if (! $error && ! empty($this->isextrafieldmanaged))
 		{
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $this->table_element."_extrafields";
 			$sql.= " WHERE fk_object=" . $this->id;
@@ -6469,7 +6469,7 @@ abstract class CommonObject
 				$this->errors[] = $this->db->lasterror();
 				$error++;
 			}
-		}*/
+		}
 
 		if (! $error)
 		{
