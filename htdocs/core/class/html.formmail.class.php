@@ -571,7 +571,7 @@ class FormMail extends Form
 			            $u->firstname = $obj->firstname;
 			            $u->id = $obj->rowid;
 
-			            $internal_user_emails['user_'.$obj->rowid]=$langs->trans("User").': '.$u->getFullName($langs)." &lt;".$obj->email."&gt;";
+			            $internal_user_emails['user_'.$obj->rowid]=$langs->trans("User").': '.$u->getFullName($langs)." <".$obj->email.">";
 			        }
 
 			    }
