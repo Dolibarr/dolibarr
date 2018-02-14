@@ -35,7 +35,7 @@ $allowinstall = 0;
 $allowupgrade = false;
 $checksok = 1;
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):$langs->getDefaultLang();
+$setuplang=GETPOST("selectlang",'az09',3)?GETPOST("selectlang",'az09',3):$langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
@@ -345,6 +345,10 @@ else
 			$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 			$conf->setValues($db);
+			// Reset forced setup after the setValues
+			if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+			$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL)?$conf->global->MAIN_VERSION_LAST_INSTALL:''));

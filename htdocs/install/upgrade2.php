@@ -163,7 +163,13 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
     // Chargement config
-    if (! $error) $conf->setValues($db);
+    if (! $error)
+    {
+    	$conf->setValues($db);
+    	// Reset forced setup after the setValues
+    	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+    	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+    }
 
 
     /***************************************************************************************

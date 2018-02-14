@@ -42,10 +42,8 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
+$setuplang=GETPOST("selectlang",'az09',3)?GETPOST("selectlang",'az09',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 
 $langs->loadLangs(array("admin","install","other"));
 
@@ -155,7 +153,9 @@ if ($ok)
 }
 
 $conf->setValues($db);
-
+// Reset forced setup after the setValues
+if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 
 /* Start action here */
@@ -588,8 +588,6 @@ if ($ok && GETPOST('clean_menus','alpha'))
 // clean_orphelin_dir: Run purge of directory
 if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 {
-    $conf->setValues($db);
-
     $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
     foreach ($listmodulepart as $modulepart)
     {
