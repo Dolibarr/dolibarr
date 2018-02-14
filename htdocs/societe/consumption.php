@@ -490,7 +490,7 @@ if ($sql_select)
 			$txt='';
 			print img_object($langs->trans("ShowReduc"),'reduc').' ';
 			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
-			elseif ($objp->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
+			elseif ($objp->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived"); // TODO handle (EXCESS PAID)
 			//else $txt=$langs->trans("Discount");
 			print $txt;
 			?>
@@ -517,7 +517,7 @@ if ($sql_select)
 					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 					// Add date of deposit
 					if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
-				}
+				} // TODO handle (EXCESS PAID)
 				else
 				{
 					echo ($txt?' - ':'').dol_htmlentitiesbr($objp->description);

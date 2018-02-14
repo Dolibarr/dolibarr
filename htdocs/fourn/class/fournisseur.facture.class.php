@@ -897,6 +897,106 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
+    /**
+     *    Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
+     *
+     *    @param     int	$idremise	Id of absolute discount
+     *    @return    int          		>0 if OK, <0 if KO
+     */
+    function insert_discount($idremise)
+    {
+    	global $langs;
+    	
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+    	include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+    	
+    	$this->db->begin();
+    	
+    	$remise=new DiscountAbsolute($this->db);
+    	$result=$remise->fetch($idremise);
+    	
+    	if ($result > 0)
+    	{
+    		if ($remise->fk_invoice_supplier)	// Protection against multiple submission
+    		{
+    			$this->error=$langs->trans("ErrorDiscountAlreadyUsed");
+    			$this->db->rollback();
+    			return -5;
+    		}
+    		
+    		$facligne=new SupplierInvoiceLine($this->db);
+    		$facligne->fk_facture=$this->id;
+    		$facligne->fk_remise_except=$remise->id;
+    		$facligne->desc=$remise->description;   	// Description ligne
+    		$facligne->vat_src_code=$remise->vat_src_code;
+    		$facligne->tva_tx=$remise->tva_tx;
+    		$facligne->subprice = -$remise->amount_ht;
+    		$facligne->fk_product=0;					// Id produit predefini
+    		$facligne->qty=1;
+    		$facligne->remise_percent=0;
+    		$facligne->rang=-1;
+    		$facligne->info_bits=2;
+    		
+    		// Get buy/cost price of invoice that is source of discount
+    		if ($remise->fk_invoice_supplier_source > 0)
+    		{
+    			$srcinvoice=new FactureFournisseur($this->db);
+    			$srcinvoice->fetch($remise->fk_invoice_supplier_source);
+    			$totalcostpriceofinvoice=0;
+    			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';  // TODO Move this into commonobject
+    			$formmargin=new FormMargin($this->db);
+    			$arraytmp=$formmargin->getMarginInfosArray($srcinvoice, false);
+    			$facligne->pa_ht = $arraytmp['pa_total'];
+    		}
+    		
+    		$facligne->total_ht  = -$remise->amount_ht;
+    		$facligne->total_tva = -$remise->amount_tva;
+    		$facligne->total_ttc = -$remise->amount_ttc;
+    		
+    		$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
+    		$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
+    		$facligne->multicurrency_total_tva = -$remise->multicurrency_total_tva;
+    		$facligne->multicurrency_total_ttc = -$remise->multicurrency_total_ttc;
+    		
+    		$lineid=$facligne->insert();
+    		if ($lineid > 0)
+    		{
+    			$result=$this->update_price(1);
+    			if ($result > 0)
+    			{
+    				// Create link between discount and invoice line
+    				$result=$remise->link_to_invoice($lineid,0,'supplier');
+    				if ($result < 0)
+    				{
+    					$this->error=$remise->error;
+    					$this->db->rollback();
+    					return -4;
+    				}
+    				
+    				$this->db->commit();
+    				return 1;
+    			}
+    			else
+    			{
+    				$this->error=$facligne->error;
+    				$this->db->rollback();
+    				return -1;
+    			}
+    		}
+    		else
+    		{
+    			$this->error=$facligne->error;
+    			$this->db->rollback();
+    			return -2;
+    		}
+    	}
+    	else
+    	{
+    		$this->db->rollback();
+    		return -3;
+    	}
+    }
+    
 
     /**
      *	Delete invoice from database

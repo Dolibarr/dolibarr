@@ -1718,14 +1718,15 @@ class Societe extends CommonObject
 	 *	@param	User	$user		Filtre sur un user auteur des remises
 	 * 	@param	string	$filter		Filtre autre
 	 * 	@param	integer	$maxvalue	Filter on max value for discount
+	 * 	@param	string	$mode		'supplier' to get available discounts for suppliers, 'customer' instead
 	 *	@return	int					<0 if KO, Credit note amount otherwise
 	 */
-	function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
+	function getAvailableDiscounts($user='',$filter='',$maxvalue=0,$mode='customer')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue);
+		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue,$mode);
 		if ($result >= 0)
 		{
 			return $result;

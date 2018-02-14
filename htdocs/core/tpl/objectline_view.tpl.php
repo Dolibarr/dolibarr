@@ -72,7 +72,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 		$txt='';
 		print img_object($langs->trans("ShowReduc"),'reduc').' ';
 		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
-		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
+		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived"); // TODO handle (EXCESS PAID)
 		//else $txt=$langs->trans("Discount");
 		print $txt;
 		?>
@@ -100,7 +100,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
-			}
+			} // TODO handle (EXCESS PAID)
 			else
 			{
 				echo ($txt?' - ':'').dol_htmlentitiesbr($line->description);

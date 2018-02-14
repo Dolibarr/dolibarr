@@ -88,7 +88,7 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($line->fk_remise_except);
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived",$discount->ref_facture_source);
-		}
+		} // TODO handle (EXCESS PAID)
 		else
 		{
 			if ($idprod)
