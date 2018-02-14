@@ -78,6 +78,7 @@ print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(G
 print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
 print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
 print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
+print 'Option clean_perm_table (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table','alpha')?GETPOST('clean_perm_table','alpha'):'0').'<br>'."\n";
 print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
 print '<br>';
 
@@ -161,6 +162,7 @@ $conf->setValues($db);
 $oneoptionset=0;
 $oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos','alpha') || GETPOST('clean_linked_elements','alpha') || GETPOST('clean_menus','alpha')
 	|| GETPOST('clean_orphelin_dir','alpha') || GETPOST('clean_product_stock_batch','alpha') || GETPOST('set_empty_time_spent_amount','alpha') || GETPOST('rebuild_product_thumbs','alpha')
+	|| GETPOST('clean_perm_table','alpha')
 	|| GETPOST('force_disable_of_modules_not_found','alpha') || GETPOST('force_utf8_on_tables','alpha'));
 
 if ($ok && $oneoptionset)
@@ -898,6 +900,57 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
         dol_print_error($db);
     }
 
+}
+
+
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+if ($ok && GETPOST('clean_perm_table','alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean table user_rights from lines of external modules no more enabled</td></tr>';
+
+	$listofmods='';
+	foreach($conf->modules as $key => $val)
+	{
+		$listofmods.=($listofmods?',':'')."'".$val."'";
+	}
+	$sql = 'SELECT id, libelle, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+				if ($obj->id > 0)
+				{
+					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->libelle.'" of module "'.$obj->module.'" to delete';
+					if (GETPOST('clean_perm_table','alpha') == 'confirmed')
+					{
+						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
+						$resqldelete = $db->query($sqldelete);
+						if (! $resqldelete)
+						{
+							dol_print_error($db);
+						}
+						print ' - deleted';
+					}
+					print '</td></tr>';
+				}
+				$i++;
+			}
+		}
+		else
+		{
+			print '<tr><td>No lines of a disabled external module (with id > 100000) found into table rights_def</td></tr>';
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 
