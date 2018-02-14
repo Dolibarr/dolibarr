@@ -2919,6 +2919,9 @@ class Facture extends CommonInvoice
 		$line->total_ttc = $tabprice[2];
 		$line->total_localtax1 = $tabprice[9];
 		$line->total_localtax2 = $tabprice[10];
+		$line->multicurrency_total_ht  = $tabprice[16];
+		$line->multicurrency_total_tva = $tabprice[17];
+		$line->multicurrency_total_ttc = $tabprice[18];
 		$line->update($user);
 		$this->update_price(1);
 		$this->db->commit();
