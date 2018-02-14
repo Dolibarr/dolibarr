@@ -83,6 +83,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		  GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",      GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE', GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
+    	dolibarr_set_const($db, 'MAIN_MAIL_ADD_INTERNAL_USER_WITHTO',GETPOST('MAIN_MAIL_ADD_INTERNAL_USER_WITHTO'),'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -433,6 +434,12 @@ if ($action == 'edit')
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
 	print '</td></tr>';
 
+	// Allow to add internal user into "to" and "cc" address selector
+
+	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_ADD_INTERNAL_USER_WITHTO').'</td><td>';
+	print $form->selectyesno('MAIN_MAIL_ADD_INTERNAL_USER_WITHTO',(! empty($conf->global->MAIN_MAIL_ADD_INTERNAL_USER_WITHTO)?$conf->global->MAIN_MAIL_ADD_INTERNAL_USER_WITHTO:0),1);
+	print '</td></tr>';
+
 	// Separator
 
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
@@ -611,6 +618,13 @@ else
 			print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
 		}
 	}
+	print '</td></tr>';
+
+	// Allow to add internal user into "to" and "cc" address selector
+
+    	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_ADD_INTERNAL_USER_WITHTO').'</td>';
+    	print '<td>';
+    	print yn($conf->global->MAIN_MAIL_ADD_INTERNAL_USER_WITHTO);
 	print '</td></tr>';
 
 	// Separator
