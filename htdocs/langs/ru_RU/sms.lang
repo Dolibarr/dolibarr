@@ -48,4 +48,4 @@ SmsInfoNumero= (В международном формате, т.е.: +712345678
 DelayBeforeSending=Задержка перед отправкой (в минутах)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Нет доступных получателей. Проверьте настройки вашего провайдера SMS.
-
+DisableStopIfSupported=Disable STOP message (if supported)

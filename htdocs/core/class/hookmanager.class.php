@@ -139,6 +139,9 @@ class HookManager
 			    'addMoreMassActions',
 			    'addSearchEntry',
 				'addStatisticLine',
+				'createDictionaryFieldList',
+				'editDictionaryFieldlist',
+				'getFormMail',
 			    'deleteFile',
 				'doActions',
 			    'doMassActions',
@@ -175,10 +178,9 @@ class HookManager
 				'formatEvent',
                 'printObjectLine',
                 'printObjectSubLine',
-				'createDictionaryFieldList',
-				'editDictionaryFieldlist',
-				'getFormMail',
-			    'showLinkToObjectBlock'
+			    'showLinkToObjectBlock',
+				'sendMail',
+				'sendMailAfter'
 				)
 			)) $hooktype='addreplace';
 

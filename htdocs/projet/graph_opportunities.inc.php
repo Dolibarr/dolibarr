@@ -1,9 +1,9 @@
-<?php 
+<?php
 if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p, ".MAIN_DB_PREFIX."c_lead_status as cls";
-	$sql.= " WHERE p.entity = ".$conf->entity;
+	$sql.= " WHERE p.entity IN (".getEntity('project').")";
 	$sql.= " AND p.fk_opp_status = cls.rowid";
 	$sql.= " AND p.fk_statut = 1";     // Opend projects only
 	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";
@@ -48,10 +48,10 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $db->free($resql);
 
 	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
-	    
+
+		print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
-	    $var=true;
 	    $listofstatus=array_keys($listofoppstatus);
 	    foreach ($listofstatus as $status)
 	    {
@@ -64,10 +64,10 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        //$labelstatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
 	        //$labelstatus .= ' - '.price2num($listofoppstatus[$status]).'%';
 
-	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
+	        $dataseries[]=array($labelstatus, (isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-	            
+
 	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
@@ -76,9 +76,19 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    }
 	    if ($conf->use_javascript_ajax)
 	    {
-	        print '<tr class="impair"><td align="center" colspan="2">';
-   	        $data=array('series'=>$dataseries);
-   	        dol_print_graph('stats',360,180,$data,1,'pie',0,'',0,$totaloppnb?0:1);
+	        print '<tr><td align="center" colspan="2">';
+
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+	        $dolgraph = new DolGraph();
+	        $dolgraph->SetData($dataseries);
+	        $dolgraph->setShowLegend(1);
+	        $dolgraph->setShowPercent(1);
+	        $dolgraph->SetType(array('pie'));
+	        $dolgraph->setWidth('100%');
+	        $dolgraph->SetHeight(180);
+	        $dolgraph->draw('idgraphstatus');
+	        print $dolgraph->show($totaloppnb?0:1);
+
 	        print '</td></tr>';
 	    }
 	    //if ($totalinprocess != $total)
@@ -88,7 +98,10 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    //print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
 	    print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
 	    print '</td><td align="right">'.price(price2num($ponderated_opp_amount,'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
-	    print "</table><br>";
+	    print "</table>";
+	    print "</div>";
+
+	    print "<br>";
 	}
 	else
 	{

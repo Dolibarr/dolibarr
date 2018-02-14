@@ -53,10 +53,10 @@ AdminLogin=Início de sessão para o administrador da base de dados Dolibarr. De
 PasswordAgain=Contrassenha
 AdminPassword=A senha para o utilizador da base de dados Dolibarr.
 CreateDatabase=Criar base de dados
-CreateUser=Create owner or grant him permission on database
+CreateUser=Crie o proprietário ou conceda-lhe permissão na base de dados
 DatabaseSuperUserAccess=Servidor da Base de Dados - Acesso de Administrador
 CheckToCreateDatabase=Marque a caixa se a base de dados não existir e se deverá ser criada. <br> Neste caso, deve preencher o nome/senha para a conta de administrador, no fim desta página.
-CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
+CheckToCreateUser=Selecione se o proprietário da base de dados não existir e deve ser criado, ou se ele existe mas a base de dados não existe e as permissões devem ser concedidas.<br>Neste caso, você deve escolher seu nome de utilizador e palavra-passe e também preencher o nome de utilizador/palavra-passe para a conta do super-utilizador na parte inferior desta página. Se esta caixa estiver desmarcada, a base de dados do proprietário deve existir e deve ser possível ter acesso a esta.
 DatabaseRootLoginDescription=Início de sessão do utilizador autorizado para criar as novas bases de dados ou novos utilizadores, obrigatório se a sua base de dados ou o administrador já existirem.
 KeepEmptyIfNoPassword=Deixar em branco se o utilizador não tiver uma senha (evitar isto)
 SaveConfigurationFile=Guardar valores
@@ -139,23 +139,25 @@ KeepDefaultValuesDeb=Você pode usar o assistente de configuração Dolibarr de 
 KeepDefaultValuesMamp=Você usa o DoliMamp Setup Wizard, para valores propostos aqui já estão otimizados. Alterá-los apenas se souber o que você faz.
 KeepDefaultValuesProxmox=Você usa o assistente de configuração Dolibarr de um appliance virtual Proxmox, para valores propostos aqui já são otimizados. Alterá-los apenas se você sabe o que fazer.
 UpgradeExternalModule=Corra o processo de atualização dedicado dos módulos externos
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nada para limpar/eliminar
+NothingToDo=Nada para fazer
 #########
 # upgrade
 MigrationFixData=Correção para os dados não normalizados
 MigrationOrder=Migração de dados para os clientes "ordens
 MigrationSupplierOrder=Migração de dados de Fornecedores' ordens
 MigrationProposal=Data migrering for kommersielle forslag
-MigrationInvoice=Migração de dados para os clientes "facturas
+MigrationInvoice=Migração de dados para as faturas dos clientes
 MigrationContract=Migração de dados para os contratos
 MigrationSuccessfullUpdate=Atualização bem sucedida
 MigrationUpdateFailed=Falha do processo de atualização
 MigrationRelationshipTables=Migração de dados para tabelas de relacionamento (%s)
 MigrationPaymentsUpdate=Pagamento correção de dados
-MigrationPaymentsNumberToUpdate=%s pagamento (s) para atualizar
-MigrationProcessPaymentUpdate=Atualização pagamento (s) %s
+MigrationPaymentsNumberToUpdate=%s pagamento(s) por atualizar
+MigrationProcessPaymentUpdate=Atualizar o(s) pagamento(s) %s
 MigrationPaymentsNothingToUpdate=Não há mais coisas para fazer
-MigrationPaymentsNothingUpdatable=Não há mais pagamentos que podem ser corrigidos
+MigrationPaymentsNothingUpdatable=Não existem mais pagamentos que possam ser corrigidos
 MigrationContractsUpdate=Contrato correcção de dados
 MigrationContractsNumberToUpdate=%s contrato (s) para atualizar
 MigrationContractsLineCreation=Criar uma linha de contrato contrato ref %s
@@ -191,9 +193,11 @@ MigrationActioncommElement=Atualizar os dados nas ações
 MigrationPaymentMode=A migração de dados para o modo de pagamento
 MigrationCategorieAssociation=Migração de categorias
 MigrationEvents=Migração dos eventos de forma a adicionar o criador do evento à tabela de atribuições
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Atualize o valor do campo entity da tabela llx_societe_remise
 MigrationRemiseExceptEntity=Atualize o valor do campo entity da tabela llx_societe_remise_except
 MigrationReloadModule=Recarregar módulo %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Mostrar opções indisponíveis
 HideNotAvailableOptions=Ocultar opções indisponíveis
 ErrorFoundDuringMigration=Não pode proceder ao próximo passo porque foram reportados erros durante o processo de migração. Para ignorar os erros, pode <a href="%s">clicar aqui</a>, mas a aplicação ou algumas funcionalidades desta poderão não funcionar corretamente.

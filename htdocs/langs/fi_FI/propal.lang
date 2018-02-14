@@ -4,7 +4,6 @@ Proposal=Tarjous
 ProposalShort=Tarjous
 ProposalsDraft=Tarjousluonnos
 ProposalsOpened=Open commercial proposals
-Prop=Tarjoukset
 CommercialProposal=Tarjous
 PdfCommercialProposalTitle=Tarjous
 ProposalCard=Tarjous kortti
@@ -64,6 +63,7 @@ ProposalLine=Tarjousrivi
 AvailabilityPeriod=Saatavuus viive
 SetAvailability=Aseta saatavuus viive
 AfterOrder=tilauksesta
+OtherProposals=Muut ehdotukset
 ##### Availability #####
 AvailabilityTypeAV_NOW=Välitön
 AvailabilityTypeAV_1W=1 viikko

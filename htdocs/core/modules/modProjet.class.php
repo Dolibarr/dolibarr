@@ -188,7 +188,7 @@ class modProjet extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 142; // id de la permission
-		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for)"; // libelle de la permission
+		$this->rights[$r][1] = "Create/modify all projects and tasks (also private projects I am not contact for). Can also enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'all';
@@ -264,7 +264,7 @@ class modProjet extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' WHERE p.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=" WHERE p.entity IN (".getEntity('project').")";
 
 
 		// Import list of tasks

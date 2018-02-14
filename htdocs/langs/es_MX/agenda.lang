@@ -36,9 +36,6 @@ SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por correo electróni
 ShippingSentByEMail=Envío %s enviado por correo electrónico
 ShippingValidated=Envío %s validado
 InterventionSentByEMail=Intervención %s enviada por correo electrónico
-PRODUCT_CREATEInDolibarr=Producto %s creado
-PRODUCT_MODIFYInDolibarr=Producto %s modificado
-PRODUCT_DELETEInDolibarr=Producto %s eliminado
 DateActionEnd=Fecha de finalización
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.

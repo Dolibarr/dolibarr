@@ -30,9 +30,9 @@ create table llx_commandedet
   description					text,
   vat_src_code					varchar(10)  DEFAULT '',		 -- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx						double(6,3),	                 -- Vat rate
-  localtax1_tx               	double(6,3)  DEFAULT 0,    		 -- localtax1 rate
-  localtax1_type			 	varchar(10)	  	 NULL, 			 -- localtax1 type
-  localtax2_tx               	double(6,3)  DEFAULT 0,    		 -- localtax2 rate
+  localtax1_tx					double(6,3)  DEFAULT 0,			 -- localtax1 rate
+  localtax1_type			 	varchar(10)  NULL, 				 -- localtax1 type
+  localtax2_tx					double(6,3)  DEFAULT 0,			 -- localtax2 rate
   localtax2_type			 	varchar(10)	  	 NULL, 			 -- localtax2 type
   qty							real,                            -- quantity
   remise_percent				real         DEFAULT 0,          -- pourcentage de remise
@@ -45,7 +45,7 @@ create table llx_commandedet
   total_localtax1				double(24,8) DEFAULT 0,          -- Total LocalTax1 
   total_localtax2				double(24,8) DEFAULT 0,          -- Total LocalTax2
   total_ttc						double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  product_type					integer      DEFAULT 0,
+  product_type					integer      DEFAULT 0,          -- 0 or 1. Value 9 may be used by some modules (amount of line may not be included into generated discount if value is 9).
   date_start					datetime     DEFAULT NULL,       -- date debut si service
   date_end						datetime     DEFAULT NULL,       -- date fin si service
   info_bits						integer      DEFAULT 0,          -- TVA NPR ou non
@@ -53,19 +53,19 @@ create table llx_commandedet
   buy_price_ht					double(24,8) DEFAULT 0,          -- buying price
   fk_product_fournisseur_price	integer      DEFAULT NULL,       -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
   
-  special_code					integer      DEFAULT 0,      -- code pour les lignes speciales
+  special_code					integer      DEFAULT 0,          -- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
   rang							integer      DEFAULT 0,
-  fk_unit            integer      DEFAULT NULL,           -- lien vers table des unités
+  fk_unit						integer      DEFAULT NULL,       -- lien vers table des unités
   import_key					varchar(14),
   
-  fk_commandefourndet			integer DEFAULT NULL,       -- link to detail line of commande fourn (resplenish)
+  fk_commandefourndet			integer DEFAULT NULL,            -- link to detail line of commande fourn (resplenish)
   
-  fk_multicurrency		integer,
+  fk_multicurrency				integer,
   multicurrency_code			varchar(255),
   multicurrency_subprice		double(24,8) DEFAULT 0,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
-  multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0
+  multicurrency_total_tva		double(24,8) DEFAULT 0,
+  multicurrency_total_ttc		double(24,8) DEFAULT 0
 )ENGINE=innodb;
 
 -- 

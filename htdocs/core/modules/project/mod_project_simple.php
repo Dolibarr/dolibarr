@@ -75,7 +75,7 @@ class mod_project_simple extends ModeleNumRefProjects
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
         if ($resql)
@@ -111,7 +111,7 @@ class mod_project_simple extends ModeleNumRefProjects
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
 		$resql=$db->query($sql);

@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=Supplier order %s received %s
 SupplierOrderSubmitedInDolibarr=Supplier order %s submited
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=Övriga beställningar
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representanten följa upp kundorder
 TypeContact_commande_internal_SHIPPING=Representanten uppföljning sjöfart
@@ -151,5 +152,7 @@ OrderCreated=Din order har skapats
 OrderFail=Ett fel inträffade under din order skapande
 CreateOrders=Skapa order
 ToBillSeveralOrderSelectCustomer=För att skapa en faktura för flera ordrar, klicka först på kunden och välj sedan "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

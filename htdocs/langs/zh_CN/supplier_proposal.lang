@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=供应商商业报价
 supplier_proposalDESC=管理供应商询价申请
-SupplierProposalNew=新建申请
+SupplierProposalNew=新建询价申请
 CommRequest=询价申请
 CommRequests=询价申请
 SearchRequest=搜索申请

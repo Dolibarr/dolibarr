@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=بروتوكول نقل الملفات العملاء الإعداد وحدة
-NewFTPClient=جديد الإعداد بروتوكول نقل الملفات الصدد
-FTPArea=بروتوكول نقل الملفات المنطقة
-FTPAreaDesc=هذه الشاشة تظهر لك المحتوى من وجهة نظر خادم بروتوكول نقل الملفات
-SetupOfFTPClientModuleNotComplete=إعداد وحدة من بروتوكول نقل الملفات العملاء ويبدو أن عدم اكتمال
-FTPFeatureNotSupportedByYourPHP=الخاص بي لا يدعم وظائف بروتوكول نقل الملفات
-FailedToConnectToFTPServer=فشل الاتصال بخادم بروتوكول نقل الملفات (%s الخادم ، %s منفذ)
-FailedToConnectToFTPServerWithCredentials=فشل في تسجيل الدخول إلى خادم بروتوكول نقل الملفات مع تعريف الدخول / كلمة المرور
-FTPFailedToRemoveFile=فشل لإزالة <b>%s</b> الملف.
-FTPFailedToRemoveDir=فشل لإزالة <b>%s</b> الدليل (راجع الأذونات وهذا الدليل فارغ).
+FTPClientSetup=إعداد نموذج عميل بروتوكول نقل الملفات
+NewFTPClient=إعداد إتصال بروتوكول نقل الملفات جديد 
+FTPArea=منطقة بروتوكول نقل الملفات 
+FTPAreaDesc=هذه الشاشة تظهر لك المحتوى محتوى خادم بروتوكول نقل الملفات
+SetupOfFTPClientModuleNotComplete=إعداد نموذج عميل بروتوكول نقل الملفات يبدو أنة غير مكتمل
+FTPFeatureNotSupportedByYourPHP=بي اتش بي الخاص بك لا يدعم وظائف بروتوكول نقل الملفات
+FailedToConnectToFTPServer=فشل الاتصال بخادم بروتوكول نقل الملفات ( الخادم%s ، منفذ%s)
+FailedToConnectToFTPServerWithCredentials=فشل في تسجيل الدخول إلى خادم بروتوكول نقل الملفات مع تعريف الدخول / كلمة المرور المحددة
+FTPFailedToRemoveFile=فشل لإزالة الملف <b>%s</b> .
+FTPFailedToRemoveDir=فشل إزالة المسار <b>%s</b> (راجع الأذونات وهذا المسار فارغ).
 FTPPassiveMode=الوضع السلبي
-ChooseAFTPEntryIntoMenu=اختيار دخول FTP إلى القائمة ...
-FailedToGetFile=فشل في الحصول على الملفات٪ الصورة
+ChooseAFTPEntryIntoMenu=اختيار مدخل بروتوكول نقل البيانات في القائمة ...
+FailedToGetFile=فشل في الحصول على الملفات %s

@@ -45,7 +45,7 @@ $langs->load('orders');
 $langs->load('commercial');
 
 $action	= GETPOST('action','aZ09');
-$cancelbutton = GETPOST('cancel');
+$cancelbutton = GETPOST('cancel','alpha');
 
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
@@ -101,6 +101,16 @@ if (empty($reshook))
 		$result=$object->setPaymentMethods(GETPOST('mode_reglement_supplier_id','int'));
 		if ($result < 0) dol_print_error($db,$object->error);
 	}
+	
+	// update supplier order min amount
+	if ($action == 'setsupplier_order_min_amount')
+	{
+		$object->fetch($id);
+		$object->supplier_order_min_amount=GETPOST('supplier_order_min_amount');
+		$result=$object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
 	if ($action == 'update_extras') {
         $object->fetch($id);
 
@@ -147,7 +157,7 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -245,6 +255,16 @@ if ($object->id > 0)
 	}
 	print "</td>";
 	print '</tr>';
+	
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("OrderMinAmount",'supplier_order_min_amount',$object->supplier_order_min_amount,$object,$user->rights->societe->creer);
+	print '</td><td>';
+	$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
+	print $form->editfieldval("OrderMinAmount",'supplier_order_min_amount',$object->supplier_order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->supplier_order_min_amount != '' ? price($object->supplier_order_min_amount) : ''));
+	
+	print '</td>';
+	print '</tr>';
 
 	// Categories
 	if (! empty($conf->categorie->enabled))
@@ -305,7 +325,7 @@ if ($object->id > 0)
 	    $outstandingTotal=$tmp['total_ht'];
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 	    $text=$langs->trans("OverAllSupplierProposals");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -323,7 +343,7 @@ if ($object->id > 0)
 	    $outstandingTotal=$tmp['total_ht'];
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 	    $text=$langs->trans("OverAllOrders");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -341,7 +361,7 @@ if ($object->id > 0)
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 
 	    $text=$langs->trans("OverAllInvoices");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -408,7 +428,7 @@ if ($object->id > 0)
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre'.(($num == 0) ? ' nobottom':'').'">';
         print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-        print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductServicePrices").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
+        print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductReferencesOfSupplier").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
         print '</a></td></tr>';
 
 		$return = array();
@@ -586,7 +606,7 @@ if ($object->id > 0)
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a class="notasortlink" href="commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
+    			print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
@@ -794,7 +814,7 @@ if ($object->id > 0)
 	print '</div>';
 
 
-	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+	if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD))
 	{
     	print '<br>';
     	// List of contacts

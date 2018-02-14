@@ -58,7 +58,8 @@ if ($action == 'setmainoptions')
 	if (GETPOST('PROJECT_USE_OPPORTUNITIES')) dolibarr_set_const($db, "PROJECT_USE_OPPORTUNITIES",GETPOST('PROJECT_USE_OPPORTUNITIES'),'chaine',0,'',$conf->entity);
 	else dolibarr_del_const($db, "PROJECT_USE_OPPORTUNITIES", $conf->entity);
 
-	if (GETPOST('PROJECT_USE_TASKS')) dolibarr_del_const($db, "PROJECT_HIDE_TASKS", $conf->entity);
+	// Warning, the constant saved and used in code is PROJECT_HIDE_TASKS
+	if (GETPOST('PROJECT_USE_TASKS')) dolibarr_del_const($db, "PROJECT_USE_TASKS", $conf->entity);
 	else dolibarr_set_const($db, "PROJECT_HIDE_TASKS",1,'chaine',0,'',$conf->entity);
 }
 
@@ -273,6 +274,12 @@ elseif ($action == 'updateoptions')
 			$conf->global->PROJECT_USE_SEARCH_TO_SELECT = $companysearch;
 		}
 	}
+}
+else if ($action == "linkOtherCompany")
+{
+	$projectToSelect = GETPOST('projectToSelect');
+
+	dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity);	//Allow to disable this configuration if empty value
 }
 
 
@@ -912,16 +919,16 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
-print '<td align="center" width="300">';
-echo ajax_constantonoff('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY');
+print '<td align="right" width="60" colspan="2">';
+print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
+print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
+print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '</tr>';
 
-print '</table></form>';
+print '</table>';
 
 
-
+print '</form>';
 
 llxFooter();
 $db->close();

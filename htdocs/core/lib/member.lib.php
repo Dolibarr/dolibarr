@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2016  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,8 @@ function member_prepare_head(Adherent $object)
 	$head[$h][2] = 'general';
 	$h++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{
 		$langs->load("ldap");
 
@@ -100,7 +102,7 @@ function member_prepare_head(Adherent $object)
 	    $head[$h][2] = 'agenda';
 	    $h++;
 	}
-	
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'member','remove');
 
 	return $head;
@@ -123,6 +125,17 @@ function member_type_prepare_head(AdherentType $object)
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
+
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
+	{
+		$langs->load("ldap");
+
+		$head[$h][0] = DOL_URL_ROOT.'/adherents/type_ldap.php?rowid='.$object->id;
+		$head[$h][1] = $langs->trans("LDAPCard");
+		$head[$h][2] = 'ldap';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
@@ -152,6 +165,11 @@ function member_admin_prepare_head()
     $head[$h][2] = 'general';
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_emails.php';
+    $head[$h][1] = $langs->trans("EMails");
+    $head[$h][2] = 'emails';
+    $h++;
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -168,9 +186,9 @@ function member_admin_prepare_head()
     $head[$h][2] = 'attributes_type';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/public.php';
+    $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/website.php';
     $head[$h][1] = $langs->trans("BlankSubscriptionForm");
-    $head[$h][2] = 'public';
+    $head[$h][2] = 'website';
     $h++;
 
     complete_head_from_modules($conf,$langs,'',$head,$h,'member_admin','remove');

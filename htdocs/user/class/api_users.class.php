@@ -63,7 +63,7 @@ class Users extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of User objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0, $sqlfilters = '') {
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '') {
 	    global $db, $conf;
 
 	    $obj_ret = array();
@@ -216,10 +216,14 @@ class Users extends DolibarrApi
 		    $this->useraccount->$field = $value;
 		}
 
-		if ($this->useraccount->update(DolibarrApiAccess::$user, 1))
+		if ($this->useraccount->update(DolibarrApiAccess::$user) > 0)
+		{
 			return $this->get($id);
-
-        return false;
+		}
+		else
+		{
+			throw new RestException(500, $this->useraccount->error);
+		}
     }
 
     /**
@@ -285,7 +289,8 @@ class Users extends DolibarrApi
 	 * @param   object  $object    Object to clean
 	 * @return    array    Array of cleaned object properties
 	 */
-	function _cleanObjectDatas($object) {
+	function _cleanObjectDatas($object)
+	{
 		global $conf;
 
 	    $object = parent::_cleanObjectDatas($object);
@@ -299,6 +304,7 @@ class Users extends DolibarrApi
 	    unset($object->total_localtax1);
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
+
 	    unset($object->libelle_incoterms);
 	    unset($object->location_incoterms);
 
@@ -309,6 +315,7 @@ class Users extends DolibarrApi
 	    unset($object->nb_rights);
 	    unset($object->search_sid);
 	    unset($object->ldap_sid);
+	    unset($object->clicktodial_loaded);
 
 	    // List of properties never returned by API, whatever are permissions
 	    unset($object->pass);

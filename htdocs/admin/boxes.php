@@ -248,10 +248,8 @@ if ($resql)
 	// Check record to know if we must recalculate sort order
 	$i = 0;
 	$decalage=0;
-	$var=false;
 	while ($i < $num)
 	{
-		$var = ! $var;
 		$obj = $db->fetch_object($resql);
 		$boxes[$obj->position][$obj->box_id]=1;
 		$i++;
@@ -321,6 +319,8 @@ if ($resql)
 
 // Available boxes to activate
 $boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
+// Activated boxes
+$boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 
 print "<br>\n";
 print "\n\n".'<!-- Boxes Available -->'."\n";
@@ -339,11 +339,9 @@ print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
 print '<td width="160" align="center">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
-$var=true;
+
 foreach($boxtoadd as $box)
 {
-
-
     if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
     {
         $logo = $box->boximg;
@@ -376,7 +374,10 @@ foreach($boxtoadd as $box)
 
     print '</tr>'."\n";
 }
-
+if (! count($boxtoadd) && count($boxactivated))
+{
+	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("AllWidgetsWereEnabled").'</td></tr>';
+}
 print '</table>'."\n";
 print '</div>';
 
@@ -387,8 +388,6 @@ print '</form>';
 print "\n".'<!-- End Boxes Available -->'."\n";
 
 
-// Activated boxes
-$boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 //var_dump($boxactivated);
 print "<br>\n\n";
 print load_fiche_titre($langs->trans("BoxesActivated"));
@@ -404,13 +403,10 @@ print '<td align="center" width="60" colspan="2">'.$langs->trans("PositionByDefa
 print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
 print '</tr>'."\n";
 
-$var=true;
 $box_order=1;
 $foundrupture=1;
 foreach($boxactivated as $key => $box)
 {
-    $var = ! $var;
-
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
 	{
 		$logo = $box->boximg;
@@ -462,7 +458,6 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addconst">';
 print '<table class="noborder" width="100%">';
 
-$var=false;
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';

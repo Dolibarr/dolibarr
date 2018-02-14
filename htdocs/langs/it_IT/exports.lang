@@ -117,9 +117,9 @@ ImportFromToLine=Import line numbers (from - to)
 SetThisValueTo2ToExcludeFirstLine=Per esempio: imposta questo valore a 3 per escludere le prime 2 righe
 KeepEmptyToGoToEndOfFile=Lascia il campo vuoto per andare alla fine del file
 SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for update attempt
-UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
+UpdateNotYetSupportedForThisImport=Il caricamento non è supportato per questo tipo di importazione (solo inserimento)
 NoUpdateAttempt=No update attempt was performed, only insert
-ImportDataset_user_1=Users (employees or not) and properties
+ImportDataset_user_1=Untenti (dipendenti o no) e proprietà
 ComputedField=Computed field
 ## filters
 SelectFilterFields=Se vuoi filtrare su qualche valore, inserisci qui il valore.

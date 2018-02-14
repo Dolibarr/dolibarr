@@ -79,7 +79,8 @@ $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','globalcard'));
+$contextpage=array('usercard','userihm','globalcard');
+$hookmanager->initHooks($contextpage);
 
 
 /*
@@ -188,9 +189,9 @@ if ($action == 'edit')
 	if ($user->rights->user->user->lire || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	}
-    
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
+
     if (! empty($conf->use_javascript_ajax))
     {/*
         print '<script type="text/javascript" language="javascript">
@@ -204,7 +205,7 @@ if ($action == 'edit')
     		});
     	});
     	</script>';*/
-    }	
+    }
     if (! empty($conf->use_javascript_ajax))
     {
         print '<script type="text/javascript" language="javascript">
@@ -213,16 +214,16 @@ if ($action == 'edit')
         	{
         		if (jQuery("#check_MAIN_LANDING_PAGE").prop("checked")) { jQuery("#MAIN_LANDING_PAGE").removeAttr(\'disabled\'); }
         		else { jQuery("#MAIN_LANDING_PAGE").attr(\'disabled\',\'disabled\'); }
-            
+
                 if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
         		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
-        		
+
                 if (jQuery("#check_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#main_size_liste_limit").removeAttr(\'disabled\'); }
         		else { jQuery("#main_size_liste_limit").attr(\'disabled\',\'disabled\'); }
-        		
+
                 if (jQuery("#check_MAIN_THEME").prop("checked")) { jQuery(".themethumbs").removeAttr(\'disabled\'); }
         		else { jQuery(".themethumbs").attr(\'disabled\',\'disabled\'); }
-            
+
                 if (jQuery("#check_THEME_ELDY_TOPMENU_BACK1").prop("checked")) { jQuery("#colorpickerTHEME_ELDY_TOPMENU_BACK1").removeAttr(\'disabled\'); }
         		else { jQuery("#colorpickerTHEME_ELDY_TOPMENU_BACK1").attr(\'disabled\',\'disabled\'); }
             }
@@ -236,7 +237,7 @@ if ($action == 'edit')
         });
         </script>';
     }
-	
+
 
     clearstatcache();
     $var=true;
@@ -245,7 +246,7 @@ if ($action == 'edit')
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
@@ -257,9 +258,9 @@ if ($action == 'edit')
     print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
     //print info_admin($langs->trans("WarningYouMayLooseAccess"), 0, 0, 0);
     print '</td></tr>';
-    
+
     // Langue par defaut
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
@@ -274,7 +275,7 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Taille max des listes
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
@@ -300,18 +301,18 @@ if ($action == 'edit')
 else
 {
     dol_fiche_head($head, 'guisetup', $title, -1, 'user');
-    
+
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-    
+
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
+
     $var=true;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
@@ -327,9 +328,9 @@ else
     else print $object->conf->MAIN_LANDING_PAGE;
     //print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
     print '</td></tr>';
-    
+
     // Language
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
@@ -343,7 +344,7 @@ else
     print (isset($object->conf->MAIN_LANG_DEFAULT) && $object->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):(! empty($object->conf->MAIN_LANG_DEFAULT)?$langs->trans("Language_".$object->conf->MAIN_LANG_DEFAULT):''));
     print '</td></tr>';
 
-    
+
     print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';

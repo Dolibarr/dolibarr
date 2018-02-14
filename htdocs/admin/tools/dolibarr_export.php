@@ -214,10 +214,13 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 
 			</div>
 
+			<?php if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) { ?>
 			<div class="formelementrow"><input type="checkbox" name="disable_fk"
 				value="yes" id="checkbox_disable_fk" checked /> <label
 				for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
 			</div>
+			<?php } ?>
+
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 
 			<select name="sql_compat" id="select_sql_compat" class="flat">
@@ -286,11 +289,12 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
                                         for="checkbox_use_transaction"> <?php echo $langs->trans("UseTransactionnalMode"); ?></label>
 
                                 </div>
-
+								<?php if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) { ?>
                                 <div class="formelementrow"><input type="checkbox" name="nobin_disable_fk"
                                         value="yes" id="checkbox_disable_fk" checked /> <label
                                         for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
                                 </div>
+								<?php } ?>
                             </fieldset>
 
                             <br>
@@ -458,6 +462,19 @@ if (! empty($_SESSION["commandbackuplastdone"]))
     // Now run command and show result
     print '<b>'.$langs->trans("BackupResult").':</b> ';
 	print $_SESSION["commandbackupresult"];
+
+	$_SESSION["commandbackuplastdone"]='';
+	$_SESSION["commandbackuptorun"]='';
+	$_SESSION["commandbackupresult"]='';
+}
+if (! empty($_SESSION["commandbackuptorun"]))
+{
+	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user).':</font><br>'."\n";
+	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
+	print ajax_autoselect("commandbackuptoruntext", 0);
+	print '<br>';
+
+	//print $paramclear;
 
 	$_SESSION["commandbackuplastdone"]='';
 	$_SESSION["commandbackuptorun"]='';

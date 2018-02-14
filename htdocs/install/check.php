@@ -365,7 +365,7 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
-        print '<br /><br />';
+        print '<br><br>';
 
 		$foundrecommandedchoice=0;
 
@@ -421,10 +421,12 @@ else
 								array('from'=>'3.5.0', 'to'=>'3.6.0'),
 								array('from'=>'3.6.0', 'to'=>'3.7.0'),
 								array('from'=>'3.7.0', 'to'=>'3.8.0'),
-		                        array('from'=>'3.8.0', 'to'=>'3.9.0'),
-		                        array('from'=>'3.9.0', 'to'=>'4.0.0'),
-		                        array('from'=>'4.0.0', 'to'=>'5.0.0'),
-		                        array('from'=>'5.0.0', 'to'=>'6.0.0')
+								array('from'=>'3.8.0', 'to'=>'3.9.0'),
+								array('from'=>'3.9.0', 'to'=>'4.0.0'),
+								array('from'=>'4.0.0', 'to'=>'5.0.0'),
+								array('from'=>'5.0.0', 'to'=>'6.0.0'),
+								array('from'=>'6.0.0', 'to'=>'7.0.0'),
+								array('from'=>'7.0.0', 'to'=>'8.0.0')
 		);
 
 		$count=0;
@@ -533,13 +535,13 @@ else
 
         if (count($notavailable_choices)) {
 
-            print '<br />';
+            print '<br>';
             print '<div id="AShowChoices">';
             print '<img src="../theme/eldy/img/1downarrow.png"> <a href="#">'.$langs->trans('ShowNotAvailableOptions').'</a>';
             print '</div>';
 
             print '<div id="navail_choices" style="display:none">';
-            print '<br />';
+            print '<br>';
             print '<table width="100%" class="listofchoices">';
             foreach ($notavailable_choices as $choice) {
                 print $choice;

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
@@ -118,26 +119,30 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
-	$var = true;
 	$i = 0;
 
 	while ($i < $num && $i < $max)
 	{
 		$obj = $db->fetch_object($resql);
-		
+
+		$fuserstatic->id = $obj->rowid;
+		$fuserstatic->statut = $obj->statut;
+		$fuserstatic->lastname = $obj->lastname;
+		$fuserstatic->firstname = $obj->firstname;
+		$fuserstatic->login = $obj->login;
+		$fuserstatic->photo = $obj->photo;
+		$fuserstatic->admin = $obj->admin;
+		$fuserstatic->email = $obj->email;
+		$fuserstatic->skype = $obj->skype;
+		$fuserstatic->societe_id = $obj->fk_soc;
+
+		$companystatic->id=$obj->fk_soc;
+		$companystatic->name=$obj->name;
+		$companystatic->code_client = $obj->code_client;
+		$companystatic->canvas=$obj->canvas;
 
 		print '<tr class="oddeven">';
 		print '<td>';
-        $fuserstatic->id = $obj->rowid;
-        $fuserstatic->statut = $obj->statut;
-        $fuserstatic->lastname = $obj->lastname;
-        $fuserstatic->firstname = $obj->firstname;
-        $fuserstatic->login = $obj->login;
-        $fuserstatic->photo = $obj->photo;
-        $fuserstatic->admin = $obj->admin;
-        $fuserstatic->email = $obj->email;
-        $fuserstatic->skype = $obj->skype;
-        $fuserstatic->societe_id = $obj->fk_soc;
         print $fuserstatic->getNomUrl(-1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
@@ -152,10 +157,6 @@ if ($resql)
 		print "<td>";
 		if ($obj->fk_soc)
 		{
-			$companystatic->id=$obj->fk_soc;
-            $companystatic->name=$obj->name;
-            $companystatic->code_client = $obj->code_client;
-            $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
 		else
@@ -231,16 +232,21 @@ if ($canreadperms)
 		$num = $db->num_rows($resql);
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
-		$var = true;
 		$i = 0;
+
+		$grouptemp = new UserGroup($db);
 
 		while ($i < $num && (! $max || $i < $max))
 		{
 			$obj = $db->fetch_object($resql);
-			
+
+			$grouptemp->id = $obj->rowid;
+			$grouptemp->name = $obj->name;
+			$grouptemp->note = $obj->note;
 
 			print '<tr class="oddeven">';
-			print '<td><a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
+			print '<td>';
+			print $grouptemp->getNomUrl(1);
 			if (! $obj->entity)
 			{
 				print img_picto($langs->trans("GlobalGroup"),'redstar');

@@ -71,12 +71,14 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id > 0 || $ref)
 {
-  	if ($object->fetch($prev_id, $ref) == 0)
+  	if ($object->fetch($prev_id, $ref) >= 0)
     {
     	$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';

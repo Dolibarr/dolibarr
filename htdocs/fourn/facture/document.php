@@ -92,10 +92,10 @@ if ($object->id > 0)
 {
 	$head = facturefourn_prepare_head($object);
 	dol_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'bill');
-    
+
 	$totalpaye = $object->getSommePaiement();
 
-    $linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
     $morehtmlref='<div class="refidno">';
     // Ref supplier
@@ -233,7 +233,7 @@ if ($object->id > 0)
 	print '</table><br>';
 
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border" width="100%">';
 
 	// Nb of files
@@ -243,9 +243,11 @@ if ($object->id > 0)
 
 	print '</table>';
 	print '</div>';
-	
+
+	print '<div class="clearboth"></div>';
+
 	dol_fiche_end();
-	
+
 
 	$modulepart = 'facture_fournisseur';
 	$permission = $user->rights->fournisseur->facture->creer;
