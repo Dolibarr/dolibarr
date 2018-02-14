@@ -1311,7 +1311,17 @@ class pdf_einstein extends ModelePDFCommandes
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			$carac_emetteur='';
+		 	// Add internal contact of proposal if defined
+			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+		 	if (count($arrayidcontact) > 0)
+		 	{
+		 		$object->fetch_user($arrayidcontact[0]);
+		 		$labelbeforecontactname=($outputlangs->transnoentities("FromContactName")!='FromContactName'?$outputlangs->transnoentities("FromContactName"):$outputlangs->transnoentities("Name"));
+		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+		 	}
+
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
 			$posy=42+$top_shift;
