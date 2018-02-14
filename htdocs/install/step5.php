@@ -165,6 +165,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         if ($db->connected)
         {
             $conf->setValues($db);
+            // Reset forced setup after the setValues
+            if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+            $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
             // Create admin user
             include_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
@@ -298,6 +301,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         if ($db->connected)
         {
             $conf->setValues($db);
+            // Reset forced setup after the setValues
+            if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+            $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
             // Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
             $tagdatabase=false;
