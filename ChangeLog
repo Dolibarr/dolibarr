@@ -287,7 +287,9 @@ Following changes may create regression for some external modules, but were nece
   exists, but if an external module need action on it, it must provides itself its trigger file.
 * Use $conf->global->MULTICOMPANY_TRANSVERSE_MODE instead $conf->multicompany->transverse_mode. So, if you set var
   $multicompany_transverse_mode to 1 into your conf file, you must remove this line and a new key into 
-  the Home - setup - other admin page. 
+  the Home - setup - other admin page.
+* If you use Multicompany transverse mode, it will be necessary to check the activation of the modules in the children
+  entities and to review completely the rights of the groups and the users.
 * Use getEntity('xxx') instead getEntity('xxx', 1) and use getEntity('xxx', 0) instead getEntity('xxx')
 * Some other change were done in the way we read permission of a user when module multicompany is enabled. You can 
   retreive the old behavior by adding constant MULTICOMPANY_BACKWARD_COMPATIBILITY to 1.
