@@ -96,7 +96,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		$object->label			= trim($label);
 		$object->subscription	= (int) trim($subscription);
 		$object->note			= trim($comment);
-		$object->mail_valid		= $db->escape(trim($mail_valid));
+		$object->mail_valid		= trim($mail_valid);
 		$object->vote			= (boolean) trim($vote);
 
 		// Fill array 'array_options' with data from add form
