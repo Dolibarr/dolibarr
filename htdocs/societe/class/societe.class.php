@@ -1661,13 +1661,14 @@ class Societe extends CommonObject
 	/**
 	 *    	Add a discount for third party
 	 *
-	 *    	@param	float	$remise     Amount of discount
-	 *    	@param  User	$user       User adding discount
-	 *    	@param  string	$desc		Reason of discount
-	 *      @param  float	$tva_tx     VAT rate
+	 *    	@param	float	$remise     	Amount of discount
+	 *    	@param  User	$user       	User adding discount
+	 *    	@param  string	$desc			Reason of discount
+	 *      @param  float	$tva_tx     	VAT rate
+	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *		@return	int					<0 if KO, id of discount record if OK
 	 */
-	function set_remise_except($remise, User $user, $desc, $tva_tx=0)
+	function set_remise_except($remise, User $user, $desc, $tva_tx=0, $discount_type=0)
 	{
 		global $langs;
 
@@ -1693,11 +1694,13 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
+			$discount->discount_type=$discount_type;
 			$discount->amount_ht=price2num($remise,'MT');
 			$discount->amount_tva=price2num($remise*$tva_tx/100,'MT');
 			$discount->amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
 			$discount->tva_tx=price2num($tva_tx,'MT');
 			$discount->description=$desc;
+
 			$result=$discount->create($user);
 			if ($result > 0)
 			{
@@ -1715,18 +1718,18 @@ class Societe extends CommonObject
 	/**
 	 *  Renvoie montant TTC des reductions/avoirs en cours disponibles de la societe
 	 *
-	 *	@param	User	$user		Filtre sur un user auteur des remises
-	 * 	@param	string	$filter		Filtre autre
-	 * 	@param	integer	$maxvalue	Filter on max value for discount
-	 * 	@param	string	$mode		'supplier' to get available discounts for suppliers, 'customer' instead
+	 *	@param	User	$user			Filtre sur un user auteur des remises
+	 * 	@param	string	$filter			Filtre autre
+	 * 	@param	integer	$maxvalue		Filter on max value for discount
+	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *	@return	int					<0 if KO, Credit note amount otherwise
 	 */
-	function getAvailableDiscounts($user='',$filter='',$maxvalue=0,$mode='customer')
+	function getAvailableDiscounts($user='',$filter='',$maxvalue=0,$discount_type=0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue,$mode);
+		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue,$discount_type);
 		if ($result >= 0)
 		{
 			return $result;

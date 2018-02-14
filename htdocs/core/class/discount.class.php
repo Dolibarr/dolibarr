@@ -34,6 +34,7 @@ class DiscountAbsolute
 
     public $id;					// Id discount
     public $fk_soc;
+    public $discount_type;			// 0 => customer discount, 1 => supplier discount
     public $amount_ht;				//
     public $amount_tva;			//
     public $amount_ttc;			//
@@ -76,7 +77,7 @@ class DiscountAbsolute
             return -1;
         }
 
-        $sql = "SELECT sr.rowid, sr.fk_soc,";
+        $sql = "SELECT sr.rowid, sr.fk_soc, sr.discount_type,";
         $sql.= " sr.fk_user,";
         $sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
         $sql.= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
@@ -101,6 +102,7 @@ class DiscountAbsolute
 
                 $this->id = $obj->rowid;
                 $this->fk_soc = $obj->fk_soc;
+                $this->discount_type = $obj->discount_type;
 
                 $this->amount_ht = $obj->amount_ht;
                 $this->amount_tva = $obj->amount_tva;
@@ -166,11 +168,11 @@ class DiscountAbsolute
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
-        $sql.= " (entity, datec, fk_soc, fk_user, description,";
+        $sql.= " (entity, datec, fk_soc, discount_type, fk_user, description,";
         $sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
         $sql.= " fk_facture_source, fk_invoice_supplier_source";
         $sql.= ")";
-        $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".$user->id.", '".$this->db->escape($this->description)."',";
+        $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type)?0:intval($this->discount_type)).", ".$user->id.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
         $sql.= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'":"null").",";
         $sql.= " ".($this->fk_invoice_supplier_source ? "'".$this->db->escape($this->fk_invoice_supplier_source)."'":"null");
@@ -202,7 +204,7 @@ class DiscountAbsolute
         global $conf, $langs;
 
         // Check if we can remove the discount
-        if ($this->fk_facture_source)  // TODO check
+        if ($this->fk_facture_source)
         {
             $sql="SELECT COUNT(rowid) as nb";
             $sql.=" FROM ".MAIN_DB_PREFIX."societe_remise_except";
@@ -228,15 +230,46 @@ class DiscountAbsolute
                 return -1;
             }
         }
+        
+        // Check if we can remove the discount
+        if ($this->fk_invoice_supplier_source)
+        {
+        	$sql="SELECT COUNT(rowid) as nb";
+        	$sql.=" FROM ".MAIN_DB_PREFIX."societe_remise_except";
+        	$sql.=" WHERE (fk_invoice_supplier_line IS NOT NULL";	// Not used as absolute simple discount
+        	$sql.=" OR fk_invoice_supplier IS NOT NULL)"; 			// Not used as credit note and not used as deposit
+        	$sql.=" AND fk_invoice_supplier_source = ".$this->fk_invoice_supplier_source;
+        	//$sql.=" AND rowid != ".$this->id;
+        	
+        	dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
+        	$resql=$this->db->query($sql);
+        	if ($resql)
+        	{
+        		$obj = $this->db->fetch_object($resql);
+        		if ($obj->nb > 0)
+        		{
+        			$this->error='ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved';
+        			return -2;
+        		}
+        	}
+        	else
+        	{
+        		dol_print_error($this->db);
+        		return -1;
+        	}
+        }
 
         $this->db->begin();
 
         // Delete but only if not used
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
         if ($this->fk_facture_source) $sql.= " WHERE fk_facture_source = ".$this->fk_facture_source;	// Delete all lines of same serie
+        elseif ($this->fk_invoice_supplier_source) $sql.= " WHERE fk_invoice_supplier_source = ".$this->fk_invoice_supplier_source;	// Delete all lines of same serie
         else $sql.= " WHERE rowid = ".$this->id;	// Delete only line
         $sql.= " AND (fk_facture_line IS NULL";	// Not used as absolute simple discount
         $sql.= " AND fk_facture IS NULL)";		// Not used as credit note and not used as deposit
+        $sql.= " AND (fk_invoice_supplier_line IS NULL";	// Not used as absolute simple discount
+        $sql.= " AND fk_invoice_supplier IS NULL)";		// Not used as credit note and not used as deposit
 
         dol_syslog(get_class($this)."::delete Delete discount", LOG_DEBUG);
         $result=$this->db->query($sql);
@@ -263,6 +296,26 @@ class DiscountAbsolute
                     return -1;
                 }
             }
+            elseif($this->fk_invoice_supplier_source) {
+            	
+            	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
+            	$sql.=" set paye=0, fk_statut=1";
+            	$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;
+
+            	dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
+            	$result=$this->db->query($sql);
+            	if ($result)
+            	{
+            		$this->db->commit();
+            		return 1;
+            	}
+            	else
+            	{
+            		$this->error=$this->db->lasterror();
+            		$this->db->rollback();
+            		return -1;
+            	}
+            }
             else
             {
                 $this->db->commit();
@@ -286,10 +339,9 @@ class DiscountAbsolute
      *
      *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
      *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduc payment of invoice)
-     *	@param		string	$mode			'supplier' to link to supplier invoice, 'customer' instead
      *	@return		int						<0 if KO, >0 if OK
      */
-    function link_to_invoice($rowidline,$rowidinvoice,$mode='customer')
+    function link_to_invoice($rowidline,$rowidinvoice)
     {
         // Check parameters
         if (! $rowidline && ! $rowidinvoice)
@@ -304,7 +356,7 @@ class DiscountAbsolute
         }
 
         $sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
-        if($mode == 'supplier') {
+        if(! empty($this->discount_type)) {
         	if ($rowidline)    $sql.=" SET fk_invoice_supplier_line = ".$rowidline;
         	if ($rowidinvoice) $sql.=" SET fk_invoice_supplier = ".$rowidinvoice;
         } else {
@@ -317,7 +369,7 @@ class DiscountAbsolute
         $resql = $this->db->query($sql);
         if ($resql)
         {
-        	if($mode == 'supplier') {
+        	if(! empty($this->discount_type)) {
         		$this->fk_invoice_supplier_line=$rowidline;
         		$this->fk_invoice_supplier=$rowidinvoice;
         	} else {
@@ -338,13 +390,12 @@ class DiscountAbsolute
      *	Link the discount to a particular invoice line or a particular invoice.
      *	Do not call this if discount is linked to a reconcialiated invoice
      *
-     *	@param		string		$mode			'supplier' to unlink a supplier invoice, 'customer' instead
      *	@return		int							<0 if KO, >0 if OK
      */
-    function unlink_invoice($mode = 'customer')
+    function unlink_invoice()
     {
         $sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
-		if($mode = 'supplier') {
+		if(! empty($this->discount_type)) {
        		$sql.=" SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
 		} else {
 			$sql.=" SET fk_facture_line = NULL, fk_facture = NULL";
@@ -368,14 +419,14 @@ class DiscountAbsolute
     /**
      *  Return amount (with tax) of discounts currently available for a company, user or other criteria
      *
-     *	@param		Societe		$company	Object third party for filter
-     *	@param		User		$user		Filtre sur un user auteur des remises
-     * 	@param		string		$filter		Filtre autre
-     * 	@param		int			$maxvalue	Filter on max value for discount
-     *  @param      string      $mode       'customer' = discounts the customer has, 'supplier' = discount i have at this supplier
+     *	@param		Societe		$company		Object third party for filter
+     *	@param		User		$user			Filtre sur un user auteur des remises
+     * 	@param		string		$filter			Filtre autre
+     * 	@param		int			$maxvalue		Filter on max value for discount
+     *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
      * 	@return		int						<0 if KO, amount otherwise
      */
-    function getAvailableDiscounts($company='', $user='',$filter='', $maxvalue=0, $mode='customer')
+    function getAvailableDiscounts($company='', $user='',$filter='', $maxvalue=0, $discount_type=0)
     {
     	global $conf;
 
@@ -383,8 +434,12 @@ class DiscountAbsolute
         //$sql  = "SELECT rc.amount_ttc as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE rc.entity = " . $conf->entity;
-        if ($mode == 'supplier') $sql.= " AND (rc.fk_facture_source IS NULL AND rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";	// Available
-        else $sql.= " AND (rc.fk_invoice_supplier_source IS NULL AND rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)";	        // Available
+        $sql.= " AND rc.discount_type=".intval($discount_type);
+        if (! empty($discount_type)) {
+        	$sql.= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
+        } else {
+        	$sql.= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)"; // Available to customer
+        }
         if (is_object($company)) $sql.= " AND rc.fk_soc = ".$company->id;
         if (is_object($user))    $sql.= " AND rc.fk_user = ".$user->id;
         if ($filter)   $sql.=' AND ('.$filter.')';

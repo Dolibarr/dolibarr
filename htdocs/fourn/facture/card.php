@@ -133,7 +133,7 @@ if (empty($reshook))
 		$object->fetch_thirdparty();
 		$result = $object->add_object_linked('order_supplier', GETPOST('linkedOrder'));
 	}
-
+	var_dump($conf->global->MAIN_VERSION_LAST_UPGRADE, $conf->global->MAIN_VERSION_LAST_INSTALL);
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
@@ -272,7 +272,7 @@ if (empty($reshook))
 	{
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOST("discountid"));
-		$discount->unlink_invoice('supplier');
+		$discount->unlink_invoice();
 	}
 
 	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
@@ -419,7 +419,7 @@ if (empty($reshook))
 
 			if (! $error)
 			{
-				$result = $discount->link_to_invoice(0, $id, 'supplier');
+				$result = $discount->link_to_invoice(0, $id);
 				if ($result < 0) {
 					setEventMessages($discount->error, $discount->errors, 'errors');
 				}
@@ -486,6 +486,7 @@ if (empty($reshook))
 			else {
 				setEventMessages($langs->trans('CantConvertToReducAnInvoiceOfThisType'), null, 'errors');
 			}
+			$discount->discount_type = 1; // Supplier discount
 			$discount->fk_soc = $object->socid;
 			$discount->fk_invoice_supplier_source = $object->id;
 			
@@ -1679,7 +1680,7 @@ if ($action == 'create')
 
 	if ($societe->id > 0)
 	{
-		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 'supplier');
+		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	}
@@ -2143,12 +2144,12 @@ else
 			$filterabsolutediscount = "fk_invoice_supplier IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_invoice_supplier IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
-			$filterabsolutediscount = "fk_invoice_supplier IS NOT NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
+			$filterabsolutediscount = "fk_invoice_supplier IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
 			$filtercreditnote = "fk_invoice_supplier IS NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
 		
-		$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 'supplier');
-		$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 'supplier');
+		$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
+		$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
@@ -2442,7 +2443,7 @@ else
 			} else {
 				// Discount available of type fixed amount (not credit note)
 				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, GETPOST('discountid'), 'remise_id', $societe->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' (' . $addabsolutediscount . ')', 0, 'supplier');
+				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, GETPOST('discountid'), 'remise_id', $societe->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' (' . $addabsolutediscount . ')', 0, 1);
 			}
 		} else {
 			if ($absolute_creditnote > 0) 		// If not, link will be added later
@@ -2468,9 +2469,9 @@ else
 			} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
 				// There is credit notes discounts available
 				if (! $absolute_discount) print '<br>';
-				// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, $resteapayer, '', 0, 'supplier');
+				// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, $resteapayer, '', 0, 1);
 				$more=' ('.$addcreditnote. (($addcreditnote && $viewabsolutediscount) ? ' - ' : '') . $viewabsolutediscount . ')';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, 0, $more, 0, 'supplier'); // We allow credit note even if amount is higher
+				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, 0, $more, 0, 1); // We allow credit note even if amount is higher
 			}
 		}
 		if (! $absolute_discount && ! $absolute_creditnote) {

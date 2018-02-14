@@ -4220,10 +4220,10 @@ class Form
 	 * 	@param	int		$maxvalue		Max value for lines that can be selected
 	 *  @param  string	$more           More string to add
 	 *  @param  int     $hidelist       1=Hide list
-	 *  @param	string	$mode			'supplier' to list available discounts for suppliers, 'customer' instead
+	 *  @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *  @return	void
 	 */
-	function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='', $hidelist=0, $mode='customer')
+	function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='', $hidelist=0, $discount_type=0)
 	{
 		global $conf,$langs;
 		if ($htmlname != "none")
@@ -4232,7 +4232,7 @@ class Form
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<div class="inline-block">';
-			if($mode == 'supplier') {
+			if(! empty($discount_type)) {
 				if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 				{
 					if (! $filter || $filter=="fk_invoice_supplier IS NOT NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
@@ -4260,11 +4260,10 @@ class Form
 			if (empty($hidelist))
 			{
 				print '<div class="inline-block" style="padding-right: 10px">';
-				if($mode == 'supplier') {
-					$newfilter = 'fk_facture_source IS NULL AND fk_facture IS NULL AND fk_facture_line IS NULL'; // Exclude customer discounts
+				$newfilter = 'discount_type='.intval($discount_type);
+				if(! empty($discount_type)) {
 					$newfilter.= ' AND fk_invoice_supplier IS NULL AND fk_invoice_supplier_line IS NULL'; // Supplier discounts available
 				} else {
-					$newfilter = 'fk_invoice_supplier_source IS NULL AND fk_invoice_supplier IS NULL AND fk_invoice_supplier_line IS NULL'; // Exclude supplier discounts
 					$newfilter.= ' AND fk_facture IS NULL AND fk_facture_line IS NULL'; // Customer discounts available
 				}
 				if ($filter) $newfilter.=' AND ('.$filter.')';
@@ -4272,9 +4271,9 @@ class Form
 				if ($nbqualifiedlines > 0)
 				{
 					print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
-					if($mode == 'supplier' && $filter && $filter != "fk_invoice_supplier IS NOT NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')")
+					if(! empty($discount_type) && $filter && $filter != "fk_invoice_supplier IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')")
 						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
-					if($mode != 'supplier' && $filter && $filter != "fk_facture IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')")
+					if(empty($discount_type) && $filter && $filter != "fk_facture IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')")
 						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
 
 					print '>';
