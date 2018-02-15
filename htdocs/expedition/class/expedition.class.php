@@ -108,6 +108,8 @@ class Expedition extends CommonObject
 	 */
 	function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 		$this->lines = array();
 		$this->products = array();
@@ -118,6 +120,20 @@ class Expedition extends CommonObject
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
 		$this->statuts[2]  = 'StatusSendingProcessed';
+
+		// List of short language codes for status
+		$this->statutshorts = array();
+		$this->statutshorts[-1] = 'StatusSendingCanceledShort';
+		$this->statutshorts[0]  = 'StatusSendingDraftShort';
+		$this->statutshorts[1]  = 'StatusSendingValidatedShort';
+		$this->statutshorts[2]  = 'StatusSendingProcessedShort';
+
+		/* Status "billed" or not is managed by another field than status
+		if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
+		{
+			$this->statuts[2]  = 'StatusSendingBilled';
+			$this->statutshorts[2]  = 'StatusSendingBilledShort';
+		}*/
 	}
 
 	/**
@@ -1575,32 +1591,32 @@ class Expedition extends CommonObject
 		if ($mode==0)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
-			if ($statut==2)  return $langs->trans($this->statuts[$statut]);
+			if ($statut==1) return $langs->trans($this->statuts[$statut]);
+			if ($statut==2) return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode==1)
 		{
-			if ($statut==0) return $langs->trans('StatusSendingDraftShort');
-			if ($statut==1) return $langs->trans('StatusSendingValidatedShort');
-			if ($statut==2) return $langs->trans('StatusSendingProcessedShort');
+			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
+			if ($statut==1) return $langs->trans($this->statutshorts[$statut]);
+			if ($statut==2) return $langs->trans($this->statutshorts[$statut]);
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6');
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6').' '.$langs->trans('StatusSendingProcessed');
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans('StatusSendingDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut==1) return $langs->trans('StatusSendingValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return $langs->trans('StatusSendingProcessedShort').' '.img_picto($langs->trans('StatusSendingProcessedShort'),'statut6');
+			if ($statut==0) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
 	}
 
@@ -2070,13 +2086,19 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as validated/opened
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     <0 if KO, 0 if already open, >0 if OK
 	 */
 	function reOpen()
 	{
 		global $conf,$langs,$user;
 
 		$error=0;
+
+		// Protection. This avoid to move stock later when we should not
+		if ($this->statut == self::STATUS_VALIDATED)
+		{
+			return 0;
+		}
 
 		$this->db->begin();
 

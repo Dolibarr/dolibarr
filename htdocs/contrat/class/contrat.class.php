@@ -3014,7 +3014,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0)
 	{
-		global $user;
+		global $conf, $user;
 
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";

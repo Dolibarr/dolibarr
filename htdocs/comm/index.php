@@ -156,6 +156,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -201,7 +202,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 
 		$db->free($resql);
 	}
@@ -237,6 +238,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         $total = 0;
         $num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -281,7 +283,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
-        print "</table><br>";
+        print "</table></div><br>";
 
         $db->free($resql);
     }
@@ -316,6 +318,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -361,7 +364,8 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 
 		$db->free($resql);
 	}
@@ -397,6 +401,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         $total = 0;
         $num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -442,7 +447,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
-        print "</table><br>";
+        print "</table>";
+        print "</div><br>";
 
         $db->free($resql);
     } else {
@@ -482,6 +488,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
@@ -520,7 +527,8 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		{
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 	}
 }
 
@@ -546,6 +554,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		$num = $db->num_rows($result);
 		$i = 0;
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedSuppliers",min($max,$num)).'</th>';
@@ -574,7 +583,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		{
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table>';
+		print '</div><br>';
 	}
 }
 
@@ -626,6 +636,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 
 		if ($num > 0)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("LastContracts",5).'</th></tr>';
 			$i = 0;
@@ -648,7 +659,8 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 
 				$i++;
 			}
-			print "</table><br>";
+			print "</table>";
+			print "</div><br>";
 		}
 	}
 	else
@@ -684,6 +696,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$i = 0;
 		if ($num > 0)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
@@ -745,7 +758,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
-			print "</table><br>";
+			print "</table>";
+			print "</div><br>";
 		}
 	}
 	else
@@ -781,6 +795,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$i = 0;
 		if ($num > 0)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
@@ -842,7 +857,8 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
-			print "</table><br>";
+			print "</table>";
+			print "</div><br>";
 		}
 	}
 	else

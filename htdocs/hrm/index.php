@@ -265,6 +265,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 		$i = 0;
 
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
@@ -309,7 +310,8 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		{
 			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table>';
+		print '</div>';
 	}
 	else dol_print_error($db);
 }
@@ -336,6 +338,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 		$i = 0;
 
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
@@ -381,6 +384,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table>';
+		print '</div>';
 	}
 	else dol_print_error($db);
 }

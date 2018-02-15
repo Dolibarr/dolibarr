@@ -2015,7 +2015,7 @@ class Societe extends CommonObject
 				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose.=' class="classfortooltip"';
+			$linkclose.=' class="classfortooltip refurl"';
 
 		 	if (! is_object($hookmanager))
 			{

@@ -3811,7 +3811,8 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
-			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 4 : 1);		// page nb before and after selected page + ... + first or last
+			// Define nb of extra page links before and after selected page + ... + first or last
+			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 4 : 1);
 
 			if ($limit > 0) $nbpages=ceil($totalnboflines/$limit);
 			else $nbpages=1;

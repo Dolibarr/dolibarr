@@ -188,15 +188,6 @@ if ($action == 'adddir' && $permtouploadfile)
 }
 */
 
-// Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
-{
-	//$result=$ecmdir->delete($user);
-	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
-
-	clearstatcache();
-}
-
 
 if (GETPOST('refreshsite'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
@@ -656,6 +647,8 @@ if ($action == 'addcontainer')
 // Delete page
 if ($action == 'delete')
 {
+	$error = 0;
+
 	$db->begin();
 
 	$res = $object->fetch(0, $website);
@@ -665,27 +658,24 @@ if ($action == 'delete')
 	if ($res > 0)
 	{
 		$res = $objectpage->delete($user);
-		if (! $res > 0)
+		if ($res <= 0)
 		{
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 		}
+	}
 
-		if (! $error)
-		{
-			$db->commit();
-			setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
 
-			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
-			exit;
-		}
-		else
-		{
-			$db->rollback();
-		}
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
+		exit;
 	}
 	else
 	{
+		$db->rollback();
 		dol_print_error($db);
 	}
 }
@@ -1398,9 +1388,18 @@ if (count($object->records) > 0)
 
 		$urlext=$virtualurl;
 		$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
-		print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-		print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
-		print '</a>';
+		if (empty($object->fk_default_home))
+		{
+			print '<span class="websitebuttonsitepreview websitebuttonsitepreviewdisabled cursornotallowed" id="previewsiteextdisabled" href="" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+			print $form->textwithpicto('', '<span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br>'.$langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+			print '</span>';
+		}
+		else
+		{
+			print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+			print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+			print '</a>';
+		}
 	}
 
 	if (in_array($action, array('editcss','editmenu','file_manager')))
@@ -1597,6 +1596,8 @@ if (count($object->records) > 0)
                             console.log("Website external url modified "+jQuery("#previewsiteurl").val());
                 			if (jQuery("#previewsiteurl").val() != "") jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
                 			else jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 0.2 });
+						';
+				print '
                 		});
                     	jQuery("#previewsiteext,#previewpageext").click(function() {
                             newurl=jQuery("#previewsiteurl").val();

@@ -810,6 +810,7 @@ ConfirmMassDeletion=Bulk delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record ?
 RelatedObjects=Related Objects
 ClassifyBilled=Classify billed
+ClassifyUnbilled=Classify unbilled
 Progress=Progress
 ClickHere=Click here
 FrontOffice=Front office
