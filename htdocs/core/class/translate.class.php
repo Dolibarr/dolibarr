@@ -129,7 +129,7 @@ class Translate
 	 *  Return active language code for current user
 	 * 	It's an accessor for this->defaultlang
 	 *
-	 *  @param	int		$mode       0=Long language code, 1=Short language code (en, fr, es, ...)
+	 *  @param	int		$mode       0=Long language code, 1=Short language code
 	 *  @return string      		Language code used (en_US, en_AU, fr_FR, ...)
 	 */
 	function getDefaultLang($mode=0)

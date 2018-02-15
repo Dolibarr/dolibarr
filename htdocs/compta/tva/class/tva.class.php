@@ -670,9 +670,6 @@ class Tva extends CommonObject
         $linkclose='';
         if (empty($notooltip))
         {
-
-
-            
         	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
         		$label=$langs->trans("ShowMyObject");

@@ -4095,11 +4095,9 @@ class Product extends CommonObject
 	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
 	 * 	@param		int		$maxWidth		Max width of original image when size='small'
 	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
-	 *  @param      int     $notitle         Do not add title tag on image
-	 *  @param		int		$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
 	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160,$nolink=0,$notitle=0,$usesharelink=0)
+	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160,$nolink=0)
 	{
 		global $conf,$user,$langs;
 
@@ -4198,39 +4196,15 @@ class Product extends CommonObject
 						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
 						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
 						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
-						if ($notitle) $alt='';
 
-						if ($usesharelink)
+						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
 						{
-							if ($val['share'])
-							{
-								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
-								{
-									$return.= '<!-- Show original file (thumb not yet available with shared links) -->';
-									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
-								}
-								else {
-									$return.= '<!-- Show original file -->';
-									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
-								}
-							}
-							else
-							{
-								$return.= '<!-- Show nophoto file (because file is not shared) -->';
-								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
-							}
+							$return.= '<!-- Show thumb -->';
+							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
 						}
-						else
-						{
-							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
-							{
-								$return.= '<!-- Show thumb -->';
-								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
-							}
-							else {
-								$return.= '<!-- Show original file -->';
-								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
-							}
+						else {
+							$return.= '<!-- Show original file -->';
+							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
 						}
 
 						if (empty($nolink)) $return.= '</a>';

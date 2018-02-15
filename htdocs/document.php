@@ -25,9 +25,9 @@
  *	\file       htdocs/document.php
  *  \brief      Wrapper to download data files
  *  \remarks    Call of this wrapper is made with URL:
- * 				DOL_URL_ROOT.'/document.php?modulepart=repfichierconcerne&file=relativepathoffile'
- * 				DOL_URL_ROOT.'/document.php?modulepart=logs&file=dolibarr.log'
- * 				DOL_URL_ROOT.'/document.php?hashp=sharekey'
+ * 				document.php?modulepart=repfichierconcerne&file=relativepathoffile
+ * 				document.php?modulepart=logs&file=dolibarr.log
+ * 				document.php?modulepart=logs&hashp=sharekey
  */
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -36,9 +36,9 @@
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
 //if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK','1');
 if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
+//if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
+//if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
+//if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
 //if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
 // For bittorent link, we don't need to load/check we are into a login session
 if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'bittorrent' && ! defined("NOLOGIN"))
@@ -58,6 +58,9 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') && ! defined
 	define("NOLOGIN",1);
 	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 }
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 /**
  * Header empty
@@ -71,6 +74,7 @@ function llxHeader() { }
  * @return	void
  */
 function llxFooter() { }
+
 
 require 'main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -99,16 +103,20 @@ if (in_array($modulepart, array('facture_paiement','unpaid')))
 
 
 /*
- * Actions
+ * Action
  */
 
 // None
 
 
-
 /*
  * View
  */
+
+// Define mime type
+$type = 'application/octet-stream';
+if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
+else $type=dol_mimetype($original_file);
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
@@ -152,10 +160,6 @@ if (! empty($hashp))
 	}
 }
 
-// Define mime type
-$type = 'application/octet-stream';
-if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
-else $type=dol_mimetype($original_file);
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);
@@ -247,6 +251,9 @@ header('Content-Length: ' . dol_filesize($fullpath_original_file));
 // Ajout directives pour resoudre bug IE
 header('Cache-Control: Public, must-revalidate');
 header('Pragma: public');
+
+//ob_clean();
+//flush();
 
 readfile($fullpath_original_file_osencoded);
 

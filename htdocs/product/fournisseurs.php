@@ -63,9 +63,7 @@ if (! empty($_REQUEST['search_fourn_id']))
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
-
-if (empty($user->rights->fournisseur->lire)) accessforbidden();
+$result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&product','','',$fieldtype);
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');

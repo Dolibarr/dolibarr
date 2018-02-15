@@ -1476,12 +1476,6 @@ if (count($object->records) > 0)
 		//print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 		print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 
-		$websitepage = new WebSitePage($db);
-		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
-		{
-			$websitepage->fetch($pageid);
-		}
-
 		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 		{
 			$disabled='';
@@ -1522,15 +1516,7 @@ if (count($object->records) > 0)
 				print ' &nbsp; ';
 
 				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
-				if ($websitepage->grabbed_from)
-				{
-					print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-				}
-				else
-				{
-					print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-				}
-
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
 				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
 				else print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
@@ -1543,8 +1529,11 @@ if (count($object->records) > 0)
 
 		print '<div class="websitetools">';
 
-		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
+		if ($website && $pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 		{
+			$websitepage = new WebSitePage($db);
+			$websitepage->fetch($pageid);
+
 			$realpage=$urlwithroot.'/public/website/index.php?website='.$website.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
 
@@ -1905,9 +1894,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			print '<tr><td class="titlefield">';
 			print $langs->trans("URL");
 			print '</td><td>';
-			print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
+			print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="http://externalsite/pagetofetch"> ';
 			print '<input class="button" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
-			print '<br><br>'.info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, '1');
 			print '</td></tr>';
 			print '</table>';
 

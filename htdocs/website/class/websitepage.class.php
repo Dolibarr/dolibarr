@@ -59,11 +59,9 @@ class WebsitePage extends CommonObject
 	public $keywords;
 	public $htmlheader;
 	public $content;
-	public $grabbed_from;
 	public $status;
 	public $date_creation;
 	public $date_modification;
-
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
