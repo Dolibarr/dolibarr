@@ -615,8 +615,8 @@ if ($action == 'create')
 							print '<input type="text" name="subledger_account" value="'.$line->subledger_account.'">';
 						}
 						print '</td>';
-						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
-						print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
+						print '<td><input type="text" class="minwidth100" name="label_compte" value="' . $line->label_compte . '"/></td>';
+						print '<td><input type="text" class="minwidth300" name="label_operation" value="' . $line->label_operation. '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td>';
@@ -636,8 +636,8 @@ if ($action == 'create')
 						print img_edit();
 						print '</a> &nbsp;';
 
-						$actiontodelete='detele';
-						if ($mode == '_tmp') $actiontodelete='confirm_delete';
+						$actiontodelete='delete';
+						if ($mode == '_tmp' || $action != 'delmouv') $actiontodelete='confirm_delete';
 
 						print '<a href="' . $_SERVER["PHP_SELF"] . '?action='.$actiontodelete.'&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
 						print img_delete();
@@ -673,8 +673,8 @@ if ($action == 'create')
 						print '<input type="text" name="subledger_account" value="">';
 					}
 					print '</td>';
-					print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
-					print '<td><input type="text" size="15" name="label_operation" value="' . $line->label_operation. '"/></td>';
+					print '<td><input type="text" class="minwidth100" name="label_compte" value="' . $line->label_compte . '"/></td>';
+					print '<td><input type="text" class="minwidth300" name="label_operation" value="' . $line->label_operation. '"/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . ($debit ? price($debit) : '') . '"/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . ($credit ? price($credit) : '') . '"/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';

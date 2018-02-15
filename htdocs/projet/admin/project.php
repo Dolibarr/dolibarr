@@ -58,7 +58,8 @@ if ($action == 'setmainoptions')
 	if (GETPOST('PROJECT_USE_OPPORTUNITIES')) dolibarr_set_const($db, "PROJECT_USE_OPPORTUNITIES",GETPOST('PROJECT_USE_OPPORTUNITIES'),'chaine',0,'',$conf->entity);
 	else dolibarr_del_const($db, "PROJECT_USE_OPPORTUNITIES", $conf->entity);
 
-	if (GETPOST('PROJECT_USE_TASKS')) dolibarr_del_const($db, "PROJECT_HIDE_TASKS", $conf->entity);
+	// Warning, the constant saved and used in code is PROJECT_HIDE_TASKS
+	if (GETPOST('PROJECT_USE_TASKS')) dolibarr_del_const($db, "PROJECT_USE_TASKS", $conf->entity);
 	else dolibarr_set_const($db, "PROJECT_HIDE_TASKS",1,'chaine',0,'',$conf->entity);
 }
 

@@ -162,9 +162,9 @@ SizeUnitinch=polzada
 SizeUnitfoot=peu
 SizeUnitpoint=punt
 BugTracker=Incidències
-SendNewPasswordDesc=Aquest formulari us permet sol·licitar una nova contrasenya. Se us enviarà a la vostra adreça electrònica. El canvi es farà efectiu una vegada que feu clic a l'enllaç de confirmació al correu electrònic. <br /> Comproveu la vostra safata d'entrada.
+SendNewPasswordDesc=Aquest formulari et permet sol·licitar una nova contrasenya. S'enviarà a la teva adreça de correu electrònic. <br> El canvi es farà efectiu una vegada facis clic a l'enllaç de confirmació del correu electrònic. <br> Comprova la teva safata d'entrada.
 BackToLoginPage=Tornar a la pàgina de connexió
-AuthenticationDoesNotAllowSendNewPassword=El mode d'autenticació és <b>%s</b>. <br>En aquest mode, Dolibarr no pot saber ni canviar la vostra contrasenya. <br /> Contacteu l'administrador del sistema si voleu canviar la vostra contrasenya.
+AuthenticationDoesNotAllowSendNewPassword=El mode d'autenticació de Dolibarr està configurat com "<b>%s</b>".<br>En aquest mode Dolibarr no pot conèixer ni modificar la seva contrasenya<br>Contacti amb l'administrador per conèixer les modalitats de canvi.
 EnableGDLibraryDesc=Instala o habilita la llibreria GD en la teva instal·lació PHP per poder utilitzar aquesta opció.
 ProfIdShortDesc=<b>Prof Id %s </b> és una informació que depèn del país del tercer. <br>Per exemple, per al país <b>%s</b>, és el codi <b>%s</b>.
 DolibarrDemo=Demo de Dolibarr ERP/CRM
@@ -227,7 +227,9 @@ Chart=Gràfic
 PassEncoding=Codificació de contrasenya
 PermissionsAdd=Permisos afegits
 PermissionsDelete=Permisos eliminats
-
+YourPasswordMustHaveAtLeastXChars=La teva contrasenya ha de tenir almenys <strong>%s</strong> \ncaràcters
+YourPasswordHasBeenReset=La teva contrasenya s'ha restablert correctament
+ApplicantIpAddress=Adreça IP del sol·licitant
 ##### Export #####
 ExportsArea=Àrea d'exportacions
 AvailableFormats=Formats disponibles

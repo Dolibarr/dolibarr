@@ -2052,8 +2052,12 @@ elseif (! empty($object->id))
 	}
 
 	// Total
+	$alert = '';
+	if($object->total_ht < $object->thirdparty->supplier_order_min_amount) {
+		$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->supplier_order_min_amount));
+	}
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
-	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).$alert.'</td>';
 	print '</tr>';
 
 	// Total VAT

@@ -162,9 +162,9 @@ SizeUnitinch=Zoll
 SizeUnitfoot=Fuß
 SizeUnitpoint=Punkt
 BugTracker=Fehlerverfolgung (Bug-Tracker)
-SendNewPasswordDesc=Sie können sich ein neues Passwort zusenden lassen<br>Die Änderungen an Ihrem Passwort werden erst wirksam, wenn Sie auf den im Mail enthaltenen Bestätigungslink klicken.<br />Überprüfen Sie den Posteingang Ihrer E-Mail-Anwendung.
+SendNewPasswordDesc=Mit diesem Formular können Sie ein neues Passwort anfordern. Es wird an Ihre E-Mail-Adresse gesendet. Die Änderung wird wirksam, sobald Sie auf den Bestätigungslink in der E-Mail klicken. <br> Überprüfen Sie Ihren Posteingang.
 BackToLoginPage=Zurück zur Anmeldeseite
-AuthenticationDoesNotAllowSendNewPassword=Im derzeit gewählten Authentifizierungsmodus (<b>%s</b>) kann das System nicht auf Ihre Passwortdaten zugreifen und diese auch nicht ändern.<br />Wenden Sie sich hierzu bitte an den Systemadministrator wenn die das Passwort ändern möchten.
+AuthenticationDoesNotAllowSendNewPassword=Im derzeit gewählten Authentifizierungsmodus <b>(%s)</b> kann das System nicht auf Ihre Passwortdaten zugreifen und diese auch nicht ändern.<br> Wenden Sie sich hierzu bitte an den Systemadministrator.
 EnableGDLibraryDesc=Installiere oder aktiviere die GD Bibliothek in der PHP Installtion um dieses Option zu verwenden.
 ProfIdShortDesc=<b>Prof ID %s</b> dient zur Speicherung landesabhängiger Partnerdaten. <br> Für das Land <b>%s</b> ist dies beispielsweise Code <b>%s</b>.
 DolibarrDemo=Dolibarr ERP/CRM-Demo
@@ -227,7 +227,9 @@ Chart=Grafik
 PassEncoding=Kennwort Encoding
 PermissionsAdd=Berechtigungen hinzugefügt
 PermissionsDelete=Berechtigungen entfernt
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Exportübersicht
 AvailableFormats=Verfügbare Formate

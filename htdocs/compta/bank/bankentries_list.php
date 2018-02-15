@@ -383,11 +383,13 @@ if (dol_strlen($search_dv_start) > 0) $param .= '&search_start_dvmonth=' . GETPO
 if (dol_strlen($search_dv_end) > 0)   $param .= '&search_end_dvmonth=' . GETPOST('search_end_dvmonth', 'int') . '&search_end_dvday=' . GETPOST('search_end_dvday', 'int') . '&search_end_dvyear=' . GETPOST('search_end_dvyear', 'int');
 if ($search_req_nb) $param.='&amp;req_nb='.urlencode($search_req_nb);
 if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
-if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+if ($optioncss != '')      $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+$options = array();
 
+$buttonreconcile = '';
 
 if ($id > 0 || ! empty($ref))
 {
@@ -398,7 +400,6 @@ if ($id > 0 || ! empty($ref))
     // Load bank groups
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
     $bankcateg = new BankCateg($db);
-    $options = array();
 
     foreach ($bankcateg->fetchAll() as $bankcategory) {
         $options[$bankcategory->id] = $bankcategory->label;
@@ -421,18 +422,19 @@ if ($id > 0 || ! empty($ref))
 
     if ($action != 'reconcile')
     {
-        print '<div class="tabsAction">';
+        //print '<div class="tabsAction">';
 
-        if ($object->canBeConciliated() > 0) {
+        if ($object->canBeConciliated() > 0)
+        {
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$param.'">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$param.'">'.$langs->trans("Conciliate").'</a>';
             } else {
-                print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
 
-        print '</div>';
+        //print '</div>';
     }
 }
 else
@@ -531,7 +533,6 @@ dol_syslog('compta/bank/bankentries_list.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
-	$var=True;
 	$num = $db->num_rows($resql);
 
 	$arrayofselected=is_array($toselect)?$toselect:array();
@@ -569,14 +570,12 @@ if ($resql)
 	// Form to reconcile
 	if ($user->rights->banque->consolidate && $action == 'reconcile')
 	{
-//	    print '<table class="noborder" width="100%">';
-//	    print '<tr '.$bcnd[false].'>';
-//	    print '<td>';
 	    print '<div class="valignmiddle inline-block" style="padding-right: 20px;">';
 	    print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
 	    print '<input class="flat" id="num_releve" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
 	    print '</div>';
-	    if ($options) {
+	    if (is_array($options) && count($options))
+	    {
 	        print $langs->trans("EventualyAddCategory").': ';
 	        print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 	    }
@@ -589,7 +588,7 @@ if ($resql)
 	    $nbmax=15;      // We accept to show last 15 receipts (so we can have more than one year)
 	    $liste="";
 	    $sql = "SELECT DISTINCT num_releve FROM ".MAIN_DB_PREFIX."bank";
-	    $sql.= " WHERE fk_account=".$id." AND num_releve IS NOT NULL";
+	    $sql.= " WHERE fk_account=".$object->id." AND num_releve IS NOT NULL";
 	    $sql.= $db->order("num_releve","DESC");
 	    $sql.= $db->plimit($nbmax+1);
 	    print '<br><br>';
@@ -618,18 +617,17 @@ if ($resql)
 	    {
 	        dol_print_error($db);
 	    }
-        /**
-         * Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
-         */
-        if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE == 1) {
-            print '
-    <script type="text/javascript">
-    	$("#num_releve").val("' . $last_releve . '");
-    </script>
-    ';
-        }
-	    print '<br><br>';
-//	    print '</td></tr></table>';
+
+		// Using BANK_REPORT_LAST_NUM_RELEVE to automatically report last num (or not)
+		if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE == 1)
+		{
+			print '
+			    <script type="text/javascript">
+			    	$("#num_releve").val("' . $last_releve . '");
+			    </script>
+			';
+		}
+		print '<br><br>';
 	}
 
 	// Form to add a transaction with no invoice
@@ -663,7 +661,8 @@ if ($resql)
 		print '<tr>';
 		print '<td>';
 		print '<input name="label" class="flat minwidth200" type="text" value="'.GETPOST("label","alpha").'">';
-		if (is_array($options) && count($options)) {
+		if (is_array($options) && count($options))
+		{
 			print '<br>'.$langs->trans("Rubrique").': ';
 			print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
 		}
@@ -725,11 +724,6 @@ if ($resql)
 
 	// Title
 	$bankcateg=new BankCateg($db);
-	$morehtml='<div class="inline-block">';
-	$morehtml.= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
-	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" class="flat right width25" value="'.($page+1).'">';
-	$morehtml.='/'.$nbtotalofpages.' ';
-	$morehtml.='</div>';
 
 	$addbutton = '';
 	if ($action != 'addline' && $action != 'reconcile')
@@ -758,6 +752,18 @@ if ($resql)
 			$addbutton = '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 		}
 	}
+
+	$morehtml='<div class="inline-block '.(($buttonreconcile || $addbutton)?'marginrightonly':'').'">';
+	$morehtml.= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
+	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" class="flat right width25" value="'.($page+1).'">';
+	$morehtml.='/'.$nbtotalofpages.' ';
+	$morehtml.='</div>';
+
+	if ($action != 'addline' && $action != 'reconcile')
+	{
+		$morehtml.=$buttonreconcile;
+	}
+
 	$morehtml.=$addbutton;
 
 	$picto='title_bank';
@@ -928,6 +934,7 @@ if ($resql)
 
     $balance = 0;    // For balance
 	$balancecalculated = false;
+	$posconciliatecol = 0;
 
 	// Loop on each record
 	$sign = 1;
@@ -1015,7 +1022,7 @@ if ($resql)
 				print '<td align="right">';
             	print price(price2num($balance, 'MT'), 1, $langs);
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance+3).'">';
 				print '</td>';
             	print '</tr>';
             }
@@ -1351,7 +1358,11 @@ if ($resql)
             	}
         	}
         	print '</td>';
-            if (! $i) $totalarray['nbfield']++;
+            if (! $i)
+            {
+            	$totalarray['nbfield']++;
+            	$posconciliatecol = $totalarray['nbfield'];
+            }
     	}
 
         if (! empty($arrayfields['b.conciliated']['checked']))
@@ -1434,6 +1445,12 @@ if ($resql)
 	        }
 	        elseif ($totalarray['totaldebfield'] == $i) print '<td align="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
+	        elseif ($i == $posconciliatecol)
+	        {
+	        	print '<td>';
+	        	if ($user->rights->banque->consolidate && $action == 'reconcile') print '<input class="button" name="confirm_reconcile" type="submit" value="' . $langs->trans("Conciliate") . '">';
+	        	print '</td>';
+	        }
 	        else print '<td></td>';
 	    }
 	    print '</tr>';

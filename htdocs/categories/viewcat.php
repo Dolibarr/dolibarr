@@ -67,13 +67,14 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('categorycard'));
+$hookmanager->initHooks(array('categorycard','globalcard'));
 
 
 /*
  *	Actions
  */
-
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 // Remove element from category
 if ($id > 0 && $removeelem > 0)
 {
@@ -353,7 +354,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ProductsAndServices")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ProductsAndServices")." (".count($prods).")</td></tr>\n";
 
 		if (count($prods) > 0)
 		{
@@ -402,7 +403,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 	{
 		print "<br>";
 		print '<table class="noborder" width="100%">'."\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Suppliers")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Suppliers")." (".count($socs).")</td></tr>\n";
 
 		if (count($socs) > 0)
 		{
@@ -451,7 +452,7 @@ if($type == Categorie::TYPE_CUSTOMER)
 	{
 		print "<br>";
 		print '<table class="noborder" width="100%">'."\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Customers")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Customers")." (".count($socs).")</td></tr>\n";
 
 		if (count($socs) > 0)
 		{
@@ -507,7 +508,7 @@ if ($type == Categorie::TYPE_MEMBER)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Member")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Member")." (".count($prods).")</td></tr>\n";
 
 		if (count($prods) > 0)
 		{
@@ -558,7 +559,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	{
 		print "<br>";
 		print '<table class="noborder" width="100%">'."\n";
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Contact")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Contact")." (".count($contacts).")</td></tr>\n";
 
 		if (count($contacts) > 0)
 		{
@@ -613,7 +614,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
     {
         print "<br>";
         print "<table class='noborder' width='100%'>\n";
-        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Account")."</td></tr>\n";
+        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Account")." (".count($accounts).")</td></tr>\n";
 
         if (count($accounts) > 0)
         {
@@ -666,7 +667,7 @@ if ($type == Categorie::TYPE_PROJECT)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Project")."</td></tr>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Project")." (".count($projects).")</td></tr>\n";
 
 		if (count($projects) > 0)
 		{

@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Kļūda, atlaide jau tiek pielietota
 ErrorInvoiceAvoirMustBeNegative=Kļūda, pareizs rēķins, jābūt ar negatīvu summu
 ErrorInvoiceOfThisTypeMustBePositive=Kļūda, šim rēķina veidam ir jābūt ar pozitīvu summu
 ErrorCantCancelIfReplacementInvoiceNotValidated=Kļūda, nevar atcelt rēķinu, kas ir aizstāts ar citu rēķina, kas vēl ir projekta stadijā
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=No
 BillTo=Kam
 ActionsOnBill=Pasākumi attiecībā uz rēķinu

@@ -56,6 +56,7 @@ Address=Indirizzo
 State=Provincia/Cantone/Stato
 StateShort=Stato
 Region=Regione
+Region-State=Region - State
 Country=Paese
 CountryCode=Codice del paese
 CountryId=Id paese

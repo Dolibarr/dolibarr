@@ -616,20 +616,18 @@ print '<div class="fichecenter fichecenterbis">';
 
 $boxlist.='<div class="twocolumns">';
 
-$boxlist.='<div class="fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist.='<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 $boxlist.=$boxwork;
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
 
-$boxlist.= '<div class="fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist.= '<div class="ficheaddleft">';
+$boxlist.= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlistb'];
 
-$boxlist.= '</div>';
 $boxlist.= '</div>';
 $boxlist.= "\n";
 
@@ -656,7 +654,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     {
         $langs->load("errors");
         //if (! empty($message)) $message.='<br>';
-        $message.=info_admin($langs->trans("WarningLockFileDoesNotExists",DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+        $message.=info_admin($langs->trans("WarningLockFileDoesNotExists",DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
     }
 
     // Conf files must be in read only mode
@@ -665,7 +663,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
         $langs->load("errors");
         //$langs->load("other");
         //if (! empty($message)) $message.='<br>';
-        $message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+        $message.=info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
     }
 
     if ($message)

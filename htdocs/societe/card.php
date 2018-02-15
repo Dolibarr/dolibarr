@@ -119,7 +119,7 @@ if (empty($reshook))
 	{
 		$object->fetch($socid);
 
-		$errors = 0;
+		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
 
@@ -131,13 +131,13 @@ if (empty($reshook))
 		}
 		else
 		{
-			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1)
+			if (!$error && $soc_origin->fetch($soc_origin_id) < 1)
 			{
 				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
-				$errors++;
+				$error++;
 			}
 
-			if (!$errors)
+			if (!$error)
 			{
 			    // TODO Move the merge function into class of object.
 
@@ -184,48 +184,67 @@ if (empty($reshook))
 				$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
 				$object->setCategories($suppcats, 'supplier');
 
+				// If thirdparty has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
+				if ($soc_origin->code_client == $object->code_client
+					|| $soc_origin->code_fournisseur == $object->code_fournisseur
+					|| $soc_origin->barcode == $object->barcode)
+				{
+					dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
+					$soc_origin->code_client = '';
+					$soc_origin->code_fournisseur = '';
+					$soc_origin->barcode = '';
+					$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
+				}
+
 				// Update
-				$object->update($object->id, $user, 0);
+				$object->update($object->id, $user, 0, 1, 1, 'merge');
+				if ($result < 0)
+				{
+					$error++;
+				}
 
 				// Move links
-				$objects = array(
-					'Adherent' => '/adherents/class/adherent.class.php',
-					'Societe' => '/societe/class/societe.class.php',
-					'Categorie' => '/categories/class/categorie.class.php',
-					'ActionComm' => '/comm/action/class/actioncomm.class.php',
-					'Propal' => '/comm/propal/class/propal.class.php',
-					'Commande' => '/commande/class/commande.class.php',
-					'Facture' => '/compta/facture/class/facture.class.php',
-					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
-					'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
-					'Contact' => '/contact/class/contact.class.php',
-					'Contrat' => '/contrat/class/contrat.class.php',
-					'Expedition' => '/expedition/class/expedition.class.php',
-					'Fichinter' => '/fichinter/class/fichinter.class.php',
-					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
-					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
-					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
-					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-					'Livraison' => '/livraison/class/livraison.class.php',
-					'Product' => '/product/class/product.class.php',
-					'Project' => '/projet/class/project.class.php',
-					'User' => '/user/class/user.class.php',
-				);
-
-				//First, all core objects must update their tables
-				foreach ($objects as $object_name => $object_file)
+				if (! $error)
 				{
-					require_once DOL_DOCUMENT_ROOT.$object_file;
+					$objects = array(
+						'Adherent' => '/adherents/class/adherent.class.php',
+						'Societe' => '/societe/class/societe.class.php',
+						'Categorie' => '/categories/class/categorie.class.php',
+						'ActionComm' => '/comm/action/class/actioncomm.class.php',
+						'Propal' => '/comm/propal/class/propal.class.php',
+						'Commande' => '/commande/class/commande.class.php',
+						'Facture' => '/compta/facture/class/facture.class.php',
+						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+						'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
+						'Contact' => '/contact/class/contact.class.php',
+						'Contrat' => '/contrat/class/contrat.class.php',
+						'Expedition' => '/expedition/class/expedition.class.php',
+						'Fichinter' => '/fichinter/class/fichinter.class.php',
+						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+						'Livraison' => '/livraison/class/livraison.class.php',
+						'Product' => '/product/class/product.class.php',
+						'Project' => '/projet/class/project.class.php',
+						'User' => '/user/class/user.class.php',
+					);
 
-					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
+					//First, all core objects must update their tables
+					foreach ($objects as $object_name => $object_file)
 					{
-						$errors++;
-						setEventMessages($db->lasterror(), null, 'errors');
+						require_once DOL_DOCUMENT_ROOT.$object_file;
+
+						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
+						{
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+						}
 					}
 				}
 
-				//External modules should update their ones too
-				if (!$errors)
+				// External modules should update their ones too
+				if (! $error)
 				{
 					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
@@ -235,7 +254,7 @@ if (empty($reshook))
 					if ($reshook < 0)
 					{
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-						$errors++;
+						$error++;
 					}
 				}
 
@@ -254,16 +273,16 @@ if (empty($reshook))
 					// End call triggers
 				}
 
-				if (!$errors)
+				if (!$error)
 				{
 					//We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1)
 					{
-						$errors++;
+						$error++;
 					}
 				}
 
-				if (!$errors)
+				if (!$error)
 				{
 					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
@@ -628,14 +647,17 @@ if (empty($reshook))
                     setEventMessages($object->error, $object->errors, 'errors');
                   	$error++;
                 }
+				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
+				if (!empty($user->rights->categorie->lire))
+				{
+					// Customer categories association
+					$categories = GETPOST( 'custcats', 'array' );
+					$object->setCategories($categories, 'customer');
 
-				// Customer categories association
-				$categories = GETPOST('custcats', 'array');
-				$object->setCategories($categories, 'customer');
-
-				// Supplier categories association
-				$categories = GETPOST('suppcats', 'array');
-				$object->setCategories($categories, 'supplier');
+					// Supplier categories association
+					$categories = GETPOST('suppcats', 'array');
+					$object->setCategories($categories, 'supplier');
+				}
 
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
@@ -1143,7 +1165,15 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+            {
+                print '<tr><td>'.fieldLabel('Region-State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            }
+            else
+            {
+                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            }
+
             if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code);
             else print $countrynotdefined;
             print '</td></tr>';
@@ -1200,7 +1230,7 @@ else
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
-        if (empty($conf->global->MAIN_DISABLEVATCHECK))
+        if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
         {
             $s.=' ';
 
@@ -1700,7 +1730,15 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<tr><td>'.fieldLabel('Region-State','state_id').'</td><td colspan="3">';
+                }
+                else
+                {
+                    print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                }
+
                 print $formcompany->select_state($object->state_id,$object->country_code);
                 print '</td></tr>';
             }
@@ -1811,7 +1849,7 @@ else
             print '<td colspan="3">';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
-            if (empty($conf->global->MAIN_DISABLEVATCHECK))
+            if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
             {
                 $s.=' &nbsp; ';
 
@@ -1874,6 +1912,7 @@ else
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
+					$arrayselected=array();
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
@@ -1888,6 +1927,7 @@ else
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+					$arrayselected=array();
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}

@@ -45,7 +45,6 @@ ContractStatusClosed=Encerrado
 ErrorProductBadRefOrLabel=O valor da referencia ou etiqueta é incorreto
 ErrorProductClone=Aconteceu um problema durante a clonação do produto ou serviço.
 ErrorPriceCantBeLowerThanMinPrice=Erro, o preço não pode ser inferior ao preço mínimo.
-PriceForEachProduct=Produtos com preços específicos
 SupplierCard=Ficha do fornecedor
 NoteNotVisibleOnBill=Nota (não visivel em faturas, orçamentos etc.)
 MultiPricesAbility=Varias faixas de preços de produtos/serviços por segmento (cada cliente está em um segmento)

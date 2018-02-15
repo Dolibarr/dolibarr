@@ -580,7 +580,7 @@ function modules_prepare_head()
  */
 function security_prepare_head()
 {
-    global $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
     $h = 0;
     $head = array();
 
@@ -616,8 +616,26 @@ function security_prepare_head()
     $head[$h][2] = 'audit';
     $h++;
 
+
+    // Show permissions lines
+    $nbPerms=0;
+    $sql = "SELECT COUNT(r.id) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+    $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " AND bydefault = 1";
+    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+    	$obj = $db->fetch_object($resql);
+    	if ($obj) $nbPerms = $obj->nb;
+    }
+    else dol_print_error($db);
+
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
+    if ($nbPerms > 0) $head[$h][1].= ' <span class="badge">'.$nbPerms.'</span>';
     $head[$h][2] = 'default';
     $h++;
 

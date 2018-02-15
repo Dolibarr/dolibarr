@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Error, discount already used
 ErrorInvoiceAvoirMustBeNegative=Error, correct invoice must have a negative amount
 ErrorInvoiceOfThisTypeMustBePositive=Error, this type of invoice must have a positive amount
 ErrorCantCancelIfReplacementInvoiceNotValidated=Error, can't cancel an invoice that has been replaced by another invoice that is still in draft status
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Από
 BillTo=Στοιχεία Πελάτη
 ActionsOnBill=Ενέργειες στο τιμολόγιο

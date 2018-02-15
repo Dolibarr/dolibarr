@@ -2300,12 +2300,15 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$tmparray=$object->getTotalWeightVolume();
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
-		if ($totalWeight || $totalVolume)
+		if ($totalWeight)
 		{
 			print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
 			print '<td>';
 			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
 			print '</td></tr>';
+		}
+		if ($totalVolume)
+		{
 			print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
 			print '<td>';
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
@@ -2388,8 +2391,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 
 		// Total HT
+		$alert = '';
+		if($object->total_ht < $object->thirdparty->order_min_amount) {
+			$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->order_min_amount));
+		}
 		print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
+		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . $alert . '</td>';
 
 		// Total VAT
 		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';

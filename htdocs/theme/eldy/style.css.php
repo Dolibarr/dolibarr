@@ -277,7 +277,7 @@ input.select2-input {
 
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
-.liste_titre input[name=month_lim], .liste_titre input[name=month_create] {
+.liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create] {
 	margin-right: 4px;
 }
 input[type=submit] {
@@ -357,7 +357,7 @@ input.buttonpayment {
 	background: none;
 	padding-left: 30px;
 	text-align: <?php echo $left; ?>;
-	border: 2px solid #ccc;
+	border: 1px solid #ddd;
 	background-color: #eee;
 	white-space: normal;
 }
@@ -388,11 +388,15 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
 }
+
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
+}
+td.weekend {
+	background-color: #eee;
 }
 td.onholidaymorning, td.onholidayafternoon {
 	background-color: #fdf6f2;
@@ -400,6 +404,10 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.leftborder, td.hide0 {
+	border-left: 1px solid #ccc;
+}
+
 td.actionbuttons a {
     padding-left: 6px;
 }
@@ -588,6 +596,12 @@ textarea.centpercent {
 }
 .wordwrap {
 	word-wrap: break-word;
+}
+.wordbreak {
+	word-break: break-all;
+}
+.bold {
+	font-weight: bold !important;
 }
 .nobold {
 	font-weight: normal !important;
@@ -1211,6 +1225,12 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
+div.firstcolumn div.box {
+	padding-right: 10px;
+}
+div.secondcolumn div.box {
+	padding-left: 10px;
+}
 /* Force values on one colum for small screen */
 @media only screen and (max-width: 1000px)
 {
@@ -1248,6 +1268,12 @@ div.ficheaddleft {
     	<?php print "padding-".$left.": 0px;\n"; ?>
     	margin-top: 10px;
     }
+    div.firstcolumn div.box {
+		padding-right: 0px;
+	}
+	div.secondcolumn div.box {
+		padding-left: 0px;
+	}
 }
 
 /* For table into table into card */
@@ -1442,14 +1468,14 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
     font-weight: normal;
-	padding: 0px 5px 0px 3px;
+	padding: 0px 4px 0px 4px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
     text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
-	padding: 0px 5px 0px 3px;
+	padding: 0px 4px 0px 4px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
@@ -1538,12 +1564,8 @@ div.menu_titre {
 }
 .mainmenuaspan
 {
-<?php if ($disableimages) { ?>
-	padding-<?php print $left; ?>: 4px;
+	padding-<?php print $left; ?>: 2px;
 	padding-<?php print $right; ?>: 2px;
-<?php } else { ?>
-	padding-<?php print $right; ?>: 4px;
-<?php } ?>
 }
 
 div.mainmenu {
@@ -1731,7 +1753,6 @@ form#login {
 	max-width: 530px;
 	color: #aaa !important;
 	padding-bottom: 20px;
-	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
 	text-shadow: 1px 1px 1px #FFF;
@@ -1759,7 +1780,7 @@ form#login {
 	border: none;
 	border-bottom: solid 1px rgba(180,180,180,.4);
 	padding: 5px;
-	margin-left: 18px;
+	margin-left: 5px;
 	margin-top: 5px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
@@ -2790,6 +2811,12 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 {
 	height: 26px !important;
 }
+div.colorback
+{
+	background: rgb(<?php echo $colorbacktitle1; ?>);
+	padding: 10px;
+	margin-top: 5px;
+}
 div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
 	background: rgb(<?php echo $colorbacktitle1; ?>);
@@ -2947,14 +2974,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     border: none;
 }*/
 .boxstatsborder {
-    border: 1px solid #CCC !important;
+    /* border: 1px solid #CCC !important; */
 }
 .boxstats, .boxstats130 {
     display: inline-block;
     margin: 3px;
-    border: 1px solid #CCC;
+    /* border: 1px solid #CCC; */
     text-align: center;
     border-radius: 2px;
+    background: #eee;
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -2982,12 +3010,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.thumbstat150 {
 		flex: 1 1 110px;
 	}
-	.boxstats, .boxstats130 {
-        width: 90px;
-    }
     .dashboardlineindicator {
         float: left;
     	padding-left: 5px;
+    }
+    .boxstats130 {
+    	width: 148px;
     }
     .boxstats {
         width: 100px;
@@ -3188,6 +3216,20 @@ a.impayee:visited { font-weight: bold; color: #550000; }
 a.impayee:active { font-weight: bold; color: #550000; }
 a.impayee:hover { font-weight: bold; color: #550000; }
 
+
+/*
+ *  External web site
+ */
+
+.framecontent {
+    width: 100%;
+    height: 100%;
+}
+
+.framecontent iframe {
+    width: 100%;
+    height: 100%;
+}
 
 
 /*
@@ -3596,7 +3638,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event_busy a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
-.cal_peruserviewname { max-width: 100px; height: 22px; }
+.cal_peruserviewname { max-width: 140px; height: 22px; }
 
 
 /* ============================================================================== */
@@ -4034,10 +4076,13 @@ td.gminorheadingwkend {
 td.gminorheading {
     color: #666 !important;
 }
+.glistlbl, .glistgrid {
+	width: 582px !important;
+}
 .gtaskname div, .gtaskname {
-    min-width: 200px !important;
-    max-width: 200px !important;
-    width: 200px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    width: 250px !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;
@@ -4590,7 +4635,7 @@ dl.dropdown {
     position:absolute;
     top:2px;
     list-style:none;
-    max-height: 270px;
+    max-height: 264px;
     overflow: auto;
 }
 .dropdown span.value {
@@ -5013,8 +5058,8 @@ div.tabsElem a.tab {
     	margin-left: 1px;
 	}
 	.mainmenuaspan {
-    	/*display: none;*/
   		font-size: 10px;
+  		padding-left: 0;
   		padding-right: 0;
     }
     .topmenuimage {

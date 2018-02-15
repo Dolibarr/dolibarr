@@ -211,6 +211,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		        // Contracts
 		    case 'CONTRACT_CREATE':
 		    case 'CONTRACT_ACTIVATE':
+		    case 'CONTRACT_MODIFY':
 		    case 'CONTRACT_CANCEL':
 		    case 'CONTRACT_CLOSE':
 		    case 'CONTRACT_DELETE':

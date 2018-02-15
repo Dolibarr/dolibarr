@@ -182,37 +182,70 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
         $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
         $filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
 
-        // Security:
-        // Disallow file with some extensions. We rename them.
-        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-        if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+        if ($filenamefrom != $filenameto)
         {
-            $filenameto.= '.noexe';
+	        // Security:
+	        // Disallow file with some extensions. We rename them.
+	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
+	        if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+	        {
+	            $filenameto.= '.noexe';
+	        }
+
+	        if ($filenamefrom && $filenameto)
+	        {
+	            $srcpath = $upload_dir.'/'.$filenamefrom;
+	            $destpath = $upload_dir.'/'.$filenameto;
+
+	            $result = dol_move($srcpath, $destpath);
+	            if ($result)
+	            {
+	            	if ($object->id)
+	            	{
+	                	$object->addThumbs($destpath);
+	            	}
+
+	                // TODO Add revert function of addThumbs to remove for old name
+	                //$object->delThumbs($srcpath);
+
+	                setEventMessages($langs->trans("FileRenamed"), null);
+	            }
+	            else
+	            {
+	                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+	            }
+	        }
         }
+    }
 
-        if ($filenamefrom && $filenameto)
-        {
-            $srcpath = $upload_dir.'/'.$filenamefrom;
-            $destpath = $upload_dir.'/'.$filenameto;
+    // Update properties in ECM table
+    if (GETPOST('ecmfileid', 'int') > 0)
+    {
+    	$shareenabled = GETPOST('shareenabled', 'alpha');
 
-            $result = dol_move($srcpath, $destpath);
-            if ($result)
-            {
-            	if ($object->id)
-            	{
-                	$object->addThumbs($destpath);
-            	}
-
-                // TODO Add revert function of addThumbs to remove for old name
-                //$object->delThumbs($srcpath);
-
-                setEventMessages($langs->trans("FileRenamed"), null);
-            }
-            else
-            {
-                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
-                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
-            }
-        }
+    	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	    $ecmfile=new EcmFiles($db);
+	    $result = $ecmfile->fetch(GETPOST('ecmfileid', 'int'));
+	    if ($result > 0)
+	    {
+	    	if ($shareenabled)
+		    {
+		    	if (empty($ecmfile->share))
+		    	{
+		    		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		    		$ecmfile->share = getRandomPassword(true);
+		    	}
+		    }
+		    else
+		    {
+		    	$ecmfile->share = '';
+		    }
+		    $result = $ecmfile->update($user);
+		    if ($result < 0)
+		    {
+		    	setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+	    }
     }
 }

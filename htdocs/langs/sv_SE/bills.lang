@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Fel, rabatt som redan används
 ErrorInvoiceAvoirMustBeNegative=Fel, måste korrigera fakturan ett negativt belopp
 ErrorInvoiceOfThisTypeMustBePositive=Fel, skall denna typ av faktura har ett positivt belopp
 ErrorCantCancelIfReplacementInvoiceNotValidated=Fel, kan inte avbryta en faktura som har ersatts av en annan faktura som fortfarande i utkast status
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Från
 BillTo=Fakturamottagare
 ActionsOnBill=Åtgärder mot faktura

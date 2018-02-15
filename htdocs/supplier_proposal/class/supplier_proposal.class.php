@@ -1833,7 +1833,7 @@ class SupplierProposal extends CommonObject
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= " WHERE p.entity IN (".getEntity('supplier_proposal').")";
         $sql.= " AND p.fk_soc = s.rowid";
         $sql.= " AND p.fk_statut = c.id";
         if (! $user->rights->societe->client->voir && ! $socid) //restriction

@@ -140,7 +140,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		$action='';
     	}
 
-    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
+    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a redirect to avoid to run twice the job when using back
     	exit;
     }
 }
@@ -270,7 +270,7 @@ else
     $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
 }
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttontoshow, $num, $nbtotalofrecords, 'title_setup', 0, '', '', $limit);
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup', 0, $buttontoshow, '', $limit);
 
 
 print $langs->trans('CronInfo').'<br>';

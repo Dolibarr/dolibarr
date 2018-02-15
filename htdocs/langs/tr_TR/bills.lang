@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Hata, indirim zaten kullanılmış
 ErrorInvoiceAvoirMustBeNegative=Hata, doğru fatura eksi bir tutarda olmalıdır
 ErrorInvoiceOfThisTypeMustBePositive=Hata, bu türde bir fatura artı tutarda olmalıdır
 ErrorCantCancelIfReplacementInvoiceNotValidated=Hata, halen taslak durumunda olan bir faturayla değiştirilmiş bir faturayı iptal edemezsiniz
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Kimden
 BillTo=Kime
 ActionsOnBill=Fatura üzerindeki eylemler

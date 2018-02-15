@@ -228,4 +228,4 @@ WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Pleas
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.
 WarningAnEntryAlreadyExistForTransKey=An entry already exists for the translation key for this language
-WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different recipient is limited to <b>%s</b> when using the bulk actions on lists
+WarningNumberOfRecipientIsRestrictedInMassAction=Aviso, o número de destinatários diferentes é limitado a <b> %s </b> ao usar as ações em massa em listas

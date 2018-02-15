@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=خطا، تخفیف ویژه در حال حاضر اس�
 ErrorInvoiceAvoirMustBeNegative=خطا، فاکتور صحیح باید یک مقدار منفی داشته
 ErrorInvoiceOfThisTypeMustBePositive=خطا، این نوع از فاکتور باید یک مقدار مثبت
 ErrorCantCancelIfReplacementInvoiceNotValidated=خطا، می تواند یک فاکتور است که توسط فاکتور دیگری است که هنوز هم در وضعیت پیش نویس جایگزین لغو کنید
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=از
 BillTo=به
 ActionsOnBill=عملیات در فاکتور

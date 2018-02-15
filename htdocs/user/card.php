@@ -1231,7 +1231,7 @@ else
 		if ($mode == 'employee') // For HRM module development
 		{
 			$title = $langs->trans("Employee");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		}
 		else
 		{
@@ -1239,7 +1239,7 @@ else
 			$linkback = '';
 
 			if ($user->rights->user->user->lire || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 			}
 		}
 
@@ -1706,7 +1706,7 @@ else
 			$modelmail='user';
 			$defaulttopic='Information';
 			$diroutput = $conf->user->dir_output;
-			$trackid = 'user'.$object->id;
+			$trackid = 'use'.$object->id;
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 

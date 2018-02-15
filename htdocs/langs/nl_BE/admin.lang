@@ -40,5 +40,4 @@ ModuleFamilyHr=Personeelszaken (HR)
 HideDetailsOnPDF=Verberg product-detaillijnen op gemaakte PDF
 ExtrafieldPassword=Paswoord
 LibraryToBuildPDF=Bibliotheek om PDF bestanden te genereren.
-LDAPFieldTitle=Functie
 AddBoxes=Widgets toevoegen

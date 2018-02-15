@@ -70,7 +70,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	else $classname = 'class="tmenu"';
 	$idsel='home';
 
-	$menu->add('/index.php?mainmenu=home&amp;leftmenu=home', $langs->trans("Home"), 0, $showmode, $atarget, "home", '', 10, $id, $idsel, $classname);
+	$titlehome = $langs->trans("Home");
+	if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) $titlehome = '&nbsp; <span class="fa fa-home"></span> &nbsp;';
+	$menu->add('/index.php?mainmenu=home&amp;leftmenu=home', $titlehome, 0, $showmode, $atarget, "home", '', 10, $id, $idsel, $classname);
 
 	// Third parties
 	$tmpentry=array('enabled'=>(( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
@@ -361,7 +363,8 @@ function print_start_menu_entry($idsel,$classname,$showmode)
 	if ($showmode)
 	{
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-		print '<div class="tmenuleft tmenusep"></div><div class="tmenucenter">';
+		//print '<div class="tmenuleft tmenusep"></div>';
+		print '<div class="tmenucenter">';
 	}
 }
 
@@ -802,24 +805,24 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/facture/card.php?action=create",$langs->trans("NewBill"),1,$user->rights->facture->creer);
 				$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills",$langs->trans("List"),1,$user->rights->facture->lire, '', $mainmenu, 'customers_bills_list');
 
-				if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills/', $leftmenu))
+				if ($usemenuhider || empty($leftmenu) || preg_match('/customers_bills(|draft|notpaid|paid|canceled)$/', $leftmenu))
 				{
 					$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills_draft&amp;search_status=0",$langs->trans("BillShortStatusDraft"),2,$user->rights->facture->lire);
 					$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills_notpaid&amp;search_status=1",$langs->trans("BillShortStatusNotPaid"),2,$user->rights->facture->lire);
 					$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills_paid&amp;search_status=2",$langs->trans("BillShortStatusPaid"),2,$user->rights->facture->lire);
 					$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills_canceled&amp;search_status=3",$langs->trans("BillShortStatusCanceled"),2,$user->rights->facture->lire);
 				}
-				$newmenu->add("/compta/facture/invoicetemplate_list.php",$langs->trans("ListOfTemplates"),1,$user->rights->facture->creer);    // No need to see recurring invoices, if user has no permission to create invoice.
+				$newmenu->add("/compta/facture/invoicetemplate_list.php?leftmenu=customers_bills_templates",$langs->trans("ListOfTemplates"),1,$user->rights->facture->creer,'',$mainmenu,'customers_bills_templates');    // No need to see recurring invoices, if user has no permission to create invoice.
 
-				$newmenu->add("/compta/paiement/list.php",$langs->trans("Payments"),1,$user->rights->facture->lire);
+				$newmenu->add("/compta/paiement/list.php?leftmenu=customers_bills_payment",$langs->trans("Payments"),1,$user->rights->facture->lire,'',$mainmenu,'customers_bills_payment');
 
 				if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 				{
-					$newmenu->add("/compta/paiement/avalider.php",$langs->trans("MenuToValid"),2,$user->rights->facture->lire);
+					$newmenu->add("/compta/paiement/avalider.php?leftmenu=customers_bills_tovalid",$langs->trans("MenuToValid"),2,$user->rights->facture->lire,'',$mainmenu,'customer_bills_tovalid');
 				}
-				$newmenu->add("/compta/paiement/rapport.php",$langs->trans("Reportings"),2,$user->rights->facture->lire);
+				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_reports",$langs->trans("Reportings"),2,$user->rights->facture->lire,'',$mainmenu,'customers_bills_reports');
 
-				$newmenu->add("/compta/facture/stats/index.php", $langs->trans("Statistics"),1,$user->rights->facture->lire);
+				$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"),1,$user->rights->facture->lire,'',$mainmenu,'customers_bills_stats');
 			}
 
 			// Suppliers invoices
@@ -827,7 +830,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("bills");
 				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills');
-				$newmenu->add("/fourn/facture/card.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer, '', $mainmenu, 'suppliers_bills_create');
+				$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&amp;action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer, '', $mainmenu, 'suppliers_bills_create');
 				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("List"),1,$user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_list');
 
 				if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
@@ -836,11 +839,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_paid&amp;search_status=2", $langs->trans("BillShortStatusPaid"),2,$user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_paid');
 				}
 
-				$newmenu->add("/fourn/facture/paiement.php", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire);
+				$newmenu->add("/fourn/facture/paiement.php?leftmenu=suppliers_bills_payment", $langs->trans("Payments"),1,$user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_payment');
 
-				$newmenu->add("/fourn/facture/rapport.php",$langs->trans("Reportings"),2,$user->rights->fournisseur->facture->lire);
+				$newmenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_report",$langs->trans("Reportings"),2,$user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_report');
 
-				$newmenu->add("/compta/facture/stats/index.php?mode=supplier", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire);
+				$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"),1,$user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_stats');
 			}
 
 			// Orders
@@ -993,7 +996,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $newmenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"),2, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_export', 60);
 
 				// Fiscal year
-				if ($conf->global->MAIN_FEATURES_LEVEL > 0)     // Not yet used. In a future will lock some periods.
+				if ($conf->global->MAIN_FEATURES_LEVEL > 1)     // Not yet used. In a future will lock some periods.
 				{
 				    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("FiscalPeriod"), 2, $user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
 				}
@@ -1054,7 +1057,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 								if ($objp->nature == 9) $nature="hasnew";
 
 								// To enable when page exists
-								if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+								if ($conf->global->MAIN_FEATURES_LEVEL < 2)
 								{
 									if ($nature == 'various' || $nature == 'hasnew') $nature='';
 								}

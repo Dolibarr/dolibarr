@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Virhe, alennus jo käytössä
 ErrorInvoiceAvoirMustBeNegative=Virhe, oikea lasku on negatiivinen määrä
 ErrorInvoiceOfThisTypeMustBePositive=Virhe, tällainen lasku on myönteinen määrä
 ErrorCantCancelIfReplacementInvoiceNotValidated=Virhe ei voi peruuttaa laskun, joka on korvattu toisella laskun, joka on vielä luonnosvaiheessa asema
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Mistä
 BillTo=Billistä
 ActionsOnBill=Toimet lasku

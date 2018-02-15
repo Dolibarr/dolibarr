@@ -334,6 +334,12 @@ class Societe extends CommonObject
 	 */
 	var $price_level;
 	var $outstanding_limit;
+	
+	/**
+	 * Min order amounts
+	 */
+	var $order_min_amount;
+	var $supplier_order_min_amount;
 
 	/**
 	 * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
@@ -738,7 +744,7 @@ class Societe extends CommonObject
 	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
-	 *		@param	string	$action						'add' or 'update'
+	 *		@param	string	$action						'add' or 'update' or 'merge'
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			<0 if KO, >=0 if OK
 	 */
@@ -785,6 +791,8 @@ class Societe extends CommonObject
 		$this->idprof6		= (! empty($this->idprof6)?trim($this->idprof6):'');
 		$this->prefix_comm	= trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
+		$this->order_min_amount = price2num($this->order_min_amount);
+		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
 		$this->tva_assuj	= trim($this->tva_assuj);
 		$this->tva_intra	= dol_sanitizeFileName($this->tva_intra,'');
@@ -867,7 +875,12 @@ class Societe extends CommonObject
 		// Check name is required and codes are ok or unique.
 		// If error, this->errors[] is filled
 		$result = 0;
-		if ($action != 'add') $result = $this->verify();	// We don't check when update called during a create because verify was already done
+		if ($action != 'add' && $action != 'merge')
+		{
+			// We don't check when update called during a create because verify was already done.
+			// For a merge, we suppose source data is clean and a customer code of a deleted thirdparty must be accepted into a target thirdparty with empty code without duplicate error
+			$result = $this->verify();
+		}
 
 		if ($result >= 0)
 		{
@@ -955,6 +968,8 @@ class Societe extends CommonObject
 			$sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
 			$sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
 			$sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
+			$sql .= ",order_min_amount= ".($this->order_min_amount!=''?$this->order_min_amount:'null');
+			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount!=''?$this->supplier_order_min_amount:'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 
 			$sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
@@ -1132,6 +1147,7 @@ class Societe extends CommonObject
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
+		$sql .= ', s.order_min_amount, s.supplier_order_min_amount';
 		$sql .= ', s.fk_multicurrency, s.multicurrency_code';
 		$sql .= ', fj.libelle as forme_juridique';
 		$sql .= ', e.libelle as effectif';
@@ -1148,7 +1164,8 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' WHERE s.entity IN ('.getEntity($this->element, 1).')';
+
+		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid)   $sql .= ' AND s.rowid = '.$rowid;
 		if ($ref)     $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
@@ -1279,6 +1296,8 @@ class Societe extends CommonObject
 				$this->webservices_key = $obj->webservices_key;
 
 				$this->outstanding_limit		= $obj->outstanding_limit;
+				$this->order_min_amount			= $obj->order_min_amount;
+				$this->supplier_order_min_amount	= $obj->supplier_order_min_amount;
 
 				// multiprix
 				$this->price_level = $obj->price_level;
@@ -3461,7 +3480,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 			return array();
@@ -3501,7 +3520,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 			return array();
@@ -3572,7 +3591,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 		{
@@ -3767,16 +3786,22 @@ class Societe extends CommonObject
 	 * Function used to replace a thirdparty id with another one.
 	 * It must be used within a transaction to avoid trouble
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$db 		Database handler
+	 * @param 	int 	$origin_id 	Old thirdparty id (will be removed)
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool				True if success, False if error
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
+		if ($origin_id == $dest_id)
+		{
+			dol_syslog('Error: Try to merge a thirdparty into itself');
+			return false;
+		}
+
 		/**
-		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
-		 * Because this function is meant to be executed within a transaction, we won't take care of it.
+		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some to avoid duplicate.
+		 * Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
 		 */
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';

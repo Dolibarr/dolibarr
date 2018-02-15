@@ -646,9 +646,10 @@ class Form
 	 *  @param	integer	$maxlength		Max length for labels (0=no limit)
 	 *  @param	string	$morecss		More css class
 	 *  @param	string	$usecodeaskey	'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	int		$showempty		Show empty choice
 	 *  @return string           		HTML string with select
 	 */
-	function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0,$morecss='minwidth300',$usecodeaskey='')
+	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1)
 	{
 		global $conf,$langs;
 
@@ -693,20 +694,22 @@ class Form
 
 				foreach ($countryArray as $row)
 				{
+					if (empty($showempty) && empty($row['rowid'])) continue;
+
 					if ($row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
-						$out.= '<option a value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
+						$out.= '<option value="" disabled class="selectoptiondisabledwhite">----------------------</option>';
 					}
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
 					{
 						$foundselected=true;
-						$out.= '<option b value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
+						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'" selected>';
 					}
 					else
 					{
-						$out.= '<option c value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
+						$out.= '<option value="'.($usecodeaskey?($usecodeaskey=='code2'?$row['code_iso']:$row['code_iso3']):$row['rowid']).'">';
 					}
 					if ($row['label']) $out.= dol_trunc($row['label'],$maxlength,'middle');
 					else $out.= '&nbsp;';
@@ -1726,7 +1729,7 @@ class Form
 	 *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
-	 *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 *  @param		int			$status					Sell status -1=Return all products, 0=Products not on sell, 1=Products on sell
 	 *  @param		int			$finished				2=all, 1=finished, 0=raw material
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
 	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
@@ -1740,7 +1743,7 @@ class Form
 	 *										            'warehouseopen' = select products from open warehouses,
 	 *										            'warehouseclosed' = select products from closed warehouses,
 	 *										            'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @return		void
 	 */
 	function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0, $morecss='', $hidepriceinlabel=0, $warehouseStatus='', $selected_combinations = array())
@@ -2390,7 +2393,7 @@ class Form
 	 *	Return list of suppliers products
 	 *
 	 *	@param	int		$socid   		Id societe fournisseur (0 pour aucun filtre)
-	 *	@param  int		$selected       Produit pre-selectionne
+	 *	@param  int		$selected       Product price pre-selected (must be 'id' in product_fournisseur_price or 'idprod_IDPROD')
 	 *	@param  string	$htmlname       Nom de la zone select
 	 *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
 	 *	@param  string	$filtre         Pour filtre sql
@@ -5275,7 +5278,7 @@ class Form
 		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
 
 		$fieldstoshow='t.ref';
-		if (! empty($objecttmp->fields))
+		if (! empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields ( like societe, contact, ...)
 		{
 			$tmpfieldstoshow='';
 			foreach($objecttmp->fields as $key => $val)
@@ -6252,8 +6255,11 @@ class Form
 				$navurl = preg_replace('/\/tasks\/(task|contact|time|note|document)\.php/','/tasks.php',$navurl);
 				$paramid='ref';
 			}
-			$previous_ref = $object->ref_previous?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-			$next_ref     = $object->ref_next?'<a href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
+
+			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
+			// accesskey is for Mac:               CTRL + key for all browsers
+			$previous_ref = $object->ref_previous?'<a accesskey="p" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+			$next_ref     = $object->ref_next?'<a accesskey="n" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 		}
 
 		//print "xx".$previous_ref."x".$next_ref;

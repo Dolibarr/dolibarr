@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Napaka, popust je bil že uporabljen
 ErrorInvoiceAvoirMustBeNegative=Napaka, na popravljenem računu mora biti negativni znesek
 ErrorInvoiceOfThisTypeMustBePositive=Napaka, ta tip računa mora imeti pozitiven znesek
 ErrorCantCancelIfReplacementInvoiceNotValidated=Napaka, ne morete preklicati računa, ki je bil zamenjan z drugim računom, ki je še v statusu osnutka
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Izdajatelj
 BillTo=Prejemnik
 ActionsOnBill=Aktivnosti na računu

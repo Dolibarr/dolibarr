@@ -47,7 +47,7 @@ class FormProjets
 	 *	Output a combo list with projects qualified for a third party / user
 	 *
 	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  int		$selected   	Id project preselected
+	 *	@param  string	$selected   	Id project preselected ('' or id of project)
 	 *	@param  string	$htmlname   	Name of HTML field
 	 *	@param	int		$maxlength		Maximum length of label
 	 *	@param	int		$option_only	Return only html options lines without the select tag
@@ -330,7 +330,7 @@ class FormProjets
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
 		$sql.= ', '.MAIN_DB_PREFIX.'projet_task as t';
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity IN (".getEntity('project').")";
 		$sql.= " AND t.fk_projet = p.rowid";
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";

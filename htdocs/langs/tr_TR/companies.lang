@@ -56,6 +56,7 @@ Address=Adresi
 State=Eyaleti/İli
 StateShort=Durum
 Region=Bölgesi
+Region-State=Region - State
 Country=Ülkesi
 CountryCode=Ülke kodu
 CountryId=Ülke kimliği

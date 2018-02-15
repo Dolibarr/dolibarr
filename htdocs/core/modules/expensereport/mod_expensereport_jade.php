@@ -101,6 +101,59 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	{
 		global $db,$conf;
 
+		// For backward compatibility and restore old behavior to get ref of expense report
+		if ($conf->global->EXPENSEREPORT_USE_OLD_NUMBERING_RULE)
+		{
+			$fuser = null;
+			if ($object->fk_user_author > 0)
+			{
+				$fuser=new User($db);
+				$fuser->fetch($object->fk_user_author);
+			}
+
+			$expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
+			$num_car = (empty($conf->global->NDF_NUM_CAR_REF))?"5":$conf->global->NDF_NUM_CAR_REF;
+
+			$sql = 'SELECT MAX(de.ref_number_int) as max';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport de';
+
+			$result = $db->query($sql);
+
+			if($db->num_rows($result) > 0):
+			$objp = $db->fetch_object($result);
+			$newref = $objp->max;
+			$newref++;
+			while(strlen($newref) < $num_car):
+				$newref = "0".$newref;
+			endwhile;
+			else:
+				$newref = 1;
+			while(strlen($newref) < $num_car):
+				$newref = "0".$newref;
+			endwhile;
+			endif;
+
+			$ref_number_int = ($newref+1)-1;
+			$update_number_int = true;
+
+			$user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
+
+			$prefix="ER";
+			if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
+			$newref = str_replace(' ','_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut,'%y%m%d');
+
+			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
+			$resqlbis = $db->query($sqlbis);
+			if (! $resqlbis)
+			{
+				dol_print_error($resqlbis);
+				exit;
+			}
+
+			dol_syslog("mod_expensereport_jade::getNextValue return ".$newref);
+			return $newref;
+		}
+
 		// D'abord on recupere la valeur max
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";

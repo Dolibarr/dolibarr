@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Помилка, знижка вже використо�
 ErrorInvoiceAvoirMustBeNegative=Помилка, правильний рахунок-фактура повинен мати негативну суму
 ErrorInvoiceOfThisTypeMustBePositive=Помилка, такий тип рахунку-фактури повинен мати позитивну суму
 ErrorCantCancelIfReplacementInvoiceNotValidated=Помилка, неможливо відмінити рахунок-фактуру, який був замінений на іншій рахунок-фактуру, що знаходиться в статусі проекту
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Продавець
 BillTo=Покупець
 ActionsOnBill=Дії з рахунком-фактурою

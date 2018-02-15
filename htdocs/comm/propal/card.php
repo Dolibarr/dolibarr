@@ -104,8 +104,11 @@ if ($id > 0 || ! empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
-	if ($ret < 0)
-		dol_print_error('', $object->error);
+	if ($ret <= 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -1711,7 +1714,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 
-} else {
+} elseif ($object->id > 0) {
 	/*
 	 * Show object in view mode
 	 */
@@ -1817,7 +1820,6 @@ if ($action == 'create')
 	// Proposal card
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
 
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
@@ -2129,6 +2131,22 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+
+    $tmparray=$object->getTotalWeightVolume();
+    $totalWeight=$tmparray['weight'];
+    $totalVolume=$tmparray['volume'];
+    if ($totalWeight) {
+        print '<tr><td>' . $langs->trans("CalculatedWeight") . '</td>';
+        print '<td>';
+        print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
+        print '</td></tr>';
+    }
+    if ($totalVolume) {
+        print '<tr><td>' . $langs->trans("CalculatedVolume") . '</td>';
+        print '<td>';
+        print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
+        print '</td></tr>';
+    }
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))

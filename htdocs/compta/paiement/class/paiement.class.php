@@ -141,7 +141,7 @@ class Paiement extends CommonObject
 	/**
 	 *    Create payment of invoices into database.
 	 *    Use this->amounts to have list of invoices for the payment.
-	 *    For payment of a customer invoice, amounts are postive, for payment of credit note, amounts are negative
+	 *    For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
 	 *    @param	User	$user                	Object user
 	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
@@ -233,11 +233,12 @@ class Paiement extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
+						$invoice=new Facture($this->db);
+						$invoice->fetch($facid);
+
 						// If we want to closed payed invoices
 					    if ($closepaidinvoices)
 					    {
-					        $invoice=new Facture($this->db);
-					        $invoice->fetch($facid);
                             $paiement = $invoice->getSommePaiement();
                             $creditnotes=$invoice->getSumCreditNotesUsed();
                             $deposits=$invoice->getSumDepositsUsed();
@@ -339,25 +340,24 @@ class Paiement extends CommonObject
                                     }
                                 }
                             }
-
-                            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-                            {
-                            	$outputlangs = $langs;
-                            	if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
-                            	if (! empty($newlang)) {
-                            		$outputlangs = new Translate("", $conf);
-                            		$outputlangs->setDefaultLang($newlang);
-                            	}
-                            	$ret = $invoice->fetch($id); // Reload to get new records
-
-                            	$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
-                            	if ($result < 0) {
-                            		setEventMessages($invoice->error, $invoice->errors, 'errors');
-                            		$error++;
-                            	}
-
-                            }
 					    }
+
+					    // Regenerate documents of invoices
+                        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+                        {
+                            $outputlangs = $langs;
+                            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                            if (! empty($newlang)) {
+                            	$outputlangs = new Translate("", $conf);
+                            	$outputlangs->setDefaultLang($newlang);
+                            }
+                            $ret = $invoice->fetch($facid); // Reload to get new records
+                            $result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+                            if ($result < 0) {
+                            	setEventMessages($invoice->error, $invoice->errors, 'errors');
+                            	$error++;
+                            }
+                        }
 					}
 					else
 					{
@@ -1042,11 +1042,14 @@ class Paiement extends CommonObject
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
+     *  @param	int  	$notooltip		1=Disable tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
+	function getNomUrl($withpicto=0, $option='', $mode='withlistofinvoices', $notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
         $label = $langs->trans("ShowPayment").': '.$this->ref;
@@ -1064,12 +1067,31 @@ class Paiement extends CommonObject
             	}
             }
         }
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowMyObject");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+        $url = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id;
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.($this->ref?$this->ref:$this->id).$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto && $withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 

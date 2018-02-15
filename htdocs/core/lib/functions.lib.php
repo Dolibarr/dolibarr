@@ -111,7 +111,7 @@ function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
  *									'commande', 'commande_fournisseur', 'expedition', 'intervention', 'survey',
  *									'contract', 'tax', 'expensereport', 'holiday', 'multicurrency', 'project',
  *									'email_template', 'event', 'donation'
- *									'c_paiement', ...
+ *									'c_paiement', 'c_payment_term', ...
  * 	@param	int		$shared			0=Return id of current entity only,
  * 									1=Return id of current entity + shared entities (default)
  *  @param	int		$forceentity	Entity id
@@ -550,7 +550,7 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
 		case 'nohtml':
-			$out=dol_string_nohtmltag($out);
+			$out=dol_string_nohtmltag($out, 0);
 			break;
 		case 'alphanohtml':	// Recommended for search params
 			if (! is_array($out))
@@ -2188,7 +2188,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  */
 function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='',$adddivfloat=0)
 {
-	global $conf,$user,$langs,$mysoc;
+	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
@@ -2278,23 +2278,33 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
-	$picto = '';
-	if($withpicto){
-		if($withpicto=='fax'){
-			$picto = 'phoning_fax';
-		}elseif($withpicto=='phone'){
-			$picto = 'phoning';
-		}elseif($withpicto=='mobile'){
-			$picto = 'phoning_mobile';
-		}else{
-			$picto = '';
+
+	if ($hookmanager) {
+            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
+            $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
+            $rep.=$hookmanager->resPrint;
+        }
+	 if (empty($reshook))
+        {
+		$picto = '';
+		if($withpicto){
+			if($withpicto=='fax'){
+				$picto = 'phoning_fax';
+			}elseif($withpicto=='phone'){
+				$picto = 'phoning';
+			}elseif($withpicto=='mobile'){
+				$picto = 'phoning_mobile';
+			}else{
+				$picto = '';
+			}
 		}
-	}
-	if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
-	else $rep.='<span style="margin-right: 10px;">';
-	$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
-	if ($adddivfloat) $rep.='</div>';
-	else $rep.='</span>';
+		if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
+		else $rep.='<span style="margin-right: 10px;">';
+		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
+		if ($adddivfloat) $rep.='</div>';
+		else $rep.='</span>';
+	  }
+
 	return $rep;
 }
 
@@ -3357,18 +3367,19 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
  *  @param  string  $admin          '1'=Info for admin users. '0'=Info for standard users (change only the look), 'xxx'=Other
+ *  @param	string	$morecss		More CSS
  *	@return	string					String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1')
+function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin='1', $morecss='')
 {
 	global $conf, $langs;
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'info', 'class="hideonsmartphone"');
+		return img_picto($text, 'info', 'class="hideonsmartphone'.($morecss?' '.$morecss:'').'"');
 	}
 
-	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="'.(empty($admin)?'':($admin=='1'?'info':$admin)).' hideonsmartphone'.($morecss?' '.$morecss:'').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin?$langs->trans('InfoAdmin'):$langs->trans('Note')).'"></span> '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -3509,15 +3520,16 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
+ * @param	string	$morecss		More css
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="center login_main_message"><div class="error">';
+	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
@@ -5620,7 +5632,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			'__USER_LASTNAME__' => (string) $user->lastname,
 			'__USER_FIRSTNAME__' => (string) $user->firstname,
 			'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-			'__USER_SUPERVISOR_ID__' => (string) $user->fk_user
+			'__USER_SUPERVISOR_ID__' => (string) $user->fk_user,
+			'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
 			)
 		);
 	}
@@ -5634,7 +5647,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 /**
  *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
- *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced
+ *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  Example of usage:
+ *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
+ *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
+ *  $mesg = make_substitutions($mesg, $substitutionarray, $langs);
  *
  *  @param	string		$text	      			Source string in which we must do substitution
  *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
@@ -6293,7 +6310,7 @@ function dol_validElement($element)
  * 	Return img flag of country for a language code or country code
  *
  * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
- *  @param	string	$moreatt		Add more attribute on img tag (For example 'style="float: right"')
+ *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  * 	@return	string				HTML img string with flag.
  */
 function picto_from_langcode($codelang, $moreatt = '')
@@ -6306,7 +6323,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 
 	if ($codelang == 'auto')
 	{
-		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png', $moreatt);
+		return '<span class="fa fa-globe"></span>';
 	}
 
 	$langtocountryflag = array(
@@ -6827,7 +6844,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
 
 	if (empty($conf->use_javascript_ajax)) return '';
 
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css');
+	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'svg+xml');
 	//$mime_preview[]='vnd.oasis.opendocument.presentation';
 	//$mime_preview[]='archive';
 	$num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
@@ -6841,6 +6858,25 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
 	// old behavior
 	if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param?'&'.$param:'')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
 	else return '';
+}
+
+
+/**
+ * Make content of an input box selected when we click into input field.
+ *
+ * @param string	$htmlname	Id of html object
+ * @param string	$addlink	Add a 'link to' after
+ */
+function ajax_autoselect($htmlname, $addlink='')
+{
+	global $langs;
+	$out = '<script type="text/javascript">
+               jQuery(document).ready(function () {
+				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
+				});
+		    </script>';
+	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+	return $out;
 }
 
 
@@ -6914,6 +6950,7 @@ function dol_mimetype($file, $default='application/octet-stream', $mode=0)
 	if (preg_match('/\.gif$/i',$tmpfile))					   { $mime='image/gif';    $imgmime='image.png'; $famime='file-image-o'; }
 	if (preg_match('/\.bmp$/i',$tmpfile))					   { $mime='image/bmp';    $imgmime='image.png'; $famime='file-image-o'; }
 	if (preg_match('/\.(tif|tiff)$/i',$tmpfile))			   { $mime='image/tiff';   $imgmime='image.png'; $famime='file-image-o'; }
+	if (preg_match('/\.svg$/i',$tmpfile))					   { $mime='image/svg+xml';$imgmime='image.png'; $famime='file-image-o'; }
 	// Calendar
 	if (preg_match('/\.vcs$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }
 	if (preg_match('/\.ics$/i',$tmpfile))					   { $mime='text/calendar'; $imgmime='other.png'; $famime='file-text-o'; }

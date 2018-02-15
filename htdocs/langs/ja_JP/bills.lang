@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=既に使用されるエラー、割引
 ErrorInvoiceAvoirMustBeNegative=エラーは、正しい請求書は、負の金額を持っている必要があります
 ErrorInvoiceOfThisTypeMustBePositive=エラー、請求書のこの型は、正の金額を持っている必要があります
 ErrorCantCancelIfReplacementInvoiceNotValidated=エラーは、ドラフトの状態のままで別の請求書に置き換えられている請求書を取り消すことはできません
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=から
 BillTo=請求する
 ActionsOnBill=請求書上のアクション

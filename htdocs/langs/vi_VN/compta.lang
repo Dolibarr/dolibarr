@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Tới <a href="%s">Thuế thiết lập mô-đun</a> để sửa đổi quy định để tính
 TaxModuleSetupToModifyRulesLT=Tới <a href="%s">thiết lập Công ty</a> để sửa đổi quy định để tính
 OptionMode=Lựa chọn cho kế toán

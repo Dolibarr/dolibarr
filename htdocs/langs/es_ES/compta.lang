@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Financiera
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Ir a la <a href="%s">configuración del módulo de impuestos</a> para modificar las reglas de cálculo
 TaxModuleSetupToModifyRulesLT=Ir a la <a href="%s">configuración de la Empresa</a> para modificar las reglas de cálculo
 OptionMode=Opción de gestión contable
@@ -24,7 +24,7 @@ PaymentsNotLinkedToInvoice=Pagos vinculados a ninguna factura, por lo que ningu�
 PaymentsNotLinkedToUser=Pagos no vinculados a un usuario
 Profit=Beneficio
 AccountingResult=Resultado contable
-BalanceBefore=Balance (before)
+BalanceBefore=Balance (antes)
 Balance=Saldo
 Debit=Debe
 Credit=Haber

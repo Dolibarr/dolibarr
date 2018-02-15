@@ -193,7 +193,7 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut > 0";
-$sql .= " AND f.entity = " . getEntity('facture');
+$sql .= " AND f.entity IN (" . getEntity('facture') . ") ";
 if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
 if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
 if ($search_ref) $sql.=natural_search('f.facnumber', $search_ref);

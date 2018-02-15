@@ -1091,7 +1091,7 @@ class ExpenseReport extends CommonObject
 		{
             $num = $this->ref;
         }
-        if (empty($num)) return -1;
+        if (empty($num) || $num < 0) return -1;
 
         $this->newref = $num;
 

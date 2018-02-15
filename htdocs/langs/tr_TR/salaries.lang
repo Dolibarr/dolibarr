@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Kullanıcı üçüncü tarafları için kullanılan muhasebe hesabı
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Personel giderleri için varsayılan muhasebe hesabı
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
 Salary=Ücret
 Salaries=Ücretler
 NewSalaryPayment=Yeni ücret ödemesi
@@ -13,5 +13,5 @@ TJM=Ortalama günlük ücret
 CurrentSalary=Güncel maaş
 THMDescription=Bu değer, eğer proje modülü kullanılıyorsa kullanıcılar tarafından girilen bir projede tüketilen sürenin maliyetinin hesaplanması için kullanılır
 TJMDescription=Bu değer yalnızca bilgi amaçlı olup hiçbir hesaplamada kulanılmaz
-LastSalaries=Latest %s salary payments
-AllSalaries=All salary payments
+LastSalaries=Son %s maaş ödemeleri
+AllSalaries=Tüm maaş ödemeleri
