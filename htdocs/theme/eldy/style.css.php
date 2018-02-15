@@ -3209,6 +3209,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+div.boximport {
+    min-height: unset;
+}
+
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #884400; }
 

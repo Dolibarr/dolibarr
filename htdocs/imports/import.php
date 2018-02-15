@@ -1941,7 +1941,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	$height='24';
 
 	print "\n\n<!-- Box ".$pos." start -->\n";
-	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
+	print '<div class="box boximport" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	if ($pos && $pos > count($fieldssource))	// No fields
