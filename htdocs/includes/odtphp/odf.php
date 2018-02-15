@@ -585,6 +585,7 @@ IMG;
 			if (isset($_SERVER["WINDIR"]))
 			{
 				// using windows libreoffice that must be in path
+				// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
 				$command ='soffice.exe -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 			}
 			else
