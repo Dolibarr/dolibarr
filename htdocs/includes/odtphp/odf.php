@@ -616,8 +616,8 @@ IMG;
 			//DEBUG: Terminating LibreOffice instance.
 			//DEBUG: Waiting for LibreOffice instance to exit
 
-			// It fails:
-			// - set shel of user to bash instead of nologin.
+			// If it fails:
+			// - set shell of user to bash instead of nologin.
 			// - set permission to read/write to user on home directory /var/www so user can create the libreoffice , dconf and .cache dir and files then set permission back
 
 			$command = $conf->global->MAIN_ODT_AS_PDF.' '.escapeshellcmd($name);
