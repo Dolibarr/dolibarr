@@ -104,8 +104,11 @@ if ($id > 0 || ! empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
-	if ($ret < 0)
-		dol_print_error('', $object->error);
+	if ($ret <= 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -1711,7 +1714,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 
-} else {
+} elseif ($object->id > 0) {
 	/*
 	 * Show object in view mode
 	 */
@@ -1817,7 +1820,6 @@ if ($action == 'create')
 	// Proposal card
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-
 
 	$morehtmlref='<div class="refidno">';
 	// Ref customer

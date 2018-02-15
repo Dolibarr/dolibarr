@@ -75,7 +75,7 @@ $opclotureyear=GETPOST('opclotureyear');
 $filter_opcloture=GETPOST('filter_opcloture');
 
 // Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'servicelist'.$mode;
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contractservicelist'.$mode;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));
@@ -482,7 +482,6 @@ if (! empty($arrayfields['cd.date_cloture']['checked']))
 	print $form->select_date($filter_date_cloture,'opcloture',0,0,1,'',1,0,1);
 	print '</td>';
 }
-// Extra fields
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 

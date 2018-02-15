@@ -1561,7 +1561,7 @@ else
 
 				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
 				{
-					print '<tr '.$bcnd[$var].' valign="top">';
+					print '<tr '.$bcnd[$var].' class="tdtop">';
 					// Label
 					if ($objp->fk_product > 0)
 					{
@@ -1571,12 +1571,10 @@ else
 						$productstatic->ref=$objp->pref;
 						$productstatic->entity=$objp->pentity;
 						$productstatic->label=$objp->plabel;
-						$text = $productstatic->getNomUrl(1,'',20);
+						$text = $productstatic->getNomUrl(1,'',32);
 						if ($objp->plabel)
 						{
 							$text .= ' - ';
-							//$productstatic->ref=$objp->label;
-							//$text .= $productstatic->getNomUrl(0,'',16);
 							$text .= $objp->plabel;
 						}
 						$description = $objp->description;
@@ -1713,8 +1711,8 @@ else
 						$productstatic->type=$objp->ptype;
 						$productstatic->ref=$objp->pref;
 						$productstatic->entity=$objp->pentity;
-						print $productstatic->getNomUrl(1,'',20);
-						print $objp->label?' - '.dol_trunc($objp->label,16):'';
+						print $productstatic->getNomUrl(1,'',32);
+						print $objp->label?' - '.dol_trunc($objp->label,32):'';
 						print '<br>';
 					}
 					else
@@ -1822,7 +1820,7 @@ else
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-				$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
@@ -1834,7 +1832,7 @@ else
 				$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 				$dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 				$comment      = GETPOST('comment','alpha');
-				$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
@@ -1853,7 +1851,7 @@ else
 				}
 				else
 				{
-					$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne','int')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
+					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne','int')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
 				}
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
