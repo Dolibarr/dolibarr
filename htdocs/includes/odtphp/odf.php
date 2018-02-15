@@ -581,18 +581,10 @@ IMG;
 		// Export to PDF using LibreOffice
 		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
 		{
-			// Executing convert to PDF using libreoffice 5
-			if (isset($_SERVER["WINDIR"]))
-			{
-				// using windows libreoffice that must be in path
-				// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-				$command ='soffice.exe -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
-			}
-			else
-			{
-				// using linux/mac libreoffice that must be in path
-				$command ='soffice -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
-			}
+			// using windows libreoffice that must be in path
+			// using linux/mac libreoffice that must be in path
+			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
+			$command ='soffice -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		}
 		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
 		{
