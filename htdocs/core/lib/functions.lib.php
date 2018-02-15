@@ -2229,14 +2229,14 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone=($separ!=''?'(':'').substr($newphone,0,3).($separ!=''?')':'').$separ.substr($newphone,3,3).($separ!=''?'-':'').substr($newphone,6,4);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "PT" )
+	elseif (strtoupper($countrycode) == "PT" )
 	{//Portugal		
 		if (dol_strlen($object) == 13)
 		{//ex: +351_ABC_DEF_GHI
 			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "SR" )
+	elseif (strtoupper($countrycode) == "SR" )
 	{//Suriname
 		if (dol_strlen($object) == 10)
 		{//ex: +597_ABC_DEF
@@ -2247,7 +2247,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,4);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "DE" )
+	elseif (strtoupper($countrycode) == "DE" )
 	{//Allemagne
 		if (dol_strlen($object) == 14)
 		{//ex:  +49_ABCD_EFGH_IJK
@@ -2258,42 +2258,42 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,4).$separ.substr($newphone,10,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "ES")
+	elseif (strtoupper($countrycode) == "ES")
 	{//Espagne
 		if (dol_strlen($object) == 12) 
 		{//ex:  +34_ABC_DEF_GHI
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "BF")
+	elseif (strtoupper($countrycode) == "BF")
 	{// Burkina Faso
 		if (dol_strlen($newphone) == 12)
 		{//ex :  +22 A BC_DE_FG_HI
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "RO")
+	elseif (strtoupper($countrycode) == "RO")
 	{// Roumanie
 		if (dol_strlen($newphone) == 12)
 		{//ex :  +40 AB_CDE_FG_HI
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "TR")
+	elseif (strtoupper($countrycode) == "TR")
 	{//Turquie			
 		if (dol_strlen($object) == 13)
 		{//ex :  +90 ABC_DEF_GHIJ
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,4);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "US")
+	elseif (strtoupper($countrycode) == "US")
 	{//Etat-Unis
 		if (dol_strlen($newphone) == 12)
 		{//ex: +1 ABC_DEF_GHIJ
 			$newphone= substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,3).$separ.substr($newphone,8,4);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "MX")
+	elseif (strtoupper($countrycode) == "MX")
 	{//Mexique
 		if (dol_strlen($newphone) == 12)
 		{//ex: +52 ABCD_EFG_HI
@@ -2308,14 +2308,14 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,4);	
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "ML")
+	elseif (strtoupper($countrycode) == "ML")
 	{//Mali
 		if(dol_strlen($newphone) == 12)
 		{//ex: +223 AB_CD_EF_GH
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "TH")
+	elseif (strtoupper($countrycode) == "TH")
 	{//Thaïlande
 		if(dol_strlen($newphone) == 11)
 		{//ex: +66_ABC_DE_FGH
@@ -2326,7 +2326,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,3);
 		}
 		}
-	elseif (strtoupper($parameters['countrycode']) == "MU")
+	elseif (strtoupper($countrycode) == "MU")
 	{//Maurice
 		if(dol_strlen($newphone) == 11)
 		{//ex: +230_ABC_DE_FG
@@ -2337,14 +2337,14 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,4).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "ZA")
+	elseif (strtoupper($countrycode) == "ZA")
 	{//Afrique du sud
 		if(dol_strlen($newphone) == 12)
 		{//ex: +27_AB_CDE_FG_HI
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "SY")
+	elseif (strtoupper($countrycode) == "SY")
 	{//Syrie
 		if(dol_strlen($newphone) == 12)
 		{//ex: +963_AB_CD_EF_GH
@@ -2355,7 +2355,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "AE")
+	elseif (strtoupper($countrycode) == "AE")
 	{//Emirats Arabes Unis
 		if(dol_strlen($newphone) == 12)
 		{//ex: +971_ABC_DEF_GH
@@ -2370,14 +2370,14 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,4);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "DZ")
+	elseif (strtoupper($countrycode) == "DZ")
 	{//Algérie
 		if(dol_strlen($newphone) == 13)
 		{//ex: +213_ABC_DEF_GHI
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "BE")
+	elseif (strtoupper($countrycode) == "BE")
 	{//Belgique
 		if(dol_strlen($newphone) == 11)
 		{//ex: +32_ABC_DE_FGH
@@ -2388,42 +2388,42 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "PF")
+	elseif (strtoupper($countrycode) == "PF")
 	{//Polynésie française
 		if(dol_strlen($newphone) == 12)
 		{//ex: +689_AB_CD_EF_GH
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "CO")
+	elseif (strtoupper($countrycode) == "CO")
 	{//Colombie
 		if(dol_strlen($newphone) == 13)
 		{//ex: +57_ABC_DEF_GH_IJ
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "JO")
+	elseif (strtoupper($countrycode) == "JO")
 	{//Jordanie
 		if(dol_strlen($newphone) == 12)
 		{//ex: +962_A_BCD_EF_GH
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,1).$separ.substr($newphone,5,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "MG")
+	elseif (strtoupper($countrycode) == "MG")
 	{//Madagascar
 		if(dol_strlen($newphone) == 13)
 		{//ex: +261_AB_CD_EF_GHI 
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "GB")
+	elseif (strtoupper($countrycode) == "GB")
 	{//Royaume uni
 		if(dol_strlen($newphone) == 13)
 		{//ex: +44_ABCD_EFG_HIJ
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "CH")
+	elseif (strtoupper($countrycode) == "CH")
 	{//Suisse
 		if(dol_strlen($newphone) == 12)
 		{//ex: +41_AB_CDE_FG_HI
@@ -2434,35 +2434,35 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone =$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,3).$separ.substr($newphone,11,4);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "TN")
+	elseif (strtoupper($countrycode) == "TN")
 	{//Tunisie
 		if(dol_strlen($newphone) == 12)
 		{//ex: +216_AB_CDE_FGH
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "GF")
+	elseif (strtoupper($countrycode) == "GF")
 	{//Guyane francaise
 		if(dol_strlen($newphone) == 13)
 		{//ex: +594_ABC_DE_FG_HI  (ABC=594 de nouveau)
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "GP")
+	elseif (strtoupper($countrycode) == "GP")
 	{//Guadeloupe
 		if(dol_strlen($newphone) == 13)
 		{//ex: +590_ABC_DE_FG_HI  (ABC=590 de nouveau)
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "MQ")
+	elseif (strtoupper($countrycode) == "MQ")
 	{//Martinique
 		if(dol_strlen($newphone) == 13)
 		{//ex: +596_ABC_DE_FG_HI  (ABC=596 de nouveau)
 			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
 		}
 	}
-	elseif (strtoupper($parameters['countrycode']) == "IT")
+	elseif (strtoupper($countrycode) == "IT")
 	{//Italie
 		if(dol_strlen($newphone) == 12)
 		{//ex: +39_ABC_DEF_GHI
@@ -2473,7 +2473,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
 		}
 	}
-	elseif(strtoupper($parameters['countrycode']) == "AU")
+	elseif(strtoupper($countrycode) == "AU")
 	{//Australie
 		 if(dol_strlen($newphone) == 12)
 		{//ex: +61_A_BCDE_FGHI
