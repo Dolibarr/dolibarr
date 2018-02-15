@@ -74,7 +74,7 @@ print "<br>\n";
 
 $head=resource_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("ResourceSingular"), 0, 'action');
+dol_fiche_head($head, 'attributes', $langs->trans("ResourceSingular"), -1, 'action');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
