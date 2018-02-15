@@ -269,7 +269,6 @@ else
 	$sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
 	$sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
-	//$sql.= ' pfp.ref_fourn as ref_supplier, ';
 	$sql.= ' MIN(pfp.unitprice) as minsellprice';
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
 		$sql .= ', pac.rowid prod_comb_id';
