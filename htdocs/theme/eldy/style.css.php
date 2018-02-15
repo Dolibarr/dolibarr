@@ -3546,14 +3546,14 @@ tr.visible {
 .websiteiframenoborder {
 	border: 0px;
 }
-a.websitebuttonsitepreview {
+span.websitebuttonsitepreview, a.websitebuttonsitepreview {
 	vertical-align: middle;
 }
-a.websitebuttonsitepreview img {
+span.websitebuttonsitepreview img, a.websitebuttonsitepreview img {
 	width: 26px;
 	display: inline-block;
 }
-a.websitebuttonsitepreviewdisabled img {
+span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled img {
 	opacity: 0.2;
 }
 .websitehelp {

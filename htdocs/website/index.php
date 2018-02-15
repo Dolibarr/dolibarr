@@ -1388,9 +1388,18 @@ if (count($object->records) > 0)
 
 		$urlext=$virtualurl;
 		$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
-		print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-		print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
-		print '</a>';
+		if (empty($object->fk_default_home))
+		{
+			print '<span class="websitebuttonsitepreview websitebuttonsitepreviewdisabled cursornotallowed" id="previewsiteextdisabled" href="" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+			print $form->textwithpicto('', '<span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br>'.$langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+			print '</span>';
+		}
+		else
+		{
+			print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+			print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+			print '</a>';
+		}
 	}
 
 	if (in_array($action, array('editcss','editmenu','file_manager')))
@@ -1587,6 +1596,8 @@ if (count($object->records) > 0)
                             console.log("Website external url modified "+jQuery("#previewsiteurl").val());
                 			if (jQuery("#previewsiteurl").val() != "") jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
                 			else jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 0.2 });
+						';
+				print '
                 		});
                     	jQuery("#previewsiteext,#previewpageext").click(function() {
                             newurl=jQuery("#previewsiteurl").val();

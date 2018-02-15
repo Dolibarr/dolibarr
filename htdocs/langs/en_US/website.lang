@@ -64,5 +64,6 @@ BackToListOfThirdParty=Back to list for Third Party
 DisableSiteFirst=Disable website first
 MyContainerTitle=My web site title
 AnotherContainer=Another container
+YouMustDefineTheHomePage=You must first define the default Home page
 OnlyEditionOfSourceForGrabbedContentFuture=Note: only edition of HTML source will be possible when a page content is intiliazed by grabbing it from an external page (WYSIWYG editor will not be available)
 OnlyEditionOfSourceForGrabbedContent=Only edition of HTML source is possible when content was grabber from an external site
