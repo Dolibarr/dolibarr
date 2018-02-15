@@ -561,7 +561,7 @@ IMG;
 	 * Convert the ODT file to PDF and export the file as attached file by HTTP
 	 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
 	 *
-	 * @param string $name (optional)
+	 * @param 	string 	$name 	Name of ODT file to generate before generating PDF
 	 * @throws OdfException
 	 * @return void
 	 */
@@ -574,98 +574,94 @@ IMG;
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
-		// Export to PDF using LibreOffice 
+		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+		// Method 1 sometimes hang the server.
+
+
+		// Export to PDF using LibreOffice
 		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
 		{
-			// Executing convert to PDF using libreoffice 5 (using windows libreoffice must be in path)
-			$command ='soffice.exe -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
-			exec($command, $output_arr, $retval);
-			
-			// Split extension from name to allow deleting the source using MAIN_ODT_AS_PDF_DEL_SOURCE
-			$name=preg_replace('/\.odt/i', '', $name);
+			// using windows libreoffice that must be in path
+			// using linux/mac libreoffice that must be in path
+			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
+			$command ='soffice -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+		}
+		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
+		{
+			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
+
+			// MAIN_ODT_AS_PDF should be   "sudo -u unoconv /usr/bin/unoconv" and userunoconv must have sudo to be root by adding file /etc/sudoers.d/unoconv with content  www-data ALL=(unoconv) NOPASSWD: /usr/bin/unoconv .
+
+			// Try this with www-data user:    /usr/bin/unoconv -vvvv -f pdf /tmp/document-example.odt
+			// It must return:
+			//Verbosity set to level 4
+			//Using office base path: /usr/lib/libreoffice
+			//Using office binary path: /usr/lib/libreoffice/program
+			//DEBUG: Connection type: socket,host=127.0.0.1,port=2002;urp;StarOffice.ComponentContext
+			//DEBUG: Existing listener not found.
+			//DEBUG: Launching our own listener using /usr/lib/libreoffice/program/soffice.bin.
+			//LibreOffice listener successfully started. (pid=9287)
+			//Input file: /tmp/document-example.odt
+			//unoconv: file `/tmp/document-example.odt' does not exist.
+			//unoconv: RuntimeException during import phase:
+			//Office probably died. Unsupported URL <file:///tmp/document-example.odt>: "type detection failed"
+			//DEBUG: Terminating LibreOffice instance.
+			//DEBUG: Waiting for LibreOffice instance to exit
+
+			// If it fails:
+			// - set shell of user to bash instead of nologin.
+			// - set permission to read/write to user on home directory /var/www so user can create the libreoffice , dconf and .cache dir and files then set permission back
+
+			$command = $conf->global->MAIN_ODT_AS_PDF.' '.escapeshellcmd($name);
+			//$command = '/usr/bin/unoconv -vvv '.escapeshellcmd($name);
 		}
 		else
 		{
-			$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
-			// Method 1 sometimes hang the server.
+			// deprecated old method
+			$tmpname=preg_replace('/\.odt/i', '', $name);
 
-			if (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
+			if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
 			{
-				// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
-
-				// MAIN_ODT_AS_PDF should be   "sudo -u unoconv /usr/bin/unoconv" and userunoconv must have sudo to be root by adding file /etc/sudoers.d/unoconv with content  www-data ALL=(unoconv) NOPASSWD: /usr/bin/unoconv .
-
-				// Try this with www-data user:    /usr/bin/unoconv -vvvv -f pdf /tmp/document-example.odt
-				// It must return:
-				//Verbosity set to level 4
-				//Using office base path: /usr/lib/libreoffice
-				//Using office binary path: /usr/lib/libreoffice/program
-				//DEBUG: Connection type: socket,host=127.0.0.1,port=2002;urp;StarOffice.ComponentContext
-				//DEBUG: Existing listener not found.
-				//DEBUG: Launching our own listener using /usr/lib/libreoffice/program/soffice.bin.
-				//LibreOffice listener successfully started. (pid=9287)
-				//Input file: /tmp/document-example.odt
-				//unoconv: file `/tmp/document-example.odt' does not exist.
-				//unoconv: RuntimeException during import phase:
-				//Office probably died. Unsupported URL <file:///tmp/document-example.odt>: "type detection failed"
-				//DEBUG: Terminating LibreOffice instance.
-				//DEBUG: Waiting for LibreOffice instance to exit
-
-				// It fails:
-				// - set shel of user to bash instead of nologin.
-				// - set permission to read/write to user on home directory /var/www so user can create the libreoffice , dconf and .cache dir and files then set permission back
-
-				$command = $conf->global->MAIN_ODT_AS_PDF.' '.escapeshellcmd($name);
-				//$command = '/usr/bin/unoconv -vvv '.escapeshellcmd($name);
+				$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
 			}
 			else
 			{
-				// deprecated old method
-				$name=preg_replace('/\.odt/i', '', $name);
-
-				if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
-				{
-					$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
-				}
-				else
-				{
-					dol_syslog(get_class($this).'::exportAsAttachedPDF is used but the constant MAIN_DOL_SCRIPTS_ROOT with path to script directory was not defined.', LOG_WARNING);
-					$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
-				}
-			}
-
-			//$dirname=dirname($name);
-			//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
-
-			dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
-			if ($execmethod == 1)
-			{
-				exec($command, $output_arr, $retval);
-			}
-			if ($execmethod == 2)
-			{
-				$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
-
-				$ok=0;
-				$handle = fopen($outputfile, 'w');
-				if ($handle)
-				{
-					dol_syslog(get_class($this)."Run command ".$command,LOG_DEBUG);
-					fwrite($handle, $command."\n");
-					$handlein = popen($command, 'r');
-					while (!feof($handlein))
-					{
-						$read = fgets($handlein);
-						fwrite($handle, $read);
-						$output_arr[]=$read;
-					}
-					pclose($handlein);
-					fclose($handle);
-				}
-				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			    dol_syslog(get_class($this).'::exportAsAttachedPDF is used but the constant MAIN_DOL_SCRIPTS_ROOT with path to script directory was not defined.', LOG_WARNING);
+				$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
 			}
 		}
-		
+
+		//$dirname=dirname($name);
+		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
+
+		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
+		if ($execmethod == 1)
+		{
+			exec($command, $output_arr, $retval);
+		}
+		if ($execmethod == 2)
+		{
+			$outputfile = DOL_DATA_ROOT.'/odt2pdf.log';
+
+			$ok=0;
+			$handle = fopen($outputfile, 'w');
+			if ($handle)
+			{
+				dol_syslog(get_class($this)."Run command ".$command,LOG_DEBUG);
+				fwrite($handle, $command."\n");
+				$handlein = popen($command, 'r');
+				while (!feof($handlein))
+				{
+					$read = fgets($handlein);
+					fwrite($handle, $read);
+					$output_arr[]=$read;
+				}
+				pclose($handlein);
+				fclose($handle);
+			}
+			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+		}
+
 		if ($retval == 0)
 		{
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
@@ -674,12 +670,15 @@ IMG;
 			}
 
 			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$name=preg_replace('/\.od(x|t)/i', '', $name);
 				header('Content-type: application/pdf');
 				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-				readfile("$name.pdf");
+				readfile($name.".pdf");
 			}
 			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
-				unlink("$name.odt");
+			{
+				unlink($name);
+			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
