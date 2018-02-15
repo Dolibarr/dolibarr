@@ -30,6 +30,7 @@
 //if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
 //if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
 //if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
+//if (! defined('NOIPCHECK'))              define('NOIPCHECK','1');				// Do not check IP defined into conf $dolibarr_main_restrict_ip
 //if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
 //if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
 //if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
@@ -253,19 +254,19 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-// if total resultset is smaller then paging size (filtering), goto and load page 0 
-if (($page * $limit) > $nbtotalofrecords) 
+// if total resultset is smaller then paging size (filtering), goto and load page 0
+if (($page * $limit) > $nbtotalofrecords)
 {
 	$page = 0;
-	$offset = 0; 
+	$offset = 0;
 }
 // if total resultset is smaller the limit, no need to do paging.
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$resql = $result;
 	$num = $nbtotalofrecords;
-} 
-else 
+}
+else
 {
 	$sql.= $db->plimit($limit+1, $offset);
 

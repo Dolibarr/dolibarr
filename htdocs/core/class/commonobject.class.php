@@ -548,9 +548,10 @@ abstract class CommonObject
 	 *
 	 * @param	string	$modulepart			Module related to document
 	 * @param	int		$initsharekey		Init the share key if it was not yet defined
+	 * @param	int		$relativelink		0=Return full external link, 1=Return link relative to root of file
 	 * @return	string						Link or empty string if there is no download link
 	 */
-	function getLastMainDocLink($modulepart, $initsharekey=0)
+	function getLastMainDocLink($modulepart, $initsharekey=0, $relativelink=0)
 	{
 		global $user, $dolibarr_main_url_root;
 
@@ -621,10 +622,17 @@ abstract class CommonObject
 		if (! empty($ecmfile->share)) $paramlink.=($paramlink?'&':'').'hashp='.$ecmfile->share;			// Hash for public share
 		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
 
-		$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
+		if ($relativelink)
+		{
+			$linktoreturn='document.php'.($paramlink?'?'.$paramlink:'');
+		}
+		else
+		{
+			$linktoreturn=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
+		}
 
 		// Here $ecmfile->share is defined
-		return $fulllink;
+		return $linktoreturn;
 	}
 
 
