@@ -716,13 +716,13 @@ class FormFile
 					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl=$conf->global->DOL_URL_ROOT_DOCUMENT_PHP;    // To use another wrapper
 
 					// Show file name with link to download
-					$out.= '<td class="tdoverflowmax300">';
+					$out.= '<td class="minwidth200">';
 					$out.= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 					$mime=dol_mimetype($relativepath,'',0);
 					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 					$out.= ' target="_blank">';
 					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]);
-					$out.= $file["name"];
+					$out.= dol_trunc($file["name"], 150);
 					$out.= '</a>'."\n";
 					$out.= $this->showPreview($file,$modulepart,$relativepath,0,$param);
 					$out.= '</td>';
@@ -1087,7 +1087,7 @@ class FormFile
 					print '<tr id="row-'.($filearray[$key]['rowid']>0?$filearray[$key]['rowid']:'-AFTER'.$lastrowid.'POS'.($i+1)).'">';
 
 					// File name
-					print '<td class="tdoverflowmax300">';
+					print '<td class="minwith200">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1110,7 +1110,7 @@ class FormFile
 					}
 					else
 					{
-						print $file['name'];
+						print dol_trunc($file['name'], 200);
 						print '</a>';
 					}
 					// Preview link
