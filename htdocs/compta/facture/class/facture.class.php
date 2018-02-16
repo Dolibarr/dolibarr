@@ -3235,7 +3235,6 @@ class Facture extends CommonInvoice
 		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
 		$sql.= ' WHERE pf.'.$field.' = '.$this->id;
-		//$sql.= ' WHERE pf.'.$field.' = 1';
 		$sql.= ' AND pf.'.$field2.' = p.rowid';
 		$sql.= ' AND p.fk_paiement = t.id';
 		$sql.= ' AND p.entity IN (' . getEntity($sharedentity).')';
