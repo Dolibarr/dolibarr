@@ -2231,36 +2231,36 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 	}
 	elseif (strtoupper($countrycode) == "PT" )
 	{//Portugal		
-		if (dol_strlen($object) == 13)
+		if (dol_strlen($newphone) == 13)
 		{//ex: +351_ABC_DEF_GHI
 			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "SR" )
 	{//Suriname
-		if (dol_strlen($object) == 10)
+		if (dol_strlen($newphone) == 10)
 		{//ex: +597_ABC_DEF
 			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3);
 		}
-		elseif (dol_strlen($object) == 11)
+		elseif (dol_strlen($newphone) == 11)
 		{//ex: +597_ABC_DEFG
 			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,4);
 		}
 	}
 	elseif (strtoupper($countrycode) == "DE" )
 	{//Allemagne
-		if (dol_strlen($object) == 14)
+		if (dol_strlen($newphone) == 14)
 		{//ex:  +49_ABCD_EFGH_IJK
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,4).$separ.substr($newphone,11,3);
 		}
-		elseif (dol_strlen($object) == 13) 
+		elseif (dol_strlen($newphone) == 13) 
 		{//ex: +49_ABC_DEFG_HIJ
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,4).$separ.substr($newphone,10,3);
 		}
 	}
 	elseif (strtoupper($countrycode) == "ES")
 	{//Espagne
-		if (dol_strlen($object) == 12) 
+		if (dol_strlen($newphone) == 12) 
 		{//ex:  +34_ABC_DEF_GHI
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
 		}
@@ -2281,7 +2281,7 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 	}
 	elseif (strtoupper($countrycode) == "TR")
 	{//Turquie			
-		if (dol_strlen($object) == 13)
+		if (dol_strlen($newphone) == 13)
 		{//ex :  +90 ABC_DEF_GHIJ
 			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,4);
 		}
