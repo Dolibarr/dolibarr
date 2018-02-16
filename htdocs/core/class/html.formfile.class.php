@@ -586,7 +586,7 @@ class FormFile
 				}
 			}
 
-			// Set headershown to avoit to have table opened a second time later
+			// Set headershown to avoid to have table opened a second time later
 			$headershown=1;
 
 			$buttonlabeltoshow=$buttonlabel;

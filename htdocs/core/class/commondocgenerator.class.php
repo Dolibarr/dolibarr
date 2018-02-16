@@ -425,7 +425,7 @@ abstract class CommonDocGenerator
 			{
 				$object->fetch_projet();
 			}
-			
+
 			$resarray[$array_key.'_project_ref'] = $object->project->ref;
 			$resarray[$array_key.'_project_title'] = $object->project->title;
 			$resarray[$array_key.'_project_description'] = $object->project->description;
@@ -510,7 +510,7 @@ abstract class CommonDocGenerator
 		    'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
 		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
-		
+
 		    // Units
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
@@ -527,6 +527,15 @@ abstract class CommonDocGenerator
 		$line->fetch_optionals($line->rowid,$extralabels);
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+
+		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
+		if (isset($line->fk_product) && $line->fk_product > 0)
+		{
+			$tmpproduct = new Product($this->db);
+			$result = $tmpproduct->fetch($line->fk_product);
+			foreach($tmpproduct->array_options as $key=>$label)
+				$resarray["line_".$key] = $label;
+		}
 
 		return $resarray;
 	}

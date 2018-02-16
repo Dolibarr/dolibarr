@@ -1767,6 +1767,6 @@ MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
-DisabledResourceLinkUser=Disabled resource link to user
-DisabledResourceLinkContact=Disabled resource link to contact
+DisabledResourceLinkUser=Disable feature to link a resource to users
+DisabledResourceLinkContact=Disable feature to link a resource to contacts
 ConfirmUnactivation=Confirm module reset

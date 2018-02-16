@@ -1150,6 +1150,28 @@ if ($resql)
 		print "</tr>\n";
 		$i++;
 	}
+
+	// Show total line
+	if (isset($totalarray['totalhtfield']))
+	{
+		print '<tr class="liste_total">';
+		$i=0;
+		while ($i < $totalarray['nbfield'])
+		{
+			$i++;
+			if ($i == 1)
+			{
+				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+			}
+			elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
+			elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+			elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+			else print '<td></td>';
+		}
+		print '</tr>';
+	}
+
 	print "</table>\n";
 	print '</div>';
 	print "</form>\n";

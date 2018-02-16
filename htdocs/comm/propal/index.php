@@ -172,6 +172,7 @@ if (! empty($conf->propal->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("DraftPropals").'</td></tr>';
@@ -199,7 +200,8 @@ if (! empty($conf->propal->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 	}
 }
 
@@ -230,6 +232,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">'.$langs->trans("LastModifiedProposals",$max).'</td></tr>';
@@ -278,7 +281,8 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table>";
+	print "</div><br>";
 }
 else dol_print_error($db);
 
@@ -311,6 +315,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		$i = 0;
 		if ($num > 0)
 		{
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
@@ -365,7 +370,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
-			print "</table><br>";
+			print "</table>";
+			print "</div><br>";
 		}
 	}
 	else
@@ -396,6 +402,7 @@ if (! empty($conf->propal->enabled))
 	{
 		$num = $db->num_rows($resql);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
@@ -440,7 +447,8 @@ if (! empty($conf->propal->enabled))
 			}
 		}
 
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 	}
 	else dol_print_error($db);
 }
@@ -467,6 +475,7 @@ if (! empty($conf->propal->enabled))
 	{
 		$num = $db->num_rows($resql);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
@@ -510,7 +519,8 @@ if (! empty($conf->propal->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table>";
+		print "</div><br>";
 	}
 	else dol_print_error($db);
 }

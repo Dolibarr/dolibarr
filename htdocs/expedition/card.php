@@ -29,7 +29,7 @@
 /**
  *	\file       htdocs/expedition/card.php
  *	\ingroup    expedition
- *	\brief      Fiche descriptive d'une expedition
+ *	\brief      Card of a shipment
  */
 
 require '../main.inc.php';
@@ -2492,7 +2492,7 @@ else if ($id || $ref)
 		if (empty($reshook))
 		{
 
-			if ($object->statut == 0 && $num_prod > 0)
+			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0)
 			{
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
 	  		     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
@@ -2507,9 +2507,16 @@ else if ($id || $ref)
 
 			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
-			if ($object->statut == 2 && $object->billed && $user->rights->expedition->creer)
+			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer)
 			{
-			    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+				if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ClassifyUnbilled").'</a>';
+				}
+				else
+				{
+			    	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+				}
 			}
 
 			// Send

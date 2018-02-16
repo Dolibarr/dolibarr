@@ -1018,13 +1018,13 @@ else
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
-	        print '<label for="radiocompany">';
+	        print '<label for="radiocompany" class="radiocompany">';
             print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked').'>';
 	        print '&nbsp;';
             print $langs->trans("CreateThirdPartyOnly");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
-	        print '<label for="radioprivate">';
+	        print '<label for="radioprivate" class="radioprivate">';
             $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked':'').'>';
 	        $text.='&nbsp;';
 	        $text.= $langs->trans("CreateThirdPartyAndContact");
