@@ -272,7 +272,8 @@ class Contrat extends CommonObject
 		// Load lines
 		$this->fetch_lines();
 
-		$ok=true;
+		$error=0;
+
 		foreach($this->lines as $contratline)
 		{
 			// Open lines not already open
@@ -281,26 +282,27 @@ class Contrat extends CommonObject
 				$result = $contratline->active_line($user, $date_start, -1);
 				if ($result < 0)
 				{
-					$ok=false;
+					$error++;
+					$this->errors = $contratline->error;
+					$this->errors = $contratline->errors;
 					break;
 				}
 			}
 		}
 
-		if ($this->statut == 0)
+		if (! $error && $this->statut == 0)
 		{
 			$result=$this->validate($user);
-			if ($result < 0) $ok=false;
+			if ($result < 0) $error++;
 		}
 
-		if ($ok)
+		if (! $error)
 		{
 			$this->db->commit();
 			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db,'Error in activateAll function');
 			$this->db->rollback();
 			return -1;
 		}
@@ -310,7 +312,7 @@ class Contrat extends CommonObject
 	 * Close all lines of a contract
 	 *
 	 * @param	User		$user      		Object User making action
-     * @param	int			$notrigger		1=Does not execute triggers, 0= execute triggers
+     * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @return	int							<0 if KO, >0 if OK
 	 */
 	function closeAll(User $user, $notrigger=0)
@@ -322,7 +324,8 @@ class Contrat extends CommonObject
 
 		$now = dol_now();
 
-		$ok=true;
+		$error = 0;
+
 		foreach($this->lines as $contratline)
 		{
 			// Close lines not already closed
@@ -331,29 +334,30 @@ class Contrat extends CommonObject
 				$contratline->date_cloture=$now;
 				$contratline->fk_user_cloture=$user->id;
 				$contratline->statut='5';
-				$result=$contratline->update($user);
+				$result=$contratline->close_line($user, $now);
 				if ($result < 0)
 				{
-					$ok=false;
+					$error++;
+					$this->errors = $contratline->error;
+					$this->errors = $contratline->errors;
 					break;
 				}
 	        }
 		}
 
-		if ($this->statut == 0)
+		if (! $error && $this->statut == 0)
 		{
 			$result=$this->validate($user, '', $notrigger);
-			if ($result < 0) $ok=false;
+			if ($result < 0) $error++;
 		}
 
-        if ($ok)
+        if (! $error)
         {
             $this->db->commit();
             return 1;
         }
         else
         {
-            dol_print_error($this->db,'Error in closeAll function');
             $this->db->rollback();
             return -1;
         }
@@ -3122,7 +3126,7 @@ class ContratLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Call trigger
-			$result = $this->call_trigger('CONTRACT_SERVICE_ACTIVATE', $user);
+			$result = $this->call_trigger('LINECONTRACT_ACTIVATE', $user);
 			if ($result < 0) {
 				$error++;
 				$this->db->rollback();
@@ -3142,10 +3146,10 @@ class ContratLigne extends CommonObjectLine
 	/**
 	 *  Close a contract line
 	 *
-	 * @param    User $user Objet User who close contract
-	 * @param  int $date_end Date end
-	 * @param    string $comment A comment typed by user
-	 * @return int                    <0 if KO, >0 if OK
+	 * @param    User 	$user 			Objet User who close contract
+	 * @param  	 int 	$date_end 		Date end
+	 * @param    string $comment 		A comment typed by user
+	 * @return int                    	<0 if KO, >0 if OK
 	 */
 	function close_line($user, $date_end, $comment = '')
 	{
@@ -3171,7 +3175,7 @@ class ContratLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Call trigger
-			$result = $this->call_trigger('CONTRACT_SERVICE_CLOSE', $user);
+			$result = $this->call_trigger('LINECONTRACT_CLOSE', $user);
 			if ($result < 0) {
 				$error++;
 				$this->db->rollback();

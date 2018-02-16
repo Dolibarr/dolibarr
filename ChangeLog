@@ -10,7 +10,9 @@ WARNING:
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Hook 'maildao' was renamed into 'mail' into the method sendfile that send emails, and method was renamed from
   'doaction' into 'sendMail'. 
-  
+* Rename trigger CONTRACT_SERVICE_ACTIVATE into LINECONTRACT_ACTIVATE and
+  CONTRACT_SERVICE_CLOSE into LINECONTRACT_CLOSE
+
 
 ***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:

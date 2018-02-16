@@ -810,18 +810,30 @@ if (empty($reshook))
 	else if ($action == 'reopen' && $user->rights->contrat->creer)
 	{
 		$result = $object->reopen($user);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Close all lines
 	else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
-		$object->closeAll($user);
+		$result = $object->closeAll($user);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Close all lines
 	else if ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
-		$object->activateAll($user);
+		$result = $object->activateAll($user);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
