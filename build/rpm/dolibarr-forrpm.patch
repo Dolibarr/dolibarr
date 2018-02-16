@@ -1,7 +1,7 @@
 diff -up htdocs/install/inc.php.patch htdocs/install/inc.php
 --- htdocs/install/inc.php.patch	2011-09-03 02:33:26.450952000 +0200
 +++ htdocs/install/inc.php	2011-09-03 02:33:36.286952001 +0200
-@@ -71,8 +71,8 @@
+@@ -74,8 +74,8 @@
  $conffile = "../conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
  // For debian/redhat like systems

@@ -767,8 +767,8 @@ if ($nboftargetok) {
 			$cmd="cp -pr '$BUILDROOT/$PROJECT' '$BUILDROOT/$FILENAMETGZ2'";
 			$ret=`$cmd`;
 
-			# Removed files we don't need
-			$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
+			# Removed files we don't need (already removed before)
+			#$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
 
 			print "Set permissions on files/dir\n";
 			$ret=`chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;

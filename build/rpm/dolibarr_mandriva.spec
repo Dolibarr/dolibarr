@@ -212,7 +212,6 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/*.ico
-%_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php
 %_datadir/dolibarr/htdocs/*.txt
 
