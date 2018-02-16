@@ -133,7 +133,7 @@ if (empty($reshook))
 		$object->fetch_thirdparty();
 		$result = $object->add_object_linked('order_supplier', GETPOST('linkedOrder'));
 	}
-	var_dump($conf->global->MAIN_VERSION_LAST_UPGRADE, $conf->global->MAIN_VERSION_LAST_INSTALL);
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
