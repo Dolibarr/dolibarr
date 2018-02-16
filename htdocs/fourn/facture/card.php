@@ -268,7 +268,7 @@ if (empty($reshook))
 	}
 	
 	// Delete link of credit note to invoice
-	else if ($action == 'unlinkdiscount' && $user->rights->facture->creer)
+	else if ($action == 'unlinkdiscount' && $user->rights->fournisseur->facture->creer)
 	{
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOST("discountid"));
@@ -326,12 +326,12 @@ if (empty($reshook))
 	}
 
 	// Multicurrency Code
-	else if ($action == 'setmulticurrencycode' && $user->rights->facture->creer) {
+	else if ($action == 'setmulticurrencycode' && $user->rights->fournisseur->facture->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	}
 
 	// Multicurrency rate
-	else if ($action == 'setmulticurrencyrate' && $user->rights->facture->creer) {
+	else if ($action == 'setmulticurrencyrate' && $user->rights->fournisseur->facture->creer) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')));
 	}
 
@@ -385,7 +385,7 @@ if (empty($reshook))
 		$result=$object->update($user);
 		if ($result < 0) dol_print_error($db,$object->error);
 	}
-	elseif ($action == "setabsolutediscount" && $user->rights->facture->creer)
+	elseif ($action == "setabsolutediscount" && $user->rights->fournisseur->facture->creer)
 	{
 		// POST[remise_id] or POST[remise_id_for_payment]
 	
@@ -443,7 +443,7 @@ if (empty($reshook))
 		}
 	}
 	// Convertir en reduc
-	else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer)
+	else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -3108,7 +3108,7 @@ else
 					}
 
 					// For standard invoice with excess paid
-					if ($object->type == FactureFournisseur::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $user->rights->facture->creer && empty($discount->id))
+					if ($object->type == FactureFournisseur::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $user->rights->fournisseur->facture->creer && empty($discount->id))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a></div>'; // TODO translation : trop-perçu => trop payé
 					}
