@@ -9,35 +9,9 @@ Forwarded: not-needed
 Last-Update: 2013-07-29
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
---- a/htdocs/filefunc.inc.php
-+++ b/htdocs/filefunc.inc.php
-@@ -63,8 +63,8 @@ $conffiletoshowshort = "conf.php";
- $conffile = "conf/conf.php";
- $conffiletoshow = "htdocs/conf/conf.php";
- // For debian/redhat like systems
--//$conffile = "/etc/dolibarr/conf.php";
--//$conffiletoshow = "/etc/dolibarr/conf.php";
-+$conffile = "/etc/dolibarr/conf.php";
-+$conffiletoshow = "/etc/dolibarr/conf.php";
- 
- 
- // Include configuration
 --- a/htdocs/install/inc.php
 +++ b/htdocs/install/inc.php
 @@ -73,8 +73,8 @@ $conffiletoshowshort = "conf.php";
- $conffile = "../conf/conf.php";
- $conffiletoshow = "htdocs/conf/conf.php";
- // For debian/redhat like systems
--//$conffile = "/etc/dolibarr/conf.php";
--//$conffiletoshow = "/etc/dolibarr/conf.php";
-+$conffile = "/etc/dolibarr/conf.php";
-+$conffiletoshow = "/etc/dolibarr/conf.php";
- 
- 
- // Load conf file if it is already defined
---- a/htdocs/support/inc.php
-+++ b/htdocs/support/inc.php
-@@ -69,8 +69,8 @@ $conffiletoshowshort = "conf.php";
  $conffile = "../conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
  // For debian/redhat like systems
