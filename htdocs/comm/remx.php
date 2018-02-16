@@ -93,6 +93,12 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount2->fk_facture=$discount->fk_facture;
 		$newdiscount1->fk_facture_line=$discount->fk_facture_line;
 		$newdiscount2->fk_facture_line=$discount->fk_facture_line;
+		$newdiscount1->fk_invoice_supplier_source=$discount->fk_invoice_supplier_source;
+		$newdiscount2->fk_invoice_supplier_source=$discount->fk_invoice_supplier_source;
+		$newdiscount1->fk_invoice_supplier=$discount->fk_invoice_supplier;
+		$newdiscount2->fk_invoice_supplier=$discount->fk_invoice_supplier;
+		$newdiscount1->fk_invoice_supplier_line=$discount->fk_invoice_supplier_line;
+		$newdiscount2->fk_invoice_supplier_line=$discount->fk_invoice_supplier_line;
 		if ($discount->description == '(CREDIT_NOTE)' || $discount->description == '(DEPOSIT)')
 		{
 			$newdiscount1->description=$discount->description;
@@ -107,6 +113,8 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 		$newdiscount2->fk_user=$discount->fk_user;
 		$newdiscount1->fk_soc=$discount->fk_soc;
 		$newdiscount2->fk_soc=$discount->fk_soc;
+		$newdiscount1->discount_type=$discount->discount_type;
+		$newdiscount2->discount_type=$discount->discount_type;
 		$newdiscount1->datec=$discount->datec;
 		$newdiscount2->datec=$discount->datec;
 		$newdiscount1->tva_tx=$discount->tva_tx;
