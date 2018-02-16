@@ -1479,6 +1479,7 @@ if ($action=='create')
 
 	if ($societe->id > 0)
 	{
+/* // TODO handle supplier relative discount
 		// Discounts for third party
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 		if ($societe->remise_percent)
@@ -1488,7 +1489,7 @@ if ($action=='create')
 		print ' <a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $societe->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $societe->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditRelativeDiscount") . ')</a>';
 		print '. ';
 		print '<br>';
-
+*/
 		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
 
 		if ($absolute_discount)
@@ -1894,11 +1895,13 @@ elseif (! empty($object->id))
 	$addcreditnote = '<a href="' . DOL_URL_ROOT . '/fourn/facture/card.php?action=create&socid=' . $societe->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 
 	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
+/* // TODO handle supplier relative discount
 	if ($societe->remise_percent)
 		print $langs->trans("CompanyHasRelativeDiscount", $societe->remise_percent);
 	else
 		print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
+*/
 	$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
 	$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 1);
 	$absolute_discount = price2num($absolute_discount, 'MT');
@@ -1908,7 +1911,7 @@ elseif (! empty($object->id))
 			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
 		} else {
 			// Remise dispo de type remise fixe (not credit note)
-			print '<br>';
+//			print '<br>';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $societe->id, $absolute_discount, $filterabsolutediscount, 0, '', 1, 1);
 		}
 	}
