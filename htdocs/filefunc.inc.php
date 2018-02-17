@@ -69,21 +69,9 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // Include configuration
 // --- End of part replaced by Dolibarr packager makepack-dolibarr
 
-// Replace conf filename with "conf" parameter on url by GET
-/* Disabled. This is a serious security hole
-if (! empty($_GET['conf']))
-{
-	$confname=basename($_GET['conf']);
-    setcookie('dolconf', $confname, 0, '/');
-    $conffile = 'conf/'.$confname.'.php';
-} else {
-	$confname=basename(empty($_COOKIE['dolconf']) ? 'conf' : $_COOKIE['dolconf']);
-	$conffile = 'conf/'.$confname.'.php';
-}
-*/
 
 // Include configuration
-$result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect
+$result=@include_once $conffile;	// Keep @ because with some error reporting this break the redirect done when file not found
 
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
