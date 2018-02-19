@@ -925,13 +925,14 @@ class FactureFournisseur extends CommonInvoice
     		}
     		
     		$facligne=new SupplierInvoiceLine($this->db);
-    		$facligne->fk_facture=$this->id;
+    		$facligne->fk_facture_fourn=$this->id;
     		$facligne->fk_remise_except=$remise->id;
     		$facligne->desc=$remise->description;   	// Description ligne
     		$facligne->vat_src_code=$remise->vat_src_code;
     		$facligne->tva_tx=$remise->tva_tx;
     		$facligne->subprice = -$remise->amount_ht;
     		$facligne->fk_product=0;					// Id produit predefini
+    		$facligne->product_type=0;
     		$facligne->qty=1;
     		$facligne->remise_percent=0;
     		$facligne->rang=-1;
@@ -1030,6 +1031,33 @@ class FactureFournisseur extends CommonInvoice
             // Fin appel triggers
         }
 
+		if (! $error) {
+			// If invoice was converted into a discount not yet consumed, we remove discount
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'societe_remise_except';
+			$sql .= ' WHERE fk_invoice_supplier_source = ' . $rowid;
+			$sql .= ' AND fk_invoice_supplier_line IS NULL';
+			$resql = $this->db->query($sql);
+
+			// If invoice has consumned discounts
+			$this->fetch_lines();
+			$list_rowid_det = array ();
+			foreach ($this->lines as $key => $invoiceline) {
+				$list_rowid_det[] = $invoiceline->rowid;
+			}
+
+			// Consumned discounts are freed
+			if (count($list_rowid_det)) {
+				$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'societe_remise_except';
+				$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
+				$sql .= ' WHERE fk_invoice_supplier_line IN (' . join(',', $list_rowid_det) . ')';
+
+				dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
+				if (! $this->db->query($sql)) {
+					$error ++;
+				}
+			}
+		}
+
         if (! $error)
         {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
@@ -1048,8 +1076,6 @@ class FactureFournisseur extends CommonInvoice
             	$error++;
             }
         }
-
-        // TODO Delete related discounts
 
 		if (! $error)
 		{
@@ -1769,6 +1795,22 @@ class FactureFournisseur extends CommonInvoice
 	        $rowid = $this->id;
         }
 
+		$this->db->begin();
+
+		// Libere remise liee a ligne de facture
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'societe_remise_except';
+		$sql .= ' SET fk_invoice_supplier_line = NULL';
+		$sql .= ' WHERE fk_invoice_supplier_line = ' . $rowid;
+
+		dol_syslog(get_class($this) . "::deleteline", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (! $result)
+		{
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return - 2;
+		}
+
 	    $line = new SupplierInvoiceLine($this->db);
 
 	    if ($line->fetch($rowid) < 1) {
@@ -1778,12 +1820,24 @@ class FactureFournisseur extends CommonInvoice
 	    $res = $line->delete($notrigger);
 
 	    if ($res < 1) {
-		    $this->errors[] = $line->error;
+			$this->errors[] = $line->error;
+			$this->db->rollback();
+			return - 3;
 	    } else {
-		    $res = $this->update_price();
-	    }
+			$res = $this->update_price();
 
-    	return $res;
+			if ($res > 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				return - 4;
+			}
+	    }
     }
 
 
