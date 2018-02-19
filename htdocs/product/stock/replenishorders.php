@@ -29,7 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-require_once './lib/replenishment.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/lib/replenishment.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -44,9 +45,12 @@ $sref = GETPOST('search_ref', 'alpha');
 $snom = GETPOST('search_nom', 'alpha');
 $suser = GETPOST('search_user', 'alpha');
 $sttc = GETPOST('search_ttc', 'alpha');
-$sdate = GETPOST('search_date', 'alpha');
 $page = GETPOST('page', 'int');
 $sproduct = GETPOST('sproduct', 'int');
+$search_dateyear = GETPOST('search_dateyear', 'int');
+$search_datemonth = GETPOST('search_datemonth', 'int');
+$search_dateday = GETPOST('search_dateday', 'int');
+$search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
@@ -56,7 +60,6 @@ if (!$sortfield) $sortfield = 'cf.date_creation';
 $page = GETPOST("page");
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
-
 
 
 /*
@@ -70,7 +73,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $snom="";
     $suser="";
     $sttc="";
-    $sdate='';
+    $search_date='';
+    $search_datemonth='';
+    $search_dateday='';
+    $search_dateyear='';
     $sproduct=0;
 }
 
@@ -125,17 +131,19 @@ if ($sref) $sql .= natural_search('cf.ref', $sref);
 if ($snom) $sql .= natural_search('s.nom', $snom);
 if ($suser) $sql .= natural_search('u.login', $suser);
 if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
-if ($sdate)
+
+if ($search_datemonth > 0)
 {
-    if (GETPOST('search_datemonth', 'int') && GETPOST('search_dateday', 'int') && GETPOST('search_dateyear', 'int'))
-    {
-	    $date = dol_mktime(0, 0, 0, GETPOST('search_datemonth', 'int'), GETPOST('search_dateday', 'int'), GETPOST('search_dateyear', 'int'));
-    }
-    else
-    {
-        $date = dol_stringtotime($sdate);
-    }
-    $sql .= " AND cf.date_creation = '" . $db->idate($date) . "'";
+	if ($search_dateyear > 0 && empty($search_dateday))
+		$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear,$search_datemonth,false))."' AND '".$db->idate(dol_get_last_day($search_dateyear,$search_datemonth,false))."'";
+		else if ($search_dateyear > 0 && ! empty($search_dateday))
+			$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_datemonth, $search_dateday, $search_dateyear))."'";
+			else
+				$sql.= " AND date_format(cf.date_creation, '%m') = '".$search_datemonth."'";
+}
+else if ($search_dateyear > 0)
+{
+	$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear,1,false))."' AND '".$db->idate(dol_get_last_day($search_dateyear,12,false))."'";
 }
 if ($sall) $sql .= natural_search(array('cf.ref','cf.note'), $sall);
 if (!empty($socid)) $sql .= ' AND s.rowid = ' . $socid;
@@ -146,7 +154,6 @@ $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit+1, $offset);
-//print $sql;
 
 $resql = $db->query($sql);
 if ($resql)
@@ -158,6 +165,19 @@ if ($resql)
 
     print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
 
+    $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+    if ($sref) $param.='&search_ref='.urlencode($sref);
+    if ($snom) $param.='&search_nom='.urlencode($snom);
+    if ($suser) $param.='&search_user='.urlencode($suser);
+    if ($sttc) $param.='&search_ttc='.urlencode($sttc);
+    if ($search_dateyear) $param.='&search_dateyear='.urlencode($search_dateyear);
+    if ($search_datemonth) $param.='&search_datemonth='.urlencode($search_datemonth);
+    if ($search_dateday) $param.='&search_dateday='.urlencode($search_dateday);
+    if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
+
+
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
     print '<table class="noborder" width="100%">'.
@@ -167,7 +187,7 @@ if ($resql)
     		$_SERVER['PHP_SELF'],
     		'cf.ref',
     		'',
-    		'',
+    		$param,
     		'',
     		$sortfield,
     		$sortorder
@@ -177,7 +197,7 @@ if ($resql)
     		$_SERVER['PHP_SELF'],
     		's.nom',
     		'',
-    		'',
+    		$param,
     		'',
     		$sortfield,
     		$sortorder
@@ -187,7 +207,7 @@ if ($resql)
     		$_SERVER['PHP_SELF'],
     		'u.login',
     		'',
-    		'',
+    		$param,
     		'',
     		$sortfield,
     		$sortorder
@@ -197,7 +217,7 @@ if ($resql)
     		$_SERVER['PHP_SELF'],
     		'cf.total_ttc',
     		'',
-    		'',
+    		$param,
     		'',
     		$sortfield,
     		$sortorder
@@ -207,7 +227,7 @@ if ($resql)
     		$_SERVER['PHP_SELF'],
     		'cf.date_creation',
     		'',
-    		'',
+    		$param,
     		'',
     		$sortfield,
     		$sortorder
@@ -217,28 +237,29 @@ if ($resql)
     		$_SERVER['PHP_SELF'],
     		'cf.fk_statut',
     		'',
-    		'',
+    		$param,
     		'align="right"',
     		$sortfield,
     		$sortorder
     );
+
     print '</tr>'.
 
          '<tr class="liste_titre">'.
          '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_ref" value="' . $sref . '">'.
+         '<input type="text" class="flat" name="search_ref" value="' . dol_escape_htmltag($sref) . '">'.
          '</td>'.
          '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_nom" value="' . $snom . '">'.
+         '<input type="text" class="flat" name="search_nom" value="' . dol_escape_htmltag($snom) . '">'.
          '</td>'.
          '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_user" value="' . $suser . '">'.
+         '<input type="text" class="flat" name="search_user" value="' . dol_escape_htmltag($suser) . '">'.
          '</td>'.
          '<td class="liste_titre">'.
-         '<input type="text" class="flat" name="search_ttc" value="' . $sttc . '">'.
+         '<input type="text" class="flat" name="search_ttc" value="' . dol_escape_htmltag($sttc) . '">'.
          '</td>'.
          '<td class="liste_titre">'.
-         $form->select_date('', 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
+         $form->select_date($search_date, 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
          $searchpitco=$form->showFilterAndCheckAddButtons(0);
@@ -247,6 +268,7 @@ if ($resql)
          '</tr>';
 
     $var = true;
+
     $userstatic = new User($db);
 
     while ($i < min($num,$conf->liste_limit))

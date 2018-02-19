@@ -88,6 +88,7 @@ class Conf
 		$this->user				= new stdClass();
 		$this->syslog			= new stdClass();
 		$this->browser			= new stdClass();
+		$this->medias			= new stdClass();
 		$this->multicompany		= new stdClass();
 
 		//! Charset for HTML output and for storing data in memory
@@ -327,6 +328,10 @@ class Conf
 		// For propal storage
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
+
+		// For medias storage
+		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
+		$this->medias->multidir_temp		= array($this->entity => $rootfordata."/medias/temp");
 
 		// Exception: Some dir are not the name of module. So we keep exception here
 		// for backward compatibility.

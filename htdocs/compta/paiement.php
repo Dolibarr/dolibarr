@@ -745,7 +745,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 {
                     // Print total
                     print '<tr class="liste_total">';
-                    print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').'</td>';
+                    print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
+					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';
 					if (!empty($conf->multicurrency->enabled)) print '<td></td>';

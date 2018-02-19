@@ -149,7 +149,7 @@ if ($action == 'create')
 
 	    if (! $error)
 	    {
-    	    $object->fk_user = $userid;
+    	    $object->fk_user = $fuserid;
     	    $object->description = $description;
     	    $object->date_debut = $date_debut;
     	    $object->date_fin = $date_fin;

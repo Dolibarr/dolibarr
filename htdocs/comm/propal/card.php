@@ -494,7 +494,7 @@ if (empty($reshook))
 
 										$tva_tx = $lines[$i]->tva_tx;
 										if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
-										
+
 										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit);
 
 										if ($result > 0) {
@@ -735,7 +735,7 @@ if (empty($reshook))
 			$db->begin();
 
             // $tva_tx can be 'x.x (XXX)'
-            
+
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
 			// Ecrase $tva_tx par celui du produit
@@ -750,7 +750,7 @@ if (empty($reshook))
 				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) $tva_npr=0;
-				
+
 				$pu_ht = $prod->price;
 				$pu_ttc = $prod->price_ttc;
 				$price_min = $prod->price_min;
@@ -791,7 +791,7 @@ if (empty($reshook))
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
-				
+
 				// if price ht is forced (ie: calculated by margin rate and cost price). TODO Why this ?
 				if (! empty($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
@@ -844,13 +844,33 @@ if (empty($reshook))
 				// Add custom code and origin country into description
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
 				{
-					$tmptxt = '(';
-					if (! empty($prod->customcode))
-						$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
-					if (! empty($prod->customcode) && ! empty($prod->country_code))
-						$tmptxt .= ' - ';
-					if (! empty($prod->country_code))
-						$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					// Define output language
+					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (empty($newlang) && GETPOST('lang_id','alpha'))
+							$newlang = GETPOST('lang_id','alpha');
+						if (empty($newlang))
+							$newlang = $object->thirdparty->default_lang;
+						if (! empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						if (! empty($prod->customcode))
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))
+							$tmptxt .= ' - ';
+						if (! empty($prod->country_code))
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+					} else {
+						if (! empty($prod->customcode))
+							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))
+							$tmptxt .= ' - ';
+						if (! empty($prod->country_code))
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					}
 					$tmptxt .= ')';
 					$desc = dol_concatdesc($desc, $tmptxt);
 				}
@@ -969,7 +989,7 @@ if (empty($reshook))
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value
-		
+
 		$pu_ht_devise = GETPOST('multicurrency_subprice');
 
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
@@ -1305,7 +1325,7 @@ if ($action == 'create')
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options = $objectsrc->array_options;
-			
+
 			if (!empty($conf->multicurrency->enabled))
 			{
 			    if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;

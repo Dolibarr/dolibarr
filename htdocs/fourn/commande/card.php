@@ -390,7 +390,7 @@ if (empty($reshook))
 	    			$localtax1_tx,
 	    			$localtax2_tx,
 	    			$idprod,
-	    			$productsupplier->id,
+	    			$productsupplier->product_fourn_price_id,
 	    			$productsupplier->fourn_ref,
 	    			$remise_percent,
 	    			'HT',

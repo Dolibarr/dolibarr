@@ -967,7 +967,7 @@ while ($i < min($num, $limit))
     if (! empty($arrayfields['typent.code']['checked']))
     {
         print '<td align="center">';
-		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+        if (! is_array($typenArray) || count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
 		print $typenArray[$obj->typent_code];
 		print '</td>';
     }
