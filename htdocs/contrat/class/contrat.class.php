@@ -283,7 +283,7 @@ class Contrat extends CommonObject
 				if ($result < 0)
 				{
 					$error++;
-					$this->errors = $contratline->error;
+					$this->error = $contratline->error;
 					$this->errors = $contratline->errors;
 					break;
 				}
@@ -338,7 +338,7 @@ class Contrat extends CommonObject
 				if ($result < 0)
 				{
 					$error++;
-					$this->errors = $contratline->error;
+					$this->error = $contratline->error;
 					$this->errors = $contratline->errors;
 					break;
 				}

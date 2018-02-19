@@ -2780,28 +2780,42 @@ function dol_readcachefile($directory, $filename)
  */
 function getFilesUpdated(&$file_list, SimpleXMLElement $dir, $path = '', $pathref = '', &$checksumconcat = array())
 {
+	global $conffile;
+
 	$exclude = 'install';
 
 	foreach ($dir->md5file as $file)    // $file is a simpleXMLElement
 	{
 		$filename = $path.$file['name'];
 		$file_list['insignature'][] = $filename;
+		$expectedmd5 = (string) $file;
 
 		//if (preg_match('#'.$exclude.'#', $filename)) continue;
 
 		if (!file_exists($pathref.'/'.$filename))
 		{
-			$file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file);
+			$file_list['missing'][] = array('filename'=>$filename, 'expectedmd5'=>$expectedmd5);
 		}
 		else
 		{
 			$md5_local = md5_file($pathref.'/'.$filename);
-			if ($md5_local != (string) $file) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>(string) $file, 'md5'=>(string) $md5_local);
-			$checksumconcat[] = $md5_local;
+
+			if ($conffile == '/etc/dolibarr/conf.php' && $filename == '/filefunc.inc.php')	// For install with deb or rpm, we ignore test on filefunc.inc.php that was modified by package
+			{
+				$checksumconcat[] = $expectedmd5;
+			}
+			else
+			{
+				if ($md5_local != $expectedmd5) $file_list['updated'][] = array('filename'=>$filename, 'expectedmd5'=>$expectedmd5, 'md5'=>(string) $md5_local);
+				$checksumconcat[] = $md5_local;
+			}
 		}
 	}
 
-	foreach ($dir->dir as $subdir) getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
+	foreach ($dir->dir as $subdir)			// $subdir['name'] is  '' or '/accountancy/admin' for example
+	{
+		getFilesUpdated($file_list, $subdir, $path.$subdir['name'].'/', $pathref, $checksumconcat);
+	}
 
 	return $file_list;
 }
