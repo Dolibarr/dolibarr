@@ -156,10 +156,12 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 	$backtourl = DOL_URL_ROOT."/ecm/index.php";
 	if ($module == 'medias') $backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
 
+	$deletedirrecursive = (GETPOST('deletedirrecursive','alpha') == 'on' ? 1 : 0);
+
 	if ($module == 'ecm')
 	{
 		// Fetch was already done
-		$result=$ecmdir->delete($user);
+		$result=$ecmdir->delete($user, 'all', $deletedirrecursive);
 		if ($result <= 0)
 		{
 			$langs->load('errors');
@@ -168,7 +170,14 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 	}
 	else
 	{
-		$resbool = dol_delete_dir($upload_dir, 1);
+		if ($deletedirrecursive)
+		{
+			$resbool = dol_delete_dir_recursive($upload_dir, 0, 1);
+		}
+		else
+		{
+			$resbool = dol_delete_dir($upload_dir, 1);
+		}
 		if ($resbool) $result = 1;
 		else
 		{
@@ -475,8 +484,8 @@ if ($action != 'edit' && $action != 'delete')
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
-	if (count($filearrayall) == 0)
-	{
+	//if (count($filearrayall) == 0)
+	//{
 		if ($permtoadd)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir'.($module?'&module='.$module:'').'&section='.$section.'">'.$langs->trans('Delete').'</a>';
@@ -485,14 +494,14 @@ if ($action != 'edit' && $action != 'delete')
 		{
 			print '<a class="butActionDeleteRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 		}
-	}
+	/*}
 	else
 	{
 		if (count($filearray) > 0)
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFiles").'">'.$langs->trans('Delete').'</a>';
 		else
 			print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFilesOrDirs").'">'.$langs->trans('Delete').'</a>';
-	}
+	}*/
 	print '</div>';
 }
 
@@ -506,7 +515,17 @@ if ($action == 'delete')
 if ($action == 'delete_dir')
 {
 	$relativepathwithoutslash=preg_replace('/[\/]$/','',$relativepath);
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST('section','alpha').($module?'&module='.$module:''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', '', 1, 1);
+
+	//Form to close proposal (signed or not)
+	if (count($filearrayall) > 0)
+	{
+		$langs->load("other");
+		$formquestion = array(
+			array('type' => 'checkbox', 'name' => 'deletedirrecursive', 'label' => $langs->trans("ContentOfDirectoryIsNotEmpty").'<br>'.$langs->trans("DeleteAlsoContentRecursively"),'value' => '0')				// Field to complete private note (not replace)
+		);
+	}
+
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.GETPOST('section','alpha').($module?'&module='.$module:''), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', $formquestion, 1, 1);
 }
 
 

@@ -22,6 +22,8 @@ JumpToLogin=Disconnected. Go to login page...
 MessageForm=Message on online payment form
 MessageOK=Message on validated payment return page
 MessageKO=Message on canceled payment return page
+ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
+DeleteAlsoContentRecursively=Check to delete all content recursiveley
 
 YearOfInvoice=Year of invoice date
 PreviousYearOfInvoice=Previous year of invoice date
