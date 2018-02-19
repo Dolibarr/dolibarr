@@ -165,6 +165,47 @@ function dolWebsiteSaveContent($content)
 
 
 /**
+ * Make a redirect to another container
+ *
+ * @param 	string	$containeralias		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
+ * @return  void
+ */
+function redirectToContainer($containeralias)
+{
+	global $db, $website;
+
+	$newurl = '';
+
+	if (defined('USEDOLIBARRSERVER'))	// When page called from Dolibarr server
+	{
+		// Check new container exists
+		$tmpwebsitepage=new WebsitePage($db);
+		$result = $tmpwebsitepage->fetch(0, $website->id, $containeralias);
+		unset($tmpwebsitepage);
+		if ($result > 0)
+		{
+			$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containeralias, $_SERVER["REQUEST_URI"]);
+		}
+	}
+	else								// When page called from virtual host server
+	{
+		$newurl = '/'.$containeralias;
+	}
+
+	if ($newurl)
+	{
+		header("Location: ".$newurl);
+		exit;
+	}
+	else
+	{
+		print "Error, page contains a reditect to the alias page '".$containeralias."' that does not exists in web site '".$website->ref."'";
+		exit;
+	}
+}
+
+
+/**
  * Clean an HTML page to report only content, so we can include it into another page.
  * It outputs content of file sanitized from html and body part.
  *

@@ -210,6 +210,7 @@ if ($action == 'addsite')
 	if (! $error && ! preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF','alpha')))
 	{
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("Ref")), null, 'errors');
 	}
 
@@ -330,6 +331,10 @@ if ($action == 'addcontainer')
 				{
 					$objectpage->title = $regtmp[1];
 				}
+				if (preg_match('/<meta name="title"[^"]+content="([^"]+)"/ims', $head, $regtmp))
+				{
+					if (empty($objectpage->title)) $objectpage->title = $regtmp[1];		// If title not found into <title>, we get it from <meta title>
+				}
 				if (preg_match('/<meta name="description"[^"]+content="([^"]+)"/ims', $head, $regtmp))
 				{
 					$objectpage->description = $regtmp[1];
@@ -343,6 +348,8 @@ if ($action == 'addcontainer')
 					$tmplang=explode('-', $regtmp[1]);
 					$objectpage->lang = $tmplang[0].($tmplang[1] ? '_'.strtoupper($tmplang[1]) : '');
 				}
+
+				$tmp['content'] = preg_replace('/\s*<meta name="generator"[^"]+content="([^"]+)"\s*\/?>/ims', '', $tmp['content']);
 
 				$objectpage->content = $tmp['content'];
 				$objectpage->content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $objectpage->content);
@@ -359,11 +366,12 @@ if ($action == 'addcontainer')
 				$objectpage->htmlheader = preg_replace('/^.*<head(\s[^>]*)*>/ims', '', $objectpage->htmlheader);
 				$objectpage->htmlheader = preg_replace('/<\/head(\s[^>]*)*>.*$/ims', '', $objectpage->htmlheader);
 				$objectpage->htmlheader = preg_replace('/<base(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-				$objectpage->htmlheader = preg_replace('/<meta name="robot(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-				$objectpage->htmlheader = preg_replace('/<meta name="keywords(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-				$objectpage->htmlheader = preg_replace('/<meta name="title(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-				$objectpage->htmlheader = preg_replace('/<meta name="description(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-				$objectpage->htmlheader = preg_replace('/<meta name="generator(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta http-equiv="content-type"([^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="robots"([^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="title"([^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="description"([^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="keywords"([^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="generator"([^>]*)*>\n*/ims', '', $objectpage->htmlheader);
 				//$objectpage->htmlheader = preg_replace('/<meta name="verify-v1[^>]*>\n*/ims', '', $objectpage->htmlheader);
 				//$objectpage->htmlheader = preg_replace('/<meta name="msvalidate.01[^>]*>\n*/ims', '', $objectpage->htmlheader);
 				$objectpage->htmlheader = preg_replace('/<title>[^<]*<\/title>\n*/ims', '', $objectpage->htmlheader);
@@ -432,7 +440,7 @@ if ($action == 'addcontainer')
 					//$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 					$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '', $tmp);
 				}
-				$objectpage->htmlheader = trim($tmp);
+				$objectpage->htmlheader = trim($tmp)."\n";
 
 
 				// Now loop to fetch CSS
@@ -503,11 +511,11 @@ if ($action == 'addcontainer')
 					}
 				}
 
-				$pagecsscontent.='</style>'."\n";
+				$pagecsscontent.='</style>';
 				//var_dump($pagecsscontent);
 
 				//print dol_escape_htmltag($tmp);exit;
-				$objectpage->htmlheader .= $pagecsscontent;
+				$objectpage->htmlheader .= trim($pagecsscontent)."\n";
 
 
 				// Now loop to fetch all images into page
@@ -543,18 +551,21 @@ if ($action == 'addcontainer')
 	{
 		if (empty($objectpage->pageurl))
 		{
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
 			$error++;
 			$action='createcontainer';
 		}
 		else if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
 		{
+			$langs->load("errors");
 			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
 			$error++;
 			$action='createcontainer';
 		}
 		if (empty($objectpage->title))
 		{
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE")), null, 'errors');
 			$error++;
 			$action='createcontainer';
@@ -915,14 +926,16 @@ if ($action == 'setashome')
 if ($action == 'updatemeta')
 {
 	$db->begin();
+
 	$object->fetch(0, $website);
 
 	$objectpage->fk_website = $object->id;
 
 	// Check parameters
-	if (! preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
+	if (! preg_match('/^[a-z0-9\-\_]+$/i',  GETPOST('WEBSITE_PAGENAME', 'alpha')))
 	{
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
 		$action='editmeta';
 	}
@@ -931,7 +944,7 @@ if ($action == 'updatemeta')
 	if ($res <= 0)
 	{
 		$error++;
-		dol_print_error($db, 'Page not found');
+		setEventMessages('Page not found '.$objectpage->error, $objectpage->errors, 'errors');
 	}
 
 	if (! $error)
@@ -944,7 +957,7 @@ if ($action == 'updatemeta')
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
-		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
+		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 
 		$res = $objectpage->update($user);
 		if (! $res > 0)
@@ -952,67 +965,70 @@ if ($action == 'updatemeta')
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 		}
+	}
 
-		if (! $error)
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
+
+	if (! $error)
+	{
+		$filemaster=$pathofwebsite.'/master.inc.php';
+		$fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
+		$filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+
+		dol_mkdir($pathofwebsite);
+
+
+		// Now generate the master.inc.php page
+		dol_syslog("We regenerate the master file (because we update meta)");
+		dol_delete_file($filemaster);
+
+		$mastercontent = '<?php'."\n";
+		$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
+		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+		//$mastercontent.= "include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';"."\n";
+		//$mastercontent.= '$website = new WebSite($db)'."\n";
+		$mastercontent.= '?>'."\n";
+		$result = file_put_contents($filemaster, $mastercontent);
+		if (! empty($conf->global->MAIN_UMASK))
+			@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+
+		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+
+
+		// Now generate the alias.php page
+		if (! empty($fileoldalias))
 		{
-			$db->commit();
+			dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+			dol_delete_file($fileoldalias);
+		}
 
-			$filemaster=$pathofwebsite.'/master.inc.php';
-			$fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
-			$filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+		// Save page alias
+		$result=dolSavePageAlias($filealias, $object, $objectpage);
+		if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 
-			dol_mkdir($pathofwebsite);
-
-
-			// Now generate the master.inc.php page
-			dol_syslog("We regenerate the master file (because we update meta)");
-			dol_delete_file($filemaster);
-
-			$mastercontent = '<?php'."\n";
-			$mastercontent.= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-			$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
-			//$mastercontent.= "include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';"."\n";
-			//$mastercontent.= '$website = new WebSite($db)'."\n";
-			$mastercontent.= '?>'."\n";
-			$result = file_put_contents($filemaster, $mastercontent);
-			if (! empty($conf->global->MAIN_UMASK))
-				@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
-
-			if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
-
-
-			// Now generate the alias.php page
-			if (! empty($fileoldalias))
-			{
-				dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
-				dol_delete_file($fileoldalias);
-			}
-
-			// Save page alias
-			$result=dolSavePageAlias($filealias, $object, $objectpage);
-			if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
-
-			// Save page of content
-			$result=dolSavePageContent($filetpl, $object, $objectpage);
-			if ($result)
-			{
-				setEventMessages($langs->trans("Saved"), null, 'mesgs');
-				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
-				//exit;
-			}
-			else
-			{
-				setEventMessages('Failed to write file '.$filetpl, null, 'errors');
-				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
-	   			//exit;
-			}
-
-			$action='preview';
+		// Save page of content
+		$result=dolSavePageContent($filetpl, $object, $objectpage);
+		if ($result)
+		{
+			setEventMessages($langs->trans("Saved"), null, 'mesgs');
+			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+			//exit;
 		}
 		else
 		{
-			$db->rollback();
+			setEventMessages('Failed to write file '.$filetpl, null, 'errors');
+			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+   			//exit;
 		}
+
+		$action='preview';
 	}
 }
 
