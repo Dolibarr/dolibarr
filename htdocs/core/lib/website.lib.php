@@ -230,11 +230,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 	$error=0;
 
+	dol_syslog("Call getAllImages with grabimagesinto=".$grabimagesinto);
+
 	$alreadygrabbed=array();
 
 	if (preg_match('/\/$/', $urltograb)) $urltograb.='.';
 	$urltograb = dirname($urltograb);							// So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
 
+	// Search X in "img...src=X"
 	preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $tmp, $regs);
 
 	foreach ($regs[0] as $key => $val)
@@ -323,16 +326,20 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		}
 
 		$linkwithoutdomain = $regs[2][$key];
-		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+
+		$dirforimages = '/'.$objectpage->pageurl;
+		if ($grabimagesinto == 'root') $dirforimages='';
+
+		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 
 		if (preg_match('/^http/', $regs[2][$key]))
 		{
 			$urltograbbis = $regs[2][$key];
 			$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 		}
 
-		$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+		$filename = 'image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 
 		// Clean the aa/bb/../cc into aa/cc
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
