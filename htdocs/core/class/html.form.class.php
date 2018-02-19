@@ -1236,7 +1236,7 @@ class Form
 					if (preg_match('/\(CREDIT_NOTE\)/', $desc)) $desc=preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $desc);
 					if (preg_match('/\(DEPOSIT\)/', $desc)) $desc=preg_replace('/\(DEPOSIT\)/', $langs->trans("Deposit"), $desc);
 					if (preg_match('/\(EXCESS RECEIVED\)/', $desc)) $desc=preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $desc);
-					// TODO handle (EXCESS PAID)
+					if (preg_match('/\(EXCESS PAID\)/', $desc)) $desc=preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $desc);
 
 					$selectstring='';
 					if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected';

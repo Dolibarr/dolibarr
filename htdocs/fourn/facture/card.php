@@ -2167,10 +2167,10 @@ else
 
 		// Confirmation de la conversion de l'avoir en reduc
 		if ($action == 'converttoreduc') {
-			if($object->type == FactureFournisseur::TYPE_STANDARD) $type_fac = 'ExcessReceived'; // TODO translation trop-perçu => trop-payé
+			if($object->type == FactureFournisseur::TYPE_STANDARD) $type_fac = 'ExcessPaid';
 			elseif($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 			elseif($object->type == FactureFournisseur::TYPE_DEPOSIT) $type_fac = 'Deposit';
-			$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac))); // TODO translation client => fournisseur
+			$text = $langs->trans('ConfirmConvertToReducSupplier', strtolower($langs->transnoentities($type_fac)));
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 		}
 
@@ -2872,7 +2872,7 @@ else
 					print ' :</td>';
 					print '<td align="right">' . price($obj->amount_ttc) . '</td>';
 					print '<td align="right">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>'; // TODO unlinkdiscount
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
 					print '</td></tr>';
 					$i ++;
 					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
@@ -2929,7 +2929,7 @@ else
 			if ($resteapayeraffiche >= 0)
 				print $langs->trans('RemainderToPay');
 			else
-				print $langs->trans('ExcessReceived');
+				print $langs->trans('ExcessPaid');
 			print ' :</td>';
 			print '<td align="right" class="'.($resteapayeraffiche?'amountremaintopay':$cssforamountpaymentcomplete).'">' . price($resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
@@ -3113,7 +3113,7 @@ else
 					// For standard invoice with excess paid
 					if ($object->type == FactureFournisseur::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $user->rights->fournisseur->facture->creer && empty($discount->id))
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a></div>'; // TODO translation : trop-perçu => trop payé
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessPaidToReduc').'</a></div>';
 					}
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() == 0) {

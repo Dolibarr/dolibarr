@@ -1049,6 +1049,8 @@ class FactureFournisseur extends CommonInvoice
             }
         }
 
+        // TODO Delete related discounts
+
 		if (! $error)
 		{
 			// Delete linked object

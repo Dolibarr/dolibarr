@@ -276,12 +276,12 @@ if ($socid > 0)
 		dol_print_error($db);
 	}
 
-	print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>'; // TODO adapt text
+	print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
 	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 	if (! empty($user->fk_soc))    // No need to show this for external users
 	{
-		print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>'; // TODO adapt text
+		print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
     	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 	}
 
@@ -307,12 +307,12 @@ if ($socid > 0)
 			dol_print_error($db);
 		}
 		
-		print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>'; // TODO adapt text
+		print '<tr><td class="titlefield">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
 		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		
 		if (! empty($user->fk_soc))    // No need to show this for external users
 		{
-			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>'; // TODO adapt text
+			print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountMy").'</td>';
 			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		}
 	}
@@ -330,9 +330,10 @@ if ($socid > 0)
     	print '<div class="underbanner clearboth"></div>';
     	print '<table class="border" width="100%">';
 		if($conf->global->MAIN_FEATURES_LEVEL > 0) {
-	    	print '<tr><td>'.$langs->trans('DiscountType').'</td>';
-	    	print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
-	    	print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label></td></tr>';
+			print '<tr><td>'.$langs->trans('DiscountType').'</td>';
+			print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+			print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+			print '</td></tr>';
 		}
     	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
     	print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'">';
@@ -401,7 +402,7 @@ if ($socid > 0)
 	if ($resql)
 	{
 		if($conf->global->MAIN_FEATURES_LEVEL > 0) {
-			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', ''); // TODO translate
+			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
@@ -536,7 +537,7 @@ if ($socid > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', ''); // TODO translate
+			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 			print '<table width="100%" class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -585,7 +586,7 @@ if ($socid > 0)
 						$facturefournstatic->id=$obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref=$obj->ref;
 						$facturefournstatic->type=$obj->type;
-						print preg_replace('/\(EXCESS PAID\)/',$langs->trans("ExcessPaid"),$obj->description).' '.$facturefournstatic->getNomURl(1); // TODO translate ExcessPaid
+						print preg_replace('/\(EXCESS PAID\)/',$langs->trans("ExcessPaid"),$obj->description).' '.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					}
 					else
@@ -705,7 +706,7 @@ if ($socid > 0)
 	if ($resql2)
 	{
 		if($conf->global->MAIN_FEATURES_LEVEL > 0) {
-			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', ''); // TODO translate
+			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -855,7 +856,7 @@ if ($socid > 0)
 		if ($resql) $resql2=$db->query($sql2);
 		if ($resql2)
 		{
-			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', ''); // TODO translate
+			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
@@ -934,12 +935,12 @@ if ($socid > 0)
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>'; // TODO adapt to supplier invoice of use getNomUrl
+					print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
 					print '<td align="right">'.price($obj->amount_ht).'</td>';
 					print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
 					print '<td align="right">'.price($obj->amount_ttc).'</td>';
 					print '<td align="center">';
-					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>'; // TODO getNomUrl ?
+					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a>';
 					print '</td>';
 					print '<td>&nbsp;</td>';
 					print '</tr>';
