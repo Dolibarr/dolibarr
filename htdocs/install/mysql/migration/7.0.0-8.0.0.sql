@@ -48,6 +48,11 @@ create table llx_c_type_container
 
 ALTER TABLE llx_c_type_container ADD UNIQUE INDEX uk_c_type_container_id (code, entity);
 
+insert into llx_c_type_container (code,label,module,active) values ('page',     'Page',     'system', 1);
+insert into llx_c_type_container (code,label,module,active) values ('banner',   'Banner',   'system', 1);
+insert into llx_c_type_container (code,label,module,active) values ('blogpost', 'BlogPost', 'system', 1);
+insert into llx_c_type_container (code,label,module,active) values ('other',    'Other',    'system', 1);
+
 
 
 
