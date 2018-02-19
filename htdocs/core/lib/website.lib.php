@@ -184,7 +184,23 @@ function redirectToContainer($containeralias)
 		unset($tmpwebsitepage);
 		if ($result > 0)
 		{
-			$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containeralias, $_SERVER["REQUEST_URI"]);
+			$currenturi = $_SERVER["REQUEST_URI"];
+			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp))
+			{
+				if ($regtmp[0] == $containeralias)
+				{
+					print "Error, page with uri '.$currenturi.' try a redirect to the same alias page '".$containeralias."' in web site '".$website->ref."'";
+					exit;
+				}
+				else
+				{
+					$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containeralias, $currenturi);
+				}
+			}
+			else
+			{
+				$newurl = $currenturi.'&pageref='.urlencode($containeralias);
+			}
 		}
 	}
 	else								// When page called from virtual host server
@@ -199,7 +215,7 @@ function redirectToContainer($containeralias)
 	}
 	else
 	{
-		print "Error, page contains a reditect to the alias page '".$containeralias."' that does not exists in web site '".$website->ref."'";
+		print "Error, page contains a redirect to the alias page '".$containeralias."' that does not exists in web site '".$website->ref."'";
 		exit;
 	}
 }
