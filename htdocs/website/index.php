@@ -261,6 +261,9 @@ if ($action == 'addcontainer')
 	if (GETPOST('fetchexternalurl','alpha'))
 	{
 		$urltograb=GETPOST('externalurl','alpha');
+		$grabimages=GETPOST('grabimages','alpha');
+		$grabimagesinto=GETPOST('grabimagesinto','alpha');
+		//var_dump($grabimages);exit;
 	}
 
 	if ($urltograb)
@@ -275,234 +278,248 @@ if ($action == 'addcontainer')
 		{
 			$urltograb.='/';
 		}
+		$pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-', preg_replace('/\/+$/', '', $urltograbwithoutdomainandparam)));
 
 		$urltograbdirwithoutslash = dirname($urltograb.'.');
 		$urltograbdirrootwithoutslash = getRootURLFromURL($urltograbdirwithoutslash);
 		// Exemple, now $urltograbdirwithoutslash is https://www.dolimed.com/screenshots
 		// and $urltograbdirrootwithoutslash is https://www.dolimed.com
 
-		$tmp = getURLContent($urltograb);
-		if ($tmp['curl_error_no'])
+		// Check pageurl is not already used
+		$tmpwebsitepage = new WebsitePage($db);
+		$result = $tmpwebsitepage->fetch(0, $object->id, $pageurl);
+		if ($result > 0)
 		{
+			setEventMessages($langs->trans("AliasPageAlreadyExists", $pageurl), null, 'errors');
 			$error++;
-			setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
 			$action='createcontainer';
 		}
-		elseif ($tmp['http_code'] != '200')
+
+		if (! $error)
 		{
-			$error++;
-			setEventMessages('Error getting '.$urltograb.': '.$tmp['http_code'], null, 'errors');
-			$action='createcontainer';
-		}
-		else
-		{
-			// Remove comments
-			$tmp['content'] = removeHtmlComment($tmp['content']);
-
-			preg_match('/<head>(.*)<\/head>/is', $tmp['content'], $reg);
-			$head = $reg[1];
-
-			$objectpage->type_container = 'page';
-   			$objectpage->pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/','-', preg_replace('/\/+$/', '', $urltograbwithoutdomainandparam)));
-   			if (empty($objectpage->pageurl))
-   			{
-   				$tmpdomain = getDomainFromURL($urltograb);
-   				$objectpage->pageurl=$tmpdomain.'-home';
-   			}
-
-			if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
+			$tmp = getURLContent($urltograb);
+			if ($tmp['curl_error_no'])
 			{
-				$objectpage->title = $regtmp[1];
+				$error++;
+				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
+				$action='createcontainer';
 			}
-			if (preg_match('/<meta name="description"[^"]+content="([^"]+)"/ims', $head, $regtmp))
+			elseif ($tmp['http_code'] != '200')
 			{
-				$objectpage->description = $regtmp[1];
+				$error++;
+				setEventMessages('Error getting '.$urltograb.': '.$tmp['http_code'], null, 'errors');
+				$action='createcontainer';
 			}
-			if (preg_match('/<meta name="keywords"[^"]+content="([^"]+)"/ims', $head, $regtmp))
+			else
 			{
-				$objectpage->keywords = $regtmp[1];
+				// Remove comments
+				$tmp['content'] = removeHtmlComment($tmp['content']);
+
+				preg_match('/<head>(.*)<\/head>/is', $tmp['content'], $reg);
+				$head = $reg[1];
+
+				$objectpage->type_container = 'page';
+	   			$objectpage->pageurl = $pageurl;
+	   			if (empty($objectpage->pageurl))
+	   			{
+	   				$tmpdomain = getDomainFromURL($urltograb);
+	   				$objectpage->pageurl=$tmpdomain.'-home';
+	   			}
+
+				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
+				{
+					$objectpage->title = $regtmp[1];
+				}
+				if (preg_match('/<meta name="description"[^"]+content="([^"]+)"/ims', $head, $regtmp))
+				{
+					$objectpage->description = $regtmp[1];
+				}
+				if (preg_match('/<meta name="keywords"[^"]+content="([^"]+)"/ims', $head, $regtmp))
+				{
+					$objectpage->keywords = $regtmp[1];
+				}
+				if (preg_match('/<html\s+lang="([^"]+)"/ims', $tmp['content'], $regtmp))
+				{
+					$tmplang=explode('-', $regtmp[1]);
+					$objectpage->lang = $tmplang[0].($tmplang[1] ? '_'.strtoupper($tmplang[1]) : '');
+				}
+
+				$objectpage->content = $tmp['content'];
+				$objectpage->content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $objectpage->content);
+				$objectpage->content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $objectpage->content);
+
+				$absoluteurlinaction=$urltograbdirwithoutslash;
+				// TODO Replace 'action="$urltograbdirwithoutslash' into action="/"
+				// TODO Replace 'action="$urltograbdirwithoutslash..."' into   action="..."
+				// TODO Replace 'a href="$urltograbdirwithoutslash' into a href="/"
+				// TODO Replace 'a href="$urltograbdirwithoutslash..."' into a href="..."
+
+				// Now loop to fetch all css files. Include them inline into header of page
+				$objectpage->htmlheader = $tmp['content'];
+				$objectpage->htmlheader = preg_replace('/^.*<head(\s[^>]*)*>/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<\/head(\s[^>]*)*>.*$/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<base(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="robot(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="keywords(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="title(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="description(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<meta name="generator(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
+				//$objectpage->htmlheader = preg_replace('/<meta name="verify-v1[^>]*>\n*/ims', '', $objectpage->htmlheader);
+				//$objectpage->htmlheader = preg_replace('/<meta name="msvalidate.01[^>]*>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<title>[^<]*<\/title>\n*/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<link[^>]*rel="shortcut[^>]*>\n/ims', '', $objectpage->htmlheader);
+
+				// Now loop to fetch JS
+				$tmp = $objectpage->htmlheader;
+
+				preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
+				foreach ($regs[0] as $key => $val)
+				{
+					dol_syslog("We will grab the resource found into script tag ".$regs[2][$key]);
+
+					$linkwithoutdomain = $regs[2][$key];
+					if (preg_match('/^\//', $regs[2][$key]))
+					{
+						$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+					}
+					else
+					{
+						$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key];	// We use dir of grabbed file
+					}
+
+					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+					if (preg_match('/^http/', $regs[2][$key]))
+					{
+						$urltograbbis = $regs[2][$key];
+						$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
+						//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+					}
+
+					//print $domaintograb.' - '.$domaintograbbis.' - '.$urltograbdirwithoutslash.' - ';
+					//print $linkwithoutdomain.' - '.$urltograbbis."<br>\n";
+
+					// Test if this is an external URL of grabbed web site. If yes, we do not load resource
+					$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
+					$domaintograbbis = getDomainFromURL($urltograbbis);
+					if ($domaintograb != $domaintograbbis) continue;
+
+					/*
+	    			$tmpgeturl = getURLContent($urltograbbis);
+	    			if ($tmpgeturl['curl_error_no'])
+	    			{
+	    				$error++;
+	    				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+	    				$action='createcontainer';
+	    			}
+					elseif ($tmpgeturl['http_code'] != '200')
+					{
+						$error++;
+						setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						$action='createcontainer';
+					}
+					else
+	    			{
+	    				dol_mkdir(dirname($filetosave));
+
+	    				$fp = fopen($filetosave, "w");
+	    				fputs($fp, $tmpgeturl['content']);
+	    				fclose($fp);
+	    				if (! empty($conf->global->MAIN_UMASK))
+	    					@chmod($file, octdec($conf->global->MAIN_UMASK));
+	    			}
+					*/
+
+					//$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+					$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '', $tmp);
+				}
+				$objectpage->htmlheader = trim($tmp);
+
+
+				// Now loop to fetch CSS
+				$pagecsscontent = "\n".'<style>'."\n";
+
+				preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
+				foreach ($regs[0] as $key => $val)
+				{
+					dol_syslog("We will grab the resource found into link tag ".$regs[2][$key]);
+
+					$linkwithoutdomain = $regs[2][$key];
+					if (preg_match('/^\//', $regs[2][$key]))
+					{
+						$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
+					}
+					else
+					{
+						$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key];	// We use dir of grabbed file
+					}
+
+					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+					if (preg_match('/^http/', $regs[2][$key]))
+					{
+						$urltograbbis = $regs[2][$key];
+						$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
+						//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+					}
+
+					//print $domaintograb.' - '.$domaintograbbis.' - '.$urltograbdirwithoutslash.' - ';
+					//print $linkwithoutdomain.' - '.$urltograbbis."<br>\n";
+
+					// Test if this is an external URL of grabbed web site. If yes, we do not load resource
+					$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
+					$domaintograbbis = getDomainFromURL($urltograbbis);
+					if ($domaintograb != $domaintograbbis) continue;
+
+					$tmpgeturl = getURLContent($urltograbbis);
+					if ($tmpgeturl['curl_error_no'])
+					{
+						$error++;
+						setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+						$action='createcontainer';
+					}
+					elseif ($tmpgeturl['http_code'] != '200')
+					{
+						$error++;
+						setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+						$action='createcontainer';
+					}
+					else
+					{
+						//dol_mkdir(dirname($filetosave));
+
+						//$fp = fopen($filetosave, "w");
+						//fputs($fp, $tmpgeturl['content']);
+						//fclose($fp);
+						//if (! empty($conf->global->MAIN_UMASK))
+						//	@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+						//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+						$pagecsscontent.='/* Content of file '.$urltograbbis.' */'."\n";
+
+						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
+
+						$pagecsscontent.=$tmpgeturl['content']."\n";
+
+						$objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key],'/').'\n*/ims', '', $objectpage->htmlheader);
+					}
+				}
+
+				$pagecsscontent.='</style>'."\n";
+				//var_dump($pagecsscontent);
+
+				//print dol_escape_htmltag($tmp);exit;
+				$objectpage->htmlheader .= $pagecsscontent;
+
+
+				// Now loop to fetch all images into page
+				$tmp = $objectpage->content;
+
+				getAllImages($object, $objectpage, $urltograb, $tmp, $action, 1, $grabimages, $grabimagesinto);
+
+				//print dol_escape_htmltag($tmp);exit;
+				$objectpage->content = $tmp;
+
+				$objectpage->grabbed_from = $urltograb;
 			}
-			if (preg_match('/<html\s+lang="([^"]+)"/ims', $tmp['content'], $regtmp))
-			{
-				$tmplang=explode('-', $regtmp[1]);
-				$objectpage->lang = $tmplang[0].($tmplang[1] ? '_'.strtoupper($tmplang[1]) : '');
-			}
-
-			$objectpage->content = $tmp['content'];
-			$objectpage->content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $objectpage->content);
-			$objectpage->content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $objectpage->content);
-
-			$absoluteurlinaction=$urltograbdirwithoutslash;
-			// TODO Replace 'action="$urltograbdirwithoutslash' into action="/"
-			// TODO Replace 'action="$urltograbdirwithoutslash..."' into   action="..."
-			// TODO Replace 'a href="$urltograbdirwithoutslash' into a href="/"
-			// TODO Replace 'a href="$urltograbdirwithoutslash..."' into a href="..."
-
-			// Now loop to fetch all css files. Include them inline into header of page
-			$objectpage->htmlheader = $tmp['content'];
-			$objectpage->htmlheader = preg_replace('/^.*<head(\s[^>]*)*>/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<\/head(\s[^>]*)*>.*$/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<base(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="robot(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="keywords(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="title(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="description(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<meta name="generator(\s[^>]*)*>\n*/ims', '', $objectpage->htmlheader);
-			//$objectpage->htmlheader = preg_replace('/<meta name="verify-v1[^>]*>\n*/ims', '', $objectpage->htmlheader);
-			//$objectpage->htmlheader = preg_replace('/<meta name="msvalidate.01[^>]*>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<title>[^<]*<\/title>\n*/ims', '', $objectpage->htmlheader);
-			$objectpage->htmlheader = preg_replace('/<link[^>]*rel="shortcut[^>]*>\n/ims', '', $objectpage->htmlheader);
-
-			// Now loop to fetch JS
-			$tmp = $objectpage->htmlheader;
-
-			preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
-			foreach ($regs[0] as $key => $val)
-			{
-				dol_syslog("We will grab the resource found into script tag ".$regs[2][$key]);
-
-				$linkwithoutdomain = $regs[2][$key];
-				if (preg_match('/^\//', $regs[2][$key]))
-				{
-					$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
-				}
-				else
-				{
-					$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key];	// We use dir of grabbed file
-				}
-
-				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
-				if (preg_match('/^http/', $regs[2][$key]))
-				{
-					$urltograbbis = $regs[2][$key];
-					$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-				}
-
-				//print $domaintograb.' - '.$domaintograbbis.' - '.$urltograbdirwithoutslash.' - ';
-				//print $linkwithoutdomain.' - '.$urltograbbis."<br>\n";
-
-				// Test if this is an external URL of grabbed web site. If yes, we do not load resource
-				$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
-				$domaintograbbis = getDomainFromURL($urltograbbis);
-				if ($domaintograb != $domaintograbbis) continue;
-
-				/*
-    			$tmpgeturl = getURLContent($urltograbbis);
-    			if ($tmpgeturl['curl_error_no'])
-    			{
-    				$error++;
-    				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-    				$action='createcontainer';
-    			}
-				elseif ($tmpgeturl['http_code'] != '200')
-				{
-					$error++;
-					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-					$action='createcontainer';
-				}
-				else
-    			{
-    				dol_mkdir(dirname($filetosave));
-
-    				$fp = fopen($filetosave, "w");
-    				fputs($fp, $tmpgeturl['content']);
-    				fclose($fp);
-    				if (! empty($conf->global->MAIN_UMASK))
-    					@chmod($file, octdec($conf->global->MAIN_UMASK));
-    			}
-				*/
-
-				//$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-				$tmp = preg_replace('/'.preg_quote($regs[0][$key],'/').'/i', '', $tmp);
-			}
-			$objectpage->htmlheader = trim($tmp);
-
-
-			// Now loop to fetch CSS
-			$pagecsscontent = "\n".'<style>'."\n";
-
-			preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
-			foreach ($regs[0] as $key => $val)
-			{
-				dol_syslog("We will grab the resource found into link tag ".$regs[2][$key]);
-
-				$linkwithoutdomain = $regs[2][$key];
-				if (preg_match('/^\//', $regs[2][$key]))
-				{
-					$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key];	// We use dirroot
-				}
-				else
-				{
-					$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key];	// We use dir of grabbed file
-				}
-
-				//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
-				if (preg_match('/^http/', $regs[2][$key]))
-				{
-					$urltograbbis = $regs[2][$key];
-					$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-				}
-
-				//print $domaintograb.' - '.$domaintograbbis.' - '.$urltograbdirwithoutslash.' - ';
-				//print $linkwithoutdomain.' - '.$urltograbbis."<br>\n";
-
-				// Test if this is an external URL of grabbed web site. If yes, we do not load resource
-				$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
-				$domaintograbbis = getDomainFromURL($urltograbbis);
-				if ($domaintograb != $domaintograbbis) continue;
-
-				$tmpgeturl = getURLContent($urltograbbis);
-				if ($tmpgeturl['curl_error_no'])
-				{
-					$error++;
-					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-					$action='createcontainer';
-				}
-				elseif ($tmpgeturl['http_code'] != '200')
-				{
-					$error++;
-					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-					$action='createcontainer';
-				}
-				else
-				{
-					//dol_mkdir(dirname($filetosave));
-
-					//$fp = fopen($filetosave, "w");
-					//fputs($fp, $tmpgeturl['content']);
-					//fclose($fp);
-					//if (! empty($conf->global->MAIN_UMASK))
-					//	@chmod($file, octdec($conf->global->MAIN_UMASK));
-
-					//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
-					$pagecsscontent.='/* Content of file '.$urltograbbis.' */'."\n";
-
-					getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1);
-
-					$pagecsscontent.=$tmpgeturl['content']."\n";
-
-					$objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key],'/').'\n*/ims', '', $objectpage->htmlheader);
-				}
-			}
-
-			$pagecsscontent.='</style>'."\n";
-			//var_dump($pagecsscontent);
-
-			//print dol_escape_htmltag($tmp);exit;
-			$objectpage->htmlheader .= $pagecsscontent;
-
-
-			// Now loop to fetch all images
-			$tmp = $objectpage->content;
-
-			getAllImages($object, $objectpage, $urltograb, $tmp, $action, 1);
-
-			//print dol_escape_htmltag($tmp);exit;
-			$objectpage->content = $tmp;
-
-			$objectpage->grabbed_from = $urltograb;
 		}
 	}
 	else
@@ -1895,27 +1912,30 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<!-- Edit or create page/container -->'."\n";
 	//print '<div class="fichecenter">';
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+	if ($action == 'createcontainer')
 	{
-		if ($action == 'createcontainer')
-		{
-			print '<br>';
+		print '<br>';
 
-			print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br><hr>';
-			print '<table class="border" width="100%">';
-			print '<tr><td class="titlefield">';
-			print $langs->trans("URL");
-			print '</td><td>';
-			print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
-			print '<input class="button" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
-			print '<br><br>'.info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, '1');
-			print '</td></tr>';
-			print '</table>';
+		print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br><hr>';
+		print '<table class="border" width="100%">';
+		print '<tr><td class="titlefield">';
+		print $langs->trans("URL");
+		print '</td><td>';
+		print '<input class="flat minwidth300" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl','alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
+		print '<input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
+		print ' ';
+		print $langs->trans("ImagesShouldBeSavedInto").' ';
+		$arraygrabimagesinto=array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
+		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto')?GETPOST('grabimagesinto'):'root');
+		print '<br>';
+		print '<input class="button" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
+		print '<br>'.info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, '1');
+		print '</td></tr>';
+		print '</table>';
 
-			print '<br>';
+		print '<br>';
 
-			print ' * '.$langs->trans("OrEnterPageInfoManually").'<br><hr>';
-		}
+		print ' * '.$langs->trans("OrEnterPageInfoManually").'<br><hr>';
 	}
 
 	print '<table class="border" width="100%">';

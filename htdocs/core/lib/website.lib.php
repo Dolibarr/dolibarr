@@ -222,9 +222,11 @@ function includeContainer($containeralias)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
  * @param	string		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int			$grabimages		0=Do not grab images, 1=Grab images
+ * @param	string		$grabimagesinto	'root' or 'subpage'
  * @return	void
  */
-function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks=0)
+function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks=0, $grabimages=1, $grabimagesinto='subpage')
 {
 	global $conf;
 
@@ -252,15 +254,18 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		}
 
 		$linkwithoutdomain = $regs[2][$key];
-		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+		$dirforimages = '/'.$objectpage->pageurl;
+		if ($grabimagesinto == 'root') $dirforimages='';
+
+		// Define $filetosave and $filename
+		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 		if (preg_match('/^http/', $regs[2][$key]))
 		{
 			$urltograbbis = $regs[2][$key];
 			$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 		}
-
-		$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+		$filename = 'image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 
 		// Clean the aa/bb/../cc into aa/cc
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
@@ -272,30 +277,33 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 		if (empty($alreadygrabbed[$urltograbbis]))
 		{
-			$tmpgeturl = getURLContent($urltograbbis);
-			if ($tmpgeturl['curl_error_no'])
+			if ($grabimages)
 			{
-				$error++;
-				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-				$action='create';
-			}
-			elseif ($tmpgeturl['http_code'] != '200')
-			{
-				$error++;
-				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-				$action='create';
-			}
-			else
-			{
-				$alreadygrabbed[$urltograbbis]=1;	// Track that file was alreay grabbed.
+				$tmpgeturl = getURLContent($urltograbbis);
+				if ($tmpgeturl['curl_error_no'])
+				{
+					$error++;
+					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+					$action='create';
+				}
+				elseif ($tmpgeturl['http_code'] != '200')
+				{
+					$error++;
+					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+					$action='create';
+				}
+				else
+				{
+					$alreadygrabbed[$urltograbbis]=1;	// Track that file was alreay grabbed.
 
-				dol_mkdir(dirname($filetosave));
+					dol_mkdir(dirname($filetosave));
 
-				$fp = fopen($filetosave, "w");
-				fputs($fp, $tmpgeturl['content']);
-				fclose($fp);
-				if (! empty($conf->global->MAIN_UMASK))
-					@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
+					$fp = fopen($filetosave, "w");
+					fputs($fp, $tmpgeturl['content']);
+					fclose($fp);
+					if (! empty($conf->global->MAIN_UMASK))
+						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
+				}
 			}
 		}
 
@@ -344,30 +352,33 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 		if (empty($alreadygrabbed[$urltograbbis]))
 		{
-			$tmpgeturl = getURLContent($urltograbbis);
-			if ($tmpgeturl['curl_error_no'])
+			if ($grabimages)
 			{
-				$error++;
-				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-				$action='create';
-			}
-			elseif ($tmpgeturl['http_code'] != '200')
-			{
-				$error++;
-				setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
-				$action='create';
-			}
-			else
-			{
-				$alreadygrabbed[$urltograbbis]=1;	// Track that file was alreay grabbed.
+				$tmpgeturl = getURLContent($urltograbbis);
+				if ($tmpgeturl['curl_error_no'])
+				{
+					$error++;
+					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+					$action='create';
+				}
+				elseif ($tmpgeturl['http_code'] != '200')
+				{
+					$error++;
+					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
+					$action='create';
+				}
+				else
+				{
+					$alreadygrabbed[$urltograbbis]=1;	// Track that file was alreay grabbed.
 
-				dol_mkdir(dirname($filetosave));
+					dol_mkdir(dirname($filetosave));
 
-				$fp = fopen($filetosave, "w");
-				fputs($fp, $tmpgeturl['content']);
-				fclose($fp);
-				if (! empty($conf->global->MAIN_UMASK))
-					@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
+					$fp = fopen($filetosave, "w");
+					fputs($fp, $tmpgeturl['content']);
+					fclose($fp);
+					if (! empty($conf->global->MAIN_UMASK))
+						@chmod($filetosave, octdec($conf->global->MAIN_UMASK));
+				}
 			}
 		}
 
