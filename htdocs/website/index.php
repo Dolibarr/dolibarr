@@ -287,13 +287,16 @@ if ($action == 'addcontainer')
 		// and $urltograbdirrootwithoutslash is https://www.dolimed.com
 
 		// Check pageurl is not already used
-		$tmpwebsitepage = new WebsitePage($db);
-		$result = $tmpwebsitepage->fetch(0, $object->id, $pageurl);
-		if ($result > 0)
+		if ($pageurl)
 		{
-			setEventMessages($langs->trans("AliasPageAlreadyExists", $pageurl), null, 'errors');
-			$error++;
-			$action='createcontainer';
+			$tmpwebsitepage = new WebsitePage($db);
+			$result = $tmpwebsitepage->fetch(0, $object->id, $pageurl);
+			if ($result > 0)
+			{
+				setEventMessages($langs->trans("AliasPageAlreadyExists", $pageurl), null, 'errors');
+				$error++;
+				$action='createcontainer';
+			}
 		}
 
 		if (! $error)
@@ -2003,7 +2006,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
-	print '<input type="text" class="flat maxwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="fieldrequired">';
