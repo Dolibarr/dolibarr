@@ -205,7 +205,7 @@ function redirectToContainer($containeralias)
 	}
 	else								// When page called from virtual host server
 	{
-		$newurl = '/'.$containeralias;
+		$newurl = '/'.$containeralias.'.php';
 	}
 
 	if ($newurl)
