@@ -160,22 +160,27 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 	{
 		// Fetch was already done
 		$result=$ecmdir->delete($user);
+		if ($result <= 0)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans($ecmdir->error,$ecmdir->label), null, 'errors');
+		}
 	}
 	else
 	{
-		$resbool = dol_delete_dir($upload_dir);
+		$resbool = dol_delete_dir($upload_dir, 1);
 		if ($resbool) $result = 1;
-		else $result = 0;
+		else
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFailToDeleteDir", $upload_dir), null, 'errors');
+			$result = 0;
+		}
 	}
 	if ($result > 0)
 	{
 		header("Location: ".$backtourl);
 		exit;
-	}
-	else
-	{
-		$langs->load('errors');
-		setEventMessages($langs->trans($ecmdir->error,$ecmdir->label), null, 'errors');
 	}
 }
 
@@ -281,6 +286,7 @@ if ($module == 'ecm')
 llxHeader();
 
 // Built the file List
+$filearrayall=dol_dir_list($upload_dir,"all",0,'','',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 $totalsize=0;
 foreach($filearray as $key => $file)
@@ -469,7 +475,7 @@ if ($action != 'edit' && $action != 'delete')
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
-	if (count($filearray) == 0)
+	if (count($filearrayall) == 0)
 	{
 		if ($permtoadd)
 		{
@@ -482,7 +488,10 @@ if ($action != 'edit' && $action != 'delete')
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFiles").'">'.$langs->trans('Delete').'</a>';
+		if (count($filearray) > 0)
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFiles").'">'.$langs->trans('Delete').'</a>';
+		else
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFilesOrDirs").'">'.$langs->trans('Delete').'</a>';
 	}
 	print '</div>';
 }
