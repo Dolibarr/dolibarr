@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
@@ -1245,6 +1246,7 @@ if (GETPOST('exportsite','alpha'))
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formwebsite = new FormWebsite($db);
+$formother = new FormOther($db);
 
 $help_url='';
 
@@ -1999,8 +2001,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
-	$arrayoftype=array('page'=>$langs->trans("Page"), 'banner'=>$langs->trans("Banner"), 'blogpost'=>$langs->trans("BlogPost"), 'other'=>$langs->trans("Other"));
-	print $form->selectarray('WEBSITE_TYPE_CONTAINER', $arrayoftype, $type_container);
+	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER')?GETPOST('WEBSITE_TYPE_CONTAINER'):'page'));
 	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';

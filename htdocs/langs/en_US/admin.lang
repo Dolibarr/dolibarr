@@ -885,6 +885,7 @@ DictionaryRevenueStamp=Amount of revenue stamps
 DictionaryPaymentConditions=Payment terms
 DictionaryPaymentModes=Payment modes
 DictionaryTypeContact=Contact/Address types
+DictionaryTypeOfContainer=Type of website pages/containers
 DictionaryEcotaxe=Ecotax (WEEE)
 DictionaryPaperFormat=Paper formats
 DictionaryFormatCards=Cards formats
