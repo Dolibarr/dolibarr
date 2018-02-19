@@ -1454,7 +1454,7 @@ if (count($object->records) > 0)
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
-		$array=$objectpage->fetchAll($object->id);
+		$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
 		if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
 		$atleastonepage=(is_array($array) && count($array) > 0);
 
