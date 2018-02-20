@@ -635,7 +635,9 @@ class Contrat extends CommonObject
 				$this->db->free($resql);
 
 
-				$this->fetch_optionals($this->id, null);
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 
 				/*

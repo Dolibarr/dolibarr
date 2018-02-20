@@ -383,14 +383,13 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
-				*/
+				 */
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{

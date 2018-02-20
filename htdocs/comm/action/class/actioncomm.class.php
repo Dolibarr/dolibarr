@@ -465,7 +465,10 @@ class ActionComm extends CommonObject
 		// Load source object
 		$objFrom = clone $this;
 
+		// Retreive all extrafield
+		// fetch optionals attributes and labels
 		$this->fetch_optionals();
+
 //		$this->fetch_userassigned();
 		$this->fetchResources();
 

@@ -334,7 +334,7 @@ class Societe extends CommonObject
 	 */
 	var $price_level;
 	var $outstanding_limit;
-	
+
 	/**
 	 * Min order amounts
 	 */
@@ -1315,8 +1315,9 @@ class Societe extends CommonObject
 
 				$result = 1;
 
-				// Retreive all extrafield for thirdparty
-			   	$this->fetch_optionals();
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 			}
 			else
 			{
