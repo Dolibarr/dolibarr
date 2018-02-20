@@ -1289,11 +1289,6 @@ class Propal extends CommonObject
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$clonedObj,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-			// Call trigger
-			$result=$clonedObj->call_trigger('PROPAL_CLONE',$user);
-			if ($result < 0) { $error++; }
-			// End call triggers
 		}
 
 		unset($this->context['createfromclone']);

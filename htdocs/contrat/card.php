@@ -881,7 +881,7 @@ if (empty($reshook))
 		if ($ret < 0) $error++;
 
 		if (! $error) {
-			$result = $object->insertExtraFields();
+			$result = $object->insertExtraFields('CONTRACT_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
