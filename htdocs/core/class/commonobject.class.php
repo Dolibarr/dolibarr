@@ -5847,21 +5847,27 @@ abstract class CommonObject
 				else
 				{
 					$csstyle='';
-					$class=(!empty($extrafields->attribute_hidden[$key]) ? 'class="hideobject" ' : '');
+					$class=(!empty($extrafields->attribute_hidden[$key]) ? 'hideobject ' : '');
 					if (is_array($params) && count($params)>0) {
 						if (array_key_exists('style',$params)) {
 							$csstyle=$params['style'];
 						}
 					}
+					
+					// add html5 elements
+					$domData  = ' data-element="extrafield"';
+					$domData .= ' data-targetelement="'.$this->element.'"';
+					$domData .= ' data-targetid="'.$this->id.'"';
+					
+					$html_id = !empty($this->id) ? 'extrarow-'.$this->element.'_'.$key.'_'.$this->id : '';
+					
+					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.'" '.$domData.' >';
+					
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
-						$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
 						$colspan='0';
 					}
-					else
-					{
-						$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
-					}
+					
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{

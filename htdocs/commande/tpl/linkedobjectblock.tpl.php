@@ -47,7 +47,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
-    <tr class="<?php echo $trclass; ?>" data-element="<?php echo $objectlink->element; ?>"  data-elementid="<?php echo $objectlink->id; ?>" >
+    <tr class="<?php echo $trclass; ?>" data-element="<?php echo $objectlink->element; ?>"  data-id="<?php echo $objectlink->id; ?>" >
         <td class="linkedcol-element" ><?php echo $langs->trans("CustomerOrder"); ?></td>
         <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>

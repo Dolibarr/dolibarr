@@ -56,10 +56,17 @@ if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
+// add html5 elements
+$domData  = ' data-element="'.$line->element.'"';
+$domData .= ' data-id="'.$line->id.'"';
+$domData .= ' data-qty="'.$line->qty.'"';
+$domData .= ' data-product_type="'.$line->product_type.'"';
+
+
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
-<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
+<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; echo $domData; ?> >
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
