@@ -47,18 +47,18 @@ foreach($linkedObjectBlock as $key => $objectlink)
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
-    <tr class="<?php echo $trclass; ?>">
-        <td><?php echo $langs->trans("CustomerOrder"); ?></td>
-        <td><?php echo $objectlink->getNomUrl(1); ?></td>
-    	<td align="center"><?php echo $objectlink->ref_client; ?></td>
-    	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
-    	<td align="right"><?php
+    <tr class="<?php echo $trclass; ?>" data-element="<?php echo $objectlink->element; ?>"  data-elementid="<?php echo $objectlink->id; ?>" >
+        <td class="linkedcol-element" ><?php echo $langs->trans("CustomerOrder"); ?></td>
+        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+    	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
+    	<td class="linkedcol-amount" align="right"><?php
     		if ($user->rights->commande->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
-    	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right">
+    	<td class="linkedcol-statut" align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="linkedcol-action" align="right">
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'shipping') {

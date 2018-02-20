@@ -5856,7 +5856,7 @@ class Form
 
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder allwidth">';
+			print '<table class="noborder allwidth" data-block="showLinkedObject" data-element="'.$object->element.'"  data-elementid="'.$object->id.'"   >';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Type").'</td>';
@@ -5933,7 +5933,7 @@ class Form
 						global $noMoreLinkedObjectBlockAfter;
 						$noMoreLinkedObjectBlockAfter=1;
 					}
-
+					
 					$res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
 					if ($res)
 					{
