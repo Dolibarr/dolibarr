@@ -1919,7 +1919,7 @@ class Societe extends CommonObject
         if (! empty($this->code_fournisseur) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierCode') . ':</b> '. $this->code_fournisseur;
         if (! empty($conf->accounting->enabled) && $this->client)
-            $label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. $this->code_compta_client;
+            $label.= '<br><b>' . $langs->trans('CustomerAccountancyCode') . ':</b> '. $this->code_compta;
         if (! empty($conf->accounting->enabled) && $this->fournisseur)
             $label.= '<br><b>' . $langs->trans('SupplierAccountancyCode') . ':</b> '. $this->code_compta_fournisseur;
 
