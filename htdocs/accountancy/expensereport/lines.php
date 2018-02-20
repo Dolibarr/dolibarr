@@ -61,10 +61,10 @@ $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->AC
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if ($page < 0) $page = 0;
-$offset = $conf->liste_limit * $page;
+if (empty($page) || $page < 0) $page = 0;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$offset = $limit * $page;
 if (! $sortfield)
 	$sortfield = "erd.date, erd.rowid";
 if (! $sortorder) {
@@ -170,19 +170,19 @@ if (strlen(trim($search_expensereport))) {
 	$sql .= " AND er.ref like '%" . $search_expensereport . "%'";
 }
 if (strlen(trim($search_label))) {
-	$sql .= " AND f.label like '%" . $search_label . "%'";
+	$sql .= natural_search("f.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= " AND er.comments like '%" . $search_desc . "%'";
+	$sql .= natural_search("er.comments", $search_desc);
 }
 if (strlen(trim($search_amount))) {
-	$sql .= " AND erd.total_ht like '%" . $search_amount . "%'";
+	$sql .= natural_search("erd.total_ht", $search_amount, 1);
 }
 if (strlen(trim($search_account))) {
-	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
+	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= " AND (erd.tva_tx like '" . $search_vat . "%')";
+	$sql .= natural_search("erd.tva_tx", price2num($search_vat), 1);
 }
 if ($search_month > 0)
 {
@@ -219,25 +219,18 @@ if ($result) {
 	$i = 0;
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_expensereport)
-		$param .= "&search_expensereport=" . $search_expensereport;
-	if ($search_label)
-		$param .= "&search_label=" . $search_label;
-	if ($search_desc)
-		$param .= "&search_desc=" . $search_desc;
-	if ($search_account)
-		$param .= "&search_account=" . $search_account;
-	if ($search_vat)
-		$param .= "&search_vat=" . $search_vat;
-	if ($search_day)         $param.='&search_day='.urlencode($search_day);
-	if ($search_month)       $param.='&search_month='.urlencode($search_month);
-	if ($search_year)        $param.='&search_year='.urlencode($search_year);
-	if ($search_country)
-		$param .= "&search_country=" . $search_country;
-	if ($search_tvaintra)
-		$param .= "&search_tvaintra=" . $search_tvaintra;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_expensereport) $param .= "&search_expensereport=" . urlencode($search_expensereport);
+	if ($search_label)		$param .= "&search_label=" . urlencode($search_label);
+	if ($search_desc)		$param .= "&search_desc=" . urlencode($search_desc);
+	if ($search_account)	$param .= "&search_account=" . urlencode($search_account);
+	if ($search_vat)		$param .= "&search_vat=" . urlencode($search_vat);
+	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
+	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
+	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+	if ($search_country)	$param .= "&search_country=" . urlencode($search_country);
+	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -297,7 +290,6 @@ if ($result) {
 
 	$expensereport_static = new ExpenseReport($db);
 
-	$var = True;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
@@ -347,7 +339,7 @@ if ($result) {
 
 	print '</form>';
 } else {
-	print $db->error();
+	print $db->lasterror();
 }
 
 
