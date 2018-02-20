@@ -2147,7 +2147,7 @@ else
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
-			$filtercreditnote = "fk_invoice_supplier_source NOT IS NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
+			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
 		
 		$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
@@ -2426,6 +2426,7 @@ else
 			print $langs->trans("CompanyHasNoRelativeDiscount");
 		// print ' ('.$addrelativediscount.')';
 */
+
 		// Is there is commercial discount or down payment available ?
 		if ($absolute_discount > 0) {
 //			print '. ';
