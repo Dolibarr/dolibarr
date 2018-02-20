@@ -1204,6 +1204,7 @@ WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at follow
 BillsSetup=Invoices module setup
 BillsNumberingModule=Invoices and credit notes numbering model
 BillsPDFModules=Invoice documents models
+BillsPDFModulesAccordindToInvoiceType=Invoice documents models according to invoice type
 PaymentsPDFModules=Payment documents models
 CreditNote=Credit note
 CreditNotes=Credit notes

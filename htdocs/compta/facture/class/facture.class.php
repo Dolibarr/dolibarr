@@ -4023,13 +4023,16 @@ class Facture extends CommonInvoice
 
 		if (! dol_strlen($modele)) {
 
-			$modele = 'crabe';
-
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
-			} elseif (! empty($conf->global->FACTURE_ADDON_PDF)) {
-				$modele = $conf->global->FACTURE_ADDON_PDF;
-			}
+		    $modele = 'crabe';
+		    $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
+		    
+		    if ($this->modelpdf) {
+		        $modele = $this->modelpdf;
+		    }elseif (! empty($conf->global->{'FACTURE_ADDON_PDF_'.$this->type})){
+		        $modele = $conf->global->{'FACTURE_ADDON_PDF_'.$this->type} ;
+		    }elseif (! empty($conf->global->FACTURE_ADDON_PDF)) {
+		        $modele = $conf->global->FACTURE_ADDON_PDF;
+		    }
 		}
 
 		$modelpath = "core/modules/facture/doc/";
