@@ -44,7 +44,7 @@ ErrorConstantNotDefined=Parameter %s not defined
 ErrorUnknown=Unknown error
 ErrorSQL=SQL Error
 ErrorLogoFileNotFound=Logo file '%s' was not found
-ErrorGoToGlobalSetup=Go to 'Company/Organisation' setup to fix this
+ErrorGoToGlobalSetup=Go to 'Company/Organization' setup to fix this
 ErrorGoToModuleSetup=Go to Module setup to fix this
 ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=%s)
 ErrorFileNotUploaded=File was not uploaded. Check that size does not exceed maximum allowed, that free space is available on disk and that there is not already a file with same name in this directory.
@@ -421,7 +421,7 @@ ActionRunningShort=In progress
 ActionDoneShort=Finished
 ActionUncomplete=Uncomplete
 LatestLinkedEvents=Latest %s linked events
-CompanyFoundation=Company/Organisation
+CompanyFoundation=Company/Organization
 ContactsForCompany=Contacts for this third party
 ContactsAddressesForCompany=Contacts/addresses for this third party
 AddressesForCompany=Addresses for this third party

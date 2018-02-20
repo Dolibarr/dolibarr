@@ -698,10 +698,19 @@ else
 		print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
 	}
 
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && ! in_array($action, array('testconnect', 'test', 'testhtml')))
+	if (! in_array($action, array('testconnect', 'test', 'testhtml')))
 	{
-		$text = $langs->trans("WarningPHPMail");
-		print info_admin($text);
+		$text = '';
+		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+		{
+			$text.= $langs->trans("WarningPHPMail");
+		}
+		//$conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS='1.2.3.4';
+		if (! empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+		{
+			$text.= ($text?'<br>':'').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+		}
+		if ($text) print info_admin($text);
 	}
 
 	// Run the test to connect

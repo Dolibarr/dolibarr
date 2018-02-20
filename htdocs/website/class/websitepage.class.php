@@ -113,13 +113,16 @@ class WebsitePage extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
+		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
+
 		return $this->createCommon($user, $notrigger);
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one found.
+	 * @param int    $id           Id object. If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
 	 * @param string $website_id   Web site id (page name must also be filled if this parameter is used)
 	 * @param string $page         Page name (website id must also be filled if this parameter is used)
 	 *

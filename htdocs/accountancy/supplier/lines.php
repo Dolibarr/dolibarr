@@ -65,8 +65,8 @@ $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->AC
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if ($page < 0) $page = 0;
-$offset = $conf->liste_limit * $page;
+if (empty($page) || $page < 0) $page = 0;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield)
@@ -195,10 +195,10 @@ if (strlen(trim($search_amount))) {
 	$sql .= natural_search("l.total_ht", $search_amount, 1);
 }
 if (strlen(trim($search_account))) {
-	$sql .= natural_search("aa.account_number", $search_account, 1);
+	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= natural_search("l.tva_tx", $search_vat, 1);
+	$sql .= natural_search("l.tva_tx", price2num($search_vat), 1);
 }
 if ($search_month > 0)
 {
@@ -214,10 +214,10 @@ else if ($search_year > 0)
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if (strlen(trim($search_country))) {
-	$sql .= " AND (co.label like'" . $search_country . "%')";
+	$sql .= natural_search("co.label", $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
-	$sql .= " AND (s.tva_intra like'" . $search_tvaintra . "%')";
+	$sql .= natural_search("s.tva_intra", $search_tvaintra);
 }
 $sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";  // We don't share object for accountancy
 
@@ -241,27 +241,19 @@ if ($result) {
 	$i = 0;
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_invoice)
-		$param .= "&search_invoice=" . $search_invoice;
-	if ($search_ref)
-		$param .= "&search_ref=" . $search_ref;
-	if ($search_label)
-		$param .= "&search_label=" . $search_label;
-	if ($search_desc)
-		$param .= "&search_desc=" . $search_desc;
-	if ($search_account)
-		$param .= "&search_account=" . $search_account;
-	if ($search_vat)
-		$param .= "&search_vat=" . $search_vat;
-	if ($search_day)         $param.='&search_day='.urlencode($search_day);
-	if ($search_month)       $param.='&search_month='.urlencode($search_month);
-	if ($search_year)        $param.='&search_year='.urlencode($search_year);
-	if ($search_country)
-		$param .= "&search_country=" . $search_country;
-	if ($search_tvaintra)
-		$param .= "&search_tvaintra=" . $search_tvaintra;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_invoice)	$param .= "&search_invoice=" . urlencode($search_invoice);
+	if ($search_ref)		$param .= "&search_ref=" . urlencode($search_ref);
+	if ($search_label)		$param .= "&search_label=" . urlencode($search_label);
+	if ($search_desc)		$param .= "&search_desc=" . urlencode($search_desc);
+	if ($search_account)	$param .= "&search_account=" . urlencode($search_account);
+	if ($search_vat)		$param .= "&search_vat=" . urlencode($search_vat);
+	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
+	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
+	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+	if ($search_country) 	$param .= "&search_country=" . urlencode($search_country);
+	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -277,7 +269,7 @@ if ($result) {
 	print $langs->trans("DescVentilDoneSupplier") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formaccounting->select_account(GETPOST('account_parent'), 'account_parent', 1);
+	print $formaccounting->select_account($account_parent, 'account_parent', 1);
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
 
 	$moreforfilter = '';
@@ -389,7 +381,7 @@ if ($result) {
 
     print '</form>';
 } else {
-	print $db->error();
+	print $db->lasterror();
 }
 
 

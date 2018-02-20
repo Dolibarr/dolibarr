@@ -35,3 +35,24 @@ ALTER TABLE llx_projet ADD COLUMN bill_time integer DEFAULT 0;
 ALTER TABLE llx_societe ADD COLUMN order_min_amount double(24,8) DEFAULT NULL AFTER outstanding_limit;
 ALTER TABLE llx_societe ADD COLUMN supplier_order_min_amount double(24,8) DEFAULT NULL AFTER order_min_amount;
 
+
+create table llx_c_type_container
+(
+  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
+  code          varchar(32) NOT NULL,
+  entity		integer	DEFAULT 1 NOT NULL,	-- multi company id
+  label 	    varchar(64)	NOT NULL,
+  module     	varchar(32) NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_type_container ADD UNIQUE INDEX uk_c_type_container_id (code, entity);
+
+insert into llx_c_type_container (code,label,module,active) values ('page',     'Page',     'system', 1);
+insert into llx_c_type_container (code,label,module,active) values ('banner',   'Banner',   'system', 1);
+insert into llx_c_type_container (code,label,module,active) values ('blogpost', 'BlogPost', 'system', 1);
+insert into llx_c_type_container (code,label,module,active) values ('other',    'Other',    'system', 1);
+
+
+
+

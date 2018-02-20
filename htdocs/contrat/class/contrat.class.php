@@ -279,11 +279,13 @@ class Contrat extends CommonObject
 			// Open lines not already open
 			if ($contratline->statut != 4)
 			{
+				$contratline->context = $this->context;
+
 				$result = $contratline->active_line($user, $date_start, -1);
 				if ($result < 0)
 				{
 					$error++;
-					$this->errors = $contratline->error;
+					$this->error = $contratline->error;
 					$this->errors = $contratline->errors;
 					break;
 				}
@@ -338,7 +340,7 @@ class Contrat extends CommonObject
 				if ($result < 0)
 				{
 					$error++;
-					$this->errors = $contratline->error;
+					$this->error = $contratline->error;
 					$this->errors = $contratline->errors;
 					break;
 				}

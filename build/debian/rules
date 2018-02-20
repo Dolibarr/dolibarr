@@ -10,12 +10,23 @@ export DH_OPTIONS=-v
 %:
 	dh $@
 
+# Replace standard debian package actions with a new one
+########################################################
+
 override_dh_auto_clean:
 # Do nothing. Added to disable launchpad to use bugged dh_auto_clean search for ant
 
 override_dh_auto_build:
 # Do nothing. Added to disable launchpad to use bugged dh_auto_build search for ant
-	
+
+#override_dh_compress:
+#	dh_compress --no-act -X.png
+
+# We disable this for png file because it modify content of original file so make
+# the dolibarr signature not valid.
+override_dh_strip_nondeterminism:
+	dh_strip_nondeterminism -X.png
+
 override_dh_install:
 	dh_install
 	# Delete files
