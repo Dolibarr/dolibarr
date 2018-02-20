@@ -52,30 +52,6 @@ class AccountancyCategory 	// extends CommonObject
 	public $sdc;
 
 
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
-
-
-	var $id;
-	var $code;
-	var $label;
-	var $range_account;
-	var $sens;
-	var $category_type;
-	var $formula;
-	var $position;
-	var $fk_country;
-	var $active;
-
-
-
 
 	/**
 	 *  Constructor
@@ -85,7 +61,6 @@ class AccountancyCategory 	// extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 
