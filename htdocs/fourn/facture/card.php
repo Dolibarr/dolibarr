@@ -1913,7 +1913,7 @@ if ($action == 'create')
 
 	print '</td></tr>';
 
-	if ($societe->id > 0)
+	if ($conf->global->MAIN_FEATURES_LEVEL > 0 && $societe->id > 0)
 	{
 		// Discounts for third party
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
@@ -2410,90 +2410,93 @@ else
             print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
         }
         print '</td></tr>';
-        
-        // Relative and absolute discounts
-        $addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $societe->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
-        $addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $societe->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
-        $addcreditnote = '<a href="' . DOL_URL_ROOT . '/fourn/facture/card.php?action=create&socid=' . $societe->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
-        $viewabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $societe->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("ViewAvailableGlobalDiscounts") . '</a>';
-		
-		print '<!-- Discounts --><tr><td>' . $langs->trans('Discounts');
-		print '</td><td>';
-/* // TODO handle supplier relative discount
-		if ($societe->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", $societe->remise_percent);
-		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
-		// print ' ('.$addrelativediscount.')';
-*/
 
-		// Is there is commercial discount or down payment available ?
-		if ($absolute_discount > 0) {
-//			print '. ';
-			if ($object->statut > 0 || $object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
-				if ($object->statut == 0) {
-					print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
-					print '. ';
-				} else {
-					if ($object->statut < 1 || $object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
-						$text = $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
-						print '<!--<br>-->' . $text . '.<br>';
+        if ($conf->global->MAIN_FEATURES_LEVEL > 0) {
+        
+	        // Relative and absolute discounts
+	        $addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $societe->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
+	        $addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $societe->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
+	        $addcreditnote = '<a href="' . DOL_URL_ROOT . '/fourn/facture/card.php?action=create&socid=' . $societe->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
+	        $viewabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $societe->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("ViewAvailableGlobalDiscounts") . '</a>';
+			
+			print '<!-- Discounts --><tr><td>' . $langs->trans('Discounts');
+			print '</td><td>';
+/* // TODO handle supplier relative discount
+			if ($societe->remise_percent)
+				print $langs->trans("CompanyHasRelativeDiscount", $societe->remise_percent);
+			else
+				print $langs->trans("CompanyHasNoRelativeDiscount");
+			print ' ('.$addrelativediscount.')';
+*/
+	
+			// Is there is commercial discount or down payment available ?
+			if ($absolute_discount > 0) {
+//				print '. ';
+				if ($object->statut > 0 || $object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
+					if ($object->statut == 0) {
+						print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
+						print '. ';
 					} else {
-						$text = $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
-						$text2 = $langs->trans("AbsoluteDiscountUse");
-						print $form->textwithpicto($text, $text2);
+						if ($object->statut < 1 || $object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
+							$text = $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
+							print '<!--<br>-->' . $text . '.<br>';
+						} else {
+							$text = $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
+							$text2 = $langs->trans("AbsoluteDiscountUse");
+							print $form->textwithpicto($text, $text2);
+						}
 					}
+				} else {
+					// Discount available of type fixed amount (not credit note)
+//					print '<br>';
+					$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, GETPOST('discountid'), 'remise_id', $societe->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' (' . $addabsolutediscount . ')', 0, 1);
 				}
 			} else {
-				// Discount available of type fixed amount (not credit note)
-//				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, GETPOST('discountid'), 'remise_id', $societe->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' (' . $addabsolutediscount . ')', 0, 1);
+				if ($absolute_creditnote > 0) 		// If not, link will be added later
+				{
+					if ($object->statut == FactureFournisseur::STATUS_DRAFT && $object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT)
+						print ' (' . $addabsolutediscount . ')<br>';
+//					else
+//						print '. ';
+				} else
+				print '. ';
 			}
-		} else {
-			if ($absolute_creditnote > 0) 		// If not, link will be added later
+			// Is there credit notes availables ?
+			if ($absolute_creditnote > 0)
 			{
+				// If validated, we show link "add credit note to payment"
+				if ($object->statut != FactureFournisseur::STATUS_VALIDATED || $object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+					if ($object->statut == 0 && $object->type != FactureFournisseur::TYPE_DEPOSIT) {
+						$text = $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency));
+						print $form->textwithpicto($text, $langs->trans("CreditNoteDepositUse"));
+					} else {
+						print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '.';
+					}
+				} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
+					// There is credit notes discounts available
+//					if (! $absolute_discount) print '<br>';
+					// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, $resteapayer, '', 0, 1);
+					$more=' ('.$addcreditnote. (($addcreditnote && $viewabsolutediscount) ? ' - ' : '') . $viewabsolutediscount . ')';
+					$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, 0, $more, 0, 1); // We allow credit note even if amount is higher
+				}
+			}
+			if (! $absolute_discount && ! $absolute_creditnote) {
+				print $langs->trans("CompanyHasNoAbsoluteDiscount");
 				if ($object->statut == FactureFournisseur::STATUS_DRAFT && $object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT)
 					print ' (' . $addabsolutediscount . ')<br>';
-//				else
-//					print '. ';
-			} else
-			print '. ';
-		}
-		// Is there credit notes availables ?
-		if ($absolute_creditnote > 0)
-		{
-			// If validated, we show link "add credit note to payment"
-			if ($object->statut != FactureFournisseur::STATUS_VALIDATED || $object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-				if ($object->statut == 0 && $object->type != FactureFournisseur::TYPE_DEPOSIT) {
-					$text = $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency));
-					print $form->textwithpicto($text, $langs->trans("CreditNoteDepositUse"));
-				} else {
-					print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '.';
-				}
-			} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
-				// There is credit notes discounts available
-//				if (! $absolute_discount) print '<br>';
-				// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, $resteapayer, '', 0, 1);
-				$more=' ('.$addcreditnote. (($addcreditnote && $viewabsolutediscount) ? ' - ' : '') . $viewabsolutediscount . ')';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $societe->id, $absolute_creditnote, $filtercreditnote, 0, $more, 0, 1); // We allow credit note even if amount is higher
+				else
+					print '. ';
 			}
-		}
-		if (! $absolute_discount && ! $absolute_creditnote) {
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			if ($object->statut == FactureFournisseur::STATUS_DRAFT && $object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $object->type != FactureFournisseur::TYPE_DEPOSIT)
-				print ' (' . $addabsolutediscount . ')<br>';
-			else
-				print '. ';
-		}
-		// if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
-		// {
-		// if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
-		// print ' &nbsp; - &nbsp; ';
-		// print $addabsolutediscount;
-		// print ' &nbsp; - &nbsp; '.$addcreditnote; // We disbale link to credit note
-		// }
-		print '</td></tr>';
-			
+			// if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
+			// {
+			// if (! $absolute_discount && ! $absolute_creditnote) print '<br>';
+			// print ' &nbsp; - &nbsp; ';
+			// print $addabsolutediscount;
+			// print ' &nbsp; - &nbsp; '.$addcreditnote; // We disbale link to credit note
+			// }
+			print '</td></tr>';
+        }
+				
         // Label
         print '<tr>';
         print '<td>'.$form->editfieldkey("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
@@ -2852,37 +2855,39 @@ else
 			$creditnoteamount = 0;
 			$depositamount = 0;
 
-			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-			$sql .= " re.description, re.fk_invoice_supplier_source";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
-			$sql .= " WHERE fk_invoice_supplier = " . $object->id;
-			$resql = $db->query($sql);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				$invoice = new FactureFournisseur($db);
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					$invoice->fetch($obj->fk_invoice_supplier_source);
-					print '<tr><td colspan="' . $nbcols . '" align="right">';
-					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
-						print $langs->trans("CreditNote") . ' ';
-					if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
-						print $langs->trans("Deposit") . ' ';
-					print $invoice->getNomUrl(0);
-					print ' :</td>';
-					print '<td align="right">' . price($obj->amount_ttc) . '</td>';
-					print '<td align="right">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
-					print '</td></tr>';
-					$i ++;
-					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
-						$creditnoteamount += $obj->amount_ttc;
-					if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
-						$depositamount += $obj->amount_ttc;
+			if($conf->global->MAIN_FEATURES_LEVEL > 0) {
+				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+				$sql .= " re.description, re.fk_invoice_supplier_source";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
+				$sql .= " WHERE fk_invoice_supplier = " . $object->id;
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					$invoice = new FactureFournisseur($db);
+					while ($i < $num) {
+						$obj = $db->fetch_object($resql);
+						$invoice->fetch($obj->fk_invoice_supplier_source);
+						print '<tr><td colspan="' . $nbcols . '" align="right">';
+						if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+							print $langs->trans("CreditNote") . ' ';
+						if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
+							print $langs->trans("Deposit") . ' ';
+						print $invoice->getNomUrl(0);
+						print ' :</td>';
+						print '<td align="right">' . price($obj->amount_ttc) . '</td>';
+						print '<td align="right">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
+						print '</td></tr>';
+						$i ++;
+						if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+							$creditnoteamount += $obj->amount_ttc;
+						if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
+							$depositamount += $obj->amount_ttc;
+					}
+				} else {
+					dol_print_error($db);
 				}
-			} else {
-				dol_print_error($db);
 			}
 
 
@@ -3097,7 +3102,7 @@ else
 				}
 
 				// Reverse back money or convert to reduction
-				if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD) {
+				if ($conf->global->MAIN_FEATURES_LEVEL > 0 && ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD)) {
 					// For credit note only
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0)
 					{
