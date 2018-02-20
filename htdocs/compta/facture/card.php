@@ -852,6 +852,12 @@ if (empty($reshook))
 
 	                    foreach($facture_source->lines as $line)
 	                    {
+	                        // Extrafields
+	                        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($line, 'fetch_optionals')) {
+	                            // load extrafields
+	                            $line->fetch_optionals();
+	                        }
+	                        
 	                    	// Reset fk_parent_line for no child products and special product
 	                    	if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 	                    		$fk_parent_line = 0;
