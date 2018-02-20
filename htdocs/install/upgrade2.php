@@ -3977,7 +3977,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
 					}
 					else
 					{
-						print ' - '.$langs->trans('AlreadyInV7');
+						print ' - '.$langs->trans('AlreadyInV7').'<br>';
 					}
 				}
 				else
