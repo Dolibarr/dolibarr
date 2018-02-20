@@ -609,7 +609,7 @@ class Contrat extends CommonObject
 				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
 
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
-				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
+				$this->date_creation			= $this->db->jdate($result["datecontrat"]);
 
 				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
 				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
@@ -634,16 +634,13 @@ class Contrat extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retreive all extrafield for thirdparty
-				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+
+				$this->fetch_optionals($this->id, null);
+
 
 				/*
 				 * Lines
-				*/
+				 */
 
 				$this->lines  = array();
 

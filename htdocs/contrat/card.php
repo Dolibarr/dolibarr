@@ -94,6 +94,7 @@ $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions
 $permissiondellink=$user->rights->contrat->creer;	// Used by the include of actions_dellink.inc.php
 
 
+
 /*
  * Actions
  */
@@ -875,6 +876,8 @@ if (empty($reshook))
 	}
 	else if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
