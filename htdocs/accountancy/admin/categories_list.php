@@ -113,7 +113,7 @@ $tabcond[32]= ! empty($conf->accounting->enabled);
 
 // List of help for fields
 $tabhelp=array();
-$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"), 'category_type'=>$langs->trans("SetToYesIfGroupIsComputationOfOtherGroups"), 'formula'=>$langs->trans("EnterCalculationRuleIfPreviousFieldIsYes"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
