@@ -1246,7 +1246,7 @@ else
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
-                    if ($user->rights->holiday->delete && $object->statut == 1)	// If draft
+                    if ($user->rights->holiday->delete && ($object->statut == 1 || $object->statut == 4 || $object->statut == 5)	// If draft or canceled or refused
                     {
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
