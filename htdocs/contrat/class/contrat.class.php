@@ -279,6 +279,8 @@ class Contrat extends CommonObject
 			// Open lines not already open
 			if ($contratline->statut != 4)
 			{
+				$contratline->context = $this->context;
+
 				$result = $contratline->active_line($user, $date_start, -1);
 				if ($result < 0)
 				{
