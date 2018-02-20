@@ -140,8 +140,16 @@ if ($object->id > 0)
 	if ($object->paye) $resteapayer=0;
 	$resteapayeraffiche=$resteapayer;
 
-	$absolute_discount=$object->thirdparty->getAvailableDiscounts('','fk_facture_source IS NULL');
-	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+	}
+
+	$absolute_discount=$object->thirdparty->getAvailableDiscounts('',$filterabsolutediscount);
+	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('',$filtercreditnote);
 	$absolute_discount=price2num($absolute_discount,'MT');
 	$absolute_creditnote=price2num($absolute_creditnote,'MT');
 
@@ -282,7 +290,7 @@ if ($object->id > 0)
 		else
 		{
 			// Remise dispo de type non avoir
-			$filter='fk_facture_source IS NULL';
+			$filter=!empty($cong->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)?'fk_facture_source IS NULL':"fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			print '<br>';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$object->thirdparty->id,$absolute_discount,$filter,$resteapayer,'',1);
 		}
@@ -302,7 +310,7 @@ if ($object->id > 0)
 		else
 		{
 			// Remise dispo de type avoir
-			$filter='fk_facture_source IS NOT NULL';
+			$filter=!empty($cong->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)?'fk_facture_source IS NOT NULL':"fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 			if (! $absolute_discount) print '<br>';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id_for_payment',$object->thirdparty->id,$absolute_creditnote,$filter,$resteapayer,'',1);
 		}

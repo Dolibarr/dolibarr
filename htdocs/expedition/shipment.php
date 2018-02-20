@@ -329,12 +329,20 @@ if ($id > 0 || ! empty($ref))
 	    print '<table class="border" width="100%">';
 
 		// Discounts for third party
+	    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	    	$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	    	$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	    } else {
+	    	$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+	    	$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+	    }
+
 		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td colspan="3">';
 		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
-		$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
-		$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+		$absolute_discount=$soc->getAvailableDiscounts('',$filterabsolutediscount);
+		$absolute_creditnote=$soc->getAvailableDiscounts('',$filtercreditnote);
 		$absolute_discount=price2num($absolute_discount,'MT');
 		$absolute_creditnote=price2num($absolute_creditnote,'MT');
 		if ($absolute_discount)
@@ -346,7 +354,7 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				// Remise dispo de type non avoir
-				$filter='fk_facture_source IS NULL';
+				$filter=!empty($cong->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)?'fk_facture_source IS NULL':"fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 				print '<br>';
 				$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter, 0, '', 1);
 			}

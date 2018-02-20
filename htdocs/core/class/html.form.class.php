@@ -4235,23 +4235,23 @@ class Form
 			if(! empty($discount_type)) {
 				if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 				{
-					if (! $filter || $filter=="fk_invoice_supplier IS NOT NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
+					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
 					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
 				}
 				else
 				{
-					if (! $filter || $filter=="fk_invoice_supplier IS NOT NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
+					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
 					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
 				}
 			} else {
 				if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 				{
-					if (! $filter || $filter=="fk_facture IS NOT NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
+					if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
 					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
 				}
 				else
 				{
-					if (! $filter || $filter=="fk_facture IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
+					if (! $filter || $filter=="fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
 					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
 				}
 			}
@@ -4271,9 +4271,9 @@ class Form
 				if ($nbqualifiedlines > 0)
 				{
 					print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
-					if(! empty($discount_type) && $filter && $filter != "fk_invoice_supplier IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')")
+					if(! empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')")
 						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
-					if(empty($discount_type) && $filter && $filter != "fk_facture IS NOT NULL AND (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')")
+					if(empty($discount_type) && $filter && $filter != "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')")
 						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
 
 					print '>';
