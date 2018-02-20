@@ -1625,7 +1625,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     		if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
     	    {
     	        $langs->load("users");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'maxwidth100', 'sall', 'M', 'searchleftuser', img_object('','user'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/index.php', DOL_URL_ROOT.'/user/index.php', $langs->trans("Users"), 'maxwidth100', 'sall', 'M', 'searchleftuser', img_object('','user'));
     	    }
 	    }
 
