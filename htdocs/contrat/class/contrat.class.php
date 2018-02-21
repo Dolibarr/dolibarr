@@ -795,7 +795,7 @@ class Contrat extends CommonObject
 
 				// Retreive all extrafield for contract
 				// fetch optionals attributes and labels
-				$line->fetch_optionals($line->id,$extralabelsline);
+				$line->fetch_optionals();
 
 				$this->lines[$pos]			= $line;
 				$this->lines_id_index_mapper[$line->id] = $pos;

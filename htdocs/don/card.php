@@ -411,7 +411,7 @@ if (! empty($id) && $action == 'edit')
 	if ($result < 0) {
 		dol_print_error($db,$object->error); exit;
 	}
-	$result=$object->fetch_optionals($object->id,$extralabels);
+	$result=$object->fetch_optionals();
 	if ($result < 0) {
 		dol_print_error($db); exit;
 	}
@@ -539,7 +539,7 @@ if (! empty($id) && $action != 'edit')
 	if ($result < 0) {
 		dol_print_error($db,$object->error); exit;
 	}
-	$result=$object->fetch_optionals($object->id,$extralabels);
+	$result=$object->fetch_optionals();
 	if ($result < 0) {
 		dol_print_error($db); exit;
 	}

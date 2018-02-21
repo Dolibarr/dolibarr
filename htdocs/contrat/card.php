@@ -1709,7 +1709,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
-						$line->fetch_optionals($objp->rowid,$extralabelslines);
+						$line->fetch_optionals($objp->rowid);
 						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
 						print '</tr>';
 					}
@@ -1783,7 +1783,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
-						$line->fetch_optionals($objp->rowid,$extralabelslines);
+						$line->fetch_optionals($objp->rowid);
 						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
 						print '</tr>';
 					}
