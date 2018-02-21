@@ -3594,7 +3594,7 @@ abstract class CommonObject
 		if (empty($reshook))
 		{
 			print '<tr class="liste_titre nodrag nodrop">';
-
+			
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
 
 			// Description
@@ -3661,6 +3661,14 @@ abstract class CommonObject
 
 			print '<td class="linecolmove" width="10"></td>';
 
+			if($action == 'selectlines')
+			{
+			    print '<td class="linecolcheckall" align="center">';
+			    print '<input type="checkbox" class="linecheckboxtoggle" />';
+			    print '<script type="text/javascript">$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';
+			    print '</td>';
+			}
+			
 			print "</tr>\n";
 		}
 
@@ -5882,6 +5890,8 @@ abstract class CommonObject
 						$colspan='0';
 					}
 					
+					if($action == 'selectlines'){  $colspan++; }
+					
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
@@ -5914,6 +5924,7 @@ abstract class CommonObject
 					}
 
 					$out .= '</td>';
+					
 
 					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
 					else $out .= '</tr>';

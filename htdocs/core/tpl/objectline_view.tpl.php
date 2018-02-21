@@ -251,7 +251,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 
 	<?php
-	if ($this->statut == 0  && ($object_rights->creer)) { ?>
+	if ($this->statut == 0  && ($object_rights->creer) && $action != 'selectlines' ) { ?>
 	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
 		<?php } else { ?>
@@ -291,6 +291,9 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
 <?php } ?>
+	<?php  if($action == 'selectlines'){ ?>
+	<td class="linecolcheck" align="center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $line->id; ?>]" value="<?php echo $line->id; ?>" ></td>
+	<?php } ?>
 
 <?php
 //Line extrafield

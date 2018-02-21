@@ -4224,7 +4224,7 @@ else if ($id > 0 || ! empty($ref))
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline' && ($object->is_first() || !$object->situation_cycle_ref))
 	{
-		if ($action != 'editline')
+	    if ($action != 'editline' && $action != 'selectlines')
 		{
 			// Add free products/services
 			$object->formAddObjectLine(1, $mysoc, $soc);
