@@ -2409,6 +2409,13 @@ else
             $facthatreplace->fetch($facidnext);
             print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
         }
+        if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
+            $discount = new DiscountAbsolute($db);
+            $result = $discount->fetch(0, 0, $object->id);
+            if ($result > 0){
+                print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(), $discount->getNomUrl(1, 'discount')).'<br>';
+            }
+        }
         print '</td></tr>';
 
         if ($conf->global->MAIN_FEATURES_LEVEL > 0) {
