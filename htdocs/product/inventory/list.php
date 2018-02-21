@@ -494,25 +494,21 @@ print '</form>'."\n";
 
 if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-		$formfile = new FormFile($db);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		// Show list of available documents
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+	$formfile = new FormFile($db);
 
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->mymodule->read;
-		$delallowed=$user->rights->mymodule->create;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->mymodule->read;
+	$delallowed=$user->rights->mymodule->create;
+
+	print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 
 // End of page
