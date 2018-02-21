@@ -310,12 +310,9 @@ class CommandeFournisseur extends CommonOrder
 
             $this->db->free($resql);
 
-            // Retrieve all extrafields
+            // Retreive all extrafield
             // fetch optionals attributes and labels
-            require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-            $extrafields=new ExtraFields($this->db);
-            $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-            $this->fetch_optionals($this->id,$extralabels);
+            $this->fetch_optionals();
 
             if ($this->statut == 0) $this->brouillon = 1;
 
@@ -1368,11 +1365,6 @@ class CommandeFournisseur extends CommonOrder
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-			// Call trigger
-			$result=$this->call_trigger('ORDER_SUPPLIER_CLONE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
         }
 
 		unset($this->context['createfromclone']);

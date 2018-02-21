@@ -1101,11 +1101,6 @@ class SupplierProposal extends CommonObject
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-            // Call trigger
-            $result=$this->call_trigger('SUPPLIER_PROPOSAL_CLONE',$user);
-            if ($result < 0) { $error++; }
-            // End call triggers
         }
 
         // End
@@ -1220,12 +1215,9 @@ class SupplierProposal extends CommonObject
                     $this->brouillon = 1;
                 }
 
-                // Retreive all extrafield for invoice
+                // Retreive all extrafield
                 // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                $this->fetch_optionals($this->id,$extralabels);
+                $this->fetch_optionals();
 
                 $this->db->free($resql);
 
@@ -1316,12 +1308,9 @@ class SupplierProposal extends CommonObject
                     return -1;
                 }
 
-                // Retreive all extrafield for askprice
+                // Retreive all extrafield
                 // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                $this->fetch_optionals($this->id,$extralabels);
+                $this->fetch_optionals();
 
                 return 1;
             }

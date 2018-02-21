@@ -4481,7 +4481,7 @@ abstract class CommonObject
 		if (! is_array($optionsArray))
 		{
 			// If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
-			// TODO Use of existing extrafield is not yet ready (must mutualize code that use extrafields in form first)
+			// TODO Use of existing $extrafield is not yet ready (must mutualize code that use extrafields in form first)
 			// global $extrafields;
 			//if (! is_object($extrafields))
 			//{
@@ -4495,6 +4495,10 @@ abstract class CommonObject
 				$extrafields->fetch_name_optionals_label($this->table_element);
 			}
 			$optionsArray = $extrafields->attributes[$this->table_element]['label'];
+		}
+		else
+		{
+			dol_syslog("Warning: fetch_optionals was called with param $optionsArray defined when you should pass null now", LOG_WARNING);
 		}
 
 		$table_element = $this->table_element;
@@ -4529,7 +4533,17 @@ abstract class CommonObject
 						if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
 						{
 							// we can add this attribute to object
-							$this->array_options["options_".$key]=$value;
+							if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date','datetime')))
+							{
+								//var_dump($extrafields->attributes[$this->table_element]['type'][$key]);
+								$this->array_options["options_".$key]=$this->db->jdate($value);
+							}
+							else
+							{
+								$this->array_options["options_".$key]=$value;
+							}
+
+							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
 					}
 				}

@@ -1274,7 +1274,7 @@ if (empty($reshook))
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
 
-					$result=$object->insertExtraFields();
+					$result=$object->insertExtraFields('BILL_SUPPLIER_MODIFY');
 
 					if ($result < 0)
 					{
