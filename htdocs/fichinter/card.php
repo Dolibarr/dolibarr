@@ -1476,7 +1476,7 @@ else if ($id > 0 || ! empty($ref))
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
 
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
 
@@ -1521,7 +1521,7 @@ else if ($id > 0 || ! empty($ref))
 
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
 

@@ -1003,7 +1003,7 @@ else
 		if ($res < 0) {
 			dol_print_error($db,$object->error); exit;
 		}
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 		if ($res < 0) {
 			dol_print_error($db); exit;
 		}
@@ -1272,7 +1272,7 @@ else
 		if ($res < 0) {
 			dol_print_error($db,$object->error); exit;
 		}
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 		if ($res < 0) {
 			dol_print_error($db); exit;
 		}

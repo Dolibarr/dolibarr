@@ -247,7 +247,7 @@ if ($id > 0 || ! empty($ref))
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');

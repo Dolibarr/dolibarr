@@ -1185,7 +1185,7 @@ class FormMail extends Form
 					$extralabels = $extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
-					$product->fetch_optionals($product->id, $extralabels);
+					$product->fetch_optionals();
 					foreach ($extrafields->attribute_label as $key => $label) {
 						$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
 					}

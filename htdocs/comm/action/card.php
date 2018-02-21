@@ -934,7 +934,7 @@ if ($id > 0)
 	$result2=$object->fetch_projet();
 	$result3=$object->fetch_contact();
 	$result4=$object->fetch_userassigned();
-	$result5=$object->fetch_optionals($id,$extralabels);
+	$result5=$object->fetch_optionals();
 
 	if ($listUserAssignedUpdated || $donotclearsession)
 	{

@@ -1418,7 +1418,7 @@ else
 
         if ($socid)
         {
-        	$res=$object->fetch_optionals($object->id,$extralabels);
+        	$res=$object->fetch_optionals();
             //if ($res < 0) { dol_print_error($db); exit; }
 
 	        $head = societe_prepare_head($object);
@@ -2011,7 +2011,7 @@ else
          * View
          */
 
-        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
+        if (!empty($object->id)) $res=$object->fetch_optionals();
         //if ($res < 0) { dol_print_error($db); exit; }
 
 
