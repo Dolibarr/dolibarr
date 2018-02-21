@@ -354,9 +354,8 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				// Remise dispo de type non avoir
-				$filter=!empty($cong->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)?'fk_facture_source IS NULL':"fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filter, 0, '', 1);
+				$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filterabsolutediscount, 0, '', 1);
 			}
 		}
 		if ($absolute_creditnote)

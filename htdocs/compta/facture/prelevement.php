@@ -290,9 +290,8 @@ if ($object->id > 0)
 		else
 		{
 			// Remise dispo de type non avoir
-			$filter=!empty($cong->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)?'fk_facture_source IS NULL':"fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$object->thirdparty->id,$absolute_discount,$filter,$resteapayer,'',1);
+			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$object->thirdparty->id,$absolute_discount,$filterabsolutediscount,$resteapayer,'',1);
 		}
 	}
 	if ($absolute_creditnote > 0)
@@ -310,9 +309,8 @@ if ($object->id > 0)
 		else
 		{
 			// Remise dispo de type avoir
-			$filter=!empty($cong->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)?'fk_facture_source IS NOT NULL':"fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 			if (! $absolute_discount) print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id_for_payment',$object->thirdparty->id,$absolute_creditnote,$filter,$resteapayer,'',1);
+			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id_for_payment',$object->thirdparty->id,$absolute_creditnote,$filtercreditnote,$resteapayer,'',1);
 		}
 	}
 	if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
