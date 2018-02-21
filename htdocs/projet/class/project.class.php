@@ -444,7 +444,8 @@ class Project extends CommonObject
 
                 $this->db->free($resql);
 
-                // Retreive all extrafield for thirdparty
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
                 $this->fetch_optionals();
 
                 if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))

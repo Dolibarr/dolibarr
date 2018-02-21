@@ -206,7 +206,7 @@ if ($action == 'update_extras')
 		$parameters = array('id' => $object->id);
 		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
-			$result = $object->insertExtraFields();
+			$result = $object->insertExtraFields('DELIVERY_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');

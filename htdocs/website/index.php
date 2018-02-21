@@ -153,7 +153,7 @@ $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/jquery
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
-$htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=relativepathtomyfile.js"></script>'."\n";
+$htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=js/myfile.js"></script>'."\n";
 
 
 /*
@@ -552,8 +552,13 @@ if ($action == 'addcontainer')
 		$substitutionarray=array();
 		$substitutionarray['__WEBSITE_CREATE_BY__']=$user->getFullName($langs);
 
+		$sample = GETPOST('sample','alpha');
+		if (empty($sample)) $sample='empty';
+
+		$pathtosample = DOL_DOCUMENT_ROOT.'/website/page-sample-'.$sample.'.html';
+
 		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
-		$objectpage->content = make_substitutions(@file_get_contents(DOL_DOCUMENT_ROOT.'/website/'.$objectpage->type_container.'template.html'), $substitutionarray);
+		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 	}
 
 	if (! $error)
@@ -2034,6 +2039,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
 	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER')?GETPOST('WEBSITE_TYPE_CONTAINER'):'page'));
+	print '</td></tr>';
+
+	print '<tr><td class="titlefield fieldrequired">';
+	print $langs->trans('WEBSITE_PAGE_EXAMPLE');
+	print '</td><td>';
+	print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample')?GETPOST('sample'):'corporatehomepage'));
 	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';

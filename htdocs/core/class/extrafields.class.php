@@ -1404,12 +1404,12 @@ class ExtraFields
 		if ($type == 'date')
 		{
 			$showsize=10;
-			$value=dol_print_date($value, 'day', 'tzuser');
+			$value=dol_print_date($value, 'day');
 		}
 		elseif ($type == 'datetime')
 		{
 			$showsize=19;
-			$value=dol_print_date($value, 'dayhour', 'tzuser');
+			$value=dol_print_date($value, 'dayhour');
 		}
 		elseif ($type == 'int')
 		{

@@ -261,9 +261,10 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user      		Object User making action
 	 *  @param	int|string	$date_start		Date start (now if empty)
+     *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	function activateAll($user, $date_start='')
+	function activateAll($user, $date_start='', $notrigger=0)
 	{
 		if (empty($date_start)) $date_start = dol_now();
 
@@ -294,7 +295,7 @@ class Contrat extends CommonObject
 
 		if (! $error && $this->statut == 0)
 		{
-			$result=$this->validate($user);
+			$result=$this->validate($user, '', $notrigger);
 			if ($result < 0) $error++;
 		}
 
@@ -609,7 +610,7 @@ class Contrat extends CommonObject
 				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
 
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
-				$this->date_creation				= $this->db->jdate($result["datecontrat"]);
+				$this->date_creation			= $this->db->jdate($result["datecontrat"]);
 
 				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
 				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
@@ -634,16 +635,15 @@ class Contrat extends CommonObject
 
 				$this->db->free($resql);
 
-				// Retreive all extrafield for thirdparty
+
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
+
 
 				/*
 				 * Lines
-				*/
+				 */
 
 				$this->lines  = array();
 
@@ -2428,17 +2428,6 @@ class Contrat extends CommonObject
 					$error ++;
 			}
 
-		}
-
-		if (! $notrigger && empty($error))
-		{
-			// Call trigger
-			$clonedObj->old_copy=$this;
-			$result = $clonedObj->call_trigger('CONTRACT_CLONE', $user);
-			if ($result < 0) {
-				$error ++;
-			}
-			// End call triggers
 		}
 
 		unset($this->context['createfromclone']);
