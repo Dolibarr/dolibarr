@@ -92,7 +92,7 @@ class AccountancyCategory 	// extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_accounting_category(";
-		$sql.= "rowid,";
+		if ($this->rowid > 0) $sql.= "rowid,";
 		$sql.= "code,";
 		$sql.= "label,";
 		$sql.= "range_account,";
@@ -103,16 +103,16 @@ class AccountancyCategory 	// extends CommonObject
 		$sql.= "fk_country,";
 		$sql.= "active";
 		$sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
+		if ($this->rowid > 0) $sql.= " ".$this->rowid.",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
 		$sql.= " ".(! isset($this->range_account)?'NULL':"'".$this->db->escape($this->range_account)."'").",";
-		$sql.= " ".(! isset($this->sens)?'NULL':"'".$this->sens."'").",";
-		$sql.= " ".(! isset($this->category_type)?'NULL':"'".$this->category_type."'").",";
+		$sql.= " ".(! isset($this->sens)?'NULL':"'".$this->db->escape($this->sens)."'").",";
+		$sql.= " ".(! isset($this->category_type)?'NULL':"'".$this->db->escape($this->category_type)."'").",";
 		$sql.= " ".(! isset($this->formula)?'NULL':"'".$this->db->escape($this->formula)."'").",";
-		$sql.= " ".(! isset($this->position)?'NULL':"'".$this->position."'").",";
-		$sql.= " ".(! isset($this->fk_country)?'NULL':"'".$this->fk_country."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'")."";
+		$sql.= " ".(! isset($this->position)?'NULL':$this->db->escape($this->position)).",";
+		$sql.= " ".(! isset($this->fk_country)?'NULL':$this->db->escape($this->fk_country)).",";
+		$sql.= " ".(! isset($this->active)?'NULL':$this->db->escape($this->active));
 		$sql.= ")";
 
 		$this->db->begin();
