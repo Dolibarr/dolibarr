@@ -1183,33 +1183,41 @@ abstract class CommonObject
     }
 
     /**
-     *    	Load object from specific field
+     *  Load object from specific field
      *
-     *    	@param	string	$table		Table element or element line
-     *    	@param	string	$field		Field selected
-     *    	@param	string	$key		Import key
-     *		@return	int					<0 if KO, >0 if OK
+     *  @param	string	$table		Table element or element line
+     *  @param	string	$field		Field selected
+     *  @param	string	$key			Import key
+     *  @param	string	$element		Element name
+     *	@return	int					<0 if KO, >0 if OK
      */
-    function fetchObjectFrom($table,$field,$key)
-    {
-        global $conf;
+	function fetchObjectFrom($table, $field, $key, $element = null)
+	{
+		global $conf;
 
-        $result=false;
+		$result=false;
 
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
-        $sql.= " WHERE ".$field." = '".$key."'";
-        $sql.= " AND entity = ".$conf->entity;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
+		$sql.= " WHERE ".$field." = '".$key."'";
+		if (! empty($element)) {
+			$sql.= " AND entity IN (".getEntity($element).")";
+		} else {
+			$sql.= " AND entity = ".$conf->entity;
+		}
 
-        dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $row = $this->db->fetch_row($resql);
-            $result = $this->fetch($row[0]);
-        }
+		dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			// Test for avoid error -1
+			if ($row[0] > 0) {
+				$result = $this->fetch($row[0]);
+			}
+		}
 
-        return $result;
-    }
+		return $result;
+	}
 
     /**
      *	Getter generic. Load value from a specific field

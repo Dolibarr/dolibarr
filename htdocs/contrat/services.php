@@ -75,7 +75,7 @@ $opclotureyear=GETPOST('opclotureyear');
 $filter_opcloture=GETPOST('filter_opcloture');
 
 // Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'servicelist'.$mode;
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contractservicelist'.$mode;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array($contextpage));

@@ -1248,7 +1248,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
                           && (! file_exists($fileimagebis) || (filemtime($fileimagebis) < filemtime($file)))
                            )
                         {
-                        	if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experienc trouble with pdf thumb generation and imagick, you can disable here.
+                        	if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS))		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
                         	{
                             	$ret = dol_convert_file($file, 'png', $fileimage);
                             	if ($ret < 0) $error++;
@@ -1781,11 +1781,13 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 		if (empty($localtz)) {
 			$localtz = new DateTimeZone('UTC');
 		}
-
+		//var_dump($localtz);
+		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
 		$dt = new DateTime(null,$localtz);
 		$dt->setDate($year,$month,$day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
 		$date=$dt->getTimestamp();	// should include daylight saving time
+		//var_dump($date);
 		return $date;
 	}
 	else

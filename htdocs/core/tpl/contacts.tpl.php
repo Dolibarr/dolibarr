@@ -201,18 +201,12 @@ if ($permission) {
 
 			if ($tab[$i]['source']=='internal')
 			{
-				$userstatic->id=$tab[$i]['id'];
-				$userstatic->lastname=$tab[$i]['lastname'];
-				$userstatic->firstname=$tab[$i]['firstname'];
-				$userstatic->photo=$tab[$i]['photo'];
-				$userstatic->login=$tab[$i]['login'];
+				$userstatic->fetch($tab[$i]['id']);
 				echo $userstatic->getNomUrl(-1);
 			}
 			if ($tab[$i]['source']=='external')
 			{
-				$contactstatic->id=$tab[$i]['id'];
-				$contactstatic->lastname=$tab[$i]['lastname'];
-				$contactstatic->firstname=$tab[$i]['firstname'];
+				$contactstatic->fetch($tab[$i]['id']);
 				echo $contactstatic->getNomUrl(1);
 			}
 			?>
@@ -223,16 +217,10 @@ if ($permission) {
 			<?php
 			if ($tab[$i]['source']=='internal')
 			{
-				$userstatic->id=$tab[$i]['id'];
-				$userstatic->lastname=$tab[$i]['lastname'];
-				$userstatic->firstname=$tab[$i]['firstname'];
 				echo $userstatic->LibStatut($tab[$i]['statuscontact'],3);
 			}
 			if ($tab[$i]['source']=='external')
 			{
-				$contactstatic->id=$tab[$i]['id'];
-				$contactstatic->lastname=$tab[$i]['lastname'];
-				$contactstatic->firstname=$tab[$i]['firstname'];
 				echo $contactstatic->LibStatut($tab[$i]['statuscontact'],3);
 			}
 			?>
