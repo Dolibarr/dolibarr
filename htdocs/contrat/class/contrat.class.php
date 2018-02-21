@@ -261,9 +261,10 @@ class Contrat extends CommonObject
 	 *
 	 *  @param	User		$user      		Object User making action
 	 *  @param	int|string	$date_start		Date start (now if empty)
+     *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	function activateAll($user, $date_start='')
+	function activateAll($user, $date_start='', $notrigger=0)
 	{
 		if (empty($date_start)) $date_start = dol_now();
 
@@ -294,7 +295,7 @@ class Contrat extends CommonObject
 
 		if (! $error && $this->statut == 0)
 		{
-			$result=$this->validate($user);
+			$result=$this->validate($user, '', $notrigger);
 			if ($result < 0) $error++;
 		}
 
