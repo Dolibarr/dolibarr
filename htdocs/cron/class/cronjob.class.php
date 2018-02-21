@@ -925,7 +925,8 @@ class Cronjob extends CommonObject
 				$ret=dol_include_once($this->classesname);
 				if ($ret===false || (! class_exists($this->objectname)))
 				{
-					$this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					if ($ret===false) $this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					else $this->error=$langs->trans('CronCannotLoadObject',$this->classesname,$this->objectname);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
 					$this->lastresult = -1;
