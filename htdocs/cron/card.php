@@ -557,7 +557,7 @@ else
 
 	dol_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2&restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';
