@@ -1,0 +1,99 @@
+<?php
+/* Copyright (C) 2011-2013 Regis Houssin <regis.houssin@capnetworks.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+?>
+
+<!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$('.objectlinked_importbtn').click(function (e) {
+		
+        e.preventDefault();
+        var page = $(this).attr("href");
+
+        var fromelement = $(this).attr("data-element");
+        var fromelementid = $(this).attr("data-id");
+        
+		if( page != undefined && fromelement != undefined && fromelementid != undefined)
+		{
+	    	var windowWidth = $(window).width()*0.8; //retrieve current window width
+	    	var windowHeight = $(window).height()*0.8; //retrieve current window height
+			var htmlLines;
+	        $.get(page, function (data) {
+	        	htmlLines = $(data).find('#tablelines') ;
+	        });
+
+	        
+	        var $dialog = $('<form id="ajaxloaded_tablelinesform" action="<?php print $object->getNomUrl(0,'',0,1); ?>"  method="post" ></form>')
+	        .load( page + " #tablelines", function() {
+
+	        	$("#ajaxloaded_tablelinesform #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
+
+	        	$("#ajaxloaded_tablelines .linecheckbox").prop("checked", true); // checked by default 
+
+		        // reload checkbox toggle function
+	            $("#ajaxloaded_tablelines .linecheckboxtoggle").click(function(){
+	        		var checkBoxes = $(".ajaxloadedtablelines .linecheckbox");
+	        		checkBoxes.prop("checked", this.checked);
+	        	});
+
+	            var inputs = '<div class="tabsAction" ><button class="butAction" type="submit" name="import" ><?php echo $langs->trans('Import'); ?></button></div>'
+	            $('#ajaxloaded_tablelinesform').append( inputs );
+	        	$('#ajaxloaded_tablelinesform').append('<input type="hidden" name="action" value="import_lines_from_object" />');
+	        	$('#ajaxloaded_tablelinesform').append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
+	        	$('#ajaxloaded_tablelinesform').append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
+
+	        })
+	        .html(htmlLines)
+	        .dialog({
+	            autoOpen: false,
+	            modal: true,
+	            height: windowHeight,
+	            width: windowWidth,
+	            title: "<?php echo $langs->trans('LinesToImport'); ?>"
+	        });
+	        
+	        $dialog.dialog('open');
+		}
+		else
+		{
+			$.jnotify("<?php echo $langs->trans('ErrorNoUrl'); ?>", "error", true);
+		}
+		
+    });
+
+	
+
+
+});
+
+</script>
+<style type="text/css">
+.objectlinked_importbtn{
+    cursor:pointer;
+}
+</style>
+cursor: pointer;
+<!-- END TEMPLATE IMPORT OBJECT LINKED LINES -->

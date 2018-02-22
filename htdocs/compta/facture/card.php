@@ -2087,6 +2087,13 @@ if (empty($reshook))
 		header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
+	
+	// add lines from objectlinked
+	elseif ($action == 'import_lines_from_object' && $user->rights->facture->creer)
+	{
+	    
+	
+	}
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -4516,8 +4523,16 @@ else if ($id > 0 || ! empty($ref))
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
+		
+		$compatibleImportElementsList = false;
+		if($user->rights->facture->creer 
+		    && $object->statut == Facture::STATUS_DRAFT 
+		    && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) )
+		{
+		    $compatibleImportElementsList = array('commande'); // import from linked elements
+		}
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
+		
 
 		// Show online payment link
 		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));

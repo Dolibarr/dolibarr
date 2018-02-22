@@ -5833,9 +5833,10 @@ class Form
 	 *
 	 *  @param	CommonObject	$object		      Object we want to show links to
 	 *  @param  string          $morehtmlright    More html to show on right of title
+	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
 	 *  @return	int							      <0 if KO, >=0 if OK
 	 */
-	function showLinkedObjectBlock($object, $morehtmlright='')
+	function showLinkedObjectBlock($object, $morehtmlright='',$compatibleImportElementsList=false)
 	{
 		global $conf,$langs,$hookmanager;
 		global $bc;
@@ -5844,7 +5845,9 @@ class Form
 
 		// Bypass the default method
 		$hookmanager->initHooks(array('commonobject'));
-		$parameters=array();
+		$parameters=array(
+		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
+		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 		if (empty($reshook))
@@ -5873,7 +5876,13 @@ class Form
 			foreach($object->linkedObjects as $objecttype => $objects)
 			{
 				$tplpath = $element = $subelement = $objecttype;
-
+                
+				// to display inport button on tpl
+				$showImportButton=false;
+				if(!empty($compatibleImportElementsList) && in_array($element,$compatibleImportElementsList)){
+				    $showImportButton=true;
+				}
+				
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 				{
 					$element = $regs[1];
@@ -5949,6 +5958,13 @@ class Form
 			}
 
 			print '</table>';
+			
+			if(!empty($compatibleImportElementsList))
+			{
+			    $res=@include dol_buildpath('core/tpl/ajax/objectlinked_lineimport.tpl.php');
+			}
+			
+			
 			print '</div>';
 
 			return $nbofdifferenttypes;
