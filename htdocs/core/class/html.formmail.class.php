@@ -982,7 +982,7 @@ class FormMail extends Form
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param	int			$id				Id of template to find, or -1 for first found with position = 0, or 0 for all
+	 *      @param	int			$id				Id of template to find, or -1 for first found with lower position, or 0 for first found whatever is position
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
@@ -1001,7 +1001,7 @@ class FormMail extends Form
 		if ($id == -1) $sql.= " AND position=0";
 		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
 		else $sql.= $db->order("position,lang,label","ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
-		if ($id == -1) $sql.= $db->plimit(1);
+		$sql.= $db->plimit(1);
 		//print $sql;
 
 		$resql = $db->query($sql);
