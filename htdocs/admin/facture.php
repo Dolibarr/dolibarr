@@ -250,7 +250,7 @@ if ($action == 'setDefaultPDFModulesByType')
         
         foreach ($invoicetypemodels as $type => $value)
         {
-            $res = dolibarr_set_const($db, 'FACTURE_ADDON_PDF_'.intval($type) ,$value,'chaine',0,'',$conf->entity);
+            $res = dolibarr_set_const($db, 'FACTURE_ADDON_PDF_'.intval($type),$value,'chaine',0,'',$conf->entity);
             if (! $res > 0) $error++;
         }
         
@@ -645,10 +645,10 @@ if (! empty($conf->global->INVOICE_USE_SITUATION))
 foreach ($listtype as $type => $trans)
 {
     $thisTypeConfName = 'FACTURE_ADDON_PDF_'.$type;
-    $curent = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+    $current = !empty($conf->global->{$thisTypeConfName})?$conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
     print '<tr >';
     print '<td>'.$trans.'</td>';
-    print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db) , $curent ,0,0, 0).'</td>';
+    print '<td colspan="2" >'.$form->selectarray('invoicetypemodels['.$type.']', ModelePDFFactures::liste_modeles($db), $current,0,0, 0).'</td>';
     print "</tr>\n";
 }
 
