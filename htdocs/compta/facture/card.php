@@ -2087,14 +2087,84 @@ if (empty($reshook))
 		header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
-	
-	// add lines from objectlinked
-	elseif ($action == 'import_lines_from_object' && $user->rights->facture->creer)
-	{
-	    
-	
-	}
 
+	// add lines from objectlinked
+	elseif($action == 'import_lines_from_object'
+	    && $user->rights->facture->creer
+	    && $object->statut == Facture::STATUS_DRAFT
+	    && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION))
+	{
+	    $fromElement = GETPOST('fromelement');
+	    $fromElementid = intval(GETPOST('fromelementid'));
+	    $importLines = GETPOST('line_checkbox');
+	    
+	    if(!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+	    {
+	        if($fromElement == 'commande')
+	        {
+	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class');
+	            $lineClassName = 'OrderLine';
+	        }
+	        $nextRang = count($object->lines) + 1;
+	        $importCount = 0;
+	        $error = 0;
+	        foreach($importLines as $lineId)
+	        {
+                $originLine = new $lineClassName($db);
+                if($originLine->fetch( $fromElementid ) > 0)
+                {
+                    $originLine->fetch_optionals(intval($fromElementid));
+                    
+                    $desc = $originLine->desc;
+                    $pu_ht = $originLine->subprice;
+                    $qty = $originLine->qty;
+                    $txtva = $originLine->tva_tx;
+                    $txlocaltax1 = $originLine->localtax1_tx;
+                    $txlocaltax2 = $originLine->localtax2_tx;
+                    $fk_product = $originLine->fk_product;
+                    $remise_percent = $originLine->remise_percent;
+                    $date_start = $originLine->date_start;
+                    $date_end = $originLine->date_end;
+                    $ventil = 0;
+                    $info_bits = $originLine->info_bits;
+                    $fk_remise_except = $originLine->fk_remise_except;
+                    $price_base_type='HT';
+                    $pu_ttc=0;
+                    $type = $object->type;
+                    $rang=$nextRang++;
+                    $special_code = $originLine->special_code;
+                    $origin = $originLine->element;
+                    $origin_id = $originLine->id;
+                    $fk_parent_line=0;
+                    $fk_fournprice=$originLine->fk_fournprice;
+                    $pa_ht = $originLine->pa_ht;
+                    $label = $originLine->label;
+                    $array_options = $originLine->array_options;
+                    $situation_percent = 100;
+                    $fk_prev_id = '';
+                    $fk_unit = $originLine->fk_unit;
+                    $pu_ht_devise = $originLine->multicurrency_subprice;
+                    
+                    $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $ventil, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit,$pu_ht_devise);
+                    
+                    if($res > 0){
+                        $importCount++;
+                    }else{
+                        $error++;
+                    }
+                }
+                else{ 
+                    $error++; 
+                }
+	        }
+	        
+	        if($error)
+	        {
+	            setEventMessage($langs->trans('ErrorsOnXLines',$error), 'errors');
+	        }
+	    }
+	}
+	
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 

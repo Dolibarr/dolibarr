@@ -51,11 +51,11 @@ $(document).ready(function(){
 
 	        	$("#ajaxloaded_tablelinesform #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
 
-	        	$("#ajaxloaded_tablelines .linecheckbox").prop("checked", true); // checked by default 
+	        	$("#ajaxloaded_tablelines .linecheckbox,#ajaxloaded_tablelines .linecheckboxtoggle").prop("checked", true); // checked by default 
 
 		        // reload checkbox toggle function
 	            $("#ajaxloaded_tablelines .linecheckboxtoggle").click(function(){
-	        		var checkBoxes = $(".ajaxloadedtablelines .linecheckbox");
+	        		var checkBoxes = $("#ajaxloaded_tablelines .linecheckbox");
 	        		checkBoxes.prop("checked", this.checked);
 	        	});
 
