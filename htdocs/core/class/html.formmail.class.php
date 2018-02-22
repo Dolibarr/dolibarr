@@ -999,7 +999,8 @@ class FormMail extends Form
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
-		$sql.= $db->order("position,lang,label","ASC");
+		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
+		else $sql.= $db->order("position,lang,label","ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
 		if ($id == -1) $sql.= $db->plimit(1);
 		//print $sql;
 
