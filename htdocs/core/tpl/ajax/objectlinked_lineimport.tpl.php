@@ -41,29 +41,25 @@ $(document).ready(function(){
 	    	var windowWidth = $(window).width()*0.8; //retrieve current window width
 	    	var windowHeight = $(window).height()*0.8; //retrieve current window height
 			var htmlLines;
+			var formId = "ajaxloaded_tablelinesform_" + fromelement + "_" + fromelementid;
 	        $.get(page, function (data) {
 	        	htmlLines = $(data).find('#tablelines') ;
 	        });
 
 	        
-	        var $dialog = $('<form id="ajaxloaded_tablelinesform" action="<?php print $object->getNomUrl(0,'',0,1); ?>"  method="post" ></form>')
+	        var $dialog = $('<form id="' + formId + '" action="<?php print $object->getNomUrl(0,'',0,1); ?>"  method="post" ></form>')
 	        .load( page + " #tablelines", function() {
 
-	        	$("#ajaxloaded_tablelinesform #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
+	        	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
 
-	        	$("#ajaxloaded_tablelines .linecheckbox,#ajaxloaded_tablelines .linecheckboxtoggle").prop("checked", true); // checked by default 
+	        	$("#" + formId + "  .linecheckbox,#" + formId + " .linecheckboxtoggle").prop("checked", true); // checked by default 
 
 		        // reload checkbox toggle function
-	            $("#ajaxloaded_tablelines .linecheckboxtoggle").click(function(){
-	        		var checkBoxes = $("#ajaxloaded_tablelines .linecheckbox");
+	            $("#" + formId + " .linecheckboxtoggle").click(function(){
+	        		var checkBoxes = $("#" + formId + " .linecheckbox");
 	        		checkBoxes.prop("checked", this.checked);
 	        	});
 
-	            var inputs = '<div class="tabsAction" ><button class="butAction" type="submit" name="import" ><?php echo $langs->trans('Import'); ?></button></div>'
-	            $('#ajaxloaded_tablelinesform').append( inputs );
-	        	$('#ajaxloaded_tablelinesform').append('<input type="hidden" name="action" value="import_lines_from_object" />');
-	        	$('#ajaxloaded_tablelinesform').append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
-	        	$('#ajaxloaded_tablelinesform').append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
 
 	        })
 	        .html(htmlLines)
@@ -72,7 +68,19 @@ $(document).ready(function(){
 	            modal: true,
 	            height: windowHeight,
 	            width: windowWidth,
-	            title: "<?php echo $langs->trans('LinesToImport'); ?>"
+	            title: "<?php echo $langs->trans('LinesToImport'); ?>",
+	            buttons: {
+	                    "<?php echo $langs->trans('Import'); ?>": function() {
+	                      	$( this ).dialog( "close" );
+    	      	        	$("#" + formId).append('<input type="hidden" name="action" value="import_lines_from_object" />');
+    	      	        	$("#" + formId).append('<input type="hidden" name="fromelement" value="' + fromelement + '" />');
+    	      	        	$("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
+    	      	        	$("#" + formId).submit();
+	                    },
+	                    "<?php echo $langs->trans('Cancel'); ?>": function() {
+	                      $( this ).dialog( "close" );
+	                    }
+	            }
 	        });
 	        
 	        $dialog.dialog('open');
@@ -95,5 +103,4 @@ $(document).ready(function(){
     cursor:pointer;
 }
 </style>
-cursor: pointer;
 <!-- END TEMPLATE IMPORT OBJECT LINKED LINES -->
