@@ -54,5 +54,6 @@ insert into llx_c_type_container (code,label,module,active) values ('blogpost', 
 insert into llx_c_type_container (code,label,module,active) values ('other',    'Other',    'system', 1);
 
 
+ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_expensereport;
 
 
