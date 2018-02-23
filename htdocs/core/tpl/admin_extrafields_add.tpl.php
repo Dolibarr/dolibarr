@@ -166,7 +166,7 @@ $langs->load("modulebuilder");
     <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0,'', 0, 2, 'helpvalue2')?></span>
     <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0,'', 0, 2, 'helpvalue3')?></span>
     <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0,'', 0, 2, 'helpvalue4')?></span>
-    <span id="helppassword"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamPassword"),1,0,'', 0, 2, 'helpvalue5')?></span>
+    <span id="helppassword"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"),1,0,'', 0, 2, 'helpvalue5')?></span>
     </td></tr>
     </table>
 </td>

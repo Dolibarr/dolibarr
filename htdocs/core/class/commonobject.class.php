@@ -4629,10 +4629,10 @@ abstract class CommonObject
 			foreach($new_array_options as $key => $value)
 			{
 			   	$attributeKey      = substr($key,8);   // Remove 'options_' prefix
-			   	$attributeType     = $extrafields->attribute_type[$attributeKey];
-			   	$attributeLabel    = $extrafields->attribute_label[$attributeKey];
-			   	$attributeParam    = $extrafields->attribute_param[$attributeKey];
-			   	$attributeRequired = $extrafields->attribute_required[$attributeKey];
+			   	$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			   	$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+			   	$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
+			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 
 			   	if ($attributeRequired)
 			   	{
@@ -4665,7 +4665,26 @@ abstract class CommonObject
              				$this->array_options[$key] = null;
              			}
              			break;*/
-					case 'price':
+			   		case 'password':
+			   			$algo='';
+			   			if (is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']))
+			   			{
+			   				// If there is an encryption choice, we use it to crypt data before insert
+			   				$algo=reset(array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']));
+			   				if ($algo != '')
+			   				{
+				   				$new_array_options[$key] = dol_hash($this->array_options[$key], $algo);
+				   				/*var_dump($algo);
+				   				var_dump($this->array_options[$key]);
+				   				var_dump($new_array_options[$key]);*/
+			   				}
+			   			}
+			   			else	// Common usage
+			   			{
+			   				$new_array_options[$key] = $this->array_options[$key];
+			   			}
+			   			break;
+			   		case 'price':
 						$new_array_options[$key] = price2num($this->array_options[$key]);
 						break;
 					case 'date':
@@ -4723,7 +4742,7 @@ abstract class CommonObject
 			{
 				$attributeKey = substr($key,8);   // Remove 'options_' prefix
 				// Add field of attribut
-				if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator
 					$sql.=",".$attributeKey;
 			}
 			$sql .= ") VALUES (".$this->id;
@@ -4731,8 +4750,8 @@ abstract class CommonObject
 			foreach($new_array_options as $key => $value)
 			{
 				$attributeKey = substr($key,8);   // Remove 'options_' prefix
-				// Add field o fattribut
-				if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+				// Add field of attribute
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator)
 				{
 					if ($new_array_options[$key] != '')
 					{
@@ -4781,7 +4800,7 @@ abstract class CommonObject
 	 *	Update an exta field value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
-	 *  @param  string      $key    		Key of the extrafield
+	 *  @param  string      $key    		Key of the extrafield (without starting 'options_')
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
@@ -4806,9 +4825,12 @@ abstract class CommonObject
 			$target_extrafields=$extrafields->fetch_name_optionals_label($this->table_element);
 
 			$value=$this->array_options["options_".$key];
-			$attributeType  = $extrafields->attribute_type[$key];
-			$attributeLabel = $extrafields->attribute_label[$key];
-			$attributeParam = $extrafields->attribute_param[$key];
+
+			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$key];
+			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
+			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
+			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+
 			switch ($attributeType)
 			{
 				case 'int':
@@ -4838,7 +4860,7 @@ abstract class CommonObject
 					$this->array_options["options_".$key]=$this->db->idate($this->array_options["options_".$key]);
 					break;
 				case 'link':
-					$param_list=array_keys($attributeParam ['options']);
+					$param_list=array_keys($attributeParam['options']);
 					// 0 : ObjectName
 					// 1 : classPath
 					$InfoFieldList = explode(":", $param_list[0]);
