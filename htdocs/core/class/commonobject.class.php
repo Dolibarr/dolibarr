@@ -4673,12 +4673,13 @@ abstract class CommonObject
 			   				$algo=reset(array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']));
 			   				if ($algo != '')
 			   				{
+			   					//global $action;		// $action may be 'create', 'update', 'update_extras'...
+			   					//var_dump($action);
+			   					//var_dump($this->oldcopy);exit;
 			   					if (is_object($this->oldcopy))		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 			   					{
-				   					//global $action;		// $action may be 'create', 'update', 'update_extras'...
-				   					//var_dump($action);
 			   						//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
-				   					if ($this->array_options[$key] == $this->oldcopy->array_options[$key])	// If old value crypted in database is same thaan submited new value, it means we don't change it, so we don't update.
+				   					if ($this->array_options[$key] == $this->oldcopy->array_options[$key])	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 				   					{
 				   						$new_array_options[$key] = $this->array_options[$key];	// Value is kept
 				   					}
