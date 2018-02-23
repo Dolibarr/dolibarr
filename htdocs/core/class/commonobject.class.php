@@ -4667,7 +4667,7 @@ abstract class CommonObject
              			break;*/
 			   		case 'password':
 			   			$algo='';
-			   			if (is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']))
+			   			if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']))
 			   			{
 			   				// If there is an encryption choice, we use it to crypt data before insert
 			   				$algo=reset(array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']));
