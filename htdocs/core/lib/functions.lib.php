@@ -5506,12 +5506,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 			}
 
