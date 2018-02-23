@@ -292,7 +292,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
 <?php } ?>
 	<?php  if($action == 'selectlines'){ ?>
-	<td class="linecolcheck" align="center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $line->id; ?>]" value="<?php echo $line->id; ?>" ></td>
+	<td class="linecolcheck" align="center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
 	<?php } ?>
 
 <?php
