@@ -854,6 +854,7 @@ FileNotShared=File not shared to exernal public
 Project=Project
 Projects=Projects
 Rights=Permissions
+LineNb=Line nb
 # Week day
 Monday=Monday
 Tuesday=Tuesday
