@@ -1018,7 +1018,9 @@ if (empty($reshook))
 					0,
 					$array_options,
 					$productsupplier->fk_unit,
-					$productsupplier->fourn_ref
+					0,
+                    $productsupplier->fourn_multicurrency_unitprice,
+                    $productsupplier->fourn_ref
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)

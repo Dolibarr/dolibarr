@@ -53,6 +53,9 @@ insert into llx_c_type_container (code,label,module,active) values ('banner',   
 insert into llx_c_type_container (code,label,module,active) values ('blogpost', 'BlogPost', 'system', 1);
 insert into llx_c_type_container (code,label,module,active) values ('other',    'Other',    'system', 1);
 
+-- For supplier product buy price in multicurency
+ALTER TABLE `llx_product_fournisseur_price` CHANGE `multicurrency_price_ttc` `multicurrency_unitprice` DOUBLE(24,8) NULL DEFAULT NULL;
+ALTER TABLE `llx_product_fournisseur_price_log` CHANGE `multicurrency_price_ttc` `multicurrency_unitprice` DOUBLE(24,8) NULL DEFAULT NULL;
 
 
 

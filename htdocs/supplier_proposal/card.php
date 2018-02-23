@@ -643,8 +643,11 @@ if (empty($reshook))
 						$label,
 						$array_options,
 						$ref_supplier,
-						$fk_unit
-						);
+						$fk_unit,
+						'',
+						0,
+						$productsupplier->fourn_multicurrency_unitprice
+                    );
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 				}
 				if ($idprod == -99 || $idprod == 0)
