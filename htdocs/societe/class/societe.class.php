@@ -3767,6 +3767,8 @@ class Societe extends CommonObject
 			$to_add = $categories;
 		}
 
+		$error = 0;
+
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
@@ -3774,12 +3776,20 @@ class Societe extends CommonObject
 			}
 		}
 		foreach ($to_add as $add) {
-			if ($c->fetch($add) > 0) {
-				$c->add_type($this, $type_text);
+			if ($c->fetch($add) > 0)
+			{
+				$result = $c->add_type($this, $type_text);
+				if ($result < 0)
+				{
+					$error++;
+					$this->error = $c->error;
+					$this->errors = $c->errors;
+					break;
+				}
 			}
 		}
 
-		return 1;
+		return $error ? -1 : 1;
 	}
 
 

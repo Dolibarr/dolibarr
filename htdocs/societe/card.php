@@ -511,6 +511,8 @@ if (empty($reshook))
         {
             if ($action == 'add')
             {
+            	$error = 0;
+
                 $db->begin();
 
                 if (empty($object->client))      $object->code_client='';
@@ -533,11 +535,21 @@ if (empty($reshook))
 
 					// Customer categories association
 					$custcats = GETPOST('custcats', 'array');
-					$object->setCategories($custcats, 'customer');
+					$result = $object->setCategories($custcats, 'customer');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
-					$object->setCategories($suppcats, 'supplier');
+					$result = $object->setCategories($suppcats, 'supplier');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
@@ -566,7 +578,7 @@ if (empty($reshook))
                         }
                     }
                     else
-	              {
+					{
 						switch($_FILES['photo']['error'])
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -593,7 +605,7 @@ if (empty($reshook))
                    	$error++;
                 }
 
-                if ($result >= 0)
+                if ($result >= 0 && ! $error)
                 {
                     $db->commit();
 
@@ -622,6 +634,8 @@ if (empty($reshook))
 
             if ($action == 'update')
             {
+            	$error = 0;
+
                 if (GETPOST('cancel','alpha'))
                 {
                 	if (! empty($backtopage))
@@ -647,16 +661,27 @@ if (empty($reshook))
                     setEventMessages($object->error, $object->errors, 'errors');
                   	$error++;
                 }
+
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if (!empty($user->rights->categorie->lire))
+				if (! $error && !empty($user->rights->categorie->lire))
 				{
 					// Customer categories association
 					$categories = GETPOST( 'custcats', 'array' );
-					$object->setCategories($categories, 'customer');
+					$result = $object->setCategories($categories, 'customer');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
 					// Supplier categories association
 					$categories = GETPOST('suppcats', 'array');
-					$object->setCategories($categories, 'supplier');
+					$result = $object->setCategories($categories, 'supplier');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 
                 // Logo/Photo save
