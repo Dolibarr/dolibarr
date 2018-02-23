@@ -1642,7 +1642,7 @@ elseif (! empty($object->id))
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 
 	$head = ordersupplier_prepare_head($object);

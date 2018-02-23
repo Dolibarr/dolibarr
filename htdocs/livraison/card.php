@@ -571,7 +571,7 @@ else
 				// copy from expedition
 				$expeditionExtrafields = new Extrafields($db);
 				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id, $expeditionExtrafieldLabels) > 0) {
+				if ($expedition->fetch_optionals($object->origin_id) > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
@@ -674,12 +674,12 @@ else
 					$colspan=2;
 					$mode = ($object->statut == 0) ? 'edit' : 'view';
 					$line = new LivraisonLigne($db);
-					$line->fetch_optionals($object->lines[$i]->id,$extralabelslines);
+					$line->fetch_optionals($object->lines[$i]->id);
 					if ($action = 'create_delivery') {
 						$srcLine = new ExpeditionLigne($db);
 						$expeditionLineExtrafields = new Extrafields($db);
 						$expeditionLineExtrafieldLabels = $expeditionLineExtrafields->fetch_name_optionals_label($srcLine->table_element);
-						$srcLine->fetch_optionals($expedition->lines[$i]->id,$expeditionLineExtrafieldLabels);
+						$srcLine->fetch_optionals($expedition->lines[$i]->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					}
 					print '<tr class="oddeven">';

@@ -139,7 +139,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-			$object->fetch_optionals($object->id,$extralabels);
+			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
@@ -830,7 +830,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else

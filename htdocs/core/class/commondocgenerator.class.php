@@ -203,7 +203,7 @@ abstract class CommonDocGenerator
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
         	$extralabels = $extrafields->fetch_name_optionals_label('societe',true);
-        	$object->fetch_optionals($object->id,$extralabels);
+        	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
@@ -274,7 +274,7 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
-		$object->fetch_optionals($object->id, $extralabels);
+		$object->fetch_optionals();
 
 		foreach($extrafields->attribute_label as $key => $label)
 		{
@@ -457,7 +457,7 @@ abstract class CommonDocGenerator
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-			$object->fetch_optionals($object->id,$extralabels);
+			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
@@ -524,7 +524,7 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-		$line->fetch_optionals($line->rowid,$extralabels);
+		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
 
@@ -592,7 +592,7 @@ abstract class CommonDocGenerator
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
     		$extralabels = $extrafields->fetch_name_optionals_label('shipment',true);
-    		$object->fetch_optionals($object->id,$extralabels);
+    		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
     	}*/

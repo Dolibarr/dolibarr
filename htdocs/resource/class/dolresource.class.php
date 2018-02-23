@@ -566,7 +566,7 @@ class Dolresource extends CommonObject
     				// Retreive all extrafield for thirdparty
     				// fetch optionals attributes and labels
 
-    				$line->fetch_optionals($line->id,$extralabels);
+    				$line->fetch_optionals();
 
     				$this->lines[] = $line;
     			}

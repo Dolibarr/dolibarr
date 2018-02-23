@@ -207,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
-	$res=$object->fetch_optionals($object->id,$extralabels_projet);
+	$res=$object->fetch_optionals();
 
 
 	// To verify role of users

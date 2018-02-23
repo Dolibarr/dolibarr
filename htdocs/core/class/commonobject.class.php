@@ -3678,8 +3678,7 @@ abstract class CommonObject
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield
-			$line->fetch_optionals($line->id,$extralabelslines);
-
+			$line->fetch_optionals();
 
 
 			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
@@ -4506,7 +4505,7 @@ abstract class CommonObject
 		}
 		else
 		{
-			dol_syslog("Warning: fetch_optionals was called with param $optionsArray defined when you should pass null now", LOG_WARNING);
+			dol_syslog("Warning: fetch_optionals was called with param optionsArray defined when you should pass null now", LOG_WARNING);
 		}
 
 		$table_element = $this->table_element;

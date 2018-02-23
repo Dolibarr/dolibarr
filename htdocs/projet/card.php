@@ -660,7 +660,7 @@ elseif ($object->id > 0)
      * Show or edit
      */
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 	// To verify role of users
 	$userAccess = $object->restrictedProjectArea($user,'read');

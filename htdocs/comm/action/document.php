@@ -100,7 +100,7 @@ if ($object->id > 0)
 	$result2=$object->fetch_thirdparty();
 	$result3=$object->fetch_contact();
 	$result4=$object->fetch_userassigned();
-	$result5=$object->fetch_optionals($id,$extralabels);
+	$result5=$object->fetch_optionals();
 
 	if ($result1 < 0 || $result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
 	{

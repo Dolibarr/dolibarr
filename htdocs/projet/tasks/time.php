@@ -288,13 +288,13 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     {
         $result=$projectstatic->fetch($projectidforalltimes);
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
-        $res=$projectstatic->fetch_optionals($object->id,$extralabels_projet);
+        $res=$projectstatic->fetch_optionals();
     }
     elseif ($object->fetch($id, $ref) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
-		$res=$projectstatic->fetch_optionals($object->id,$extralabels_projet);
+		$res=$projectstatic->fetch_optionals();
 
 		$object->project = clone $projectstatic;
     }

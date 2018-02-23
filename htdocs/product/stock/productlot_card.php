@@ -305,7 +305,7 @@ if ($action == 'create')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	$res = $object->fetch_optionals($object->id, $extralabels);
+	$res = $object->fetch_optionals();
 
     //print load_fiche_titre($langs->trans("Batch"));
 
