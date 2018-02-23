@@ -327,6 +327,8 @@ if (empty($reshook))
     if ($action == 'update_extras') {
         $object->fetch($socid);
 
+        $object->oldcopy = dol_clone($object);
+
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
