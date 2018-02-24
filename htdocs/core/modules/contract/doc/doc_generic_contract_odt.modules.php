@@ -319,7 +319,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
 				$tmparray = $substitutionarray;
-				
+
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -329,7 +329,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				$paramfreetext='contract_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
-					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+					$newfreetext=make_substitutions($conf->global->$paramfreetext,$tmparray);
 				}
 
 

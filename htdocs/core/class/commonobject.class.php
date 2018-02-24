@@ -4534,7 +4534,7 @@ abstract class CommonObject
 						if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
 						{
 							// we can add this attribute to object
-							if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date','datetime')))
+							if (! empty($extrafields) && in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date','datetime')))
 							{
 								//var_dump($extrafields->attributes[$this->table_element]['type'][$key]);
 								$this->array_options["options_".$key]=$this->db->jdate($value);

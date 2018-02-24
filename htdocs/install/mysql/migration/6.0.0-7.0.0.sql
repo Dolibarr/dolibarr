@@ -321,6 +321,8 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     active          integer DEFAULT 1
 )ENGINE=innodb;
 
+ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset          double DEFAULT 0 NOT NULL;
+
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
