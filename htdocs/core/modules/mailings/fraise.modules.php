@@ -127,7 +127,7 @@ class mailing_fraise extends MailingTargets
         $s.='<select name="filter_type" class="flat">';
         $sql = "SELECT rowid, libelle, statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
-        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " WHERE entity IN (".getEntity('member_type').")";
         $sql.= " ORDER BY rowid";
         $resql = $this->db->query($sql);
         if ($resql)
