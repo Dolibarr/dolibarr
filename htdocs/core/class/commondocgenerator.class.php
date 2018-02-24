@@ -353,6 +353,8 @@ abstract class CommonDocGenerator
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
+		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
+
 		$resarray=array(
 		$array_key.'_id'=>$object->id,
 		$array_key.'_ref'=>$object->ref,
@@ -361,9 +363,9 @@ abstract class CommonDocGenerator
 		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
-        $array_key.'_hour'=>dol_print_date($object->date,'hour'),
-		$array_key.'_date'=>dol_print_date($object->date,'day'),
-		$array_key.'_date_rfc'=>dol_print_date($object->date,'dayrfc'),
+        $array_key.'_hour'=>dol_print_date($date,'hour'),
+		$array_key.'_date'=>dol_print_date($date,'day'),
+		$array_key.'_date_rfc'=>dol_print_date($date,'dayrfc'),
 		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement,'day'):''),
 	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite,'day'):''),
 		$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
