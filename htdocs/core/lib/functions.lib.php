@@ -5947,7 +5947,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 		if (dol_textishtml($text,1)) $msgishtml = 1;
 
 		$keyfound = $reg[1];
-		$newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
+		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+		else $newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
 		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
 	}
 
