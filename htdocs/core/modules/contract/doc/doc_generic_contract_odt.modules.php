@@ -296,13 +296,11 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 				// Define substitution array
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				/* deprecated
 				$substitutionarray['__FROM_NAME__'] = $this->emetteur->name;
 				$substitutionarray['__FROM_EMAIL__'] = $this->emetteur->email;
 				$substitutionarray['__TOTAL_TTC__'] = $object->total_ttc;
 				$substitutionarray['__TOTAL_HT__'] = $object->total_ht;
 				$substitutionarray['__TOTAL_VAT__'] = $object->total_vat;
-				*/
 
 				// Make substitutions into ODT
 				$array_contract=$this->get_substitutionarray_each_var_object($object, $outputlangs);
@@ -319,7 +317,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
 				$tmparray = $substitutionarray;
-				
+
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
