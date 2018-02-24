@@ -349,8 +349,8 @@ abstract class CommonDocGenerator
 		$array_key.'_id'=>$object->id,
 		$array_key.'_ref'=>$object->ref,
 		$array_key.'_ref_ext'=>$object->ref_ext,
-		$array_key.'_ref_customer'=>$object->ref_client,
-		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
+		$array_key.'_ref_customer'=>(! empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
+		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
         $array_key.'_hour'=>dol_print_date($object->date,'hour'),
