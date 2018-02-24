@@ -1027,6 +1027,7 @@ class Translate
 
 		foreach($this->tab_translate as $code => $label) {
 			$substitutionarray['lang_'.$code] = $label;
+			$substitutionarray['__('.$code.')__'] = $label;
 		}
 
 		return $substitutionarray;

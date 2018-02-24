@@ -316,6 +316,14 @@ abstract class CommonDocGenerator
    			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
+
+    	foreach($conf->global as $key => $val)
+    	{
+    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+    		else $newval = $val;
+    		$array_other['__['.$key.']__'] = $newval;
+    	}
+
     	return $array_other;
     }
 
