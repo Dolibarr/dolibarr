@@ -4428,7 +4428,7 @@ abstract class CommonObject
 		}
 		else
 		{
-			dol_syslog("Warning: fetch_optionals was called with param $optionsArray defined when you should pass null now", LOG_WARNING);
+			dol_syslog('Warning: fetch_optionals was called with param '.implode(",", $optionsArray).' defined when you should pass null now', LOG_WARNING);
 		}
 
 		$table_element = $this->table_element;
