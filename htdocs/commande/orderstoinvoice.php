@@ -277,31 +277,55 @@ if (($action == 'create' || $action == 'add') && !$error)
 										{
 											$fk_parent_line = 0;
 										}
-										$result = $object->addline(
-												$desc,
-												$lines[$i]->subprice,
-												$lines[$i]->qty,
-												$lines[$i]->tva_tx,
-												$lines[$i]->localtax1_tx,
-												$lines[$i]->localtax2_tx,
-												$lines[$i]->fk_product,
-												$lines[$i]->remise_percent,
-												$date_start,
-												$date_end,
-												0,
-												$lines[$i]->info_bits,
-												$lines[$i]->fk_remise_except,
-												'HT',
-												0,
-												$product_type,
-												$ii,
-												$lines[$i]->special_code,
-												$object->origin,
-												$lines[$i]->rowid,
-												$fk_parent_line,
-												$lines[$i]->fk_fournprice,
-												$lines[$i]->pa_ht
-										);
+
+                                        $tva_tx = $lines[$i]->tva_tx;
+                                        if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+
+
+                                        $localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
+                                        $localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
+
+                                        // Extrafields
+                                        if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+                                            $targetExtraFields = new ExtraFields($db);
+                                            $targetExtraFieldLabels = $targetExtraFields->fetch_name_optionals_label($object->table_element_line);
+                                            $lines[$i]->fetch_optionals($lines[$i]->id, $targetExtraFieldLabels);
+                                            $array_options = $lines[$i]->array_options;
+                                        }
+
+                                        $label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+
+                                        $result = $object->addline(
+                                            $desc,
+                                            $lines[$i]->subprice,
+                                            $lines[$i]->qty,
+                                            $tva_tx,
+                                            $localtax1_tx,
+                                            $localtax2_tx,
+                                            $lines[$i]->fk_product,
+                                            $lines[$i]->remise_percent,
+                                            $date_start,
+                                            $date_end,
+                                            0,
+                                            $lines[$i]->info_bits,
+                                            $lines[$i]->fk_remise_except,
+                                            'HT',
+                                            0,
+                                            $product_type,
+                                            $lines[$i]->rang,
+                                            $lines[$i]->special_code,
+                                            $object->origin,
+                                            $lines[$i]->id,
+                                            $fk_parent_line,
+                                            $lines[$i]->fk_fournprice,
+                                            $lines[$i]->pa_ht,
+                                            $label,
+                                            $array_options,
+                                            $lines[$i]->situation_percent,
+                                            $lines[$i]->fk_prev_id,
+                                            $lines[$i]->fk_unit
+                                        );
+
 										if ($result > 0)
 										{
 											$lineid=$result;
