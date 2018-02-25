@@ -2960,7 +2960,58 @@ class CommandeFournisseur extends CommonOrder
     					    }
     					    return 4;
     					}
-    				}
+    				}elseif(! empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED) )
+				{//set livraison to 'tot' if more products received than wished. (and if $closeopenorder is set to 1 of course...)
+					
+					$close=0;
+					
+					if( count($diff_array) > 0 )
+					{//there are some difference between  the two arrays
+	
+						//scan the array of results
+						foreach($diff_array as $key => $value)
+						{//if the quantity delivered is greater or equal to wish quantity
+							if($qtydelivered[$key] >= $qtywished[$key] )
+							{
+								$close++;
+							}
+		
+						}
+					}
+
+					
+					if($close == count($diff_array))
+					{//all the products are received equal or more than the wished quantity
+						if ($closeopenorder)
+    						{
+    							$ret = $this->Livraison($user, $date_liv, 'tot', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+        						if ($ret<0) {
+        							return -1;
+        						}
+    					    		return 5;
+    						}
+    						else
+    						{
+    					   	 	//Diff => received partially
+    					  		$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							if ($ret<0) {
+								return -1;
+							}
+							return 4;
+						}
+					
+					
+					}
+					else
+					{//all the products are not received
+						$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+						if ($ret<0) {
+							return -1;
+						}
+						return 4;
+					}
+					
+				}
     				else
     				{
     					//Diff => received partially
