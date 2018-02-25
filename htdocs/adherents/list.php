@@ -574,7 +574,7 @@ if (! empty($arrayfields['d.datefin']['checked']))        print_liste_field_titr
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
