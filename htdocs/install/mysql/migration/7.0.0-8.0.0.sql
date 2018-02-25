@@ -29,6 +29,8 @@
 
 -- For 8.0
 
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
+
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN bill_time integer DEFAULT 0;
 

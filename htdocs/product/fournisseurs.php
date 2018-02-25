@@ -638,11 +638,6 @@ if ($id > 0 || $ref)
 				print_liste_field_titre("DiscountQtyMin",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("NbDaysToDelivery",$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("ReputationForThisProduct",$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled)) print_liste_field_titre("UnitCharges");
-				}
 				print_liste_field_titre('');
 				print "</tr>\n";
 
@@ -707,18 +702,6 @@ if ($id > 0 || $ref)
 							print $object->reputations[$productfourn->supplier_reputation];
 						}
 						print'</td>';
-
-						// Charges ????
-						/*
-						if ($conf->global->PRODUCT_CHARGES)
-						{
-							if (! empty($conf->margin->enabled))
-							{
-								print '<td align="right">';
-								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
-								print '</td>';
-							}
-						}*/
 
 						if (is_object($hookmanager))
 						{
