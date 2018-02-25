@@ -31,7 +31,7 @@ class modHRM extends DolibarrModules
 	 * Constructor.
 	 * Define names, constants, directories, boxes, permissions
 	 *
-	 * @param DoliDB $db
+	 * @param 	DoliDB 	$db		Database handler
 	 */
 	public function __construct($db)
 	{
