@@ -3846,6 +3846,7 @@ class Facture extends CommonInvoice
 
 		// Initialize parameters
 		$this->id=0;
+		$this->entity = 1;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;
