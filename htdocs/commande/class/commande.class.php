@@ -1572,7 +1572,7 @@ class Commande extends CommonOrder
         // Check parameters
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
+        $sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
         $sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
         $sql.= ', c.fk_account';
         $sql.= ', c.date_commande';
@@ -1602,12 +1602,14 @@ class Commande extends CommonOrder
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $result = $this->db->query($sql);
-        if ($result)
-        {
-            $obj = $this->db->fetch_object($result);
-            if ($obj)
-            {
-                $this->id					= $obj->rowid;
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+			if ($obj)
+			{
+				$this->id					= $obj->rowid;
+				$this->entity				= $obj->entity;
+
                 $this->ref					= $obj->ref;
                 $this->ref_client			= $obj->ref_client;
                 $this->ref_customer			= $obj->ref_client;
