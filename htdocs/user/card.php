@@ -75,6 +75,9 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
     $canreadgroup=(! empty($user->admin) || $user->rights->user->group_advance->read);
     $caneditgroup=(! empty($user->admin) || $user->rights->user->group_advance->write);
 }
+if(! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	$caneditgroup = $conf->entity == 1 && ! empty($user->admin) && empty($user->entity);
+}
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
@@ -1791,41 +1794,21 @@ else
 
                     print '<table class="noborder" width="100%">'."\n";
                     print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("Groups").'</th>'."\n";
-                    if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-                    {
-                        print '<td class="liste_titre" width="25%">'.$langs->trans("Entity").'</td>';
-                    }
                     print '<th align="right">';
-                    if ($caneditgroup)
-                    {
-                    	// Users/Groups management only in master entity if transverse mode
-                    	if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-                    	{
-                    		// nothing
-                    	}
-                    	else
-                    	{
-                    		print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
-                    		print ' &nbsp; ';
-                    		// Multicompany
-                    		if (! empty($conf->multicompany->enabled))
-                    		{
-                    			if ($conf->entity == 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-                    			{
-                    				print '</td><td>'.$langs->trans("Entity").'</td>';
-                    				print "<td>".$mc->select_entities($conf->entity);
-                    			}
-                    			else
-                    			{
-                    				print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-                    			}
-                    		}
-                    		else
-                    		{
-                    			print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-                    		}
-                    		print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
-                    	}
+                    if ($caneditgroup) {
+                        print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
+                    }
+
+                    if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+                        print '</th><th>' . $langs->trans("Entity");
+
+                        if ($caneditgroup) {
+                            print '</th><th>' . $mc->select_entities($conf->entity, 'entity');
+                        }
+                    }
+
+                    if ($caneditgroup) {
+                        print ' &nbsp; <input type="submit" class="button" value="' . $langs->trans("Add") . '" />';
                     }
                     print '</th></tr>'."\n";
 
@@ -1849,40 +1832,46 @@ else
                                 print img_object($langs->trans("ShowGroup"),"group").' '.$group->name;
                             }
                             print '</td>';
-                            if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-                            {
-                            	print '<td class="valeur">';
-                            	if (! empty($group->usergroup_entity))
-                            	{
-                            		$nb=0;
-                            		foreach($group->usergroup_entity as $group_entity)
-                            		{
-                            			$mc->getInfo($group_entity);
-                            			print ($nb > 0 ? ', ' : '').$mc->label;
-                            			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group_entity.'">';
-                            			print img_delete($langs->trans("RemoveFromGroup"));
-                            			print '</a>';
-                            			$nb++;
-                            		}
-                            	}
-                            }
                             print '<td align="right">';
-                            if ($caneditgroup && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-                            {
-                                print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
+                            if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+                                print '</td><td class="valeur">';
+
+                                if (! empty($group->usergroup_entity)) {
+                                    $nb = 0;
+                                    foreach ($group->usergroup_entity as $group_entity) {
+                                        $mc->getInfo($group_entity);
+                                        print ($nb > 0 ? ', ' : '') . $mc->label;
+
+                                        if ($conf->entity == 1 && ! empty($user->admin) && empty($user->entity)) {
+                                            print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=removegroup&amp;group=' . $group->id . '&amp;entity=' . $group_entity . '">';
+                                            print img_delete($langs->trans("RemoveFromGroup"));
+                                            print '</a>';
+                                        }
+
+                                        $nb ++;
+                                    }
+                                }
+
+                                if ($caneditgroup) {
+                                    print '</td><td>';
+                                }
+                            } elseif ($caneditgroup) {
+                                print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=removegroup&amp;group=' . $group->id . '">';
                                 print img_delete($langs->trans("RemoveFromGroup"));
                                 print '</a>';
                             }
-                            else
-                            {
-                                print "&nbsp;";
-                            }
-                            print "</td></tr>\n";
+                            print '</td></tr>'."\n";
                         }
                     }
                     else
                     {
-                        print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+                        $colspan = 2;
+                        if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+                            $colspan ++;
+                            if ($caneditgroup) $colspan ++;
+                        }
+
+                        print '<tr ' . $bc[false] . '><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
                     }
 
                     print "</table>";
