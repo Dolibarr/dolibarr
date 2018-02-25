@@ -56,7 +56,6 @@ class modAdherent extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->special = 0;
         $this->picto='user';
 
         // Data directories to create when module is enabled

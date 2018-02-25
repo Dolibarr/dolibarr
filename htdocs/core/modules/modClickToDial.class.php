@@ -43,7 +43,7 @@ class modClickToDial extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 58;
 
-		$this->family = "technic";
+		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion du Click To Dial";
@@ -51,7 +51,6 @@ class modClickToDial extends DolibarrModules
 		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 1;
 		$this->picto='phoning';
 
 		// Data directories to create when module is enabled

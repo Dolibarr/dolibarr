@@ -178,8 +178,6 @@ foreach ($modulesdir as $dir)
                             $filename[$i]= $modName;
                             $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
                             //print "x".$modName." ".$orders[$i]."\n<br>";
-       						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
-       			            else $categ[$objMod->special]=1;
                             $dirmod[$i] = $dirroot;
                             $j++;
                             $i++;

@@ -59,7 +59,6 @@ class modCommande extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='order';
 
 		// Data directories to create when module is enabled
@@ -104,7 +103,7 @@ class modCommande extends DolibarrModules
 		$this->const[$r][2] = "__(Draft)__";
 		$this->const[$r][3] = 'Watermark to show on draft orders';
 		$this->const[$r][4] = 0;*/
-		
+
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),
@@ -177,12 +176,12 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
