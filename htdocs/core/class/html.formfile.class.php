@@ -298,6 +298,9 @@ class FormFile
 			return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
 		}
 
+		// Add entity in $param
+		$param.= 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
+
 		$printer=0;
 		if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport')))	// The direct print feature is implemented only for such elements
 		{

@@ -392,13 +392,13 @@ class Notify
 								break;
 							case 'PROPAL_VALIDATE':
 								$link='/comm/propal/card.php?id='.$object->id;
-								$dir_output = $conf->propal->dir_output;
+								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
 								$link='/comm/propal/card.php?id='.$object->id;
-								$dir_output = $conf->propal->dir_output;
+								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
 								break;
@@ -574,13 +574,13 @@ class Notify
 						break;
 					case 'PROPAL_VALIDATE':
 						$link='/comm/propal/card.php?id='.$object->id;
-						$dir_output = $conf->propal->dir_output;
+						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 						break;
 					case 'PROPAL_CLOSE_SIGNED':
 						$link='/comm/propal/card.php?id='.$object->id;
-						$dir_output = $conf->propal->dir_output;
+						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
 						break;

@@ -230,7 +230,7 @@ class pdf_azur extends ModelePDFPropales
 
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
-		if ($conf->propal->dir_output)
+		if ($conf->propal->multidir_output[$conf->entity])
 		{
 			$object->fetch_thirdparty();
 
@@ -239,13 +239,13 @@ class pdf_azur extends ModelePDFPropales
 			// Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->propal->dir_output;
+				$dir = $conf->propal->multidir_output[$conf->entity];
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propal->dir_output . "/" . $objectref;
+				$dir = $conf->propal->multidir_output[$object->entity] . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
@@ -1501,7 +1501,7 @@ class pdf_azur extends ModelePDFPropales
 		{
 			$top_shift = $pdf->getY() - $current_y;
 		}
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
