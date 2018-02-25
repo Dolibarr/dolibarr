@@ -399,7 +399,7 @@ class FormMail extends Form
 
 
 
-			$out.= '<table class="border" width="100%">'."\n";
+			$out.= '<table class="border" width="100%" style="border-top: 1px solid #BBB;">'."\n";
 
 			// Substitution array
 			if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
