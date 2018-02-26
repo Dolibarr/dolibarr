@@ -1342,7 +1342,7 @@ class Contrat extends CommonObject
 		// Check parameters
 		if ($fk_product <= 0 && empty($desc))
 		{
-			$this->error="DescRequiredForFreeProductLines";
+			$this->error="ErrorDescRequiredForFreeProductLines";
 			return -1;
 		}
 
