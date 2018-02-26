@@ -79,6 +79,7 @@ VATIsUsed=Sales tax is used
 VATIsNotUsed=Sales tax is not used
 CopyAddressFromSoc=Fill address with third party address
 ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Thirdparty neither customer nor supplier, discounts are not available
 PaymentBankAccount=Payment bank account
 OverAllProposals=Proposals
 OverAllOrders=Orders
