@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 $langs->load('projects');
 
@@ -38,6 +39,7 @@ $projectid=GETPOST('projectid','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+$cancel=GETPOST('cancel','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
 
@@ -89,6 +91,8 @@ $extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_e
  * Actions
  */
 
+if (GETPOST('cancel','alpha')) { $action=''; }
+
 $parameters=array('socid'=>$socid, 'projectid'=>$projectid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -137,10 +141,17 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 
 	if (! $error)
 	{
-		$object->fetch($id, $ref);
+		if ($id || $ref)
+		{
+			$object->fetch($id, $ref);
+		}
+		else
+		{
+			$object->fetch(GETPOST('taskid','int'));
+		}
 		$object->fetch_projet();
 
-		if (empty($object->projet->statut))
+		if (empty($object->project->statut))
 		{
 			setEventMessages($langs->trans("ProjectMustBeValidatedFirst"), null, 'errors');
 			$error++;
@@ -175,7 +186,8 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 	}
 	else
 	{
-		$action='';
+		if (empty($id)) $action='createtime';
+		else $action='createtime';
 	}
 }
 
@@ -277,6 +289,7 @@ llxHeader("",$langs->trans("Task"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formproject = new FormProjets($db);
 $userstatic = new User($db);
 
 if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
@@ -398,35 +411,26 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			dol_fiche_end();
 
 
-			/*
-			 * Actions
-			 */
+			print '<br>';
 
+			// Link to create time
 			if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))
 			{
-    			print '<div class="tabsAction">';
-
     			if ($user->rights->projet->all->creer || $user->rights->projet->creer)
     			{
     			    if ($object->public || $userWrite > 0)
     			    {
-    			        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
+    			    	$linktocreatetime = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.'&withproject=1&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'</a>';
     			    }
     			    else
     			    {
-    			        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
+    			    	$linktocreatetime = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTime').'</a>';
     			    }
     			}
     			else
     			{
-    			    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
+    				$linktocreatetime = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTime').'</a>';
     			}
-
-    			print '</div>';
-			}
-			else
-			{
-				print '<br>';
 			}
 		}
 	}
@@ -528,12 +532,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 
 		/*
-		 * Form to add time spent
+		 * Form to add time spent on task
 		 */
+
 		if ($user->rights->projet->lire)
 		{
 			print '<br>';
 
+			print '<!-- form to add time spent on task -->'."\n";
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addtimespent">';
@@ -676,7 +682,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    $title=$langs->trans("ListTaskTimeUserProject");
 			    $linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
 			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-			    print load_fiche_titre($title,$linktotasks,'title_generic.png');
+			    print load_fiche_titre($title,$linktotasks.' &nbsp; '.$linktocreatetime,'title_generic.png');
 			}
 
 			$i = 0;
@@ -691,6 +697,88 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		else
 		{
 			dol_print_error($db);
+		}
+
+
+		/*
+		 * Form to add time spent
+		 */
+		if ($action == 'createtime' && empty($id) && $user->rights->projet->lire)
+		{
+			print '<!-- form to add time spent -->'."\n";
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="addtimespent">';
+			print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+
+			print '<table class="noborder nohover" width="100%">';
+
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Date").'</td>';
+			print '<td>'.$langs->trans("Task").'</td>';
+			print '<td>'.$langs->trans("By").'</td>';
+			print '<td>'.$langs->trans("Note").'</td>';
+			print '<td>'.$langs->trans("NewTimeSpent").'</td>';
+			print '<td>'.$langs->trans("ProgressDeclared").'</td>';
+			print '<td></td>';
+			print "</tr>\n";
+
+			print '<tr class="oddeven">';
+
+			// Date
+			print '<td class="maxwidthonsmartphone">';
+			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+			$newdate='';
+			print $form->select_date($newdate, 'time', ($conf->browser->layout == 'phone'?2:1), 1, 2, "timespent_date", 1, 0, 1);
+			print '</td>';
+
+			// Task
+			print '<td class="maxwidthonsmartphone">';
+			$formproject->selectTasks(-1, GETPOST('taskid','int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+			print '</td>';
+
+			// Contributor
+			print '<td class="maxwidthonsmartphone">';
+			print img_object('','user','class="hideonsmartphone"');
+			$contactsofproject=$projectstatic->getListContactId('internal');
+			if (count($contactsofproject)>0)
+			{
+				if (in_array($user->id, $userid=$contactsofproject)) $userid = $user->id;
+				else $userid=$contactsofproject[0];
+				if ($projectstatic->public) $contactsofproject = array();
+				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+			}
+			else
+			{
+				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
+			}
+			print '</td>';
+
+			// Note
+			print '<td>';
+			print '<textarea name="timespent_note" class="maxwidth100onsmartphone" rows="'.ROWS_2.'">'.($_POST['timespent_note']?$_POST['timespent_note']:'').'</textarea>';
+			print '</td>';
+
+			// Duration - Time spent
+			print '<td>';
+			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
+			print '</td>';
+
+			// Progress declared
+			print '<td class="nowrap">';
+			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress,'progress');
+			print '</td>';
+
+			print '<td align="center">';
+			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
+			print ' &nbsp; ';
+			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '</td></tr>';
+
+			print '</table></form>';
+
+			print '<br>';
 		}
 
 

@@ -1141,10 +1141,10 @@ class Project extends CommonObject
      *
      * @param 	User	$user			User object
      * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
-     * @param 	int		$list			0=Return array,1=Return string list
+     * @param 	int		$list			0=Return array, 1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
-     * @param	string		$filter			additionnal filter on project (statut, ref, ...)
-     * @return 	array or string			Array of projects id, or string with projects id separated with ","
+     * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+     * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0, $filter='')
     {
