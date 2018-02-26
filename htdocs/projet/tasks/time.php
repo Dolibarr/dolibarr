@@ -79,11 +79,7 @@ $projectstatic = new Project($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 
-if ($projectid > 0 || ! empty($ref))
-{
-    // fetch optionals attributes and labels
-    $extralabels_projet=$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
-}
+$extralabels_projet=$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
 $extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_element);
 
 
@@ -278,10 +274,9 @@ if (! empty($project_ref) && ! empty($withproject))
 
 // To show all time lines for project
 $projectidforalltimes=0;
-if (GETPOST('projectid'))
+if (GETPOST('projectid','none'))
 {
-    $projectidforalltimes=GETPOST('projectid','int');
-
+	$projectidforalltimes=GETPOST('projectid','int');
 }
 
 

@@ -411,6 +411,9 @@ td.actionbuttons a {
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
+td.leftborder, td.hide6 {
+	border-right: 1px solid #ccc;
+}
 
 select.flat, form.flat select {
 	font-weight: normal;
