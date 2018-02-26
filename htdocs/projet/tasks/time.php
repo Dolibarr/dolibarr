@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -241,7 +241,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->lire
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->lire)
 {
-	$object->fetchTimeSpent($_GET['lineid']);
+	$object->fetchTimeSpent(GETPOST('lineid','int'));
 	// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 	$result = $object->delTimeSpent($user);
 
@@ -251,6 +251,10 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->l
 		setEventMessages($langs->trans($object->error), null, 'errors');
 		$error++;
 		$action='';
+	}
+	else
+	{
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	}
 }
 
@@ -441,7 +445,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		if ($action == 'deleteline')
 		{
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id>0?"id=".$object->id:'projectid='.$projectstatic->id).'&lineid='.GETPOST("lineid",'int').($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
 
 		$param=($withproject?'&withproject=1':'');
@@ -615,7 +619,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	{
 		if ($action == 'deleteline')
 		{
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id>0?"id=".$object->id:'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid','int').($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
 
 	    // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -634,6 +638,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("AmountInvoiced"), 'checked'=>1, 'enabled'=>(empty($conf->global->PROJECT_BILL_TIME_SPENT)?0:1));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -650,8 +655,11 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " pt.ref, pt.label,";
-		$sql .= " u.lastname, u.firstname, u.login, u.photo";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+		$sql .= " u.lastname, u.firstname, u.login, u.photo,";
+		$sql .= " il.fk_facture as invoice_id, il.total_ht";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
+		$sql .= ", ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 		if (empty($projectidforalltimes)) $sql .= " AND t.fk_task =".$object->id;
 		else $sql.= " AND pt.fk_projet IN (".$projectidforalltimes.")";
@@ -876,9 +884,11 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
         if (! empty($arrayfields['t.note']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 		// Duration
         if (! empty($arrayfields['t.task_duration']['checked'])) print '<td class="liste_titre right"></td>';
-		// Value in currency
+		// Value in main currency
         if (! empty($arrayfields['value']['checked'])) print '<td class="liste_titre"></td>';
-		/*
+        // Value billed
+        if (! empty($arrayfields['valuebilled']['checked'])) print '<td class="liste_titre"></td>';
+        /*
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 		*/
@@ -894,16 +904,17 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '</tr>'."\n";
 
 		print '<tr class="liste_titre">';
-		if (! empty($arrayfields['t.task_date']['checked'])) print_liste_field_titre($arrayfields['t.task_date']['label'],$_SERVER['PHP_SELF'],'t.task_date,t.task_datehour,t.rowid','',$param,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.task_date']['checked']))      print_liste_field_titre($arrayfields['t.task_date']['label'],$_SERVER['PHP_SELF'],'t.task_date,t.task_datehour,t.rowid','',$param,'',$sortfield,$sortorder);
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
             if (! empty($arrayfields['t.task_ref']['checked']))   print_liste_field_titre($arrayfields['t.task_ref']['label'],$_SERVER['PHP_SELF'],'pt.ref','',$param,'',$sortfield,$sortorder);
             if (! empty($arrayfields['t.task_label']['checked'])) print_liste_field_titre($arrayfields['t.task_label']['label'],$_SERVER['PHP_SELF'],'pt.label','',$param,'',$sortfield,$sortorder);
         }
-        if (! empty($arrayfields['author']['checked'])) print_liste_field_titre($arrayfields['author']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
-		if (! empty($arrayfields['t.note']['checked'])) print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$param,'',$sortfield,$sortorder);
-		if (! empty($arrayfields['t.task_duration']['checked'])) print_liste_field_titre($arrayfields['t.task_duration']['label'],$_SERVER['PHP_SELF'],'t.task_duration','',$param,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['value']['checked'])) print_liste_field_titre($arrayfields['value']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
+        if (! empty($arrayfields['author']['checked']))           print_liste_field_titre($arrayfields['author']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.note']['checked']))           print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$param,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.task_duration']['checked']))  print_liste_field_titre($arrayfields['t.task_duration']['label'],$_SERVER['PHP_SELF'],'t.task_duration','',$param,'align="right"',$sortfield,$sortorder);
+		if (! empty($arrayfields['value']['checked']))            print_liste_field_titre($arrayfields['value']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
+		if (! empty($arrayfields['valuebilled']['checked']))      print_liste_field_titre($arrayfields['valuebilled']['label'],$_SERVER['PHP_SELF'],'il.total_ht','',$param,'align="right"',$sortfield,$sortorder);
 		/*
     	// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1050,6 +1061,18 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				if (! $i) $totalarray['nbfield']++;
     			if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
     			$totalarray['totalvalue'] += $value;
+            }
+
+            // Value billed
+            if (! empty($arrayfields['valuebilled']['checked']))
+            {
+            	print '<td align="right">';
+            	$valuebilled = price2num($task_time->total_ht);
+            	if (isset($task_time->total_ht)) print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
+            	print '</td>';
+            	if (! $i) $totalarray['nbfield']++;
+            	if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
+            	$totalarray['totalvaluebilled'] += $valuebilled;
             }
 
             /*
