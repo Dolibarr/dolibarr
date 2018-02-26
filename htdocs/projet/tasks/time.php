@@ -410,17 +410,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			dol_fiche_end();
 
-
 			print '<br>';
 
 			// Link to create time
-			if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))
-			{
+			//if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))
+			//{
     			if ($user->rights->projet->all->creer || $user->rights->projet->creer)
     			{
-    			    if ($object->public || $userWrite > 0)
+    				if ($projectstatic->public || $userWrite > 0)
     			    {
-    			    	$linktocreatetime = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.'&withproject=1&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'</a>';
+    			    	$linktocreatetime = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?withproject=1'.($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'</a>';
     			    }
     			    else
     			    {
@@ -431,7 +430,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			{
     				$linktocreatetime = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTime').'</a>';
     			}
-			}
+			//}
 		}
 	}
 
@@ -531,14 +530,17 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		dol_fiche_end();
 
 
+		$title=$langs->trans("ListTaskTimeForTask");
+		//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
+		print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
+
+
 		/*
 		 * Form to add time spent on task
 		 */
 
-		if ($user->rights->projet->lire)
+		if ($action == 'createtime' && $object->id > 0 && $user->rights->projet->lire)
 		{
-			print '<br>';
-
 			print '<!-- form to add time spent on task -->'."\n";
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -597,7 +599,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '</td>';
 
 			print '<td align="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
+			print ' &nbsp; ';
+			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table></form>';
@@ -682,7 +686,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			    $title=$langs->trans("ListTaskTimeUserProject");
 			    $linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
 			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-			    print load_fiche_titre($title,$linktotasks.' &nbsp; '.$linktocreatetime,'title_generic.png');
+			    print load_fiche_titre($title,$linktotasks.' &nbsp; '.$linktocreatetime, 'title_generic.png');
 			}
 
 			$i = 0;
