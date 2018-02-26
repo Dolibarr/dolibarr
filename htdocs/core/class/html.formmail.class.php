@@ -984,9 +984,10 @@ class FormMail extends Form
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @param	int			$id				Id of template to find, or -1 for first found with lower position, or 0 for first found whatever is position
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
+	 *      @param	string		$label			Label of template
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
-	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
+	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1, $label='')
 	{
 		$ret=array();
 
@@ -996,6 +997,7 @@ class FormMail extends Form
 		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
+		if ($label) $sql.=" AND label ='".$this->db->escape($label)."'";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";

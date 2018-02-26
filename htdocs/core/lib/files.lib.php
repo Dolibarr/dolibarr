@@ -950,7 +950,7 @@ function dolCheckVirus($src_file)
  *  Note:
  *  - This function can be used only into a HTML page context. Use dol_move if you are outside.
  *  - Test on antivirus is always done (if antivirus set).
- *  - Database of files is NOT updated.
+ *  - Database of files is NOT updated (this is done by dol_add_file_process() that calls this function).
  *
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
@@ -1554,28 +1554,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					// Update table of files
 					if ($donotupdatesession)
 					{
-						$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dir);
-
-						if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile), $TFile['name'][$i], 'uploaded', 0);
+						if ($result < 0)
 						{
-							$filename = basename($destfile);
-							$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-							$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
-
-							include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-							$ecmfile=new EcmFiles($db);
-							$ecmfile->filepath = $rel_dir;
-							$ecmfile->filename = $filename;
-							$ecmfile->label = md5_file(dol_osencode($destfull));	// MD5 of file content
-							$ecmfile->fullpath_orig = $TFile['name'][$i];
-							$ecmfile->gen_or_uploaded = 'uploaded';
-							$ecmfile->description = '';    // indexed content
-							$ecmfile->keyword = '';        // keyword content
-							$result = $ecmfile->create($user);
-							if ($result < 0)
-							{
-								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-							}
+							setEventMessages('FailedToAddFileIntoDatabaseIndex', '', 'warnings');
 						}
 					}
 
@@ -1678,6 +1660,114 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 		}
 	}
 }
+
+
+/**
+ *  Add a file into database index.
+ *  Called by dol_add_file_process when uploading a file and on other cases.
+ *  See also commonGenerateDocument that also add/update database index when a file is generated.
+ *
+ *  @param      string	$dir			Directory name (full real path without ending /)
+ *  @param		string	$file			File name
+ *  @param		string	$fullpathorig	Full path of origin for file (can be '')
+ *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
+ *  @param		int		$setsharekey	Set also the share key
+ *	@return		int						<0 if KO, 0 if nothing done, >0 if OK
+ */
+function addFileIntoDatabaseIndex($dir, $file, $fullpathorig='', $mode='uploaded', $setsharekey=0)
+{
+	global $db, $user;
+
+	$result = 0;
+
+	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $dir);
+
+	if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
+	{
+		$filename = basename($file);
+		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($db);
+		$ecmfile->filepath = $rel_dir;
+		$ecmfile->filename = $filename;
+		$ecmfile->label = md5_file(dol_osencode($dir.'/'.$file));	// MD5 of file content
+		$ecmfile->fullpath_orig = $fullpathorig;
+		$ecmfile->gen_or_uploaded = $mode;
+		$ecmfile->description = '';    // indexed content
+		$ecmfile->keyword = '';        // keyword content
+		if ($setsharekey)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$ecmfile->share = getRandomPassword(true);
+		}
+
+		$result = $ecmfile->create($user);
+		if ($result < 0)
+		{
+			dol_syslog($ecmfile->error);
+		}
+	}
+
+	return $result;
+}
+
+
+/**
+ *  Delete files into database index using search criterias.
+ *
+ *  @param      string	$dir			Directory name (full real path without ending /)
+ *  @param		string	$file			File name
+ *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
+ *	@return		int						<0 if KO, 0 if nothing done, >0 if OK
+ */
+function deleteFilesIntoDatabaseIndex($dir, $file, $mode='uploaded')
+{
+	global $conf, $db, $user;
+
+	$error = 0;
+
+	if (empty($dir))
+	{
+		dol_syslog("deleteFilesIntoDatabaseIndex: dir parameter can't be empty", LOG_ERR);
+		return -1;
+	}
+
+	$db->begin();
+
+	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $dir);
+
+	$filename = basename($file);
+	$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+	$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+	if (! $error)
+	{
+		$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'ecm_files';
+		$sql.= ' WHERE entity = '.$conf->entity;
+		$sql.= " AND filepath = '" . $db->escape($rel_dir) . "'";
+		if ($file) $sql.= " AND filename = '" . $db->escape($file) . "'";
+		if ($mode) $sql.= " AND gen_or_uploaded = '" . $db->escape($mode) . "'";
+
+		$resql = $db->query($sql);
+		if (!$resql)
+		{
+			$error++;
+			dol_syslog(__METHOD__ . ' ' . $db->lasterror(), LOG_ERR);
+		}
+	}
+
+	// Commit or rollback
+	if ($error) {
+		$db->rollback();
+		return - 1 * $error;
+	} else {
+		$db->commit();
+		return 1;
+	}
+}
+
 
 /**
  * 	Convert an image file into another format.

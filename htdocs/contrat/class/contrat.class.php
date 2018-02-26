@@ -316,9 +316,10 @@ class Contrat extends CommonObject
 	 *
 	 * @param	User		$user      		Object User making action
      * @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
+     * @param	string		$comment		Comment
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	function closeAll(User $user, $notrigger=0)
+	function closeAll(User $user, $notrigger=0, $comment='')
 	{
 		$this->db->begin();
 
@@ -337,7 +338,7 @@ class Contrat extends CommonObject
 				$contratline->date_cloture=$now;
 				$contratline->fk_user_cloture=$user->id;
 				$contratline->statut='5';
-				$result=$contratline->close_line($user, $now);
+				$result=$contratline->close_line($user, $now, $comment, $notrigger);
 				if ($result < 0)
 				{
 					$error++;
@@ -3140,9 +3141,10 @@ class ContratLigne extends CommonObjectLine
 	 * @param    User 	$user 			Objet User who close contract
 	 * @param  	 int 	$date_end 		Date end
 	 * @param    string $comment 		A comment typed by user
+     * @param    int	$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 * @return int                    	<0 if KO, >0 if OK
 	 */
-	function close_line($user, $date_end, $comment = '')
+	function close_line($user, $date_end, $comment = '', $notrigger=0)
 	{
 		global $langs, $conf;
 
@@ -3164,15 +3166,19 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " WHERE rowid = " . $this->id . " AND statut = 4";
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			// Call trigger
-			$result = $this->call_trigger('LINECONTRACT_CLOSE', $user);
-			if ($result < 0) {
-				$error++;
-				$this->db->rollback();
-				return -1;
+		if ($resql)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result = $this->call_trigger('LINECONTRACT_CLOSE', $user);
+				if ($result < 0) {
+					$error++;
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
 			}
-			// End call triggers
 
 			$this->db->commit();
 			return 1;

@@ -5767,12 +5767,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 			}
 
@@ -5945,7 +5947,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 		if (dol_textishtml($text,1)) $msgishtml = 1;
 
 		$keyfound = $reg[1];
-		$newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
+		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+		else $newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
 		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
 	}
 

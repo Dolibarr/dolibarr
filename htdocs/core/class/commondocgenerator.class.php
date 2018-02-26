@@ -316,6 +316,14 @@ abstract class CommonDocGenerator
    			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
+
+    	foreach($conf->global as $key => $val)
+    	{
+    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+    		else $newval = $val;
+    		$array_other['__['.$key.']__'] = $newval;
+    	}
+
     	return $array_other;
     }
 
@@ -345,17 +353,19 @@ abstract class CommonDocGenerator
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
+		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
+
 		$resarray=array(
 		$array_key.'_id'=>$object->id,
 		$array_key.'_ref'=>$object->ref,
 		$array_key.'_ref_ext'=>$object->ref_ext,
-		$array_key.'_ref_customer'=>$object->ref_client,
-		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
+		$array_key.'_ref_customer'=>(! empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
+		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
-        $array_key.'_hour'=>dol_print_date($object->date,'hour'),
-		$array_key.'_date'=>dol_print_date($object->date,'day'),
-		$array_key.'_date_rfc'=>dol_print_date($object->date,'dayrfc'),
+        $array_key.'_hour'=>dol_print_date($date,'hour'),
+		$array_key.'_date'=>dol_print_date($date,'day'),
+		$array_key.'_date_rfc'=>dol_print_date($date,'dayrfc'),
 		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement,'day'):''),
 	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite,'day'):''),
 		$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),

@@ -358,8 +358,6 @@ foreach ($modulesdir as $dir)
 		    			            $filename[$i]= $modName;
 		    					    $modules[$modName] = $objMod;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
@@ -373,8 +371,6 @@ foreach ($modulesdir as $dir)
 		    			            {
 		    			                $moduleposition = 800;
 		    			            }
-
-		    			            if ($special == 1) $familykey='interface';
 
 		    			            // Add list of warnings to show into arrayofwarnings and arrayofwarningsext
 		    			            if (! empty($objMod->warnings_activation))
@@ -390,7 +386,7 @@ foreach ($modulesdir as $dir)
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -531,12 +527,9 @@ if ($mode == 'common')
     	$objMod  = $modules[$modName];
     	$dirofmodule = $dirmod[$key];
 
-    	$special = $objMod->special;
-
-    	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
+    	//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
     	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
-    	if (($special >= 4 && $mode != 'expdev')
-    		|| ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental')) continue;    // Discard if not for current tab
+    	if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
         {
@@ -741,12 +734,12 @@ if ($mode == 'common')
         					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
         					{
         						$urltouse=dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1);
-        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         					else
         					{
         						$urltouse=$urlpage;
-        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         				}
         			}
@@ -754,11 +747,11 @@ if ($mode == 'common')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'?backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'?backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else

@@ -29,6 +29,8 @@
 
 -- For 8.0
 
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
+
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN bill_time integer DEFAULT 0;
 
@@ -57,5 +59,6 @@ insert into llx_c_type_container (code,label,module,active) values ('other',    
 ALTER TABLE `llx_product_fournisseur_price` CHANGE `multicurrency_price_ttc` `multicurrency_unitprice` DOUBLE(24,8) NULL DEFAULT NULL;
 ALTER TABLE `llx_product_fournisseur_price_log` CHANGE `multicurrency_price_ttc` `multicurrency_unitprice` DOUBLE(24,8) NULL DEFAULT NULL;
 
+ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_expensereport;
 
 

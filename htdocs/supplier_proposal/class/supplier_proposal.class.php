@@ -1134,7 +1134,7 @@ class SupplierProposal extends CommonObject
     {
         global $conf;
 
-        $sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+        $sql = "SELECT p.rowid, p.entity, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
         $sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
         $sql.= ", p.datec";
         $sql.= ", p.date_valid as datev";
@@ -1168,6 +1168,7 @@ class SupplierProposal extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id                   = $obj->rowid;
+                $this->entity               = $obj->entity;
 
                 $this->ref                  = $obj->ref;
                 $this->remise               = $obj->remise;

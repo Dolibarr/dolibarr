@@ -91,6 +91,7 @@ $langs->load("modulebuilder");
 			else if (type == 'int')      { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
 			else if (type == 'text')     { size.removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
     		else if (type == 'varchar')  { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+			else if (type == 'password') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true); default_value.val('').prop('disabled', true); jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
 			else if (type == 'boolean')  { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
 			else if (type == 'price')    { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
 			else if (type == 'select')   { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
@@ -166,7 +167,7 @@ if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_ar
 		}
 	}
 }
-elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
+elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password'))
 {
 	$paramlist=array_keys($param['options']);
 	$param_chain = $paramlist[0];
@@ -210,7 +211,7 @@ else
 </td></tr>
 <!-- Size -->
 <tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
-<!--  Value (for select list / radio) -->
+<!--  Value (for some fields like password, select list, radio, ...) -->
 <tr id="value_choice">
 <td>
 	<?php echo $langs->trans("Value"); ?>
@@ -224,6 +225,7 @@ else
     <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0,'', 0, 2, 'helpvalue2')?></span>
     <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0,'', 0, 2, 'helpvalue3')?></span>
     <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0,'', 0, 2, 'helpvalue4')?></span>
+    <span id="helppassword"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"),1,0,'', 0, 2, 'helpvalue5')?></span>
     </td></tr>
     </table>
 </td>

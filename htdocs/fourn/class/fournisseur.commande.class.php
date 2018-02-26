@@ -218,7 +218,7 @@ class CommandeFournisseur extends CommonOrder
         // Check parameters
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_vat,";
+        $sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_vat,";
         $sql.= " c.localtax1, c.localtax2, ";
         $sql.= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
         $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
@@ -253,6 +253,8 @@ class CommandeFournisseur extends CommonOrder
             }
 
             $this->id					= $obj->rowid;
+            $this->entity				= $obj->entity;
+
             $this->ref					= $obj->ref;
             $this->ref_supplier			= $obj->ref_supplier;
             $this->socid				= $obj->fk_soc;
@@ -2964,7 +2966,58 @@ class CommandeFournisseur extends CommonOrder
     					    }
     					    return 4;
     					}
-    				}
+    				}elseif(! empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED) )
+				{//set livraison to 'tot' if more products received than wished. (and if $closeopenorder is set to 1 of course...)
+					
+					$close=0;
+					
+					if( count($diff_array) > 0 )
+					{//there are some difference between  the two arrays
+	
+						//scan the array of results
+						foreach($diff_array as $key => $value)
+						{//if the quantity delivered is greater or equal to wish quantity
+							if($qtydelivered[$key] >= $qtywished[$key] )
+							{
+								$close++;
+							}
+		
+						}
+					}
+
+					
+					if($close == count($diff_array))
+					{//all the products are received equal or more than the wished quantity
+						if ($closeopenorder)
+    						{
+    							$ret = $this->Livraison($user, $date_liv, 'tot', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+        						if ($ret<0) {
+        							return -1;
+        						}
+    					    		return 5;
+    						}
+    						else
+    						{
+    					   	 	//Diff => received partially
+    					  		$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							if ($ret<0) {
+								return -1;
+							}
+							return 4;
+						}
+					
+					
+					}
+					else
+					{//all the products are not received
+						$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+						if ($ret<0) {
+							return -1;
+						}
+						return 4;
+					}
+					
+				}
     				else
     				{
     					//Diff => received partially
