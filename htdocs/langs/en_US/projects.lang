@@ -55,6 +55,7 @@ TasksOnOpenedProject=Tasks on open projects
 WorkloadNotDefined=Workload not defined
 NewTimeSpent=Time spent
 MyTimeSpent=My time spent
+BillTime=Bill the time spent
 Tasks=Tasks
 Task=Task
 TaskDateStart=Task start date
