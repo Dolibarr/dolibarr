@@ -850,6 +850,10 @@ class FormFile
 		$out='';
 		$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
+		// Get object entity
+		preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
+		$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
+
 		$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
 
 		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
@@ -903,7 +907,7 @@ class FormFile
 				}
 
 				// Download
-				$tmpout.= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+				$tmpout.= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime=dol_mimetype($relativepath,'',0);
 				if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
 				$tmpout.= '>';
