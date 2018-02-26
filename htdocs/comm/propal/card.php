@@ -201,7 +201,7 @@ if (empty($reshook))
 	{
 		$result = $object->delete($user);
 		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/comm/propal/list.php');
+			header('Location: ' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1');
 			exit();
 		} else {
 			$langs->load("errors");

@@ -191,7 +191,7 @@ if (empty($reshook))
 
 		$result = $object->delete($user, 0, $idwarehouse);
 		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
+			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1');
 			exit();
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');

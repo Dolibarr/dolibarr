@@ -157,7 +157,7 @@ if (empty($reshook)) {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
 			} else {
-				header("Location: index.php");
+				header("Location: index.php?restore_lastsearch_values=1");
 				exit;
 			}
 		}

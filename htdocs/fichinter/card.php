@@ -470,7 +470,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
-		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
+		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter&restore_lastsearch_values=1');
 		exit;
 	}
 

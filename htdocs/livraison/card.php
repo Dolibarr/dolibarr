@@ -165,7 +165,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	{
 		$db->commit();
 		if (! empty($backtopage)) header("Location: ".$backtopage);
-		else header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+		else header("Location: ".DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
