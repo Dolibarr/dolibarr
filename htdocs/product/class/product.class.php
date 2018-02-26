@@ -3392,7 +3392,7 @@ class Product extends CommonObject
 	 * 	@param		int		$id					Id of product to search childs of
 	 *  @param		int		$firstlevelonly		Return only direct child
 	 *  @param		int		$level				Level of recursing call (start to 1)
-	 *  @return     array       				Prod
+	 *  @return     array       				Return array(prodid=>array(0=prodid, 1=>qty, 2=> ...)
 	 */
 	function getChildsArbo($id, $firstlevelonly=0, $level=1)
 	{
