@@ -1999,7 +1999,7 @@ function dol_now($mode='gmt')
 	}*/
 	else if ($mode == 'tzuser')				// Time for now with user timezone added
 	{
-		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
+		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
 		$ret=(int) dol_now('gmt')+($offsettz+$offsetdst);
