@@ -600,7 +600,7 @@ if ($resql)
 			{
 			   print '<td align="center">';
 			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
-			   if ($objp->frequency > 0 && $objp->date_last_gen && $objp->date_last_gen < $now) print img_warning($langs->trans("Late"));
+			   if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
