@@ -2730,7 +2730,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 				$this->error = $this->db->lasterror();
 			}
 		}
-		// TODO free discount linked to line as in customer invoice 
+
 		if (! $error)
 		{
 			$this->db->commit();
