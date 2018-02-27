@@ -1231,7 +1231,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *		Charge le projet d'id $this->fk_project dans this->projet
+	 *		Load the project with id $this->fk_project into this->project
 	 *
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
@@ -1251,7 +1251,25 @@ abstract class CommonObject
 	}
 
 	/**
-	 *		Charge le user d'id userid dans this->user
+	 *		Load the product with id $this->fk_product into this->product
+	 *
+	 *		@return		int			<0 if KO, >=0 if OK
+	 */
+	function fetch_product()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		if (empty($this->fk_product)) return 0;
+
+		$product = new Product($this->db);
+		$result = $product->fetch($this->fk_product);
+
+		$this->product = $product;
+		return $result;
+	}
+
+	/**
+	 *		Load the user with id $userid into this->user
 	 *
 	 *		@param	int		$userid 		Id du contact
 	 *		@return	int						<0 if KO, >0 if OK
