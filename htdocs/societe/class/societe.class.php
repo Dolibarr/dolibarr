@@ -1121,10 +1121,11 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
-	 *    @param    string	$email   		Email (Warning, this can return several records)
+	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
+	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='', $email='')
+	function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='', $email='', $ref_alias='')
 	{
 		global $langs;
 		global $conf;
@@ -1166,17 +1167,18 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
-		if ($rowid)   $sql .= ' AND s.rowid = '.$rowid;
-		if ($ref)     $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
-		if ($ref_ext) $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
-		if ($ref_int) $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
-		if ($idprof1) $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
-		if ($idprof2) $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
-		if ($idprof3) $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
-		if ($idprof4) $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
-		if ($idprof5) $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
-		if ($idprof6) $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
-		if ($email)   $sql .= " AND s.email = '".$this->db->escape($email)."'";
+		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
+		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
+		if ($ref_alias) $sql .= " AND s.nom_alias = '".$this->db->escape($nom_alias)."'";
+		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
+		if ($ref_int)   $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
+		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
+		if ($idprof2)   $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
+		if ($idprof3)   $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
+		if ($idprof4)   $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
+		if ($idprof5)   $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
+		if ($idprof6)   $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
+		if ($email)     $sql .= " AND s.email = '".$this->db->escape($email)."'";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3767,6 +3769,8 @@ class Societe extends CommonObject
 			$to_add = $categories;
 		}
 
+		$error = 0;
+
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
@@ -3774,12 +3778,20 @@ class Societe extends CommonObject
 			}
 		}
 		foreach ($to_add as $add) {
-			if ($c->fetch($add) > 0) {
-				$c->add_type($this, $type_text);
+			if ($c->fetch($add) > 0)
+			{
+				$result = $c->add_type($this, $type_text);
+				if ($result < 0)
+				{
+					$error++;
+					$this->error = $c->error;
+					$this->errors = $c->errors;
+					break;
+				}
 			}
 		}
 
-		return 1;
+		return $error ? -1 : 1;
 	}
 
 

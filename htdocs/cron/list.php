@@ -38,6 +38,7 @@ if (!$user->rights->cron->read) accessforbidden();
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'cronjoblist';   // To manage different context of search
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -49,9 +50,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.status';
 if (! $sortorder) $sortorder='ASC';
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='cronjoblist';
 
 $status=GETPOST('status','int');
 if ($status == '') $status=-2;
@@ -151,6 +149,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
  */
 
 $form = new Form($db);
+$cronjob = new Cronjob($db);
 
 $pagetitle=$langs->trans("CronList");
 
@@ -280,6 +279,9 @@ if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("Warn
 print info_admin($text);
 print '<br>';
 
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+//$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder">';
@@ -340,19 +342,22 @@ if ($num > 0)
 		if (empty($obj)) break;
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
 
+		$object->id = $obj->rowid;
+		$object->ref = $obj->rowid;
+		$object->label = $obj->label;
+
 		print '<tr class="oddeven">';
 
 		print '<td class="nowrap">';
-		print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$obj->rowid.'">';
-		print img_picto('', 'object_cron').' ';
-		print $obj->rowid;
-		print '</a>';
+		print $object->getNomUrl(1);
 		print '</td>';
 
 		print '<td>';
 		if (! empty($obj->label))
 		{
-			print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$obj->rowid.'">'.$langs->trans($obj->label).'</a>';
+			$object->ref = $obj->label;
+			print $object->getNomUrl(0, '', 1);
+			$object->ref = $obj->rowid;
 		}
 		else
 		{
@@ -430,7 +435,7 @@ if ($num > 0)
 		print '<td align="right" class="nowrap">';
 		if ($user->rights->cron->create)
 		{
-			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"])."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
+			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:''))."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{

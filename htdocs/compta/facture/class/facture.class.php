@@ -557,6 +557,15 @@ class Facture extends CommonInvoice
 						}
 
 						$newinvoiceline->fk_parent_line=$fk_parent_line;
+
+						if($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except){
+                            $discount = new DiscountAbsolute($this->db);
+                            $discount->fetch($newinvoiceline->fk_remise_except);
+
+						    $discountId = $soc->set_remise_except($discount->amount_ht, $user, $discount->description, $discount->tva_tx);
+						    $newinvoiceline->fk_remise_except = $discountId;
+                        }
+
 						$result=$newinvoiceline->insert();
 
 						// Defined the new fk_parent_line
@@ -1228,7 +1237,7 @@ class Facture extends CommonInvoice
 
 		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount';
+		$sql = 'SELECT f.rowid,f.entity,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount';
 		$sql.= ', f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc, f.revenuestamp';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.datef as df, f.date_pointoftax';
@@ -1265,6 +1274,8 @@ class Facture extends CommonInvoice
 				$obj = $this->db->fetch_object($result);
 
 				$this->id					= $obj->rowid;
+				$this->entity				= $obj->entity;
+
 				$this->ref					= $obj->facnumber;
 				$this->ref_client			= $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
@@ -3831,6 +3842,7 @@ class Facture extends CommonInvoice
 
 		// Initialize parameters
 		$this->id=0;
+		$this->entity = 1;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;

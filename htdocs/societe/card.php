@@ -327,9 +327,11 @@ if (empty($reshook))
     if ($action == 'update_extras') {
         $object->fetch($socid);
 
+        $object->oldcopy = dol_clone($object);
+
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -511,6 +513,8 @@ if (empty($reshook))
         {
             if ($action == 'add')
             {
+            	$error = 0;
+
                 $db->begin();
 
                 if (empty($object->client))      $object->code_client='';
@@ -533,11 +537,21 @@ if (empty($reshook))
 
 					// Customer categories association
 					$custcats = GETPOST('custcats', 'array');
-					$object->setCategories($custcats, 'customer');
+					$result = $object->setCategories($custcats, 'customer');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
-					$object->setCategories($suppcats, 'supplier');
+					$result = $object->setCategories($suppcats, 'supplier');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
@@ -566,7 +580,7 @@ if (empty($reshook))
                         }
                     }
                     else
-	              {
+					{
 						switch($_FILES['photo']['error'])
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -593,7 +607,7 @@ if (empty($reshook))
                    	$error++;
                 }
 
-                if ($result >= 0)
+                if ($result >= 0 && ! $error)
                 {
                     $db->commit();
 
@@ -622,6 +636,8 @@ if (empty($reshook))
 
             if ($action == 'update')
             {
+            	$error = 0;
+
                 if (GETPOST('cancel','alpha'))
                 {
                 	if (! empty($backtopage))
@@ -647,16 +663,27 @@ if (empty($reshook))
                     setEventMessages($object->error, $object->errors, 'errors');
                   	$error++;
                 }
+
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if (!empty($user->rights->categorie->lire))
+				if (! $error && !empty($user->rights->categorie->lire))
 				{
 					// Customer categories association
 					$categories = GETPOST( 'custcats', 'array' );
-					$object->setCategories($categories, 'customer');
+					$result = $object->setCategories($categories, 'customer');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
 					// Supplier categories association
 					$categories = GETPOST('suppcats', 'array');
-					$object->setCategories($categories, 'supplier');
+					$result = $object->setCategories($categories, 'supplier');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 
                 // Logo/Photo save
@@ -686,13 +713,18 @@ if (empty($reshook))
                             }
                             else
                             {
-                                // Create small thumbs for company (Ratio is near 16/9)
-                                // Used on logon for example
-                                $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+                            	// Create thumbs
+                            	$object->addThumbs($newfile);
 
-                                // Create mini thumbs for company (Ratio is near 16/9)
-                                // Used on menu or for setup page for example
-                                $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+                                // Index file in database
+                                if (! empty($conf->global->THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD))
+                                {
+                                	require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+                                	// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
+                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', 'uploaded', 1);
+                                	// now we index the uploaded logo file
+                                	addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
+                                }
                             }
                         }
                     }
@@ -764,7 +796,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/societe/list.php?delsoc=".urlencode($object->name));
+            header("Location: ".DOL_URL_ROOT."/societe/list.php?restore_lastsearch_values=1&delsoc=".urlencode($object->name));
             exit;
         }
         else
@@ -1145,7 +1177,7 @@ else
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'._ROWS_2.'" wrap="soft">';
+	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 

@@ -842,7 +842,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result >= 0)
 		{
-			header("Location: index.php");
+			header("Location: list.php?restore_lastsearch_values=1");
 			return;
 		}
 		else
@@ -880,7 +880,7 @@ if (empty($reshook))
 
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
 		if (! $error) {
@@ -1895,7 +1895,7 @@ else
 						}
 						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver))
 						{
-							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
+							print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
 							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}

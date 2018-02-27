@@ -216,6 +216,21 @@ function updateTotal(days,mode)
         if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+days).addClass("bold");
         else jQuery('.totalDay'+days).removeClass("bold");
     	jQuery('.totalDay'+days).text(pad(total.getHours())+':'+pad(total.getMinutes()));
+    	
+    	var total = new Date(0);
+        total.setHours(0);
+        total.setMinutes(0); 
+        for (var i=0; i<7; i++)
+        {
+        	var taskTime= new Date(0);
+        	result=parseTime(jQuery('.totalDay'+i).text(),taskTime);
+        	if (result >= 0)
+        	{
+        		total.setHours(total.getHours()+taskTime.getHours());
+        		total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+        	}
+        }
+    	jQuery('.totalDayAll').text(pad(total.getHours())+':'+pad(total.getMinutes()));
     }
     else
     {
@@ -260,7 +275,6 @@ function updateTotal(days,mode)
         else jQuery('.totalDay'+days).removeClass("bold");
     	jQuery('.totalDay'+days).text(total);
     }
-    
 }
 
    

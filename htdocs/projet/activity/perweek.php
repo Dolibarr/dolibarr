@@ -531,8 +531,8 @@ $colspan=7;
 
 if ($conf->use_javascript_ajax)
 {
-	print '<tr class="liste_total">
-                <td class="liste_total" colspan="'.$colspan.'">';
+	print '<tr class="liste_total">';
+    print '<td class="liste_total" colspan="'.$colspan.'">';
 	print $langs->trans("Total");
 	print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 	print '</td>';
@@ -547,8 +547,8 @@ if ($conf->use_javascript_ajax)
 
 		print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
-	print '<td class="liste_total"></td>
-    	</tr>';
+	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+	print '</tr>';
 }
 
 
@@ -625,7 +625,7 @@ if (count($tasksarray) > 0)
 				$cssweekend='weekend';
 			}
 
-			print '<td align="center'.($cssweekend?' '.$cssweekend:'').'">';
+			print '<td class="center hide'.$idw.' '.($cssweekend?' '.$cssweekend:'').'">';
 			$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 			$timeonothertasks=($totalforeachday[$tmpday] - $totalforvisibletasks[$tmpday]);
 			if ($timeonothertasks)
@@ -658,7 +658,7 @@ if (count($tasksarray) > 0)
 
 					print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 				}
-                print '<td class="liste_total"></td>
+                print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
 }

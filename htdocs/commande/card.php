@@ -185,7 +185,7 @@ if (empty($reshook))
 		$result = $object->delete($user);
 		if ($result > 0)
 		{
-			header('Location: index.php');
+			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -1268,9 +1268,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)

@@ -334,6 +334,7 @@ PriceUHTCurrency=U.P (currency)
 PriceUTTC=U.P. (inc. tax)
 Amount=Amount
 AmountInvoice=Invoice amount
+AmountInvoiced=Amount invoiced
 AmountPayment=Payment amount
 AmountHTShort=Amount (net)
 AmountTTCShort=Amount (inc. tax)
@@ -854,6 +855,7 @@ FileNotShared=File not shared to exernal public
 Project=Project
 Projects=Projects
 Rights=Permissions
+LineNb=Line nb
 # Week day
 Monday=Monday
 Tuesday=Tuesday

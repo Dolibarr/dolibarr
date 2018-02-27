@@ -286,9 +286,11 @@ if (empty($reshook))
 
     if ($action == 'update_extras')
     {
-        // Fill array 'array_options' with data from update form
+    	$object->oldcopy = dol_clone($object);
+
+    	// Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -1978,7 +1980,8 @@ else
 					$i = 0;$total = 0;
 
 					print '<tr class="liste_titre">';
-					print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
+					print '<td style="text-align:center;">'.$langs->trans('LineNb').'</td>';
+					//print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
 					print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
@@ -2001,15 +2004,21 @@ else
 
 					foreach ($object->lines as &$line)
 					{
-						$piece_comptable = $i + 1;
+						$numline = $i + 1;
 
 						if ($action != 'editline' || $line->rowid != GETPOST('rowid'))
 						{
 							print '<tr class="oddeven">';
 
 							print '<td style="text-align:center;">';
+							print $numline;
+							print '</td>';
+
+							/*print '<td style="text-align:center;">';
 							print img_picto($langs->trans("Document"), "object_generic");
-							print ' <span>'.$piece_comptable.'</span></td>';
+							print ' <span>'.$piece_comptable.'</span>';
+							print '</td>';*/
+
 							print '<td style="text-align:center;">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 							if (! empty($conf->projet->enabled))
 							{

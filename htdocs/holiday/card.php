@@ -282,8 +282,8 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 
 	$canedit=(($user->id == $object->fk_user && $user->rights->holiday->write) || ($user->id != $object->fk_user && $user->rights->holiday->write_all));
 
-    // If this is a rough draft
-	if ($object->statut == 1 || $object->statut == 3)
+    // If this is a rough draft, approved, canceled or refused
+	if ($object->statut == 1 || $object->statut == 4 || $object->statut == 5)
 	{
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
 		if ($canedit)
@@ -299,7 +299,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	if (! $error)
 	{
 		$db->commit();
-		header('Location: list.php');
+		header('Location: list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
@@ -1255,7 +1255,7 @@ else
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
-                    if ($user->rights->holiday->delete && $object->statut == 1)	// If draft
+                    if ($user->rights->holiday->delete && ($object->statut == 1 || $object->statut == 4 || $object->statut == 5))	// If draft or canceled or refused
                     {
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
