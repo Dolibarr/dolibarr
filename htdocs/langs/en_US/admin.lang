@@ -392,6 +392,7 @@ PriceBaseTypeToChange=Modify on prices with base reference value defined on
 MassConvert=Launch mass convert
 String=String
 TextLong=Long text
+HtmlText=Html text
 Int=Integer
 Float=Float
 DateAndTime=Date and hour
