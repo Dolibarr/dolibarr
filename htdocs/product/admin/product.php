@@ -129,7 +129,7 @@ if ($action == 'other')
 
 	}
 
-	$value = GETPOST('activate_sousproduits','alpha');
+	$value = GETPOST('PRODUIT_SOUSPRODUITS','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value,'chaine',0,'',$conf->entity);
 
 	$value = GETPOST('activate_viewProdDescInForm','alpha');
@@ -580,7 +580,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
-print $form->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
+print $form->selectyesno("PRODUIT_SOUSPRODUITS",$conf->global->PRODUIT_SOUSPRODUITS,1);
 print '</td>';
 print '</tr>';
 

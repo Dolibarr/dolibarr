@@ -266,8 +266,9 @@ class Task extends CommonObject
 					$this->task_parent_position = $obj->task_parent_position;
 				}
 
-				// Retreive all extrafield data
-			   	$this->fetch_optionals();
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 			}
 
 			$this->db->free($resql);

@@ -381,12 +381,9 @@ class FactureRec extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-				// Retreive all extrafield for thirdparty
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
@@ -504,7 +501,7 @@ class FactureRec extends CommonInvoice
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
 
-				$extralabelsline = $line->fetch_optionals($line->id,$extrafieldsline);
+				$extralabelsline = $line->fetch_optionals($line->id);
 
 				// Multicurrency
 				$line->fk_multicurrency 		= $objp->fk_multicurrency;

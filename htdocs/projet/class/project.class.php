@@ -64,6 +64,7 @@ class Project extends CommonObject
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
     var $budget_amount;
+    var $bill_time;			// Is the time spent on project must be invoiced or not
 
     var $statuts_short;
     var $statuts_long;
@@ -178,6 +179,7 @@ class Project extends CommonObject
         $sql.= ", datee";
         $sql.= ", opp_amount";
         $sql.= ", budget_amount";
+        $sql.= ", bill_time";
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
@@ -297,6 +299,7 @@ class Project extends CommonObject
             $sql.= ", opp_amount = " . (strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
             $sql.= ", budget_amount = " . (strcmp($this->budget_amount, '')  ? price2num($this->budget_amount) : "null");
             $sql.= ", fk_user_modif = " . $user->id;
+            $sql.= ", bill_time = " . ($this->bill_time ? 1 : 0);
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -394,7 +397,8 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
-        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent, note_private, note_public, model_pdf";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
+        $sql.= " note_private, note_public, model_pdf, bill_time";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -441,10 +445,12 @@ class Project extends CommonObject
                 $this->opp_percent	= $obj->opp_percent;
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
+                $this->bill_time = (int) $obj->bill_time;
 
                 $this->db->free($resql);
 
-                // Retreive all extrafield for thirdparty
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
                 $this->fetch_optionals();
 
                 if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
@@ -583,10 +589,10 @@ class Project extends CommonObject
                     $i++;
                 }
                 $this->db->free($result);
-
-                /* Return array */
-                return $elements;
             }
+
+            /* Return array even if empty*/
+            return $elements;
         }
         else
         {
@@ -1140,10 +1146,10 @@ class Project extends CommonObject
      *
      * @param 	User	$user			User object
      * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
-     * @param 	int		$list			0=Return array,1=Return string list
+     * @param 	int		$list			0=Return array, 1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
-     * @param	string		$filter			additionnal filter on project (statut, ref, ...)
-     * @return 	array or string			Array of projects id, or string with projects id separated with ","
+     * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+     * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0, $filter='')
     {

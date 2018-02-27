@@ -117,7 +117,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->su
 	if ($result > 0)
 	{
 	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php');
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?resotre_lastsearch_values=1');
 		exit;
 	}
 	else

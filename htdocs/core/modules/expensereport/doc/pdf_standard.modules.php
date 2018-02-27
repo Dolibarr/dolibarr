@@ -328,7 +328,15 @@ class pdf_standard extends ModeleExpenseReport
                         $nextColumnPosX = $this->posxprojet;
                     }
 
-					$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 10), 0, 'C');
+                    $expensereporttypecode = $object->lines[$i]->type_fees_code;
+                    $expensereporttypecodetoshow = $outputlangs->transnoentities($expensereporttypecode);
+                    if ($expensereporttypecodetoshow == $expensereporttypecode)
+                    {
+                    	$expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
+                    }
+                    $expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);	// 10 is too much
+
+                    $pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
                     // Project
 					if (! empty($conf->projet->enabled))

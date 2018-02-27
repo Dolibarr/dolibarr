@@ -411,6 +411,7 @@ ExtrafieldCheckBoxFromList=Checkboxes from table
 ExtrafieldLink=Link to an object
 ComputedFormula=Computed field
 ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2) : ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id : ($obj->rowid ? $obj->rowid : $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5 : '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : 'Parent project not found'
+ExtrafieldParamHelpPassword=Keep this field empty means value will be stored without encryption (field must be only hidden with star on screen).<br>Set here value 'auto' to use the default encryption rule to save password into database (then value read will be the hash only, no way to retreive original value)
 ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example : <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list :<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list :<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
@@ -885,6 +886,7 @@ DictionaryRevenueStamp=Amount of revenue stamps
 DictionaryPaymentConditions=Payment terms
 DictionaryPaymentModes=Payment modes
 DictionaryTypeContact=Contact/Address types
+DictionaryTypeOfContainer=Type of website pages/containers
 DictionaryEcotaxe=Ecotax (WEEE)
 DictionaryPaperFormat=Paper formats
 DictionaryFormatCards=Cards formats
@@ -1765,6 +1767,8 @@ MAIN_PDF_MARGIN_LEFT=Left margin on PDF
 MAIN_PDF_MARGIN_RIGHT=Right margin on PDF
 MAIN_PDF_MARGIN_TOP=Top margin on PDF
 MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
+SetToYesIfGroupIsComputationOfOtherGroups=Set this to yes if this group is a computation of other groups
+EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous field was set to Yes (For example 'CODEGRP1+CODEGRP2')
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

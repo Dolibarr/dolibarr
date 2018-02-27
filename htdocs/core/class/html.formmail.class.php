@@ -982,11 +982,12 @@ class FormMail extends Form
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param	int			$id				Id of template to find, or -1 for first found with position = 0, or 0 for all
+	 *      @param	int			$id				Id of template to find, or -1 for first found with lower position, or 0 for first found whatever is position
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
+	 *      @param	string		$label			Label of template
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
-	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
+	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1, $label='')
 	{
 		$ret=array();
 
@@ -996,11 +997,13 @@ class FormMail extends Form
 		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
+		if ($label) $sql.=" AND label ='".$this->db->escape($label)."'";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
-		$sql.= $db->order("position,lang,label","ASC");
-		if ($id == -1) $sql.= $db->plimit(1);
+		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
+		else $sql.= $db->order("position,lang,label","ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
+		$sql.= $db->plimit(1);
 		//print $sql;
 
 		$resql = $db->query($sql);
@@ -1185,7 +1188,7 @@ class FormMail extends Form
 					$extralabels = $extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
-					$product->fetch_optionals($product->id, $extralabels);
+					$product->fetch_optionals();
 					foreach ($extrafields->attribute_label as $key => $label) {
 						$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
 					}

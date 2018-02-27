@@ -95,4 +95,112 @@ class FormWebsite
         return $out;
     }
 
+
+    /**
+     *  Return a HTML select list of a dictionary
+     *
+     *  @param  string	$htmlname          	Name of select zone
+     *  @param	string	$selected			Selected value
+     *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string  $moreattrib         More attributes on HTML select tag
+     * 	@return	void
+     */
+    function selectTypeOfContainer($htmlname, $selected='', $useempty=0, $moreattrib='')
+    {
+    	global $langs, $conf, $user;
+
+    	$langs->load("admin");
+
+    	$sql = "SELECT rowid, code, label, entity";
+    	$sql.= " FROM ".MAIN_DB_PREFIX.'c_type_container';
+    	$sql.= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
+    	$sql.= " ORDER BY label";
+
+    	dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
+    	$result = $this->db->query($sql);
+    	if ($result)
+    	{
+    		$num = $this->db->num_rows($result);
+    		$i = 0;
+    		if ($num)
+    		{
+    			print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+    			if ($useempty == 1 || ($useempty == 2 && $num > 1))
+    			{
+    				print '<option value="-1">&nbsp;</option>';
+    			}
+
+    			while ($i < $num)
+    			{
+    				$obj = $this->db->fetch_object($result);
+    				if ($selected == $obj->rowid || $selected == $obj->code)
+    				{
+    					print '<option value="'.$obj->code.'" selected>';
+    				}
+    				else
+    				{
+    					print '<option value="'.$obj->code.'">';
+    				}
+    				print $obj->label;
+    				print '</option>';
+    				$i++;
+    			}
+    			print "</select>";
+    			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+    		}
+    		else
+    		{
+    			print $langs->trans("NoTypeOfPagePleaseEditDictionary");
+    		}
+    	}
+    	else {
+    		dol_print_error($this->db);
+    	}
+    }
+
+
+    /**
+     *  Return a HTML select list of a dictionary
+     *
+     *  @param  string	$htmlname          	Name of select zone
+     *  @param	string	$selected			Selected value
+     *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string  $moreattrib         More attributes on HTML select tag
+     * 	@return	void
+     */
+    function selectSampleOfContainer($htmlname, $selected='', $useempty=0, $moreattrib='')
+    {
+    	global $langs, $conf, $user;
+
+    	$langs->load("admin");
+
+    	$arrayofsamples=array('corporatehome'=>'CorporateHomePage', 'empty'=>'EmptyPage');
+
+    	$out = '';
+
+    	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+    	if ($useempty == 1 || ($useempty == 2 && $num > 1))
+    	{
+    		$out .= '<option value="-1">&nbsp;</option>';
+    	}
+
+    	foreach($arrayofsamples as $key => $val)
+    	{
+    		if ($selected == $key)
+    		{
+    			$out .= '<option value="'.$key.'" selected>';
+    		}
+    		else
+    		{
+    			$out .= '<option value="'.$key.'">';
+    		}
+    		$out .= $langs->trans($val);
+    		$out .= '</option>';
+    		$i++;
+    	}
+    	$out .= "</select>";
+
+    	return $out;
+    }
+
 }

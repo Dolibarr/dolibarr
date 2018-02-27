@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
@@ -152,7 +153,7 @@ $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/jquery
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
-$htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=relativepathtomyfile.js"></script>'."\n";
+$htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=js/myfile.js"></script>'."\n";
 
 
 /*
@@ -287,13 +288,16 @@ if ($action == 'addcontainer')
 		// and $urltograbdirrootwithoutslash is https://www.dolimed.com
 
 		// Check pageurl is not already used
-		$tmpwebsitepage = new WebsitePage($db);
-		$result = $tmpwebsitepage->fetch(0, $object->id, $pageurl);
-		if ($result > 0)
+		if ($pageurl)
 		{
-			setEventMessages($langs->trans("AliasPageAlreadyExists", $pageurl), null, 'errors');
-			$error++;
-			$action='createcontainer';
+			$tmpwebsitepage = new WebsitePage($db);
+			$result = $tmpwebsitepage->fetch(0, $object->id, $pageurl);
+			if ($result > 0)
+			{
+				setEventMessages($langs->trans("AliasPageAlreadyExists", $pageurl), null, 'errors');
+				$error++;
+				$action='createcontainer';
+			}
 		}
 
 		if (! $error)
@@ -523,6 +527,11 @@ if ($action == 'addcontainer')
 
 				getAllImages($object, $objectpage, $urltograb, $tmp, $action, 1, $grabimages, $grabimagesinto);
 
+				// Normalize links href to Dolibarr internal naming
+				$tmp = preg_replace('/a href="\/([^\/"]+)\/([^\/"]+)"/', 'a href="/\1-\2.php"', $tmp);
+				$tmp = preg_replace('/a href="\/([^\/"]+)\/([^\/"]+)\/([^\/"]+)"/', 'a href="/\1-\2-\3.php"', $tmp);
+				$tmp = preg_replace('/a href="\/([^\/"]+)\/([^\/"]+)\/([^\/"]+)\/([^\/"]+)"/', 'a href="/\1-\2-\3-\4.php"', $tmp);
+
 				//print dol_escape_htmltag($tmp);exit;
 				$objectpage->content = $tmp;
 
@@ -543,8 +552,13 @@ if ($action == 'addcontainer')
 		$substitutionarray=array();
 		$substitutionarray['__WEBSITE_CREATE_BY__']=$user->getFullName($langs);
 
+		$sample = GETPOST('sample','alpha');
+		if (empty($sample)) $sample='empty';
+
+		$pathtosample = DOL_DOCUMENT_ROOT.'/website/page-sample-'.$sample.'.html';
+
 		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
-		$objectpage->content = make_substitutions(@file_get_contents(DOL_DOCUMENT_ROOT.'/website/'.$objectpage->type_container.'template.html'), $substitutionarray);
+		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 	}
 
 	if (! $error)
@@ -1242,6 +1256,7 @@ if (GETPOST('exportsite','alpha'))
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formwebsite = new FormWebsite($db);
+$formother = new FormOther($db);
 
 $help_url='';
 
@@ -1408,29 +1423,44 @@ if (count($object->records) > 0)
 
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 	{
-		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/website/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint)).'">';
-		print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot), 1, 'preview');
+		$urlext=$virtualurl;
+		$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
+
+		$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot);
+		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/website/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($htmltext).'">';
+		print $form->textwithpicto('', $htmltext, 1, 'preview');
 		print '</a>';
 
 		print '<div class="websiteinputurl" id="websiteinputurl">';
 		print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
 		//print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
-		$htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
+		$htmltext =$langs->trans("SetHereVirtualHost", $dataroot);
+		$htmltext.='<br>';
+		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
 		print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helpvirtualhost');
 		print '</div>';
 
-		$urlext=$virtualurl;
-		$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
 		if (empty($object->fk_default_home))
 		{
+			$htmltext = '<span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br>'.$langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>');
+			$htmltext.='<br>';
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
 			print '<span class="websitebuttonsitepreview websitebuttonsitepreviewdisabled cursornotallowed" id="previewsiteextdisabled" href="" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-			print $form->textwithpicto('', '<span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br>'.$langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</span>';
 		}
 		else
 		{
+			$htmltext = $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>');
+			$htmltext.='<br>';
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
 			print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
-			print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</a>';
 		}
 	}
@@ -1451,7 +1481,7 @@ if (count($object->records) > 0)
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
-		$array=$objectpage->fetchAll($object->id);
+		$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
 		if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
 		$atleastonepage=(is_array($array) && count($array) > 0);
 
@@ -1580,8 +1610,12 @@ if (count($object->records) > 0)
 			$realpage=$urlwithroot.'/public/website/index.php?website='.$website.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
 
-			print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage)).'">';
-			print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot), 1, 'preview');
+			$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot);
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+
+			print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($htmltext).'">';
+			print $form->textwithpicto('', $htmltext, 1, 'preview');
 			print '</a>';       // View page in new Tab
 
 			print '<div class="websiteinputurl" id="websiteinputpage">';
@@ -1592,8 +1626,11 @@ if (count($object->records) > 0)
 
 			$urlext=$virtualurl.'/'.$pagealias.'.php';
 			$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
-			print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $urlext)).'">';
-			print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>'), 1, 'preview_ext');
+
+			$htmltext = $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>');
+
+			print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($htmltext).'">';
+			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</a>';
 			//print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
 
@@ -1879,7 +1916,12 @@ if ($action == 'createsite')
 	print '</td></tr>';
 
 	print '<tr><td>';
-	print $form->textwithpicto($langs->trans('Virtualhost'), $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>'), 1, 'help', '', 0, 2, 'tooltipvirtual');
+	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>');
+	$htmltext.='<br>';
+	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
+	$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
+
+	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'tooltipvirtual');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($sitedesc).'">';
 	print '</td></tr>';
@@ -1996,14 +2038,19 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
-	$arrayoftype=array('page'=>$langs->trans("Page"), 'banner'=>$langs->trans("Banner"), 'blogpost'=>$langs->trans("BlogPost"), 'other'=>$langs->trans("Other"));
-	print $form->selectarray('WEBSITE_TYPE_CONTAINER', $arrayoftype, $type_container);
+	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER')?GETPOST('WEBSITE_TYPE_CONTAINER'):'page'));
+	print '</td></tr>';
+
+	print '<tr><td class="titlefield fieldrequired">';
+	print $langs->trans('WEBSITE_PAGE_EXAMPLE');
+	print '</td><td>';
+	print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample')?GETPOST('sample'):'corporatehomepage'));
 	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
-	print '<input type="text" class="flat maxwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="fieldrequired">';

@@ -1003,7 +1003,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$freetextheight=0;
 	if ($line)	// Free text
 	{
-		//$line="eee<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
+		//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
 	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 		{
 			$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.

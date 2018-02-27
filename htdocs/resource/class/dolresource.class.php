@@ -213,13 +213,9 @@ class Dolresource extends CommonObject
     			$this->note_private				=	$obj->note_private;
     			$this->type_label				=	$obj->type_label;
 
-    			// Retreive all extrafield for thirdparty
+    			// Retreive all extrafield
     			// fetch optionals attributes and labels
-    			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-    			$extrafields=new ExtraFields($this->db);
-    			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-    			$this->fetch_optionals($this->id,$extralabels);
-
+    			$this->fetch_optionals();
     		}
     		$this->db->free($resql);
 
@@ -570,7 +566,7 @@ class Dolresource extends CommonObject
     				// Retreive all extrafield for thirdparty
     				// fetch optionals attributes and labels
 
-    				$line->fetch_optionals($line->id,$extralabels);
+    				$line->fetch_optionals();
 
     				$this->lines[] = $line;
     			}

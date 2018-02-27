@@ -850,7 +850,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php');
+			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -945,9 +945,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from add form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -963,7 +965,7 @@ if (empty($reshook))
 			{
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					$result=$object->insertExtraFields();
+					$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
 
 					if ($result < 0)
 					{
@@ -1665,7 +1667,7 @@ elseif (! empty($object->id))
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 
 	$head = ordersupplier_prepare_head($object);

@@ -1951,13 +1951,9 @@ class Product extends CommonObject
 
 				$this->db->free($resql);
 
-
-				// Retreive all extrafield for current object
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
@@ -3396,7 +3392,7 @@ class Product extends CommonObject
 	 * 	@param		int		$id					Id of product to search childs of
 	 *  @param		int		$firstlevelonly		Return only direct child
 	 *  @param		int		$level				Level of recursing call (start to 1)
-	 *  @return     array       				Prod
+	 *  @return     array       				Return array(prodid=>array(0=prodid, 1=>qty, 2=> ...)
 	 */
 	function getChildsArbo($id, $firstlevelonly=0, $level=1)
 	{

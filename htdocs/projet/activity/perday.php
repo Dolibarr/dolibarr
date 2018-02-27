@@ -595,10 +595,15 @@ if (count($tasksarray) > 0)
 	if ($isdiff)
 	{
 		print '<tr class="oddeven othertaskwithtime">';
-        print '<td colspan="'.$colspan.'">';
+        print '<td colspan="3">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
-		print '<td align="center">';
+		print '<td align="right" class="leftborder plannedworkload"></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td class="leftborder"></td>';
+		print '<td class="center">';
 		$timeonothertasks=($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
 		//if ($timeonothertasks)
 		//{

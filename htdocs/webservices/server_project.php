@@ -377,7 +377,7 @@ function getProject($authentication,$id='',$ref='')
                 $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
 
                 //Get extrafield values
-                $project->fetch_optionals($project->id,$extralabels);
+                $project->fetch_optionals();
                 foreach($extrafields->attribute_label as $key=>$label)
                 {
                     $project_result_fields=array_merge($project_result_fields,array('options_'.$key => $project->array_options['options_'.$key]));

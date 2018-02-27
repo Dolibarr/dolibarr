@@ -557,6 +557,15 @@ class Facture extends CommonInvoice
 						}
 
 						$newinvoiceline->fk_parent_line=$fk_parent_line;
+
+						if($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except){
+                            $discount = new DiscountAbsolute($this->db);
+                            $discount->fetch($newinvoiceline->fk_remise_except);
+
+						    $discountId = $soc->set_remise_except($discount->amount_ht, $user, $discount->description, $discount->tva_tx);
+						    $newinvoiceline->fk_remise_except = $discountId;
+                        }
+
 						$result=$newinvoiceline->insert();
 
 						// Defined the new fk_parent_line
@@ -790,14 +799,17 @@ class Facture extends CommonInvoice
 		// Charge facture source
 		$facture=new Facture($this->db);
 
-                $this->fetch_optionals();
-                if(!empty($this->array_options)){
-                    $facture->array_options = $this->array_options;
-                }
+		// Retreive all extrafield
+		// fetch optionals attributes and labels
+		$this->fetch_optionals();
 
-                foreach($this->lines as &$line){
+        if(!empty($this->array_options)){
+                    $facture->array_options = $this->array_options;
+        }
+
+        foreach($this->lines as &$line){
                     $line->fetch_optionals();//fetch extrafields
-                }
+        }
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
@@ -958,11 +970,6 @@ class Facture extends CommonInvoice
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-            // Call trigger
-            $result=$this->call_trigger('BILL_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1033,7 +1040,7 @@ class Facture extends CommonInvoice
 			$line->pa_ht			= $marginInfos[0];
 
             // get extrafields from original line
-			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			$object->lines[$i]->fetch_optionals();
 			foreach($object->lines[$i]->array_options as $options_key => $value)
 				$line->array_options[$options_key] = $value;
 
@@ -1230,7 +1237,7 @@ class Facture extends CommonInvoice
 
 		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount';
+		$sql = 'SELECT f.rowid,f.entity,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount';
 		$sql.= ', f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc, f.revenuestamp';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.datef as df, f.date_pointoftax';
@@ -1267,6 +1274,8 @@ class Facture extends CommonInvoice
 				$obj = $this->db->fetch_object($result);
 
 				$this->id					= $obj->rowid;
+				$this->entity				= $obj->entity;
+
 				$this->ref					= $obj->facnumber;
 				$this->ref_client			= $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
@@ -1333,16 +1342,13 @@ class Facture extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-				// Retrieve all extrafield for invoice
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
-				*/
+				 */
 
 				$this->lines  = array();
 
@@ -3836,6 +3842,7 @@ class Facture extends CommonInvoice
 
 		// Initialize parameters
 		$this->id=0;
+		$this->entity = 1;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;

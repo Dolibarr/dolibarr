@@ -1024,7 +1024,7 @@ class Commande extends CommonOrder
 
 		// get lines so they will be clone
 		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
+			$line->fetch_optionals();
 
         // Load source object
         $objFrom = clone $this;
@@ -1073,11 +1073,6 @@ class Commande extends CommonOrder
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-            // Call trigger
-            $result=$this->call_trigger('ORDER_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
         }
 
         unset($this->context['createfromclone']);
@@ -1150,7 +1145,7 @@ class Commande extends CommonOrder
 			$line->marque_tx		= $marginInfos[2];
 
             // get extrafields from original line
-			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			$object->lines[$i]->fetch_optionals();
 			foreach($object->lines[$i]->array_options as $options_key => $value)
 				$line->array_options[$options_key] = $value;
 
@@ -1572,7 +1567,7 @@ class Commande extends CommonOrder
         // Check parameters
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
+        $sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_statut';
         $sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
         $sql.= ', c.fk_account';
         $sql.= ', c.date_commande';
@@ -1602,12 +1597,14 @@ class Commande extends CommonOrder
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $result = $this->db->query($sql);
-        if ($result)
-        {
-            $obj = $this->db->fetch_object($result);
-            if ($obj)
-            {
-                $this->id					= $obj->rowid;
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+			if ($obj)
+			{
+				$this->id					= $obj->rowid;
+				$this->entity				= $obj->entity;
+
                 $this->ref					= $obj->ref;
                 $this->ref_client			= $obj->ref_client;
                 $this->ref_customer			= $obj->ref_client;
@@ -1673,12 +1670,9 @@ class Commande extends CommonOrder
 
                 if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
-                // Retrieve all extrafields for invoice
+                // Retreive all extrafield
                 // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-               	$this->fetch_optionals($this->id,$extralabels);
+                $this->fetch_optionals();
 
                 $this->db->free($result);
 

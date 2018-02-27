@@ -64,10 +64,6 @@ class ProductFournisseur extends Product
     var $fourn_unitprice;
     var $fourn_tva_tx;
     var $fourn_tva_npr;
-    /**
-     * @deprecated
-     */
-    var $fourn_unitcharges;       // old version used a buggy system to calculate margin of a charge field on supplier price. Now margin is on pmp, best supplier price or cost price.
 
     var $fk_supplier_price_expression;
     var $supplier_reputation;     // reputation of supplier
@@ -215,7 +211,6 @@ class ProductFournisseur extends Product
  		$error=0;
 
 		$unitBuyPrice = price2num($buyprice/$qty,'MU');
-		$unitCharges = price2num($charges/$qty,'MU');
 
 		$now=dol_now();
 
@@ -250,7 +245,6 @@ class ProductFournisseur extends Product
 			$sql.= " remise_percent = ".$remise_percent.",";
 			$sql.= " remise = ".$remise.",";
 			$sql.= " unitprice = ".$unitBuyPrice.",";
-			$sql.= " unitcharges = ".$unitCharges.",";   // deprecated
 			$sql.= " fk_availability = ".$availability.",";
 			$sql.= " entity = ".$conf->entity.",";
 			$sql.= " tva_tx = ".price2num($tva_tx).",";
@@ -306,7 +300,7 @@ class ProductFournisseur extends Product
             if ($resql) {
                 // Add price for this quantity to supplier
                 $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price(";
-                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
+                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
                 $sql .= " values('" . $this->db->idate($now) . "',";
                 $sql .= " " . $this->id . ",";
                 $sql .= " " . $fourn->id . ",";
@@ -319,7 +313,6 @@ class ProductFournisseur extends Product
                 $sql .= " " . $unitBuyPrice . ",";
                 $sql .= " " . $tva_tx . ",";
                 $sql .= " " . $charges . ",";
-                $sql .= " " . $unitCharges . ",";
                 $sql .= " " . $availability . ",";
                 $sql .= " ".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
                 $sql .= " " . $newnpr . ",";
@@ -393,7 +386,7 @@ class ProductFournisseur extends Product
     {
         global $conf;
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
         $sql.= " pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
@@ -418,7 +411,6 @@ class ProductFournisseur extends Product
             	$this->fourn_remise_percent     = $obj->remise_percent;
             	$this->fourn_remise             = $obj->remise;
             	$this->fourn_unitprice          = $obj->unitprice;
-            	$this->fourn_unitcharges        = $obj->unitcharges;	// deprecated
             	$this->fourn_tva_tx				= $obj->tva_tx;
             	// TODO
             	// $this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
@@ -478,7 +470,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE pfp.entity IN (".getEntity('productprice').")";
@@ -510,7 +502,6 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_remise			= $record["remise"];
 				$prodfourn->fourn_unitprice			= $record["unitprice"];
 				$prodfourn->fourn_charges           = $record["charges"];		// deprecated
-				$prodfourn->fourn_unitcharges       = $record["unitcharges"];	// deprecated
                 $prodfourn->fourn_tva_tx			= $record["tva_tx"];
                 $prodfourn->fourn_id				= $record["fourn_id"];
                 $prodfourn->fourn_name				= $record["supplier_name"];
@@ -588,7 +579,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges, pfp.unitcharges, ";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges,";
         $sql.= " pfp.remise, pfp.remise_percent, pfp.fk_supplier_price_expression, pfp.delivery_time_days";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity IN (".getEntity('societe').")";
@@ -623,7 +614,7 @@ class ProductFournisseur extends Product
                 {
                     $fourn_price = $record["price"];
                     // discount calculated buy price
-                    $fourn_unitprice = $record["unitprice"] * (1 - $record["remise_percent"] / 100) + $record["unitcharges"] - $record["remise"];
+                    $fourn_unitprice = $record["unitprice"] * (1 - $record["remise_percent"] / 100) - $record["remise"];
                     if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
                         $prod_supplier = new ProductFournisseur($this->db);
                         $prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
@@ -657,7 +648,6 @@ class ProductFournisseur extends Product
                         $this->fourn_remise             = $record["remise"];
                         $this->fourn_unitprice          = $record["unitprice"];
                         $this->fourn_charges            = $record["charges"];		// deprecated
-                        $this->fourn_unitcharges        = $record["unitcharges"];	// deprecated
                         $this->fourn_tva_tx             = $record["tva_tx"];
                         $this->fourn_id                 = $record["fourn_id"];
                         $this->fourn_name               = $record["supplier_name"];
@@ -755,14 +745,14 @@ class ProductFournisseur extends Product
             $out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
             foreach ($productFournList as $productFourn) {
-                $out.= '<tr><td align="right">'.($showunitprice?price($productFourn->fourn_unitprice * (1 -$productFourn->fourn_remise_percent/100) + $productFourn->fourn_unitcharges - $productFourn->fourn_remise):'').'</td>';
+                $out.= '<tr><td align="right">'.($showunitprice?price($productFourn->fourn_unitprice * (1 -$productFourn->fourn_remise_percent/100) - $productFourn->fourn_remise):'').'</td>';
                 $out.= '<td align="right">'.($showunitprice?$productFourn->fourn_qty:'').'</td>';
                 $out.= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
                 $out.= '<td>'.$productFourn->fourn_ref.'<td></tr>';
             }
             $out .= '</table>';
         } else {
-            $out=($showunitprice?price($this->fourn_unitprice * (1 - $this->fourn_remise_percent/100) + $this->fourn_unitcharges - $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
+            $out=($showunitprice?price($this->fourn_unitprice * (1 - $this->fourn_remise_percent/100) + $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
         }
         return $out;
     }

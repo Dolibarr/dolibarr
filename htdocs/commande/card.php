@@ -185,7 +185,7 @@ if (empty($reshook))
 		$result = $object->delete($user);
 		if ($result > 0)
 		{
-			header('Location: index.php');
+			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -1268,9 +1268,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -1281,7 +1283,7 @@ if (empty($reshook))
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
 																								  // some hooks
 			if (empty($reshook)) {
-				$result = $object->insertExtraFields();
+				$result = $object->insertExtraFields('ORDER_MODIFY');
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1804,7 +1806,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');

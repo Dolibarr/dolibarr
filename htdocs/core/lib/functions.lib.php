@@ -1999,7 +1999,7 @@ function dol_now($mode='gmt')
 	}*/
 	else if ($mode == 'tzuser')				// Time for now with user timezone added
 	{
-		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
+		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
 		$ret=(int) dol_now('gmt')+($offsettz+$offsetdst);
@@ -5703,6 +5703,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 			$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
 			if (is_object($object) && $object->element == 'shipping')
 			{
@@ -5766,11 +5767,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 			}
 
 			if (is_object($object->projet) && $object->projet->id > 0)
@@ -5806,7 +5811,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				$extrafieldstmp = new ExtraFields($db);
 				$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
-				$object->fetch_optionals($object->id, $extralabels);
+				$object->fetch_optionals();
 				foreach ($extrafieldstmp->attribute_label as $key => $label) {
 					$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 				}
@@ -5942,7 +5947,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 		if (dol_textishtml($text,1)) $msgishtml = 1;
 
 		$keyfound = $reg[1];
-		$newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
+		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+		else $newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
 		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
 	}
 

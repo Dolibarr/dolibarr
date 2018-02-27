@@ -184,12 +184,28 @@ function redirectToContainer($containeralias)
 		unset($tmpwebsitepage);
 		if ($result > 0)
 		{
-			$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containeralias, $_SERVER["REQUEST_URI"]);
+			$currenturi = $_SERVER["REQUEST_URI"];
+			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp))
+			{
+				if ($regtmp[0] == $containeralias)
+				{
+					print "Error, page with uri '.$currenturi.' try a redirect to the same alias page '".$containeralias."' in web site '".$website->ref."'";
+					exit;
+				}
+				else
+				{
+					$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containeralias, $currenturi);
+				}
+			}
+			else
+			{
+				$newurl = $currenturi.'&pageref='.urlencode($containeralias);
+			}
 		}
 	}
 	else								// When page called from virtual host server
 	{
-		$newurl = '/'.$containeralias;
+		$newurl = '/'.$containeralias.'.php';
 	}
 
 	if ($newurl)
@@ -199,7 +215,7 @@ function redirectToContainer($containeralias)
 	}
 	else
 	{
-		print "Error, page contains a reditect to the alias page '".$containeralias."' that does not exists in web site '".$website->ref."'";
+		print "Error, page contains a redirect to the alias page '".$containeralias."' that does not exists in web site '".$website->ref."'";
 		exit;
 	}
 }
@@ -273,11 +289,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 	$error=0;
 
+	dol_syslog("Call getAllImages with grabimagesinto=".$grabimagesinto);
+
 	$alreadygrabbed=array();
 
 	if (preg_match('/\/$/', $urltograb)) $urltograb.='.';
 	$urltograb = dirname($urltograb);							// So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
 
+	// Search X in "img...src=X"
 	preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $tmp, $regs);
 
 	foreach ($regs[0] as $key => $val)
@@ -372,16 +391,20 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		}
 
 		$linkwithoutdomain = $regs[2][$key];
-		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
+
+		$dirforimages = '/'.$objectpage->pageurl;
+		if ($grabimagesinto == 'root') $dirforimages='';
+
+		$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
 
 		if (preg_match('/^http/', $regs[2][$key]))
 		{
 			$urltograbbis = $regs[2][$key];
 			$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
-			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+			$filetosave = $conf->medias->multidir_output[$conf->entity].'/image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 		}
 
-		$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
+		$filename = 'image/'.$object->ref.$dirforimages.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
 
 		// Clean the aa/bb/../cc into aa/cc
 		$filetosave = preg_replace('/\/[^\/]+\/\.\./', '', $filetosave);
@@ -499,7 +522,7 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 	$tplcontent.= '<meta name="keywords" content="'.dol_string_nohtmltag($objectpage->keywords).'" />'."\n";
 	$tplcontent.= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 0, 'UTF-8').'" />'."\n";
 	$tplcontent.= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
-	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.'" />'."\n";
+	$tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent.= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent.= '<link rel="stylesheet" href="styles.css.php?websiteid='.$object->id.'" type="text/css" />'."\n";
 	$tplcontent.= '<!-- Include HTML header from common file -->'."\n";

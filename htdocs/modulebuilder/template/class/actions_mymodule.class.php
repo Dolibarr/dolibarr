@@ -175,7 +175,7 @@ class ActionsMyModule
 	 */
 	function beforePDFCreation($parameters, &$object, &$action)
 	{
-		global $langs,$conf;
+		global $conf, $user, $langs;
 		global $hookmanager;
 
 		$outputlangs=$langs;
@@ -204,7 +204,7 @@ class ActionsMyModule
 	 */
 	function afterPDFCreation($parameters, &$pdfhandler, &$action)
 	{
-		global $langs,$conf;
+		global $conf, $user, $langs;
 		global $hookmanager;
 
 		$outputlangs=$langs;
