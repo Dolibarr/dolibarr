@@ -519,7 +519,8 @@ if (empty($reshook))
                             $error=$object->error; $errors=$object->errors;
                         }
                     }
-
+				
+					
 					// Customer categories association
 					$custcats = GETPOST( 'custcats', 'array' );
 					$object->setCategories($custcats, 'customer');
@@ -527,7 +528,7 @@ if (empty($reshook))
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
 					$object->setCategories($suppcats, 'supplier');
-
+					
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
                     $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
@@ -634,15 +635,16 @@ if (empty($reshook))
                 {
                     $error = $object->error; $errors = $object->errors;
                 }
+				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
+				if(!empty($user->rights->categorie->lire)){ 
+					// Customer categories association
+					$categories = GETPOST( 'custcats', 'array' );
+					$object->setCategories($categories, 'customer');
 
-				// Customer categories association
-				$categories = GETPOST( 'custcats', 'array' );
-				$object->setCategories($categories, 'customer');
-
-				// Supplier categories association
-				$categories = GETPOST('suppcats', 'array');
-				$object->setCategories($categories, 'supplier');
-
+					// Supplier categories association
+					$categories = GETPOST('suppcats', 'array');
+					$object->setCategories($categories, 'supplier');
+				}
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);

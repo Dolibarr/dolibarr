@@ -116,7 +116,7 @@ if (empty($reshook))
     	    $userValue = $_POST['nb_holiday_'.$val['rowid']];
     	    $userValue = $userValue[$userID];
 
-    	    if (!empty($userValue))
+    	    if (!empty($userValue) || (string) $userValue == '0')
     	    {
     	        $userValue = price2num($userValue,5);
     	    } else {
@@ -172,11 +172,14 @@ $userstatic=new User($db);
 llxHeader('', $langs->trans('CPTitreMenu'));
 
 
+$typeleaves=$holiday->getTypes(1,1);
+
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
@@ -210,10 +213,8 @@ if (is_numeric($listUsers) && $listUsers < 0)
     setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
 
-$var=true;
 $i = 0;
 
-$typeleaves=$holiday->getTypes(1,1);
 
 if (count($typeleaves) == 0)
 {
@@ -233,8 +234,6 @@ else
     {
         $userchilds=$user->getAllChildIds();
     }
-
-    print '<input type="hidden" name="action" value="update" />';
 
     $moreforfilter='';
 
