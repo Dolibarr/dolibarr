@@ -138,7 +138,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		$action='';
     	}
 
-    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a redirect to avoid to run twice the job when using back
+    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2&restore_lastsearch_values=1');		// Make a redirect to avoid to run twice the job when using back
     	exit;
     }
 }
@@ -301,6 +301,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
 print $form->selectarray('status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $status, 1);
 print '</td><td class="liste_titre" align="right">';
@@ -312,6 +313,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 print_liste_field_titre("ID",$_SERVER["PHP_SELF"],"t.rowid","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"t.label","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Prority",$_SERVER["PHP_SELF"],"t.priority","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronDtStart",$_SERVER["PHP_SELF"],"t.datestart","",$param,'align="center"',$sortfield,$sortorder);
@@ -345,13 +347,16 @@ if ($num > 0)
 		$object->id = $obj->rowid;
 		$object->ref = $obj->rowid;
 		$object->label = $obj->label;
+		$object->priority = $obj->priority;
 
 		print '<tr class="oddeven">';
 
+		// Ref
 		print '<td class="nowrap">';
 		print $object->getNomUrl(1);
 		print '</td>';
 
+		// Label
 		print '<td>';
 		if (! empty($obj->label))
 		{
@@ -363,6 +368,11 @@ if ($num > 0)
 		{
 			//print $langs->trans('CronNone');
 		}
+		print '</td>';
+
+		// Priority
+		print '<td class="right">';
+		print $object->priority;
 		print '</td>';
 
 		print '<td>';
@@ -445,7 +455,7 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->execute)
 		{
-		    if (!empty($obj->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=execute".(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    if (!empty($obj->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=execute&save_lastsearch_values=1".(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
 		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"playdisabled")."</a>";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"playdisabled")."</a>";
