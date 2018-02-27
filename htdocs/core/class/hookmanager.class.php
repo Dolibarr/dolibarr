@@ -154,6 +154,7 @@ class HookManager
 			    'getIdProfUrl',
 			    'getDirList',
 				'moveUploadedFile',
+				'moreHtmlStatus',
 			    'pdf_build_address',
 				'pdf_writelinedesc',
 			    'pdf_getlinenum',
