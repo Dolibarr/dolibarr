@@ -48,8 +48,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield='t.status';
-if (! $sortorder) $sortorder='ASC';
+if (! $sortfield) $sortfield='t.status,t.priority';
+if (! $sortorder) $sortorder='DESC,ASC';
 
 $status=GETPOST('status','int');
 if ($status == '') $status=-2;
@@ -245,7 +245,8 @@ if ($action == 'delete')
 }
 if ($action == 'execute')
 {
-    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status.'&securitykey='.$securitykey, $langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	var_dump($param);
+    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status.'&securitykey='.$securitykey.'&restore_lastsearch_values=1', $langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 }
 
 
@@ -324,7 +325,7 @@ print_liste_field_titre("CronDtLastLaunch",$_SERVER["PHP_SELF"],"t.datelastrun",
 print_liste_field_titre("CronLastResult",$_SERVER["PHP_SELF"],"t.lastresult","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("CronLastOutput",$_SERVER["PHP_SELF"],"t.lastoutput","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronDtNextLaunch",$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"t.status,t.priority","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre('');
 print "</tr>\n";
 
@@ -347,6 +348,7 @@ if ($num > 0)
 		$object->id = $obj->rowid;
 		$object->ref = $obj->rowid;
 		$object->label = $obj->label;
+		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 
 		print '<tr class="oddeven">';
@@ -437,9 +439,7 @@ if ($num > 0)
 
 		// Status
 		print '<td align="center">';
-		if ($obj->status == 1) print $langs->trans("Enabled");
-		elseif ($obj->status == 2) print $langs->trans("Archived");
-		else print $langs->trans("Disabled");
+		print $object->getLibStatut(3);
 		print '</td>';
 
 		print '<td align="right" class="nowrap">';
