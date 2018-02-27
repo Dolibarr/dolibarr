@@ -36,3 +36,16 @@ ALTER TABLE llx_societe ADD COLUMN order_min_amount double(24,8) DEFAULT NULL AF
 ALTER TABLE llx_societe ADD COLUMN supplier_order_min_amount double(24,8) DEFAULT NULL AFTER order_min_amount;
 
 ALTER TABLE llx_societe_remise_except ADD COLUMN discount_type integer DEFAULT 0 NOT NULL AFTER fk_soc;
+ALTER TABLE llx_societe ADD COLUMN remise_supplier real DEFAULT 0 AFTER remise_client;
+CREATE TABLE llx_societe_remise_supplier
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,			-- multi company id
+  fk_soc			integer NOT NULL,
+  tms				timestamp,
+  datec				datetime,							-- creation date
+  fk_user_author	integer,							-- creation user
+  remise_supplier	double(6,3)  DEFAULT 0 NOT NULL,	-- discount
+  note				text
+
+)ENGINE=innodb;

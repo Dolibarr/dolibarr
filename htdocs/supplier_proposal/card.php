@@ -995,7 +995,7 @@ if ($action == 'create')
 
 		$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 		$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-		$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+		$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_supplier_percent)?$soc->remise_supplier_percent:0));
 		$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 
 		// Replicate extrafields
@@ -1052,15 +1052,15 @@ if ($action == 'create')
 	{
 		// Discounts for third party
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';		
-/* // TODO handle supplier relative discount
-		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . $soc->remise_percent . '</a>');
+
+		if ($soc->remise_supplier_percent)
+			print $langs->trans("HasRelativeDiscountFromSupplier", '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . $soc->remise_supplier_percent . '</a>');
 		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print $langs->trans("HasNoRelativeDiscountFromSupplier");
 		print ' <a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditRelativeDiscount") . ')</a>';
 		print '. ';
 		print '<br>';
-*/
+
 		$absolute_discount = $soc->getAvailableDiscounts('', '', 0, 1);
 
 		if ($absolute_discount)
@@ -1427,13 +1427,13 @@ if ($action == 'create')
 		$addcreditnote = '<a href="' . DOL_URL_ROOT . '/fourn/facture/card.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 	
 		print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
-/* // TODO handle supplier relative discount
-		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
+
+		if ($soc->remise_supplier_percent)
+			print $langs->trans("HasRelativeDiscountFromSupplier", $soc->remise_supplier_percent);
 		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+			print $langs->trans("HasNoRelativeDiscountFromSupplier");
 		print '. ';
-*/
+
 		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
 		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
@@ -1443,7 +1443,7 @@ if ($action == 'create')
 				print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
 			} else {
 				// Remise dispo de type remise fixe (not credit note)
-//				print '<br>';
+				print '<br>';
 				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, 0, '', 1, 1);
 			}
 		}

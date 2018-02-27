@@ -257,6 +257,19 @@ if ($object->id > 0)
 	print '</tr>';
 
 	if($conf->global->MAIN_FEATURES_LEVEL > 0) {
+		// Relative discounts (Discounts-Drawbacks-Rebates)
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans("CustomerRelativeDiscountShort");
+		print '<td><td align="right">';
+		if ($user->rights->societe->creer && !$user->societe_id > 0)
+		{
+			print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		}
+		print '</td></tr></table>';
+		print '</td><td>'.($object->remise_supplier_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_supplier_percent.'%</a>':'').'</td>';
+		print '</tr>';
+
 		// Absolute discounts (Discounts-Drawbacks-Rebates)
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding">';
