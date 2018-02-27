@@ -138,7 +138,15 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		$action='';
     	}
 
-    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2&restore_lastsearch_values=1');		// Make a redirect to avoid to run twice the job when using back
+    	$param='&status='.$status;
+    	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    	if ($search_label)	  $param.='&search_label='.$search_label;
+    	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+    	// Add $param from extra fields
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?'.$param.($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:''));		// Make a redirect to avoid to run twice the job when using back
     	exit;
     }
 }
@@ -241,12 +249,11 @@ $stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(),
 
 if ($action == 'delete')
 {
-    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.$param,$langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
 }
 if ($action == 'execute')
 {
-	var_dump($param);
-    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status.'&securitykey='.$securitykey.'&restore_lastsearch_values=1', $langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&securitykey='.$securitykey.$param, $langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 }
 
 
@@ -455,7 +462,7 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->execute)
 		{
-		    if (!empty($obj->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=execute&save_lastsearch_values=1".(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    if (!empty($obj->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=execute".(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
 		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"playdisabled")."</a>";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"playdisabled")."</a>";
