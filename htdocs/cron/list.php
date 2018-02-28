@@ -313,8 +313,8 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
 print $form->selectarray('status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $status, 1);
 print '</td><td class="liste_titre" align="right">';
-print '<input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
 print '</td>';
 print '</tr>';
 
@@ -449,7 +449,7 @@ if ($num > 0)
 		print $object->getLibStatut(3);
 		print '</td>';
 
-		print '<td align="right" class="nowrap">';
+		print '<td align="right" class="nowraponall">';
 		if ($user->rights->cron->create)
 		{
 			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:''))."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";

@@ -596,7 +596,7 @@ textarea.centpercent {
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
-.nowraponall {
+.nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
 .wordwrap {
