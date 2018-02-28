@@ -2929,11 +2929,9 @@ class Societe extends CommonObject
 			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
 				$url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
 			}
-			/*
 			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
-				$url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';     // Link no more valid
+				$url='https://beta.companieshouse.gov.uk/company/'.$thirdparty->idprof1;
 			}
-			*/
 			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
 				$url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
 			}
@@ -2941,7 +2939,7 @@ class Societe extends CommonObject
 				$url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
-				$url='http://www.nif.pt/'.$thirdparty->idprof1.'/';
+				$url='http://www.nif.pt/'.$thirdparty->idprof1;
 			}
 
 			if ($url) {
