@@ -2876,6 +2876,29 @@ class Societe extends CommonObject
 			return -4;
 		}
 
+		//Verify NIF if country is PT
+		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
+		if ($idprof == 1 && $soc->country_code == 'PT')
+		{
+			$string=trim($this->idprof1);
+			$string=preg_replace('/(\s)/','',$string);
+
+			for ($i = 0; $i < 9; $i ++) {
+				$num[$i] = substr($string, $i, 1);
+			}
+
+			//Check NIF
+			if (preg_match('/(^[0-9]{9}$)/', $string)) {
+				return 1;
+			}
+			else {
+				return -1;
+			}
+
+			//Wrong format
+			return 0;
+		}
+
 		return $ok;
 	}
 
