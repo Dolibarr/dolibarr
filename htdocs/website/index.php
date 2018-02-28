@@ -330,7 +330,7 @@ if ($action == 'addcontainer')
 	   			}
 
 	   			$objectpage->aliasalt = '';
-	   			if (preg_match('/^(\d+)\-/', basename($pageurl), $reg)) $objectpage->aliasalt = $reg[0];
+	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $reg)) $objectpage->aliasalt = $reg[1];
 
 				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
 				{
