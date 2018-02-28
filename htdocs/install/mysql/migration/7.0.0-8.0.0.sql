@@ -58,4 +58,5 @@ insert into llx_c_type_container (code,label,module,active) values ('other',    
 
 ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_expensereport;
 
+ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 
