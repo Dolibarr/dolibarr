@@ -39,7 +39,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 $colorbackhmenu1='80,90,120';      // topmenu
 $colorbackvmenu1='248,248,248';      // vmenu
 $colortopbordertitle1='200,200,200';    // top border of title
-$colorbacktitle1='230,230,233';      // title of tables,list
+$colorbacktitle1='220,220,223';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -768,13 +768,16 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: #008800;
 	font-weight: bold;
+	font-size: 1.4em;
 }
 .amountremaintopay {
 	color: #880000;
 	font-weight: bold;
+	font-size: 1.4em;
 }
 .amountremaintopayback {
 	font-weight: bold;
+	font-size: 1.4em;
 }
 .savingdocmask {
 	margin-top: 6px;
@@ -1053,6 +1056,13 @@ select.selectarrowonleft option {
 	div.statusrefbis {
     	padding-right: 3px !important;
    	}
+	/* TODO
+	div.statusref {
+    	padding-top: 0px !important;
+    	padding-left: 0px !important;
+    	border: none !important;
+   	}
+	*/
 
    	input.buttonpayment {
 		min-width: 300px;
@@ -1345,7 +1355,7 @@ div.attachareaformuserfileecm {
 div.arearef {
 	padding-top: 2px;
 	margin-bottom: 10px;
-	padding-bottom: 7px;
+	padding-bottom: 10px;
 }
 div.arearefnobottom {
 	padding-top: 2px;
@@ -1360,6 +1370,12 @@ div.divphotoref {
 div.paginationref {
 	padding-bottom: 10px;
 }
+/* TODO
+div.statusref {
+   	padding: 10px;
+   	border: 1px solid #bbb;
+   	border-radius: 6px;
+} */
 div.statusref {
 	float: right;
 	padding-left: 12px;
@@ -1405,11 +1421,12 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	/* border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>); */
-	border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>);
+	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	/* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>); */
 }
 .trextrafieldseparator td {
-    border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important;
+    /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
+    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {
@@ -2447,6 +2464,10 @@ table.borderplus {
 .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 22px;
 }
+tr.liste_titre.box_titre td table td {
+    height: 22px;
+}
+
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
 }
@@ -2483,6 +2504,9 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
+.nobordertop, .nobordertop tr:first-of-type td {
+    border-top: none !important;
+}
 .noborderbottom, .noborderbottom tr:last-of-type td {
     border-bottom: none !important;
 }
@@ -2794,7 +2818,7 @@ td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.imp
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
-td.evenodd, tr.nohoverpair td {
+td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
@@ -2946,9 +2970,10 @@ table.tableforservicepart1 tr td {
 }
 
 .paymenttable, .margintable {
-	border-top-width: <?php echo $borderwidth ?>px !important;
+	/*border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
-	border-top-style: solid !important;
+	border-top-style: solid !important;*/
+	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
@@ -3144,6 +3169,9 @@ span.dashboardlineko {
 table.noborder.boxtable tr td {
     height: unset;
 }
+.boxtablenotop {
+    border-top-width: 0 !important;
+}
 .boxtablenobottom {
     border-bottom-width: 0 !important;
 }
@@ -3190,9 +3218,6 @@ img.boxhandle, img.boxclose {
 	padding-left: 5px;
 }
 
-.noborderbottom {
-	border-bottom: none !important;
-}
 .formboxfilter {
 	vertical-align: middle;
 	margin-bottom: 6px;

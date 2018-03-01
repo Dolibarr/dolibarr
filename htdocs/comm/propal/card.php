@@ -1921,7 +1921,7 @@ if ($action == 'create')
 		print '</form>';
 	} else {
 		if ($object->date) {
-			print dol_print_date($object->date, 'daytext');
+			print dol_print_date($object->date, 'day');
 		} else {
 			print '&nbsp;';
 		}
@@ -1947,7 +1947,7 @@ if ($action == 'create')
 		print '</form>';
 	} else {
 		if (! empty($object->fin_validite)) {
-			print dol_print_date($object->fin_validite, 'daytext');
+			print dol_print_date($object->fin_validite, 'day');
 			if ($object->statut == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay))
 				print img_warning($langs->trans("Late"));
 		} else {

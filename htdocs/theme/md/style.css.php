@@ -2509,7 +2509,10 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
-.noborderbottom {
+.nobordertop, .nobordertop tr:first-of-type td {
+    border-top: none !important;
+}
+.noborderbottom, .noborderbottom tr:last-of-type td {
     border-bottom: none !important;
 }
 .ficheaddleft table.noborder {
@@ -3153,6 +3156,9 @@ span.dashboardlineko {
     margin-bottom: 8px !important;
     border-bottom-width: 1px;
 }
+.boxtablenotop {
+    /* border-top-width: 0 !important; */
+}
 .boxtablenobottom {
     /* border-bottom-width: 0 !important; */
 }
@@ -3199,10 +3205,6 @@ tr.box_titre td.boxclose {
 }
 img.boxhandle, img.boxclose {
 	padding-left: 5px;
-}
-
-.noborderbottom {
-	border-bottom: none !important;
 }
 
 .formboxfilter {
