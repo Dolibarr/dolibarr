@@ -103,7 +103,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
-$borderwith=2;
+$borderwidth=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -1413,7 +1413,7 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 .tdhrthin {
 	margin: 0;
@@ -2524,7 +2524,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2585,7 +2585,7 @@ tr.liste_titre_filter td.liste_titre {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
-table.noborder td, div.noborder form, div.noborder form div {
+table.noborder td, div.noborder form, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
 }
 
@@ -2884,7 +2884,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 
@@ -2927,7 +2927,7 @@ tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, fo
 	text-shadow: none !important;
 }
 tr.liste_titre_topborder td {
-	border-top-width: <?php echo $borderwith; ?>px;
+	border-top-width: <?php echo $borderwidth; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
@@ -2987,7 +2987,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 
 .paymenttable, .margintable {
-	border-top-width: <?php echo $borderwith ?>px !important;
+	border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 	margin: 0px 0px 0px 0px !important;

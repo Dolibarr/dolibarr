@@ -131,7 +131,7 @@ if ($nolinesbefore) {
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>
-	<td class="nobottom linecolnum" align="center" width="5">
+	<td class="nobottom linecolnum" align="center" width="5"></td>
 	<?php
 }
 else {
@@ -142,7 +142,7 @@ else {
 	<td class="nobottom linecoldescription minwidth500imp">
 
 	<?php
-	
+
 	$freelines = false;
 	if (empty($conf->global->MAIN_DISABLE_FREE_LINES))
 	{
@@ -153,7 +153,7 @@ else {
 			if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
 			else $forceall=0;
 		}
-	
+
 		// Free line
 		echo '<span class="prod_entry_mode_free">';
 		// Show radio free line
@@ -180,9 +180,9 @@ else {
 				echo ' ';
 			}
 		}
-	
+
 		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
-	
+
 		echo '</span>';
 	}
 
@@ -408,6 +408,10 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 {
 	$colspan = 6;
 
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+		$colspan++;
+	}
 	if ($this->situation_cycle_ref) {
 		$colspan++;
 	}
@@ -595,7 +599,7 @@ jQuery(document).ready(function() {
 		setforpredef();
 		jQuery('#trlinefordates').show();
 	});
-	
+
 	<?php
 	if(!$freelines) { ?>
 		$("#prod_entry_mode_predef").click();
