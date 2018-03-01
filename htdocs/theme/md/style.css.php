@@ -864,7 +864,9 @@ select.selectarrowonleft option {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+	.width25  { width: 25px; }
     .width50  { width: 50px; }
+    .width75  { width: 75px; }
     .width100 { width: 100px; }
     .width200 { width: 200px; }
 	.minwidth100 { min-width: 100px; }
@@ -880,8 +882,10 @@ select.selectarrowonleft option {
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
 }
+.widthauto { width: auto; }
 .width25  { width: 25px; }
 .width50  { width: 50px; }
+.width75  { width: 75px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
