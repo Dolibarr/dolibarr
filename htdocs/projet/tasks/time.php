@@ -534,7 +534,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 		print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
 
-
 		/*
 		 * Form to add time spent on task
 		 */
@@ -612,7 +611,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	if ($projectstatic->id > 0)
 	{
-		if ($action == 'deleteline')
+		if ($action == 'deleteline' && ! empty($projectidforalltimes))
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id>0?"id=".$object->id:'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid','int').($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
@@ -1094,12 +1093,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 					print img_edit();
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 					print img_delete();
 					print '</a>';
 			    }

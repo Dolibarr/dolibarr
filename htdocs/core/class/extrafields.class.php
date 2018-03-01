@@ -82,6 +82,7 @@ class ExtraFields
 	public static $type2label=array(
 	'varchar'=>'String',
 	'text'=>'TextLong',
+	'html'=>'HtmlText',
 	'int'=>'Int',
 	'double'=>'Float',
 	'date'=>'Date',
@@ -133,7 +134,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  int				$type               Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param  int				$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length of attribute
 	 *  @param  string			$elementtype        Element type ('member', 'product', 'thirdparty', ...)
@@ -189,7 +190,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -232,6 +233,8 @@ class ExtraFields
 			} elseif ($type=='link') {
 				$typedb='int';
 				$lengthdb='11';
+			} elseif ($type=='html') {
+				$typedb='text';
 			} elseif($type=='password') {
 				$typedb='varchar';
 				$lengthdb='128';
@@ -275,7 +278,7 @@ class ExtraFields
 	 *
 	 *	@param	string			$attrname		code of attribute
 	 *	@param	string			$label			label of attribute
-	 *  @param	int				$type			Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
+	 *  @param	int				$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
 	 *  @param	string			$size			Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
@@ -483,7 +486,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	int		$length				Length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -529,6 +532,8 @@ class ExtraFields
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') || ($type=='checkbox') || ($type=='chkbxlst')) {
 				$typedb='text';
 				$lengthdb='';
+			} elseif ($type == 'html') {
+				$typedb='text';
 			} elseif ($type=='link') {
 				$typedb='int';
 				$lengthdb='11';
@@ -800,15 +805,17 @@ class ExtraFields
 							{
 								if ($obj = $this->db->fetch_object($resql_entity_name))
 								{
-									$this->attribute_entitylabel[$tab->name]=$obj->label;
+									$this->attribute_entitylabel[$tab->name]=$obj->label;	// Old usage
 									$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=$obj->label;
 								}
 							}
 						}
 					}
+
+					$this->attributes[$tab->elementtype]['loaded']=1;
 				}
 			}
-			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;
+			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;	// If nothing found, we also save tag 'loaded'
 		}
 		else
 		{
@@ -933,6 +940,19 @@ class ExtraFields
 			$out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
+		{
+			if (! preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,false,ROWS_5,'90%');
+				$out=$doleditor->Create(1);
+			}
+			else
+			{
+				$out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
+			}
+		}
+		elseif ($type == 'html')
 		{
 			if (! preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -1373,7 +1393,7 @@ class ExtraFields
 			$list=$this->attributes[$extrafieldsobjectkey]['list'][$key];
 			$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
-		else
+		else	// Old usage
 		{
 			$elementtype=$this->attribute_elementtype[$key];	// seems not used
 			$label=$this->attribute_label[$key];
@@ -1643,6 +1663,10 @@ class ExtraFields
 			}
 		}
 		elseif ($type == 'text')
+		{
+			$value=dol_htmlentitiesbr($value);
+		}
+		elseif ($type == 'html')
 		{
 			$value=dol_htmlentitiesbr($value);
 		}

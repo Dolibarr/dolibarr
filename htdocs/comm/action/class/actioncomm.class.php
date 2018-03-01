@@ -1329,7 +1329,7 @@ class ActionComm extends CommonObject
      *		@param	string		$type			'event' or 'journal'
      *		@param	int			$cachedelay		Do not rebuild file if date older than cachedelay seconds
      *		@param	string		$filename		Force filename
-     *		@param	array		$filters		Array of filters
+     *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
      *		@return int     					<0 if error, nb of events in new file if ok
      */
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)
@@ -1410,7 +1410,9 @@ class ActionComm extends CommonObject
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
                 if ($key == 'project')      $sql.=" AND a.fk_project=".(is_numeric($value)?$value:0);
-    	        // We must filter on assignement table
+                if ($key == 'actiontype')    $sql.=" AND c.type = '".$this->db->escape($value)."'";
+                if ($key == 'notactiontype') $sql.=" AND c.type <> '".$this->db->escape($value)."'";
+                // We must filter on assignement table
 				if ($key == 'logint')       $sql.= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
                 if ($key == 'logina')
                 {

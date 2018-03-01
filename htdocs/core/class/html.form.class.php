@@ -6309,6 +6309,11 @@ class Form
 		{
 			$ret.='</ul></div>';
 		}
+
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('moreHtmlStatus',$parameters, $object);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $morehtmlstatus.=$hookmanager->resPrint;
+		else $morehtmlstatus=$hookmanager->resPrint;
 		if ($morehtmlstatus) $ret.='<div class="statusref">'.$morehtmlstatus.'</div>';
 
 		// Left part of banner

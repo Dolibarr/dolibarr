@@ -27,6 +27,13 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
+-- Forgot in 7.0
+
+-- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+
+
+
 -- For 8.0
 
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
@@ -72,4 +79,5 @@ insert into llx_c_type_container (code,label,module,active) values ('other',    
 
 ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_expensereport;
 
+ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 

@@ -550,7 +550,7 @@ if ($object->id > 0)
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
+	print '<div class="underbanner clearboth"></div>';
 
 	$boxstat = '';
 
@@ -559,7 +559,7 @@ if ($object->id > 0)
 
 	// Lien recap
 	$boxstat.='<div class="box">';
-	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
+	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom" width="100%">';
 	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
 
 	if (! empty($conf->propal->enabled))
