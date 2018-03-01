@@ -3021,10 +3021,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats, .boxstats130 {
     display: inline-block;
     margin: 3px;
-    /* border: 1px solid #CCC; */
     text-align: center;
-    border-radius: 2px;
-    background: #eee;
+
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    box-shadow: 1px 1px 6px #bbb;
+    border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -3046,6 +3048,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
 @media only screen and (max-width: 767px)
 {
+	.boxstats, .boxstats130 {
+	    border: 1px solid #ddd;
+    	box-shadow: none;
+    	text-align: <?php echo $left; ?>
+    }
 	.thumbstat {
 		flex: 1 1 110px;
 	}
