@@ -3057,6 +3057,7 @@ abstract class CommonObject
 
 		$fieldstatus="fk_statut";
 		if ($elementTable == 'mailing') $fieldstatus="statut";
+		if ($elementTable == 'cronjob') $fieldstatus="status";
 		if ($elementTable == 'user') $fieldstatus="statut";
 		if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
