@@ -2203,6 +2203,9 @@ div.tabBarWithBottom {
 div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
 }
+.tableforservicepart1 .tdhrthin {
+	height: unset;
+}
 
 div.popuptabset {
 	padding: 6px;
@@ -3021,6 +3024,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstats, .boxstats130 {
     display: inline-block;
     margin: 3px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     text-align: center;
 
     background: #f8f8f8;
@@ -3051,6 +3056,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.boxstats, .boxstats130 {
 	    border: 1px solid #ddd;
     	box-shadow: none;
+    	background: #ddd;
+    }
+    .boxstats130 {
     	text-align: <?php echo $left; ?>
     }
 	.thumbstat {

@@ -2198,6 +2198,9 @@ div.tabBarWithBottom {
 div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
 }
+.tableforservicepart1 .tdhrthin {
+	height: unset;
+}
 
 /* ============================================================================== */
 /* Boutons actions                                                                */

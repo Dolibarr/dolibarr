@@ -1926,7 +1926,7 @@ else
 					print $langs->trans("DateEndReal").': ';
 					print dol_print_date($objp->date_fin_reelle, 'day');
 				}
-				if (! empty($objp->comment)) print "<br>".$objp->comment;
+				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';
 
 				print '<td align="center">&nbsp;</td>';
