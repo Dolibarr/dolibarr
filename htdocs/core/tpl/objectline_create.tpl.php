@@ -729,10 +729,11 @@ jQuery(document).ready(function() {
         ?>
 
         /* To process customer price per quantity */
-        var pbq = $('option:selected', this).attr('data-pbq');
-        var pbqqty = $('option:selected', this).attr('data-pbqqty');
-        var pbqpercent = $('option:selected', this).attr('data-pbqpercent');
-        if (jQuery('#idprod').val() > 0 && typeof pbq !== "undefined")
+        var pbq = parseInt($('option:selected', this).attr('data-pbq'));
+        var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
+        var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
+
+        if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && typeof pbq !== "undefined")
         {
             console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
             jQuery("#pbq").val(pbq);
@@ -786,7 +787,6 @@ function setforfree() {
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
 	jQuery("#fournprice_predef").hide();
-	jQuery("#title_fourn_ref").show();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
 	jQuery("#title_up_ht_currency").show();
@@ -810,7 +810,6 @@ function setforpredef() {
 	jQuery("#fourn_ref").hide();
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
-	jQuery("#title_fourn_ref").hide();
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ht_currency").hide();
