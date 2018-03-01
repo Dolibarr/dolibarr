@@ -38,3 +38,4 @@ STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
 STRIPE_LIVE_SECRET_KEY=Secret live key
 STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
+StripeImportPayment=Import Stripe payments

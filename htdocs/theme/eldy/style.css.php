@@ -2256,8 +2256,8 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
 	margin: 0 0.2em 0 0.2em !important;
 
-	border-right: 1px solid #AAA !important;
-	border-left: 1px solid #AAA !important;
+	border-right: 1px solid #CCC !important;
+	border-left: 1px solid #CCC !important;
 	/* border-top: <?php echo 2; ?>px solid rgb(<?php echo $colortopbordertitle1; ?>) !important; */
 	border-top: <?php echo 2; ?>px solid rgb(<?php echo $colorbackhmenu1 ?>) !important;
 }
@@ -2476,7 +2476,7 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
-.noborderbottom {
+.noborderbottom, .noborderbottom tr:last-of-type td {
     border-bottom: none !important;
 }
 /*.ficheaddleft table.noborder {
@@ -2491,6 +2491,9 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
+	/* border-top-width: 2px;
+	border-top-color: rgb(<?php echo $colorbackhmenu1 ?>);
+	border-top-style: solid; */
 
 	border-bottom-width: 1px;
 	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
@@ -2499,7 +2502,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	margin: 0px 0px 5px 0px;
 }
 div.tabBar div.ficheaddleft table.noborder:last-of-type {
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+div.tabBar table.border>tbody>tr:last-of-type>td {
+	border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;
 }
 div.tabBar div.ficheaddleft table.noborder {
     border-bottom: none;
@@ -2529,7 +2537,7 @@ tr#trlinefordates td {
 }
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
-    border-top-width: 2px;
+    border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
@@ -2543,6 +2551,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
 	line-height: 1.2em;
+	height: 22px;
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
@@ -2939,6 +2948,9 @@ table.tableforservicepart1 tr td {
 {
 	padding-left: 2px;
 }
+.paymenttable, .margintable tr td {
+	height: 22px;
+}
 
 /* Disable shadows */
 .noshadow {
@@ -3106,6 +3118,12 @@ span.dashboardlineko {
 .boxtable {
     margin-bottom: 8px !important;
     border-bottom-width: 1px;
+
+    border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	/* border-top: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
+}
+table.noborder.boxtable tr td {
+    height: unset;
 }
 .boxtablenobottom {
     border-bottom-width: 0 !important;

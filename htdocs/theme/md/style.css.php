@@ -2996,6 +2996,9 @@ tr.liste_sub_total, tr.liste_sub_total td {
 {
 	padding-left: 2px;
 }
+.paymenttable, .margintable tr td {
+	height: 22px;
+}
 
 /* Disable shadows */
 .noshadow {
