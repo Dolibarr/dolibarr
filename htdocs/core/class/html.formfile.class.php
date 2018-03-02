@@ -851,9 +851,16 @@ class FormFile
 		$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
 		// Get object entity
-		preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
-		$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
-
+		if (empty($conf->multicompany->enabled))
+		{
+			$entity = $conf->entity;
+		}
+		else
+		{
+			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
+			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
+		}
+		
 		$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
 
 		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
