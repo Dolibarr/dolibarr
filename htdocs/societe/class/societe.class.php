@@ -2876,6 +2876,29 @@ class Societe extends CommonObject
 			return -4;
 		}
 
+		//Verify NIF if country is PT
+		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
+		if ($idprof == 1 && $soc->country_code == 'PT')
+		{
+			$string=trim($this->idprof1);
+			$string=preg_replace('/(\s)/','',$string);
+
+			for ($i = 0; $i < 9; $i ++) {
+				$num[$i] = substr($string, $i, 1);
+			}
+
+			//Check NIF
+			if (preg_match('/(^[0-9]{9}$)/', $string)) {
+				return 1;
+			}
+			else {
+				return -1;
+			}
+
+			//Wrong format
+			return 0;
+		}
+
 		return $ok;
 	}
 
@@ -2897,20 +2920,33 @@ class Societe extends CommonObject
 		$hookmanager->initHooks(array('idprofurl'));
 		$parameters=array('idprof'=>$idprof, 'company'=>$thirdparty);
 		$reshook=$hookmanager->executeHooks('getIdProfUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
+		if (empty($reshook)) {
+			if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
+				return '';
+			}
 
 			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
-			if ($idprof == 1 && $thirdparty->country_code == 'FR') $url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
-			//if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';     // Link no more valid
-			if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
-			if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
+				$url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
+			}
+			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
+				$url='https://beta.companieshouse.gov.uk/company/'.$thirdparty->idprof1;
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
+				$url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
+				$url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
+				$url='http://www.nif.pt/'.$thirdparty->idprof1;
+			}
 
-			if ($url) return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+			if ($url) {
+				return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+			}
 		}
-		else
-		{
+		else {
 			return $hookmanager->resPrint;
 		}
 
