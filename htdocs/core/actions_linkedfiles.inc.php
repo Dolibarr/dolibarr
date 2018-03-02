@@ -177,42 +177,50 @@ elseif ($action == 'confirm_updateline' && GETPOST('save','alpha') && GETPOST('l
 elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 {
     // For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
-    if (! empty($upload_dir))
-    {
-        $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
-        $filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
+	if (! empty($upload_dir))
+	{
+		$reshook=$hookmanager->initHooks(array('actionlinkedfiles'));
 
-        // Security:
-        // Disallow file with some extensions. We rename them.
-        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-        if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
-        {
-            $filenameto.= '.noexe';
-        }
+		$filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
+		$filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
 
-        if ($filenamefrom && $filenameto)
-        {
-            $srcpath = $upload_dir.'/'.$filenamefrom;
-            $destpath = $upload_dir.'/'.$filenameto;
+		$parameters=array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto);
+		$reshook=$hookmanager->executeHooks('renameUploadedFile', $parameters, $object);
 
-            $result = dol_move($srcpath, $destpath);
-            if ($result)
-            {
-            	if ($object->id)
-            	{
-                	$object->addThumbs($destpath);
-            	}
+		if (empty($reshook))
+		{
+			// Security:
+			// Disallow file with some extensions. We rename them.
+			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
+			if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+			{
+				$filenameto.= '.noexe';
+			}
 
-                // TODO Add revert function of addThumbs to remove for old name
-                //$object->delThumbs($srcpath);
+			if ($filenamefrom && $filenameto)
+			{
+				$srcpath = $upload_dir.'/'.$filenamefrom;
+				$destpath = $upload_dir.'/'.$filenameto;
 
-                setEventMessages($langs->trans("FileRenamed"), null);
-            }
-            else
-            {
-                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
-                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
-            }
-        }
+				$result = dol_move($srcpath, $destpath);
+				if ($result)
+				{
+					if ($object->id)
+					{
+						$object->addThumbs($destpath);
+					}
+
+					// TODO Add revert function of addThumbs to remove for old name
+					//$object->delThumbs($srcpath);
+
+					setEventMessages($langs->trans("FileRenamed"), null);
+				}
+				else
+				{
+					$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+					setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+				}
+			}
+		}
     }
 }
