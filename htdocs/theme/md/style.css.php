@@ -2473,7 +2473,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #f4f4f4;
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
@@ -2481,9 +2481,11 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
-
-.border tbody tr, .border tbody tr td, div.tabBar table.border tr {
+.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 22px;
+}
+tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
+    height: 22px;
 }
 
 table.border td, div.border div div.tagtd {
@@ -2515,6 +2517,13 @@ td.border, div.tagtable div div.border {
 .noborderbottom, .noborderbottom tr:last-of-type td {
     border-bottom: none !important;
 }
+.bordertop {
+	border-top: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+.borderbottom {
+	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
@@ -3508,6 +3517,13 @@ div.ui-tooltip {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+.ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
+.ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
+html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
+{
+    border: unset;
+}
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
