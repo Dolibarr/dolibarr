@@ -355,7 +355,7 @@ if ($num > 0)
 		print '<td>';
 		if (! empty($obj->label))
 		{
-			$object->ref = $obj->label;
+			$object->ref = $langs->trans($obj->label);
 			print $object->getNomUrl(0, '', 1);
 			$object->ref = $obj->rowid;
 		}

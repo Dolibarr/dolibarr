@@ -224,7 +224,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header('Location: list.php');
+			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else

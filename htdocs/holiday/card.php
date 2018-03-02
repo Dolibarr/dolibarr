@@ -299,7 +299,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	if (! $error)
 	{
 		$db->commit();
-		header('Location: list.php');
+		header('Location: list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else

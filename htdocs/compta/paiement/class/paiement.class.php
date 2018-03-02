@@ -1089,7 +1089,7 @@ class Paiement extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto && $withpicto != 2) $result.= $this->ref;
+		if ($withpicto && $withpicto != 2) $result.= ($this->ref?$this->ref:$this->id);
 		$result .= $linkend;
 
 		return $result;

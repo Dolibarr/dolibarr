@@ -692,7 +692,8 @@ class FormFile
 			$out.= '<!-- html.formfile::showdocuments -->'."\n";
 
 			// Show title of array if not already shown
-			if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
+			if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart))
+				&& ! $headershown)
 			{
 				$headershown=1;
 				$out.= '<div class="titre">'.$titletoshow.'</div>'."\n";

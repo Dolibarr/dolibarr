@@ -819,7 +819,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result >= 0)
 		{
-			header("Location: index.php");
+			header("Location: list.php?restore_lastsearch_values=1");
 			return;
 		}
 		else
@@ -1969,7 +1969,7 @@ else
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="closeline">';
 
-				print '<table class="noborder tableforservicepart2 boxtablenobottom" width="100%">';
+				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ?' boxtablenobottom':'').'" width="100%">';
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_debut_reelle;

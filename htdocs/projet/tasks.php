@@ -578,7 +578,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			if ($nboftaskshown < count($tasksarray))
+			if ($nboftaskshown < count($tasksarray) && ! GETPOST('search_user_id','int'))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');

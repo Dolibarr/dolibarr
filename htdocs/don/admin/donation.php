@@ -204,12 +204,12 @@ $form=new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
 
 $head = donation_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
+dol_fiche_head($head, 'general', $langs->trans("Donations"), -1, 'payment');
 
 
 // Document templates
