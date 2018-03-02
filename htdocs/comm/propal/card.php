@@ -1458,17 +1458,13 @@ if ($action == 'create')
 
 		// Ligne info remises tiers
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
-		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+
 		$absolute_discount = $soc->getAvailableDiscounts();
-		print '. ';
-		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 1, -1, -1, $conf->currency));
-		else
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print '.';
+
+		$thirdparty = $soc;
+		$discount_type = 0;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?socid=' . $thirdparty->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid'));
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 		print '</td></tr>';
 	}
 
@@ -1884,29 +1880,17 @@ if ($action == 'create')
 	}
 
 	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
-	if ($soc->remise_percent)
-		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-	else
-		print $langs->trans("CompanyHasNoRelativeDiscount");
-	print '. ';
+
 	$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
 	$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
 	$absolute_discount = price2num($absolute_discount, 'MT');
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
-	if ($absolute_discount) {
-		if ($object->statut > Propal::STATUS_DRAFT) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
-		} else {
-			// Remise dispo de type non avoir
-			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, 0, '', 1);
-		}
-	}
-	if ($absolute_creditnote) {
-		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $conf->currency)) . '. ';
-	}
-	if (! $absolute_discount && ! $absolute_creditnote)
-		print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
+
+	$thirdparty = $soc;
+	$discount_type = 0;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 	print '</td></tr>';
 
 	// Date of proposal

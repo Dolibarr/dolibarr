@@ -4239,26 +4239,27 @@ class Form
 			if(! empty($discount_type)) {
 				if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 				{
-					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
-					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
+					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL") $translationKey = 'HasAbsoluteDiscountFromSupplier';    // If we want deposit to be substracted to payments only and not to total of final invoice
+					else $translationKey = 'HasCreditNoteFromSupplier';
 				}
 				else
 				{
-					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
-					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
+					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") $translationKey = 'HasAbsoluteDiscountFromSupplier';
+					else $translationKey = 'HasCreditNoteFromSupplier';
 				}
 			} else {
 				if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
 				{
-					if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
-					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
+					if (! $filter || $filter=="fk_facture_source IS NULL") $translationKey = 'CompanyHasAbsoluteDiscount';    // If we want deposit to be substracted to payments only and not to total of final invoice
+					else $translationKey = 'CompanyHasCreditNote';
 				}
 				else
 				{
-					if (! $filter || $filter=="fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
-					else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
+					if (! $filter || $filter=="fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')") $translationKey = 'CompanyHasAbsoluteDiscount';
+					else $translationKey = 'CompanyHasCreditNote';
 				}
 			}
+			print $langs->trans($translationKey,price($amount,0,$langs,0,0,-1,$conf->currency));
 			if (empty($hidelist)) print ': ';
 			print '</div>';
 			if (empty($hidelist))

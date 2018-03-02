@@ -340,31 +340,17 @@ if ($id > 0 || ! empty($ref))
 	    }
 
 		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td colspan="3">';
-		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
-		else print $langs->trans("CompanyHasNoRelativeDiscount");
-		print '. ';
+
 		$absolute_discount=$soc->getAvailableDiscounts('',$filterabsolutediscount);
 		$absolute_creditnote=$soc->getAvailableDiscounts('',$filtercreditnote);
 		$absolute_discount=price2num($absolute_discount,'MT');
 		$absolute_creditnote=price2num($absolute_creditnote,'MT');
-		if ($absolute_discount)
-		{
-			if ($object->statut > Commande::STATUS_DRAFT)
-			{
-				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
-			}
-			else
-			{
-				// Remise dispo de type non avoir
-				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$soc->id,$absolute_discount,$filterabsolutediscount, 0, '', 1);
-			}
-		}
-		if ($absolute_creditnote)
-		{
-			print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'. ';
-		}
-		if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+
+		$thirdparty = $soc;
+		$discount_type = 0;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+		$cannotApplyDiscount = 1;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 		print '</td></tr>';
 
 		// Date

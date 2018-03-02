@@ -1055,22 +1055,13 @@ if ($action == 'create')
 		// Discounts for third party
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';		
 
-		if ($soc->remise_supplier_percent)
-			print $langs->trans("HasRelativeDiscountFromSupplier", '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . $soc->remise_supplier_percent . '</a>');
-		else
-			print $langs->trans("HasNoRelativeDiscountFromSupplier");
-		print ' <a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditRelativeDiscount") . ')</a>';
-		print '. ';
-		print '<br>';
-
 		$absolute_discount = $soc->getAvailableDiscounts('', '', 0, 1);
 
-		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . price($absolute_discount) . '</a>', $langs->trans("Currency" . $conf->currency));
-		else
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print ' <a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditGlobalDiscounts") . ')</a>';
-		print '.';
+		$thirdparty = $soc;
+		$discount_type = 1;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?socid=' . $thirdparty->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid'));
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 		print '</td></tr>';
 	}
 
@@ -1423,37 +1414,19 @@ if ($action == 'create')
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
-	
-		$addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
-		$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
-		$addcreditnote = '<a href="' . DOL_URL_ROOT . '/fourn/facture/card.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
-	
-		print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
 
-		if ($soc->remise_supplier_percent)
-			print $langs->trans("HasRelativeDiscountFromSupplier", $soc->remise_supplier_percent);
-		else
-			print $langs->trans("HasNoRelativeDiscountFromSupplier");
-		print '. ';
+		print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
 
 		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
 		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
-		if ($absolute_discount) {
-			if ($object->statut > SupplierProposal::STATUS_DRAFT) {
-				print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
-			} else {
-				// Remise dispo de type remise fixe (not credit note)
-				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, 0, '', 1, 1);
-			}
-		}
-		if ($absolute_creditnote) {
-			print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '. ';
-		}
-		if (! $absolute_discount && ! $absolute_creditnote)
-			print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
+
+		$thirdparty = $soc;
+		$discount_type = 1;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 		print '</td></tr>';
 	}
 
