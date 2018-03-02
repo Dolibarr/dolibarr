@@ -3064,7 +3064,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 3px;
+    margin: 8px;
     margin-top: 5px;
     margin-bottom: 5px;
     text-align: center;
@@ -3095,6 +3095,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 @media only screen and (max-width: 767px)
 {
 	.boxstats, .boxstats130 {
+		margin: 3px;
 	    border: 1px solid #ddd;
     	box-shadow: none;
     	background: #ddd;

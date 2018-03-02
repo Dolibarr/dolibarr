@@ -3081,7 +3081,7 @@ div .tdtop {
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 3px;
+    margin: 8px;
     /* border: 1px solid #CCC; */
     text-align: center;
     border-radius: 2px;
@@ -3104,6 +3104,12 @@ div .tdtop {
 }
 @media only screen and (max-width: 767px)
 {
+	.boxstats, .boxstats130 {
+		margin: 3px;
+	    border: 1px solid #ddd;
+    	box-shadow: none;
+    	background: #ddd;
+    }
 	.thumbstat {
 		flex: 1 1 110px;
 	}
