@@ -1749,8 +1749,8 @@ class Propal extends CommonObject
 				// to  not lose the linked files
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->propal->dir_output.'/'.$oldref;
-				$dirdest = $conf->propal->dir_output.'/'.$newref;
+				$dirsource = $conf->propal->multidir_output[$this->entity].'/'.$oldref;
+				$dirdest = $conf->propal->multidir_output[$this->entity].'/'.$newref;
 
 				if (file_exists($dirsource))
 				{
@@ -1759,7 +1759,7 @@ class Propal extends CommonObject
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+						$listoffiles=dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref,'/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
@@ -2815,9 +2815,9 @@ class Propal extends CommonObject
 					{
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
-						if ($conf->propal->dir_output && !empty($this->ref))
+						if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref))
 						{
-							$dir = $conf->propal->dir_output . "/" . $ref ;
+							$dir = $conf->propal->multidir_output[$this->entity] . "/" . $ref ;
 							$file = $dir . "/" . $ref . ".pdf";
 							if (file_exists($file))
 							{
