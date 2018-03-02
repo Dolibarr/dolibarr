@@ -209,7 +209,7 @@ print load_fiche_titre($langs->trans("DonationsSetup"),$linkback,'title_setup');
 
 $head = donation_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Donations"), 0, 'payment');
+dol_fiche_head($head, 'general', $langs->trans("Donations"), -1, 'payment');
 
 
 // Document templates
