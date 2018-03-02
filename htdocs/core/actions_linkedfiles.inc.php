@@ -184,7 +184,7 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 		$filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
 		$filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
 
-		$parameters=array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto);
+		$parameters=array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);
 		$reshook=$hookmanager->executeHooks('renameUploadedFile', $parameters, $object);
 
 		if (empty($reshook))
