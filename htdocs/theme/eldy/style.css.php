@@ -3081,7 +3081,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats {
     padding: 3px;
-    width: 104px;
+    width: 121px;
 }
 .boxstats130 {
     width: 158px;

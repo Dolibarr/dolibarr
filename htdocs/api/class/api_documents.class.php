@@ -306,7 +306,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Proposal not found');
 			}
 
-			$upload_dir = $conf->propal->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
+			$upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . get_exdir(0, 0, 0, 1, $object, 'propal');
 		}
 		else if ($modulepart == 'commande' || $modulepart == 'order')
 		{

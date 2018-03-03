@@ -1292,7 +1292,7 @@ if (empty($reshook))
 	}
 
 	// Actions to build doc
-	$upload_dir = $conf->propal->dir_output;
+	$upload_dir = $conf->propal->multidir_output[$object->entity];
 	$permissioncreate=$user->rights->propal->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -2425,7 +2425,7 @@ if ($action == 'create')
 		 * Documents generes
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->propal->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 		$genallowed = $user->rights->propal->lire;
 		$delallowed = $user->rights->propal->creer;
@@ -2466,7 +2466,7 @@ if ($action == 'create')
 	// Presend form
 	$modelmail='propal_send';
 	$defaulttopic='SendPropalRef';
-	$diroutput = $conf->propal->dir_output;
+	$diroutput = $conf->propal->multidir_output[$object->entity];
 	$trackid = 'pro'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
