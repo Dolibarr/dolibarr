@@ -586,7 +586,7 @@ if ($id > 0 || ! empty($ref))
 				    }
 				    else
 				    {
-				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("ProjecHasChild").'">'.$langs->trans('Delete').'</a>';
+				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }
 				}
 				else

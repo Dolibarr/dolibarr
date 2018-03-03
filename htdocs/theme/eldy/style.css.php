@@ -3079,14 +3079,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	overflow: hidden;
     text-overflow: ellipsis;
 }
-.boxstats {
-    padding: 3px;
-    width: 121px;
-}
 .boxstats130 {
     width: 158px;
     height: 48px;
     padding: 3px
+}
+.boxstats {
+    padding: 3px;
+    width: 121px;
 }
 .boxstatscontent {
 	padding: 3px;
@@ -3096,9 +3096,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 {
 	.boxstats, .boxstats130 {
 		margin: 3px;
-	    border: 1px solid #ddd;
-    	box-shadow: none;
-    	background: #ddd;
+	    border: 1px solid #ccc;
+    	box-shadow: 1px 1px 5px #bbb;
     }
     .boxstats130 {
     	text-align: <?php echo $left; ?>
@@ -3117,7 +3116,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     	width: 148px;
     }
     .boxstats {
-        width: 100px;
+        width: 111px;
     }
 }
 
