@@ -67,7 +67,7 @@ class Utils
 			// Delete temporary files
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'^temp$','','','',2);
+				$filesarray=dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', '', '', 2, 0, '', 1);	// Do not follow symlinks
 				if ($choice == 'tempfilesold')
 				{
 					$now = dol_now();

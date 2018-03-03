@@ -52,10 +52,11 @@ function dol_basename($pathfile)
  *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
  *  @param	int			$nohook			Disable all hooks
  *  @param	string		$relativename	For recursive purpose only. Must be "" at first call.
+ *  @param	string		$donotfollowsymlinks	Do not follow symbolic links
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_indatabase
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0, $relativename="")
+function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=0, $relativename="", $donotfollowsymlinks=0)
 {
 	global $db, $hookmanager;
 	global $object;
@@ -159,7 +160,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 						// if we're in a directory and we want recursive behavior, call this function again
 						if ($recursive)
 						{
-							$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename!=''?$relativename.'/':'').$file));
+							if (empty($donotfollowsymlinks) || ! is_link($path."/".$file))
+							{
+								//var_dump('eee '. $path."/".$file. ' '.is_dir($path."/".$file).' '.is_link($path."/".$file));
+								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename!=''?$relativename.'/':'').$file, $donotfollowsymlinks));
+							}
 						}
 					}
 					else if (! $isdir && (($types == "files") || ($types == "all")))
