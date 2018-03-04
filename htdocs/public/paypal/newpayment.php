@@ -250,7 +250,7 @@ if (GETPOST('action','aZ09') == 'dopayment')
 	    //$_SESSION["FinalPaymentAmt"]=$PAYPAL_API_PRICE;
 
 	    // A redirect is added if API call successfull
-        print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
+        $mesg = print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
 
 		exit;
 	}

@@ -209,9 +209,10 @@ class Paiement extends CommonObject
 			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			$mtotal = $totalamount;
 		}
+		$note = ($this->note_public?$this->note_public:$this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($note)."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);

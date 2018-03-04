@@ -708,6 +708,7 @@ CoreErrorTitle=System error
 CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=Credit card
 ValidatePayment=Validate payment
+CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=Fields with <b>%s</b> are mandatory
 FieldsWithIsForPublic=Fields with <b>%s</b> are shown on public list of members. If you don't want this, check off the "public" box.
 AccordingToGeoIPDatabase=(according to GeoIP convertion)

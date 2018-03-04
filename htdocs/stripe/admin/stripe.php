@@ -56,7 +56,9 @@ if ($action == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY",GETPOST('STRIPE_LIVE_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM','alpha'),'chaine',0,'',$conf->entity);
@@ -194,6 +196,14 @@ print $langs->trans("VendorName").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
+
+if (! empty($conf->banque->enabled))
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccount").'</td><td>';
+	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '</td></tr>';
+}
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';

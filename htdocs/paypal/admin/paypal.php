@@ -55,6 +55,8 @@ if ($action == 'setvalue' && $user->admin)
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
+    if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
@@ -210,6 +212,13 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$con
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
+if (! empty($conf->banque->enabled))
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccount").'</td><td>';
+	print $form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '</td></tr>';
+}
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
