@@ -91,6 +91,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		if ($user->rights->facture->lire)
 		{
+			$mesg = '';
+
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb='DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot='DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';

@@ -616,7 +616,7 @@ class Website extends CommonObject
 
 		    	// Generate the index.php page to be the home page
 		    	//-------------------------------------------------
-		    	$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl);
+		    	$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl);
 		    }
 		}
 

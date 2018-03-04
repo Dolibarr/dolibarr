@@ -319,7 +319,7 @@ abstract class CommonDocGenerator
 
     	foreach($conf->global as $key => $val)
     	{
-    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
     		else $newval = $val;
     		$array_other['__['.$key.']__'] = $newval;
     	}

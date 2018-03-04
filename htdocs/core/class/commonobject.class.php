@@ -4691,7 +4691,8 @@ abstract class CommonObject
 			   			if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']))
 			   			{
 			   				// If there is an encryption choice, we use it to crypt data before insert
-			   				$algo=reset(array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']));
+			   				$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])
+			   				$algo=reset($tmparrays);
 			   				if ($algo != '')
 			   				{
 			   					//global $action;		// $action may be 'create', 'update', 'update_extras'...

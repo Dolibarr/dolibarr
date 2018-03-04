@@ -235,6 +235,7 @@ class ExtraFields
 				$lengthdb='11';
 			} elseif ($type=='html') {
 				$typedb='text';
+				$lengthdb=$length;
 			} elseif($type=='password') {
 				$typedb='varchar';
 				$lengthdb='128';
