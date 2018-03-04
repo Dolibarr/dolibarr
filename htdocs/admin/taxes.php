@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load('admin');
+$langs->load("products");
 
 if (!$user->admin) accessforbidden();
 
