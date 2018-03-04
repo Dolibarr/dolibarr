@@ -398,7 +398,7 @@ class Expedition extends CommonObject
 
 		if (($lineId = $expeditionline->insert()) < 0)
 		{
-			$this->error[]=$expeditionline->error;
+			$this->errors[]=$expeditionline->error;
 		}
 		return $lineId;
 	}
@@ -2386,9 +2386,9 @@ class ExpeditionLigne extends CommonObjectLine
 		$error=0;
 
 		// Check parameters
-		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || empty($this->qty))
+		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || ! is_numeric($this->qty))
 		{
-			$this->errors[] = 'ErrorMandatoryParametersNotProvided';
+			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
 		// Clean parameters
@@ -2418,6 +2418,7 @@ class ExpeditionLigne extends CommonObjectLine
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
+					$this->errors[]=$this->error;
 					$error++;
 				}
 			}
