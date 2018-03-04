@@ -2002,7 +2002,7 @@ class Societe extends CommonObject
 				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose.=' class="classfortooltip"';
+			$linkclose.=' class="classfortooltip refurl"';
 
 		 	if (! is_object($hookmanager))
 			{
@@ -3780,7 +3780,7 @@ class Societe extends CommonObject
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
-		if ($origin_id == $id)
+		if ($origin_id == $dest_id)
 		{
 			dol_syslog('Error: Try to merge a thirdparty into itself');
 			return false;

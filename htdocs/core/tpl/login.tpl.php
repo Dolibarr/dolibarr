@@ -270,7 +270,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
     {
         $xml = simplexml_load_string($resgetcommitstrip['content']);
         $little = $xml->channel->item[0]->children('content',true);
-        print $little->encoded;
+        print preg_replace('/width="650" height="658"/', '', $little->encoded);
     }
 }
 

@@ -6,6 +6,7 @@ WelcomeOnPaymentPage=Bem Vindos a Nossos serviços de pagamento on-line
 ThisScreenAllowsYouToPay=Esta página lhe permite fazer seu pagamento on-line destinado a %s.
 ThisIsInformationOnPayment=Aqui está a informação sobre o pagamento a realizar
 Creditor=Beneficiário
+PayBoxDoPayment=Pagar com Cartão de Débito ou Crédito (Paybox)
 ToPay=Realizar pagamento
 YouWillBeRedirectedOnPayBox=Va a ser redirecionado a a página segura de  Paybox para indicar seu cartão de crédito
 ToOfferALinkForOnlinePayment=URL para %s pagamento

@@ -407,7 +407,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-			header("Location: index.php");
+			header("Location: list.php?restore_lastsearch_values=1");
 			exit;
 		}
 		else
@@ -917,9 +917,9 @@ elseif ($object->id > 0)
 
 		// Date start - end
 		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-		$start = dol_print_date($object->date_start,'dayhour');
+		$start = dol_print_date($object->date_start,'day');
 		print ($start?$start:'?');
-		$end = dol_print_date($object->date_end,'dayhour');
+		$end = dol_print_date($object->date_end,'day');
 		print ' - ';
 		print ($end?$end:'?');
 		if ($object->hasDelay()) print img_warning("Late");

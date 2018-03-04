@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -240,7 +240,7 @@ if ($canreadperms)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$grouptemp->id = $obj->id;
+			$grouptemp->id = $obj->rowid;
 			$grouptemp->name = $obj->name;
 			$grouptemp->note = $obj->note;
 

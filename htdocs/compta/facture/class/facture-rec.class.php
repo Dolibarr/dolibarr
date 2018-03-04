@@ -1009,7 +1009,7 @@ class FactureRec extends CommonInvoice
 
 			    $facture->type = self::TYPE_STANDARD;
 			    $facture->brouillon = 1;
-			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
+			    $facture->date = (empty($facturerec->date_when)?$now:$facturerec->date_when);	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
 
 			    $invoiceidgenerated = $facture->create($user);

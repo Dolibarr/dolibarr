@@ -382,7 +382,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+					if ($conf->global->MAIN_FEATURES_LEVEL < 2)
 					{
 						if ($nature == 'various' || $nature == 'hasnew') $nature='';
 					}

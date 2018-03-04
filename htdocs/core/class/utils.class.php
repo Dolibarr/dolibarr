@@ -67,7 +67,7 @@ class Utils
 			// Delete temporary files
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'^temp$','','','',2);
+				$filesarray=dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1);	// Do not follow symlinks
 				if ($choice == 'tempfilesold')
 				{
 					$now = dol_now();
@@ -81,10 +81,10 @@ class Utils
 
 		if ($choice=='allfiles')
 		{
-			// Delete all files (except install.lock)
+			// Delete all files (except install.lock, do not follow symbolic links)
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root,"all",0,'','install\.lock$');
+				$filesarray=dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 			}
 		}
 
@@ -93,7 +93,7 @@ class Utils
 			// Define files log
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*$', 'install\.lock$');
+				$filesarray=dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 			}
 
 			$filelog='';

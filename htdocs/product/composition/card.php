@@ -473,7 +473,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				$colspan=6;
+				$colspan=8;
 				if (! empty($conf->stock->enabled)) $colspan++;
 
 				print '<tr class="impair">';
