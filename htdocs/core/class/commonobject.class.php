@@ -4520,6 +4520,7 @@ abstract class CommonObject
 		}
 		else
 		{
+			global $extrafields;
 			dol_syslog("Warning: fetch_optionals was called with param optionsArray defined when you should pass null now", LOG_WARNING);
 		}
 
