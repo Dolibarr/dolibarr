@@ -253,6 +253,8 @@ $token='';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
+print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242', '4000000000000101', '4000000000000069', '4000000000000341'));
+
 if (! empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';

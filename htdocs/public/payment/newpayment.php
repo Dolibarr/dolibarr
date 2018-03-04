@@ -1442,7 +1442,7 @@ if (preg_match('/^dopayment/',$action))
 	    <div id="card-errors" role="alert"></div>
 	    </div>
 	    <br>
-	    <button class="button" id="buttontopay">'.$langs->trans("ToPay").'</button>
+	    <button class="button" id="buttontopay">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>
 

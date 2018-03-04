@@ -356,23 +356,24 @@ input.buttonpayment {
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 30px;
+	padding-left: 38px;
 	text-align: <?php echo $left; ?>;
 	border: 1px solid #ddd;
 	background-color: #eee;
 	white-space: normal;
+	box-shadow: 1px 1px 8px #bbb;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
 	background-size: 26px;
 	background-repeat: no-repeat;
-	background-position: 2px 11px;
+	background-position: 5px 11px;
 }
 input.buttonpaymentcheque {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
 	background-size: 24px;
 	background-repeat: no-repeat;
-	background-position: 2px 8px;
+	background-position: 5px 8px;
 }
 input.buttonpaymentpaypal {
 	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
