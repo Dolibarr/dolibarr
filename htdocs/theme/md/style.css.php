@@ -153,7 +153,7 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
 
-//if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
+if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
 
 
 // Set text color to black or white
@@ -3184,8 +3184,8 @@ span.dashboardlineko {
 	text-align: center;
 }
 .boxworkingboard .tdboxstats {
-	padding-left: 0px !important;
-	padding-right: 0px !important;
+	padding-left: 1px !important;
+	padding-right: 1px !important;
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;

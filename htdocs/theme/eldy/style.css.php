@@ -833,21 +833,13 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
     flex-flow: row wrap;
     justify-content: flex-start;
 }
-/*.thumbstat {
-	flex: 1 1 116px;
-}*/
+.thumbstat {
+    min-width: 150px;
+}
 .thumbstat150 {
-	flex: 1 1 170px;
+    min-width: 170px;
 }
 .thumbstat, .thumbstat150 {
-    /*
-    flex-shrink: 1;
-    flex-basis: 140px;
-	display: inline;
-    width: 100%;
-    justify-content: flex-start;
-    align-self: flex-start;
-    */
     flex-grow: 1;
     flex-shrink: 0;
     min-width: 150px;
@@ -3095,6 +3087,20 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstatscontent {
 	padding: 3px;
 }
+.boxstatsempty {
+    width: 121px;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.boxstats150empty {
+    width: 158px;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
 
 @media only screen and (max-width: 767px)
 {
@@ -3122,6 +3128,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     .boxstats {
         width: 111px;
     }
+    .boxstatsempty {
+    	width: 111px;
+	}
+
 }
 
 .boxstats:hover {
