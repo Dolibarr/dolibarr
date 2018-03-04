@@ -833,20 +833,24 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
     flex-flow: row wrap;
     justify-content: flex-start;
 }
-.thumbstat {
+/*.thumbstat {
 	flex: 1 1 116px;
-}
+}*/
 .thumbstat150 {
 	flex: 1 1 170px;
 }
 .thumbstat, .thumbstat150 {
-    /* flex-grow: 1; */
-    /* flex-shrink: 1; */
-    /* flex-basis: 140px; */
+    /*
+    flex-shrink: 1;
+    flex-basis: 140px;
 	display: inline;
     width: 100%;
     justify-content: flex-start;
     align-self: flex-start;
+    */
+    flex-grow: 1;
+    flex-shrink: 0;
+    min-width: 150px;
 }
 
 select.selectarrowonleft {
@@ -3097,7 +3101,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	.boxstats, .boxstats130 {
 		margin: 3px;
 	    border: 1px solid #ccc;
-    	box-shadow: 1px 1px 5px #bbb;
+    	box-shadow: none;
     }
     .boxstats130 {
     	text-align: <?php echo $left; ?>
