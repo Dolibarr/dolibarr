@@ -132,7 +132,7 @@ class Localtax extends CommonObject
      *	@param		int		$notrigger		0=no, 1=yes (no update trigger)
      *	@return		int						<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update(User $user, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -149,8 +149,8 @@ class Localtax extends CommonObject
 		$this->db->begin();
 
 		// Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
-        $sql.= " localtaxtype=".$this->ltt.",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
+		$sql.= " localtaxtype=".$this->ltt.",";
 		$sql.= " tms='".$this->db->idate($this->tms)."',";
 		$sql.= " datep='".$this->db->idate($this->datep)."',";
 		$sql.= " datev='".$this->db->idate($this->datev)."',";
@@ -160,7 +160,7 @@ class Localtax extends CommonObject
 		$sql.= " fk_bank=".$this->fk_bank.",";
 		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
 		$sql.= " fk_user_modif=".$this->fk_user_modif;
-        $sql.= " WHERE rowid=".$this->id;
+		$sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -255,12 +255,12 @@ class Localtax extends CommonObject
     }
 
 
- 	/**
- 	 *	Delete object in database
- 	 *
- 	 *	@param		User	$user		User that delete
- 	 *	@return		int					<0 if KO, >0 if OK
- 	 */
+	/**
+	 *	Delete object in database
+	 *
+	 *	@param		User	$user		User that delete
+	 *	@return		int					<0 if KO, >0 if OK
+	 */
 	function delete($user)
 	{
 		// Call trigger
@@ -285,11 +285,11 @@ class Localtax extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	function initAsSpecimen()
 	{

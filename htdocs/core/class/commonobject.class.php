@@ -2739,7 +2739,7 @@ abstract class CommonObject
 	 *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
 	 *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
 	 *  @param	int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
-	 *	@return	void
+	 *	@return	int						<0 if KO, >0 if OK
 	 *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
 	 */
 	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1)
@@ -2920,10 +2920,12 @@ abstract class CommonObject
 					}
 				}
 			}
+			return 1;
 		}
 		else
 		{
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -3582,7 +3584,7 @@ abstract class CommonObject
 	 *	Return HTML table for object lines
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *	If lines are into a template, title must also be into a template
-	 *	But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				Action code
 	 *	@param  string		$seller            	Object of seller third party
