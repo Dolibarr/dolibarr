@@ -4,7 +4,6 @@ Proposal=Търговско предложение
 ProposalShort=Предложение
 ProposalsDraft=Проектът на търговски предложения
 ProposalsOpened=Отваряне на търговски предложения
-Prop=Търговски предложения
 CommercialProposal=Търговско предложение
 PdfCommercialProposalTitle=Търговско предложение
 ProposalCard=Предложение карта
@@ -64,6 +63,7 @@ ProposalLine=Предложение линия
 AvailabilityPeriod=Наличност закъснение
 SetAvailability=Незабавно наличността
 AfterOrder=по поръчка
+OtherProposals=Други предложения
 ##### Availability #####
 AvailabilityTypeAV_NOW=Непосредствен
 AvailabilityTypeAV_1W=1 седмица

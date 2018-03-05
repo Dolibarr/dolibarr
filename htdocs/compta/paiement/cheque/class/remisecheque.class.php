@@ -36,7 +36,7 @@ class RemiseCheque extends CommonObject
 	public $element='chequereceipt';
 	public $table_element='bordereau_cheque';
 	public $picto = 'payment';
-	
+
 	var $num;
 	var $intitule;
 	//! Numero d'erreur Plage 1024-1279
@@ -345,7 +345,7 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 
 		$this->db->begin();
-		
+
 		$numref = $this->getNextNumRef();
 
 		if ($this->errno == 0 && $numref)
@@ -481,10 +481,10 @@ class RemiseCheque extends CommonObject
 
 
 	/**
-     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
-     *
-     *      @param      User	$user       Objet user
-     *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param      User	$user       Objet user
+	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
 	function load_board($user)
 	{
@@ -523,6 +523,45 @@ class RemiseCheque extends CommonObject
 			}
 
 			return $response;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if ko, >0 if ok
+	 */
+	function load_state_board()
+	{
+		global $user;
+
+		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
+		$sql = "SELECT count(b.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid";
+		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql.= " AND b.fk_type = 'CHQ'";
+		$sql.= " AND b.amount > 0";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["cheques"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
 		}
 		else
 		{
@@ -716,7 +755,7 @@ class RemiseCheque extends CommonObject
 	 *
 	 *	@param	int		$bank_id 		   Id of bank transaction line concerned
 	 *	@param	date	$rejection_date    Date to use on the negative payment
-	 * 	@return	int                        Id of negative payment line created 
+	 * 	@return	int                        Id of negative payment line created
 	 */
 	function rejectCheck($bank_id, $rejection_date)
 	{
@@ -727,19 +766,19 @@ class RemiseCheque extends CommonObject
 
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
-		
+
 		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
             $this->error='ActionRefusedLineAlreadyConciliated';
 		    return -1;
 		}*/
-		
+
 		$this->db->begin();
-		
+
 		// Not conciliated, we can delete it
-		//$bankline->delete($user);    // We delete 
-			    
+		//$bankline->delete($user);    // We delete
+
 		$bankaccount = $payment->fk_account;
 
 		// Get invoices list to reopen them
@@ -753,7 +792,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment = new Paiement($db);
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
-			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement');
+			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement','code','id',1);
 			$rejectedPayment->num_paiement = $payment->numero;
 
 			while($obj = $db->fetch_object($resql))
@@ -940,25 +979,56 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	Return clicable name (with picto eventually)
+	 *	Return clicable name (with picto eventually)
 	 *
-	 *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *		@param	string	$option			Sur quoi pointe le lien
-	 *		@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option						Sur quoi pointe le lien
+     *  @param	int  	$notooltip					1=Disable tooltip
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$result='';
-        $label = $langs->trans("ShowCheckReceipt").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$label = '<u>'.$langs->trans("ShowCheckReceipt").'</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+
+        $url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?id='.$this->id;
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        }
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowCheckReceipt");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
 
 		return $result;
 	}

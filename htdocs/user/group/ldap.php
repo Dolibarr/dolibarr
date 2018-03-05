@@ -63,30 +63,31 @@ $object->getrights();
 
 if ($action == 'dolibarr2ldap')
 {
-	$db->begin();
-
 	$ldap=new Ldap();
 	$result=$ldap->connect_bind();
 
-	$info=$object->_load_ldap_info();
-	// Get a gid number for objectclass PosixGroup
-	if(in_array('posixGroup',$info['objectclass']))
-		$info['gidNumber'] = $ldap->getNextGroupGid();
+	if ($result > 0)
+	{
+		$info=$object->_load_ldap_info();
 
-	$dn=$object->_load_ldap_dn($info);
-	$olddn=$dn;	// We can say that old dn = dn as we force synchro
+		// Get a gid number for objectclass PosixGroup
+		if (in_array('posixGroup',$info['objectclass'])) {
+			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+		}
 
-	$result=$ldap->update($dn,$info,$user,$olddn);
+		$dn=$object->_load_ldap_dn($info);
+		$olddn=$dn;	// We can say that old dn = dn as we force synchro
+
+		$result=$ldap->update($dn,$info,$user,$olddn);
+	}
 
 	if ($result >= 0)
 	{
 		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
-		$db->commit();
 	}
 	else
 	{
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
-		$db->rollback();
 	}
 }
 
@@ -104,7 +105,9 @@ $head = group_prepare_head($object);
 
 dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
-dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object,'id',$linback,$user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -206,12 +209,10 @@ if ($result > 0)
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 print '</table>';
 
 llxFooter();
-
 $db->close();
-

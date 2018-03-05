@@ -9,6 +9,7 @@ LastModifiedProposals=Últimas %s propostas modificadas
 NoProposal=Sem propostas
 AmountOfProposalsByMonthHT=Valor por Mês (sem ICMS)
 PropalsOpened=Aberto
+PropalStatusValidated=Validado (a proposta esta em aberto)
 PropalStatusSigned=Assinado (A Faturar)
 PropalStatusNotSigned=Sem Assinar (Encerrado)
 PropalStatusBilled=Faturado

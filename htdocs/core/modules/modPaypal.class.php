@@ -49,7 +49,7 @@ class modPaypal extends DolibarrModules
 
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
-        $this->family = "other";
+        $this->family = "interface";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -58,8 +58,6 @@ class modPaypal extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=other)
-        $this->special = 1;
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
@@ -107,6 +105,21 @@ class modPaypal extends DolibarrModules
         // Main menu entries
         $this->menus = array();			// List of menus to add
         $r=0;
+        $this->menu[$r]=array(
+        'fk_menu'=>'fk_mainmenu=billing,fk_leftmenu=customers_bills_payment',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        'mainmenu'=>'billing',
+        'leftmenu'=>'customers_bills_payment_paypal',
+        'type'=>'left',			                // This is a Left menu entry
+        'titre'=>'PaypalImportPayment',
+        'url'=>'/paypal/importpayments.php',
+        'langs'=>'paypal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+        'position'=>501,
+        'enabled'=>'$conf->paypal->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+        'perms'=>'$user->rights->banque->consolidate',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+        'target'=>'',
+        'user'=>2
+        );				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
 
         // Add here entries to declare new menus
         // Example to declare the Top Menu entry:

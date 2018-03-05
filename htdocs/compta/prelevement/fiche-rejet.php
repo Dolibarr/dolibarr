@@ -31,10 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load('withdrawals');
-$langs->load('bills');
+$langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();
@@ -66,12 +63,14 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id > 0 || $ref)
 {
-  	if ($object->fetch($prev_id, $ref) == 0)
+  	if ($object->fetch($prev_id, $ref) >= 0)
     {
     	$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'rejects', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
@@ -155,7 +154,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql.= " , ".MAIN_DB_PREFIX."societe as s";
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql.= " WHERE p.rowid=".$prev_id;
+$sql.= " WHERE p.rowid=".$object->id;
 $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND pl.fk_soc = s.rowid";

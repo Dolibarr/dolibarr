@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - categories
-Rubrique=Tag/Category
-Rubriques=Tags/Categories
+Rubrique=분류/범주
+Rubriques=분류/범주
 RubriquesTransactions=Tags/Categories of transactions
-categories=tags/categories
-NoCategoryYet=No tag/category of this type created
+categories=분류/범주
+NoCategoryYet=해당 분류/범주가 없습니다. 
 In=In
 AddIn=Add in
 modify=modify

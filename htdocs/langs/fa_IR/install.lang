@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=شما با استفاده از جادوگر Dolibarr را�
 KeepDefaultValuesMamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliMamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 KeepDefaultValuesProxmox=شما با استفاده از جادوگر در راه اندازی Dolibarr از یک دستگاه مجازی بورس، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=ثابت برای داده های denormalized
@@ -191,9 +193,11 @@ MigrationActioncommElement=به روز کردن اطلاعات در مورد ا�
 MigrationPaymentMode=اطلاعات مهاجرت برای حالت پرداخت
 MigrationCategorieAssociation=مهاجرت از دسته
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=نمایش گزینه های در دسترس نیست
 HideNotAvailableOptions=پنهان کردن گزینه های در دسترس نیست
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

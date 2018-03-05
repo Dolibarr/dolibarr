@@ -4,7 +4,6 @@ Proposal=Commercial proposal
 ProposalShort=Proposal
 ProposalsDraft=Draft commercial proposals
 ProposalsOpened=Open commercial proposals
-Prop=Commercial proposals
 CommercialProposal=Commercial proposal
 PdfCommercialProposalTitle=Commercial proposal
 ProposalCard=Proposal card
@@ -64,6 +63,7 @@ ProposalLine=Proposal line
 AvailabilityPeriod=Availability delay
 SetAvailability=Set availability delay
 AfterOrder=after order
+OtherProposals=Other proposals
 ##### Availability #####
 AvailabilityTypeAV_NOW=Негайно
 AvailabilityTypeAV_1W=1 week

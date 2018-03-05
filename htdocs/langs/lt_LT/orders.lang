@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=Supplier order %s received %s
 SupplierOrderSubmitedInDolibarr=Supplier order %s submited
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=Kiti užsakymai
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Sekančio kliento užsakymo atstovas
 TypeContact_commande_internal_SHIPPING=Sekančio pakrovimo atstovas
@@ -151,5 +152,7 @@ OrderCreated=Jūsų užsakymai sukurti
 OrderFail=Kuriant užsakymus įvyko klaida
 CreateOrders=Sukurti užsakymus
 ToBillSeveralOrderSelectCustomer=Norėdami sukurti už kelis užsakymus sąskaitą faktūrą, spustelėkite pirma į klientą, tada pasirinkite "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

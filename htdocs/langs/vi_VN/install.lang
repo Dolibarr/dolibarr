@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Bạn sử dụng các hướng dẫn cài đặt Dolibarr 
 KeepDefaultValuesMamp=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ DoliMamp, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
 KeepDefaultValuesProxmox=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ một thiết bị ảo Proxmox, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Sửa chữa cho các dữ liệu denormalized
@@ -191,9 +193,11 @@ MigrationActioncommElement=Cập nhật dữ liệu về các hoạt động
 MigrationPaymentMode=Di chuyển dữ liệu cho phương thức thanh toán
 MigrationCategorieAssociation=Di chuyển các loại
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Hiển thị tùy chọn không có sẵn
 HideNotAvailableOptions=Ẩn các tùy chọn không có sẵn
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

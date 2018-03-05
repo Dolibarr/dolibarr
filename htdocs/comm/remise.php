@@ -46,7 +46,7 @@ $backtopage = GETPOST('backtopage','alpha');
  * Actions
  */
 
-if (GETPOST('cancel') && ! empty($backtopage))
+if (GETPOST('cancel','alpha') && ! empty($backtopage))
 {
      header("Location: ".$backtopage);
      exit;
@@ -107,7 +107,7 @@ if ($socid > 0)
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), 0, 'company');
+	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -125,7 +125,7 @@ if ($socid > 0)
 	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
 
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border centpercent">';
 
 	// New value
@@ -197,7 +197,7 @@ if ($socid > 0)
 		else
 		{
 		    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-		}		
+		}
 		$db->free($resql);
 		print "</table>";
 	}

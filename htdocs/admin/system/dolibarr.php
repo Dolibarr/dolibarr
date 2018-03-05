@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
@@ -49,12 +49,12 @@ $version='0.0';
 
 if ($action == 'getlastversion')
 {
-    $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+    $result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
     //var_dump($result['content']);
     $sfurl = simplexml_load_string($result['content']);
 }
 
-	
+
 /*
  * View
  */
@@ -107,19 +107,26 @@ if (function_exists('curl_init'))
             }
 
             // Show version
-            print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
+            print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b>';
         }
         else
         {
-            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+            print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b>';
         }
     }
     else
     {
-        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a><br>';
+        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a>';
     }
 }
 
+// Now show link to the changelog
+print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
+
+$version=DOL_VERSION;
+if (preg_match('/[a-z]+/i', $version)) $version='develop';	// If version contains text, it is not an official tagged version, so we use the full change log.
+
+print '<a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank">'.$langs->trans("SeeChangeLog").'</a>';
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
@@ -256,7 +263,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzuser').'</td></tr>'."\n";
 
 $filesystemencoding=ini_get("unicode.filesystem_encoding");	// Disponible avec PHP 6.0
-print '<tr class="oddeven"><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+print '<tr class="oddeven"><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";
 
 $tmp=ini_get("unicode.filesystem_encoding");						// Disponible avec PHP 6.0
 if (empty($tmp) && ! empty($_SERVER["WINDIR"])) $tmp='iso-8859-1';	// By default for windows
@@ -343,7 +350,7 @@ foreach($configfileparameters as $key => $value)
 	{
 		$newkey = preg_replace('/^\?/','',$key);
 
-		if (preg_match('/^\?/',$key) && empty(${$newkey})) 
+		if (preg_match('/^\?/',$key) && empty(${$newkey}))
 		{
 		    if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled))
                 continue;    // We discard parameters starting with ?
@@ -382,7 +389,7 @@ foreach($configfileparameters as $key => $value)
 				}
 			}
 			else print ${$newkey};
-			if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
+			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";
 		}
 		print "</tr>\n";

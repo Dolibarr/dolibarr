@@ -46,7 +46,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysql, php-adodb, php-nusoap, dejavu-sans-fonts
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-adodb, php-nusoap, dejavu-sans-fonts, php-mbstring, php-xml
 Requires: mysql-server, mysql
 BuildRequires: desktop-file-utils
 %else
@@ -63,9 +63,9 @@ Requires: mysql-community-server, mysql-community-server-client
 BuildRequires: update-desktop-files fdupes
 %else
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap 
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mbstring, php-xml
 Requires: mysql-server, mysql 
-Requires: php-mysql >= 4.1.0 
+Requires: php-mysqli >= 4.1.0 
 %endif
 %endif
 %endif
@@ -293,7 +293,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
-%_datadir/dolibarr/htdocs/websites
+%_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php
@@ -441,8 +441,8 @@ if [ "x$os" = "xfedora-redhat" -a -s /sbin/restorecon ]; then
 %else
   echo Add SE Linux permissions for dolibarr
   # semanage add records into /etc/selinux/targeted/contexts/files/file_contexts.local
-  semanage fcontext -a -t httpd_sys_script_rw_t "/etc/dolibarr(/.*?)"
-  semanage fcontext -a -t httpd_sys_script_rw_t "/var/lib/dolibarr(/.*?)"
+  semanage fcontext -a -t httpd_sys_rw_content_t "/etc/dolibarr(/.*)?"
+  semanage fcontext -a -t httpd_sys_rw_content_t "/var/lib/dolibarr(/.*)?"
   restorecon -R -v /etc/dolibarr
   restorecon -R -v /var/lib/dolibarr
 %endif

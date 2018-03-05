@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Kasutad Linuxi (Ubuntu, Debian, Fedora, ...) pakist pärit 
 KeepDefaultValuesMamp=Kasutad DoliMampist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
 KeepDefaultValuesProxmox=Kasutad Proxmoxi virtuaalrakendusest pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Paranda denormaliseeritud andmed
@@ -191,9 +193,11 @@ MigrationActioncommElement=Uuenda tegevuste andmec
 MigrationPaymentMode=Maksete režiimi andmete migreerimine
 MigrationCategorieAssociation=Kategooriate migreerimine
 MigrationEvents=Sündmuste migreerimine sündmuse omaniku lisamiseks seoste tabelisse
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Näita mitte saadaval olevaid lisavalikuid
 HideNotAvailableOptions=Peida mitte saadaval olevad lisavalikud
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

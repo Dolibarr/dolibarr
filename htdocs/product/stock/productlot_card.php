@@ -45,7 +45,7 @@ $langs->load("productbatch");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
-$backtopage = GETPOST('backtopage');
+$backtopage = GETPOST('backtopage','alpha');
 $batch  	= GETPOST('batch','alpha');
 $productid  = GETPOST('productid','int');
 $ref        = GETPOST('ref','alpha');       // ref is productid_batch
@@ -122,9 +122,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
     {
-        // Fill array 'array_options' with data from update form
+    	$object->oldcopy = dol_clone($object);
+
+    	// Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -135,10 +137,12 @@ if (empty($reshook))
             $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
             // some hooks
             if (empty($reshook)) {
-                $result = $object->insertExtraFields();
-                if ($result < 0) {
-                    $error++;
-                }
+                $result = $object->insertExtraFields('PRODUCT_LOT_MODIFY');
+       			if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
             } else if ($reshook < 0)
                 $error++;
         }
@@ -150,7 +154,7 @@ if (empty($reshook))
 	// Action to add record
 	if ($action == 'add')
 	{
-		if (GETPOST('cancel'))
+		if (GETPOST('cancel','alpha'))
 		{
 			$urltogo=$backtopage?$backtopage:dol_buildpath('/stock/list.php',1);
 			header("Location: ".$urltogo);
@@ -198,10 +202,10 @@ if (empty($reshook))
 	}
 
 	// Cancel
-	if ($action == 'update' && GETPOST('cancel')) $action='view';
+	if ($action == 'update' && GETPOST('cancel','alpha')) $action='view';
 
 	// Action to update record
-	if ($action == 'update' && ! GETPOST('cancel'))
+	if ($action == 'update' && ! GETPOST('cancel','alpha'))
 	{
 		$error=0;
 
@@ -284,7 +288,6 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	//
-    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.GETPOST('entity').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.GETPOST('fk_product').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.GETPOST('batch').'"></td></tr>';
     print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td><input class="flat" type="text" name="fk_user_creat" value="'.GETPOST('fk_user_creat').'"></td></tr>';
@@ -304,7 +307,7 @@ if ($action == 'create')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	$res = $object->fetch_optionals($object->id, $extralabels);
+	$res = $object->fetch_optionals();
 
     //print load_fiche_titre($langs->trans("Batch"));
 

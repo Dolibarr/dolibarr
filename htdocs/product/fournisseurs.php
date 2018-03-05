@@ -78,6 +78,8 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
 
+$contextpage='pricesuppliercard';
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('pricesuppliercard','globalcard'));
 
@@ -321,7 +323,7 @@ if ($id > 0 || $ref)
 
 			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		    $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
@@ -636,11 +638,6 @@ if ($id > 0 || $ref)
 				print_liste_field_titre("DiscountQtyMin",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("NbDaysToDelivery",$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("ReputationForThisProduct",$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled)) print_liste_field_titre("UnitCharges");
-				}
 				print_liste_field_titre('');
 				print "</tr>\n";
 
@@ -705,18 +702,6 @@ if ($id > 0 || $ref)
 							print $object->reputations[$productfourn->supplier_reputation];
 						}
 						print'</td>';
-
-						// Charges ????
-						/*
-						if ($conf->global->PRODUCT_CHARGES)
-						{
-							if (! empty($conf->margin->enabled))
-							{
-								print '<td align="right">';
-								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
-								print '</td>';
-							}
-						}*/
 
 						if (is_object($hookmanager))
 						{

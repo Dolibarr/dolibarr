@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Código contable cargas financieras
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta contable usada para los terceros
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Se utilizará una cuenta contable dedicada definida en la ficha de usuario para el relleno del Libro Mayor, o como valor predeterminado de la contabilidad del Libro Mayor si no se define una cuenta contable en la ficha del usuario
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta contable por defecto para pagos de salarios
 Salary=Salario
 Salaries=Salarios
 NewSalaryPayment=Nuevo pago
@@ -13,3 +13,5 @@ TJM=Tasa media por día
 CurrentSalary=Salario actual
 THMDescription=Este valor puede ser usado para calcular los costos de tiempo consumidos en un proyecto indicados por los usuarios si se utiliza el módulo proyectos
 TJMDescription=Este valor actualmente es informativo y no se utiliza para realizar cualquier tipo de cálculo
+LastSalaries=Últimos %s pagos salariales
+AllSalaries=Todos los pagos salariales

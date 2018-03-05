@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("accountancy");
@@ -46,13 +47,11 @@ $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST(
 
 
 $search_accountancy_code = GETPOST("search_accountancy_code");
-
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
 }
 $search_label_account = GETPOST('search_label_account', 'alpha');
-
 $search_mvt_label = GETPOST('search_mvt_label', 'alpha');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
@@ -62,15 +61,38 @@ $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->AC
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page','int');
-if ($page < 0) { $page = 0; }
+if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
 if ($sortfield == "") $sortfield = "t.rowid";
 
-if (empty($search_date_start)) $search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
-if (empty($search_date_end)) $search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
+if (empty($search_date_start) && empty($search_date_end)) {
+	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	$sql.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+	$sql.= $db->plimit(1);
+	$res = $db->query($sql);
+
+	if ($res->num_rows > 0) {
+		$fiscalYear = $db->fetch_object($res);
+		$search_date_start = strtotime($fiscalYear->date_start);
+		$search_date_end = strtotime($fiscalYear->date_end);
+	} else {
+		$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+		$year_start = dol_print_date(dol_now(), '%Y');
+		if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;	// If current month is lower that starting fiscal month, we start last year
+		$year_end = $year_start + 1;
+		$month_end = $month_start - 1;
+		if ($month_end < 1)
+		{
+			$month_end = 12;
+			$year_end--;
+		}
+		$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+		$search_date_end = dol_get_last_day($year_end, $month_end);
+	}
+}
 
 $object = new BookKeeping($db);
 
@@ -80,39 +102,38 @@ $filter = array ();
 
 if (! empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
-	$options .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');
+	$options .= '&date_startmonth=' . GETPOST('date_startmonth', 'int') . '&date_startday=' . GETPOST('date_startday', 'int') . '&date_startyear=' . GETPOST('date_startyear', 'int');
 }
 if (! empty($search_date_end)) {
 	$filter['t.doc_date<='] = $search_date_end;
-	$options .= '&amp;date_endmonth=' . GETPOST('date_endmonth', 'int') . '&amp;date_endday=' . GETPOST('date_endday', 'int') . '&amp;date_endyear=' . GETPOST('date_endyear', 'int');
+	$options .= '&date_endmonth=' . GETPOST('date_endmonth', 'int') . '&date_endday=' . GETPOST('date_endday', 'int') . '&date_endyear=' . GETPOST('date_endyear', 'int');
 }
 if (! empty($search_doc_date)) {
 	$filter['t.doc_date'] = $search_doc_date;
-	$options .= '&amp;doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&amp;doc_dateday=' . GETPOST('doc_dateday', 'int') . '&amp;doc_dateyear=' . GETPOST('doc_dateyear', 'int');
+	$options .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
 }
-
 
 if (! GETPOST('button_removefilter_x','alpha') && ! GETPOST('button_removefilter.x','alpha') && ! GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
   if (! empty($search_accountancy_code_start)) {
   	$filter['t.numero_compte'] = $search_accountancy_code_start;
-  	$options .= '&amp;search_accountancy_code_start=' . $search_accountancy_code_start;
+  	$options .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
   }
   if (! empty($search_label_account)) {
   	$filter['t.label_operation'] = $search_label_account;
-  	$options .= '&amp;search_label_account=' . $search_label_account;
+  	$options .= '&search_label_account=' . urlencode($search_label_account);
   }
   if (! empty($search_mvt_label)) {
   	$filter['t.label_operation'] = $search_mvt_label;
-  	$options .= '&amp;search_mvt_label=' . $search_mvt_label;
+  	$options .= '&search_mvt_label=' . urlencode($search_mvt_label);
   }
   if (! empty($search_direction)) {
   	$filter['t.sens'] = $search_direction;
-  	$options .= '&amp;search_direction=' . $search_direction;
+  	$options .= '&search_direction=' . urlencode($search_direction);
   }
   if (! empty($search_ledger_code)) {
   	$filter['t.code_journal'] = $search_ledger_code;
-  	$options .= '&amp;search_ledger_code=' . $search_ledger_code;
+  	$options .= '&search_ledger_code=' . urlencode($search_ledger_code);
   }
 }
 
@@ -159,6 +180,7 @@ $title_page = $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By"
 
 llxHeader('', $title_page);
 
+
 // List
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -169,6 +191,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 $result = $object->fetchAllByAccount($sortorder, $sortfield, $limit, $offset, $filter);
+
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -177,7 +200,7 @@ $num=count($object->lines);
 
 
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
@@ -203,23 +226,23 @@ if ($action == 'delbookkeepingyear') {
 }
 
 
-
+$param=$options;
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-$viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans("ViewFlatList") . '</a>';
+$viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param.'">' . $langs->trans("ViewFlatList") . '</a>';
+$addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords,'title_accountancy',0,$viewflat,'',$limit);
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$addbutton, '', $limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
   $sortorder = "asc";
 else
   $sortorder = "desc";
-
-print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
-print '</div>';
 
 print '<table class="noborder" width="100%">';
 
@@ -315,7 +338,7 @@ while ($i < min($num, $limit))
 
     // Affiche un lien vers la facture client/fournisseur
     $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br /><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
+    print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
 	print '<td align="right">' . ($line->debit ? price($line->debit) :''). '</td>';

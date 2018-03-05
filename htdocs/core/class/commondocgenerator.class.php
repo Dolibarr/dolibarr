@@ -203,7 +203,7 @@ abstract class CommonDocGenerator
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
         	$extralabels = $extrafields->fetch_name_optionals_label('societe',true);
-        	$object->fetch_optionals($object->id,$extralabels);
+        	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
@@ -274,7 +274,7 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
-		$object->fetch_optionals($object->id, $extralabels);
+		$object->fetch_optionals();
 
 		foreach($extrafields->attribute_label as $key => $label)
 		{
@@ -316,6 +316,14 @@ abstract class CommonDocGenerator
    			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
+
+    	foreach($conf->global as $key => $val)
+    	{
+    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
+    		else $newval = $val;
+    		$array_other['__['.$key.']__'] = $newval;
+    	}
+
     	return $array_other;
     }
 
@@ -345,17 +353,19 @@ abstract class CommonDocGenerator
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
+		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
+
 		$resarray=array(
 		$array_key.'_id'=>$object->id,
 		$array_key.'_ref'=>$object->ref,
 		$array_key.'_ref_ext'=>$object->ref_ext,
-		$array_key.'_ref_customer'=>$object->ref_client,
-		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
+		$array_key.'_ref_customer'=>(! empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
+		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
-        $array_key.'_hour'=>dol_print_date($object->date,'hour'),
-		$array_key.'_date'=>dol_print_date($object->date,'day'),
-		$array_key.'_date_rfc'=>dol_print_date($object->date,'dayrfc'),
+        $array_key.'_hour'=>dol_print_date($date,'hour'),
+		$array_key.'_date'=>dol_print_date($date,'day'),
+		$array_key.'_date_rfc'=>dol_print_date($date,'dayrfc'),
 		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement,'day'):''),
 	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite,'day'):''),
 		$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
@@ -418,6 +428,21 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_total_discount_ht'] = '';
 		}
 
+		// Fetch project information if there is a project assigned to this object
+		if ($object->element != "project" && ! empty($object->fk_project) && $object->fk_project > 0)
+		{
+			if (! is_object($object->project))
+			{
+				$object->fetch_projet();
+			}
+
+			$resarray[$array_key.'_project_ref'] = $object->project->ref;
+			$resarray[$array_key.'_project_title'] = $object->project->title;
+			$resarray[$array_key.'_project_description'] = $object->project->description;
+			$resarray[$array_key.'_project_date_start'] = dol_print_date($object->project->date_start, 'day');
+			$resarray[$array_key.'_project_date_end'] = dol_print_date($object->project->date_end, 'day');
+		}
+
 		// Add vat by rates
 		if (is_array($object->lines) && count($object->lines)>0)
 		{
@@ -442,7 +467,7 @@ abstract class CommonDocGenerator
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-			$object->fetch_optionals($object->id,$extralabels);
+			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
@@ -496,15 +521,31 @@ abstract class CommonDocGenerator
 		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
 
+		    // Units
+		if ($conf->global->PRODUCT_USE_UNITS)
+		{
+		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
+		      $resarray['line_unit_short']=$outputlangs->trans($line->getLabelOfUnit('short'));
+		}
+
 		// Retrieve extrafields
 		$extrafieldkey=$line->element;
 		$array_key="line";
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-		$line->fetch_optionals($line->rowid,$extralabels);
+		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+
+		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
+		if (isset($line->fk_product) && $line->fk_product > 0)
+		{
+			$tmpproduct = new Product($this->db);
+			$result = $tmpproduct->fetch($line->fk_product);
+			foreach($tmpproduct->array_options as $key=>$label)
+				$resarray["line_".$key] = $label;
+		}
 
 		return $resarray;
 	}
@@ -561,7 +602,7 @@ abstract class CommonDocGenerator
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
     		$extralabels = $extrafields->fetch_name_optionals_label('shipment',true);
-    		$object->fetch_optionals($object->id,$extralabels);
+    		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
     	}*/

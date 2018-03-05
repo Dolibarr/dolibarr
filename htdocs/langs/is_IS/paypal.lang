@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal mát skipulag
 PaypalDesc=Þessi eining bjóða síður að leyfa greiðslu á <a href="http://www.paypal.com" target="_blank">PayPal</a> við viðskiptavini. Þetta er hægt að nota fyrir a frjáls greiðslu eða greiðslu á tilteknu Dolibarr hlut (Reikningar, til þess, ...)
-PaypalOrCBDoPayment=Borga með kreditkorti eða Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Borga með Paypal
 PAYPAL_API_SANDBOX=Ham próf / sandkassi
 PAYPAL_API_USER=API notandanafn
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilboð greiðslu &quot;órjúfanlegur&quot; (Kreditkort + Paypal) eða &quot;Paypal&quot; aðeins
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=Þetta er id viðskipta: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Bæta við slóð Paypal greiðslu þegar þú sendir skjal með pósti
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=Þú ert nú í &quot;sandkassi&quot; háttur
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+ONLINE_PAYMENT_SENDEMAIL=EMail to warn after a payment (success or not)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

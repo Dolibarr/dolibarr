@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +36,12 @@ class modAccounting extends DolibarrModules
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
-     */
+	 */
 	function __construct($db)
 	{
 		global $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 		$this->numero = 50400;
 
 		$this->family = "financial";
@@ -53,17 +54,13 @@ class modAccounting extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = 'accounting';
-
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		// $this->triggers = 1;
 
 		// Data directories to create when module is enabled
 		$this->dirs = array('/accounting/temp');
 
 		// Config pages
-		$this->config_page_url = array('index.php@accountancy');
+		$this->config_page_url = array();
 
 		// Dependencies
 		$this->depends = array("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
@@ -87,116 +84,57 @@ class modAccounting extends DolibarrModules
 				"1",
 				"With this constants on, bank account number is always required"
 		);
-		$this->const[1] = array(
-				"ACCOUNTING_EXPORT_SEPARATORCSV",
-				"string",
-				","
-		);
-		$this->const[2] = array(
+		$this->const[3] = array(
 				"ACCOUNTING_ACCOUNT_SUSPENSE",
 				"chaine",
 				"471"
 		);
-		$this->const[3] = array(
-				"ACCOUNTING_SELL_JOURNAL",
-				"chaine",
-				"VTE"
-		);
 		$this->const[4] = array(
-				"ACCOUNTING_PURCHASE_JOURNAL",
-				"chaine",
-				"ACH"
-		);
-		$this->const[5] = array(
-				"ACCOUNTING_SOCIAL_JOURNAL",
-				"chaine",
-				"SOC"
-		);
-		$this->const[6] = array(
-				"ACCOUNTING_MISCELLANEOUS_JOURNAL",
-				"chaine",
-				"OD"
-		);
-		$this->const[7] = array(
 				"ACCOUNTING_ACCOUNT_TRANSFER_CASH",
 				"chaine",
 				"58"
 		);
-		$this->const[8] = array(
+		$this->const[5] = array(
 				"CHARTOFACCOUNTS",
 				"chaine",
 				"2"
 		);
-		$this->const[9] = array(
+		$this->const[6] = array(
 				"ACCOUNTING_EXPORT_MODELCSV",
 				"chaine",
 				"1"
 		);
-		$this->const[10] = array(
+		$this->const[7] = array(
 				"ACCOUNTING_LENGTH_GACCOUNT",
 				"chaine",
 				""
 		);
-		$this->const[11] = array(
+		$this->const[8] = array(
 				"ACCOUNTING_LENGTH_AACCOUNT",
 				"chaine",
 				""
 		);
-		$this->const[13] = array(
+		$this->const[9] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",
 				"1"
 		);
-		$this->const[14] = array(
+		$this->const[10] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
 				"yesno",
 				"1"
 		);
-		/*
-		$this->const[15] = array (
-				"ACCOUNTING_GROUPBYACCOUNT",
-				"yesno",
-				"1"
-		);
-		*/
-		$this->const[16] = array (
+		$this->const[11] = array (
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
 				"%d%m%Y"
 		);
-		/*
-		$this->const[17] = array (
-				"ACCOUNTING_EXPORT_PIECE",
-				"yesno",
-				"1"
+		$this->const[12] = array(
+				"ACCOUNTING_EXPORT_SEPARATORCSV",
+				"string",
+				","
 		);
-		$this->const[18] = array (
-				"ACCOUNTING_EXPORT_GLOBAL_ACCOUNT",
-				"yesno",
-				"1"
-		);
-		$this->const[19] = array (
-				"ACCOUNTING_EXPORT_LABEL",
-				"yesno",
-				"1"
-		);
-		$this->const[20] = array (
-				"ACCOUNTING_EXPORT_AMOUNT",
-				"yesno",
-				"1"
-		);
-		$this->const[21] = array (
-				"ACCOUNTING_EXPORT_DEVISE",
-				"yesno",
-				"1"
-		);
-		*/
-		$this->const[22] = array(
-				"ACCOUNTING_EXPENSEREPORT_JOURNAL",
-				"chaine",
-				"ER"
-		);
-		$this->const[23] = array(
+		$this->const[13] = array(
 				"ACCOUNTING_EXPORT_FORMAT",
 				"chaine",
 				"csv"
@@ -296,6 +234,26 @@ class modAccounting extends DolibarrModules
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
         $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
+
+
+        // Imports
+        //--------
+        $r=0;
+
+        $r++;
+        $this->import_code[$r]=$this->rights_class.'_'.$r;
+        $this->import_label[$r]="Chartofaccounts"; // Translation key
+        $this->import_icon[$r]=$this->picto;
+        $this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+        $this->import_tables_array[$r]=array('aa'=>MAIN_DB_PREFIX.'accounting_account');
+        $this->import_tables_creator_array[$r]=array('aa'=>'fk_user_author');    // Fields to store import user id
+        $this->import_fields_array[$r]=array('aa.fk_pcg_version'=>"Chartofaccounts*",'aa.account_number'=>"AccountAccounting*",'aa.label'=>"Label*",'aa.account_parent'=>"Accountparent","aa.fk_accounting_category"=>"AccountingCategory","aa.pcg_type"=>"Pcgtype*",'aa.pcg_subtype'=>'Pcgsubtype*','aa.active'=>'Status*','aa.datec'=>"DateCreation");
+        $this->import_regex_array[$r]=array('aa.fk_pcg_version'=>'pcg_version@'.MAIN_DB_PREFIX.'accounting_system','aa.account_number'=>'^\d{1,32}$','aa.label'=>'^.{1,255}$','aa.account_parent'=>'^\d{0,32}$','aa.fk_accounting_category'=>'rowid@'.MAIN_DB_PREFIX.'c_accounting_category','aa.pcg_type'=>'^.{1,20}$','aa.pcg_subtype'=>'^.{1,20}$','aa.active'=>'^0|1$','aa.datec'=>'^\d{4}-\d{2}-\d{2}$');
+        $this->import_convertvalue_array[$r]=array(
+	        'aa.fk_accounting_category'=>array('rule'=>'fetchidfromcodeorlabel','classfile'=>'/accountancy/class/accountancycategory.class.php','class'=>'AccountancyCategory','method'=>'fetch','dict'=>'DictionaryAccountancyCategory'),
+	        'aa.account_parent'=>array('rule'=>'zeroifnull'),
+        );
+        $this->import_examplevalues_array[$r]=array('aa.fk_pcg_version'=>"PCG99-ABREGE",'aa.account_number'=>"707",'aa.label'=>"Product sales",'aa.account_parent'=>"1407","aa.fk_accounting_category"=>"","aa.pcg_type"=>"PROD",'aa.pcg_subtype'=>'PRODUCT','aa.active'=>'1','aa.datec'=>"2017-04-28");
 
 	}
 }

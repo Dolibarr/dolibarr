@@ -49,8 +49,13 @@ $result=restrictedArea($user,'contrat',$id);
 
 $object = new Contrat($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
 
-// Add new contact
+
+/*
+ * Actions
+ */
 
 if ($action == 'addcontact' && $user->rights->contrat->creer)
 {
@@ -138,9 +143,9 @@ if ($id > 0 || ! empty($ref))
 
 		// Contract card
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-        
+
         $morehtmlref='';
         //if (! empty($modCodeContract->code_auto)) {
             $morehtmlref.=$object->ref;
@@ -148,7 +153,7 @@ if ($id > 0 || ! empty($ref))
             $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
             $morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
         }*/
-        
+
 		$morehtmlref.='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, 0, 'string', '', 0, 1);
@@ -200,10 +205,10 @@ if ($id > 0 || ! empty($ref))
 
 	    print '<div class="fichecenter">';
 	    print '<div class="underbanner clearboth"></div>';
-		
+
 		print '<table class="border" width="100%">';
 
-	    
+
         // Ligne info remises tiers
         print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
         if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
@@ -229,7 +234,7 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 		dol_fiche_end();
-		
+
 		print '<br>';
 
 		// Contacts lines

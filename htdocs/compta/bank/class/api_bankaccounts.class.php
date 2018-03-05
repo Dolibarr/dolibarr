@@ -61,7 +61,7 @@ class BankAccounts extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '')
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         $list = array();
 
@@ -191,9 +191,13 @@ class BankAccounts extends DolibarrApi
         }
 
         if ($account->update(DolibarrApiAccess::$user) > 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $account->error);
+        }
     }
 
     /**
@@ -344,7 +348,7 @@ class BankAccounts extends DolibarrApi
     /**
      * Add a link to an account line
      *
-     * @param int    $account_id    ID of account
+     * @param int    $id    		ID of account
      * @param int    $line_id       ID of account line
      * @param int    $url_id        ID to set in the URL {@from body}
      * @param string $url           URL of the link {@from body}
@@ -352,16 +356,16 @@ class BankAccounts extends DolibarrApi
      * @param string $type          Type of link ('payment', 'company', 'member', ...) {@from body}
      * @return int  ID of link
      *
-     * @url POST {account_id}/lines/{line_id}/links
+     * @url POST {id}/lines/{line_id}/links
      */
-    function addLink($account_id, $line_id, $url_id, $url, $label, $type)
+    function addLink($id, $line_id, $url_id, $url, $label, $type)
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
         }
 
         $account = new Account($this->db);
-        $result = $account->fetch($account_id);
+        $result = $account->fetch($id);
         if (! $result) {
             throw new RestException(404, 'account not found');
         }

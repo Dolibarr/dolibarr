@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Naudojate Dolibarr vedlį iš Linux paketo (Ubuntu, Debian,
 KeepDefaultValuesMamp=Naudojate Dolibarr vedlį iš DoliMamp, todėl čia siūlomos reikšmės jau yra optimizuotos. Keiskite juos tik jei tikrai žinote, ką darote.
 KeepDefaultValuesProxmox=Naudojate Dolibarr vedlį iš Proxmox virtualaus prietaiso, todėl čia siūlomos reikšmės jau yra optimizuotos. keiskite juos tik jei tikrai žinote, ką darote.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fiksuoti pažeistus duomenis
@@ -191,9 +193,11 @@ MigrationActioncommElement=Atnaujinti veiksmų duomenis
 MigrationPaymentMode=Duomenų perkėlimas mokėjimo būdui
 MigrationCategorieAssociation=Kategorijų perkėlimas
 MigrationEvents=Įvykių migracija pridedant įvykio savininką į užduočių lentelę
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Perkrauti modulį %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Parodyti negalimas opcijas
 HideNotAvailableOptions=Paslėpti negalimas opcijas
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

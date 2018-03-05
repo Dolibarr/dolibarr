@@ -57,3 +57,4 @@ ErrorInsertingComment=Prišlo je do napake pri vnosu vašega komentarja
 MoreChoices=Vnesite več možnih izbir za glasovalce
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=%s je izpolnil vrstico.\nVašo anketo lahko najdete na povezavi: \n%s
+ShowSurvey=Show survey

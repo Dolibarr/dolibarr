@@ -79,6 +79,8 @@ HolidaysCancelation=Anulowanie wniosku urlopowego
 EmployeeLastname=Nazwisko pracownika
 EmployeeFirstname=Imię pracownika
 TypeWasDisabledOrRemoved=Typ urlopu (id %s) zostało wyłączone lub usunięte
+LastHolidays=Ostatnie %s wnioski urlopowe
+AllHolidays=Wszystkie wnioski urlopowe
 
 ## Configuration du Module ##
 LastUpdateCP=Ostatnia automatyczna aktualizacja alokacji urlopów

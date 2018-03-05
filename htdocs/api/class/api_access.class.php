@@ -83,10 +83,10 @@ class DolibarrApiAccess implements iAuthenticate
 
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
-		if (isset($_GET['api_key']))
+		if (isset($_GET['api_key']))	// For backward compatibility
 		{
 		    // TODO Add option to disable use of api key on url. Return errors if used.
-		    $api_key = $_GET['api_key'];                         // For backward compatibility
+		    $api_key = $_GET['api_key'];
 		}
 		if (isset($_GET['DOLAPIKEY']))
 		{

@@ -139,6 +139,9 @@ class HookManager
 			    'addMoreMassActions',
 			    'addSearchEntry',
 				'addStatisticLine',
+				'createDictionaryFieldList',
+				'editDictionaryFieldlist',
+				'getFormMail',
 			    'deleteFile',
 				'doActions',
 			    'doMassActions',
@@ -151,6 +154,7 @@ class HookManager
 			    'getIdProfUrl',
 			    'getDirList',
 				'moveUploadedFile',
+				'moreHtmlStatus',
 			    'pdf_build_address',
 				'pdf_writelinedesc',
 			    'pdf_getlinenum',
@@ -175,10 +179,9 @@ class HookManager
 				'formatEvent',
                 'printObjectLine',
                 'printObjectSubLine',
-				'createDictionaryFieldList',
-				'editDictionaryFieldlist',
-				'getFormMail',
-			    'showLinkToObjectBlock'
+			    'showLinkToObjectBlock',
+				'sendMail',
+				'sendMailAfter'
 				)
 			)) $hooktype='addreplace';
 
