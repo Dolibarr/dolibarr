@@ -1417,7 +1417,7 @@ class CommandeFournisseur extends CommonOrder
 
             if ($fk_product > 0)
             {
-                if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+                if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED) && $origin !== 'supplier_proposal')
                 {
                     // Check quantity is enough
                     dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." fourn_ref=".$fourn_ref);

@@ -1044,8 +1044,6 @@ if (empty($reshook))
 							$fk_parent_line = 0;
 							$num = count($lines);
 
-							$productsupplier = new ProductFournisseur($db);
-
 							for($i = 0; $i < $num; $i ++)
 							{
 
@@ -1068,45 +1066,41 @@ if (empty($reshook))
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
 								}
+								
+								$tva_tx = $lines[$i]->tva_tx;
 
-								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
-								if ($result>=0)
+								if ($origin=="commande")
 								{
-								    $tva_tx = $lines[$i]->tva_tx;
-
-								    if ($origin=="commande")
-								    {
-					                    $soc=new societe($db);
-					                    $soc->fetch($socid);
-					                    $tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $productsupplier->product_fourn_price_id);
-								    }
-
-									$result = $object->addline(
-										$desc,
-										$lines[$i]->subprice,
-										$lines[$i]->qty,
-										$tva_tx,
-										$lines[$i]->localtax1_tx,
-										$lines[$i]->localtax2_tx,
-										$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
-										0,
-										$productsupplier->ref_supplier,
-										$lines[$i]->remise_percent,
-										'HT',
-										0,
-										$lines[$i]->product_type,
-										'',
-										'',
-										null,
-										null,
-										array(),
-										$lines[$i]->fk_unit,
-										0,
-										$element,
-										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
-									);
+									$soc=new societe($db);
+									$soc->fetch($socid);
+									$tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $productsupplier->product_fourn_price_id);
 								}
 
+								$result = $object->addline(
+									$desc,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
+									0,
+									$lines[$i]->ref_fourn,
+									$lines[$i]->remise_percent,
+									'HT',
+									0,
+									$lines[$i]->product_type,
+									'',
+									'',
+									null,
+									null,
+									array(),
+									$lines[$i]->fk_unit,
+									0,
+									$element,
+									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
+								);
+								
 								if ($result < 0) {
 									$error++;
 									break;
