@@ -235,6 +235,7 @@ class ExtraFields
 				$lengthdb='11';
 			} elseif ($type=='html') {
 				$typedb='text';
+				$lengthdb=$length;
 			} elseif($type=='password') {
 				$typedb='varchar';
 				$lengthdb='128';
@@ -742,7 +743,7 @@ class ExtraFields
 		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed";
-		$sql .= ",entity";
+		$sql.= ",entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";

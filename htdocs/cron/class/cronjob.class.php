@@ -63,6 +63,11 @@ class Cronjob extends CommonObject
 	public $libname;
 	public $test;					// A test condition to know if job is visible/qualified
 
+	const STATUS_DISABLED = 0;
+	const STATUS_ENABLED = 1;
+	const STATUS_ARCHIVED = 2;
+
+
     /**
      *  Constructor
      *

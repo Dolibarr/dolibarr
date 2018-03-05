@@ -216,6 +216,7 @@ StartUpload=Start upload
 CancelUpload=Cancel upload
 FileIsTooBig=Files is too big
 PleaseBePatient=Please be patient...
+NewPassword=New password
 ResetPassword=Reset password
 RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
 NewKeyIs=This is your new keys to login

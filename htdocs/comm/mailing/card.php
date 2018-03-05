@@ -967,7 +967,7 @@ else
 			 * Boutons d'action
 			 */
 
-			if (GETPOST('cancel','alpha') || $confirm=='no' || $action == '' || in_array($action,array('settodraft', 'valid','delete','sendall','clone')))
+			if (GETPOST('cancel','alpha') || $confirm=='no' || $action == '' || in_array($action,array('settodraft','valid','delete','sendall','clone','test')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
@@ -1071,7 +1071,9 @@ else
 			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			    print load_fiche_titre($langs->trans("TestMailing"));
 
-				// Create l'objet formulaire mail
+			    dol_fiche_head(null, '', '', -1);
+
+			    // Create l'objet formulaire mail
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
@@ -1099,6 +1101,10 @@ else
 				print $formmail->get_form();
 
 				print '<br>';
+
+				dol_fiche_end();
+
+				print dol_set_focus('#sendto');
 			}
 
 
@@ -1114,7 +1120,7 @@ else
 
 			dol_fiche_head('', '', '', -1);
 
-			print '<table class="border" width="100%">';
+			print '<table class="bordernooddeven" width="100%">';
 
 			// Subject
 			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
@@ -1260,7 +1266,7 @@ else
 
 			dol_fiche_head(null, '', '', -1);
 
-			print '<table class="border" width="100%">';
+			print '<table class="bordernooddeven" width="100%">';
 
 			// Subject
 			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';

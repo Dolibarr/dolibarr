@@ -299,6 +299,9 @@ class FormFile
 			return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
 		}
 
+		// Add entity in $param
+		$param.= 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
+
 		$printer=0;
 		if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport')))	// The direct print feature is implemented only for such elements
 		{
@@ -699,7 +702,8 @@ class FormFile
 			$out.= '<!-- html.formfile::showdocuments -->'."\n";
 
 			// Show title of array if not already shown
-			if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
+			if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart))
+				&& ! $headershown)
 			{
 				$headershown=1;
 				$out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
@@ -744,7 +748,7 @@ class FormFile
 
 					if ($delallowed || $printer || $morepicto)
 					{
-						$out.= '<td align="right">';
+						$out.= '<td class="right nowraponall">';
 						if ($delallowed)
 						{
 							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
@@ -847,6 +851,17 @@ class FormFile
 		$out='';
 		$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
+		// Get object entity
+		if (empty($conf->multicompany->enabled))
+		{
+			$entity = $conf->entity;
+		}
+		else
+		{
+			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
+			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
+		}
+		
 		$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
 
 		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
@@ -900,7 +915,7 @@ class FormFile
 				}
 
 				// Download
-				$tmpout.= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+				$tmpout.= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime=dol_mimetype($relativepath,'',0);
 				if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
 				$tmpout.= '>';

@@ -177,6 +177,7 @@ function redirectToContainer($containerref, $containeraliasalt='',$containerid=0
 	global $db, $website;
 
 	$newurl = '';
+	$result=0;
 
 	// We make redirect using the alternative alias, we must find the real $containerref
 	if ($containeraliasalt)

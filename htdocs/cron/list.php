@@ -29,16 +29,17 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
-$langs->load("admin");
-$langs->load("cron");
-$langs->load("bills");
+$langs->loadLangs(array("admin","cron","bills"));
 
 if (!$user->rights->cron->read) accessforbidden();
 
 $action=GETPOST('action','alpha');
+$massaction = GETPOST('massaction','alpha');											// The bulk action (combo box choice into lists)
 $confirm=GETPOST('confirm','alpha');
-$id=GETPOST('id','int');
+$toselect   = GETPOST('toselect', 'array');												// Array of ids of elements selected into a list
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'cronjoblist';   // To manage different context of search
+
+$id=GETPOST('id','int');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -51,8 +52,8 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.status,t.priority';
 if (! $sortorder) $sortorder='DESC,ASC';
 
-$status=GETPOST('status','int');
-if ($status == '') $status=-2;
+$search_status=GETPOST('search_status','int')?GETPOST('search_status','int'):GETPOST('status','int');
+if ($search_status == '') $search_status=-2;
 
 //Search criteria
 $search_label=GETPOST("search_label",'alpha');
@@ -75,80 +76,129 @@ $object = new Cronjob($db);
  * Actions
  */
 
-// Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
-{
-	$search_label='';
-	$status=-1;
-}
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
-$filter=array();
-if (!empty($search_label))
-{
-	$filter['t.label']=$search_label;
-}
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-// Delete jobs
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete)
+if (empty($reshook))
 {
-	//Delete cron task
-	$object = new Cronjob($db);
-	$object->id=$id;
-	$result = $object->delete($user);
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+	{
+		$search_label='';
+		$search_status=-1;
+		$toselect='';
+		$search_array_options=array();
 	}
-}
+	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
+		|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
+	{
+		$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
+	}
 
-// Execute jobs
-if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
-{
-    if (! empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
-    {
-        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
-        $action='';
-    }
-    else
-    {
-        $object = new Cronjob($db);
-    	$job = $object->fetch($id);
+	$filter=array();
+	if (!empty($search_label))
+	{
+		$filter['t.label']=$search_label;
+	}
 
-        $now = dol_now();   // Date we start
+	// Delete jobs
+	if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete)
+	{
+		//Delete cron task
+		$object = new Cronjob($db);
+		$object->id=$id;
+		$result = $object->delete($user);
 
-        $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
-    	if ($resrunjob < 0) {
-    		setEventMessages($object->error, $object->errors, 'errors');
-    	}
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 
-    	// Programm next run
-    	$res = $object->reprogram_jobs($user->login, $now);
-    	if ($res > 0)
-    	{
-    		if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
-    		{
-    		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
-    		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
-    		}
-    		$action='';
-    	}
-    	else
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-    		$action='';
-    	}
+	// Execute jobs
+	if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
+	{
+	    if (! empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
+	    {
+	        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
+	        $action='';
+	    }
+	    else
+	    {
+	        $object = new Cronjob($db);
+	    	$job = $object->fetch($id);
 
-    	$param='&status='.$status;
-    	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    	if ($search_label)	  $param.='&search_label='.$search_label;
-    	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-    	// Add $param from extra fields
-    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+	        $now = dol_now();   // Date we start
 
-    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?'.$param.($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:''));		// Make a redirect to avoid to run twice the job when using back
-    	exit;
-    }
+	        $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
+	    	if ($resrunjob < 0) {
+	    		setEventMessages($object->error, $object->errors, 'errors');
+	    	}
+
+	    	// Programm next run
+	    	$res = $object->reprogram_jobs($user->login, $now);
+	    	if ($res > 0)
+	    	{
+	    		if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
+	    		{
+	    		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+	    		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
+	    		}
+	    		$action='';
+	    	}
+	    	else
+	    	{
+	    		setEventMessages($object->error, $object->errors, 'errors');
+	    		$action='';
+	    	}
+
+	    	$param='&search_status='.urlencode($search_status);
+	    	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	    	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	    	if ($search_label)	  $param.='&search_label='.urlencode($search_label);
+	    	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+	    	// Add $param from extra fields
+	    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+	    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?'.$param.($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:''));		// Make a redirect to avoid to run twice the job when using back
+	    	exit;
+	    }
+	}
+
+	// Mass actions
+	$objectclass='CronJob';
+	$objectlabel='CronJob';
+	$permtoread = $user->rights->cron->read;
+	$permtocreate = $user->rights->cron->create?$user->rights->cron->create:$user->rights->cron->write;
+	$permtodelete = $user->rights->cron->delete;
+	$uploaddir = $conf->cron->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	if ($permtocreate)
+	{
+		$tmpcron = new Cronjob($db);
+		foreach($toselect as $id)
+		{
+			$result = $tmpcron->fetch($id);
+			if ($result)
+			{
+				$result = 0;
+				if ($massaction == 'disable') $result = $tmpcron->setStatut(Cronjob::STATUS_DISABLED);
+				elseif ($massaction == 'enable') $result = $tmpcron->setStatut(Cronjob::STATUS_ENABLED);
+				else dol_print_error($db, 'Bad value for massaction');
+				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
+			}
+			else
+			{
+				$error++;
+			}
+		}
+	}
 }
 
 
@@ -196,8 +246,8 @@ $sql.= " t.libname,";
 $sql.= " t.test";
 $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql.= " WHERE 1 = 1";
-if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
-if ($status == 2) $sql.= " AND t.status = 2";
+if ($search_status >= 0 && $search_status < 2) $sql.= " AND t.status = ".(empty($search_status)?'0':'1');
+if ($search_status == 2) $sql.= " AND t.status = 2";
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
@@ -235,15 +285,16 @@ if (! $result) dol_print_error($db);
 
 $num = $db->num_rows($result);
 
-$param='&status='.$status;
+$arrayofselected=is_array($toselect)?$toselect:array();
+
+$param = '';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($search_status)   $param.='&search_status='.$search_status;
 if ($search_label)	  $param.='&search_label='.$search_label;
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-
-//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
 $stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(), 'dayhour');
 
@@ -256,15 +307,28 @@ if ($action == 'execute')
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&securitykey='.$securitykey.$param, $langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 }
 
+// List of mass actions available
+$arrayofmassactions =  array(
+//'presend'=>$langs->trans("SendByMail"),
+//'builddoc'=>$langs->trans("PDFMerge"),
+	'enable'=>$langs->trans("Enable"),
+	'disable'=>$langs->trans("Disable"),
+);
+if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="GET" action="'.$url_form.'" name="search_form">'."\n";
-print '<input type="hidden" name="status" value="'.$status.'" >';
+
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="search_status" value="'.$search_status.'" >';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 // Line with explanation and button new job
@@ -277,7 +341,7 @@ else
     $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
 }
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup', 0, $buttontoshow, '', $limit);
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $buttontoshow, '', $limit);
 
 
 print $langs->trans('CronInfo').'<br>';
@@ -288,8 +352,9 @@ print info_admin($text);
 print '<br>';
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$selectedfields='';
 //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-//$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder">';
@@ -311,7 +376,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
-print $form->selectarray('status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $status, 1);
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $search_status, 1);
 print '</td><td class="liste_titre" align="right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
@@ -333,7 +398,7 @@ print_liste_field_titre("CronLastResult",$_SERVER["PHP_SELF"],"t.lastresult","",
 print_liste_field_titre("CronLastOutput",$_SERVER["PHP_SELF"],"t.lastoutput","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("CronDtNextLaunch",$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"t.status,t.priority","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre('');
+print_liste_field_titre($selectedfields,$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -466,6 +531,12 @@ if ($num > 0)
 		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"playdisabled")."</a>";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"playdisabled")."</a>";
+		}
+		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		{
+			$selected=0;
+			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+			print ' &nbsp; <input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
 		}
 		print '</td>';
 

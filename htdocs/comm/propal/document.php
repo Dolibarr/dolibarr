@@ -75,7 +75,7 @@ $object->fetch($id,$ref);
 if ($object->id > 0)
 {
     $object->fetch_thirdparty();
-    $upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
+    $upload_dir = $conf->propal->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 }
 
@@ -90,7 +90,7 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
-	$upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->propal->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 	$head = propal_prepare_head($object);
 	dol_fiche_head($head, 'document', $langs->trans('Proposal'), -1, 'propal');

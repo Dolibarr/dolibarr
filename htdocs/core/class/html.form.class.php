@@ -3426,7 +3426,8 @@ class Form
 			}
 			else
 			{
-				print $langs->trans("NoActiveBankAccountDefined");
+				if ($statut == 0) print $langs->trans("NoActiveBankAccountDefined");
+				else print $langs->trans("NoBankAccountFound");
 			}
 		}
 		else {

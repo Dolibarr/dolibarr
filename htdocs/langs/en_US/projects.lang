@@ -100,6 +100,7 @@ ActivityOnProjectThisMonth=Activity on project this month
 ActivityOnProjectThisYear=Activity on project this year
 ChildOfProjectTask=Child of project/task
 ChildOfTask=Child of task
+TaskHasChild=Task has child
 NotOwnerOfProject=Not owner of this private project
 AffectedTo=Allocated to
 CantRemoveProject=This project can't be removed as it is referenced by some other objects (invoice, orders or other). See referers tab.

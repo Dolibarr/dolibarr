@@ -30,3 +30,5 @@ ErrorCode=Error Code
 ErrorSeverityCode=Error Severity Code
 OnlinePaymentSystem=Online payment system
 PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments

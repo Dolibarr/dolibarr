@@ -599,8 +599,10 @@ if ($resql)
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
 			   print '<td align="center">';
+			   print '<div class="nowraponall">';
 			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			   if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
+			   print '</div>';
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
@@ -636,7 +638,7 @@ if ($resql)
 				}
 				else
 				{
-					print $langs->trans("DateIsNotEnough");
+					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 				}
 			}
 			else
