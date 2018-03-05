@@ -202,18 +202,26 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 				$srcpath = $upload_dir.'/'.$filenamefrom;
 				$destpath = $upload_dir.'/'.$filenameto;
 
-				$result = dol_move($srcpath, $destpath);
-				if ($result)
+				if (!file_exists($destpath))
 				{
-					if ($object->id)
+					$result = dol_move($srcpath, $destpath);
+					if ($result)
 					{
-						$object->addThumbs($destpath);
+						if ($object->id)
+						{
+							$object->addThumbs($destpath);
+						}
+
+						// TODO Add revert function of addThumbs to remove for old name
+						//$object->delThumbs($srcpath);
+
+						setEventMessages($langs->trans("FileRenamed"), null);
 					}
-
-					// TODO Add revert function of addThumbs to remove for old name
-					//$object->delThumbs($srcpath);
-
-					setEventMessages($langs->trans("FileRenamed"), null);
+					else
+					{
+						$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+						setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+					}
 				}
 				else
 				{
