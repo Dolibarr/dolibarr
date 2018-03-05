@@ -1050,7 +1050,7 @@ if ($action == 'create')
 	}
 	print '</tr>' . "\n";
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 0 && $soc->id > 0)
+	if ($soc->id > 0)
 	{
 		// Discounts for third party
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';		
@@ -1404,31 +1404,28 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 0) {
-
-		// Relative and absolute discounts
-		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-		} else {
-			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
-			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
-		}
-
-		print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
-
-		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
-		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote, 0, 1);
-		$absolute_discount = price2num($absolute_discount, 'MT');
-		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
-
-		$thirdparty = $soc;
-		$discount_type = 1;
-		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
-		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
-
-		print '</td></tr>';
+	// Relative and absolute discounts
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 	}
+
+	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
+
+	$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
+	$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+	$absolute_discount = price2num($absolute_discount, 'MT');
+	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
+	$thirdparty = $soc;
+	$discount_type = 1;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+	print '</td></tr>';
 
 	// Payment term
 	print '<tr><td class="titlefield">';

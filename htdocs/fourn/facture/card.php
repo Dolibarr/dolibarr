@@ -1848,66 +1848,63 @@ if ($action == 'create')
 
 	if (empty($origin))
 	{
-		if ($conf->global->MAIN_FEATURES_LEVEL > 0)        // Need to fix reports of standard accounting module to manage supplier credit note
+		if ($societe->id > 0)
 		{
-			if ($societe->id > 0)
-			{
-				// Credit note
-				if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE))
-				{
-					print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-					$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
-					if (! $optionsav) $tmp.=' disabled';
-					$tmp.= '> ';
-					// Show credit note options only if we checked credit note
-					print '<script type="text/javascript" language="javascript">
-    				jQuery(document).ready(function() {
-    					if (! jQuery("#radio_creditnote").is(":checked"))
-    					{
-    						jQuery("#credit_note_options").hide();
-    					}
-    					jQuery("#radio_creditnote").click(function() {
-    						jQuery("#credit_note_options").show();
-    					});
-    					jQuery("#radio_standard, #radio_replacement, #radio_deposit").click(function() {
-    						jQuery("#credit_note_options").hide();
-    					});
-    				});
-    				</script>';
-					$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk") . ' ';
-					// $text.='<input type="text" value="">';
-					$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
-					if (! $optionsav)
-						$text .= ' disabled';
-					$text .= '>';
-					if ($optionsav) {
-						$text .= '<option value="-1"></option>';
-						$text .= $optionsav;
-					} else {
-						$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
-					}
-					$text .= '</select>';
-					$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
-					print $desc;
-
-					print '<div id="credit_note_options" class="clearboth">';
-					print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-					print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
-					print '</div>';
-
-					print '</div></div>';
-				}
-			}
-			else
+			// Credit note
+			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE))
 			{
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				$tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
-				$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
-				$text.= '('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").') ';
+				$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
+				if (! $optionsav) $tmp.=' disabled';
+				$tmp.= '> ';
+				// Show credit note options only if we checked credit note
+				print '<script type="text/javascript" language="javascript">
+   				jQuery(document).ready(function() {
+   					if (! jQuery("#radio_creditnote").is(":checked"))
+   					{
+   						jQuery("#credit_note_options").hide();
+   					}
+   					jQuery("#radio_creditnote").click(function() {
+   						jQuery("#credit_note_options").show();
+   					});
+   					jQuery("#radio_standard, #radio_replacement, #radio_deposit").click(function() {
+   						jQuery("#credit_note_options").hide();
+   					});
+   				});
+   				</script>';
+				$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk") . ' ';
+				// $text.='<input type="text" value="">';
+				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
+				if (! $optionsav)
+					$text .= ' disabled';
+				$text .= '>';
+				if ($optionsav) {
+					$text .= '<option value="-1"></option>';
+					$text .= $optionsav;
+				} else {
+					$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
+				}
+				$text .= '</select>';
 				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 				print $desc;
-				print '</div></div>' . "\n";
+
+				print '<div id="credit_note_options" class="clearboth">';
+				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+				print '</div>';
+
+				print '</div></div>';
 			}
+		}
+		else
+		{
+			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+			$tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
+			$text.= '('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").') ';
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
+			print $desc;
+			print '</div></div>' . "\n";
 		}
 	}
 
@@ -1915,7 +1912,7 @@ if ($action == 'create')
 
 	print '</td></tr>';
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 0 && $societe->id > 0)
+	if ($societe->id > 0)
 	{
 		// Discounts for third party
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
@@ -2411,18 +2408,17 @@ else
         }
         print '</td></tr>';
 
-        if ($conf->global->MAIN_FEATURES_LEVEL > 0) {
-	        // Relative and absolute discounts
-			print '<!-- Discounts --><tr><td>' . $langs->trans('Discounts');
-			print '</td><td>';
 
-			$thirdparty = $societe;
-			$discount_type = 1;
-			$backtopage = urlencode($_SERVER["PHP_SELF"] . '?facid=' . $object->id);
-			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+        // Relative and absolute discounts
+		print '<!-- Discounts --><tr><td>' . $langs->trans('Discounts');
+		print '</td><td>';
 
-			print '</td></tr>';
-        }
+		$thirdparty = $societe;
+		$discount_type = 1;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?facid=' . $object->id);
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+		print '</td></tr>';
 
         // Label
         print '<tr>';
@@ -2782,41 +2778,39 @@ else
 			$creditnoteamount = 0;
 			$depositamount = 0;
 
-			if($conf->global->MAIN_FEATURES_LEVEL > 0) {
-				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-				$sql .= " re.description, re.fk_invoice_supplier_source";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
-				$sql .= " WHERE fk_invoice_supplier = " . $object->id;
-				$resql = $db->query($sql);
-				if ($resql) {
-					$num = $db->num_rows($resql);
-					$i = 0;
-					$invoice = new FactureFournisseur($db);
-					while ($i < $num) {
-						$obj = $db->fetch_object($resql);
-						$invoice->fetch($obj->fk_invoice_supplier_source);
-						print '<tr><td colspan="' . $nbcols . '" align="right">';
-						if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
-							print $langs->trans("CreditNote") . ' ';
-						if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
-							print $langs->trans("Deposit") . ' ';
-						print $invoice->getNomUrl(0);
-						print ' :</td>';
-						print '<td align="right">' . price($obj->amount_ttc) . '</td>';
-						print '<td align="right">';
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
-						print '</td></tr>';
-						$i ++;
-						if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
-							$creditnoteamount += $obj->amount_ttc;
-						if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
-							$depositamount += $obj->amount_ttc;
-					}
-				} else {
-					dol_print_error($db);
-				}
-			}
 
+			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+			$sql .= " re.description, re.fk_invoice_supplier_source";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
+			$sql .= " WHERE fk_invoice_supplier = " . $object->id;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				$invoice = new FactureFournisseur($db);
+				while ($i < $num) {
+					$obj = $db->fetch_object($resql);
+					$invoice->fetch($obj->fk_invoice_supplier_source);
+					print '<tr><td colspan="' . $nbcols . '" align="right">';
+					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+						print $langs->trans("CreditNote") . ' ';
+					if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
+						print $langs->trans("Deposit") . ' ';
+					print $invoice->getNomUrl(0);
+					print ' :</td>';
+					print '<td align="right">' . price($obj->amount_ttc) . '</td>';
+					print '<td align="right">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
+					print '</td></tr>';
+					$i ++;
+					if ($invoice->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+						$creditnoteamount += $obj->amount_ttc;
+					if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT)
+						$depositamount += $obj->amount_ttc;
+				}
+			} else {
+				dol_print_error($db);
+			}
 
 			// Paye partiellement 'escompte'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
@@ -3029,7 +3023,7 @@ else
 				}
 
 				// Reverse back money or convert to reduction
-				if ($conf->global->MAIN_FEATURES_LEVEL > 0 && ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD)) {
+				if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD) {
 					// For credit note only
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0)
 					{

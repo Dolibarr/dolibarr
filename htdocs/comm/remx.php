@@ -238,9 +238,6 @@ if ($socid > 0)
 	$isCustomer = $object->client == 1 || $object->client == 3;
 	$isSupplier = $object->fournisseur == 1;
 
-	$displayCustomer = $conf->global->MAIN_FEATURES_LEVEL <= 0 || $isCustomer;
-	$displaySupplier = $conf->global->MAIN_FEATURES_LEVEL > 0 && $isSupplier;
-
 	/*
 	 * Display tabs
 	 */
@@ -259,7 +256,7 @@ if ($socid > 0)
 
     print '<div class="underbanner clearboth"></div>';
     
-    if(! $displayCustomer && ! $displaySupplier) {
+    if(! $isCustomer && ! $isSupplier) {
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
     	dol_fiche_end();
@@ -274,7 +271,7 @@ if ($socid > 0)
     
 	print '<table class="border centpercent">';
 
-	if($displayCustomer) {	// Calcul avoirs client en cours
+	if($isCustomer) {	// Calcul avoirs client en cours
 		$remise_all=$remise_user=0;
 		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
@@ -305,7 +302,7 @@ if ($socid > 0)
 		}
 	}
 
-	if($displaySupplier) {
+	if($isSupplier) {
 		// Calcul avoirs fournisseur en cours
 		$remise_all=$remise_user=0;
 		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
@@ -349,16 +346,16 @@ if ($socid > 0)
 
     	print '<div class="underbanner clearboth"></div>';
  
-    	if($conf->global->MAIN_FEATURES_LEVEL <= 0 || ($isCustomer && ! $isSupplier)) {
+    	if($isCustomer && ! $isSupplier) {
     		print '<input type="hidden" name="discount_type" value="0" />';
     	}
     	
-    	if($conf->global->MAIN_FEATURES_LEVEL > 0 && (! $isCustomer && $isSupplier)) {
+    	if(! $isCustomer && $isSupplier) {
     		print '<input type="hidden" name="discount_type" value="1" />';
     	}
 
     	print '<table class="border" width="100%">';
-		if($conf->global->MAIN_FEATURES_LEVEL > 0 && $isCustomer && $isSupplier) {
+		if($isCustomer && $isSupplier) {
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
 			print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 			print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
@@ -408,8 +405,8 @@ if ($socid > 0)
 	
 	print load_fiche_titre($langs->trans("DiscountStillRemaining"));
 
-	if($displayCustomer) {
-		if($displaySupplier) {
+	if($isCustomer) {
+		if($isSupplier) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
@@ -541,8 +538,8 @@ if ($socid > 0)
 		}
 	}
 
-	if($displaySupplier) {
-		if($displayCustomer) {
+	if($isSupplier) {
+		if($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright">';
 			print '<div class="ficheaddleft">';
@@ -677,7 +674,7 @@ if ($socid > 0)
 			dol_print_error($db);
 		}
 
-		if($displayCustomer) {
+		if($isCustomer) {
 			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
@@ -692,8 +689,8 @@ if ($socid > 0)
 	
 	print load_fiche_titre($langs->trans("DiscountAlreadyCounted"));
 
-	if($displayCustomer) {
-		if($displaySupplier) {
+	if($isCustomer) {
+		if($isSupplier) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
@@ -843,8 +840,8 @@ if ($socid > 0)
 		}
 	}
 
-	if($displaySupplier) {
-		if($displayCustomer) {
+	if($isSupplier) {
+		if($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright">';
 			print '<div class="ficheaddleft">';
@@ -994,7 +991,7 @@ if ($socid > 0)
 			dol_print_error($db);
 		}
 
-		if($displayCustomer) {
+		if($isCustomer) {
 			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
