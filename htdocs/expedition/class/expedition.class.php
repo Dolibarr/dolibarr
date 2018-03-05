@@ -2418,7 +2418,6 @@ class ExpeditionLigne extends CommonObjectLine
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
-					$this->errors[]=$this->error;
 					$error++;
 				}
 			}
@@ -2429,7 +2428,6 @@ class ExpeditionLigne extends CommonObjectLine
 				$result=$this->call_trigger('LINESHIPPING_INSERT',$user);
 				if ($result < 0)
 				{
-					$this->errors[]=$this->error;
 					$error++;
 				}
 				// End call triggers
@@ -2445,6 +2443,7 @@ class ExpeditionLigne extends CommonObjectLine
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
+			
 			$this->db->rollback();
 			return -1*$error;
 		}
