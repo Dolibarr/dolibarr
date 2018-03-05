@@ -36,15 +36,6 @@ $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-if (empty($conf->global->STRIPECONNECT_LIVE))
-{
-$mode=$conf->global->STRIPECONNECT_LIVE;
-}
-else 
-{
-$mode=$conf->global->STRIPE_LIVE;	
-}
-
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $rowid = GETPOST("rowid",'alpha');
 $sortfield = GETPOST("sortfield",'alpha');
