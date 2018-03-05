@@ -3102,6 +3102,8 @@ class Societe extends CommonObject
 	{
 		global $user,$langs;
 
+		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
+
 		$name = $socname?$socname:$member->societe;
 		if (empty($name)) $name=$member->getFullName($langs);
 
@@ -3134,7 +3136,6 @@ class Societe extends CommonObject
 			$sql.= " SET fk_soc=".$this->id;
 			$sql.= " WHERE rowid=".$member->id;
 
-			dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

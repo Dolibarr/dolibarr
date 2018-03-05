@@ -239,7 +239,7 @@ class Facture extends CommonInvoice
 	 * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user,$notrigger=0,$forceduedate=0)
+	function create(User $user, $notrigger=0, $forceduedate=0)
 	{
 		global $langs,$conf,$mysoc,$hookmanager;
 		$error=0;
@@ -265,13 +265,13 @@ class Facture extends CommonInvoice
 			$this->multicurrency_tx = 1;
 		}
 
-		dol_syslog(get_class($this)."::create user=".$user->id);
+		dol_syslog(get_class($this)."::create user=".$user->id." date=".$this->date);
 
 		// Check parameters
-		if (empty($this->date) || empty($user->id))
+		if (empty($this->date))
 		{
-			$this->error="ErrorBadParameter";
-			dol_syslog(get_class($this)."::create Try to create an invoice with an empty parameter (user, date, ...)", LOG_ERR);
+			$this->error="Try to create an invoice with an empty parameter (date)";
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -3;
 		}
 		$soc = new Societe($this->db);

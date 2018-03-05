@@ -271,21 +271,136 @@ $ispostactionok = 0;
 $postactionmessages = array();
 if ($ispaymentok)
 {
+	// Set permission for the anonymous user
+	$user->rights->societe->creer = 1;
+	$user->rights->facture->creer = 1;
+	$user->rights->adherent->cotisation->creer = 1;
+
 	if (in_array('MEM', array_keys($tmptag)))
 	{
+		$defaultdelay=1;
+		$defaultdelayunit='y';
+
 		// Record subscription
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$member = new Adherent($db);
-		$result = $member->fetch(0, $tmptag['MEM']);
-		if ($result)
-		{
-			if (empty($paymentType)) $paymentType = 'CB';
-			$paymentTypeId      = dol_getIdFromCode($db, $paymentType,'c_paiement','code','id',1);
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+		$adht = new AdherentType($db);
+		$object = new Adherent($db);
 
+		$result1 = $object->fetch(0, $tmptag['MEM']);
+		$result2 = $adht->fetch($object->typeid);
+
+		if ($result1 > 0 && $result2 > 0)
+		{
+			$paymentTypeId = 0;
+			if ($paymentmethod == 'paybox') $paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
+			if ($paymentmethod == 'paypal') $paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
+			if ($paymentmethod == 'stripe') $paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
+			if (empty($paymentTypeId))
+			{
+				$paymentType = $_SESSION["paymentType"];
+				if (empty($paymentType)) $paymentType = 'CB';
+				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
+			}
+
+			$currencyCodeType   = $_SESSION['currencyCodeType'];
+
+			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (! empty($FinalPaymentAmt) && $paymentTypeId > 0)
 			{
+				// Subscription informations
+				$datesubscription=$object->datevalid;
+				if ($object->datefin > 0)
+				{
+					$datesubscription=dol_time_plus_duree($object->datefin,1,'d');
+				}
+				$datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription,$defaultdelay,$defaultdelayunit),-1,'d');
+				$paymentdate=$now;
+				$amount = $FinalPaymentAmt;
+				$label='Online subscription '.dol_print_date($now, 'standard');
 
+				// Payment informations
+				$accountid = 0;
+				if ($paymentmethod == 'paybox') $accountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
+				if ($paymentmethod == 'paypal') $accountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+				if ($paymentmethod == 'stripe') $accountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+				$operation=$paymentTypeId; // Payment mode
+				$num_chq='';
+				$emetteur_nom='';
+				$emetteur_banque='';
+				// Define default choice for complementary actions
+				$option='';
+				if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $option='bankviainvoice';
+				else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && ! empty($conf->banque->enabled)) $option='bankdirect';
+				else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $option='invoiceonly';
+				if (empty($option)) $option='none';
+				$sendalsoemail = 1;
 
+				// Record the subscription then complementary actions
+				$db->begin();
+
+				// Create subscription
+				$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+				if ($crowid <= 0)
+				{
+					$error++;
+					$errmsg=$object->error;
+					$postactionmessages[] = $errmsg;
+					$ispostactionok = -1;
+				}
+				else
+				{
+					$postactionmessages[]='Subscription created';
+					$ispostactionok=1;
+				}
+
+				if (! $error)
+				{
+					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, 1);
+					if ($result < 0)
+					{
+						$error++;
+						$postactionmessages[] = $object->error;
+						$postactionmessages = array_merge($postactionmessages, $object->errors);
+						$ispostactionok = -1;
+					}
+					else
+					{
+						if ($option == 'bankviainvoice') $postactionmessages[] = 'Invoice, payment and bank record created';
+						if ($option == 'bankdirect')     $postactionmessages[] = 'Bank record created';
+						if ($option == 'invoiceonly')    $postactionmessages[] = 'Invoice recorded';
+						$ispostactionok = 1;
+					}
+				}
+
+				if (! $error)
+				{
+					$db->commit();
+				}
+				else
+				{
+					$db->rollback();
+				}
+
+				// Send email
+				if (! $error)
+				{
+					// Send confirmation Email
+					if ($object->email && $sendalsoemail)
+					{
+						$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
+						$texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+
+						$result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+						if ($result < 0)
+						{
+							$errmsg=$object->error;
+							$postactionmessages[] = $errmsg;
+							$ispostactionok = -1;
+						}
+					}
+				}
 			}
 			else
 			{
@@ -295,7 +410,7 @@ if ($ispaymentok)
 		}
 		else
 		{
-			$postactionmessages[] = 'Member for subscription payed '.$tmptag['MEM'].' was not found';
+			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription payed was not found';
 			$ispostactionok = -1;
 		}
 	}
@@ -322,8 +437,11 @@ if ($ispaymentok)
 
 			$currencyCodeType   = $_SESSION['currencyCodeType'];
 
+			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (! empty($FinalPaymentAmt) && $paymentTypeId > 0)
 			{
+				$db->begin();
+
 				// Creation of payment line
 				include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 				$paiement = new Paiement($db);
@@ -643,6 +761,7 @@ htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 // Clean session variables to avoid duplicate actions if post is resent
 unset($_SESSION["FinalPaymentAmt"]);
 unset($_SESSION["TRANSACTIONID"]);
+
 
 llxFooter('', 'public');
 
