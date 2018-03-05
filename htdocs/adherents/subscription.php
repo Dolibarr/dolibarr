@@ -332,7 +332,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                     if ($inserturlid > 0)
                     {
                         // Update table subscription
-                    	$sql ="UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$inserturlid;
+                        $sql ="UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
                         $sql.=" WHERE rowid=".$crowid;
 
                         dol_syslog("subscription::subscription", LOG_DEBUG);
