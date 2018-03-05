@@ -46,7 +46,7 @@ class DiscountAbsolute
     public $fk_facture;			    // Id invoice when a discount line is used into an invoice (for credit note)
     public $fk_facture_source;		// Id facture avoir a l'origine de la remise
     public $ref_facture_source;	    // Ref facture avoir a l'origine de la remise
-    public $ref_invoive_supplier_source;
+    public $ref_invoice_supplier_source;
 
     /**
      *	Constructor
