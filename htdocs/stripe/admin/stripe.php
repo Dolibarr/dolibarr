@@ -45,18 +45,26 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-    $result=dolibarr_set_const($db, "STRIPE_LIVE",GETPOST('STRIPE_LIVE','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
+  $result=dolibarr_set_const($db, "STRIPE_LIVE",GETPOST('STRIPE_LIVE','alpha'),'chaine',0,'',$conf->entity);
+  if (! $result > 0) $error++;
+if (empty($conf->stripeconnect->enabled)) {  
 	$result=dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY",GETPOST('STRIPE_TEST_PUBLISHABLE_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY",GETPOST('STRIPE_TEST_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_KEY",GETPOST('STRIPE_TEST_WEBHOOK_KEY','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;  
 	$result=dolibarr_set_const($db, "STRIPE_LIVE_PUBLISHABLE_KEY",GETPOST('STRIPE_LIVE_PUBLISHABLE_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY",GETPOST('STRIPE_LIVE_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
+ 	$result=dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_KEY",GETPOST('STRIPE_LIVE_WEBHOOK_KEY','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++; 
+}  
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM','alpha'),'chaine',0,'',$conf->entity);
@@ -107,19 +115,9 @@ if ($action=="setlive")
 
 $form=new Form($db);
 
-//$SECRET_TEST_KEY="sk_test_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe test secret key
-//if (empty($conf->global->STRIPE_TEST_SECRET_KEY)) $conf->global->STRIPE_TEST_SECRET_KEY = $SECRET_TEST_KEY;
-//$PUBLISHABLE_TEST_KEY="pk_test_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe test publishable key
-//if (empty($conf->global->STRIPE_TEST_PUBLISHABLE_KEY)) $conf->global->STRIPE_TEST_PUBLISHABLE_KEY = $PUBLISHABLE_TEST_KEY;
-
-//$SECRET_LIVE_KEY="sk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe live secret key
-//if (empty($conf->global->STRIPE_LIVE_SECRET_KEY)) $conf->global->STRIPE_LIVE_SECRET_KEY = $SECRET_LIVE_KEY;
-//$PUBLISHABLE_LIVE_KEY="pk_live_xxxxxxxxxxxxxxxxxxxxxxxx"; // Stripe live publishable key
-//if (empty($conf->global->STRIPE_LIVE_PUBLISHABLE_KEY)) $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY = $PUBLISHABLE_LIVE_KEY;
-
 llxHeader('',$langs->trans("StripeSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ModuleSetup").' Stripe',$linkback);
 
 $head=stripeadmin_prepare_head();
@@ -143,18 +141,27 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td class="titlefield">';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
+if (empty($conf->global->STRIPECONNECT_LIVE) && ! empty($conf->stripeconnect->enabled)) {
+if (!empty($conf->global->STRIPE_LIVE))
+	print '<A href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+print '</A>';
+}
+else {
 if (!empty($conf->global->STRIPE_LIVE))
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+	print '<A href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
 }
 else
 {
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+	print '<A href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
 }
+print '</A>';
+}
 print '</td></tr>';
-
+if (empty($conf->stripeconnect->enabled)) {
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_PUBLISHABLE_KEY").'</span></td><td>';
 print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'">';
@@ -165,6 +172,12 @@ print '<tr class="oddeven"><td>';
 print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
 print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="'.$conf->global->STRIPE_TEST_SECRET_KEY.'">';
 print ' &nbsp; '.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
+print '</td></tr>';  
+
+print '<tr class="oddeven"><td>';
+print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
+print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
+print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
@@ -179,6 +192,15 @@ print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" valu
 print ' &nbsp; '.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>';
+print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
+print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+print '</td></tr>';
+} else {
+print '<tr class="oddeven"><td>'.$langs->trans("STRIPECONNECT").'</td>';
+print '<td>Ce module est configuré en mode marketplace</td></tr>';
+}
 print '</table>';
 
 print '<br>';
@@ -194,6 +216,14 @@ print $langs->trans("VendorName").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
+
+if (! empty($conf->banque->enabled))
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccount").'</td><td>';
+	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '</td></tr>';
+}
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
@@ -252,6 +282,8 @@ print '<br><br>';
 $token='';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
+
+print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242', '4000000000000101', '4000000000000069', '4000000000000341'));
 
 if (! empty($conf->use_javascript_ajax))
 {
