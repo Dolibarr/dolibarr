@@ -99,7 +99,7 @@ foreach ($list->data as $charge) {
     $societestatic->email=$obj->email;
     $societestatic->societe_id=$obj->fk_soc;
         // Ref
-		print "<TD><A href='".DOL_URL_ROOT."?rowid=".$charge->id."'>".$charge->id."</A></TD>\n";
+		print "<TD><A href='".DOL_URL_ROOT."/stripe/charge.php?rowid=".$charge->id."'>".$charge->id."</A></TD>\n";
 		// Employee
 		print "<TD>".$societestatic->getNomUrl(1)."</TD>\n";
     // Origine
