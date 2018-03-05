@@ -59,6 +59,7 @@ ALTER TABLE llx_c_type_container ADD UNIQUE INDEX uk_c_type_container_id (code, 
 
 
 ALTER TABLE llx_societe_remise_except ADD COLUMN discount_type integer DEFAULT 0 NOT NULL AFTER fk_soc;
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_discount_type (discount_type);
 ALTER TABLE llx_societe ADD COLUMN remise_supplier real DEFAULT 0 AFTER remise_client;
 CREATE TABLE llx_societe_remise_supplier
 (
