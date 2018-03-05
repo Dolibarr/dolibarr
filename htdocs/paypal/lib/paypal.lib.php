@@ -342,7 +342,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
     $nvpstr = '';
-    $nvpstr = $nvpstr . "&VERSION=98.0";
+    //$nvpstr = $nvpstr . "&VERSION=".$API_version;				// Already added by hash_call
     $nvpstr = $nvpstr . "&RETURNURL=" . urlencode($returnURL);
     $nvpstr = $nvpstr . "&CANCELURL=" . urlencode($cancelURL);
     if (! empty($conf->global->PAYPAL_ALLOW_NOTES))
@@ -592,7 +592,7 @@ function hash_call($methodName,$nvpStr)
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
     // TODO problem with triggers
-    $API_version="56";
+    $API_version="98.0";
 	if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))		// We can force sand box with param 'forcesandbox'
 	{
 	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";

@@ -272,6 +272,9 @@ $postactionmessages = array();
 if ($ispaymentok)
 {
 	// Set permission for the anonymous user
+	if (empty($user->rights->societe))  $user->rights->societe=new stdClass();
+	if (empty($user->rights->facture))  $user->rights->facture=new stdClass();
+	if (empty($user->rights->adherent)) { $user->rights->adherent=new stdClass(); $user->rights->adherent->cotisation=new stdClass(); }
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
 	$user->rights->adherent->cotisation->creer = 1;
@@ -318,14 +321,14 @@ if ($ispaymentok)
 				$datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription,$defaultdelay,$defaultdelayunit),-1,'d');
 				$paymentdate=$now;
 				$amount = $FinalPaymentAmt;
-				$label='Online subscription '.dol_print_date($now, 'standard');
+				$label='Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
 
 				// Payment informations
 				$accountid = 0;
 				if ($paymentmethod == 'paybox') $accountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'paypal') $accountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'stripe') $accountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
-				$operation=$paymentTypeId; // Payment mode
+				$operation=$paymentType; // Payment mode code
 				$num_chq='';
 				$emetteur_nom='';
 				$emetteur_banque='';
@@ -460,7 +463,7 @@ if ($ispaymentok)
 				}
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_paiement = '';
-				$paiement->note_public  = 'Online payment using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
+				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
 
 				if (! $error)
 				{
@@ -556,7 +559,7 @@ if ($ispaymentok)
 
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
-    print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
+    if ($TRANSACTIONID) print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
 
     $key='ONLINE_PAYMENT_MESSAGE_OK';
     if (! empty($conf->global->$key)) print $conf->global->$key;
@@ -635,12 +638,16 @@ if ($ispaymentok)
 		{
 			$content.=' * '.$postactionmessage.'<br>'."\n";
 		}
+		if ($ispostactionok < 0)
+		{
+			$content.= $langs->transnoentities("ARollbackWasPerformedOnPostActions");
+		}
 		$content.='<br>'."\n";
 
 		$content.="<br>\n";
 		$content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
 		$content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
-		$content.=$companylangs->transnoentitiesnoconv("TransactionId").': <strong>'.$TRANSACTIONID."</strong><br>\n";
+		$content.=$companylangs->transnoentitiesnoconv("ThisIsTransactionId").': <strong>'.$TRANSACTIONID."</strong><br>\n";
 		$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 		$content.="<br>\n";
 		$content.="tag=".$fulltag."<br>\ntoken=".$onlinetoken."<br>\npaymentType=".$paymentType."<br>\ncurrencycodeType=".$currencyCodeType."<br>\npayerId=".$payerID."<br>\nipaddress=".$ipaddress."<br>\nFinalPaymentAmt=".$FinalPaymentAmt."<br>\n";

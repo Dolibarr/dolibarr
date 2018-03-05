@@ -1250,7 +1250,7 @@ class Adherent extends CommonObject
 	 *	@param	int	        $date        		Date of effect of subscription
 	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
 	 *	@param	int			$accountid			Id bank account
-	 *	@param	string		$operation			Type operation (if Id bank account provided)
+	 *	@param	string		$operation			Type of payment (if Id bank account provided). Example: 'CB', ...
 	 *	@param	string		$label				Label operation (if Id bank account provided)
 	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom		Name of cheque writer
@@ -1288,7 +1288,8 @@ class Adherent extends CommonObject
 		$subscription->dateh=$date;		// Date of new subscription
 		$subscription->datef=$datefin;	// End data of new subscription
 		$subscription->amount=$amount;
-		$subscription->note=$label;
+		$subscription->note=$label;		// deprecated
+		$subscription->note_public=$label;
 
 		$rowid=$subscription->create($user);
 		if ($rowid > 0)
