@@ -634,7 +634,7 @@ if ($resql)
     /*                                                                            */
     /* ************************************************************************** */
 
-    if (empty($action) && $id > 0)
+    if ((empty($action) || $action == 'list') && $id > 0)
     {
         print "<div class=\"tabsAction\">\n";
 
