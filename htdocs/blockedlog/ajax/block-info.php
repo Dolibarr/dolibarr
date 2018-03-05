@@ -87,7 +87,7 @@ function formatObject($objtoshow, $prefix)
 			{
 				$s.='<tr><td>'.($prefix?$prefix.' > ':'').$key.'</td>';
 				$s.='<td>';
-				if (in_array($key, array('date','datef')))
+				if (in_array($key, array('date','datef','dateh','datec','datem','datep')))
 				{
 					$s.=dol_print_date($val, 'dayhour');
 				}
