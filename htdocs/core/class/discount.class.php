@@ -570,8 +570,9 @@ class DiscountAbsolute
 
         if ($option == 'invoice') {
             $facid=! empty($this->discount_type)?$this->fk_invoice_supplier_source:$this->fk_facture_source;
+            $link=! empty($this->discount_type)?'/fourn/facture/card.php':'/compta/facture/card.php';
             $label=$langs->trans("ShowDiscount").': '.$this->ref_facture_source;
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $link = '<a href="'.DOL_URL_ROOT.$link.'?facid='.$facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $linkend='</a>';
             $ref=! empty($this->discount_type)?$this->ref_invoice_supplier_source:$this->ref_facture_source;
             $picto='bill';
