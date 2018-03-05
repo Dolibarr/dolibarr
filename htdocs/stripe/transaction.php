@@ -100,7 +100,7 @@ foreach ($txn->data as $txn) {
     $societestatic->societe_id=$obj->fk_soc;
 
     // Ref
-		print "<TD><A href='".dol_buildpath('/stripeconnect/charge.php', 1) . "?rowid=".$txn->source."'>".$txn->source."</A></TD>\n";
+		print "<TD><A href='".DOL_URL_ROOT."/stripe/transaction.php?rowid=".$txn->source."'>".$txn->source."</A></TD>\n";
 		// Employee
 		print "<TD>".$societestatic->getNomUrl(1)."</TD>\n";
     // Origine
