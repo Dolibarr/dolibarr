@@ -100,8 +100,9 @@ $arrayfields=array(
     'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
     'm.label'=>array('label'=>$langs->trans("LabelMovement"), 'checked'=>1),
     'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
-    'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
-	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
+	'm.price'=>array('label'=>$langs->trans("Price"), 'checked'=>0),
+		//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
@@ -416,7 +417,7 @@ if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type, p.entity,";
 $sql.= " e.label as stock, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
-$sql.= " m.batch,";
+$sql.= " m.batch, m.price,";
 $sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 $sql.= " u.login, u.photo, u.lastname, u.firstname";
 // Add fields from extrafields
@@ -825,6 +826,13 @@ if ($resql)
 	    print '<input class="flat" type="text" size="4" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
 	    print '</td>';
     }
+    if (! empty($arrayfields['m.price']['checked']))
+    {
+    	// Price
+    	print '<td class="liste_titre" align="left">';
+    	print '&nbsp; ';
+    	print '</td>';
+    }
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -885,7 +893,8 @@ if ($resql)
     if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
-	// Extra fields
+    if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'],$_SERVER["PHP_SELF"], "m.price","",$param,'align="right"',$sortfield,$sortorder);
+    // Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
 	   foreach($extrafields->attribute_label as $key => $val)
@@ -1022,6 +1031,13 @@ if ($resql)
 	        if ($objp->qt > 0) print '+';
 	        print $objp->qty;
 	        print '</td>';
+        }
+        if (! empty($arrayfields['m.price']['checked']))
+        {
+        	// Price
+        	print '<td align="right">';
+        	print price($objp->price);
+        	print '</td>';
         }
         // Action column
         print '<td class="nowrap" align="center">';
