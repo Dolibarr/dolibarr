@@ -65,6 +65,8 @@ if (empty($conf->stripeconnect->enabled)) {
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS",GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS','int'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;  
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM','alpha'),'chaine',0,'',$conf->entity);
@@ -222,6 +224,11 @@ if (! empty($conf->banque->enabled))
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '</td></tr>';
+  
+  print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccount").'</td><td>';
+	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
 	print '</td></tr>';
 }
 
