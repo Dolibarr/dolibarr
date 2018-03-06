@@ -3,23 +3,23 @@
 namespace Stripe;
 
 /**
- * Class OrderReturn
+ * Class ExchangeRate
  *
  * @package Stripe
  */
-class OrderReturn extends ApiResource
+class ExchangeRate extends ApiResource
 {
     use ApiOperations\All;
     use ApiOperations\Retrieve;
 
     /**
-     * This is a special case because the order returns endpoint has an
+     * This is a special case because the exchange rates endpoint has an
      *    underscore in it. The parent `className` function strips underscores.
      *
      * @return string The name of the class.
      */
     public static function className()
     {
-        return 'order_return';
+        return 'exchange_rate';
     }
 }
