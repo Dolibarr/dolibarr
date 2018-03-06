@@ -2,6 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
+ * Copyright (C) 2018		ptibogxiv				<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $servicename='Stripe';
 
@@ -77,6 +79,9 @@ if (empty($conf->stripeconnect->enabled)) {
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL",GETPOST('ONLINE_PAYMENT_SENDEMAIL'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
+  // Stock decrement
+  $result=dolibarr_set_const($db,"ONLINE_PAYMENT_WAREHOUSE",(GETPOST('ONLINE_PAYMENT_WAREHOUSE','alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE','alpha') : ''),'chaine',0,'',$conf->entity);
+  if (! $result > 0) $error++;
 	// Payment token for URL
 	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN",GETPOST('PAYMENT_SECURITY_TOKEN','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
@@ -116,6 +121,7 @@ if ($action=="setlive")
  */
 
 $form=new Form($db);
+$formproduct=new FormProduct($db);
 
 llxHeader('',$langs->trans("StripeSetup"));
 
@@ -263,6 +269,12 @@ print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$c
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
+// stock for automatic decrement
+print '<tr class="oddeven"><td>';
+print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>'; 
+print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE,'ONLINE_PAYMENT_WAREHOUSE','',1,$disabled);
+print '</td></tr>';
+
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
@@ -309,3 +321,4 @@ if (! empty($conf->use_javascript_ajax))
 
 llxFooter();
 $db->close();
+
