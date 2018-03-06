@@ -205,7 +205,7 @@ if ($result)
   	print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
   	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
   	print_liste_field_titre("AmountInvoice",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-  	print_liste_field_titre("AmountRequested",$_SERVER["PHP_SELF"],"pl.amount_requested","",$param,'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre("AmountRequested",$_SERVER["PHP_SELF"],"pl.amount","",$param,'align="right"',$sortfield,$sortorder);
   	print_liste_field_titre("StatusDebitCredit",$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";

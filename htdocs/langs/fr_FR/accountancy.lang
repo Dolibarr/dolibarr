@@ -224,8 +224,8 @@ GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être e
 NoNewRecordSaved=Plus d'enregistrements à journaliser
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
-Accounted=Comptabilisé dans le grand livre
-NotYetAccounted=Pas encore comptabilisé dans le grand livre
+Accounted=Comptabilisé
+NotYetAccounted=Pas encore comptabilisé
 
 ## Admin
 ApplyMassCategories=Application en masse des catégories

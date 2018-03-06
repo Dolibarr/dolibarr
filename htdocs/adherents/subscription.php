@@ -293,6 +293,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 {
                 	$error++;
         			setEventMessages($errmsg, null, 'errors');
+        			$error++;
                 	$action='addsubscription';
                 }
             }
