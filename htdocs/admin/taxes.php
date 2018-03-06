@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,12 +30,14 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load('admin');
+$langs->load('objects');
+$langs->load("companies");
 
 if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
-// Other parameters ACCOUNTING_*
+// Other parameters
 $list = array (
 		'ACCOUNTING_VAT_PAY_ACCOUNT'
 );
@@ -59,51 +61,55 @@ $list = array (
 $tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
 if ($action == 'update') {
-    $error = 0;
+	$error = 0;
 
 	// Tax mode
 	$tax_mode = GETPOST('tax_mode','alpha');
 
-    $db->begin();
+	$db->begin();
 
-    $res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
-    if (! $res > 0) $error++;
+	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 
-    switch ($tax_mode)
-    {
-        case 0:
-            $value = 'payment';
-            break;
-        case 1:
-            $value = 'invoice';
-            break;
-    }
+	switch ($tax_mode)
+	{
+		case 0:
+			$value = 'payment';
+			break;
+		case 1:
+			$value = 'invoice';
+			break;
+	}
 
-    $res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
-    if (! $res > 0) $error++;
-    $res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
-    if (! $res > 0) $error++;
-    $res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $value,'chaine',0,'',$conf->entity);
-    if (! $res > 0) $error++;
-    $res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
-    if (! $res > 0) $error++;
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $value,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+
+	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva",'alpha'),'chaine',0,'',$conf->entity);
+
+	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN",'alpha'),'chaine',0,'',$conf->entity);
 
 	// Others options
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    if (! $error) {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (! $error) {
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -122,74 +128,105 @@ dol_fiche_head();
 
 if (empty($mysoc->tva_assuj))
 {
-    print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
+	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
 }
 else
 {
-    print '<table class="noborder" width="100%">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
 
-    // Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="update">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
-    print "</tr>\n";
-    print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
-    print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
-    print "</td></tr>\n";
-    print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
-    print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
+	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
+	print '<input name="tva" id="intra_vat" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
+	print '</td></tr>';
 
-    print "</table>\n";
+	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATReturn").'</label></td>';
+	if (! $conf->use_javascript_ajax)
+	{
+		print '<td class="nowrap" align="right">';
+		print $langs->trans("NotAvailableWhenAjaxDisabled");
+		print "</td>";
+	}
+	else
+	{
+		print '<td width="120">';
+		$listval=array('0'=>$langs->trans(""),
+		'1'=>$langs->trans("Monthly"),
+		'2'=>$langs->trans("Quarterly"),
+		'3'=>$langs->trans("Annual"),
+		);
+		print $form->selectarray("MAIN_INFO_VAT_RETURN", $listval, $conf->global->MAIN_INFO_VAT_RETURN);
+		print "</td>";
+	}
+	print '</tr>';
 
-    print '<br>';
-    print load_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
-    //print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
+	print '</table>';
 
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+	print "<br>\n";
 
-    // Products
-    print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
-    print '<td>';
-    print $langs->trans("OnDelivery");
-    print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
-    print '</td>';
-    print '<td>';
-    print $langs->trans("OnDelivery");
-    print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
-    print '</td></tr>';
+	print '<table class="noborder" width="100%">';
 
-    // Services
-    print '<tr class="oddeven"><td>'.$langs->trans("Services").'</td>';
-    print '<td>';
-    if ($tax_mode == 0)
-    {
-        print $langs->trans("OnPayment");
-        print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-    }
-    if ($tax_mode == 1)
-    {
-        print $langs->trans("OnInvoice");
-        print ' ('.$langs->trans("InvoiceDateUsed").')';
-    }
-    print '</td>';
-    print '<td>';
-    if ($tax_mode == 0)
-    {
-        print $langs->trans("OnPayment");
-        print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-    }
-    if ($tax_mode == 1)
-    {
-        print $langs->trans("OnInvoice");
-        print ' ('.$langs->trans("InvoiceDateUsed").')';
-    }
-    print '</td></tr>';
+	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
+	print "</tr>\n";
+	print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
+	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
+	print "</td></tr>\n";
+	print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
+	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 
-    print '</table>';
+	print "</table>\n";
+
+	print '<br>';
+	print load_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
+	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
+
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+
+	// Products
+	print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
+	print '<td>';
+	print $langs->trans("OnDelivery");
+	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+	print '</td>';
+	print '<td>';
+	print $langs->trans("OnDelivery");
+	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+	print '</td></tr>';
+
+	// Services
+	print '<tr class="oddeven"><td>'.$langs->trans("Services").'</td>';
+	print '<td>';
+	if ($tax_mode == 0)
+	{
+		print $langs->trans("OnPayment");
+		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	}
+	if ($tax_mode == 1)
+	{
+		print $langs->trans("OnInvoice");
+		print ' ('.$langs->trans("InvoiceDateUsed").')';
+	}
+	print '</td>';
+	print '<td>';
+	if ($tax_mode == 0)
+	{
+		print $langs->trans("OnPayment");
+		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	}
+	if ($tax_mode == 1)
+	{
+		print $langs->trans("OnInvoice");
+		print ' ('.$langs->trans("InvoiceDateUsed").')';
+	}
+	print '</td></tr>';
+
+	print '</table>';
 }
 
 print "<br>\n";
@@ -204,8 +241,6 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	
-
 	print '<tr class="oddeven value">';
 
 	// Param
