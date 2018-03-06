@@ -363,6 +363,8 @@ class BookKeeping extends CommonObject
 	 * @return int				 <0 if KO, Id of created object if OK
 	 */
 	public function createStd(User $user, $notrigger = false, $mode='') {
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
