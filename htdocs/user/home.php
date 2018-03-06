@@ -117,7 +117,7 @@ if (! empty($conf->multicompany->enabled))
 }
 else
 {
-	$sql.= " WHERE u.entity = IN (".getEntity('user').")";
+	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
 if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 $sql.= $db->order("u.datec","DESC");

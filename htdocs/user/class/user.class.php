@@ -2760,7 +2760,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			$sql.= " WHERE u.entity = IN (".getEntity('user').")";
+			$sql.= " WHERE u.entity IN (".getEntity('user').")";
 		}
 		if ($filter) $sql.=" AND ".$filter;
 
