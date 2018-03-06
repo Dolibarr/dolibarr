@@ -48,7 +48,7 @@ class BookKeeping extends CommonObject
 	 */
 	public $table_element = 'accounting_bookkeeping';
 
-	public $entity = 1;
+	public $entity;
 
 	/**
 	 * @var BookKeepingLine[] Lines
@@ -295,7 +295,7 @@ class BookKeeping extends CommonObject
 				$sql .= ",'" . $this->db->escape($this->code_journal) . "'";
 				$sql .= ",'" . $this->db->escape($this->journal_label) . "'";
 				$sql .= "," . $this->db->escape($this->piece_num);
-				$sql .= ", " . (! isset($this->entity) ? '1' : $this->entity);
+				$sql .= ", " . (! isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
 				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
@@ -486,7 +486,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
 		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
-		$sql .= ' ' . (! isset($this->entity) ? '1' : $this->entity);
+		$sql .= ' ' . (! isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
 		$this->db->begin();
