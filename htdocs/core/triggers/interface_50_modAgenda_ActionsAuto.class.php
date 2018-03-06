@@ -655,7 +655,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             $object->sendtoid=0;
 		}
-        elseif ($action == 'MEMBER_SUBSCRIPTION')
+        elseif ($action == 'MEMBER_SUBSCRIPTION_CREATE')
         {
             $langs->load("agenda");
             $langs->load("other");
@@ -669,6 +669,37 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
 
 			$object->sendtoid=0;
+			if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
+        }
+        elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY')
+        {
+        	$langs->load("agenda");
+        	$langs->load("other");
+        	$langs->load("members");
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->getFullName($langs));
+        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
+        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
+
+        	$object->sendtoid=0;
+        }
+        elseif ($action == 'MEMBER_SUBSCRIPTION_DELETE')
+        {
+        	$langs->load("agenda");
+        	$langs->load("other");
+        	$langs->load("members");
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->getFullName($langs));
+        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
+        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
+
+        	$object->sendtoid=0;
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {

@@ -94,6 +94,11 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 
 -- For 7.0
 
+delete from llx_c_action_trigger where code = 'MEMBER_SUBSCRIPTION';
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_CREATE','Member subscribtion recorded','Executed when a member subscribtion is deleted','member',24);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_MODIFY','Member subscribtion modified','Executed when a member subscribtion is modified','member',24);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_DELETE','Member subscribtion deleted','Executed when a member subscribtion is deleted','member',24);
+
 ALTER TABLE llx_product_attribute_value DROP INDEX unique_ref;
 ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
 
