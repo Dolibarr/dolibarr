@@ -661,8 +661,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("other");
             $langs->load("members");
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->getFullName($langs));
-            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->getFullName($langs));
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref,$object->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref,$object->getFullName($langs));
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
@@ -677,14 +677,15 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	$langs->load("other");
         	$langs->load("members");
 
-        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->getFullName($langs));
-        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->getFullName($langs));
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->ref,$object->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->ref,$object->getFullName($langs));
         	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
         	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
         	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
         	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
 
         	$object->sendtoid=0;
+        	if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION_DELETE')
         {
@@ -692,14 +693,15 @@ class InterfaceActionsAuto extends DolibarrTriggers
         	$langs->load("other");
         	$langs->load("members");
 
-        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->getFullName($langs));
-        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->getFullName($langs));
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->ref,$object->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->ref,$object->getFullName($langs));
         	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
         	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
         	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
         	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
 
         	$object->sendtoid=0;
+        	if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
@@ -847,6 +849,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
         $projectid = isset($object->fk_project)?$object->fk_project:0;
         if ($object->element == 'project') $projectid = $object->id;
 
+        $elementid = $object->id;
+        $elementtype = $object->element;
+        if ($object->element == 'subscription')
+        {
+        	$elementid = $object->fk_adherent;
+        	$elementtype = 'member';
+        }
+
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
@@ -876,8 +886,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->email_subject = $object->email_subject;
 		$actioncomm->errors_to   = $object->errors_to;
 
-		$actioncomm->fk_element  = $object->id;
-		$actioncomm->elementtype = $object->element;
+		$actioncomm->fk_element  = $elementid;
+		$actioncomm->elementtype = $elementtype;
 
 		$ret=$actioncomm->create($user);       // User creating action
 
