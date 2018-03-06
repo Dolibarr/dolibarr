@@ -398,7 +398,7 @@ class Expedition extends CommonObject
 
 		if (($lineId = $expeditionline->insert()) < 0)
 		{
-			$this->error[]=$expeditionline->error;
+			$this->errors[]=$expeditionline->error;
 		}
 		return $lineId;
 	}
@@ -2386,9 +2386,9 @@ class ExpeditionLigne extends CommonObjectLine
 		$error=0;
 
 		// Check parameters
-		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || empty($this->qty))
+		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || ! is_numeric($this->qty))
 		{
-			$this->errors[] = 'ErrorMandatoryParametersNotProvided';
+			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
 		// Clean parameters
@@ -2428,7 +2428,6 @@ class ExpeditionLigne extends CommonObjectLine
 				$result=$this->call_trigger('LINESHIPPING_INSERT',$user);
 				if ($result < 0)
 				{
-					$this->errors[]=$this->error;
 					$error++;
 				}
 				// End call triggers
@@ -2444,6 +2443,7 @@ class ExpeditionLigne extends CommonObjectLine
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
+			
 			$this->db->rollback();
 			return -1*$error;
 		}
