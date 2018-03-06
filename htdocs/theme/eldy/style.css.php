@@ -296,7 +296,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input {
     line-height: 17px;
-	padding: 4px;
+	padding: 6px;
 	padding-left: 5px;
 }
 select {
@@ -869,8 +869,10 @@ select.selectarrowonleft option {
     .minwidth400imp { min-width: 400px !important; }
     .minwidth500imp { min-width: 500px !important; }
 }
+.widthauto { width: auto; }
 .width25  { width: 25px; }
 .width50  { width: 50px; }
+.width75  { width: 75px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
