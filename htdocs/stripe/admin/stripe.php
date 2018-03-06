@@ -203,6 +203,20 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("STRIPECONNECT").'</td>';
 print '<td>Ce module est configuré en mode marketplace</td></tr>';
 }
+
+if (! empty($conf->banque->enabled))
+{
+print '<tr class="oddeven"><td>';
+print $langs->trans("BankAccount").'</td><td>';
+print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+print '</td></tr>';
+  
+print '<tr class="oddeven"><td>';
+print $langs->trans("BankAccount").'</td><td>';
+print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
+print '</td></tr>';
+}
+
 print '</table>';
 
 print '<br>';
@@ -218,19 +232,6 @@ print $langs->trans("VendorName").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
-
-if (! empty($conf->banque->enabled))
-{
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BankAccount").'</td><td>';
-	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
-	print '</td></tr>';
-  
-  print '<tr class="oddeven"><td>';
-	print $langs->trans("BankAccount").'</td><td>';
-	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
-	print '</td></tr>';
-}
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
