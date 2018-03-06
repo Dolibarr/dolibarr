@@ -191,11 +191,15 @@ $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
-if (! empty($conf->multicompany->enabled))
-{
+// TODO add hook
+if (! empty($conf->multicompany->enabled)) {
 	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		if ($conf->entity == 1 && ! empty($user->admin) && empty($user->entity)) {
-			$sql.= " WHERE u.entity IS NOT NULL";
+		if (! empty($user->admin) && empty($user->entity)) {
+			if ($conf->entity == 1) {
+				$sql.= " WHERE u.entity IS NOT NULL";
+			} else {
+				$sql.= " WHERE u.entity IN (".getEntity('user').")";
+			}
 		} else {
 			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 			$sql.= " WHERE ug.fk_user = u.rowid";
@@ -204,9 +208,7 @@ if (! empty($conf->multicompany->enabled))
 	} else {
 		$sql.= " WHERE u.entity IN (".getEntity('user').")";
 	}
-}
-else
-{
+} else {
 	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;

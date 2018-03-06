@@ -2744,11 +2744,15 @@ class User extends CommonObject
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if (! empty($conf->multicompany->enabled))
-		{
+		// TODO add hook
+		if (! empty($conf->multicompany->enabled)) {
 			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				if ($conf->entity == 1 && ! empty($user->admin) && empty($user->entity)) {
-					$sql.= " WHERE u.entity IS NOT NULL";
+				if (! empty($user->admin) && empty($user->entity)) {
+					if ($conf->entity == 1) {
+						$sql.= " WHERE u.entity IS NOT NULL";
+					} else {
+						$sql.= " WHERE u.entity IN (".getEntity('user').")";
+					}
 				} else {
 					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql.= " WHERE ug.fk_user = u.rowid";
@@ -2757,9 +2761,7 @@ class User extends CommonObject
 			} else {
 				$sql.= " WHERE u.entity IN (".getEntity('user').")";
 			}
-		}
-		else
-		{
+		} else {
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";
 		}
 		if ($filter) $sql.=" AND ".$filter;
