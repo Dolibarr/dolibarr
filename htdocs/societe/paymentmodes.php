@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -331,25 +331,28 @@ if (empty($reshook))
 	$id = $savid;
 }
 
-$stripeconnect=new StripeConnexion($db);
-$customer=$stripeconnect->CustomerStripe($socid,$stripeconnect->GetStripeAccount($conf->entity));
-if ($customer->id) {
-$cu = \Stripe\Customer::retrieve("".$customer->id."",array("stripe_account" => $stripeconnect->GetStripeAccount($conf->entity)));}
-$url=DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id;
-if ($action == 'setasdefault')
+if (class_exists('StripeConnexion'))
 {
-$cu->default_source = "$source"; // obtained with Stripe.js
-$cu->save();
+	$stripeconnect=new StripeConnexion($db);
+	$customerstripe=$stripeconnect->CustomerStripe($socid,$stripeconnect->GetStripeAccount($conf->entity));
+	if ($customerstripe->id) {
+	$cu = \Stripe\Customer::retrieve("".$customerstripe->id."",array("stripe_account" => $stripeconnect->GetStripeAccount($conf->entity)));}
+	$url=DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id;
+	if ($action == 'setasdefault')
+	{
+	$cu->default_source = "$source"; // obtained with Stripe.js
+	$cu->save();
 
-header('Location: '.$url);
-exit;
-}
-elseif ($action == 'delete')
-{
-$cu->sources->retrieve("$source")->delete();
+	header('Location: '.$url);
+	exit;
+	}
+	elseif ($action == 'delete')
+	{
+	$cu->sources->retrieve("$source")->delete();
 
-header('Location: '.$url);
-exit;
+	header('Location: '.$url);
+	exit;
+	}
 }
 
 
@@ -403,115 +406,132 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
-if (! (empty($conf->stripe->enabled))){
-print '<tr><td class="titlefield">';
-print $langs->trans('StripeGateways').'</td><td colspan="3">';
-if ($stripeconnect->GetStripeAccount($conf->entity)) {
-$customer=$stripeconnect->CustomerStripe($object->id,$stripeconnect->GetStripeAccount($conf->entity));
-}
 
-if ($customer->id) {
-$input=$customer->sources->data;
-}
-print '<table class="liste" width="100%">'."\n";
-print '<tr class="liste_titre">';
-print '<td align="left">'.$langs->trans('Type').'</td>';
-print '<td align="left">'.$langs->trans('Informations').'</td>';
-print '<td align="left"></td>';
-print '<td align="center">'.$langs->trans('Default').'</td>';
-print "<td></td></tr>\n";
-    
-foreach ($input as $src) {
-print '<tr>';
-print '<td>';
-if ($src->object=='card'){
-if ($src->brand == 'Visa') {$brand='cc-visa';}
-elseif ($src->brand == 'MasterCard') {$brand='cc-mastercard';}
-elseif ($src->brand == 'American Express') {$brand='cc-amex';}
-elseif ($src->brand == 'Discover') {$brand='cc-discover';}
-elseif ($src->brand == 'JCB') {$brand='cc-jcb';}
-elseif ($src->brand == 'Diners Club') {$brand='cc-diners-club';}
-else {$brand='credit-card';}
-print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
-}
-elseif ($src->object=='source' && $src->type=='card'){
-if ($src->card->brand == 'Visa') {$brand='cc-visa';}
-elseif ($src->card->brand == 'MasterCard') {$brand='cc-mastercard';}
-elseif ($src->card->brand == 'American Express') {$brand='cc-amex';}
-elseif ($src->card->brand == 'Discover') {$brand='cc-discover';}
-elseif ($src->card->brand == 'JCB') {$brand='cc-jcb';}
-elseif ($src->card->brand == 'Diners Club') {$brand='cc-diners-club';}
-else {$brand='credit-card';}
+	if (! (empty($conf->stripe->enabled)))
+	{
+		print load_fiche_titre($langs->trans('StripeGateways'), '', '');
 
-print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
-}
-elseif ($src->object=='source' && $src->type=='sepa_debit'){
-print '<span class="fa fa-university fa-3x fa-fw"></span>';
-}
-print'</td><td valign="middle">';
-if ($src->object=='card'){
-print '**** '.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
-print '</td><td>';
- if ($src->country)
-	{
-		$img=picto_from_langcode($src->country);
-		print $img?$img.' ':'';
-		print getCountry($src->country,1);
+		if (is_object($stripeconnect) && $stripeconnect->GetStripeAccount($conf->entity))
+		{
+			$customerstripe=$stripeconnect->CustomerStripe($object->id,$stripeconnect->GetStripeAccount($conf->entity));
+		}
+
+		if ($customerstripe->id) {
+			$input=$customerstripe->sources->data;
+		}
+
+		print '<table class="liste" width="100%">'."\n";
+		print '<tr class="liste_titre">';
+		print '<td align="left">'.$langs->trans('Type').'</td>';
+		print '<td align="left">'.$langs->trans('Informations').'</td>';
+		print '<td align="left"></td>';
+		print '<td align="center">'.$langs->trans('Default').'</td>';
+		print "<td></td></tr>\n";
+
+		if (is_array($input))
+		{
+			foreach ($input as $src)
+			{
+				print '<tr>';
+				print '<td>';
+				if ($src->object=='card')
+				{
+					if ($src->brand == 'Visa') {$brand='cc-visa';}
+					elseif ($src->brand == 'MasterCard') {$brand='cc-mastercard';}
+					elseif ($src->brand == 'American Express') {$brand='cc-amex';}
+					elseif ($src->brand == 'Discover') {$brand='cc-discover';}
+					elseif ($src->brand == 'JCB') {$brand='cc-jcb';}
+					elseif ($src->brand == 'Diners Club') {$brand='cc-diners-club';}
+					else {$brand='credit-card';}
+					print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
+				}
+				elseif ($src->object=='source' && $src->type=='card')
+				{
+					if ($src->card->brand == 'Visa') {$brand='cc-visa';}
+					elseif ($src->card->brand == 'MasterCard') {$brand='cc-mastercard';}
+					elseif ($src->card->brand == 'American Express') {$brand='cc-amex';}
+					elseif ($src->card->brand == 'Discover') {$brand='cc-discover';}
+					elseif ($src->card->brand == 'JCB') {$brand='cc-jcb';}
+					elseif ($src->card->brand == 'Diners Club') {$brand='cc-diners-club';}
+					else {$brand='credit-card';}
+					print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
+				}
+				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				{
+					print '<span class="fa fa-university fa-3x fa-fw"></span>';
+				}
+
+				print'</td><td valign="middle">';
+				if ($src->object=='card')
+				{
+					print '**** '.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
+					print '</td><td>';
+					if ($src->country)
+					{
+						$img=picto_from_langcode($src->country);
+						print $img?$img.' ':'';
+						print getCountry($src->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='source' && $src->type=='card')
+				{
+					print $src->owner->name.'<br>**** '.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '</td><td>';
+
+				 	if ($src->card->country)
+					{
+						$img=picto_from_langcode($src->card->country);
+						print $img?$img.' ':'';
+						print getCountry($src->card->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				{
+					print 'info sepa';
+					print '</td><td>';
+					if ($src->sepa_debit->country)
+					{
+							$img=picto_from_langcode($src->sepa_debit->country);
+							print $img?$img.' ':'';
+							print getCountry($src->sepa_debit->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				print '</td>';
+				// Default
+				print '<td align="center" width="50">';
+				if (($cu->default_source!=$src->id))
+				{
+				                print '<a href="' . DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id.'&source='.$src->id.'&action=setasdefault">';
+				                print "<SPAN class='fa fa-circle  fa-2x'></SPAN>";
+				                print '</a>';
+				} else {
+				                print "<SPAN class=' fa fa-check-circle  fa-2x'></SPAN>";
+				}
+				print '</td>';
+				print '<td align="center">';
+				if ($user->rights->societe->creer)
+				{
+				//            	print '<a href="' . DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id.'&id='.$src->id.'&action=edit">';
+				//            	print img_picto($langs->trans("Modify"),'edit');
+				//            	print '</a>';
+				//           		print '&nbsp;';
+				           		print '<a href="' . DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id.'&source='.$src->id.'&action=delete">';
+				           		print "<SPAN class='fa fa-trash fa-2x'></SPAN>";
+				           		print '</a>';
+				}
+				print '</td></tr>';
+			}
+		}
+		if (empty($input))
+		{
+			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</td></tr>';
+		}
+		print "</table>";
 	}
-	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-}
-elseif ($src->object=='source' && $src->type=='card'){
-print $src->owner->name.'<br>**** '.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
-print '</td><td>';
- if ($src->card->country)
-	{
-		$img=picto_from_langcode($src->card->country);
-		print $img?$img.' ':'';
-		print getCountry($src->card->country,1);
-	}
-	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-}
-elseif ($src->object=='source' && $src->type=='sepa_debit'){
-print 'info sepa';
-print '</td><td>';
- if ($src->sepa_debit->country)
-	{
-		$img=picto_from_langcode($src->sepa_debit->country);
-		print $img?$img.' ':'';
-		print getCountry($src->sepa_debit->country,1);
-	}
-	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-}
-print '</td>';
-            // Default
-            print '<td align="center" width="50">';
-            if (($cu->default_source!=$src->id)) {
-                print '<a href="' . DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id.'&source='.$src->id.'&action=setasdefault">';
-                print "<SPAN class='fa fa-circle  fa-2x'></SPAN>";
-                print '</a>';
-            } else {
-                print "<SPAN class=' fa fa-check-circle  fa-2x'></SPAN>";
-            }
-            print '</td>';
-print '<td align="center">';
-            if ($user->rights->societe->creer)
-            {
-//            	print '<a href="' . DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id.'&id='.$src->id.'&action=edit">';
-//            	print img_picto($langs->trans("Modify"),'edit');
-//            	print '</a>';
-//           		print '&nbsp;';
-           		print '<a href="' . DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id.'&source='.$src->id.'&action=delete">';
-           		print "<SPAN class='fa fa-trash fa-2x'></SPAN>";
-           		print '</a>';
-            }
-print '</td></tr>';
-}
-if (empty($input))
-{
-print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</td></tr>';
-}	
-print "</table>";
-}
+
 
 	// List of bank accounts
 

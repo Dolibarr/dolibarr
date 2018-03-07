@@ -43,3 +43,4 @@ ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when payment online pay
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Import Stripe payments
 ExampleOfTestCreditCard=Example of credit card for test: %s (valid), %s (error CVC), %s (expired), %s (charge fails)
+StripeGateways=Stripe gateways
