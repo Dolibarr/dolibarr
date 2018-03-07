@@ -541,14 +541,17 @@ DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_DEVISE')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPORT_PIECE')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_EXPENSEREPORT_JOURNAL')__;
 
--- VMYSQL4.1 ALTER TABLE llx_c_paiement DROP PRIMARY KEY;
 ALTER TABLE llx_c_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER id;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
-ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement(id, entity, code);
+DELETE FROM llx_c_paiement WHERE entity > 1; 
+ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER PRIMARY KEY;
+ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
 
--- VMYSQL4.1 ALTER TABLE llx_c_payment_term DROP PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
-ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term(rowid, entity, code);
+ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
+DELETE FROM llx_c_payment_term WHERE entity > 1;
+ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
+ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
 
 ALTER TABLE llx_projet CHANGE datec datec datetime;
 
