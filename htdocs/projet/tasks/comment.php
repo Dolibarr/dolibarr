@@ -99,7 +99,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$result=$object->fetchComments();
 		if ($result<0){
-			setEventMessage($object->errors,'errors');
+			setEventMessages($object->error,$object->errors,'errors');
 		}
 
 
