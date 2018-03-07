@@ -6528,8 +6528,14 @@ abstract class CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/class/comment.class.php';
 
 		$comment = new Comment($this->db);
-		$this->comments = Comment::fetchAllFor($this->element, $this->id);
-		return 1;
+		$result=$comment->fetchAllFor($this->element, $this->id);
+		if ($result<0) {
+			$this->errors=array_merge($this->errors,$comment->errors);
+			return -1;
+		} else {
+			$this->comments = $comment->comments;
+		}
+		return count($this->comments);
 	}
 
 	/**
