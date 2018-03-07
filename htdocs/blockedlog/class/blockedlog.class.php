@@ -675,8 +675,9 @@ class BlockedLog
 	/**
 	 * Decode data
 	 *
+	 * @param	string	$data	Data to unserialize
 	 * @param	string	$mode	0=unserialize, 1=json_decode
-	 * @return string			Value unserialized
+	 * @return 	string			Value unserialized
 	 */
 	public function dolDecodeBlockedData($data, $mode=0)
 	{
