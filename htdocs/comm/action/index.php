@@ -1564,7 +1564,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 $cacheusers[$tmpid]=$newuser;
                             }
 
-                            $listofusertoshow.=$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valigntextbottom');
+                            $listofusertoshow.=$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
                         }
                         print $listofusertoshow;
 

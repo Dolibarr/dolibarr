@@ -884,6 +884,7 @@ select.selectarrowonleft option {
 }
 .widthauto { width: auto; }
 .width25  { width: 25px; }
+.width75  { width: 75px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
@@ -1938,7 +1939,7 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-.userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	border-radius: 8px;
 	width: 16px;
 	height: 16px;

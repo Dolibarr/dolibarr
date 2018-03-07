@@ -296,7 +296,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input {
     line-height: 17px;
-	padding: 4px;
+	padding: 6px;
 	padding-left: 5px;
 }
 select {
@@ -1936,7 +1936,7 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-.userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	width: 16px;
     height: 16px;
     border-radius: 8px;
