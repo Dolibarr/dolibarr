@@ -595,8 +595,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	function calculate_date_lim_reglement($cond_reglement=0)
 	{
-		global $conf;
-
 		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
 		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
 
@@ -606,7 +604,7 @@ abstract class CommonInvoice extends CommonObject
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
 		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
 		else {
-			$sqltemp.= " WHERE c.entity = ".$conf->entity;
+			$sqltemp.= " WHERE c.entity IN (".getEntity('c_payment_term').")";
 			$sqltemp.= " AND c.code='".$this->db->escape($cond_reglement)."'";
 		}
 

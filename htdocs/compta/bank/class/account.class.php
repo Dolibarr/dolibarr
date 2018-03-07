@@ -399,8 +399,6 @@ class Account extends CommonObject
 	 */
 	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='')
 	{
-		global $conf;
-
 		// Deprecatîon warning
 		if (is_numeric($oper)) {
 			dol_syslog(__METHOD__ . ": using numeric operations is deprecated", LOG_WARNING);
@@ -416,7 +414,7 @@ class Account extends CommonObject
 		{
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
 			$sql.= " WHERE id=".$oper;
-			$sql.= " AND entity = ".$conf->entity;
+			$sql.= " AND entity IN (".getEntity('c_paiement').")";
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
