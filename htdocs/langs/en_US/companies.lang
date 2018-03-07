@@ -258,6 +258,7 @@ ProfId4DZ=NIS
 VATIntra=Sales tax ID
 VATIntraShort=Tax ID
 VATIntraSyntaxIsValid=Syntax is valid
+VATReturn=VAT return
 ProspectCustomer=Prospect / Customer
 Prospect=Prospect
 CustomerCard=Customer Card
