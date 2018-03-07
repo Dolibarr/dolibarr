@@ -70,3 +70,7 @@ ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_exp
 
 ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 
+-- Add missing primary key
+ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+
+
