@@ -56,8 +56,8 @@ insert into llx_c_type_container (code,label,module,active) values ('blogpost', 
 insert into llx_c_type_container (code,label,module,active) values ('other',    'Other',    'system', 1);
 
 -- For supplier product buy price in multicurency
-ALTER TABLE `llx_product_fournisseur_price` CHANGE `multicurrency_price_ttc` `multicurrency_unitprice` DOUBLE(24,8) NULL DEFAULT NULL;
-ALTER TABLE `llx_product_fournisseur_price_log` CHANGE `multicurrency_price_ttc` `multicurrency_unitprice` DOUBLE(24,8) NULL DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price CHANGE COLUMN multicurrency_price_ttc multicurrency_unitprice DOUBLE(24,8) NULL DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price_log CHANGE COLUMN multicurrency_price_ttc multicurrency_unitprice DOUBLE(24,8) NULL DEFAULT NULL;
 
 ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_expensereport;
 
