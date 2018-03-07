@@ -18,10 +18,23 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
+
+
+
+/*ini_set('unserialize_callback_func', 'mycallback');
+
+function mycallback($classname)
+{
+	//var_dump($classname);
+	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+}*/
+
+
+
 /**
  *	Class to manage Blocked Log
  */
-
 class BlockedLog
 {
 	/**
@@ -636,7 +649,7 @@ class BlockedLog
 				$this->fk_user 			= $obj->fk_user;
 				$this->user_fullname	= $obj->user_fullname;
 
-				$this->object_data		= unserialize($obj->object_data);
+				$this->object_data		= $this->dolDecodeBlockedData($obj->object_data);
 
 				$this->signature		= $obj->signature;
 				$this->signature_line	= $obj->signature_line;
@@ -657,6 +670,30 @@ class BlockedLog
 		}
 
 	}
+
+
+	/**
+	 * Decode data
+	 *
+	 * @param	string	$mode	0=unserialize, 1=json_decode
+	 * @return string			Value unserialized
+	 */
+	public function dolDecodeBlockedData($data, $mode=0)
+	{
+		try
+		{
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$aaa = unserialize($data);
+			//$aaa = unserialize($data);
+		}
+		catch(Exception $e)
+		{
+			//print $e->getErrs);
+		}
+		return $aaa;
+	}
+
 
 	/**
 	 *	Set block certified by authority
