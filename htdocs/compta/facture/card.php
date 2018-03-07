@@ -3919,7 +3919,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</tr>';
 
 	// Payments already done (from payment on this invoice)
-	$sql = 'SELECT DISTINCT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
+	$sql = 'SELECT DISTINCT p.tms, p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
 	$sql .= ' c.code as payment_code, c.libelle as payment_label,';
 	$sql .= ' pf.amount,';
 	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
