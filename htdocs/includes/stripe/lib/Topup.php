@@ -3,25 +3,27 @@
 namespace Stripe;
 
 /**
- * Class Refund
+ * Class Topup
  *
  * @property string $id
  * @property string $object
  * @property int $amount
  * @property string $balance_transaction
- * @property string $charge
  * @property int $created
  * @property string $currency
- * @property string $failure_balance_transaction
- * @property string failure_reason
+ * @property string $description
+ * @property int $expected_availability_date
+ * @property string $failure_code
+ * @property string $failure_message
+ * @property bool $livemode
  * @property StripeObject $metadata
- * @property mixed $reason
- * @property mixed $receipt_number
+ * @property mixed $source
+ * @property string $statement_descriptor
  * @property string $status
  *
  * @package Stripe
  */
-class Refund extends ApiResource
+class Topup extends ApiResource
 {
     use ApiOperations\All;
     use ApiOperations\Create;
