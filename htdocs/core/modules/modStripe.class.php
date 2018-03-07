@@ -106,47 +106,48 @@ class modStripe extends DolibarrModules
 	        'user'=>2
         );				                // 0=Menu for internal users, 1=external users, 2=both
         $r++;
-	    
-        $this->menu[$r] = array('fk_menu'=>'fk_mainmenu=bank',
-		'type'=>'left',
-		'titre'=>'StripeAccount',
-		'mainmenu'=>'bank',
-		'leftmenu'=>'stripe',
-		'url' => '/stripe/charge.php',
-		'langs' => 'stripe',
-		'position' => 100,
-		'enabled' => '1',
-		'perms' => '$user->rights->banque->configurer',
-		'target' => '',
-		'user' => 0
+
+        $this->menu[$r] = array(
+        	'fk_menu'=>'fk_mainmenu=bank',
+			'type'=>'left',
+			'titre'=>'StripeAccount',
+			'mainmenu'=>'bank',
+			'leftmenu'=>'stripe',
+			'url' => '/stripe/charge.php',
+			'langs' => 'stripe',
+			'position' => 100,
+			'enabled' => '$conf->global->MAIN_FEATURES_LEVEL >= 2',
+			'perms' => '$user->rights->banque->configurer',
+			'target' => '',
+			'user' => 0
 		);
-    
-        $r ++;
-	$this->menu[$r] = array(
-		'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
-		'type' => 'left',
-		'titre' => 'StripeChargeList',
-		'url' => '/stripe/charge.php',
-		'langs' => 'stripe',
-		'position' => 102,
-		'enabled' => '$conf->stripe->enabled && $conf->banque->enabled',
-		'perms' => '$user->rights->banque->configurer',
-		'target' => '',
-		'user' => 0
-		);
-    
-        $r ++;
+
+        $r++;
 		$this->menu[$r] = array(
-		'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
-		'type' => 'left',
-		'titre' => 'StripeTransactionList',
-		'url' => '/stripe/transaction.php',
-		'langs' => 'stripe',
-		'position' => 102,
-		'enabled' => '$conf->stripe->enabled && $conf->banque->enabled',
-		'perms' => '$user->rights->banque->configurer',
-		'target' => '',
-		'user' => 0
+			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
+			'type' => 'left',
+			'titre' => 'StripeChargeList',
+			'url' => '/stripe/charge.php',
+			'langs' => 'stripe',
+			'position' => 102,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',
+			'perms' => '$user->rights->banque->configurer',
+			'target' => '',
+			'user' => 0
+		);
+
+        $r++;
+		$this->menu[$r] = array(
+			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
+			'type' => 'left',
+			'titre' => 'StripeTransactionList',
+			'url' => '/stripe/transaction.php',
+			'langs' => 'stripe',
+			'position' => 102,
+			'enabled' => '$conf->stripe->enabled && $conf->banque->enabled && $conf->global->MAIN_FEATURES_LEVEL >= 2',
+			'perms' => '$user->rights->banque->configurer',
+			'target' => '',
+			'user' => 0
 		);
 
         // Exports
