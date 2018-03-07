@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Błąd, zniżka już używana
 ErrorInvoiceAvoirMustBeNegative=Błąd, korekty faktury muszą mieć negatywny kwotę
 ErrorInvoiceOfThisTypeMustBePositive=Błąd ten typ faktury musi mieć dodatnią wartość
 ErrorCantCancelIfReplacementInvoiceNotValidated=Błąd, nie można anulować faktury, która została zastąpiona przez inną fakturę, będącą ciągle w stanie projektu.
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Od
 BillTo=Do
 ActionsOnBill=Działania na fakturze

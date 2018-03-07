@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin  <regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Charlie Benke  <charlie@patas-monkey.com>
-
+ * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -48,7 +49,7 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 
 /**
- *	Classe permettant de generer les projets au modele Baleine
+ *	Class to manage generation of project document Baleine
  */
 
 class pdf_beluga extends ModelePDFProjects
@@ -98,6 +99,15 @@ class pdf_beluga extends ModelePDFProjects
 		$this->posxamountht=$this->marge_gauche+110;
 		$this->posxamountttc=$this->marge_gauche+135;
 		$this->posxstatut=$this->marge_gauche+165;
+		if ($this->page_largeur < 210) // To work with US executive format
+		{
+			$this->posxref-=20;
+			$this->posxdate-=20;
+			$this->posxsociete-=20;
+			$this->posxamountht-=20;
+			$this->posxamountttc-=20;
+			$this->posstatut-=20;
+		}
 	}
 
 
@@ -110,7 +120,7 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	function write_file($object,$outputlangs)
 	{
-		global $user,$langs,$conf;
+		global $conf, $hookmanager, $langs, $user;
 
         $formproject=new FormProjets($this->db);
 
@@ -154,12 +164,14 @@ class pdf_beluga extends ModelePDFProjects
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
-                $pdf=pdf_getInstance($this->format);
-                $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
-                $heightforinfotot = 50;	// Height reserved to output the info and total part
+				// Create pdf instance
+				$pdf=pdf_getInstance($this->format);
+				$default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
+				$pdf->SetAutoPageBreak(1,0);
+
+				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
-                $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -167,10 +179,21 @@ class pdf_beluga extends ModelePDFProjects
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				// Complete object by loading several other informations
 				$task = new Task($this->db);
 				$tasksarray = $task->getTasksArray(0,0,$object->id);
+
+				if (! $object->id > 0)  // Special case when used with object = specimen, we may return all lines
+				{
+					$tasksarray=array_slice($tasksarray, 0, min(5, count($tasksarray)));
+				}
 
 				$object->lines=$tasksarray;
 				$nblignes=count($object->lines);
@@ -190,6 +213,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				// New page
 				$pdf->AddPage();
+				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 1);
@@ -197,21 +221,28 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 50;
-				$tab_height = 200;
-				$tab_top_newpage = 40;
-                $tab_height_newpage = 210;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_height = 170;
+				$tab_height_newpage = 190;
 
-				// Affiche notes
-				if (! empty($object->note_public))
+				// Show public note
+				$notetoshow=empty($object->note_public)?'':$object->note_public;
+				if ($notetoshow)
 				{
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
+					$tab_top -= 2;
+
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
-					$height_note=$nexY-($tab_top-2);
+					$height_note=$nexY-$tab_top;
 
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
-					$pdf->Rect($this->marge_gauche, $tab_top-3, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+					$pdf->Rect($this->marge_gauche, $tab_top-2, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+2);
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY+6;
@@ -221,10 +252,11 @@ class pdf_beluga extends ModelePDFProjects
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
-
+				$heightoftitleline = 10;
+				$iniY = $tab_top + $heightoftitleline + 1;
+				$curY = $tab_top + $heightoftitleline + 1;
+				$nexY = $tab_top + $heightoftitleline + 1;
+				
                 $listofreferent=array(
                     'propal'=>array(
                     	'name'=>"Proposals",
@@ -335,176 +367,286 @@ class pdf_beluga extends ModelePDFProjects
                 	$langstoload=$value['lang'];
                 	$langs->load($langstoload);
 
-                    if ($qualified)
+                    if (! $qualified) continue;
+
+                    //var_dump("$key, $tablename, $datefieldname, $dates, $datee");
+                    $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+                    
+                    if ($key == 'agenda') 
                     {
-                        //var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-                        $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
-                        //var_dump($elementarray);
+//                    	var_dump($elementarray);
+                    }
 
-                        $num = count($elementarray);
-                        if ($num >= 0)
+                    $num = count($elementarray);
+                    if ($num >= 0)
+                    {
+                        $nexY = $pdf->GetY() + 5;
+                        
+                        $curY = $nexY;
+                        $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+                        $pdf->SetTextColor(0,0,0);
+                          
+                        $pdf->SetXY($this->posxref, $curY);
+                        $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
+
+                        $selectList = $formproject->select_element($tablename, $project->thirdparty->id);
+                        $nexY = $pdf->GetY() + 1;
+                        $curY = $nexY;
+                        $pdf->SetXY($this->posxref, $curY);
+                        $pdf->MultiCell($this->posxdate - $this->posxref, 3, $outputlangs->transnoentities("Ref"), 1, 'L');
+                        $pdf->SetXY($this->posxdate, $curY);
+                        $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, $outputlangs->transnoentities("Date"), 1, 'C');
+                        $pdf->SetXY($this->posxsociety, $curY);
+                        $titlethirdparty=$outputlangs->transnoentities("ThirdParty");
+                        if ($classname == 'ExpenseReport') $titlethirdparty=$langs->trans("User");
+                        $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $titlethirdparty, 1, 'L');
+                        if (empty($value['disableamount'])) {
+                            $pdf->SetXY($this->posxamountht, $curY);
+                            $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, $outputlangs->transnoentities("AmountHTShort"), 1, 'R');
+                            $pdf->SetXY($this->posxamountttc, $curY);
+                            $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, $outputlangs->transnoentities("AmountTTCShort"), 1, 'R');
+                        } else {
+                            $pdf->SetXY($this->posxamountht, $curY);
+                            $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
+                        }
+                        $pdf->SetXY($this->posxstatut, $curY);
+                        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Statut"), 1, 'R');
+
+                        if (is_array($elementarray) && count($elementarray) > 0)
                         {
-                            $nexY = $pdf->GetY() + 5;
-                            $curY = $nexY;
-                            $pdf->SetXY($this->posxref, $curY);
-                            $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
+                            $nexY = $pdf->GetY();
 
-                            $selectList = $formproject->select_element($tablename, $project->thirdparty->id);
-                            $nexY = $pdf->GetY() + 1;
-                            $curY = $nexY;
-                            $pdf->SetXY($this->posxref, $curY);
-                            $pdf->MultiCell($this->posxdate - $this->posxref, 3, $outputlangs->transnoentities("Ref"), 1, 'L');
-                            $pdf->SetXY($this->posxdate, $curY);
-                            $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, $outputlangs->transnoentities("Date"), 1, 'C');
-                            $pdf->SetXY($this->posxsociety, $curY);
-                            $titlethirdparty=$outputlangs->transnoentities("ThirdParty");
-                            if ($classname == 'ExpenseReport') $titlethirdparty=$langs->trans("User");
-                            $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $titlethirdparty, 1, 'L');
-                            if (empty($value['disableamount'])) {
-                                $pdf->SetXY($this->posxamountht, $curY);
-                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, $outputlangs->transnoentities("AmountHTShort"), 1, 'R');
-                                $pdf->SetXY($this->posxamountttc, $curY);
-                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, $outputlangs->transnoentities("AmountTTCShort"), 1, 'R');
-                            } else {
-                                $pdf->SetXY($this->posxamountht, $curY);
-                                $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
-                            }
-                            $pdf->SetXY($this->posxstatut, $curY);
-                            $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Statut"), 1, 'R');
+                            $total_ht = 0;
+                            $total_ttc = 0;
+                            $num = count($elementarray);
 
-                            if (is_array($elementarray) && count($elementarray) > 0)
-                            {
+				// Loop on each lines
+				for ($i = 0; $i < $num; $i ++) 
+				{
+					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
+
+					$pdf->setTopMargin($tab_top_newpage);
+					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pageposbefore=$pdf->getPage();
+
+					// Description of line
+					$idofelement=$elementarray[$i];
+                             	if ($classname == 'ExpenseReport')
+                               	{
+                               		// We get id of expense report
+                               		$expensereportline=new ExpenseReportLine($this->db);
+                               		$expensereportline->fetch($idofelement);
+                               		$idofelement = $expensereportline->fk_expensereport;
+                               	}
+
+                                $element = new $classname($this->db);
+                                $element->fetch($idofelement);
+                                $element->fetch_thirdparty();
+                                // print $classname;
+
+                                $qualifiedfortotal = true;
+                                if ($key == 'invoice') {
+                                    if ($element->close_code == 'replaced')
+                                        $qualifiedfortotal = false; // Replacement invoice
+                                }
+
+					$showpricebeforepagebreak=1;
+
+					$pdf->startTransaction();
+					// Label
+					$pdf->SetXY($this->posxref, $curY);
+					$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+					$pageposafter=$pdf->getPage();
+					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					{
+						$pdf->rollbackTransaction(true);
+						$pageposafter=$pageposbefore;
+						//print $pageposafter.'-'.$pageposbefore;exit;
+						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+						// Label
+						$pdf->SetXY($this->posxref, $curY);
+						$posybefore=$pdf->GetY();
+						$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+						$pageposafter=$pdf->getPage();
+						$posyafter=$pdf->GetY();
+						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+						{
+							if ($i == ($num-1))	// No more lines, and no space left to show total, so we create a new page
+							{
+								$pdf->AddPage('','',true);
+								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$pdf->setPage($pageposafter+1);
+							}
+						}
+						else
+						{
+							// We found a page break
+							$showpricebeforepagebreak=0;
+							$forcedesconsamepage=1;
+							if ($forcedesconsamepage)
+							{
+								$pdf->rollbackTransaction(true);
+								$pageposafter=$pageposbefore;
+								$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+
+								$pdf->AddPage('','',true);
+								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								$pdf->setPage($pageposafter+1);
+								$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
+								$pdf->MultiCell(0, 3, '');		// Set interline to 3
+								$pdf->SetTextColor(0,0,0);
+								
+								$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+								$curY = $tab_top_newpage + $heightoftitleline + 1;
+								
+								// Label
+								$pdf->SetXY($this->posxref, $curY);
+								$posybefore=$pdf->GetY();
+								$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+								$pageposafter=$pdf->getPage();
+								$posyafter=$pdf->GetY();
+							}
+						}
+						//var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
+					}
+					else	// No pagebreak
+					{
+						$pdf->commitTransaction();
+					}
+					$posYAfterDescription=$pdf->GetY();
+
+					$nexY = $pdf->GetY();
+					$pageposafter=$pdf->getPage();
+					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
+					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+
+					// We suppose that a too long description is moved completely on next page
+					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
+						//var_dump($pageposbefore.'-'.$pageposafter.'-'.$showpricebeforepagebreak);
+						$pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
+					}
+
+					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
+
+					// Date
+					if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
+						$date = $element->date_commande;
+					else {
+						$date = $element->date;
+						if (empty($date))
+							$date = $element->datep;
+						if (empty($date))
+							$date = $element->date_contrat;
+						if (empty($date))
+							$date = $element->datev; // Fiche inter
+					}
+
+					$pdf->SetXY($this->posxdate, $curY);
+					$pdf->MultiCell($this->posxsociety - $this->posxdate, 3, dol_print_date($date, 'day'), 1, 'C');
+
+					$pdf->SetXY($this->posxsociety, $curY);
+					if ($classname == 'ExpenseReport')
+					{
+						$fuser=new User($this->db);
+						$fuser->fetch($element->fk_user_author);
+						$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $fuser->getFullName($outputlangs), 1, 'L');
+					}
+					else
+					{
+						$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, (is_object($element->thirdparty)?$element->thirdparty->name:''), 1, 'L');
+					}
+					
+                                // Amount without tax
+                                if (empty($value['disableamount'])) {
+                                    $pdf->SetXY($this->posxamountht, $curY);
+                                    $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : '&nbsp;'), 1, 'R');
+                                    $pdf->SetXY($this->posxamountttc, $curY);
+                                    $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($element->total_ttc) : '&nbsp;'), 1, 'R');
+                                } else {
+                                	$pdf->SetXY($this->posxamountht, $curY);
+                                	if ($key == 'agenda')
+                                	{
+                                		$textforamount = dol_trunc($element->label, 26);
+                                		$pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, $textforamount, 1, 'L');
+                                	}
+                                	else
+                                	{
+	                                    $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
+                                	}
+                                }
+
+                                // Status
+                                if ($element instanceof CommonInvoice) {
+                                    // This applies for Facture and FactureFournisseur
+                                    $outputstatut = $element->getLibStatut(1, $element->getSommePaiement());
+                                } else {
+                                    $outputstatut = $element->getLibStatut(1);
+                                }
+                                $pdf->SetXY($this->posxstatut, $curY);
+                                $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
+
+                                if ($qualifiedfortotal) {
+                                    $total_ht = $total_ht + $element->total_ht;
+                                    $total_ttc = $total_ttc + $element->total_ttc;
+                                }
                                 $nexY = $pdf->GetY();
                                 $curY = $nexY;
-
-                                $total_ht = 0;
-                                $total_ttc = 0;
-                                $num = count($elementarray);
-                                for ($i = 0; $i < $num; $i ++) {
-                                	$idofelement=$elementarray[$i];
-                                	if ($classname == 'ExpenseReport')
-                                	{
-                                		// We get id of expense report
-                                		$expensereportline=new ExpenseReportLine($this->db);
-                                		$expensereportline->fetch($idofelement);
-                                		$idofelement = $expensereportline->fk_expensereport;
-                                	}
-
-                                    $element = new $classname($this->db);
-                                    $element->fetch($idofelement);
-                                    $element->fetch_thirdparty();
-                                    // print $classname;
-
-                                    $qualifiedfortotal = true;
-                                    if ($key == 'invoice') {
-                                        if ($element->close_code == 'replaced')
-                                            $qualifiedfortotal = false; // Replacement invoice
-                                    }
-
-                                    $pdf->SetXY($this->posxref, $curY);
-                                    $pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
-
-                                    // Date
-                                    if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
-                                        $date = $element->date_commande;
-                                    else {
-                                        $date = $element->date;
-                                        if (empty($date))
-                                            $date = $element->datep;
-                                        if (empty($date))
-                                            $date = $element->date_contrat;
-                                        if (empty($date))
-                                            $date = $element->datev; // Fiche inter
-                                    }
-
-                                    $pdf->SetXY($this->posxdate, $curY);
-                                    $pdf->MultiCell($this->posxsociety - $this->posxdate, 3, dol_print_date($date, 'day'), 1, 'C');
-
-                                    $pdf->SetXY($this->posxsociety, $curY);
-                                    if (is_object($element->thirdparty))
-                                    {
-                                        $pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $element->thirdparty->name, 1, 'L');
-                                    }
-									elseif ($classname == 'ExpenseReport')
-									{
-										$fuser=new User($this->db);
-										$fuser->fetch($element->fk_user_author);
-										$pdf->MultiCell($this->posxamountht - $this->posxsociety, 3, $fuser->getFullName($outputlangs), 1, 'L');
-									}
-
-                                    // Amount without tax
-                                    if (empty($value['disableamount'])) {
-                                        $pdf->SetXY($this->posxamountht, $curY);
-                                        $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : '&nbsp;'), 1, 'R');
-                                        $pdf->SetXY($this->posxamountttc, $curY);
-                                        $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($element->total_ttc) : '&nbsp;'), 1, 'R');
-                                    } else {
-                                        $pdf->SetXY($this->posxamountht, $curY);
-                                        $pdf->MultiCell($this->posxstatut - $this->posxamountht, 3, "", 1, 'R');
-                                    }
-
-                                    // Status
-                                    if ($element instanceof CommonInvoice) {
-                                        // This applies for Facture and FactureFournisseur
-                                        $outputstatut = $element->getLibStatut(1, $element->getSommePaiement());
-                                    } else {
-                                        $outputstatut = $element->getLibStatut(1);
-                                    }
-                                    $pdf->SetXY($this->posxstatut, $curY);
-                                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
-
-                                    if ($qualifiedfortotal) {
-                                        $total_ht = $total_ht + $element->total_ht;
-                                        $total_ttc = $total_ttc + $element->total_ttc;
-                                    }
-                                    $nexY = $pdf->GetY();
-                                    $curY = $nexY;
-                                }
-
-                                if (empty($value['disableamount'])) {
-                                    $curY = $nexY;
-                                    $pdf->SetXY($this->posxref, $curY);
-                                    $pdf->MultiCell($this->posxamountttc - $this->posxref, 3, "TOTAL", 1, 'L');
-                                    $pdf->SetXY($this->posxamountht, $curY);
-                                    $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($total_ht) : '&nbsp;'), 1, 'R');
-                                    $pdf->SetXY($this->posxamountttc, $curY);
-                                    $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($total_ttc) : '&nbsp;'), 1, 'R');
-                                    $pdf->SetXY($this->posxstatut, $curY);
-                                    $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Nb") . " " . $num, 1, 'L');
-                                }
-                                $nexY = $pdf->GetY() + 5;
-                                $curY = $nexY;
                             }
+
+                            if (empty($value['disableamount'])) {
+                                $curY = $nexY;
+                                $pdf->SetXY($this->posxref, $curY);
+                                $pdf->MultiCell($this->posxamountttc - $this->posxref, 3, "TOTAL", 1, 'L');
+                                $pdf->SetXY($this->posxamountht, $curY);
+                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($total_ht) : '&nbsp;'), 1, 'R');
+                                $pdf->SetXY($this->posxamountttc, $curY);
+                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($total_ttc) : '&nbsp;'), 1, 'R');
+                                $pdf->SetXY($this->posxstatut, $curY);
+                                $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Nb") . " " . $num, 1, 'L');
+                            }
+                            $nexY = $pdf->GetY() + 5;
+                            $curY = $nexY;
                         }
                     }
-                }
+                
+					$nexY+=2;    // Passe espace entre les lignes
 
-				/*
-				 * Pied de page
-				 */
-				$this->_pagefoot($pdf,$object,$outputlangs);
-				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+					// Detect if some page were added automatically and output _tableau for past pages
+					while ($pagenb < $pageposafter)
+					{
+						$pdf->setPage($pagenb);
+						$this->_pagefoot($pdf,$object,$outputlangs,1);
+						$pagenb++;
+						$pdf->setPage($pagenb);
+						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+					}
+				}
+
+				// Pied de page
+				$this->_pagefoot($pdf, $object, $outputlangs);
+				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
 
-				$pdf->Output($file,'F');
+				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
-				if (! is_object($hookmanager))
-				{
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-					$hookmanager=new HookManager($this->db);
-				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				$parameters=array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -513,9 +655,11 @@ class pdf_beluga extends ModelePDFProjects
 				return 0;
 			}
 		}
-
-		$this->error=$langs->transnoentities("ErrorConstantNotDefined","LIVRAISON_OUTPUTDIR");
-		return 0;
+		else
+		{
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined","PROJECT_OUTPUTDIR");
+			return 0;
+		}
 	}
 
 
@@ -535,14 +679,17 @@ class pdf_beluga extends ModelePDFProjects
 	{
 		global $conf,$mysoc;
 
-        $default_font_size = pdf_getPDFFontSize($outputlangs);
+		$heightoftitleline = 10;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetDrawColor(128,128,128);
 
-		// Rect prend une longueur en 3eme param
+		// Draw rect of all tab (title + lines). Rect prend une longueur en 3eme param
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
+
 		// line prend une position y en 3eme param
-		$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
+		$pdf->line($this->marge_gauche, $tab_top+$heightoftitleline, $this->page_largeur-$this->marge_droite, $tab_top+$heightoftitleline);
 
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size);
@@ -564,7 +711,6 @@ class pdf_beluga extends ModelePDFProjects
 
 		$pdf->SetXY($this->posxdateend, $tab_top+1);
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
-
 	}
 
 	/**
@@ -621,12 +767,19 @@ class pdf_beluga extends ModelePDFProjects
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateStart")." : " . dol_print_date($object->date_start,'day',false,$outputlangs,true), '', 'R');
+
 		$posy+=6;
 		$pdf->SetXY($posx,$posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');
 
+		if (is_object($object->thirdparty))
+		{
+			$posy+=6;
+			$pdf->SetXY($posx,$posy);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("ThirdParty")." : " . $object->thirdparty->getFullName($outputlangs), '', 'R');
+		}
+		
 		$pdf->SetTextColor(0,0,60);
-
 	}
 
 	/**
@@ -644,4 +797,5 @@ class pdf_beluga extends ModelePDFProjects
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
+
 }

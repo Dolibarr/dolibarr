@@ -336,6 +336,12 @@ class Societe extends CommonObject
 	var $outstanding_limit;
 
 	/**
+	 * Min order amounts
+	 */
+	var $order_min_amount;
+	var $supplier_order_min_amount;
+
+	/**
 	 * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
 	 * @var int
 	 */
@@ -738,7 +744,7 @@ class Societe extends CommonObject
 	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
-	 *		@param	string	$action						'add' or 'update'
+	 *		@param	string	$action						'add' or 'update' or 'merge'
 	 *		@param	int		$nosyncmember				Do not synchronize info of linked member
 	 *      @return int  			           			<0 if KO, >=0 if OK
 	 */
@@ -785,6 +791,8 @@ class Societe extends CommonObject
 		$this->idprof6		= (! empty($this->idprof6)?trim($this->idprof6):'');
 		$this->prefix_comm	= trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
+		$this->order_min_amount = price2num($this->order_min_amount);
+		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
 		$this->tva_assuj	= trim($this->tva_assuj);
 		$this->tva_intra	= dol_sanitizeFileName($this->tva_intra,'');
@@ -867,7 +875,12 @@ class Societe extends CommonObject
 		// Check name is required and codes are ok or unique.
 		// If error, this->errors[] is filled
 		$result = 0;
-		if ($action != 'add') $result = $this->verify();	// We don't check when update called during a create because verify was already done
+		if ($action != 'add' && $action != 'merge')
+		{
+			// We don't check when update called during a create because verify was already done.
+			// For a merge, we suppose source data is clean and a customer code of a deleted thirdparty must be accepted into a target thirdparty with empty code without duplicate error
+			$result = $this->verify();
+		}
 
 		if ($result >= 0)
 		{
@@ -955,6 +968,8 @@ class Societe extends CommonObject
 			$sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
 			$sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
 			$sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
+			$sql .= ",order_min_amount= ".($this->order_min_amount!=''?$this->order_min_amount:'null');
+			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount!=''?$this->supplier_order_min_amount:'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 
 			$sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
@@ -1106,10 +1121,11 @@ class Societe extends CommonObject
 	 *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
-	 *    @param    string	$email   		Email (Warning, this can return several records)
+	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
+	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='', $email='')
+	function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='', $email='', $ref_alias='')
 	{
 		global $langs;
 		global $conf;
@@ -1132,6 +1148,7 @@ class Societe extends CommonObject
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
+		$sql .= ', s.order_min_amount, s.supplier_order_min_amount';
 		$sql .= ', s.fk_multicurrency, s.multicurrency_code';
 		$sql .= ', fj.libelle as forme_juridique';
 		$sql .= ', e.libelle as effectif';
@@ -1148,18 +1165,20 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
-		$sql .= ' WHERE s.entity IN ('.getEntity($this->element, 1).')';
-		if ($rowid)   $sql .= ' AND s.rowid = '.$rowid;
-		if ($ref)     $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
-		if ($ref_ext) $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
-		if ($ref_int) $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
-		if ($idprof1) $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
-		if ($idprof2) $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
-		if ($idprof3) $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
-		if ($idprof4) $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
-		if ($idprof5) $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
-		if ($idprof6) $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
-		if ($email)   $sql .= " AND s.email = '".$this->db->escape($email)."'";
+
+		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
+		if ($rowid)     $sql .= ' AND s.rowid = '.$rowid;
+		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
+		if ($ref_alias) $sql .= " AND s.nom_alias = '".$this->db->escape($ref_alias)."'";
+		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
+		if ($ref_int)   $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
+		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
+		if ($idprof2)   $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
+		if ($idprof3)   $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
+		if ($idprof4)   $sql .= " AND s.idprof4 = '".$this->db->escape($idprof4)."'";
+		if ($idprof5)   $sql .= " AND s.idprof5 = '".$this->db->escape($idprof5)."'";
+		if ($idprof6)   $sql .= " AND s.idprof6 = '".$this->db->escape($idprof6)."'";
+		if ($email)     $sql .= " AND s.email = '".$this->db->escape($email)."'";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1279,6 +1298,8 @@ class Societe extends CommonObject
 				$this->webservices_key = $obj->webservices_key;
 
 				$this->outstanding_limit		= $obj->outstanding_limit;
+				$this->order_min_amount			= $obj->order_min_amount;
+				$this->supplier_order_min_amount	= $obj->supplier_order_min_amount;
 
 				// multiprix
 				$this->price_level = $obj->price_level;
@@ -1296,8 +1317,9 @@ class Societe extends CommonObject
 
 				$result = 1;
 
-				// Retreive all extrafield for thirdparty
-			   	$this->fetch_optionals();
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 			}
 			else
 			{
@@ -1996,7 +2018,7 @@ class Societe extends CommonObject
 				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose.=' class="classfortooltip"';
+			$linkclose.=' class="classfortooltip refurl"';
 
 		 	if (! is_object($hookmanager))
 			{
@@ -2811,10 +2833,10 @@ class Societe extends CommonObject
 
 			//Check NIF
 			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
-			if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
-			return 1;
-			else
-			return -1;
+				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
+				return 1;
+				else
+				return -1;
 
 			//algorithm checking type code CIF
 			$sum = $num[2] + $num[4] + $num[6];
@@ -2824,34 +2846,54 @@ class Societe extends CommonObject
 
 			//Chek special NIF
 			if (preg_match('/^[KLM]{1}/', $string))
-			if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
-			return 1;
-			else
-			return -1;
+				if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
+				return 1;
+				else
+				return -1;
 
 			//Check CIF
 			if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string))
-			if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
-			return 2;
-			else
-			return -2;
+				if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
+				return 2;
+				else
+				return -2;
 
 			//Check NIE T
 			if (preg_match('/^[T]{1}/', $string))
-			if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
-			return 3;
-			else
-			return -3;
+				if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
+				return 3;
+				else
+				return -3;
 
 			//Check NIE XYZ
 			if (preg_match('/^[XYZ]{1}/', $string))
-			if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $string), 0, 8) % 23, 1))
-			return 3;
-			else
-			return -3;
+				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $string), 0, 8) % 23, 1))
+				return 3;
+				else
+				return -3;
 
 			//Can not be verified
 			return -4;
+		}
+
+		//Verify NIF if country is PT
+		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
+		if ($idprof == 1 && $soc->country_code == 'PT')
+		{
+			$string=trim($this->idprof1);
+			$string=preg_replace('/(\s)/','',$string);
+
+			for ($i = 0; $i < 9; $i ++) {
+				$num[$i] = substr($string, $i, 1);
+			}
+
+			//Check NIF
+			if (preg_match('/(^[0-9]{9}$)/', $string)) {
+				return 1;
+			}
+			else {
+				return -1;
+			}
 		}
 
 		return $ok;
@@ -2875,20 +2917,33 @@ class Societe extends CommonObject
 		$hookmanager->initHooks(array('idprofurl'));
 		$parameters=array('idprof'=>$idprof, 'company'=>$thirdparty);
 		$reshook=$hookmanager->executeHooks('getIdProfUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
+		if (empty($reshook)) {
+			if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) {
+				return '';
+			}
 
 			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
-			if ($idprof == 1 && $thirdparty->country_code == 'FR') $url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
-			//if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';     // Link no more valid
-			if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
-			if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
+				$url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
+			}
+			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
+				$url='https://beta.companieshouse.gov.uk/company/'.$thirdparty->idprof1;
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
+				$url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
+				$url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
+				$url='http://www.nif.pt/'.$thirdparty->idprof1;
+			}
 
-			if ($url) return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+			if ($url) {
+				return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+			}
 		}
-		else
-		{
+		else {
 			return $hookmanager->resPrint;
 		}
 
@@ -3047,6 +3102,8 @@ class Societe extends CommonObject
 	{
 		global $user,$langs;
 
+		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
+
 		$name = $socname?$socname:$member->societe;
 		if (empty($name)) $name=$member->getFullName($langs);
 
@@ -3079,7 +3136,6 @@ class Societe extends CommonObject
 			$sql.= " SET fk_soc=".$this->id;
 			$sql.= " WHERE rowid=".$member->id;
 
-			dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -3461,7 +3517,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 			return array();
@@ -3501,7 +3557,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 			return array();
@@ -3572,7 +3628,7 @@ class Societe extends CommonObject
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
 			}
-			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);
+			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
 		else
 		{
@@ -3747,6 +3803,8 @@ class Societe extends CommonObject
 			$to_add = $categories;
 		}
 
+		$error = 0;
+
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
@@ -3754,12 +3812,20 @@ class Societe extends CommonObject
 			}
 		}
 		foreach ($to_add as $add) {
-			if ($c->fetch($add) > 0) {
-				$c->add_type($this, $type_text);
+			if ($c->fetch($add) > 0)
+			{
+				$result = $c->add_type($this, $type_text);
+				if ($result < 0)
+				{
+					$error++;
+					$this->error = $c->error;
+					$this->errors = $c->errors;
+					break;
+				}
 			}
 		}
 
-		return 1;
+		return $error ? -1 : 1;
 	}
 
 
@@ -3767,16 +3833,22 @@ class Societe extends CommonObject
 	 * Function used to replace a thirdparty id with another one.
 	 * It must be used within a transaction to avoid trouble
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$db 		Database handler
+	 * @param 	int 	$origin_id 	Old thirdparty id (will be removed)
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool				True if success, False if error
 	 */
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
+		if ($origin_id == $dest_id)
+		{
+			dol_syslog('Error: Try to merge a thirdparty into itself');
+			return false;
+		}
+
 		/**
-		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
-		 * Because this function is meant to be executed within a transaction, we won't take care of it.
+		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some to avoid duplicate.
+		 * Because this function is meant to be executed within a transaction, we won't take care of begin/commit.
 		 */
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';

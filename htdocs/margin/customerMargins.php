@@ -35,6 +35,9 @@ $langs->load("margins");
 
 // Security check
 $socid = GETPOST('socid','int');
+$TSelectedProducts = GETPOST('products', 'array');
+$TSelectedCats = GETPOST('categories', 'array');
+
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 $result = restrictedArea($user,'margins');
@@ -132,6 +135,29 @@ if (! $sortfield)
 	}
 }
 
+// Products
+$TRes = $form->select_produits_list('','','',20,0,'',1,2,1,0,'', 1);
+
+$TProducts = array();
+foreach($TRes as $prod) {
+	$TProducts[$prod['key']] = $prod['label'];
+}
+
+print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
+print '<td class="maxwidthonsmartpone" colspan="4">';
+print $form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
+print '</td></tr>';
+
+// Categories
+$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+
+print '<tr>';
+print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="maxwidthonsmartphone" colspan="4">';
+print $form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'minwidth500');
+print '</td>';
+print '</tr>';
+
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
@@ -186,6 +212,10 @@ $sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
+if(! empty($TSelectedCats)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
+}
+
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE f.fk_soc = s.rowid";
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
@@ -194,6 +224,12 @@ $sql.= " AND f.fk_statut > 0";
 $sql.= ' AND s.entity IN ('.getEntity('societe').')';
 $sql.= " AND d.fk_facture = f.rowid";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
+if(! empty($TSelectedProducts)) {
+	$sql .= ' AND d.fk_product IN ('.implode(',', $TSelectedProducts) . ')';
+}
+if(! empty($TSelectedCats)) {
+	$sql .= ' AND cp.fk_categorie IN ('.implode(',', $TSelectedCats) . ')';
+}
 if (!empty($startdate))
 $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
 if (!empty($enddate))

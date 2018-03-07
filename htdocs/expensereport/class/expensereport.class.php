@@ -341,11 +341,6 @@ class ExpenseReport extends CommonObject
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-            // Call trigger
-            $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
         }
 
         unset($this->context['createfromclone']);
@@ -1091,7 +1086,7 @@ class ExpenseReport extends CommonObject
 		{
             $num = $this->ref;
         }
-        if (empty($num)) return -1;
+        if (empty($num) || $num < 0) return -1;
 
         $this->newref = $num;
 
@@ -2326,6 +2321,41 @@ class ExpenseReport extends CommonObject
         else
             return ($this->datevalid?$this->datevalid:$this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
     }
+
+    /**
+     *	Return if an expensereport was dispatched into bookkeeping
+     *
+     *	@return     int         <0 if KO, 0=no, 1=yes
+     */
+    public function getVentilExportCompta()
+    {
+    	$alreadydispatched = 0;
+
+    	$type = 'expense_report';
+
+    	$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$obj = $this->db->fetch_object($resql);
+    		if ($obj)
+    		{
+    			$alreadydispatched = $obj->nb;
+    		}
+    	}
+    	else
+    	{
+    		$this->error = $this->db->lasterror();
+    		return -1;
+    	}
+
+    	if ($alreadydispatched)
+    	{
+    		return 1;
+    	}
+    	return 0;
+    }
+
 }
 
 

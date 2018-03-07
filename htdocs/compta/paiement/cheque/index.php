@@ -92,10 +92,12 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $max=10;
 
-$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref";
-$sql.= ", bc.statut, bc.nbcheque";
-$sql.= ", ba.label, ba.rowid as bid";
+$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
+$sql.= " bc.statut, bc.nbcheque,";
+$sql.= " ba.ref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.accountancy_journal,";
+$sql.= " aj.code";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
 $sql.= " WHERE ba.rowid = bc.fk_bank_account";
 $sql.= " AND bc.entity = ".$conf->entity;
 $sql.= " ORDER BY bc.date_bordereau DESC, rowid DESC";
@@ -122,8 +124,13 @@ if ($resql)
 	    $checkdepositstatic->statut=$objp->statut;
 
 		$accountstatic->id=$objp->bid;
+		$accountstatic->ref=$objp->ref;
 		$accountstatic->label=$objp->label;
-		
+		$accountstatic->number=$objp->number;
+		$accountstatic->currency_code=$objp->currency_code;
+		$accountstatic->account_number=$objp->account_number;
+		$accountstatic->accountancy_journal=$objp->code;
+
 		print '<tr class="oddeven">'."\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';

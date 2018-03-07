@@ -1525,6 +1525,7 @@ class Product extends CommonObject
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " ,pfp.default_vat_code";
+        $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
@@ -1561,6 +1562,11 @@ class Product extends CommonObject
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
+                $this->fourn_multicurrency_price       = $obj->multicurrency_price;
+                $this->fourn_multicurrency_unitprice   = $obj->multicurrency_unitprice;
+                $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
+                $this->fourn_multicurrency_id          = $obj->fk_multicurrency;
+                $this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				$result=$obj->fk_product;
 				return $result;
 			}
@@ -1570,6 +1576,7 @@ class Product extends CommonObject
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
 				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
 				$sql.= " ,pfp.default_vat_code";
+                $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.fk_product = ".$product_id;
 				if ($fourn_ref != 'none') $sql.= " AND pfp.ref_fourn = '".$fourn_ref."'";
@@ -1610,6 +1617,11 @@ class Product extends CommonObject
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
+                        $this->fourn_multicurrency_price       = $obj->multicurrency_price;
+                        $this->fourn_multicurrency_unitprice   = $obj->multicurrency_unitprice;
+                        $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
+                        $this->fourn_multicurrency_id          = $obj->fk_multicurrency;
+                        $this->fourn_multicurrency_code        = $obj->multicurrency_code;
 						$result=$obj->fk_product;
 						return $result;
 					}
@@ -1951,13 +1963,9 @@ class Product extends CommonObject
 
 				$this->db->free($resql);
 
-
-				// Retreive all extrafield for current object
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
@@ -3396,7 +3404,7 @@ class Product extends CommonObject
 	 * 	@param		int		$id					Id of product to search childs of
 	 *  @param		int		$firstlevelonly		Return only direct child
 	 *  @param		int		$level				Level of recursing call (start to 1)
-	 *  @return     array       				Prod
+	 *  @return     array       				Return array(prodid=>array(0=prodid, 1=>qty, 2=> ...)
 	 */
 	function getChildsArbo($id, $firstlevelonly=0, $level=1)
 	{
@@ -4095,9 +4103,11 @@ class Product extends CommonObject
 	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
 	 * 	@param		int		$maxWidth		Max width of original image when size='small'
 	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
+	 *  @param      int     $notitle         Do not add title tag on image
+	 *  @param		int		$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
 	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160,$nolink=0)
+	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160,$nolink=0,$notitle=0,$usesharelink=0)
 	{
 		global $conf,$user,$langs;
 
@@ -4196,15 +4206,39 @@ class Product extends CommonObject
 						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
 						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
 						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
+						if ($notitle) $alt='';
 
-						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+						if ($usesharelink)
 						{
-							$return.= '<!-- Show thumb -->';
-							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+							if ($val['share'])
+							{
+								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+								{
+									$return.= '<!-- Show original file (thumb not yet available with shared links) -->';
+									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+								}
+								else {
+									$return.= '<!-- Show original file -->';
+									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+								}
+							}
+							else
+							{
+								$return.= '<!-- Show nophoto file (because file is not shared) -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
+							}
 						}
-						else {
-							$return.= '<!-- Show original file -->';
-							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+						else
+						{
+							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+							{
+								$return.= '<!-- Show thumb -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+							}
+							else {
+								$return.= '<!-- Show original file -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+							}
 						}
 
 						if (empty($nolink)) $return.= '</a>';

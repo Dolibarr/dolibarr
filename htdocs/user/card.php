@@ -67,6 +67,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	$canreadgroup=(! empty($user->admin) || $user->rights->user->group_advance->read);
 	$caneditgroup=(! empty($user->admin) || $user->rights->user->group_advance->write);
 }
+
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
@@ -154,7 +155,7 @@ if (empty($reshook)) {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
 			} else {
-				header("Location: index.php");
+				header("Location: index.php?restore_lastsearch_values=1");
 				exit;
 			}
 		}
@@ -1176,7 +1177,7 @@ else
 	{
 		$object->fetch($id, '', '', 1);
 		if ($res < 0) { dol_print_error($db,$object->error); exit; }
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 
 		// Check if user has rights
 		$object->getrights();
@@ -1231,7 +1232,7 @@ else
 		if ($mode == 'employee') // For HRM module development
 		{
 			$title = $langs->trans("Employee");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		}
 		else
 		{
@@ -1239,7 +1240,7 @@ else
 			$linkback = '';
 
 			if ($user->rights->user->user->lire || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 			}
 		}
 
@@ -1706,7 +1707,7 @@ else
 			$modelmail='user';
 			$defaulttopic='Information';
 			$diroutput = $conf->user->dir_output;
-			$trackid = 'user'.$object->id;
+			$trackid = 'use'.$object->id;
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 
@@ -1795,7 +1796,7 @@ else
 						}
 						else
 						{
-							print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+							print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 						}
 					}
 

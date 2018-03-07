@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=Dosyadan e-postalar
 MailingModuleDescEmailsFromUser=Kullanıcı tarafından girilen e-postalar
 MailingModuleDescDolibarrUsers=E-postaları olan kullanıcılar
 MailingModuleDescThirdPartiesByCategories=Üçüncü taraflar (kategorilere göre)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Satır %s dosyası

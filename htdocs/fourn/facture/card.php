@@ -224,7 +224,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header('Location: list.php');
+			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -1018,7 +1018,9 @@ if (empty($reshook))
 					0,
 					$array_options,
 					$productsupplier->fk_unit,
-					$productsupplier->fourn_ref
+					0,
+                    $productsupplier->fourn_multicurrency_unitprice,
+                    $productsupplier->fourn_ref
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -1255,9 +1257,11 @@ if (empty($reshook))
 	}
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from add form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (!$error)
@@ -1274,7 +1278,7 @@ if (empty($reshook))
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
 
-					$result=$object->insertExtraFields();
+					$result=$object->insertExtraFields('BILL_SUPPLIER_MODIFY');
 
 					if ($result < 0)
 					{

@@ -46,6 +46,8 @@ class modBlockedLog extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "base";
+        // Module position in the family on 2 digits ('01', '10', '20', ...)
+        $this->module_position = '90';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
@@ -53,8 +55,6 @@ class modBlockedLog extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 2;
         // Name of image file used for this module.
         $this->picto='technic';
 
@@ -170,7 +170,7 @@ class modBlockedLog extends DolibarrModules
     	// If already used, we add an entry to show we enable module
    		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
-   		$object=new stdClass;
+   		$object=new stdClass();
     	$object->id = 1;
     	$object->element = 'module';
     	$object->ref = 'systemevent';
@@ -213,7 +213,7 @@ class modBlockedLog extends DolibarrModules
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
-		$object=new stdClass;
+		$object=new stdClass();
     	$object->id = 1;
     	$object->element = 'module';
     	$object->ref = 'systemevent';

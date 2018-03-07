@@ -43,6 +43,8 @@ PathToModulePackage=Chemin du zip du package du module/application
 PathToModuleDocumentation=Chemin d'accès au fichier de documentation du module
 SpaceOrSpecialCharAreNotAllowed=Les espaces et les caractères spéciaux ne sont pas autorisés.
 FileNotYetGenerated=Fichier non encore généré
+RegenerateClassAndSql=Effacer et générer à nouveau les fichiers de classe et SQL 
+RegenerateMissingFiles=Générer les fichiers manquant
 SpecificationFile=Fichier de description des règles métiers
 LanguageFile=Fichier langue
 ConfirmDeleteProperty=Êtes-vous sûr de vouloir supprimer la propriété<strong>%s</strong> ? Cela changera le code dans la classe PHP, mais supprimera également la colonne de la définition de table d'objet.
@@ -73,11 +75,11 @@ GoToApiExplorer=Se rendre sur l'explorateur d'API
 ListOfMenusEntries=Liste des entrées du menu
 ListOfPermissionsDefined=Liste des permissions
 EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only. Using a negative value means field is not shown by default on list but can be selected for viewing)
-IsAMeasureDesc=Can the value of field be cumulated to get a total into list ? (Examples: 1 or 0)
-SearchAllDesc=Is the field used to make a search from the quick search tool ? (Examples: 1 or 0)
+VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage. Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage)
+IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
+SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
-LanguageDefDesc=Enter in this files, all the key and the translation for each language file.
+LanguageDefDesc=Entrez dans ces fichiers, toutes les clés et la traduction pour chaque fichier de langue.
 MenusDefDesc=Define here the menus provided by your module (once defined, they are visible into the menu editor %s)
 PermissionsDefDesc=Define here the new permissions provided by your module (once defined, they are visible into the default permissions setup %s)
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).

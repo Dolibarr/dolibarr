@@ -104,8 +104,11 @@ if ($id > 0 || ! empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0)
 		$ret = $object->fetch_thirdparty();
-	if ($ret < 0)
-		dol_print_error('', $object->error);
+	if ($ret <= 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = '';
+	}
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -198,7 +201,7 @@ if (empty($reshook))
 	{
 		$result = $object->delete($user);
 		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/comm/propal/list.php');
+			header('Location: ' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1');
 			exit();
 		} else {
 			$langs->load("errors");
@@ -502,7 +505,7 @@ if (empty($reshook))
 
 										// Extrafields
 										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-											$lines[$i]->fetch_optionals($lines[$i]->rowid);
+											$lines[$i]->fetch_optionals();
 											$array_options = $lines[$i]->array_options;
 										}
 
@@ -1225,13 +1228,15 @@ if (empty($reshook))
 	}
 
 	else if ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 		if (! $error)
 		{
-			$result = $object->insertExtraFields();
+			$result = $object->insertExtraFields('PROPAL_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1287,7 +1292,7 @@ if (empty($reshook))
 	}
 
 	// Actions to build doc
-	$upload_dir = $conf->propal->dir_output;
+	$upload_dir = $conf->propal->multidir_output[$object->entity];
 	$permissioncreate=$user->rights->propal->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -1711,7 +1716,7 @@ if ($action == 'create')
 		print '</table>';
 	}
 
-} else {
+} elseif ($object->id > 0) {
 	/*
 	 * Show object in view mode
 	 */
@@ -1818,7 +1823,6 @@ if ($action == 'create')
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', 0, 1);
@@ -1917,7 +1921,7 @@ if ($action == 'create')
 		print '</form>';
 	} else {
 		if ($object->date) {
-			print dol_print_date($object->date, 'daytext');
+			print dol_print_date($object->date, 'day');
 		} else {
 			print '&nbsp;';
 		}
@@ -1943,7 +1947,7 @@ if ($action == 'create')
 		print '</form>';
 	} else {
 		if (! empty($object->fin_validite)) {
-			print dol_print_date($object->fin_validite, 'daytext');
+			print dol_print_date($object->fin_validite, 'day');
 			if ($object->statut == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay))
 				print img_warning($langs->trans("Late"));
 		} else {
@@ -2129,6 +2133,22 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
+
+    $tmparray=$object->getTotalWeightVolume();
+    $totalWeight=$tmparray['weight'];
+    $totalVolume=$tmparray['volume'];
+    if ($totalWeight) {
+        print '<tr><td>' . $langs->trans("CalculatedWeight") . '</td>';
+        print '<td>';
+        print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
+        print '</td></tr>';
+    }
+    if ($totalVolume) {
+        print '<tr><td>' . $langs->trans("CalculatedVolume") . '</td>';
+        print '<td>';
+        print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
+        print '</td></tr>';
+    }
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
@@ -2405,7 +2425,7 @@ if ($action == 'create')
 		 * Documents generes
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->propal->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 		$genallowed = $user->rights->propal->lire;
 		$delallowed = $user->rights->propal->creer;
@@ -2446,7 +2466,7 @@ if ($action == 'create')
 	// Presend form
 	$modelmail='propal_send';
 	$defaulttopic='SendPropalRef';
-	$diroutput = $conf->propal->dir_output;
+	$diroutput = $conf->propal->multidir_output[$object->entity];
 	$trackid = 'pro'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

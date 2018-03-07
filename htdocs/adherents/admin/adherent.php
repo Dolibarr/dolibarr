@@ -53,7 +53,7 @@ if ($action == 'updateall')
 {
     $db->begin();
     $res1=$res2=$res3=$res4=$res5=$res6=0;
-    $res1=dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res1=dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha')?0:1, 'chaine', 0, '', $conf->entity);
     $res2=dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res3=dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res4=dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -141,7 +141,7 @@ $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Mie
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 
@@ -162,7 +162,7 @@ print "</tr>\n";
 
 // Login/Pass required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1), 1);
 print "</td></tr>\n";
 
 // Mail required for members

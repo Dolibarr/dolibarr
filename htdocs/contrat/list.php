@@ -487,13 +487,13 @@ if ($resql)
 	if (! empty($arrayfields['c.date_contrat']['checked']))
 	{
 		// Date contract
-		print '<td class="liste_titre center">';
+		print '<td class="liste_titre center nowraponall">';
 		//print $langs->trans('Month').': ';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$syear = $year;
-		$formother->select_year($syear,'year',1, 20, 5);
+		print $formother->selectyear($syear,'year',1, 20, 5, 0, 0, '', 'widthauto');
 		print '</td>';
 	}
 	// Extra fields
@@ -775,24 +775,18 @@ if ($resql)
 
 	print '</form>';
 
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		/*
-    	 * Show list of available documents
-    	 */
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->contrat->lire;
-		$delallowed=$user->rights->contrat->lire;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		print $formfile->showdocuments('massfilesarea_contract','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->contrat->lire;
+	$delallowed=$user->rights->contrat->lire;
+
+	print $formfile->showdocuments('massfilesarea_contract','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 else
 {

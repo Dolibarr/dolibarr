@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Chyba zľava už používa
 ErrorInvoiceAvoirMustBeNegative=Chyba musí byť správna faktúra mať zápornú čiastku
 ErrorInvoiceOfThisTypeMustBePositive=Chyba musí byť tento typ faktúry majú kladné hodnoty
 ErrorCantCancelIfReplacementInvoiceNotValidated=Chyba, nemožno zrušiť, ak faktúra, ktorá bola nahradená inou faktúru, ktorá je stále v stave návrhu
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Z
 BillTo=Na
 ActionsOnBill=Akcie na faktúre

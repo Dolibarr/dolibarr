@@ -343,6 +343,8 @@ CREATE TABLE llx_opensurvey_user_studs (
     tms timestamp
 ) ENGINE=InnoDB;
 
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN id_sondage_admin CHAR(24);
+
 ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_comment (id_comment);
 ALTER TABLE llx_opensurvey_comments ADD INDEX idx_id_sondage (id_sondage);
 ALTER TABLE llx_opensurvey_sondage ADD INDEX idx_id_sondage_admin (id_sondage_admin);

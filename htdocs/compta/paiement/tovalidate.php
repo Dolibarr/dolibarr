@@ -17,9 +17,9 @@
  */
 
 /**
- * 	\file       htdocs/compta/paiement/avalider.php
+ * 	\file       htdocs/compta/paiement/tovalidate.php
  * 	\ingroup    compta
- * 	\brief      Page liste des paiements a valider des factures clients
+ * 	\brief      Page list payment to validate. Visible in menu when option BILL_ADD_PAYMENT_VALIDATION is on.
  */
 
 require '../../main.inc.php';

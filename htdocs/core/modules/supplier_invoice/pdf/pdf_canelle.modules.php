@@ -139,7 +139,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc,$hookmanager;
+		global $user,$langs,$conf,$mysoc,$hookmanager,$nblignes;
 
 		// Get source company
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();

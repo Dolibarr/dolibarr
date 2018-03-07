@@ -358,7 +358,7 @@ if (empty($reshook))
 
 									// Extrafields
 									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-										$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										$lines[$i]->fetch_optionals();
 										$array_options = $lines[$i]->array_options;
 									}
 
@@ -643,8 +643,11 @@ if (empty($reshook))
 						$label,
 						$array_options,
 						$ref_supplier,
-						$fk_unit
-						);
+						$fk_unit,
+						'',
+						0,
+						$productsupplier->fourn_multicurrency_unitprice
+                    );
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 				}
 				if ($idprod == -99 || $idprod == 0)
@@ -927,14 +930,16 @@ if (empty($reshook))
 	}
 
 	else if ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
 		{
-			$result = $object->insertExtraFields();
+			$result = $object->insertExtraFields('SUPPLIER_PROPOSAL_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');

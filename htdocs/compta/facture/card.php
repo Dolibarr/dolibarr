@@ -191,7 +191,7 @@ if (empty($reshook))
 
 		$result = $object->delete($user, 0, $idwarehouse);
 		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
+			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1');
 			exit();
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -217,6 +217,7 @@ if (empty($reshook))
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$ret = $object->fetch($id); // Reload to get new records
@@ -529,6 +530,7 @@ if (empty($reshook))
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
 					$model=$object->modelpdf;
 					$ret = $object->fetch($id); // Reload to get new records
@@ -606,7 +608,6 @@ if (empty($reshook))
 					$result=$object->set_draft($user, $idwarehouse);
 					if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
 
-
 					// Define output language
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 					{
@@ -617,6 +618,7 @@ if (empty($reshook))
 						if (! empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
 						}
 						$model=$object->modelpdf;
 						$ret = $object->fetch($id); // Reload to get new records
@@ -683,7 +685,7 @@ if (empty($reshook))
 			$i = 0;
 			foreach ($object->lines as $line)
 			{
-				if ($line->total_ht!=0)
+				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
 				{ 	// no need to create discount if amount is null
 					$amount_ht[$line->tva_tx] += $line->total_ht;
 					$amount_tva[$line->tva_tx] += $line->total_tva;
@@ -923,6 +925,12 @@ if (empty($reshook))
 
 						foreach($facture_source->lines as $line)
 						{
+							// Extrafields
+							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($line, 'fetch_optionals')) {
+								// load extrafields
+								$line->fetch_optionals();
+							}
+
 							// Reset fk_parent_line for no child products and special product
 							if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 								$fk_parent_line = 0;
@@ -1495,6 +1503,7 @@ if (empty($reshook))
 				if (! empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('products');
 				}
 				$model=$object->modelpdf;
 				$ret = $object->fetch($id); // Reload to get new records
@@ -1570,7 +1579,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
-		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && (($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) || $price_ht == '') && $price_ht_devise == '') 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
@@ -1747,6 +1756,7 @@ if (empty($reshook))
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
 
 					$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
@@ -1770,6 +1780,7 @@ if (empty($reshook))
 						if (! empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
 						}
 						if (! empty($prod->customcode))
 							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
@@ -1835,6 +1846,7 @@ if (empty($reshook))
 						if (! empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
 						}
 						$model=$object->modelpdf;
 						$ret = $object->fetch($id); // Reload to get new records
@@ -2012,6 +2024,7 @@ if (empty($reshook))
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
 
 					$ret = $object->fetch($id); // Reload to get new records
@@ -2099,9 +2112,11 @@ if (empty($reshook))
 
 
 	if ($action == 'update_extras') {
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
 		if (! $error) {
@@ -2112,7 +2127,7 @@ if (empty($reshook))
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
 			// some hooks
 			if (empty($reshook)) {
-				$result = $object->insertExtraFields();
+				$result = $object->insertExtraFields('BILL_MODIFY');
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -3047,10 +3062,10 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	// Confirmation de la validation
+	// Confirmation of validation
 	if ($action == 'valid')
 	{
-		// on verifie si l'objet est en numerotation provisoire
+		// we check object has a draft number
 		$objectref = substr($object->ref, 1, 4);
 		if ($objectref == 'PROV') {
 			$savdate = $object->date;
@@ -3250,7 +3265,7 @@ else if ($id > 0 || ! empty($ref))
 
 	// Invoice content
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	// Ref customer

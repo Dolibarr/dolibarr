@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Грешка, вече се използва отстъ
 ErrorInvoiceAvoirMustBeNegative=Грешка, коригиращата фактура трябва да има отрицателна сума
 ErrorInvoiceOfThisTypeMustBePositive=Грешка, този тип фактура трябва да има положителна стойност,
 ErrorCantCancelIfReplacementInvoiceNotValidated=Грешка, не може да се анулира фактура, която е била заменена от друга фактура, която все още е в състояние на чернова
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=От
 BillTo=За
 ActionsOnBill=Действия по фактура

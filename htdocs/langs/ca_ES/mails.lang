@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=Correus electrònics desde fitxer
 MailingModuleDescEmailsFromUser=Entrada de correus electrònics per usuari
 MailingModuleDescDolibarrUsers=Usuaris amb correus electrònics
 MailingModuleDescThirdPartiesByCategories=Tercers (per categories)
+SendingFromWebInterfaceIsNotAllowed=L'enviament des de la interfície web no està permès.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Línea %s en archiu

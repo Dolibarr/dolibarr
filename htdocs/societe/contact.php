@@ -44,11 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("banks");
-$langs->load("users");
+$langs->loadLangs(array("companies","commercial","bills","banks","users"));
 if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
@@ -115,6 +111,9 @@ if (empty($reshook))
             exit;
         }
     }
+
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 
 
@@ -151,7 +150,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 else
 {
 
-    if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
+    if (!empty($object->id)) $res=$object->fetch_optionals();
     //if ($res < 0) { dol_print_error($db); exit; }
 
 
@@ -169,8 +168,6 @@ else
 
 	if ($action != 'presend')
 	{
-		print '<div class="fichecenter">';
-
 		// Contacts list
 		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 		{
@@ -182,10 +179,6 @@ else
 		{
 			$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 		}
-
-
-		print '</div>';
-
 	}
 
 }

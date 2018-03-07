@@ -311,7 +311,7 @@ function show_stats_for_company($product,$socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td align="left" class="tdtop" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td align="left" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';

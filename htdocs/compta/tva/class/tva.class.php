@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,6 @@ class Tva extends CommonObject
         $this->db = $db;
         $this->element = 'tva';
         $this->table_element = 'tva';
-        return 1;
     }
 
 
@@ -149,7 +149,7 @@ class Tva extends CommonObject
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -651,25 +651,82 @@ class Tva extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			link option
+     *  @param	int  	$notooltip		1=Disable tooltip
+     *  @param	string	$morecss			More CSS
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
 	{
-		global $langs;
+		global $langs, $conf;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
         $label=$langs->trans("ShowVatPayment").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+        $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+
+
+
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowMyObject");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend ='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
+
+	/**
+     * 	Return amount of payments already done
+     *
+     *	@return		int		Amount of payment already done, <0 if KO
+     */
+    function getSommePaiement()
+    {
+        $table='paiementcharge';
+        $field='fk_charge';
+
+        $sql = 'SELECT sum(amount) as amount';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+        $sql.= ' WHERE '.$field.' = '.$this->id;
+
+        dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $amount=0;
+
+            $obj = $this->db->fetch_object($resql);
+            if ($obj) $amount=$obj->amount?$obj->amount:0;
+
+            $this->db->free($resql);
+            return $amount;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
 	/**
 	 *	Informations of vat payment object

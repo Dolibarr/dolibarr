@@ -165,6 +165,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         if ($db->connected)
         {
             $conf->setValues($db);
+            // Reset forced setup after the setValues
+            if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+            $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
             // Create admin user
             include_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
@@ -181,7 +184,10 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     			    // Define default setup for password encryption
     			    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
     			    dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0);      // All entities
-    			    dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                               // All entities
+                    if (function_exists('password_hash'))
+                        dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'password_hash', 'chaine', 0, '', 0);                     // All entities
+                    else
+                        dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                           // All entities
     			}
 		    }
 
@@ -295,6 +301,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         if ($db->connected)
         {
             $conf->setValues($db);
+            // Reset forced setup after the setValues
+            if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+            $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
             // Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
             $tagdatabase=false;
@@ -342,7 +351,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 // Create lock file
 
 // If first install
-if ($action == "set" && $success) {
+if ($action == "set" && $success)
+{
     if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
     {
         // Install is finished
@@ -350,14 +360,14 @@ if ($action == "set" && $success) {
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Install is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));
@@ -400,14 +410,14 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Upgrade is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));

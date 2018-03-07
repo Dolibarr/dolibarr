@@ -162,9 +162,9 @@ SizeUnitinch=colla
 SizeUnitfoot=pēda
 SizeUnitpoint=punkts
 BugTracker=Bug tracker
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Atpakaļ uz autorizācijas lapu
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Autentifikācijas režīms ir <b>%s.</b> <br> Šajā režīmā, Dolibarr nevar zināt, ne nomainīt savu paroli. <br> Sazinieties ar sistēmas administratoru, ja jūs vēlaties mainīt savu paroli.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>Prof ID %s</b> ir informācija, atkarībā no trešās puses valstīm. <br> Piemēram, attiecībā uz valstu <b>%s,</b> tas ir kods <b>%s.</b>
 DolibarrDemo=Dolibarr ERP/CRM demo
@@ -227,7 +227,9 @@ Chart=Diagramma
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Eksportēšanas sadaļa
 AvailableFormats=Pieejamie formāti

@@ -78,7 +78,7 @@ print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border centpercent">'."\n";
 if ($module != 'product') {
 	// No public note yet on products
-	print '<div class="tagtr table-border-row">'."\n";
+	print '<div class="tagtr pair table-border-row">'."\n";
 	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
@@ -88,7 +88,7 @@ if ($module != 'product') {
 	print '</div>'."\n";
 }
 if (empty($user->societe_id)) {
-	print '<div class="tagtr table-border-row">'."\n";
+	print '<div class="tagtr '.($module != 'product'?'impair':'pair').' table-border-row">'."\n";
 	print '<div class="tagtd tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";

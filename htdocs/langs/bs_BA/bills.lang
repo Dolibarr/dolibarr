@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Greška, popust se već koristi
 ErrorInvoiceAvoirMustBeNegative=Greška, na popravljenem računu mora biti negativni iznos
 ErrorInvoiceOfThisTypeMustBePositive=Greška, ovaj tip fakture mora imati pozitivnu količinu
 ErrorCantCancelIfReplacementInvoiceNotValidated=Greška, ne možete poništiti fakturu koju je zamijenila druga faktura a koja je još u statusu nacrta
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Od
 BillTo=Račun za
 ActionsOnBill=Aktivnosti na fakturi

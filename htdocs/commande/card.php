@@ -185,7 +185,7 @@ if (empty($reshook))
 		$result = $object->delete($user);
 		if ($result > 0)
 		{
-			header('Location: index.php');
+			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -1268,9 +1268,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -1281,7 +1283,7 @@ if (empty($reshook))
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
 																								  // some hooks
 			if (empty($reshook)) {
-				$result = $object->insertExtraFields();
+				$result = $object->insertExtraFields('ORDER_MODIFY');
 				if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1804,7 +1806,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
@@ -2300,12 +2302,15 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$tmparray=$object->getTotalWeightVolume();
 		$totalWeight=$tmparray['weight'];
 		$totalVolume=$tmparray['volume'];
-		if ($totalWeight || $totalVolume)
+		if ($totalWeight)
 		{
 			print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
 			print '<td>';
 			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
 			print '</td></tr>';
+		}
+		if ($totalVolume)
+		{
 			print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
 			print '<td>';
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
@@ -2388,8 +2393,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 
 		// Total HT
+		$alert = '';
+		if($object->total_ht < $object->thirdparty->order_min_amount) {
+			$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->order_min_amount));
+		}
 		print '<tr><td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
+		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . $alert . '</td>';
 
 		// Total VAT
 		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';

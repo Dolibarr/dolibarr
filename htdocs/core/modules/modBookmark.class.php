@@ -52,7 +52,6 @@ class modBookmark extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
 		$this->picto='bookmark';
 
 		// Data directories to create when module is enabled
@@ -98,10 +97,10 @@ class modBookmark extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
 		$this->rights[$r][4] = 'supprimer';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
+
 	}
 }

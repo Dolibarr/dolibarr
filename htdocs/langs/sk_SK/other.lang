@@ -162,9 +162,9 @@ SizeUnitinch=palec
 SizeUnitfoot=noha
 SizeUnitpoint=bod
 BugTracker=Hlásenie chýb
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Späť na prihlasovaciu stránku
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Režim overovania je <b>%s.</b> <br> V tomto režime je možné Dolibarr neviem ani zmeniť heslo. <br> Obráťte sa na správcu systému, či chcete zmeniť heslo.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>Prof Id %s</b> je informácia v závislosti na tretích strán krajiny. <br> Napríklad pre krajiny <b>%s,</b> je to kód <b>%s.</b>
 DolibarrDemo=Dolibarr ERP / CRM demo
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Vývoz plocha
 AvailableFormats=Dostupné formáty

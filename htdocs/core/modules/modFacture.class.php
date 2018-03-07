@@ -57,7 +57,6 @@ class modFacture extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = 'bill';
 
 		// Data directories to create when module is enabled

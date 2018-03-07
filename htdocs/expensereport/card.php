@@ -286,9 +286,11 @@ if (empty($reshook))
 
     if ($action == 'update_extras')
     {
-        // Fill array 'array_options' with data from update form
+    	$object->oldcopy = dol_clone($object);
+
+    	// Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -299,7 +301,7 @@ if (empty($reshook))
             $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
             // some hooks
             if (empty($reshook)) {
-                $result = $object->insertExtraFields();
+            	$result = $object->insertExtraFields('FICHINTER_MODIFY');
        			if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -315,11 +317,16 @@ if (empty($reshook))
 
     if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
     {
+    	$error = 0;
+
+    	$db->begin();
+
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
+
     	$result = $object->setValidate($user);
 
-    	if ($result > 0)
+    	if ($result >= 0)
     	{
     		// Define output language
     		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -338,8 +345,13 @@ if (empty($reshook))
     			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
     		}
     	}
+    	else
+    	{
+    		setEventMessages($object->error, $object->errors, 'errors');
+    		$error++;
+    	}
 
-    	if ($result > 0 && $object->fk_user_validator > 0)
+    	if (! $error && $result > 0 && $object->fk_user_validator > 0)
     	{
     		$langs->load("mails");
 
@@ -387,8 +399,6 @@ if (empty($reshook))
     				{
     					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($emailFrom,2),$mailfile->getValidAddress($emailTo,2));
     					setEventMessages($mesg, null, 'mesgs');
-    					header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    					exit;
     				}
     				else
     				{
@@ -418,10 +428,17 @@ if (empty($reshook))
     			$action='';
     		}
     	}
-    	else
-    	{
-    		setEventMessages($object->error, $object->errors, 'errors');
-    	}
+
+		if (! $error)
+		{
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			exit;
+		}
+		else
+		{
+			$db->rollback();
+		}
     }
 
     if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
@@ -1419,7 +1436,7 @@ else
 	{
 		$result = $object->fetch($id, $ref);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals();
 
 		if ($result > 0)
 		{
@@ -1955,7 +1972,7 @@ else
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
 
-				print '<div class="div-table-responsive">';
+				print '<div class="div-table-responsive-no-min">';
 				print '<table id="tablelines" class="noborder" width="100%">';
 
 				if (!empty($object->lines))
@@ -1963,7 +1980,8 @@ else
 					$i = 0;$total = 0;
 
 					print '<tr class="liste_titre">';
-					print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
+					print '<td style="text-align:center;">'.$langs->trans('LineNb').'</td>';
+					//print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
 					print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
 					if (! empty($conf->projet->enabled)) print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
 					if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) print '<td>'.$langs->trans('CarCategory').'</td>';
@@ -1986,15 +2004,21 @@ else
 
 					foreach ($object->lines as &$line)
 					{
-						$piece_comptable = $i + 1;
+						$numline = $i + 1;
 
 						if ($action != 'editline' || $line->rowid != GETPOST('rowid'))
 						{
 							print '<tr class="oddeven">';
 
 							print '<td style="text-align:center;">';
+							print $numline;
+							print '</td>';
+
+							/*print '<td style="text-align:center;">';
 							print img_picto($langs->trans("Document"), "object_generic");
-							print ' <span>'.$piece_comptable.'</span></td>';
+							print ' <span>'.$piece_comptable.'</span>';
+							print '</td>';*/
+
 							print '<td style="text-align:center;">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 							if (! empty($conf->projet->enabled))
 							{
@@ -2014,7 +2038,10 @@ else
 								print '</td>';
 							}
 							// print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
-							print '<td style="text-align:center;">'.($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans(($line->type_fees_code))).'</td>';
+							print '<td style="text-align:center;">';
+							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
+							print $labeltype;
+							print '</td>';
 							print '<td style="text-align:left;">'.$line->comments.'</td>';
 							print '<td style="text-align:right;">'.vatrate($line->vatrate,true).'</td>';
 							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';

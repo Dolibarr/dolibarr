@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Fakturering/Betaling
+MenuFinancial=Fakturering | Betaling
 TaxModuleSetupToModifyRules=Gå til <a href="%s">Oppsett av Skatter/avgifter-modul</a> for å endre regler for utregning
 TaxModuleSetupToModifyRulesLT=Gå til <a href="%s">Firmaoppsett</a> for  å endre kalkulasjonsreglene
 OptionMode=Alternativ for regnskap
@@ -24,7 +24,7 @@ PaymentsNotLinkedToInvoice=Betalinger ikke knyttet til noen faktura, er heller i
 PaymentsNotLinkedToUser=Betalinger ikke knyttet til noen bruker
 Profit=Profit
 AccountingResult=Regnskapsresultat
-BalanceBefore=Balance (before)
+BalanceBefore=Balanse (før)
 Balance=Balanse
 Debit=Debet
 Credit=Kreditt

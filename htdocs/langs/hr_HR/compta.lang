@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Idite na <a href="%s">Podešavanje modula poreza</a> za promjenu pravila izračuna
 TaxModuleSetupToModifyRulesLT=Idite na <a href="%s">Postavke tvrtke</a> za promjenu pravila za kalkulacije
 OptionMode=Opcija za računovodstvo

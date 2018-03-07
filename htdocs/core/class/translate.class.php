@@ -129,7 +129,7 @@ class Translate
 	 *  Return active language code for current user
 	 * 	It's an accessor for this->defaultlang
 	 *
-	 *  @param	int		$mode       0=Long language code, 1=Short language code
+	 *  @param	int		$mode       0=Long language code, 1=Short language code (en, fr, es, ...)
 	 *  @return string      		Language code used (en_US, en_AU, fr_FR, ...)
 	 */
 	function getDefaultLang($mode=0)
@@ -1027,6 +1027,7 @@ class Translate
 
 		foreach($this->tab_translate as $code => $label) {
 			$substitutionarray['lang_'.$code] = $label;
+			$substitutionarray['__('.$code.')__'] = $label;
 		}
 
 		return $substitutionarray;

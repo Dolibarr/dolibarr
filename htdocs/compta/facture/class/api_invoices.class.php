@@ -60,30 +60,30 @@ class Invoices extends DolibarrApi
      *
      * @throws 	RestException
      */
-    function get($id)
-    {
+	function get($id)
+	{
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
 
-        $result = $this->invoice->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Invoice not found');
-        }
+		$result = $this->invoice->fetch($id);
+		if (! $result) {
+			throw new RestException(404, 'Invoice not found');
+		}
 
-        // Get payment details
-        $this->invoice->totalpaye = $this->invoice->getSommePaiement();
-        $this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
-	$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
-        $this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
+		// Get payment details
+		$this->invoice->totalpaye = $this->invoice->getSommePaiement();
+		$this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
+		$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
+		$this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
 
-		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+		if (! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
-    }
+	}
 
     /**
      * List invoices

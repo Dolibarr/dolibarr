@@ -140,6 +140,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
+
 /*
  *	Actions
  */
@@ -330,13 +331,9 @@ if ($resql)
 
 	$num = $db->num_rows($resql);
 
-	/*$title=$langs->trans("DoneAndToDoActions");
-	if ($status == 'done') $title=$langs->trans("DoneActions");
-	if ($status == 'todo') $title=$langs->trans("ToDoActions");
-	*/
-	$title=$langs->trans("ListOfEvents");
-
-	$newtitle=$langs->trans($title);
+	// Local calendar
+	$newtitle ='<div class="nowrap clear inline-block minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	//$newtitle=$langs->trans($title);
 
 	$tabactive='cardlist';
 
@@ -353,15 +350,15 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	$nav='';
-	if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	//if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-	if ($resourceid) $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
-	if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-	if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-	if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-	if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-	if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-	if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+
+	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
+	if ($filter)          $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+	if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+	if ($showbirthday)    $nav.='<input type="hidden" name="showbirthday" value="1">';
+	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+	//if ($usergroup)       $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 	print $nav;
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
@@ -429,12 +426,12 @@ if ($resql)
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
 	if (! empty($arrayfields['a.datep2']['checked']))	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
@@ -516,8 +513,8 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
+		// Ref
 		if (! empty($arrayfields['a.id']['checked'])) {
-			// Ref
 			print '<td>';
 			print $actionstatic->getNomUrl(1,-1);
 			print '</td>';

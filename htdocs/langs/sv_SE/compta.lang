@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Gå till <a href="%s">skatt modul inställning</a> att ändra reglerna för beräkning
 TaxModuleSetupToModifyRulesLT=Gå till <a href="%s">Företag inställning</a> att ändra reglerna för beräkning
 OptionMode=Alternativ för bokföring

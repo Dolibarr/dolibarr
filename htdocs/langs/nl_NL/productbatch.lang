@@ -21,4 +21,4 @@ ProductDoesNotUseBatchSerial=Dit product maakt geen gebruik van lot/serial numme
 ProductLotSetup=Module instellingen voor lot/serial
 ShowCurrentStockOfLot=Toon huidige voorraad voor product/lot paar
 ShowLogOfMovementIfLot=Toon bewegingslogboek voor product/lot paar
-StockDetailPerBatch=Stock detail per lot
+StockDetailPerBatch=Voorraad details per lot

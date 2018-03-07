@@ -35,6 +35,7 @@ class AdherentType extends CommonObject
 	public $table_element = 'adherent_type';
 	public $element = 'adherent_type';
 	public $picto = 'group';
+	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
 	 * @var string
@@ -307,7 +308,7 @@ class AdherentType extends CommonObject
 
 		$sql = "SELECT rowid, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
-		$sql.= " WHERE entity IN (".getEntity('adherent').")";
+		$sql.= " WHERE entity IN (".getEntity('member_type').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)

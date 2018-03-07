@@ -148,6 +148,7 @@ ErrorDiscountAlreadyUsed=Villa, afslátt þegar notaður
 ErrorInvoiceAvoirMustBeNegative=Villa, leiðrétta reikning verður að hafa neikvæð upphæð
 ErrorInvoiceOfThisTypeMustBePositive=Villa, this tegund af reikningi þarf að hafa jákvæð upphæð
 ErrorCantCancelIfReplacementInvoiceNotValidated=Villa, get ekki hætt við reikning sem hefur verið skipt út fyrir annan reikning sem er enn í stöðu drög
+ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or another is already used so discount serie cant be removed.
 BillFrom=Frá
 BillTo=Senda á
 ActionsOnBill=Actions reikning

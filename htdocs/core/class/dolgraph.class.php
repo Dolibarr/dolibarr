@@ -594,7 +594,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	integer|null
 	 */
-	function draw($file,$fileurl='')
+	function draw($file, $fileurl='')
 	{
 		if (empty($file))
 		{
@@ -602,11 +602,16 @@ class DolGraph
 			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (! is_array($this->data) || count($this->data) < 1)
+		if (! is_array($this->data))
 		{
 			$this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
 			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
 			return -1;
+		}
+		if (count($this->data) < 1)
+		{
+			$this->error="Call to draw method was made but SetData was is an empty dataset";
+			dol_syslog(get_class($this)."::draw ".$this->error, LOG_WARNING);
 		}
 		$call = "draw_".$this->_library;
 		call_user_func_array(array($this,$call), array($file,$fileurl));
@@ -822,7 +827,7 @@ class DolGraph
 
 		$legends=array();
 		$nblot=count($this->data[0])-1;    // -1 to remove legend
-		if ($nblot < 0) dol_print_error('', 'Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw');
+		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
 		$firstlot=0;
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x

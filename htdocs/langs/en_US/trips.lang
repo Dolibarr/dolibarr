@@ -12,7 +12,7 @@ ShowTrip=Show expense report
 NewTrip=New expense report
 LastExpenseReports=Latest %s expense reports
 AllExpenseReports=All expense reports
-CompanyVisited=Company/organisation visited
+CompanyVisited=Company/organization visited
 FeesKilometersOrAmout=Amount or kilometers
 DeleteTrip=Delete expense report
 ConfirmDeleteTrip=Are you sure you want to delete this expense report?
@@ -74,6 +74,7 @@ EX_CAM_VP=PV maintenance and repair
 DefaultCategoryCar=Default transportation mode
 DefaultRangeNumber=Default range number
 
+Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
 AucuneLigne=There is no expense report declared yet
 

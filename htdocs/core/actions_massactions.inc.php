@@ -46,7 +46,7 @@ if (! empty($massaction) && count($toselect) < 1)
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
-if (! $error && count($toselect) > $maxformassaction)
+if (! $error && is_array($toselect) && count($toselect) > $maxformassaction)
 {
 	setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
 	$error++;

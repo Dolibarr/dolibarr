@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2017 Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,6 @@ class modAccounting extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = 'accounting';
 
 		// Data directories to create when module is enabled
@@ -234,6 +234,26 @@ class modAccounting extends DolibarrModules
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'accounting_account as aa, '.MAIN_DB_PREFIX.'accounting_system as ac';
         $this->export_sql_end[$r] .=' WHERE ac.pcg_version = aa.fk_pcg_version AND aa.entity IN ('.getEntity('accounting').') ';
+
+
+        // Imports
+        //--------
+        $r=0;
+
+        $r++;
+        $this->import_code[$r]=$this->rights_class.'_'.$r;
+        $this->import_label[$r]="Chartofaccounts"; // Translation key
+        $this->import_icon[$r]=$this->picto;
+        $this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+        $this->import_tables_array[$r]=array('aa'=>MAIN_DB_PREFIX.'accounting_account');
+        $this->import_tables_creator_array[$r]=array('aa'=>'fk_user_author');    // Fields to store import user id
+        $this->import_fields_array[$r]=array('aa.fk_pcg_version'=>"Chartofaccounts*",'aa.account_number'=>"AccountAccounting*",'aa.label'=>"Label*",'aa.account_parent'=>"Accountparent","aa.fk_accounting_category"=>"AccountingCategory","aa.pcg_type"=>"Pcgtype*",'aa.pcg_subtype'=>'Pcgsubtype*','aa.active'=>'Status*','aa.datec'=>"DateCreation");
+        $this->import_regex_array[$r]=array('aa.fk_pcg_version'=>'pcg_version@'.MAIN_DB_PREFIX.'accounting_system','aa.account_number'=>'^\d{1,32}$','aa.label'=>'^.{1,255}$','aa.account_parent'=>'^\d{0,32}$','aa.fk_accounting_category'=>'rowid@'.MAIN_DB_PREFIX.'c_accounting_category','aa.pcg_type'=>'^.{1,20}$','aa.pcg_subtype'=>'^.{1,20}$','aa.active'=>'^0|1$','aa.datec'=>'^\d{4}-\d{2}-\d{2}$');
+        $this->import_convertvalue_array[$r]=array(
+	        'aa.fk_accounting_category'=>array('rule'=>'fetchidfromcodeorlabel','classfile'=>'/accountancy/class/accountancycategory.class.php','class'=>'AccountancyCategory','method'=>'fetch','dict'=>'DictionaryAccountancyCategory'),
+	        'aa.account_parent'=>array('rule'=>'zeroifnull'),
+        );
+        $this->import_examplevalues_array[$r]=array('aa.fk_pcg_version'=>"PCG99-ABREGE",'aa.account_number'=>"707",'aa.label'=>"Product sales",'aa.account_parent'=>"1407","aa.fk_accounting_category"=>"","aa.pcg_type"=>"PROD",'aa.pcg_subtype'=>'PRODUCT','aa.active'=>'1','aa.datec'=>"2017-04-28");
 
 	}
 }

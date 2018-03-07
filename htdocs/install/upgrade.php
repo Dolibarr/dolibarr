@@ -356,16 +356,22 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         }
 		else
 		{
+			$listoffileprocessed=array();	// Protection to avoid to process twice the same file
+
 	        // Loop on each migrate files
 	        foreach($filelist as $file)
 	        {
+	        	if (in_array($dir.$file, $listoffileprocessed)) continue;
+
 	        	print '<tr><td colspan="2"><hr></td></tr>';
 	            print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>'."\n";
 
 	            // Run sql script
 	            $ok=run_sql($dir.$file, 0, '', 1);
+	            $listoffileprocessed[$dir.$file]=$dir.$file;
 
-	            // Scan if there is migration scripts for modules htdocs/module/sql or htdocs/custom/module/sql
+	            // Scan if there is migration scripts that depends of Dolibarr version
+	            // for modules htdocs/module/sql or htdocs/custom/module/sql (files called "dolibarr_x.y.z-a.b.c.sql")
 	            $modulesfile = array();
 	            foreach ($conf->file->dol_document_root as $type => $dirroot)
 	            {
@@ -377,9 +383,9 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 	            			if (! preg_match('/\./',$filemodule) && is_dir($dirroot.'/'.$filemodule.'/sql'))	// We exclude filemodule that contains . (are not directories) and are not directories.
 	            			{
 	            				//print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
-	            				if (is_file($dirroot . '/' . $filemodule . '/sql/'.$file))
+	            				if (is_file($dirroot . '/' . $filemodule . '/sql/dolibarr_'.$file))
 	            				{
-	            					$modulesfile[$dirroot . '/' . $filemodule . '/sql/'.$file] = '/' . $filemodule . '/sql/'.$file;
+	            					$modulesfile[$dirroot . '/' . $filemodule . '/sql/dolibarr_'.$file] = '/' . $filemodule . '/sql/dolibarr_'.$file;
 	            				}
 	            			}
 	            		}
@@ -389,13 +395,15 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
 	            foreach ($modulesfile as $modulefilelong => $modulefileshort)
 	            {
+	            	if (in_array($modulefilelong, $listoffileprocessed)) continue;
+
 	            	print '<tr><td colspan="2"><hr></td></tr>';
 	            	print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td align="right">'.$modulefileshort.'</td></tr>'."\n";
 
 		            // Run sql script
 	            	$okmodule=run_sql($modulefilelong, 0, '', 1);	// Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
+	            	$listoffileprocessed[$modulefilelong]=$modulefilelong;
 	            }
-
 	        }
 		}
     }
@@ -415,7 +423,9 @@ if (! $ok && isset($argv[1])) $ret=1;
 dol_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("--- upgrade: end ".((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule));
-pFooter(((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule)?2:0,$setuplang);
+$nonext = (! $ok && empty($_GET["ignoreerrors"]))?2:0;
+if ($dirmodule) $nonext=1;
+pFooter($nonext,$setuplang);
 
 if ($db->connected) $db->close();
 

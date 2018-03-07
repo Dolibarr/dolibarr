@@ -162,9 +162,9 @@ SizeUnitinch=tommer
 SizeUnitfoot=fot
 SizeUnitpoint=punkt
 BugTracker=Feilsporing (bugtracker)
-SendNewPasswordDesc=Dette skjemaet lar deg be om et nytt passord. Det vil bli sendt til din e-postadresse. <br> Endring vil bli effektiv når du klikker på bekreftelseslinken i e-posten. <br /> Sjekk innboksen din.
+SendNewPasswordDesc=Dette skjemaet lar deg be om et nytt passord. Det vil bli sendt til din e-postadresse. <br> Endring skjer når du klikker på bekreftelseslinken i e-posten. <br> Sjekk innboksen din.
 BackToLoginPage=Tilbake til innloggingssiden
-AuthenticationDoesNotAllowSendNewPassword=Autentiseringsmodus er <b> %s</b>.<br> I denne modusen kan Dolibarr ikke vite eller endre passordet ditt. <br /> Kontakt systemadministratoren hvis du vil endre passordet ditt.
+AuthenticationDoesNotAllowSendNewPassword=Autensitering er satt til <b>%s</b>.<br>Det betyr at Dolibarr ikke kan vite eller endre passordet ditt.<br>Kontakt systemadministrator hvis du vil endre passordet ditt.
 EnableGDLibraryDesc=Installer eller aktiver GD-bibliotek i din PHP-installasjon for å bruke denne opsjonen.
 ProfIdShortDesc=<b>Prof-ID %s</b> er avhengig av tredjepartens land.<br>For eksempel er det for <b>%s</b>, koden <b>%s</b>.
 DolibarrDemo=Dolibarr ERP/CRM demo
@@ -227,7 +227,9 @@ Chart=Diagram
 PassEncoding=Passordkoding
 PermissionsAdd=Tillatelser lagt til
 PermissionsDelete=Tillatelser fjernet
-
+YourPasswordMustHaveAtLeastXChars=Passordet ditt må ha minst <strong> %s </strong> tegn
+YourPasswordHasBeenReset=Ditt passord er tilbakestilt
+ApplicantIpAddress=IP-adresse til søkeren
 ##### Export #####
 ExportsArea=Eksportområde
 AvailableFormats=Tilgjengelige formater

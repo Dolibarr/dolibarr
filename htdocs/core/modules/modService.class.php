@@ -57,7 +57,6 @@ class modService extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='service';
 
 		// Data directories to create when module is enabled
@@ -272,12 +271,18 @@ class modService extends DolibarrModules
 				$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 				$this->import_tables_array[$r]=array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
 				$this->import_tables_creator_array[$r]=array('sp'=>'fk_user');
-				$this->import_fields_array[$r]=array('sp.fk_product'=>"ProductOrService*",
-						'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate',
-						'sp.price'=>"PriceQtyMinHT*",
-						'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this file not required and calculate it from price and qty
-						'sp.remise_percent'=>'DiscountQtyMin'
+				$this->import_fields_array[$r]=array(
+					'sp.fk_product'=>"ProductOrService*",
+					'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate', 'sp.default_vat_code'=>'VATCode'
 				);
+				if (is_object($mysoc) && $mysoc->useNPR())       $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.recuperableonly'=>'VATNPR'));
+				if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
+				if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
+				$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array(
+					'sp.price'=>"PriceQtyMinHT*",
+					'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this field not required and calculate it from price and qty
+					'sp.remise_percent'=>'DiscountQtyMin'
+				));
 
 				$this->import_convertvalue_array[$r]=array(
 						'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),

@@ -60,14 +60,14 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='bill';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
 
 		// Config pages
-		$this->config_page_url = array('salaries.php');
+		//$this->config_page_url = array('salaries.php');
+		$this->config_page_url = array();
 
 		// Dependencies
 		$this->depends = array();

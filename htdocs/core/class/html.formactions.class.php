@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,9 +194,13 @@ class FormActions
             $projectid = $object->fk_project;
             if ($typeelement == 'project') $projectid = $object->id;
 
-            $buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:'').($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">';
-        	$buttontoaddnewevent.= $langs->trans("AddEvent");
-        	$buttontoaddnewevent.= '</a>';
+            $buttontoaddnewevent='';
+			if (! empty($conf->agenda->enabled))
+			{
+				$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:'').($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">';
+				$buttontoaddnewevent.= $langs->trans("AddEvent");
+				$buttontoaddnewevent.= '</a>';
+			}
 
         	print '<!-- formactions->showactions -->'."\n";
         	print load_fiche_titre($title, $buttontoaddnewevent, '', 0, 0, '', $morehtmlright);

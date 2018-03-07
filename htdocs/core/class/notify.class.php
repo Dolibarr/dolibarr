@@ -392,25 +392,25 @@ class Notify
 								break;
 							case 'PROPAL_VALIDATE':
 								$link='/comm/propal/card.php?id='.$object->id;
-								$dir_output = $conf->propal->dir_output;
+								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
 								$link='/comm/propal/card.php?id='.$object->id;
-								$dir_output = $conf->propal->dir_output;
+								$dir_output = $conf->propal->multidir_output[$object->entity];
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
 								break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$object->ref);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
 								break;
@@ -574,13 +574,13 @@ class Notify
 						break;
 					case 'PROPAL_VALIDATE':
 						$link='/comm/propal/card.php?id='.$object->id;
-						$dir_output = $conf->propal->dir_output;
+						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 						break;
 					case 'PROPAL_CLOSE_SIGNED':
 						$link='/comm/propal/card.php?id='.$object->id;
-						$dir_output = $conf->propal->dir_output;
+						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$newref);
 						break;
@@ -664,8 +664,9 @@ class Notify
 					}
 					dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
 					$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
-					$sendto = preg_replace('/^[\s,]+/','',$sendto);	// Clean start of string
-					$sendto = preg_replace('/[\s,]+$/','',$sendto);	// Clean end of string
+					$sendto = preg_replace('/,\s*,/', ',', $sendto);	// in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
+					$sendto = preg_replace('/^[\s,]+/', '', $sendto);	// Clean start of string
+					$sendto = preg_replace('/[\s,]+$/', '', $sendto);	// Clean end of string
 				}
 
 				if ($sendto)

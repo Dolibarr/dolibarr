@@ -419,7 +419,8 @@ if (empty($reshook))
 					$date_start,
 					$date_end,
 					$array_options,
-					$productsupplier->fk_unit
+					$productsupplier->fk_unit,
+                    $productsupplier->fourn_multicurrency_unitprice
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -850,7 +851,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php');
+			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -945,9 +946,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from add form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -963,7 +966,7 @@ if (empty($reshook))
 			{
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					$result=$object->insertExtraFields();
+					$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
 
 					if ($result < 0)
 					{
@@ -1642,7 +1645,7 @@ elseif (! empty($object->id))
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 
 	$head = ordersupplier_prepare_head($object);
@@ -2052,8 +2055,12 @@ elseif (! empty($object->id))
 	}
 
 	// Total
+	$alert = '';
+	if($object->total_ht < $object->thirdparty->supplier_order_min_amount) {
+		$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->supplier_order_min_amount));
+	}
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
-	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).$alert.'</td>';
 	print '</tr>';
 
 	// Total VAT

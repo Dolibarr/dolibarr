@@ -70,6 +70,7 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 if ($action == 'update' && empty($_POST["cancel"]))
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",     GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO",     GETPOST("MAIN_MAIL_FORCE_SENDTO"),'chaine',0,'',$conf->entity);
 	// Send mode parameters
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",         GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",        GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
@@ -237,6 +238,11 @@ if ($action == 'edit')
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
 	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
+	print '</td></tr>';
+
+	// Force e-mail recipient
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>';
+	print '<input class="flat" name="MAIN_MAIL_FORCE_SENDTO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_FORCE_SENDTO)?$conf->global->MAIN_MAIL_FORCE_SENDTO:'') . '" />';
 	print '</td></tr>';
 
 	// Separator
@@ -478,6 +484,11 @@ else
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
 
+	// Force e-mail recipient
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.$conf->global->MAIN_MAIL_FORCE_SENDTO;
+	if (! empty($conf->global->MAIN_MAIL_FORCE_SENDTO) && ! isValidEmail($conf->global->MAIN_MAIL_FORCE_SENDTO)) print img_warning($langs->trans("ErrorBadEMail"));
+	print '</td></tr>';
+
 	// Separator
 
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
@@ -644,25 +655,7 @@ else
 	dol_fiche_end();
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
-	{
-		print '<br>';
-		/*
-	    // Warning 1
-    	if ($linuxlike)
-    	{
-    		$sendmailoption=ini_get('mail.force_extra_parameters');
-    		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
-    		{
-    			print info_admin($langs->trans("SendmailOptionNotComplete"));
-    		}
-    	}*/
-		// Warning 2
-   		print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
-	}
-
-
-	// Boutons actions
+	// Actions button
 	print '<div class="tabsAction">';
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
@@ -689,10 +682,35 @@ else
 	print '</div>';
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && ! in_array($action, array('testconnect', 'test', 'testhtml')))
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
 	{
-		$text = $langs->trans("WarningPHPMail");
-		print info_admin($text);
+		/*
+		 // Warning 1
+		 if ($linuxlike)
+		 {
+		 $sendmailoption=ini_get('mail.force_extra_parameters');
+		 if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
+		 {
+		 print info_admin($langs->trans("SendmailOptionNotComplete"));
+		 }
+		 }*/
+		// Warning 2
+		print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
+	}
+
+	if (! in_array($action, array('testconnect', 'test', 'testhtml')))
+	{
+		$text = '';
+		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+		{
+			$text.= $langs->trans("WarningPHPMail");
+		}
+		//$conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS='1.2.3.4';
+		if (! empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+		{
+			$text.= ($text?'<br>':'').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+		}
+		if ($text) print info_admin($text);
 	}
 
 	// Run the test to connect
