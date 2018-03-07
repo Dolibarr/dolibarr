@@ -1896,7 +1896,7 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-.userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	width: 16px;
     height: 16px;
     border-radius: 8px;
@@ -3617,10 +3617,11 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
-.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event_busy a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event { font-size: 12px; }
+.cal_event a:link       { color: #111111; font-weight: normal !important; }
+.cal_event a:visited    { color: #111111; font-weight: normal !important; }
+.cal_event a:active     { color: #111111; font-weight: normal !important; }
+.cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
 
