@@ -790,8 +790,10 @@ if (empty($reshook))
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
     }
 
-    // Actions to send emails
     $id=$socid;
+    $object->fetch($socid);
+
+    // Actions to send emails
     $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
