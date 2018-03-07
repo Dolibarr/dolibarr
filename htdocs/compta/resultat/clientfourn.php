@@ -255,7 +255,7 @@ if ($modecompta == 'BOOKKEEPING')
 	$sql.= " WHERE f.numero_compte = aa.account_number";
 	//$sql.= " AND fk_statut in (1,2)";
 	$sql.= " AND ".$predefinedgroupwhere;
-	$sql.= " AND aa.fk_pcg_version = '".$charofaccountstring."'";
+	$sql.= " AND f.entity = ".$conf->entity;
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
 	$sql.= " GROUP BY pcg_type, pcg_subtype, name, socid";

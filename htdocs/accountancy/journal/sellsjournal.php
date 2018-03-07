@@ -121,6 +121,7 @@ if ($in_bookkeeping == 'notyet')
 //	$sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 $sql .= " ORDER BY f.datef";
+//print $sql;
 
 dol_syslog('accountancy/journal/sellsjournal.php', LOG_DEBUG);
 $result = $db->query($sql);
@@ -319,6 +320,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
 
 					$totaldebit += $bookkeeping->debit;
 					$totalcredit += $bookkeeping->credit;
@@ -372,6 +374,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
+						$bookkeeping->entity = $conf->entity;
 
 						$totaldebit += $bookkeeping->debit;
 						$totalcredit += $bookkeeping->credit;
@@ -430,6 +433,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
+						$bookkeeping->entity = $conf->entity;
 
 						$totaldebit += $bookkeeping->debit;
 						$totalcredit += $bookkeeping->credit;
