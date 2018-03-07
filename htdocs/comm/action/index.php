@@ -1475,10 +1475,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         if ($event->type_code == 'ICALEVENT') print $titletoshow;
                         else
                         {
-                            $savlabel=$event->libelle;
-                            $event->libelle=$titletoshow;
-                            print $event->getNomUrl(0,$maxnbofchar,'cal_event','',0,1);
-                            $event->libelle=$savlabel;
+                        	$savlabel=$event->label?$event->label:$event->libelle;
+                        	$event->label=$titletoshow;
+                        	$event->libelle=$titletoshow;
+                        	print $event->getNomUrl(0,$maxnbofchar,'cal_event','',0,1);
+                        	$event->label=$savlabel;
+                        	$event->libelle=$savlabel;
                         }
 
                         // Loop on each assigned user
