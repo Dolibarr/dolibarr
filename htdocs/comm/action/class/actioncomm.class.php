@@ -1236,8 +1236,12 @@ class ActionComm extends CommonObject
 
 		$result='';
 
-		// Set label of typ
-		$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		// Set label of type
+		$labeltype = '';
+		if ($this->type_code)
+		{
+			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
@@ -1289,7 +1293,7 @@ class ActionComm extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		//print 'rrr'.$this->libelle.'-'.$withpicto;
+		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
         {
@@ -1309,7 +1313,10 @@ class ActionComm extends CommonObject
         {
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
             {
-                $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
+            	if ($labeltype)
+            	{
+                	$libelle.=(preg_match('/'.preg_quote($labeltype,'/').'/', $libelle)?'':' ('.$langs->transnoentities("Action".$this->type_code).')');
+            	}
             }
         }
 
