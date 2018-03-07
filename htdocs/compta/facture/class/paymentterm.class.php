@@ -102,7 +102,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= "decalage";
         $sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
-		$sql.= " ".(! isset($this->entity)?$conf->entity:"'".$this->db->escape($this->entity)."'").",";
+		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term'):"'".$this->db->escape($this->entity)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->db->escape($this->sortorder)."'").",";
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'").",";
@@ -222,7 +222,7 @@ class PaymentTerm // extends CommonObject
      */
 	function getDefaultId()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$ret=0;
 
@@ -230,7 +230,7 @@ class PaymentTerm // extends CommonObject
 		$sql.= " t.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
 		$sql.= " WHERE t.code = 'RECEP'";
-		$sql.= " AND t.entity = " . $conf->entity;
+		$sql.= " AND t.entity IN (".getEntity('c_payment_term').")";
 
 		dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
 		$resql=$this->db->query($sql);

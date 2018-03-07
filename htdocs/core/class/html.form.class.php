@@ -2784,7 +2784,7 @@ class Form
 	 */
 	function load_cache_conditions_paiements()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$num = count($this->cache_conditions_paiements);
 		if ($num > 0) return 0;    // Cache already loaded
@@ -2793,7 +2793,7 @@ class Form
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
-		$sql.= " WHERE entity = " . $conf->entity;
+		$sql.= " WHERE entity IN (".getEntity('c_payment_term').")";
 		$sql.= " AND active > 0";
 		$sql.= " ORDER BY sortorder";
 
@@ -2997,7 +2997,7 @@ class Form
 	 */
 	function load_cache_types_paiements()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$num=count($this->cache_types_paiements);
 		if ($num > 0) return $num;    // Cache already loaded
@@ -3008,7 +3008,7 @@ class Form
 
 		$sql = "SELECT id, code, libelle as label, type, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
-		$sql.= " WHERE entity = ".$conf->entity;
+		$sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 		//if ($active >= 0) $sql.= " AND active = ".$active;
 
 		$resql = $this->db->query($sql);
