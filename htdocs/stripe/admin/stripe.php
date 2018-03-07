@@ -56,7 +56,9 @@ if ($action == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY",GETPOST('STRIPE_LIVE_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM','alpha'),'chaine',0,'',$conf->entity);
@@ -195,6 +197,14 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$con
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
+if (! empty($conf->banque->enabled))
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccount").'</td><td>';
+	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '</td></tr>';
+}
+
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
@@ -252,6 +262,8 @@ print '<br><br>';
 $token='';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
+
+print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242', '4000000000000101', '4000000000000069', '4000000000000341'));
 
 if (! empty($conf->use_javascript_ajax))
 {

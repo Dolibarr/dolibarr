@@ -285,7 +285,7 @@ if ($id > 0 || ! empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask');
+		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 
 		$param=(GETPOST('withproject')?'&withproject=1':'');

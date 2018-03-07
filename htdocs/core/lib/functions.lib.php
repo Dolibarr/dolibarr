@@ -1077,11 +1077,12 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
+ *  @param	string	$morecss			More Css
  * 	@return	void
  */
-function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
+function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='', $morecss='')
 {
-	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright);
+	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright, $morecss);
 }
 
 /**
@@ -1094,9 +1095,10 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
+ *  @param	string	$morecss			More Css
  * 	@return	string
  */
-function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
+function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='', $morecss='')
 {
 	global $conf, $langs, $hookmanager;
 
@@ -1161,7 +1163,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 			{
 				if (!empty($links[$i][0]))
 				{
-					$out.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$out.='<a class="tabimage'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				}
 				else
 				{
@@ -1173,13 +1175,13 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 				//print "x $i $active ".$links[$i][2]." z";
 				if ($isactive)
 				{
-					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">';
+					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">';
 					$out.=$links[$i][1];
 					$out.='</a>'."\n";
 				}
 				else
 				{
-					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabunactive tab inline-block" href="'.$links[$i][0].'">';
+					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabunactive tab inline-block'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">';
 					$out.=$links[$i][1];
 					$out.='</a>'."\n";
 				}
@@ -1198,14 +1200,14 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
 				if (!empty($links[$i][0]))
-					$outmore.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$outmore.='<a class="tabimage'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				else
 					$outmore.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 
 			}
 			else if (! empty($links[$i][1]))
 			{
-				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="wordwrap inline-block" href="'.$links[$i][0].'">';
+				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="wordwrap inline-block'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">';
 				$outmore.=preg_replace('/([a-z])\/([a-z])/i', '\\1 / \\2', $links[$i][1]);	// Replace x/y with x / y to allow wrap on long composed texts.
 				$outmore.='</a>'."\n";
 			}
@@ -1488,6 +1490,14 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	{
 		if ($object->frequency == 0) $morehtmlstatus.=$object->getLibStatut(2);
 		else $morehtmlstatus.=$object->getLibStatut(5);
+	}
+	elseif ($object->element == 'project_task')
+	{
+		$object->fk_statut = 1;
+		if ($object->progress > 0) $object->fk_statut = 2;
+		if ($object->progress >= 100) $object->fk_statut = 3;
+		$tmptxt=$object->getLibStatut(5);
+		$morehtmlstatus.=$tmptxt;		// No status on task
 	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);

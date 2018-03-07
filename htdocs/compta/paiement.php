@@ -88,11 +88,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='yes'))
+	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes'))
 	{
 	    $error = 0;
 
-	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 	    $paiement_id = 0;
 	    $totalpayment = 0;
 		$multicurrency_totalpayment = 0;

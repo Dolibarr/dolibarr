@@ -818,7 +818,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 				{
-					$newmenu->add("/compta/paiement/avalider.php?leftmenu=customers_bills_tovalid",$langs->trans("MenuToValid"),2,$user->rights->facture->lire,'',$mainmenu,'customer_bills_tovalid');
+					$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid",$langs->trans("MenuToValid"),2,$user->rights->facture->lire,'',$mainmenu,'customer_bills_tovalid');
 				}
 				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_reports",$langs->trans("Reportings"),2,$user->rights->facture->lire,'',$mainmenu,'customers_bills_reports');
 

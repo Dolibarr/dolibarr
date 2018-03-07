@@ -296,7 +296,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input {
     line-height: 17px;
-	padding: 4px;
+	padding: 6px;
 	padding-left: 5px;
 }
 select {
@@ -356,23 +356,24 @@ input.buttonpayment {
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 30px;
+	padding-left: 38px;
 	text-align: <?php echo $left; ?>;
 	border: 1px solid #ddd;
 	background-color: #eee;
 	white-space: normal;
+	box-shadow: 1px 1px 8px #bbb;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
 	background-size: 26px;
 	background-repeat: no-repeat;
-	background-position: 2px 11px;
+	background-position: 5px 11px;
 }
 input.buttonpaymentcheque {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
 	background-size: 24px;
 	background-repeat: no-repeat;
-	background-position: 2px 8px;
+	background-position: 5px 8px;
 }
 input.buttonpaymentpaypal {
 	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
@@ -833,21 +834,13 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
     flex-flow: row wrap;
     justify-content: flex-start;
 }
-/*.thumbstat {
-	flex: 1 1 116px;
-}*/
+.thumbstat {
+    min-width: 150px;
+}
 .thumbstat150 {
-	flex: 1 1 170px;
+    min-width: 170px;
 }
 .thumbstat, .thumbstat150 {
-    /*
-    flex-shrink: 1;
-    flex-basis: 140px;
-	display: inline;
-    width: 100%;
-    justify-content: flex-start;
-    align-self: flex-start;
-    */
     flex-grow: 1;
     flex-shrink: 0;
     min-width: 150px;
@@ -1943,7 +1936,7 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-.userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	width: 16px;
     height: 16px;
     border-radius: 8px;
@@ -3095,6 +3088,20 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .boxstatscontent {
 	padding: 3px;
 }
+.boxstatsempty {
+    width: 121px;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.boxstats150empty {
+    width: 158px;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
 
 @media only screen and (max-width: 767px)
 {
@@ -3122,6 +3129,10 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     .boxstats {
         width: 111px;
     }
+    .boxstatsempty {
+    	width: 111px;
+	}
+
 }
 
 .boxstats:hover {
@@ -3757,12 +3768,15 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
-.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event_busy a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event              { font-size: 1em; }
+.cal_event a:link       { color: #111111; font-weight: normal !important; }
+.cal_event a:visited    { color: #111111; font-weight: normal !important; }
+.cal_event a:active     { color: #111111; font-weight: normal !important; }
+.cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
+
+.calendarviewcontainertr { height: 100px; }
 
 
 /* ============================================================================== */

@@ -32,6 +32,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core
 $langs->load('admin');
 $langs->load('objects');
 $langs->load("companies");
+$langs->load("products");
 
 if (!$user->admin) accessforbidden();
 

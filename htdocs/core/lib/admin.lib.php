@@ -1288,9 +1288,10 @@ function complete_elementList_with_modules(&$elementList)
 
                             $modules[$i] = $objMod;
                             $filename[$i]= $modName;
-                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                            $orders[$i]  = $objMod->family."_".$j;   // Sort on family then module number
+                            $dirmod[$i] = $dir;
                             //print "x".$modName." ".$orders[$i]."\n<br>";
-                            $dirmod[$i] = $dirroot;
+
                             if (! empty($objMod->module_parts['contactelement']))
                             {
                             	$elementList[$objMod->name] = $langs->trans($objMod->name);
