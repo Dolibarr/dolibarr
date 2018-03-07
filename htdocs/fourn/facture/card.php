@@ -2928,7 +2928,7 @@ else
 		}
 
 		// Presend form
-		$modelmail='supplier_order_send';
+		$modelmail='order_supplier_send';
 		$defaulttopic='SendBillRef';
 		$diroutput = $conf->fournisseur->facture->dir_output;
 		$trackid = 'sin'.$object->id;
