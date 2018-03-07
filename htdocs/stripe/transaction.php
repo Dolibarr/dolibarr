@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2018 	PtibogXIV        <support@ptibogxiv.net>
+/* Copyright (C) 2018 	PtibogXIV        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ llxHeader('', $langs->trans("StripeTransactionList"));
 $form = new Form($db);
 $societestatic = new societe($db);
 $acc = new Account($db);
-$stripeconnect=new StripeConnexion($db);
+$stripe=new Stripe($db);
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
@@ -87,7 +87,7 @@ if (!$rowid){
 
 	print "</TR>\n";      
     
-$txn=\Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeconnect->GetStripeAccount($conf->entity)));
+$txn=\Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));
 foreach ($txn->data as $txn) {
     print '<TR class="oddeven">';
     $societestatic->fetch($charge->metadata->idcustomer);
@@ -119,16 +119,7 @@ $object->fetch($txn->metadata->idsource);
     print '<TD align="center">'.dol_print_date($txn->created,'%d/%m/%Y %H:%M')."</TD>\n";
     // Label payment
     print "<TD>";
-if ($charge->refunded=='1'){
-    print $langs->trans("refunded");
-} elseif ($charge->paid=='1'){
-    print $langs->trans("".$charge->status."");
-} else {
-$label="Message: ".$charge->failure_message."<BR>";
-$label.="Réseau: ".$charge->outcome->network_status."<BR>";
-$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-   print $form->textwithpicto($langs->trans("".$charge->status.""),$label,1);
-}
+
     print "</TD>\n";
     // Type
     print '<TD>'.$txn->type.'</TD>';
