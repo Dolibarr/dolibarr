@@ -71,6 +71,7 @@ ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_exp
 ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 
 -- Add missing keys and primary key
+DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
 ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;

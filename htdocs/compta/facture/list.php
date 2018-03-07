@@ -756,7 +756,7 @@ if ($resql)
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 0, 1, 10);
+		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 10);
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ht']['checked']))
@@ -775,14 +775,14 @@ if ($resql)
 	}
 	if (! empty($arrayfields['f.total_localtax1']['checked']))
 	{
-		// Amount
+		// Localtax1
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_localtax2']['checked']))
 	{
-		// Amount
+		// Localtax2
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
 		print '</td>';

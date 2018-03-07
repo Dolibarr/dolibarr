@@ -173,7 +173,7 @@ if ($result)
 	print '</td>';
 	// Type
 	print '<td class="liste_titre" align="left">';
-	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
+	$form->select_types_paiements($typeid,'typeid','',0,1,1,16);
 	print '</td>';
 	// Account
 	if (! empty($conf->banque->enabled))
