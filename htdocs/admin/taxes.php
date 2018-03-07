@@ -43,6 +43,7 @@ $list = array (
 		'ACCOUNTING_VAT_PAY_ACCOUNT'
 );
 
+
 /*
  * Actions
  */
@@ -114,18 +115,20 @@ if ($action == 'update') {
 }
 
 
+
 /*
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("TaxSetup"));
+
 $form=new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
 
-dol_fiche_head();
+//dol_fiche_head(null, '', '', -1);
 
 if (empty($mysoc->tva_assuj))
 {
@@ -245,7 +248,7 @@ foreach ($list as $key)
 	print '<tr class="oddeven value">';
 
 	// Param
-	$label = $langs->trans($key); 
+	$label = $langs->trans($key);
 	print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
 	// Value
@@ -263,7 +266,9 @@ foreach ($list as $key)
 
 print '</table>';
 
-dol_fiche_end();
+
+//dol_fiche_end();
+
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="button">';
