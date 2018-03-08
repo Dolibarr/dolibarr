@@ -2695,7 +2695,7 @@ elseif (! empty($object->id))
 		}
 
 		// Presend form
-		$modelmail='supplier_order_send';
+		$modelmail='order_supplier_send';
 		$defaulttopic='SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
 		$trackid = 'sor'.$object->id;

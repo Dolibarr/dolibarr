@@ -265,7 +265,7 @@ if (empty($reshook))
 			$action='';
 		}
 	}
-
+	
 	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
 		$object->fetch($id);
@@ -2928,7 +2928,7 @@ else
 		}
 
 		// Presend form
-		$modelmail='order_supplier_send';
+		$modelmail='invoice_supplier_send';
 		$defaulttopic='SendBillRef';
 		$diroutput = $conf->fournisseur->facture->dir_output;
 		$trackid = 'sin'.$object->id;
