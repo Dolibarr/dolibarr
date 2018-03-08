@@ -655,7 +655,7 @@ if ($resql)
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 0, 1, 10);
+		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 10);
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ht']['checked']))

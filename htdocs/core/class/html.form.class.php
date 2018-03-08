@@ -2793,7 +2793,7 @@ class Form
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
-		$sql.= " WHERE entity = " . getEntity('c_payment_term');
+		$sql.= " WHERE entity IN (".getEntity('c_payment_term').")";
 		$sql.= " AND active > 0";
 		$sql.= " ORDER BY sortorder";
 
@@ -3100,7 +3100,7 @@ class Form
 	 *      @param  string  $morecss        Add more CSS on select tag
 	 * 		@return	void
 	 */
-	function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=0, $noadmininfo=0, $maxlength=0, $active=1, $morecss='')
+	function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=1, $noadmininfo=0, $maxlength=0, $active=1, $morecss='')
 	{
 		global $langs,$user;
 

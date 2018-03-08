@@ -121,11 +121,6 @@ function getEntity($element, $shared=1, $forceentity=null)
 {
 	global $conf, $mc;
 
-	// For backward compatibilty
-	if ($element == 'actioncomm') $element='agenda';
-	if ($element == 'fichinter')  $element='intervention';
-	if ($element == 'categorie')  $element='category';
-
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared, $forceentity);

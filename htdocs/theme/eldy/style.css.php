@@ -295,12 +295,12 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input {
-    line-height: 17px;
-	padding: 6px;
+    line-height: 1.3em;
+	padding: 5px;
 	padding-left: 5px;
 }
 select {
-	padding: 4px;
+	padding: 5px;
 	padding-left: 2px;
 }
 input, select {
@@ -419,7 +419,6 @@ td.actionbuttons a {
 select.flat, form.flat select {
 	font-weight: normal;
 	font-size: unset;
-    height: 2em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -992,7 +991,7 @@ select.selectarrowonleft option {
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     	min-height: 1.4em;
-    	line-height: 1.4em;
+    	/* line-height: 1.4em; */
     	/* padding: .4em .1em; */
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */

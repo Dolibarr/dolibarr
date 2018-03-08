@@ -374,6 +374,8 @@ if ($ispaymentok)
 						if ($option == 'bankdirect')     $postactionmessages[] = 'Bank record created';
 						if ($option == 'invoiceonly')    $postactionmessages[] = 'Invoice recorded';
 						$ispostactionok = 1;
+
+						// If an invoice was created, it is into $object->invoice
 					}
 				}
 
@@ -395,12 +397,33 @@ if ($ispaymentok)
 						$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
 						$texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
 
-						$result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+						// Attach a file ?
+						$file='';
+						$listofpaths=array();
+						$listofnames=array();
+						$listofmimes=array();
+						if (is_object($object->invoice))
+						{
+							$invoicediroutput = $conf->facture->dir_output;
+							$fileparams = dol_most_recent_file($invoicediroutput . '/' . $object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
+							$file = $fileparams['fullname'];
+
+							$listofpaths=array($file);
+							$listofnames=array(basename($file));
+							$listofmimes=array(dol_mimetype($file));
+						}
+
+						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
 						if ($result < 0)
 						{
 							$errmsg=$object->error;
 							$postactionmessages[] = $errmsg;
 							$ispostactionok = -1;
+						}
+						else
+						{
+							if ($file) $postactionmessages[] = 'Email sent to member (with invoice document attached)';
+							else $postactionmessages[] = 'Email sent to member (without any attached document)';
 						}
 					}
 				}
@@ -601,7 +624,7 @@ if ($ispaymentok)
 		$content="";
 		if (in_array('MEM', array_keys($tmptag)))
 		{
-			$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+			$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 			$content.='<strong>'.$companylangs->trans("PaymentSubscription")."</strong><br><br>\n";
 			$content.=$companylangs->trans("MemberId").': <strong>'.$tmptag['MEM']."</strong><br>\n";
 			$content.=$companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";

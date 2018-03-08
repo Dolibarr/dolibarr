@@ -322,16 +322,25 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+			else
+			{
+				// If an invoice was created, it is into $object->invoice
+			}
         }
 
         if (! $error)
         {
-            $db->commit();
+//            $db->commit();
         }
         else
         {
             $db->rollback();
             $action = 'addsubscription';
+        }
+
+        if (! $error)
+        {
+        	setEventMessages("SubscriptionRecorded", null, 'mesgs');
         }
 
         // Send email
@@ -343,12 +352,36 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
                 $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
 
-                $result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+                // Attach a file ?
+                $file='';
+                $listofpaths=array();
+                $listofnames=array();
+                $listofmimes=array();
+                if (is_object($object->invoice))
+                {
+                	$invoicediroutput = $conf->facture->dir_output;
+                	$fileparams = dol_most_recent_file($invoicediroutput . '/' . $object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
+                	$file = $fileparams['fullname'];
+
+                	$listofpaths=array($file);
+                	$listofnames=array(basename($file));
+                	$listofmimes=array(dol_mimetype($file));
+                }
+
+                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
-        			setEventMessages($errmsg, null, 'errors');
+                	setEventMessages($object->error, $object->errors, 'errors');
                 }
+                else
+                {
+                	setEventMessages($langs->trans("EmailSentToMember", $object->email), null, 'mesgs');
+                }
+            }
+            else
+            {
+            	setEventMessages($langs->trans("NoEmailSentToMember"), null, 'mesgs');
             }
         }
 
@@ -998,7 +1031,7 @@ if ($rowid > 0)
             $helpcontent.='<b>'.$langs->trans("MailText").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-            print $form->textwithpicto($tmp,$helpcontent,1,'help');
+            print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
         }
         print '</td></tr>';
         print '</tbody>';

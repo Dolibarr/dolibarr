@@ -552,19 +552,22 @@ if ($id > 0 || $ref)
                     // Currency
                     print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
                     print '<td>';
-                    print $form->selectMultiCurrency(GETPOST('multicurrency_code')?GETPOST('multicurrency_code'):(isset($object->fourn_multicurrency_code)?$object->fourn_multicurrency_code:''), "multicurrency_code", 1);
+                    $currencycodetouse = GETPOST('multicurrency_code')?GETPOST('multicurrency_code'):(isset($object->fourn_multicurrency_code)?$object->fourn_multicurrency_code:'');
+                    if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse=$conf->currency;
+                    print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
                     print '</td>';
                     print '</tr>';
 
                     // Currency tx
                     print '<tr><td class="fieldrequired">'.$langs->trans("CurrencyRate").'</td>';
-                    print '<td><input class="flat" name="multicurrency_tx" size="4" value="'.(GETPOST('multicurrency_tx')?GETPOST('multicurrency_tx'):(isset($object->fourn_multicurrency_tx)?$object->fourn_multicurrency_tx:'')).'">';
+                    print '<td><input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx')?GETPOST('multicurrency_tx'):(isset($object->fourn_multicurrency_tx)?$object->fourn_multicurrency_tx:'')).'">';
                     print '</td>';
                     print '</tr>';
 
                     // Currency price qty min
                     print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
-                    print '<td><input class="flat" name="multicurrency_price" size="8" value="'.(GETPOST('multicurrency_price')?GETPOST('multicurrency_price'):(isset($object->fourn_multicurrency_price)?$object->fourn_multicurrency_price:'')).'">';
+                    $pricesupplierincurrencytouse=(GETPOST('multicurrency_price')?GETPOST('multicurrency_price'):(isset($object->fourn_multicurrency_price)?$object->fourn_multicurrency_price:''));
+                    print '<td><input class="flat" name="multicurrency_price" size="8" value="'.$pricesupplierincurrencytouse.'">';
                     print '&nbsp;';
                     print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type')?GETPOST('multicurrency_price_base_type'):'HT'), "multicurrency_price_base_type");  // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
                     print '</td></tr>';
@@ -602,7 +605,7 @@ if ($id > 0 || $ref)
             $('input[name="disabled_price"]').prop('disabled', true);
             $('select[name="disabled_price_base_type"]').prop('disabled', true);
             update_price_from_multicurrency();
-            
+
             $('input[name="multicurrency_price"]').keyup(function () {
                 update_price_from_multicurrency();
             }).change(function () {
@@ -610,7 +613,7 @@ if ($id > 0 || $ref)
             }).on('paste', function () {
                 update_price_from_multicurrency();
             });
-            
+
             $('input[name="multicurrency_tx"]').keyup(function () {
                 update_price_from_multicurrency();
             }).change(function () {
@@ -618,12 +621,12 @@ if ($id > 0 || $ref)
             }).on('paste', function () {
                 update_price_from_multicurrency();
             });
-            
+
             $('select[name="multicurrency_price_base_type"]').change(function () {
                 $('input[name="price_base_type"]').val($(this).val());
                 $('select[name="disabled_price_base_type"]').val($(this).val());
             });
-            
+
             var currencies_array = $currencies;
             $('select[name="multicurrency_code"]').change(function () {
                 $('input[name="multicurrency_tx"]').val(currencies_array[$(this).val()]);
@@ -844,7 +847,7 @@ SCRIPT;
 						}
 
 						// Modify-Remove
-						print '<td align="center">';
+						print '<td class="center nowraponall">';
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";

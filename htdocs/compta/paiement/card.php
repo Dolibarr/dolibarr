@@ -332,21 +332,22 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
+			$thirdpartystatic->fetch($objp->socid);
 
-            $invoice=new Facture($db);
-            $invoice->fetch($objp->facid);
-            $paiement = $invoice->getSommePaiement();
-            $creditnotes=$invoice->getSumCreditNotesUsed();
-            $deposits=$invoice->getSumDepositsUsed();
-            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+			$invoice=new Facture($db);
+			$invoice->fetch($objp->facid);
+
+			$paiement = $invoice->getSommePaiement();
+			$creditnotes=$invoice->getSumCreditNotesUsed();
+			$deposits=$invoice->getSumDepositsUsed();
+			$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+			$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+
+			print '<tr class="oddeven">';
 
             // Invoice
 			print '<td>';
@@ -355,8 +356,6 @@ if ($resql)
 
 			// Third party
 			print '<td>';
-			$thirdpartystatic->id=$objp->socid;
-			$thirdpartystatic->name=$objp->name;
 			print $thirdpartystatic->getNomUrl(1);
 			print '</td>';
 

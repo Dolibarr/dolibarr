@@ -175,14 +175,21 @@ function societe_prepare_head(Societe $object)
         $h++;
     }
 
-    // Bank accounrs
+    // Bank accounts
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
-        $langs->load("banks");
+    	$langs->load("banks");
+
+        $title = $langs->trans("BankAccounts");
+		if (! empty($conf->stripe->enabled))
+		{
+			$langs->load("stripe");
+			$title = $langs->trans("BankAccountsAndGateways");
+		}
 
         $nbBankAccount=0;
-        $head[$h][0] = DOL_URL_ROOT .'/societe/gateway.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("Gateways");
+        $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
+        $head[$h][1] = $title;
         $sql = "SELECT COUNT(n.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
         $sql.= " WHERE fk_soc = ".$object->id;
