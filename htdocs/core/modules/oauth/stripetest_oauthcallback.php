@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/github_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/stripe_oauthcallback.php
  *      \ingroup    oauth
  *      \brief      Page to get oauth callback
  */
@@ -45,7 +45,7 @@ $backtourl = GETPOST('backtourl', 'alpha');
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/github_oauthcallback.php');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/stripe_oauthcallback.php');
 
 
 /**
@@ -65,23 +65,26 @@ $storage = new DoliStorage($db, $conf);
 
 // Setup the credentials for the requests
 $credentials = new Credentials(
-    $conf->global->OAUTH_GITHUB_ID,
-    $conf->global->OAUTH_GITHUB_SECRET,
+    $conf->global->OAUTH_STRIPE_TEST_ID,
+	$conf->global->STRIPE_TEST_SECRET_KEY,
     $currentUri->getAbsoluteUri()
 );
 
 $requestedpermissionsarray=array();
 if (GETPOST('state')) $requestedpermissionsarray=explode(',', GETPOST('state'));       // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
-if ($action != 'delete' && empty($requestedpermissionsarray))
+/*if ($action != 'delete' && empty($requestedpermissionsarray))
 {
     print 'Error, parameter state is not defined';
     exit;
-}
+}*/
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 /** @var $apiService Service */
-$apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
+//$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
+
+$sql="INSERT INTO ".MAIN_DB_PREFIX."oauth_token set service='StripeTest', entity=".$conf->entity;
+$db->query($sql);
 
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
@@ -96,7 +99,7 @@ $langs->load("oauth");
 
 if ($action == 'delete')
 {
-    $storage->clearToken('GitHub');
+    $storage->clearToken('StripeTest');
 
     setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
@@ -156,7 +159,9 @@ else // If entry on page with no parameter, we arrive here
     }
     else
     {
-        $url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
+        //$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
+    	//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
+    	$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->OAUTH_STRIPE_TEST_ID.'&scope=read_write';
     }
 
     // we go on oauth provider authorization page

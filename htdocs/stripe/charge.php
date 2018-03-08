@@ -46,20 +46,36 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+
+
 /*
-* View
-*/ 
+ * View
+ */
+
 llxHeader('', $langs->trans("StripeChargeList"));
+
 $form = new Form($db);
 $societestatic = new societe($db);
 $acc = new Account($db);
 $stripe=new Stripe($db);
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
 {
+	$service = 'StripeTest';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
 }
-if (!$rowid){
+else
+{
+	$service = 'StripeLive';
+}
 
+$stripeaccount = $stripe->GetStripeAccount($service);
+if (empty($stripeaccount))
+{
+	print $langs->trans('ErrorStripeAccountNotDefined');
+}
+
+if (!$rowid && $stripeaccount)
+{
 	print '<FORM method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<INPUT type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<INPUT type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -85,68 +101,71 @@ if (!$rowid){
     print "</TR>\n";
 
 	print "</TR>\n";
-  
-$list=\Stripe\Charge::all(array("limit" => $limit),array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));
-//print $list;
-foreach ($list->data as $charge) {
-    print '<TR class="oddeven">';
-    $societestatic->fetch($charge->metadata->idcustomer);
-    $societestatic->id=$charge->metadata->idcustomer;
-    $societestatic->lastname=$obj->lastname;
-    $societestatic->firstname=$obj->firstname;
-    $societestatic->admin=$obj->admin;
-    $societestatic->login=$obj->login;
-    $societestatic->email=$obj->email;
-    $societestatic->societe_id=$obj->fk_soc;
-        // Ref
+
+	$list=\Stripe\Charge::all(array("limit" => $limit), array("stripe_account" => $stripeaccount));
+
+	//print $list;
+	foreach ($list->data as $charge)
+	{
+	    print '<TR class="oddeven">';
+	    $societestatic->fetch($charge->metadata->idcustomer);
+	    $societestatic->id=$charge->metadata->idcustomer;
+	    $societestatic->lastname=$obj->lastname;
+	    $societestatic->firstname=$obj->firstname;
+	    $societestatic->admin=$obj->admin;
+	    $societestatic->login=$obj->login;
+	    $societestatic->email=$obj->email;
+	    $societestatic->societe_id=$obj->fk_soc;
+	    // Ref
 		print "<TD><A href='".DOL_URL_ROOT."/stripe/charge.php?rowid=".$charge->id."'>".$charge->id."</A></TD>\n";
 		// Employee
 		print "<TD>".$societestatic->getNomUrl(1)."</TD>\n";
-    // Origine
+		// Origine
 		print "<TD>";
-if ($charge->metadata->source=="order"){
-$object = new Commande($db);
-$object->fetch($charge->metadata->idsource);
-    print "<A href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->idsource."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
-} elseif ($charge->metadata->source=="invoice"){
-$object = new Facture($db);
-$object->fetch($charge->metadata->idsource);
-    print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->idsource."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
-}  
-    print "</TD>\n";
-		// Date payment
-    print '<TD align="center">'.dol_print_date($charge->created,'%d/%m/%Y %H:%M')."</TD>\n";
-    // Label payment
-    print "<TD>";
-if ($charge->refunded=='1'){
-    print $langs->trans("refunded");
-} elseif ($charge->paid=='1'){
-    print $langs->trans("".$charge->status."");
-} else {
-$label="Message: ".$charge->failure_message."<BR>";
-$label.="Réseau: ".$charge->outcome->network_status."<BR>";
-$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-   print $form->textwithpicto($langs->trans("".$charge->status.""),$label,1);
-}
-    print "</TD>\n";
-    // Type
-    print '<TD>';
-if ($charge->source->object=='card'){
-    print $langs->trans("card");
-}   
-elseif ($charge->source->type=='card'){
-    print $langs->trans("card");
-} elseif ($charge->source->type=='three_d_secure'){
-    print $langs->trans("card3DS");
-}    
-    print '</TD>';
-    // Amount
-    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100)."</TD>";       
-    print "</TR>\n";
-   }       
+		if ($charge->metadata->source=="order"){
+			$object = new Commande($db);
+			$object->fetch($charge->metadata->idsource);
+			print "<A href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->idsource."'>".img_picto('', 'object_order')." ".$object->ref."</A>";
+		} elseif ($charge->metadata->source=="invoice"){
+			$object = new Facture($db);
+			$object->fetch($charge->metadata->idsource);
+		    print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->idsource."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
+		}
+	    print "</TD>\n";
+			// Date payment
+	    print '<TD align="center">'.dol_print_date($charge->created,'%d/%m/%Y %H:%M')."</TD>\n";
+	    // Label payment
+	    print "<TD>";
+		if ($charge->refunded=='1'){
+		    print $langs->trans("refunded");
+		} elseif ($charge->paid=='1'){
+		    print $langs->trans("".$charge->status."");
+		} else {
+			$label="Message: ".$charge->failure_message."<BR>";
+			$label.="Réseau: ".$charge->outcome->network_status."<BR>";
+			$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
+		   print $form->textwithpicto($langs->trans("".$charge->status.""),$label,1);
+		}
+	    print "</TD>\n";
+	    // Type
+	    print '<TD>';
+		if ($charge->source->object=='card')
+		{
+		    print $langs->trans("card");
+		}
+		elseif ($charge->source->type=='card'){
+		    print $langs->trans("card");
+		} elseif ($charge->source->type=='three_d_secure'){
+		    print $langs->trans("card3DS");
+		}
+	    print '</TD>';
+	    // Amount
+	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100)."</TD>";
+	    print "</TR>\n";
+	}
 } else {
 
-}    
+}
 
 llxFooter();
 $db->close();

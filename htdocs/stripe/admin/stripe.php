@@ -116,6 +116,7 @@ if ($action=="setlive")
 }
 //TODO: import script for stripe account saving in alone or connect mode for stripe.class.php
 
+
 /*
  *	View
  */
@@ -169,62 +170,51 @@ else
 print '</A>';
 }
 print '</td></tr>';
-if (empty($conf->stripeconnect->enabled)) {
-print '<tr class="oddeven"><td>';
-print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_PUBLISHABLE_KEY").'</span></td><td>';
-print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'">';
-print ' &nbsp; '.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
-print '</td></tr>';
 
-print '<tr class="oddeven"><td>';
-print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
-print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="'.$conf->global->STRIPE_TEST_SECRET_KEY.'">';
-print ' &nbsp; '.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print '<span>'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
-print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
-print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_PUBLISHABLE_KEY").'</span></td><td>';
-print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY.'">';
-print ' &nbsp; '.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
-print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.$conf->global->STRIPE_LIVE_SECRET_KEY.'">';
-print ' &nbsp; '.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
-print '<span>'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
-print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
-print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
-print '</td></tr>';
-} else {
-print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
-print '<td>'.$langs->trans("StripeConnect_Mode").'</td></tr>';
-}
-
-if (! empty($conf->banque->enabled))  //deplace here for separate stripe setting of general and common online payment settings
+if (empty($conf->stripeconnect->enabled))
 {
 	print '<tr class="oddeven"><td>';
-	print $langs->trans("BankAccount").'</td><td>';
-	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_PUBLISHABLE_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'">';
+	print ' &nbsp; '.$langs->trans("Example").': pk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
 	print '</td></tr>';
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// target bank account for stripe transfer: automatic banktransfert with stripe webhook from stripe account (receiving funds, payment, debit fee/application fee, payment dispute) to real bank account
-	{
-		print '<tr class="oddeven"><td>';
-		print $langs->trans("BankAccountForBankTransfer").'</td><td>';
-		print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
-		print '</td></tr>';
-	}
+	print '<tr class="oddeven"><td>';
+	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_SECRET_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="STRIPE_TEST_SECRET_KEY" value="'.$conf->global->STRIPE_TEST_SECRET_KEY.'">';
+	print ' &nbsp; '.$langs->trans("Example").': sk_test_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print '<span>'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
+	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_PUBLISHABLE_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY.'">';
+	print ' &nbsp; '.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.$conf->global->STRIPE_LIVE_SECRET_KEY.'">';
+	print ' &nbsp; '.$langs->trans("Example").': sk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print '<span>'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
+	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print '</td></tr>';
 }
+else
+{
+	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
+	print '<td>'.$langs->trans("StripeConnect_Mode").'</td></tr>';
+}
+
 
 print '</table>';
 
@@ -243,21 +233,17 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$con
 print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// autodecrement selected web stock when generate invoice or paid an order->generate linked invoice as in a POS module for a full automatic functionality (useful when there is a lot of payment)
-{
-	// Stock for automatic decrement
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
-	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE,'ONLINE_PAYMENT_WAREHOUSE','',1,$disabled);
-	print '</td></tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("BankAccount").'</td><td>';
+print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+print '</td></tr>';
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
-	{
-		print '<tr class="oddeven"><td>';
-		print $langs->trans("BankAccountForBankTransfer").'</td><td>';
-		print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
-		print '</td></tr>';
-	}
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
+	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
+	print '</td></tr>';
 }
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
@@ -297,7 +283,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
-print '</td></tr>'; 
+print '</td></tr>';
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';

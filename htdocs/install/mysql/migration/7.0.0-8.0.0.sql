@@ -80,3 +80,5 @@ ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KE
 ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
+
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
