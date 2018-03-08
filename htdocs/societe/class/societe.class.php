@@ -2433,7 +2433,7 @@ class Societe extends CommonObject
 	function get_all_rib()
 	{
 		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".$this->id;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".$this->id;
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error++;
