@@ -18,6 +18,8 @@
 // Put here all includes required by your class file
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -55,7 +57,8 @@ $pagenext = $page + 1;
 llxHeader('', $langs->trans("StripeChargeList"));
 
 $form = new Form($db);
-$societestatic = new societe($db);
+$societestatic = new Societe($db);
+$memberstatic = new Adherent($db);
 $acc = new Account($db);
 $stripe=new Stripe($db);
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
@@ -92,12 +95,13 @@ if (!$rowid && $stripeaccount)
 
     print '<TR class="liste_titre">';
     print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
+    print_liste_field_titre("StripeCustomer",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("Origin",$_SERVER["PHP_SELF"],"","","","",$sortfield,$sortorder);
     print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"","","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"","","",'align="left"');
     print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"","","",'align="left"',$sortfield,$sortorder);
     print_liste_field_titre("Paid",$_SERVER["PHP_SELF"],"","","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"","","",'align="left"');
     print "</TR>\n";
 
 	print "</TR>\n";
@@ -107,21 +111,48 @@ if (!$rowid && $stripeaccount)
 	//print $list;
 	foreach ($list->data as $charge)
 	{
+		// The metadata FULLTAG is defined by the online payment page
+		$FULLTAG=$charge->metadata->FULLTAG;
+
+		// Save into $tmparray all metadata
+		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
+		// Load origin object according to metadata
+		if (! empty($tmparray['CUS']))
+		{
+			$societestatic->fetch($tmparray['CUS']);
+		}
+		else
+		{
+			$societestatic->id = 0;
+		}
+		if (! empty($tmparray['MEM']))
+		{
+			$memberstatic->fetch($tmparray['MEM']);
+		}
+		else
+		{
+			$memberstatic->id = 0;
+		}
+
 	    print '<TR class="oddeven">';
-	    $societestatic->fetch($charge->metadata->idcustomer);
-	    $societestatic->id=$charge->metadata->idcustomer;
-	    $societestatic->lastname=$obj->lastname;
-	    $societestatic->firstname=$obj->firstname;
-	    $societestatic->admin=$obj->admin;
-	    $societestatic->login=$obj->login;
-	    $societestatic->email=$obj->email;
-	    $societestatic->societe_id=$obj->fk_soc;
 	    // Ref
 		print "<TD><A href='".DOL_URL_ROOT."/stripe/charge.php?rowid=".$charge->id."'>".$charge->id."</A></TD>\n";
+		// Stripe customer
+		print "<TD>".$charge->customer."</TD>\n";
 		// Employee
-		print "<TD>".$societestatic->getNomUrl(1)."</TD>\n";
+		print "<TD>";
+		if ($societestatic->id > 0)
+		{
+			print $societestatic->getNomUrl(1);
+		}
+		if ($memberstatic->id > 0)
+		{
+			print $memberstatic->getNomUrl(1);
+		}
+		print "</TD>\n";
 		// Origine
 		print "<TD>";
+		print $FULLTAG;
 		if ($charge->metadata->source=="order"){
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->idsource);
@@ -132,21 +163,8 @@ if (!$rowid && $stripeaccount)
 		    print "<A href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->idsource."'>".img_picto('', 'object_invoice')." ".$object->ref."</A>";
 		}
 	    print "</TD>\n";
-			// Date payment
+		// Date payment
 	    print '<TD align="center">'.dol_print_date($charge->created,'%d/%m/%Y %H:%M')."</TD>\n";
-	    // Label payment
-	    print "<TD>";
-		if ($charge->refunded=='1'){
-		    print $langs->trans("refunded");
-		} elseif ($charge->paid=='1'){
-		    print $langs->trans("".$charge->status."");
-		} else {
-			$label="Message: ".$charge->failure_message."<BR>";
-			$label.="Réseau: ".$charge->outcome->network_status."<BR>";
-			$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
-		   print $form->textwithpicto($langs->trans("".$charge->status.""),$label,1);
-		}
-	    print "</TD>\n";
 	    // Type
 	    print '<TD>';
 		if ($charge->source->object=='card')
@@ -161,6 +179,20 @@ if (!$rowid && $stripeaccount)
 	    print '</TD>';
 	    // Amount
 	    print "<TD align=\"right\">".price(($charge->amount-$charge->amount_refunded)/100)."</TD>";
+	    // Status
+	    print "<TD>";
+	    if ($charge->refunded=='1'){
+	    	print $langs->trans("refunded");
+	    } elseif ($charge->paid=='1'){
+	    	print $langs->trans("".$charge->status."");
+	    } else {
+	    	$label="Message: ".$charge->failure_message."<br>";
+	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
+	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
+	    	print $form->textwithpicto($langs->trans("".$charge->status.""),$label,1);
+	    }
+	    print "</TD>\n";
+
 	    print "</TR>\n";
 	}
 } else {
