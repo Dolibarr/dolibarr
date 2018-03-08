@@ -57,6 +57,21 @@ create table llx_c_type_container
 
 ALTER TABLE llx_c_type_container ADD UNIQUE INDEX uk_c_type_container_id (code, entity);
 
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN discount_type integer DEFAULT 0 NOT NULL AFTER fk_soc;
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_discount_type (discount_type);
+ALTER TABLE llx_societe ADD COLUMN remise_supplier real DEFAULT 0 AFTER remise_client;
+CREATE TABLE llx_societe_remise_supplier
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,			-- multi company id
+  fk_soc			integer NOT NULL,
+  tms				timestamp,
+  datec				datetime,							-- creation date
+  fk_user_author	integer,							-- creation user
+  remise_supplier	double(6,3)  DEFAULT 0 NOT NULL,	-- discount
+  note				text
+)ENGINE=innodb;
 insert into llx_c_type_container (code,label,module,active) values ('page',     'Page',     'system', 1);
 insert into llx_c_type_container (code,label,module,active) values ('banner',   'Banner',   'system', 1);
 insert into llx_c_type_container (code,label,module,active) values ('blogpost', 'BlogPost', 'system', 1);
