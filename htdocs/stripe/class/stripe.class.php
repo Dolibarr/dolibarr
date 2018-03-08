@@ -319,9 +319,9 @@ class Stripe extends CommonObject
 			$return->type = $err['type'];
 			$return->code = $err['code'];
 			$return->message = $err['message'];
-			$body = "Une erreur de paiement est survenue. Voici le code d'erreur: <br />" . $return->id . " " . $return->message . " ";
+			$body = "Error: <br>" . $return->id . " " . $return->message . " ";
 			$subject = '[NOTIFICATION] Erreur de paiement';
-			$headers = 'From: "ptibogxiv.net" <' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '>';
+			$headers = 'From: "noreply" <' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '>';
 			mail('' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '', $subject, $body, $headers);
 			$error ++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
