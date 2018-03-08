@@ -272,13 +272,13 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'setasdefault')
+	if ($action == 'setasbankdefault')
 	{
 		$account = new CompanyBankAccount($db);
 		$res = $account->setAsDefault(GETPOST('ribid','int'));
 		if ($res)
 		{
-			$url=DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id;
+			$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 			header('Location: '.$url);
 			exit;
 		}
@@ -337,19 +337,20 @@ if (class_exists('Stripe'))
 	$stripe=new Stripe($db);
 	$customerstripe=$stripe->CustomerStripe($socid,$stripe->GetStripeAccount($conf->entity));
 	if ($customerstripe->id) {
-	$cu = \Stripe\Customer::retrieve("".$customerstripe->id."",array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));}
+	$cu = \Stripe\Customer::retrieve("".$customerstripe->id."");} 
+
 	$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
-	if ($action == 'setasdefault')
+	if ($action == 'setassourcedefault')
 	{
 	$cu->default_source = "$source"; // obtained with Stripe.js
 	$cu->save();
-
-	header('Location: '.$url);
-	exit;
+ 
+	//header('Location: '.$url);
+	//exit;
 	}
 	elseif ($action == 'delete')
 	{
-	$cu->sources->retrieve("$source")->delete();
+	$cu->sources->retrieve("$source")->detach();
 
 	header('Location: '.$url);
 	exit;
@@ -365,8 +366,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader();
-
+    
 $head=societe_prepare_head($object);
+
 if (! $id)
 {
 	$account->fetch(0,$object->id);
@@ -505,7 +507,7 @@ if ($socid && $action != 'edit' && $action != "create")
 				print '<td align="center" width="50">';
 				if (($cu->default_source!=$src->id))
 				{
-				                print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setasdefault">';
+				                print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
 				                print "<SPAN class='fa fa-circle  fa-2x'></SPAN>";
 				                print '</a>';
 				} else {
@@ -515,7 +517,7 @@ if ($socid && $action != 'edit' && $action != "create")
 				print '<td align="center">';
 				if ($user->rights->societe->creer)
 				{
-				//            	print '<a href="' . DOL_URL_ROOT.'/societe/gateway.php?socid='.$object->id.'&id='.$src->id.'&action=edit">';
+				//            	print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$src->id.'&action=edit">';
 				//            	print img_picto($langs->trans("Modify"),'edit');
 				//            	print '</a>';
 				//           		print '&nbsp;';
@@ -634,7 +636,7 @@ if ($socid && $action != 'edit' && $action != "create")
 			// Default
 			print '<td align="center" width="70">';
 			if (!$rib->default_rib) {
-				print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&ribid='.$rib->id.'&action=setasdefault">';
+				print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&ribid='.$rib->id.'&action=setasbankdefault">';
 				print img_picto($langs->trans("Disabled"),'off');
 				print '</a>';
 			} else {
