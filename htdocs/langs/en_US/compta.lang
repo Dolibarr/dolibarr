@@ -236,3 +236,4 @@ ErrorBankAccountNotFound=Error: Bank account not found
 FiscalPeriod=Accounting period
 ListSocialContributionAssociatedProject=List of social contributions associated with the project
 DeleteFromCat=Remove from accounting group
+AccountingAffectation=Accounting affectation

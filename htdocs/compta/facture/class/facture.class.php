@@ -13,8 +13,9 @@
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
+ * Copyright (C) 2016      Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2018      Alexandre Spangaro    <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 /**
  *	Class to manage invoices
@@ -1457,6 +1461,9 @@ class Facture extends CommonInvoice
 				$line->fk_prev_id       = $objp->fk_prev_id;
 				$line->fk_unit	        = $objp->fk_unit;
 
+				// Accountancy
+				$line->fk_accounting_account	= $objp->fk_code_ventilation;
+
 				// Multicurrency
 				$line->fk_multicurrency 		= $objp->fk_multicurrency;
 				$line->multicurrency_code 		= $objp->multicurrency_code;
@@ -1584,10 +1591,10 @@ class Facture extends CommonInvoice
 		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
-		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
-		$sql.= ", situation_cycle_ref=".$this->situation_cycle_ref;
-		$sql.= ", situation_counter=".$this->situation_counter;
-		$sql.= ", situation_final=".$this->situation_final;
+		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null").",";
+		$sql.= " situation_cycle_ref=".$this->situation_cycle_ref.",";
+		$sql.= " situation_counter=".$this->situation_counter.",";
+		$sql.= " situation_final=".$this->situation_final;
 
 		$sql.= " WHERE rowid=".$this->id;
 

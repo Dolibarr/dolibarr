@@ -285,6 +285,15 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
 <?php } ?>
 
+<?php 
+	if (! empty($conf->accounting->enabled))
+	{
+		$accountingaccount=new AccountingAccount($this->db);
+		$accountingaccount->fetch($line->fk_accounting_account);
+		echo '<tr><td colspan=' . $coldisplay . '>' . $langs->trans('AccountingAffectation') . ': ' . $accountingaccount->getNomUrl(0,1,1) . '</td></tr>';
+	}
+?>
+
 <?php
 //Line extrafield
 if (!empty($extrafieldsline))
