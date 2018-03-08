@@ -611,7 +611,7 @@ if ($object->id > 0)
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
+    			print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';

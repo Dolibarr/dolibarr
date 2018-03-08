@@ -318,7 +318,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
-
 			// Feature to push mail sent into Sent folder
 			/* This code must be now included into the hook mail, method sendMailAfter
 			if (! empty($conf->dolimail->enabled))

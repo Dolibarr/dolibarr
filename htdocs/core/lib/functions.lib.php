@@ -1221,7 +1221,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';
+		$out.='<a href="#" class="tab moretab inline-block tabunactive reposition">'.$langs->trans("More").'... ('.$nbintab.')</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px">';
 		$out.=$outmore;
 		$out.='</div>';
@@ -3989,7 +3989,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 	}
 	if (dol_strlen($morehtmlright))
 	{
-		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$morehtmlright.'</td>';
+		$return.= '<td class="nobordernopadding titre_right wordbreak" align="right" valign="middle">'.$morehtmlright.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
