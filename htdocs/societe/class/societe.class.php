@@ -1662,7 +1662,7 @@ class Societe extends CommonObject
 			return 1;
 		}
 	}
-	
+
 	/**
 	 *  Definit la societe comme un client
 	 *
@@ -1674,7 +1674,7 @@ class Societe extends CommonObject
 	function set_remise_supplier($remise, $note, User $user)
 	{
 		global $conf, $langs;
-		
+
 		// Nettoyage parametres
 		$note=trim($note);
 		if (! $note)
@@ -1682,15 +1682,15 @@ class Societe extends CommonObject
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("NoteReason"));
 			return -2;
 		}
-		
+
 		dol_syslog(get_class($this)."::set_remise_supplier ".$remise.", ".$note.", ".$user->id);
-		
+
 		if ($this->id)
 		{
 			$this->db->begin();
-			
+
 			$now=dol_now();
-			
+
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql.= " SET remise_supplier = '".$this->db->escape($remise)."'";
@@ -1702,7 +1702,7 @@ class Societe extends CommonObject
 				$this->error=$this->db->error();
 				return -1;
 			}
-			
+
 			// Ecrit trace dans historique des remises
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_supplier";
 			$sql.= " (entity, datec, fk_soc, remise_supplier, note, fk_user_author)";
@@ -1710,7 +1710,7 @@ class Societe extends CommonObject
 			$sql.= " '".$this->db->escape($note)."',";
 			$sql.= " ".$user->id;
 			$sql.= ")";
-			
+
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -1718,7 +1718,7 @@ class Societe extends CommonObject
 				$this->error=$this->db->lasterror();
 				return -1;
 			}
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -2037,7 +2037,7 @@ class Societe extends CommonObject
 		else if ($option == 'ban')
 		{
 			$label.= '<u>' . $langs->trans("ShowBan") . '</u>';
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$this->id;
+			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 
 		// By default

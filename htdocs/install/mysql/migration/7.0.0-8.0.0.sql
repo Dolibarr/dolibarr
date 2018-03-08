@@ -97,3 +97,23 @@ ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT 
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
 
 ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
+
+-- Add field for payment modes
+ALTER TABLE llx_societe_rib ADD COLUMN type varchar(32) DEFAULT 'ban' after rowid;
+ALTER TABLE llx_societe_rib ADD COLUMN last_four varchar(4);
+ALTER TABLE llx_societe_rib ADD COLUMN card_type varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN cvn varchar(255);										
+ALTER TABLE llx_societe_rib ADD COLUMN exp_date_month INTEGER;
+ALTER TABLE llx_societe_rib ADD COLUMN exp_date_year INTEGER;
+ALTER TABLE llx_societe_rib ADD COLUMN country_code varchar(10);
+ALTER TABLE llx_societe_rib ADD COLUMN approved integer DEFAULT 0;
+ALTER TABLE llx_societe_rib ADD COLUMN email varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN ending_date date;
+ALTER TABLE llx_societe_rib ADD COLUMN max_total_amount_of_all_payments double(24,8);
+ALTER TABLE llx_societe_rib ADD COLUMN preapproval_key varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN starting_date date;
+ALTER TABLE llx_societe_rib ADD COLUMN total_amount_of_all_payments double(24,8);
+ALTER TABLE llx_societe_rib ADD COLUMN stripe_card_ref varchar(128);
+ALTER TABLE llx_societe_rib ADD COLUMN status integer NOT NULL DEFAULT 1;
+   
+
