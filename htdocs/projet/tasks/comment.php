@@ -97,7 +97,12 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
 	{
-		$res=$object->fetch_optionals();
+		$result=$object->fetch_optionals();
+
+		$result=$object->fetchComments();
+		if ($result<0){
+			setEventMessages($object->error,$object->errors,'errors');
+		}
 
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();

@@ -1822,7 +1822,7 @@ else
 
 		// Presend form
 		$modelmail='member';
-		$defaulttopic='SendMemberRef';
+		$defaulttopic='CardContent';
 		$diroutput = $conf->adherent->dir_output;
 		$trackid = 'mem'.$object->id;
 

@@ -331,13 +331,9 @@ if ($resql)
 
 	$num = $db->num_rows($resql);
 
-	/*$title=$langs->trans("DoneAndToDoActions");
-	if ($status == 'done') $title=$langs->trans("DoneActions");
-	if ($status == 'todo') $title=$langs->trans("ToDoActions");
-	*/
-	$title=$langs->trans("ListOfEvents");
-
-	$newtitle=$langs->trans($title);
+	// Local calendar
+	$newtitle ='<div class="nowrap clear inline-block minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	//$newtitle=$langs->trans($title);
 
 	$tabactive='cardlist';
 
@@ -430,12 +426,12 @@ if ($resql)
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
 	if (! empty($arrayfields['a.datep2']['checked']))	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
@@ -517,8 +513,8 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
+		// Ref
 		if (! empty($arrayfields['a.id']['checked'])) {
-			// Ref
 			print '<td>';
 			print $actionstatic->getNomUrl(1,-1);
 			print '</td>';

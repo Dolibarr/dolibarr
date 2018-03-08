@@ -5,10 +5,23 @@ namespace Stripe;
 /**
  * Class ApplicationFeeRefund
  *
+ * @property string $id
+ * @property string $object
+ * @property int $amount
+ * @property string $balance_transaction
+ * @property int $created
+ * @property string $currency
+ * @property string $fee
+ * @property StripeObject $metadata
+ *
  * @package Stripe
  */
 class ApplicationFeeRefund extends ApiResource
 {
+    use ApiOperations\Update {
+        save as protected _save;
+    }
+
     /**
      * @return string The API URL for this Stripe refund.
      */

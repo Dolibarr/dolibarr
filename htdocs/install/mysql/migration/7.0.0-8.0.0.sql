@@ -62,8 +62,18 @@ insert into llx_c_type_container (code,label,module,active) values ('banner',   
 insert into llx_c_type_container (code,label,module,active) values ('blogpost', 'BlogPost', 'system', 1);
 insert into llx_c_type_container (code,label,module,active) values ('other',    'Other',    'system', 1);
 
+-- For supplier product buy price in multicurency
+ALTER TABLE llx_product_fournisseur_price CHANGE COLUMN multicurrency_price_ttc multicurrency_unitprice DOUBLE(24,8) NULL DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price_log CHANGE COLUMN multicurrency_price_ttc multicurrency_unitprice DOUBLE(24,8) NULL DEFAULT NULL;
 
 ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_expensereport;
 
 ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
+
+-- Add missing keys and primary key
+DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
+ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
+ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
+ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+
 

@@ -89,7 +89,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
 $sql.= ", u.entity";
 $sql.= ", u.ldap_sid";
 $sql.= ", u.photo";
@@ -101,13 +101,25 @@ $sql.= ", s.code_client";
 $sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
-if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
-{
-	$sql.= " WHERE u.entity IS NOT NULL";
-}
-else
-{
-	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+// TODO add hook
+if (! empty($conf->multicompany->enabled)) {
+	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (! empty($user->admin) && empty($user->entity)) {
+			if ($conf->entity == 1) {
+				$sql.= " WHERE u.entity IS NOT NULL";
+			} else {
+				$sql.= " WHERE u.entity IN (".getEntity('user').")";
+			}
+		} else {
+			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql.= " WHERE ug.fk_user = u.rowid";
+			$sql.= " AND ug.entity IN (".getEntity('user').")";
+		}
+	} else {
+		$sql.= " WHERE u.entity IN (".getEntity('user').")";
+	}
+} else {
+	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
 if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 $sql.= $db->order("u.datec","DESC");
