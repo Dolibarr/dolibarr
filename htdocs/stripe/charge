@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2018 	PtibogXIV        <support@ptibogxiv.net>
+/* Copyright (C) 2018 	PtibogXIV        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ llxHeader('', $langs->trans("StripeChargeList"));
 $form = new Form($db);
 $societestatic = new societe($db);
 $acc = new Account($db);
-$stripeconnect=new StripeConnexion($db);
+$stripe=new Stripe($db);
 if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
@@ -86,7 +86,7 @@ if (!$rowid){
 
 	print "</TR>\n";
   
-$list=\Stripe\Charge::all(array("limit" => $limit),array("stripe_account" => $stripeconnect->GetStripeAccount($conf->entity)));
+$list=\Stripe\Charge::all(array("limit" => $limit),array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));
 //print $list;
 foreach ($list->data as $charge) {
     print '<TR class="oddeven">';
@@ -131,7 +131,10 @@ $label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
     print "</TD>\n";
     // Type
     print '<TD>';
-if ($charge->source->type=='card'){
+if ($charge->source->object=='card'){
+    print $langs->trans("card");
+}   
+elseif ($charge->source->type=='card'){
     print $langs->trans("card");
 } elseif ($charge->source->type=='three_d_secure'){
     print $langs->trans("card3DS");
