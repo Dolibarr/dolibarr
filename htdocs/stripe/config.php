@@ -65,4 +65,4 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-\Stripe\Stripe::setAppInfo("Stripe", "dolibarr version", "https://www.dolibarr.org"); // add dolibarr version
+\Stripe\Stripe::setAppInfo("Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
