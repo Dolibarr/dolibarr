@@ -1330,25 +1330,27 @@ class Adherent extends CommonObject
 	/**
 	 *	Do complementary actions after subscription recording.
 	 *
-	 *	@param	int			$subscriptionid		Id of created subscription
-	 *  @param	string		$option				Which action ('bankdirect', 'invoiceonly', ...)
-	 *	@param	int			$accountid			Id bank account
-	 *	@param	int			$datesubscription	Date of subscription
-	 *	@param	int			$paymentdate		Date of payment
-	 *	@param	string		$operation			Code of type of operation (if Id bank account provided). Example 'CB', ...
-	 *	@param	string		$label				Label operation (if Id bank account provided)
-	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
-	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
-	 *	@param	string		$emetteur_nom		Name of cheque writer
-	 *	@param	string		$emetteur_banque	Name of bank of cheque
+	 *	@param	int			$subscriptionid			Id of created subscription
+	 *  @param	string		$option					Which action ('bankdirect', 'invoiceonly', ...)
+	 *	@param	int			$accountid				Id bank account
+	 *	@param	int			$datesubscription		Date of subscription
+	 *	@param	int			$paymentdate			Date of payment
+	 *	@param	string		$operation				Code of type of operation (if Id bank account provided). Example 'CB', ...
+	 *	@param	string		$label					Label operation (if Id bank account provided)
+	 *	@param	double		$amount     			Amount of subscription (0 accepted for some members)
+	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
+	 *	@param	string		$emetteur_nom			Name of cheque writer
+	 *	@param	string		$emetteur_banque		Name of bank of cheque
 	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty.
-	 *	@return int         					<0 if KO, >0 if OK
+	 *	@return int									<0 if KO, >0 if OK
 	 */
 	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
 	{
 		global $conf, $langs, $user, $mysoc;
 
 		$error = 0;
+
+		$this->invoice = null;	// This will contains invoice if an invoice is created
 
 		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
 		if ($option == 'bankdirect' && $accountid)
@@ -1489,6 +1491,10 @@ class Adherent extends CommonObject
 					$this->errors=$invoice->errors;
 					$error++;
 				}
+				else
+				{
+					$this->invoice = $invoice;
+				}
 			}
 
 			if (! $error)
@@ -1522,6 +1528,11 @@ class Adherent extends CommonObject
 					$this->errors=$invoice->errors;
 					$error++;
 				}
+			}
+
+			if (! $error)
+			{
+				// TODO Link invoice with subscription ?
 			}
 
 			// Add payment onto invoice
@@ -1584,25 +1595,25 @@ class Adherent extends CommonObject
 					// Set invoice as paid
 					$invoice->set_paid($user);
 				}
+			}
 
-				if (! $error)
-				{
-					// Define output language
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-						$newlang = $_REQUEST['lang_id'];
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-						$newlang = $customer->default_lang;
-					if (! empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-					}
-					// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-					//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-
-					$invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (! $error)
+			{
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+					$newlang = $_REQUEST['lang_id'];
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $customer->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
 				}
+				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
+				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+
+				$invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 

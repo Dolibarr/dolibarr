@@ -148,15 +148,18 @@ class FormMail extends Form
 	 * Add a file into the list of attached files (stored in SECTION array)
 	 *
 	 * @param 	string   $path   Full absolute path on filesystem of file, including file name
-	 * @param 	string   $file   Only filename
-	 * @param 	string   $type   Mime type
+	 * @param 	string   $file   Only filename (can be basename($path))
+	 * @param 	string   $type   Mime type (can be dol_mimetype($file))
 	 * @return	void
 	 */
-	function add_attached_files($path,$file,$type)
+	function add_attached_files($path, $file='', $type='')
 	{
 		$listofpaths=array();
 		$listofnames=array();
 		$listofmimes=array();
+
+		if (empty($file)) $file=basename($path);
+		if (empty($type)) $type=dol_mimetype($file);
 
 		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
 		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
