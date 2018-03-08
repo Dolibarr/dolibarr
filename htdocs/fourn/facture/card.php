@@ -266,7 +266,7 @@ if (empty($reshook))
 			$action='';
 		}
 	}
-	
+
 	// Delete link of credit note to invoice
 	else if ($action == 'unlinkdiscount' && $user->rights->fournisseur->facture->creer)
 	{
@@ -388,7 +388,7 @@ if (empty($reshook))
 	elseif ($action == "setabsolutediscount" && $user->rights->fournisseur->facture->creer)
 	{
 		// POST[remise_id] or POST[remise_id_for_payment]
-	
+
 		// We use the credit to reduce amount of invoice
 		if (! empty($_POST["remise_id"])) {
 			$ret = $object->fetch($id);
@@ -407,7 +407,7 @@ if (empty($reshook))
 			require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($_POST["remise_id_for_payment"]);
-			
+
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
 			if ($discount->amount_ttc > $object->getRemainToPay(0))
@@ -425,7 +425,7 @@ if (empty($reshook))
 				}
 			}
 		}
-		
+
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
 			$outputlangs = $langs;
@@ -437,7 +437,7 @@ if (empty($reshook))
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
-			
+
 			$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -448,7 +448,7 @@ if (empty($reshook))
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 		//$object->fetch_lines();	// Already done into fetch
-		
+
 		// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
 		$discountcheck=new DiscountAbsolute($db);
 		$result=$discountcheck->fetch(0,0,$object->id);
@@ -459,9 +459,9 @@ if (empty($reshook))
 		if ($canconvert)
 		{
 			$db->begin();
-			
+
 			$amount_ht = $amount_tva = $amount_ttc = array();
-			
+
 			// Loop on each vat rate
 			$i = 0;
 			foreach ($object->lines as $line)
@@ -474,7 +474,7 @@ if (empty($reshook))
 					$i ++;
 				}
 			}
-			
+
 			// Insert one discount by VAT rate category
 			$discount = new DiscountAbsolute($db);
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
@@ -489,13 +489,13 @@ if (empty($reshook))
 			$discount->discount_type = 1; // Supplier discount
 			$discount->fk_soc = $object->socid;
 			$discount->fk_invoice_supplier_source = $object->id;
-			
+
 			$error = 0;
-				
+
 			if ($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT || $object->type == FactureFournisseur::TYPE_SITUATION)
 			{
 				// If we're on a standard invoice, we have to get excess paid to create a discount in TTC without VAT
-				
+
 				$sql = 'SELECT SUM(pf.amount) as total_paiements';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'paiementfourn as p';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement') . ')';
@@ -509,7 +509,7 @@ if (empty($reshook))
 
 				$res = $db->fetch_object($resql);
 				$total_paiements = $res->total_paiements;
-				
+
 				$discount->amount_ht = $discount->amount_ttc = $total_paiements - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
@@ -519,7 +519,7 @@ if (empty($reshook))
 				{
 					$error++;
 				}
-				
+
 			}
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT)
 			{
@@ -529,7 +529,7 @@ if (empty($reshook))
 					$discount->amount_tva = abs($amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
 					$discount->tva_tx = abs($tva_tx);
-					
+
 					$result = $discount->create($user);
 					if ($result < 0)
 					{
@@ -537,9 +537,9 @@ if (empty($reshook))
 						break;
 					}
 				}
-				
+
 			}
-			
+
 			if (empty($error))
 			{
 				if($object->type != FactureFournisseur::TYPE_DEPOSIT) {
@@ -565,7 +565,7 @@ if (empty($reshook))
 			}
 		}
 	}
-	
+
 
 	// Delete payment
 	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
@@ -2141,7 +2141,7 @@ else
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
-		
+
 		$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
 		$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
@@ -3166,7 +3166,7 @@ else
 		}
 
 		// Presend form
-		$modelmail='order_supplier_send';
+		$modelmail='invoice_supplier_send';
 		$defaulttopic='SendBillRef';
 		$diroutput = $conf->fournisseur->facture->dir_output;
 		$trackid = 'sin'.$object->id;
