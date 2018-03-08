@@ -345,8 +345,8 @@ if (class_exists('Stripe'))
 	$cu->default_source = "$source"; // obtained with Stripe.js
 	$cu->save();
  
-	//header('Location: '.$url);
-	//exit;
+	header('Location: '.$url);
+	exit;
 	}
 	elseif ($action == 'delete')
 	{
