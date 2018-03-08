@@ -69,7 +69,7 @@ $user = new User($db);
 $user->fetch(5);
 $user->getrights();
 
-if (! empty($conf->stripeconnect->enabled) && ! empty($conf->multicompany>enabled)) {
+if (! empty($conf->stripeconnect->enabled) && ! empty($conf->multicompany->enabled)) {
 		$sql = "SELECT entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."stripe_entity";
 		$sql.= " WHERE key_account = '".$event->account."'"; 
