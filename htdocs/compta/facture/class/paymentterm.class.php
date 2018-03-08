@@ -90,7 +90,6 @@ class PaymentTerm // extends CommonObject
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(";
-		$sql.= "rowid,";
 		$sql.= "entity,";
 		$sql.= "code,";
 		$sql.= "sortorder,";
@@ -101,7 +100,6 @@ class PaymentTerm // extends CommonObject
 		$sql.= "nbjour,";
 		$sql.= "decalage";
         $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
 		$sql.= " ".(! isset($this->entity)?getEntity('c_payment_term'):"'".$this->db->escape($this->entity)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->sortorder)?'NULL':"'".$this->db->escape($this->sortorder)."'").",";
