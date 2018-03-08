@@ -24,7 +24,7 @@
  *	\brief      File Class multicompany
  */
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';;
-$langs->load("stripeconnect@stripeconnect");
+$langs->load("stripe@stripe");
 
 /**
  *	\class      ActionsMulticompany
