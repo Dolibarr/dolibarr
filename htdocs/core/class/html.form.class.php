@@ -2793,7 +2793,7 @@ class Form
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
-		$sql.= " WHERE entity = " . getEntity('c_payment_term');
+		$sql.= " WHERE entity IN (".getEntity('c_payment_term').")";
 		$sql.= " AND active > 0";
 		$sql.= " ORDER BY sortorder";
 
