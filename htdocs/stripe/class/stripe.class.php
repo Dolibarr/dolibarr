@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2018 	PtibogXIV        <support@ptibogxiv.net>
+/* Copyright (C) 2018 	PtibogXIV        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ $metadata = array(
     "idsource" => "".$item."",
     "idcustomer" => "".$societe->id.""
   );
-$return = new StripeConnexion($this->db);   
+$return = new Stripe($this->db);   
 try {
 if ($stripeamount>=100) {
 if ($entite=='1' or empty($conf->stripeconnect->enabled)){
@@ -264,8 +264,8 @@ $return->id = $charge->id;
 if ($charge->source->type=='card'){
 $return->message = $charge->source->card->brand." ****".$charge->source->card->last4;
 }elseif ($charge->source->type=='three_d_secure'){
-$stripeconnect=new StripeConnexion($this->db);
-$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card."",array("stripe_account" => $stripeconnect->GetStripeAccount($conf->entity)));
+$stripe=new Stripe($this->db);
+$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card."",array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));
 $return->message = $src->card->brand." ****".$src->card->last4;
 }else {
 $return->message = $charge->id;
