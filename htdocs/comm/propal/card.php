@@ -1458,17 +1458,13 @@ if ($action == 'create')
 
 		// Ligne info remises tiers
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
-		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
+
 		$absolute_discount = $soc->getAvailableDiscounts();
-		print '. ';
-		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 1, -1, -1, $conf->currency));
-		else
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print '.';
+
+		$thirdparty = $soc;
+		$discount_type = 0;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?socid=' . $thirdparty->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid'));
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 		print '</td></tr>';
 	}
 
@@ -1875,31 +1871,26 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Link for thirdparty discounts
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+	}
+
 	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
-	if ($soc->remise_percent)
-		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-	else
-		print $langs->trans("CompanyHasNoRelativeDiscount");
-	print '. ';
-	$absolute_discount = $soc->getAvailableDiscounts('', 'fk_facture_source IS NULL');
-	$absolute_creditnote = $soc->getAvailableDiscounts('', 'fk_facture_source IS NOT NULL');
+
+	$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
+	$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
 	$absolute_discount = price2num($absolute_discount, 'MT');
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
-	if ($absolute_discount) {
-		if ($object->statut > Propal::STATUS_DRAFT) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
-		} else {
-			// Remise dispo de type non avoir
-			$filter = 'fk_facture_source IS NULL';
-			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filter, 0, '', 1);
-		}
-	}
-	if ($absolute_creditnote) {
-		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $conf->currency)) . '. ';
-	}
-	if (! $absolute_discount && ! $absolute_creditnote)
-		print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
+
+	$thirdparty = $soc;
+	$discount_type = 0;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 	print '</td></tr>';
 
 	// Date of proposal

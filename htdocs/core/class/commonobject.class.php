@@ -3984,6 +3984,12 @@ abstract class CommonObject
 				$discount->fetch($line->fk_remise_except);
 				$this->tpl['description'] = $langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
 			}
+			elseif ($line->desc == '(EXCESS PAID)')
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				$this->tpl['description'] = $langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
+			}
 			else
 			{
 				$this->tpl['description'] = dol_trunc($line->desc,60);
