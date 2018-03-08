@@ -52,12 +52,12 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * GetStripeAccount
+	 * Return stripe account
 	 *
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
 	 * @return 	int					???
 	 */
-	public function GetStripeAccount($mode='StripeTest')
+	public function getStripeAccount($mode='StripeTest')
 	{
 		global $conf;
 
@@ -90,12 +90,12 @@ class Stripe extends CommonObject
 	}
 
 	/**
-	 * GetStripeCustomerAccount
+	 * getStripeCustomerAccount
 	 *
 	 * @param	int		$id		???
 	 * @return	int				???
 	 */
-	public function GetStripeCustomerAccount($id)
+	public function getStripeCustomerAccount($id)
 	{
 		global $conf;
 
@@ -122,13 +122,13 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * CustomerStripe
+	 * customerStripe
 	 *
 	 * @param int	 $id		???
 	 * @param string $key		???
 	 * @return \Stripe\StripeObject|\Stripe\ApiResource
 	 */
-	public function CustomerStripe($id,$key)
+	public function customerStripe($id,$key)
 	{
 		global $conf;
 		if (empty($conf->global->STRIPECONNECT_LIVE)) {
@@ -186,7 +186,7 @@ class Stripe extends CommonObject
 	}
 
 	/**
-	 * CreatePaymentStripe
+	 * createPaymentStripe
 	 *
 	 * @param unknown $amount			???
 	 * @param unknown $currency			???
@@ -197,7 +197,7 @@ class Stripe extends CommonObject
 	 * @param unknown $account			???
 	 * @return Stripe
 	 */
-	public function CreatePaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account)
+	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account)
 	{
 		global $conf;
 		if (empty($conf->global->STRIPECONNECT_LIVE)) {
@@ -299,7 +299,7 @@ class Stripe extends CommonObject
 			} elseif ($charge->source->type == 'three_d_secure') {
 				$stripe = new Stripe($this->db);
 				$src = \Stripe\Source::retrieve("" . $charge->source->three_d_secure->card . "", array(
-				"stripe_account" => $stripe->GetStripeAccount($conf->entity)
+				"stripe_account" => $stripe->getStripeAccount($conf->entity)
 				));
 				$return->message = $src->card->brand . " ****" . $src->card->last4;
 			} else {

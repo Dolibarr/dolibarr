@@ -68,7 +68,7 @@ else
 	$service = 'StripeLive';
 }
 
-$stripeaccount = $stripe->GetStripeAccount($service);
+$stripeaccount = $stripe->getStripeAccount($service);
 if (empty($stripeaccount))
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');

@@ -62,10 +62,10 @@ if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || emp
 }
 else
 {
-	$servie = 'StripeLive';
+	$service = 'StripeLive';
 }
 
-$stripeaccount = $stripe->GetStripeAccount($service);
+$stripeaccount = $stripe->getStripeAccount($service);
 if (empty($stripeaccount))
 {
 	print $langs->trans('ErrorStripeAccountNotDefined');
@@ -101,7 +101,7 @@ if (! $rowid && $stripeaccount) {
 
 	print "</TR>\n";
 
-	$stripeaccount = $stripe->GetStripeAccount($conf->entity);
+	$stripeaccount = $stripe->getStripeAccount($service);
 
 	$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeaccount));
 
