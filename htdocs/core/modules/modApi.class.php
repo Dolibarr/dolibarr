@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +61,12 @@ class modApi extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		// Can be enabled / disabled only in the main company with superadmin account
+		$this->core_enabled = 1;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='technic';
-
 
 		$this->module_parts = array();
 
@@ -229,6 +231,25 @@ class modApi extends DolibarrModules
 		$result=$this->_load_tables('/api/sql/');
 
 		return $this->_init($sql, $options);
+	}
+
+	/**
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted.
+	 *
+	 *      @param string $options Options when enabling module ('', 'noboxes')
+	 *      @return int 1 if OK, 0 if KO
+	 */
+	function remove($options = '')
+	{
+		// Remove old constants with entity fields different of 0
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_API', 1),
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE', 1)
+		);
+
+		return $this->_remove($sql, $options);
 	}
 }
 
