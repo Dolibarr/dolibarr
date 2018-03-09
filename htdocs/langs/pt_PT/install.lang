@@ -140,24 +140,24 @@ KeepDefaultValuesMamp=Você usa o DoliMamp Setup Wizard, para valores propostos 
 KeepDefaultValuesProxmox=Você usa o assistente de configuração Dolibarr de um appliance virtual Proxmox, para valores propostos aqui já são otimizados. Alterá-los apenas se você sabe o que fazer.
 UpgradeExternalModule=Corra o processo de atualização dedicado dos módulos externos
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
-NothingToDelete=Nothing to clean/delete
-NothingToDo=Nothing to do
+NothingToDelete=Nada para limpar/eliminar
+NothingToDo=Nada para fazer
 #########
 # upgrade
 MigrationFixData=Correção para os dados não normalizados
 MigrationOrder=Migração de dados para os clientes "ordens
 MigrationSupplierOrder=Migração de dados de Fornecedores' ordens
 MigrationProposal=Data migrering for kommersielle forslag
-MigrationInvoice=Migração de dados para os clientes "facturas
+MigrationInvoice=Migração de dados para as faturas dos clientes
 MigrationContract=Migração de dados para os contratos
 MigrationSuccessfullUpdate=Atualização bem sucedida
 MigrationUpdateFailed=Falha do processo de atualização
 MigrationRelationshipTables=Migração de dados para tabelas de relacionamento (%s)
 MigrationPaymentsUpdate=Pagamento correção de dados
-MigrationPaymentsNumberToUpdate=%s pagamento (s) para atualizar
-MigrationProcessPaymentUpdate=Atualização pagamento (s) %s
+MigrationPaymentsNumberToUpdate=%s pagamento(s) por atualizar
+MigrationProcessPaymentUpdate=Atualizar o(s) pagamento(s) %s
 MigrationPaymentsNothingToUpdate=Não há mais coisas para fazer
-MigrationPaymentsNothingUpdatable=Não há mais pagamentos que podem ser corrigidos
+MigrationPaymentsNothingUpdatable=Não existem mais pagamentos que possam ser corrigidos
 MigrationContractsUpdate=Contrato correcção de dados
 MigrationContractsNumberToUpdate=%s contrato (s) para atualizar
 MigrationContractsLineCreation=Criar uma linha de contrato contrato ref %s

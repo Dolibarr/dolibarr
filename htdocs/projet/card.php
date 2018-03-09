@@ -153,14 +153,15 @@ if (empty($reshook))
 			$object->socid           = GETPOST('socid','int');
 			$object->description     = GETPOST('description','none'); // Do not use 'alpha' here, we want field as it is
 			$object->public          = GETPOST('public','alpha');
-			$object->opp_amount      = price2num(GETPOST('opp_amount'));
-			$object->budget_amount   = price2num(GETPOST('budget_amount'));
+			$object->opp_amount      = price2num(GETPOST('opp_amount','alpha'));
+			$object->budget_amount   = price2num(GETPOST('budget_amount','alpha'));
 			$object->datec           = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
 			$object->statut          = $status;
 			$object->opp_status      = $opp_status;
 			$object->opp_percent     = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -251,15 +252,17 @@ if (empty($reshook))
 
 			$object->ref          = GETPOST('ref','alpha');
 			$object->title        = GETPOST('title','none'); // Do not use 'alpha' here, we want field as it is
+			$object->statut       = GETPOST('status','int');
 			$object->socid        = GETPOST('socid','int');
 			$object->description  = GETPOST('description','none');	// Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public','alpha');
 			$object->date_start   = empty($_POST["projectstart"])?'':$date_start;
 			$object->date_end     = empty($_POST["projectend"])?'':$date_end;
-			if (isset($_POST['opp_amount']))    $object->opp_amount   = price2num(GETPOST('opp_amount'));
-			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount'));
+			if (isset($_POST['opp_amount']))    $object->opp_amount   = price2num(GETPOST('opp_amount','alpha'));
+			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount','alpha'));
 			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -406,7 +409,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-			header("Location: index.php");
+			header("Location: list.php?restore_lastsearch_values=1");
 			exit;
 		}
 		else
@@ -598,6 +601,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
 
+	// Bill time
+	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<tr><td>'.$langs->trans("BillTime").'</td>';
+		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time','alpha')!=''?' checked="checked"':'').'"></td>';
+		print '</tr>';
+	}
+
 	if ($conf->categorie->enabled) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -659,7 +670,7 @@ elseif ($object->id > 0)
      * Show or edit
      */
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 	// To verify role of users
 	$userAccess = $object->restrictedProjectArea($user,'read');
@@ -737,6 +748,16 @@ elseif ($object->id > 0)
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
 		print '<td><input class="quatrevingtpercent" name="title" value="'.$object->title.'"></td></tr>';
 
+		// Status
+		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
+		print '<select class="flat" name="status">';
+		foreach($object->statuts_short as $key => $val)
+		{
+			print '<option value="'.$key.'"'.((GETPOSTISSET('status')?GETPOST('status'):$object->statut) == $key ? ' selected="selected"':'').'>'.$langs->trans($val).'</option>';
+		}
+		print '</select>';
+		print '</td></tr>';
+
 		// Thirdparty
 		if ($conf->societe->enabled)
 		{
@@ -765,9 +786,6 @@ elseif ($object->id > 0)
 		print $form->selectarray('public',$array,$object->public);
 		print '</td></tr>';
 
-		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			// Opportunity status
@@ -781,18 +799,18 @@ elseif ($object->id > 0)
 			print '</td>';
 			print '</tr>';
 
-			// Opportunity probability
-			print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-			print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %';
-			print '<span id="oldopppercent"></span>';
-			print '</td>';
-			print '</tr>';
+		    // Opportunity probability
+		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?vatrate($object->opp_percent):'')).'"> %';
+            print '<span id="oldopppercent"></span>';
+		    print '</td>';
+		    print '</tr>';
 
-			// Opportunity amount
-			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-			print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price($object->opp_amount,0,$langs,1,0):'')).'"></td>';
-			print '</tr>';
-		}
+		    // Opportunity amount
+		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount'])?GETPOST('opp_amount'):(strcmp($object->opp_amount,'')?price2num($object->opp_amount):'')).'"></td>';
+		    print '</tr>';
+	    }
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
@@ -817,6 +835,14 @@ elseif ($object->id > 0)
 		print '<td>';
 		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
+
+		// Bill time
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time','alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
+			print '</tr>';
+		}
 
 		// Tags-Categories
 		if ($conf->categorie->enabled)
@@ -909,9 +935,9 @@ elseif ($object->id > 0)
 
 		// Date start - end
 		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-		$start = dol_print_date($object->date_start,'dayhour');
+		$start = dol_print_date($object->date_start,'day');
 		print ($start?$start:'?');
-		$end = dol_print_date($object->date_end,'dayhour');
+		$end = dol_print_date($object->date_end,'day');
 		print ' - ';
 		print ($end?$end:'?');
 		if ($object->hasDelay()) print img_warning("Late");
@@ -939,6 +965,14 @@ elseif ($object->id > 0)
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->description);
 		print '</td></tr>';
+
+		// Bill time
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td>'.yn($object->bill_time).'</td>';
+			print '</tr>';
+		}
 
 		// Categories
 		if($conf->categorie->enabled) {
@@ -1205,7 +1239,7 @@ elseif ($object->id > 0)
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'project', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, 'project', 0, 1, '', $MAXEVENT, '', $morehtmlright);
 
 		print '</div></div></div>';
 	}

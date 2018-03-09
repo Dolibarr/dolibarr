@@ -48,7 +48,7 @@ class BookKeeping extends CommonObject
 	 */
 	public $table_element = 'accounting_bookkeeping';
 
-	public $entity = 1;
+	public $entity;
 
 	/**
 	 * @var BookKeepingLine[] Lines
@@ -295,7 +295,7 @@ class BookKeeping extends CommonObject
 				$sql .= ",'" . $this->db->escape($this->code_journal) . "'";
 				$sql .= ",'" . $this->db->escape($this->journal_label) . "'";
 				$sql .= "," . $this->db->escape($this->piece_num);
-				$sql .= ", " . (! isset($this->entity) ? '1' : $this->entity);
+				$sql .= ", " . (! isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
 				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
@@ -363,6 +363,8 @@ class BookKeeping extends CommonObject
 	 * @return int				 <0 if KO, Id of created object if OK
 	 */
 	public function createStd(User $user, $notrigger = false, $mode='') {
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -486,7 +488,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
 		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
-		$sql .= ' ' . (! isset($this->entity) ? '1' : $this->entity);
+		$sql .= ' ' . (! isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -781,7 +783,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
-		$sql .= " t.date_creation";
+		$sql .= " t.date_creation,";
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter
 		$sqlwhere = array ();
@@ -849,7 +852,8 @@ class BookKeeping extends CommonObject
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
-				$line->date_creation = $obj->date_creation;
+				$line->date_creation = $this->db->jdate($obj->date_creation);
+				$line->date_modification = $this->db->jdate($obj->date_modification);
 
 				$this->lines[] = $line;
 			}

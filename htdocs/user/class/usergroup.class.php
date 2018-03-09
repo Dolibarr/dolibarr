@@ -1,10 +1,10 @@
 <?php
-/* Copyright (c) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014	   Alexis Algoud		<alexis@atm-consulting.fr>
+/* Copyright (c) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014		Alexis Algoud		<alexis@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,8 @@ class UserGroup extends CommonObject
     public $picto='group';
 	public $entity;		// Entity of group
 
+
+	public $name;			// Name of group
 	/**
 	 * @deprecated
 	 * @see name
@@ -48,6 +50,7 @@ class UserGroup extends CommonObject
 	public $globalgroup;	// Global group
 	public $datec;			// Creation date of group
 	public $datem;			// Modification date of group
+	public $note;			// Description
 	public $members=array();	// Array of users
 
 	public $nb_rights;					// Number of rights granted to the user
@@ -113,12 +116,9 @@ class UserGroup extends CommonObject
 					$this->members=$this->listUsersForGroup();
 
 
-				// Retreive all extrafield for group
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				dol_include_once('/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 
 				// Sav current LDAP Current DN
@@ -784,6 +784,78 @@ class UserGroup extends CommonObject
 	    global $langs;
 	    $langs->load('users');
 	    return '';
+	}
+
+	/**
+	 *  Return a link to the user card (with optionaly the picto)
+	 * 	Use this->id,this->lastname, this->firstname
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	string	$option						On what the link point to ('nolink', )
+	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	{
+		global $langs, $conf, $db, $hookmanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
+
+		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto=0;
+
+		$result=''; $label='';
+		$link=''; $linkstart=''; $linkend='';
+
+		$label.= '<div class="centpercent">';
+		$label.= '<u>' . $langs->trans("Group") . '</u><br>';
+		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->name;
+		$label.= '<br><b>' . $langs->trans("Description").':</b> '.$this->note;
+		$label.='</div>';
+
+		$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
+
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
+
+		$linkclose="";
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$langs->load("users");
+				$label=$langs->trans("ShowGroup");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		}
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('groupdao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		$result = $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->name;
+		$result .= $linkend;
+
+		return $result;
 	}
 
 	/**

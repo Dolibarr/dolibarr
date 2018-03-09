@@ -28,7 +28,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 			elseif (! in_array($typeofextrafield, array('datetime','timestamp')))
 			{
 				// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
-				echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_');
+				$morecss='';
+				if ($typeofextrafield == 'sellist') $morecss='maxwidth200';
+				echo $extrafields->showInputField($key, $search_array_options['search_options_'.$key], '', '', 'search_', $morecss);
 			}
 			elseif (in_array($typeofextrafield, array('datetime','timestamp')))
 			{

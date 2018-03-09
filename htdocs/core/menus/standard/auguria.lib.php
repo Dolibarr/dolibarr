@@ -169,7 +169,8 @@ function print_start_menu_entry_auguria($idsel,$classname,$showmode)
 	if ($showmode)
 	{
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-		print '<div class="tmenuleft tmenusep"></div><div class="tmenucenter">';
+		//print '<div class="tmenuleft tmenusep"></div>';
+		print '<div class="tmenucenter">';
 	}
 }
 
@@ -382,7 +383,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+					if ($conf->global->MAIN_FEATURES_LEVEL < 2)
 					{
 						if ($nature == 'various' || $nature == 'hasnew') $nature='';
 					}

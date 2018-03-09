@@ -386,7 +386,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow.=$px3->show();
 				$stringtoshow.='</div></div>';
 			}
-			$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+			$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
 		}
 		else
 		{

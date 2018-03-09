@@ -32,3 +32,4 @@ ThisIsATestMessage=Isto e uma mensagem de teste
 SmsInfoCharRemain=Nr de caracteres restantes
 SmsInfoNumero=(formato internacional ex: +33899701761)
 SmsNoPossibleSenderFound=Nenhum expedidor disponível. Verifique a configuração do seu provedor de SMS.
+DisableStopIfSupported=Desabilitar mensagem PARAR (se suportado)

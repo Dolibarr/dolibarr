@@ -528,7 +528,10 @@ class Adherent extends CommonObject
 					{
 						//var_dump($this->user_login);exit;
 						//var_dump($this->login);exit;
-						$luser->login=$this->login;
+
+						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
+						if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $luser->login=$this->login;
+
 						$luser->civility_id=$this->civility_id;
 						$luser->firstname=$this->firstname;
 						$luser->lastname=$this->lastname;
@@ -1153,12 +1156,9 @@ class Adherent extends CommonObject
 
 				$this->model_pdf        = $obj->model_pdf;
 
-				// Retreive all extrafield for thirdparty
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				// Load other properties
 				$result=$this->fetch_subscriptions();
@@ -1248,9 +1248,9 @@ class Adherent extends CommonObject
 	 *	Insert subscription into database and eventually add links to banks, mailman, etc...
 	 *
 	 *	@param	int	        $date        		Date of effect of subscription
-	 *	@param	double		$montant     		Amount of subscription (0 accepted for some members)
+	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
 	 *	@param	int			$accountid			Id bank account
-	 *	@param	string		$operation			Type operation (if Id bank account provided)
+	 *	@param	string		$operation			Type of payment (if Id bank account provided). Example: 'CB', ...
 	 *	@param	string		$label				Label operation (if Id bank account provided)
 	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom		Name of cheque writer
@@ -1258,7 +1258,7 @@ class Adherent extends CommonObject
 	 *	@param	int     	$datesubend			Date end subscription
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	function subscription($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
+	function subscription($date, $amount, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
 	{
 		global $conf,$langs,$user;
 
@@ -1267,7 +1267,7 @@ class Adherent extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		if (! $montant) $montant=0;
+		if (! $amount) $amount=0;
 
 		$this->db->begin();
 
@@ -1287,8 +1287,9 @@ class Adherent extends CommonObject
 		$subscription->fk_adherent=$this->id;
 		$subscription->dateh=$date;		// Date of new subscription
 		$subscription->datef=$datefin;	// End data of new subscription
-		$subscription->amount=$montant;
-		$subscription->note=$label;
+		$subscription->amount=$amount;
+		$subscription->note=$label;		// deprecated
+		$subscription->note_public=$label;
 
 		$rowid=$subscription->create($user);
 		if ($rowid > 0)
@@ -1300,7 +1301,7 @@ class Adherent extends CommonObject
 			{
 				// Change properties of object (used by triggers)
 				$this->last_subscription_date=dol_now();
-				$this->last_subscription_amount=$montant;
+				$this->last_subscription_amount=$amount;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
 			}
@@ -1319,10 +1320,313 @@ class Adherent extends CommonObject
 		else
 		{
 			$this->error=$subscription->error;
+			$this->errors=$subscription->errors;
 			$this->db->rollback();
 			return -1;
 		}
 	}
+
+
+	/**
+	 *	Do complementary actions after subscription recording.
+	 *
+	 *	@param	int			$subscriptionid			Id of created subscription
+	 *  @param	string		$option					Which action ('bankdirect', 'invoiceonly', ...)
+	 *	@param	int			$accountid				Id bank account
+	 *	@param	int			$datesubscription		Date of subscription
+	 *	@param	int			$paymentdate			Date of payment
+	 *	@param	string		$operation				Code of type of operation (if Id bank account provided). Example 'CB', ...
+	 *	@param	string		$label					Label operation (if Id bank account provided)
+	 *	@param	double		$amount     			Amount of subscription (0 accepted for some members)
+	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
+	 *	@param	string		$emetteur_nom			Name of cheque writer
+	 *	@param	string		$emetteur_banque		Name of bank of cheque
+	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty.
+	 *	@return int									<0 if KO, >0 if OK
+	 */
+	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
+	{
+		global $conf, $langs, $user, $mysoc;
+
+		$error = 0;
+
+		$this->invoice = null;	// This will contains invoice if an invoice is created
+
+		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
+		if ($option == 'bankdirect' && $accountid)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+			$acct=new Account($this->db);
+			$result=$acct->fetch($accountid);
+
+			$dateop=$paymentdate;
+
+			$insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
+			if ($insertid > 0)
+			{
+				$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullname($langs), 'member');
+				if ($inserturlid > 0)
+				{
+					// Update table subscription
+					$sql ="UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
+					$sql.=" WHERE rowid=".$subscriptionid;
+
+					dol_syslog("subscription::subscription", LOG_DEBUG);
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$error++;
+						$this->error=$this->db->lasterror();
+						$this->errors[]=$this->error;
+					}
+				}
+				else
+				{
+					$error++;
+					$this->error=$acct->error;
+					$this->errors=$acct->errors;
+				}
+			}
+			else
+			{
+				$error++;
+				$this->error=$acct->error;
+				$this->errors=$acct->errors;
+			}
+		}
+
+		// If option choosed, we create invoice
+		if (($option == 'bankviainvoice' && $accountid) || $option == 'invoiceonly')
+		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
+
+			$invoice=new Facture($this->db);
+			$customer=new Societe($this->db);
+
+			if (! $error)
+			{
+				if (! ($this->fk_soc > 0))
+				{
+					if ($autocreatethirdparty)
+					{
+						// Create a linked thirdparty to member
+						$companyalias='';
+						$fullname = $this->getFullName($langs);
+
+						if ($this->morphy == 'mor')
+						{
+							$companyname=$this->societe;
+							if (! empty($fullname)) $companyalias=$fullname;
+						}
+						else
+						{
+							$companyname=$fullname;
+							if (! empty($this->societe)) $companyalias=$this->societe;
+						}
+
+						$result=$customer->create_from_member($this, $companyname, $companyalias);
+						if ($result < 0)
+						{
+							$this->error = $company->error;
+							$this->errors = $company->errors;
+							$error++;
+						}
+						else
+						{
+							$this->fk_soc = $result;
+						}
+					}
+					else
+					{
+						 $langs->load("errors");
+						 $this->error=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
+						 $this->errors[]=$this->error;
+						 $error++;
+					}
+				}
+			}
+			if (! $error)
+			{
+				$result=$customer->fetch($this->fk_soc);
+				if ($result <= 0)
+				{
+					$this->error=$customer->error;
+					$this->errors=$customer->errors;
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				// Create draft invoice
+				$invoice->type=Facture::TYPE_STANDARD;
+				$invoice->cond_reglement_id=$customer->cond_reglement_id;
+				if (empty($invoice->cond_reglement_id))
+				{
+					$paymenttermstatic=new PaymentTerm($this->db);
+					$invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
+					if (empty($invoice->cond_reglement_id))
+					{
+						$error++;
+						$this->error='ErrorNoPaymentTermRECEPFound';
+						$this->errors[]=$this->error;
+					}
+				}
+				$invoice->socid=$this->fk_soc;
+				$invoice->date=$datesubscription;
+
+				// Possibility to add external linked objects with hooks
+				$invoice->linked_objects['subscription'] = $subscriptionid;
+				if (! empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects']))
+				{
+					$invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+				}
+
+				$result=$invoice->create($user);
+				if ($result <= 0)
+				{
+					$this->error=$invoice->error;
+					$this->errors=$invoice->errors;
+					$error++;
+				}
+				else
+				{
+					$this->invoice = $invoice;
+				}
+			}
+
+			if (! $error)
+			{
+				// Add line to draft invoice
+				$idprodsubscription=0;
+				if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled))) $idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
+
+				$vattouse=0;
+				if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry')
+				{
+					$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
+				}
+				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
+				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,$datesubend,0,0,'','TTC',$amount,1);
+				if ($result <= 0)
+				{
+					$this->error=$invoice->error;
+					$this->errors=$invoice->errors;
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				// Validate invoice
+				$result=$invoice->validate($user);
+				if ($result <= 0)
+				{
+					$this->error=$invoice->error;
+					$this->errors=$invoice->errors;
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				// TODO Link invoice with subscription ?
+			}
+
+			// Add payment onto invoice
+			if (! $error && $option == 'bankviainvoice' && $accountid)
+			{
+				require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+
+				$amounts = array();
+				$amounts[$invoice->id] = price2num($amount);
+
+				$paiement = new Paiement($this->db);
+				$paiement->datepaye     = $paymentdate;
+				$paiement->amounts      = $amounts;
+				$paiement->paiementid   = dol_getIdFromCode($this->db,$operation,'c_paiement','code','id',1);
+				$paiement->num_paiement = $num_chq;
+				$paiement->note         = $label;
+				$paiement->note_public  = $label;
+
+				if (! $error)
+				{
+					// Create payment line for invoice
+					$paiement_id = $paiement->create($user);
+					if (! $paiement_id > 0)
+					{
+						$this->error=$paiement->error;
+						$this->errors=$paiement->errors;
+						$error++;
+					}
+				}
+
+				if (! $error)
+				{
+					// Add transaction into bank account
+					$bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
+					if (! ($bank_line_id > 0))
+					{
+						$this->error=$paiement->error;
+						$this->errors=$paiement->errors;
+						$error++;
+					}
+				}
+
+				if (! $error)
+				{
+					// Update fk_bank into subscription table
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
+					$sql.= ' WHERE rowid='.$subscriptionid;
+
+					$result = $this->db->query($sql);
+					if (! $result)
+					{
+						$error++;
+					}
+				}
+
+				if (! $error)
+				{
+					// Set invoice as paid
+					$invoice->set_paid($user);
+				}
+			}
+
+			if (! $error)
+			{
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+					$newlang = $_REQUEST['lang_id'];
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $customer->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
+				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+
+				$invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+
+		if ($error)
+		{
+			return -1;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+
 
 	/**
 	 *		Function that validate a member
@@ -2155,9 +2459,9 @@ class Adherent extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id
+	 * @param int 		$dest_id 		New thirdparty id
 	 * @return bool
 	 */
 	public static function replaceThirdparty($db, $origin_id, $dest_id)

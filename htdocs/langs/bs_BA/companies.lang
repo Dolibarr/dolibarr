@@ -56,6 +56,7 @@ Address=Adresa
 State=Država/Provincija
 StateShort=Pokrajina
 Region=Region
+Region-State=Region - State
 Country=Država
 CountryCode=Šifra države
 CountryId=ID države

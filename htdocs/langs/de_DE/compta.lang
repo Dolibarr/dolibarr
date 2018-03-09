@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Rechnungswesen
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Im <a href="%s">Steuer-Modul</a> können Sie die Einstellungen für die Berechnungen vornehmen
 TaxModuleSetupToModifyRulesLT=Hier können Sie die <a href="%s">Einstellungen</a> für die Berechnungen vornehmen
 OptionMode=Buchhaltungsoptionen
@@ -24,7 +24,7 @@ PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem P
 PaymentsNotLinkedToUser=Zahlungen mit keinem Benutzer verbunden
 Profit=Gewinn
 AccountingResult=Buchhaltungsergebnis
-BalanceBefore=Balance (before)
+BalanceBefore=Saldo (vorher)
 Balance=Saldo
 Debit=Soll
 Credit=Haben

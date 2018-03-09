@@ -56,6 +56,7 @@ Address=Adreça
 State=Província
 StateShort=Estat
 Region=Regió
+Region-State=Regió - Estat
 Country=Pais
 CountryCode=Codi pais
 CountryId=Id pais

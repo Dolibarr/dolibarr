@@ -201,8 +201,10 @@ if ($action == "set")
                 {
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }
-                else if ($conf->db->type == 'mssql')
+                else
                 {
+                    // Keyword ENGINE is MySQL-specific, so scrub it for
+                    // other database types (mssql, pgsql)
                     $buffer=preg_replace('/type=innodb/i','',$buffer);
                     $buffer=preg_replace('/ENGINE=innodb/i','',$buffer);
                 }

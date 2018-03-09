@@ -200,7 +200,7 @@ $sql.= " aa.rowid as aarowid";
 $sql.= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "expensereport_det as erd ON er.rowid = erd.fk_expensereport";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."'";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."'";
 $sql.= " WHERE er.fk_statut > 4 AND erd.fk_code_ventilation <= 0";
 // Add search filter like
 if (strlen(trim($search_expensereport))) {

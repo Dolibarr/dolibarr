@@ -140,7 +140,7 @@ if (GETPOST('target') == 'remote')
     if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     {
         $xmlfile = $xmlarray['content'];
-        //print "eee".$xmlfile."eee";
+        //print "xmlfilestart".$xmlfile."xmlfileend";
         $xml = simplexml_load_string($xmlfile);
     }
     else

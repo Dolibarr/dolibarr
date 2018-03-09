@@ -94,6 +94,11 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 
 -- For 7.0
 
+delete from llx_c_action_trigger where code = 'MEMBER_SUBSCRIPTION';
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_CREATE','Member subscribtion recorded','Executed when a member subscribtion is deleted','member',24);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_MODIFY','Member subscribtion modified','Executed when a member subscribtion is modified','member',24);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_DELETE','Member subscribtion deleted','Executed when a member subscribtion is deleted','member',24);
+
 ALTER TABLE llx_product_attribute_value DROP INDEX unique_ref;
 ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
 
@@ -321,6 +326,8 @@ CREATE TABLE IF NOT EXISTS llx_expensereport_ik (
     active          integer DEFAULT 1
 )ENGINE=innodb;
 
+ALTER TABLE llx_expensereport_ik ADD COLUMN ikoffset          double DEFAULT 0 NOT NULL;
+
 CREATE TABLE IF NOT EXISTS llx_c_exp_tax_cat (
     rowid       integer  AUTO_INCREMENT PRIMARY KEY,
     label       varchar(48) NOT NULL,
@@ -435,7 +442,7 @@ CREATE TABLE llx_expensereport_rules (
     fk_usergroup integer DEFAULT NULL,
     fk_c_type_fees integer NOT NULL,
     code_expense_rules_type varchar(50) NOT NULL,
-    is_for_all tinyint DEFAULT '0',
+    is_for_all tinyint DEFAULT 0,
     entity integer DEFAULT 1
 )ENGINE=innodb;
 
@@ -683,4 +690,18 @@ ALTER TABLE llx_subscription MODIFY COLUMN subscription double(24,8);
 ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
 ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
 ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
+
+
+create table llx_facture_rec_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
+
+-- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 

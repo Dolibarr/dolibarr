@@ -126,6 +126,7 @@ $result=$interface->run_triggers('PAYBOX_PAYMENT_OK',$object,$user,$langs,$conf)
 if ($result < 0) { $error++; $errors=$interface->errors; }
 // Fin appel triggers
 
+$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
 // Send an email
 if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
@@ -152,12 +153,11 @@ if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
 
 	$urlback=$_SERVER["REQUEST_URI"];
 	$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
-	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 	$content="";
 	if (! empty($tmptag['MEM']))
 	{
 		$langs->load("members");
-		$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+		$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 		$content.=$langs->trans("PaymentSubscription")."<br>\n";
 		$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
 		$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";

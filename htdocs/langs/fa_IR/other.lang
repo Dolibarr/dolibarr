@@ -162,9 +162,9 @@ SizeUnitinch=اینچ
 SizeUnitfoot=پا
 SizeUnitpoint=نقطه
 BugTracker=اشکالات
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=بازگشت به صفحه ورود
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=نحوه <b>تایید٪ s است.</b> <br> در این حالت، Dolibarr نمی توانند بفهمند و نه رمز عبور خود را تغییر دهید. <br> تماس با مدیر سیستم شما اگر می خواهید رمز عبور خود را تغییر دهید.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>پروفسور کد از٪ s</b> اطلاعات بسته به کشور های شخص ثالث است. <br> به عنوان مثال، برای <b>کشور٪، این کد٪ بازدید کنندگان</b> است.
 DolibarrDemo=Dolibarr ERP / CRM نسخه ی نمایشی
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=منطقه صادرات
 AvailableFormats=فرمت های موجود

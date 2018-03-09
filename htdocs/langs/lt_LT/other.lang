@@ -162,9 +162,9 @@ SizeUnitinch=colis
 SizeUnitfoot=pėda
 SizeUnitpoint=taškas
 BugTracker=Defekto trekeris
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=Atgal į prisijungimo puslapį
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Autentifikavimo režimas yra <b>%s</b>.<br>Šiame režime Dolibarr negali žinoti, nei pakeisti Jūsų slaptažodžio.<br>Susisiekite su sistemos administratoriumi, jei norite pakeisti savo slaptažodį.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>Prof ID%s</b> yra informacija, priklausoma nuo trečiosios šalies dalyvio šalies.<br>Pavyzdžiui, šaliai <b>%s</b>, jo kodas <b>%s</b>.
 DolibarrDemo=Dolibarr ERP/CRM demo
@@ -227,7 +227,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Eksporto sritis
 AvailableFormats=Galimi formatai

@@ -148,15 +148,18 @@ class FormMail extends Form
 	 * Add a file into the list of attached files (stored in SECTION array)
 	 *
 	 * @param 	string   $path   Full absolute path on filesystem of file, including file name
-	 * @param 	string   $file   Only filename
-	 * @param 	string   $type   Mime type
+	 * @param 	string   $file   Only filename (can be basename($path))
+	 * @param 	string   $type   Mime type (can be dol_mimetype($file))
 	 * @return	void
 	 */
-	function add_attached_files($path,$file,$type)
+	function add_attached_files($path, $file='', $type='')
 	{
 		$listofpaths=array();
 		$listofnames=array();
 		$listofmimes=array();
+
+		if (empty($file)) $file=basename($path);
+		if (empty($type)) $type=dol_mimetype($file);
 
 		$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
 		if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
@@ -252,6 +255,14 @@ class FormMail extends Form
 		$langs->load("other");
 		$langs->load("mails");
 
+
+		// Clear temp files. Must be done at beginning, before call of triggers
+		if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
+		{
+			$this->clear_attached_files();
+		}
+
+		// Call hook getFormMail
 		$hookmanager->initHooks(array('formmail'));
 
 		$parameters=array(
@@ -306,7 +317,6 @@ class FormMail extends Form
 
 			if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
 			{
-				$this->clear_attached_files();
 				if (! empty($arraydefaultmessage['joinfiles']) && is_array($this->param['fileinit']))
 				{
 					foreach($this->param['fileinit'] as $file)
@@ -399,7 +409,7 @@ class FormMail extends Form
 
 
 
-			$out.= '<table class="border" width="100%">'."\n";
+			$out.= '<table class="tableforemailform boxtablenotop" width="100%">'."\n";
 
 			// Substitution array
 			if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
@@ -982,25 +992,28 @@ class FormMail extends Form
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param	int			$id				Id of template to find, or -1 for first found with position = 0, or 0 for all
+	 *      @param	int			$id				Id of template to find, or -1 for first found with lower position, or 0 for first found whatever is position
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
+	 *      @param	string		$label			Label of template
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
-	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
+	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1, $label='')
 	{
 		$ret=array();
 
 		$sql = "SELECT label, topic, joinfiles, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
+		if ($label) $sql.=" AND label ='".$this->db->escape($label)."'";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
-		$sql.= $db->order("position,lang,label","ASC");
-		if ($id == -1) $sql.= $db->plimit(1);
+		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
+		else $sql.= $db->order("position,lang,label","ASC,ASC,ASC");		// If no language provided, we give priority to lang not defined
+		$sql.= $db->plimit(1);
 		//print $sql;
 
 		$resql = $db->query($sql);
@@ -1065,7 +1078,7 @@ class FormMail extends Form
 		$sql = "SELECT label, topic, content, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 0).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		$sql.= $this->db->order("lang,label","ASC");
@@ -1102,7 +1115,7 @@ class FormMail extends Form
 		$sql = "SELECT rowid, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
-		$sql.= " AND entity IN (".getEntity('c_email_templates', 1).")";
+		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";		// See all public templates or templates I own.
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		//if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";	// Return all languages
@@ -1185,7 +1198,7 @@ class FormMail extends Form
 					$extralabels = $extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
-					$product->fetch_optionals($product->id, $extralabels);
+					$product->fetch_optionals();
 					foreach ($extrafields->attribute_label as $key => $label) {
 						$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
 					}

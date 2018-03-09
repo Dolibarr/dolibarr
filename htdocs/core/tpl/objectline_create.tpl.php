@@ -131,7 +131,7 @@ if ($nolinesbefore) {
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>
-	<td class="linecolnum" align="center" width="5">
+	<td class="nobottom linecolnum" align="center" width="5"></td>
 	<?php
 }
 else {
@@ -143,48 +143,53 @@ else {
 
 	<?php
 
-	$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
-	if ($object->element == 'contrat')
+	$freelines = false;
+	if (empty($conf->global->MAIN_DISABLE_FREE_LINES))
 	{
-		if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
-		else $forceall=0;
-	}
-
-	// Free line
-	echo '<span class="prod_entry_mode_free">';
-	// Show radio free line
-	if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-	{
-		echo '<label for="prod_entry_mode_free">';
-		echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
-		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
-		echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
-		echo '> ';
-		// Show type selector
-		echo $langs->trans("FreeLineOfType");
-		echo '</label>';
-		echo ' ';
-	}
-	else
-	{
-		echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
-		// Show type selector
-		if ($forceall >= 0)
+		$freelines = true;
+		$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
+		if ($object->element == 'contrat')
 		{
-		    if (empty($conf->product->enabled) || empty($conf->service->enabled)) echo $langs->trans("Type");
-			else echo $langs->trans("FreeLineOfType");
+			if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
+			else $forceall=0;
+		}
+
+		// Free line
+		echo '<span class="prod_entry_mode_free">';
+		// Show radio free line
+		if ($forceall >= 0 && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+		{
+			echo '<label for="prod_entry_mode_free">';
+			echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
+			//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
+			echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : '');
+			echo '> ';
+			// Show type selector
+			echo $langs->trans("FreeLineOfType");
+			echo '</label>';
 			echo ' ';
 		}
+		else
+		{
+			echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
+			// Show type selector
+			if ($forceall >= 0)
+			{
+			    if (empty($conf->product->enabled) || empty($conf->service->enabled)) echo $langs->trans("Type");
+				else echo $langs->trans("FreeLineOfType");
+				echo ' ';
+			}
+		}
+
+		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
+
+		echo '</span>';
 	}
-
-	echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
-
-	echo '</span>';
 
 	// Predefined product/service
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
-		if ($forceall >= 0) echo '<br>';
+		if ($forceall >= 0 && $freelines) echo '<br>';
 		echo '<span class="prod_entry_mode_predef">';
 		echo '<label for="prod_entry_mode_predef">';
 		echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode')=='predef'?' checked':'').'> ';
@@ -317,8 +322,12 @@ else {
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
+	$remise_percent = $buyer->remise_percent;
+	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {
+		$remise_percent = $seller->remise_supplier_percent;
+	}
 	?>
-	<td class="nobottom nowrap linecoldiscount" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
@@ -403,7 +412,8 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 {
 	$colspan = 6;
 
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
 		$colspan++;
 	}
 	if ($this->situation_cycle_ref) {
@@ -447,6 +457,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 	?>
 
 	<tr id="trlinefordates" <?php echo $bcnd[$var]; ?>>
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { print '<td></td>'; } ?>
 	<td colspan="<?php echo $colspan; ?>">
 	<?php
 	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
@@ -593,6 +604,13 @@ jQuery(document).ready(function() {
 		jQuery('#trlinefordates').show();
 	});
 
+	<?php
+	if(!$freelines) { ?>
+		$("#prod_entry_mode_predef").click();
+	<?php
+	}
+	?>
+
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
@@ -711,10 +729,11 @@ jQuery(document).ready(function() {
         ?>
 
         /* To process customer price per quantity */
-        var pbq = $('option:selected', this).attr('data-pbq');
-        var pbqqty = $('option:selected', this).attr('data-pbqqty');
-        var pbqpercent = $('option:selected', this).attr('data-pbqpercent');
-        if (jQuery('#idprod').val() > 0 && typeof pbq !== "undefined")
+        var pbq = parseInt($('option:selected', this).attr('data-pbq'));
+        var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
+        var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
+
+        if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && typeof pbq !== "undefined")
         {
             console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
             jQuery("#pbq").val(pbq);
@@ -768,7 +787,6 @@ function setforfree() {
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
 	jQuery("#fournprice_predef").hide();
-	jQuery("#title_fourn_ref").show();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
 	jQuery("#title_up_ht_currency").show();
@@ -792,7 +810,6 @@ function setforpredef() {
 	jQuery("#fourn_ref").hide();
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
-	jQuery("#title_fourn_ref").hide();
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ht_currency").hide();

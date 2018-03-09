@@ -58,7 +58,6 @@ class modProjet extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->config_page_url = array("project.php@projet");
 		$this->picto='project';
 
@@ -264,7 +263,7 @@ class modProjet extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."projet_task_time as ptt ON pt.rowid = ptt.fk_task";
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' WHERE p.entity = '.$conf->entity;
+		$this->export_sql_end[$r] .=" WHERE p.entity IN (".getEntity('project').")";
 
 
 		// Import list of tasks

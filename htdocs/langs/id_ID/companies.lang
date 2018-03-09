@@ -56,6 +56,7 @@ Address=Alamat
 State=State/Province
 StateShort=State
 Region=Region
+Region-State=Region - State
 Country=Negara
 CountryCode=Country code
 CountryId=Country id

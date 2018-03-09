@@ -56,6 +56,7 @@ Address=Адрес
 State=Штат/Провинция
 StateShort=Штат
 Region=Регион
+Region-State=Region - State
 Country=Страна
 CountryCode=Код страны
 CountryId=Код страны

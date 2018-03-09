@@ -59,6 +59,8 @@ class AccountingJournal extends CommonObject
 	 */
 	function fetch($rowid = null, $journal_code = null)
 	{
+		global $conf;
+
 		if ($rowid || $journal_code)
 		{
 			$sql = "SELECT rowid, code, label, nature, active";
@@ -66,8 +68,11 @@ class AccountingJournal extends CommonObject
 			$sql .= " WHERE";
 			if ($rowid) {
 				$sql .= " rowid = " . (int) $rowid;
-			} elseif ($journal_code) {
+			}
+			elseif ($journal_code)
+			{
 				$sql .= " code = '" . $this->db->escape($journal_code) . "'";
+				$sql .= " AND entity  = " . $conf->entity;
 			}
 
 			dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);

@@ -29,13 +29,12 @@ create table llx_product_fournisseur_price
   fk_soc				integer,
   ref_fourn				varchar(30),
   fk_availability		integer,	   
-  price					double(24,8) DEFAULT 0,
+  price					double(24,8) DEFAULT 0,		-- price without tax for quantity
   quantity				double,
   remise_percent		double NOT NULL DEFAULT 0,
   remise				double NOT NULL DEFAULT 0,
-  unitprice				double(24,8) DEFAULT 0,
+  unitprice				double(24,8) DEFAULT 0,		-- unit price without tax
   charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
-  unitcharges			double(24,8) DEFAULT 0,		-- deprecated
   default_vat_code	    varchar(10),
   tva_tx				double(6,3) NOT NULL,
   localtax1_tx		    double(6,3) DEFAULT 0,

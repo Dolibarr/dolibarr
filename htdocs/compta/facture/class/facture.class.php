@@ -239,7 +239,7 @@ class Facture extends CommonInvoice
 	 * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user,$notrigger=0,$forceduedate=0)
+	function create(User $user, $notrigger=0, $forceduedate=0)
 	{
 		global $langs,$conf,$mysoc,$hookmanager;
 		$error=0;
@@ -265,13 +265,13 @@ class Facture extends CommonInvoice
 			$this->multicurrency_tx = 1;
 		}
 
-		dol_syslog(get_class($this)."::create user=".$user->id);
+		dol_syslog(get_class($this)."::create user=".$user->id." date=".$this->date);
 
 		// Check parameters
-		if (empty($this->date) || empty($user->id))
+		if (empty($this->date))
 		{
-			$this->error="ErrorBadParameter";
-			dol_syslog(get_class($this)."::create Try to create an invoice with an empty parameter (user, date, ...)", LOG_ERR);
+			$this->error="Try to create an invoice with an empty parameter (date)";
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -3;
 		}
 		$soc = new Societe($this->db);
@@ -557,6 +557,15 @@ class Facture extends CommonInvoice
 						}
 
 						$newinvoiceline->fk_parent_line=$fk_parent_line;
+
+						if($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except){
+                            $discount = new DiscountAbsolute($this->db);
+                            $discount->fetch($newinvoiceline->fk_remise_except);
+
+						    $discountId = $soc->set_remise_except($discount->amount_ht, $user, $discount->description, $discount->tva_tx);
+						    $newinvoiceline->fk_remise_except = $discountId;
+                        }
+
 						$result=$newinvoiceline->insert();
 
 						// Defined the new fk_parent_line
@@ -790,14 +799,17 @@ class Facture extends CommonInvoice
 		// Charge facture source
 		$facture=new Facture($this->db);
 
-                $this->fetch_optionals();
-                if(!empty($this->array_options)){
-                    $facture->array_options = $this->array_options;
-                }
+		// Retreive all extrafield
+		// fetch optionals attributes and labels
+		$this->fetch_optionals();
 
-                foreach($this->lines as &$line){
+        if(!empty($this->array_options)){
+                    $facture->array_options = $this->array_options;
+        }
+
+        foreach($this->lines as &$line){
                     $line->fetch_optionals();//fetch extrafields
-                }
+        }
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
@@ -958,11 +970,6 @@ class Facture extends CommonInvoice
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-            // Call trigger
-            $result=$this->call_trigger('BILL_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1033,7 +1040,7 @@ class Facture extends CommonInvoice
 			$line->pa_ht			= $marginInfos[0];
 
             // get extrafields from original line
-			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			$object->lines[$i]->fetch_optionals();
 			foreach($object->lines[$i]->array_options as $options_key => $value)
 				$line->array_options[$options_key] = $value;
 
@@ -1163,9 +1170,9 @@ class Facture extends CommonInvoice
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
                 $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-            if (! empty($this->total_tva))
+            if (! empty($this->total_localtax1))
                 $label.= '<br><b>' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
-            if (! empty($this->total_tva))
+            if (! empty($this->total_localtax2))
                 $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
                 $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
@@ -1230,7 +1237,7 @@ class Facture extends CommonInvoice
 
 		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount';
+		$sql = 'SELECT f.rowid,f.entity,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount';
 		$sql.= ', f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc, f.revenuestamp';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.datef as df, f.date_pointoftax';
@@ -1249,8 +1256,8 @@ class Facture extends CommonInvoice
         $sql.= ', f.fk_incoterms, f.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid AND c.entity IN (' . getEntity('c_payment_term').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
 		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
@@ -1267,6 +1274,8 @@ class Facture extends CommonInvoice
 				$obj = $this->db->fetch_object($result);
 
 				$this->id					= $obj->rowid;
+				$this->entity				= $obj->entity;
+
 				$this->ref					= $obj->facnumber;
 				$this->ref_client			= $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
@@ -1333,16 +1342,13 @@ class Facture extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-				// Retrieve all extrafield for invoice
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
-				*/
+				 */
 
 				$this->lines  = array();
 
@@ -2236,7 +2242,7 @@ class Facture extends CommonInvoice
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql.= " SET facnumber='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+			$sql.= " SET facnumber='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
 			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
 				$sql.= ", datef='".$this->db->idate($this->date)."'";
@@ -2359,9 +2365,12 @@ class Facture extends CommonInvoice
     					$final = ($this->lines[$i]->situation_percent == 100);
     					$i++;
     				}
-    				if ($final) {
-    					$this->setFinal($user);
-    				}
+
+    				if (empty($final)) $this->situation_final = 0;
+    				else $this->situation_final = 1;
+
+				$this->setFinal($user);
+
                 }
 			}
 		}
@@ -3004,6 +3013,9 @@ class Facture extends CommonInvoice
 		$line->total_ttc = $tabprice[2];
 		$line->total_localtax1 = $tabprice[9];
 		$line->total_localtax2 = $tabprice[10];
+		$line->multicurrency_total_ht  = $tabprice[16];
+		$line->multicurrency_total_tva = $tabprice[17];
+		$line->multicurrency_total_ttc = $tabprice[18];
 		$line->update($user);
 		$this->update_price(1);
 		$this->db->commit();
@@ -3204,63 +3216,6 @@ class Facture extends CommonInvoice
 			}
 		}
 	}
-
-	/**
-	 *  Return list of payments
-	 *
-	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
-	 *  @return     array					Array with list of payments
-	 */
-	function getListOfPayments($filtertype='')
-	{
-		$retarray=array();
-
-		$table='paiement_facture';
-		$table2='paiement';
-		$field='fk_facture';
-		$field2='fk_paiement';
-		$sharedentity='facture';
-		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
-		{
-			$table='paiementfourn_facturefourn';
-			$table2='paiementfourn';
-			$field='fk_facturefourn';
-			$field2='fk_paiementfourn';
-			$sharedentity='facture_fourn';
-		}
-
-		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
-		$sql.= ' WHERE pf.'.$field.' = '.$this->id;
-		//$sql.= ' WHERE pf.'.$field.' = 1';
-		$sql.= ' AND pf.'.$field2.' = p.rowid';
-		$sql.= ' AND p.fk_paiement = t.id';
-		$sql.= ' AND p.entity IN (' . getEntity($sharedentity).')';
-		if ($filtertype) $sql.=" AND t.code='PRE'";
-
-		dol_syslog(get_class($this)."::getListOfPayments", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i=0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
-				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
-				$i++;
-			}
-			$this->db->free($resql);
-			return $retarray;
-		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			dol_print_error($this->db);
-			return array();
-		}
-	}
-
 
 	/**
 	 *      Return next reference of customer invoice not already used (or last reference)
@@ -3834,6 +3789,7 @@ class Facture extends CommonInvoice
 
 		// Initialize parameters
 		$this->id=0;
+		$this->entity = 1;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;
@@ -4117,7 +4073,6 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$this->situation_final = 1;
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture SET situation_final = ' . $this->situation_final . ' where rowid = ' . $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);

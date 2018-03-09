@@ -56,6 +56,7 @@ Address=Adresa
 State=Shteti/Provinca
 StateShort=State
 Region=Krahina
+Region-State=Region - State
 Country=Country
 CountryCode=Country code
 CountryId=Country id

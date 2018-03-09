@@ -162,9 +162,9 @@ SizeUnitinch=pulgada
 SizeUnitfoot=pie
 SizeUnitpoint=punto
 BugTracker=Incidencias
-SendNewPasswordDesc=Este formulario le permite solicitar una nueva contraseña. Se le enviará a su dirección de e-mail.<br>El cambio se hará efectivo una vez que haga clic en el enlace de confirmación en el e-mail.<br />Compruebe su bandeja de entrada.
+SendNewPasswordDesc=Este formulario le permite obtener una nueva contraseña. Le será enviada a su e-mail.<br>El cambio será efectivo una vez haga clic en el enlace de confirmación del e-mail.<br>Revise su e-mail.
 BackToLoginPage=Volver a la página de conexión
-AuthenticationDoesNotAllowSendNewPassword=El modo de autenticación es <b>%s</b>. <br>En este modo, Dolibarr no conoce ni cambia su contraseña.<br /> Póngase en contacto con el administrador del sistema si desea cambiar su contraseña.
+AuthenticationDoesNotAllowSendNewPassword=El modo de autentificación de Dolibarr está configurado como "<b>%s</b>".<br>En este modo Dolibarr no puede conocer ni modificar su contraseña<br>Contacte con su administrador para conocer las modalidades de cambio.
 EnableGDLibraryDesc=Instale o active la libreria GD en su PHP para poder usar esta opción
 ProfIdShortDesc=<b>Prof Id %s</b> es una información dependiente del país del tercero.<br>Por ejemplo, para el país  <b>%s</b>, és el código <b>%s</b>.
 DolibarrDemo=Demo de Dolibarr ERP/CRM
@@ -227,7 +227,9 @@ Chart=Gráfico
 PassEncoding=Cifrado de contraseña
 PermissionsAdd=Permisos añadidos
 PermissionsDelete=Permisos eliminados
-
+YourPasswordMustHaveAtLeastXChars=Su contraseña debe contener al menos <strong>%s</strong>  caracteres
+YourPasswordHasBeenReset=Su contraseña ha sido restablecida con éxito
+ApplicantIpAddress=Dirección IP del solicitante
 ##### Export #####
 ExportsArea=Área de exportaciones
 AvailableFormats=Formatos disponibles

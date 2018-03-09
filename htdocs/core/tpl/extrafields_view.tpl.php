@@ -107,8 +107,16 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'" colspan="'.$cols.'">';
 
 			// Convert date into timestamp format
-			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('date','datetime'))) {
-				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $db->jdate($object->array_options['options_' . $key]);
+			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('date','datetime')))
+			{
+				$datenotinstring = $object->array_options['options_' . $key];
+				// print 'X'.$object->array_options['options_' . $key].'-'.$datenotinstring.'x';
+				if (! is_numeric($object->array_options['options_' . $key]))	// For backward compatibility
+				{
+					$datenotinstring = $db->jdate($datenotinstring);
+				}
+				//print 'x'.$object->array_options['options_' . $key].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
+				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection
@@ -131,7 +139,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			}
 			else
 			{
-				print $extrafields->showOutputField($key, $value);
+				print $extrafields->showOutputField($key, $value, '', (empty($extrafieldsobjectkey)?'':$extrafieldsobjectkey));
 			}
 			print '</td></tr>' . "\n";
 

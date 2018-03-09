@@ -110,13 +110,16 @@ class CMailFile
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
-	 *  @param  string  $sendcontext      	 'standard', 'emailing', ...
+	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
+	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 */
-	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='',$sendcontext='standard')
+	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='',$sendcontext='standard',$replyto='')
 	{
 		global $conf, $dolibarr_main_data_root;
 
 		$this->sendcontext = $sendcontext;
+
+		if (empty($replyto)) $replyto=$from;
 
 		// Define this->sendmode
 		$this->sendmode = '';
@@ -236,7 +239,7 @@ class CMailFile
 			// Define smtp_headers
 			$this->subject = $subject;
 			$this->addr_from = $from;
-			$this->reply_to = $from;         // Set this property after constructor if you want to use another value
+			$this->reply_to = $replyto;
 			$this->errors_to = $errors_to;
 			$this->addr_to = $to;
 			$this->addr_cc = $addr_cc;
@@ -295,7 +298,7 @@ class CMailFile
 			$smtps->setTO($this->getValidAddress($to,0,1));
 			$smtps->setFrom($this->getValidAddress($from,0,1));
 			$smtps->setTrackId($trackid);
-			$smtps->setReplyTo($this->getValidAddress($from,0,1));   // Set property with this->smtps->setReplyTo after constructor if you want to use another value than the From
+			$smtps->setReplyTo($this->getValidAddress($replyto,0,1));
 
 			if (! empty($moreinheader)) $smtps->setMoreInHeader($moreinheader);
 
@@ -350,7 +353,7 @@ class CMailFile
 			$this->phpmailer->Subject($this->encodetorfc2822($subject));
 			$this->phpmailer->setTO($this->getValidAddress($to,0,1));
 			$this->phpmailer->SetFrom($this->getValidAddress($from,0,1));
-			$this->phpmailer->SetReplyTo($this->getValidAddress($from,0,1));   // Set property with this->phpmailer->setReplyTo after constructor if you want to use another value than the From
+			$this->phpmailer->SetReplyTo($this->getValidAddress($replyto,0,1));
 			// TODO Add trackid into smtp header
 			// TODO if (! empty($moreinheader)) ...
 
@@ -439,7 +442,7 @@ class CMailFile
 			// Set the To addresses with an associative array
 			if (! empty($to)) $this->message->setTo($this->getArrayAddress($to));
 
-			if (! empty($from)) $this->message->SetReplyTo($this->getArrayAddress($from));
+			if (! empty($replyto)) $this->message->SetReplyTo($this->getArrayAddress($replyto));
 
 			$this->message->setCharSet($conf->file->character_set_client);
 
@@ -503,7 +506,7 @@ class CMailFile
 
 
 	/**
-	 * Send mail that was prepared by constructor
+	 * Send mail that was prepared by constructor.
 	 *
 	 * @return    boolean     True if mail sent, false otherwise
 	 */
@@ -516,18 +519,24 @@ class CMailFile
 
 		$res=false;
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) || !empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			$hookmanager->initHooks(array('maildao'));
-			$reshook = $hookmanager->executeHooks('doactions', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-			if (! empty($reshook))
+			$hookmanager->initHooks(array('mail'));
+
+			$parameters=array(); $action='';
+			$reshook = $hookmanager->executeHooks('sendMail', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0)
 			{
-				$this->error = "Error in hook maildao doactions " . $reshook;
+				$this->error = "Error in hook maildao sendMail " . $reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_ERR);
 
 				return $reshook;
+			}
+			if ($reshook == 1)	// Hook replace standard code
+			{
+				return true;
 			}
 
 			// Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
@@ -579,6 +588,12 @@ class CMailFile
 				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
 			}
 
+			if(!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+				$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
+				$this->addr_cc = '';
+				$this->addr_bcc = '';
+			}
+
 			// Action according to choosed sending method
 			if ($this->sendmode == 'mail')
 			{
@@ -599,13 +614,22 @@ class CMailFile
 				if (! empty($conf->global->$keyforsmtpserver)) ini_set('SMTP',$conf->global->$keyforsmtpserver);
 				if (! empty($conf->global->$keyforsmtpport))   ini_set('smtp_port',$conf->global->$keyforsmtpport);
 
+				$res=true;
+				if ($res && ! $this->subject)
+				{
+					$this->error="Failed to send mail with php mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Subject is empty";
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					$res=false;
+				}
 				$dest=$this->getValidAddress($this->addr_to,2);
-				if (! $dest)
+				if ($res && ! $dest)
 				{
 					$this->error="Failed to send mail with php mail to HOST=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					$res=false;
 				}
-				else
+
+				if ($res)
 				{
 					$additionnalparam = '';	// By default
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
@@ -698,14 +722,14 @@ class CMailFile
 
 				$res=true;
 				$from=$this->smtps->getFrom('org');
-				if (! $from)
+				if ($res && ! $from)
 				{
 					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Sender address '$from' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				}
 				$dest=$this->smtps->getTo();
-				if (! $dest)
+				if ($res && ! $dest)
 				{
 					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
@@ -790,13 +814,21 @@ class CMailFile
 			}
 			else
 			{
-
 				// Send mail method not correctly defined
 				// --------------------------------------
 
 				return 'Bad value for sendmode';
 			}
 
+			$parameters=array(); $action='';
+			$reshook = $hookmanager->executeHooks('sendMailAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0)
+			{
+				$this->error = "Error in hook maildao sendMailAfter " . $reshook;
+				dol_syslog("CMailFile::sendfile: mail end error=" . $this->error, LOG_ERR);
+
+				return $reshook;
+			}
 		}
 		else
 		{

@@ -3,7 +3,7 @@
 # Right
 Permission23101 = Ler trabalho agendadocar
 Permission23102 = Criar/atualizar trabalho agendado
-Permission23103 = Apagar Trabalho Agendado
+Permission23103 = Eliminar trabalho agendado
 Permission23104 = Executar Trabalho Agendado
 # Admin
 CronSetup= Configuração da gestão de tarefas agendadas
@@ -24,7 +24,7 @@ CronLastResult=Latest result code
 CronCommand=Comando
 CronList=Tarefas agendadas
 CronDelete=Delete scheduled jobs
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronConfirmDelete=Tem certeza de que deseja eliminar estes trabalhos agendados?
 CronExecute=Launch scheduled job
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.

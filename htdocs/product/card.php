@@ -124,6 +124,9 @@ $hookmanager->initHooks(array('productcard','globalcard'));
 
 if ($cancel) $action = '';
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 $createbarcode=empty($conf->barcode->enabled)?0:1;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) $createbarcode=0;
 
@@ -134,7 +137,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     // Type
-    if ($action ==	'setfk_product_type' && $user->rights->produit->creer)
+	if ($action == 'setfk_product_type' && $usercancreate)
     {
     	$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -143,7 +146,7 @@ if (empty($reshook))
 
     // Actions to build doc
     $upload_dir = $conf->produit->dir_output;
-    $permissioncreate = $user->rights->produit->creer;
+    $permissioncreate = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -181,7 +184,7 @@ if (empty($reshook))
     }
 
     // Add a product or service
-    if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
+    if ($action == 'add' && $usercancreate)
     {
         $error=0;
 
@@ -360,7 +363,7 @@ if (empty($reshook))
     }
 
     // Update a product or service
-    if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
+    if ($action == 'update' && $usercancreate)
     {
     	if (GETPOST('cancel','alpha'))
         {
@@ -477,7 +480,7 @@ if (empty($reshook))
 
     // Action clone object
     if ($action == 'confirm_clone' && $confirm != 'yes') { $action=''; }
-    if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
+    if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate)
     {
         if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
         {
@@ -565,12 +568,9 @@ if (empty($reshook))
 
     // Delete a product
     if ($action == 'confirm_delete' && $confirm != 'yes') { $action=''; }
-    if ($action == 'confirm_delete' && $confirm == 'yes')
-    {
-        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
-        {
-            $result = $object->delete($user);
-        }
+    if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete)
+	{
+		$result = $object->delete($user);
 
         if ($result > 0)
         {
@@ -887,7 +887,7 @@ else
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------
-    if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
+	if ($action == 'create' && $usercancreate)
     {
         //WYSIWYG Editor
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1106,11 +1106,11 @@ else
             print "</td></tr>";
         //}
 
-		if($conf->categorie->enabled) {
+		if ($conf->categorie->enabled) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
 			print "</td></tr>";
 		}
 
@@ -1240,7 +1240,7 @@ else
     else if ($object->id > 0)
     {
         // Fiche en mode edition
-        if ($action == 'edit' &&  ((($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) ||  ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))))
+        	if ($action == 'edit' && $usercancreate)
         {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1464,6 +1464,7 @@ else
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id,Categorie::TYPE_PRODUCT);
+				$arrayselected=array();
 				foreach($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
@@ -1587,15 +1588,15 @@ else
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
 
-            // Type
-            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
-            {
-            	// TODO change for compatibility with edit in place
-            	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-                print '<tr><td class="titlefield">'.$form->editfieldkey("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
-                print $form->editfieldval("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat);
-                print '</td></tr>';
-            }
+			// Type
+			if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
+			{
+				// TODO change for compatibility with edit in place
+				$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="titlefield">'.$form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat).'</td><td colspan="2">';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+				print '</td></tr>';
+			}
 
             if ($showbarcode)
             {
@@ -1604,7 +1605,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '</td>';
-                if (($action != 'editbarcodetype') && ! empty($user->rights->produit->creer) && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype' || $action == 'editbarcode')
@@ -1628,25 +1629,25 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '</td>';
-                if (($action != 'editbarcode') && ! empty($user->rights->produit->creer) && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcode') && $usercancreate && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
                 {
-			$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
-			if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
+					$tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
+					if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
 
-			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="setbarcode">';
-			print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-			print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
-			print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					print '<input type="hidden" name="action" value="setbarcode">';
+					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
+					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+					print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+					print '</form>';
                 }
                 else
                 {
-                    print $object->barcode;
+					print $object->barcode;
                 }
                 print '</td></tr>'."\n";
             }
@@ -1740,7 +1741,7 @@ else
             // Batch number management (to batch)
             if (! empty($conf->productbatch->enabled)) {
                 print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
-                if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+                if (! empty($conf->use_javascript_ajax) && $usercancreate && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
                     print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
                 } else {
                     print $object->getLibStatut(0,2);
@@ -1973,9 +1974,8 @@ if ($action != 'create' && $action != 'edit')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     if (empty($reshook))
-    {
-        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) ||
-           ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
+	{
+		if ($usercancreate)
         {
             if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
@@ -1993,8 +1993,7 @@ if ($action != 'create' && $action != 'edit')
         }
         $object_is_used = $object->isObjectUsed($object->id);
 
-        if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer)
-        || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
+        if ($usercandelete)
         {
             if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
             {
@@ -2150,8 +2149,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $relativepath = $comref . '/' . $objectref . '.pdf';
     $filedir = $conf->produit->dir_output . '/' . $objectref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed=$user->rights->produit->lire;
-    $delallowed=$user->rights->produit->creer;
+    $genallowed=$usercanread;
+    $delallowed=$usercancreate;
 
     $var=true;
 

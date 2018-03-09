@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable utilitzat per usuaris tercers
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=S'utilitzarà un compte comptable dedicat definit en la fitxa d'usuari per a omplir el Llibre Major, o com valor predeterminar de la comptabilitat del Llibre Major si no es defineix un compte comptable en la fitxa d'usuari.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per a despeses de personal
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per als pagaments salarials
 Salary=Sou
 Salaries=Sous
 NewSalaryPayment=Nou pagament de sous

@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=E-pasti no faila
 MailingModuleDescEmailsFromUser=Emails input by user
 MailingModuleDescDolibarrUsers=Lietotāji ar e-pastu
 MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s failā
