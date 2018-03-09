@@ -844,8 +844,8 @@ class pdf_azur extends ModelePDFPropales
                 foreach ($arraynotegrids as $key => $grid) {
                     $pdf->setPage($key);
                     // Rect prend une longueur en 3eme param
-                    //$pdf->SetDrawColor(192,192,192);
-                    $pdf->SetDrawColor(255,112,112);
+                    $pdf->SetDrawColor(192,192,192);
+                    //$pdf->SetDrawColor(255,112,112);
                     //$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
                     $pdf->RoundedRect($grid['left'], $grid['top'], $grid['width'], $grid['height'], 1);
                     $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
