@@ -276,7 +276,7 @@ if ($massaction == 'withdrawrequest')
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
 				}
-				if(!($objecttmp->statut > Facture::STATUS_DRAFT)){
+				if (!($objecttmp->statut > Facture::STATUS_DRAFT)){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				}
@@ -298,11 +298,11 @@ if ($massaction == 'withdrawrequest')
 					$numprlv = $db->num_rows($result_sql);
 				}
 
-				if($numprlv>0){
+				if ($numprlv>0){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
 				}
-				if(!empty($objecttmp->mode_reglement_id ) && $objecttmp->mode_reglement_id != 3){
+				if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
 				}
