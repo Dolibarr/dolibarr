@@ -1460,6 +1460,7 @@ class Form
 	 *  @param	string	$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 *  @param	string	$morecss		More css
 	 *  @param  int     $noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 *  @param  int		$outputmode     0=HTML select string, 1=Array
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
