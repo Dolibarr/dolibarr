@@ -998,7 +998,7 @@ if ($action == 'create')
 		$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 		$soc = $objectsrc->thirdparty;
 
-		$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+		$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0)); // TODO maybe add default value option
 		$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 		$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_supplier_percent)?$soc->remise_supplier_percent:0));
 		$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
@@ -1056,7 +1056,7 @@ if ($action == 'create')
 	if ($soc->id > 0)
 	{
 		// Discounts for third party
-		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';		
+		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 
 		$absolute_discount = $soc->getAvailableDiscounts('', '', 0, 1);
 
