@@ -1,322 +1,298 @@
 <?php
-/* Copyright (C) 2018 	PtibogXIV        <support@ptibogxiv.net>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+define("NOLOGIN",1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
+
+$res=0;
+if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");		// to work if your module directory is into a subdir of root htdocs directory
+if (! $res) die("Include of main fails");
+
+if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-
-/**
- *	Stripe class
- */
-class Stripe extends CommonObject
+// You can find your endpoint's secret in your webhook settings
+if (isset($_GET['connect'])){ 
+if (isset($_GET['test']))
 {
-	public $rowid;
-	public $fk_soc;
-	public $fk_key;
-	public $id;
-	public $mode;
-	public $entity;
-	public $statut;
-	public $type;
-	public $code;
-	public $message;
+$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
+$service = 'StripeTest';
+}
+else 
+{
+$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
+$service = 'StripeLive';	
+}
+}else {
+if (isset($_GET['test']))
+{
+$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
+$service = 'StripeTest';
+}
+else 
+{
+$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
+$service = 'StripeLive';
+}
+}
+$payload = @file_get_contents("php://input");
+$sig_header = $_SERVER["HTTP_STRIPE_SIGNATURE"];
+$event = null;
 
-	/**
-	 * 	Constructor
-	 *
-	 * 	@param	DoliDB		$db			Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
+$error = 0;
+    
+try {
+$event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+}                                                                            
+catch(\UnexpectedValueException $e) {
+  // Invalid payload
+  http_response_code(400); // PHP 5.4 or greater
+  exit();
+} catch(\Stripe\Error\SignatureVerification $e) {
+  // Invalid signature
+  http_response_code(400); // PHP 5.4 or greater
+  exit();
+}
 
-	}
+// Do something with $event
 
+http_response_code(200); // PHP 5.4 or greater
+$langs->load("main");	
+$user = new User($db);
+$user->fetch(5);
+$user->getrights();
 
-	/**
-	 * Return stripe account
-	 *
-	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
-	 * @return 	int					???
-	 */
-	public function getStripeAccount($mode='StripeTest')
-	{
-		global $conf;
-
-		$sql = "SELECT tokenstring";
+if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled)) {
+		$sql = "SELECT entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND service = '".$mode."'";
+		$sql.= " WHERE service = '$service' and tokenstring = '%".$event->account."%'"; 
 
-		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-    	if ($result)
+		dol_syslog(get_class($db) . "::fetch", LOG_DEBUG);
+		$result = $db->query($sql);
+    if ($result)
 		{
-			if ($this->db->num_rows($result))
+			if ($db->num_rows($result))
 			{
-				$obj = $this->db->fetch_object($result);
-    			$tokenstring=$obj->tokenstring;
+				$obj = $db->fetch_object($result);
+    $key=$obj->entity;
+    }
+    else {$key=1;}
+    }
+    else {$key=1;}
+$ret=$mc->switchEntity($key);
+if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");		// to work if your module directory is into a subdir of root htdocs directory
+if (! $res) die("Include of main fails");
+}
 
-    			$tmparray = dol_json_decode($tokenstring);
-    			$key = $tmparray->stripe_user_id;
-    		}
-    		else {
-    			$tokenstring='';
-    		}
-    	}
-    	else {
-    		dol_print_error($this->db);
-    	}
+// list of  action
+$stripe=new Stripe($db);
+if ($event->type == 'payout.created') {
+ 		    $error=0;
 
-		return $key;
-	}
+        $result=dolibarr_set_const($db, $service."_NEXTPAYOUT",date('Y-m-d H:i:s',$event->data->object->arrival_date),'chaine',0,'',$conf->entity);
+ 
+        if ($result > 0)
+        {
+$body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." est attendu sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date); 
+$subject = '[NOTIFICATION] Virement programmée';
+$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers); 
+            return 1;
+        }
+        else
+        {
+            $error++;
+            return -1;
+        }
+}
+elseif ($event->type == 'payout.paid') {
+global $conf;
+ $error=0;
+        $result=dolibarr_set_const($db, $service."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
+        if ($result)
+        {
+	$langs->load("errors");
 
-	/**
-	 * customerStripe
-	 *
-	 * @param int	 $id		???
-	 * @param string $key		???
-	 * @return \Stripe\StripeObject|\Stripe\ApiResource
-	 */
-	public function customerStripe($id,$key)
-	{
-		global $conf;
-		if (empty($conf->global->STRIPECONNECT_LIVE)) {
-			$mode = 0;
-		} else {
-			if (empty($conf->global->STRIPE_LIVE)) {
-				$mode = 0;
-			} else {
-				$mode = $conf->global->STRIPE_LIVE;
-			}
-		}
-		$sql = "SELECT rowid,fk_soc,fk_key,mode,entity";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_stripe";
-		$sql .= " WHERE fk_soc = " . $id . " ";
-		$sql .= " AND  mode=" . $mode . " AND entity IN (" . getEntity('stripe') . ")";
+	$dateo = dol_now();
+	$label = $event->data->object->description;
+	$amount= $event->data->object->amount/100;
+	$amount_to= $event->data->object->amount/100;
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$soc = new Societe($this->db);
-			$soc->fetch($id);
-			$num = $this->db->num_rows($resql);
-			if ($num) {
-				$obj = $this->db->fetch_object($resql);
-				$tiers = $obj->fk_key;
-				if ($conf->entity == 1) {
-					$customer = \Stripe\Customer::retrieve("$tiers");
-				} else {
-					$customer = \Stripe\Customer::retrieve("$tiers", array(
-					"stripe_account" => $key
-					));
-				}
-			} else {
-				if ($conf->entity == 1) {
-					$customer = \Stripe\Customer::create(array(
-					"email" => $soc->email,
-					"description" => $soc->name
-					));
-				} else {
-					$customer = \Stripe\Customer::create(array(
-					"email" => $soc->email,
-					"description" => $soc->name
-					), array(
-					"stripe_account" => $key
-					));
-				}
-				$customer_id = "" . $customer->id . "";
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_stripe (fk_soc,fk_key,mode,entity)";
-				$sql .= " VALUES ($id,'$customer_id'," . $mode . "," . $conf->entity . ")";
-				dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
-				$resql = $this->db->query($sql);
-			}
-		}
-		return $customer;
-	}
+		$accountfrom=new Account($db);
+		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
 
-	/**
-	 * createPaymentStripe
-	 *
-	 * @param unknown $amount			???
-	 * @param unknown $currency			???
-	 * @param unknown $origin			???
-	 * @param unknown $item				???
-	 * @param unknown $source			???
-	 * @param unknown $customer			???
-	 * @param unknown $account			???
-	 * @return Stripe
-	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account)
-	{
-		global $conf;
-		if (empty($conf->global->STRIPECONNECT_LIVE)) {
-			$mode = 0;
-		} else {
-			if (empty($conf->global->STRIPE_LIVE)) {
-				$mode = 0;
-			} else {
-				$mode = $conf->global->STRIPE_LIVE;
-			}
-		}
-		$sql = "SELECT fk_soc,fk_key,mode,entity";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_stripe";
-		$sql .= " WHERE fk_key = '$customer' ";
-		$sql .= " AND mode=" . $mode . " ";
+		$accountto=new Account($db);
+		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANFERS);
 
-		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
-				$entite = $obj->entity;
-				$fksoc = $obj->fk_soc;
-			}
-		}
-		$stripeamount = round($amount * 100);
-		$societe = new Societe($this->db);
-		$societe->fetch($fksoc);
-
-		if ($origin == order) {
-			$order = new Commande($this->db);
-			$order->fetch($item);
-			$ref = $order->ref;
-			$description = "ORD=" . $ref . ".CUS=" . $societe->code_client;
-		} elseif ($origin == invoice) {
-			$invoice = new Facture($this->db);
-			$invoice->fetch($item);
-			$ref = $invoice->ref;
-			$description = "INV=" . $ref . ".CUS=" . $societe->code_client;
+		if ($accountto->currency_code != $accountfrom->currency_code) {
+			$error++;
+			setEventMessages($langs->trans("ErrorTransferBetweenDifferentCurrencyNotPossible"), null, 'errors');
 		}
 
-		$metadata = array(
-		"source" => "" . $origin . "",
-		"idsource" => "" . $item . "",
-		"idcustomer" => "" . $societe->id . ""
-		);
-		$return = new Stripe($this->db);
-		try {
-			if ($stripeamount >= 100) {
-				if ($entite == '1' or empty($conf->stripeconnect->enabled)) {
-					if (preg_match('/acct_/i', $source)) {
-						$charge = \Stripe\Charge::create(array(
-						"amount" => "$stripeamount",
-						"currency" => "$currency",
-						// "statement_descriptor" => " ",
-						"metadata" => $metadata,
-						"source" => "$source"
-						));
-					} else {
-						$charge = \Stripe\Charge::create(array(
-						"amount" => "$stripeamount",
-						"currency" => "$currency",
-						// "statement_descriptor" => " ",
-						"description" => "$description",
-						"metadata" => $metadata,
-						"receipt_email" => $societe->email,
-						"source" => "$source",
-						"customer" => "$customer"
-						), array(
-						"idempotency_key" => "$ref"
-						));
-					}
-				} else {
-					$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-					if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-						$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
-					}
-					$charge = \Stripe\Charge::create(array(
-					"amount" => "$stripeamount",
-					"currency" => "$currency",
-					// "statement_descriptor" => " ",
-					"description" => "$description",
-					"metadata" => $metadata,
-					"source" => "$source",
-					"customer" => "$customer",
-					"application_fee" => "$fee"
-					), array(
-					"idempotency_key" => "$ref",
-					"stripe_account" => "$account"
-					));
-				}
-				if (isset($charge->id)) {}
-			}
+		if ($accountto->id != $accountfrom->id)
+		{
 
-			$return->statut = 'success';
-			$return->id = $charge->id;
-			if ($charge->source->type == 'card') {
-				$return->message = $charge->source->card->brand . " ****" . $charge->source->card->last4;
-			} elseif ($charge->source->type == 'three_d_secure') {
-				$stripe = new Stripe($this->db);
-				$src = \Stripe\Source::retrieve("" . $charge->source->three_d_secure->card . "", array(
-				"stripe_account" => $stripe->getStripeAccount($conf->entity)
-				));
-				$return->message = $src->card->brand . " ****" . $src->card->last4;
-			} else {
-				$return->message = $charge->id;
-			}
-		} catch (\Stripe\Error\Card $e) {
-			// Since it's a decline, \Stripe\Error\Card will be caught
-			$body = $e->getJsonBody();
-			$err = $body['error'];
+			$bank_line_id_from=0;
+			$bank_line_id_to=0;
+			$result=0;
 
-			$return->statut = 'error';
-			$return->id = $err['charge'];
-			$return->type = $err['type'];
-			$return->code = $err['code'];
-			$return->message = $err['message'];
-			$body = "Une erreur de paiement est survenue. Voici le code d'erreur: <br />" . $return->id . " " . $return->message . " ";
-			$subject = '[NOTIFICATION] Erreur de paiement';
-			$headers = 'From: "ptibogxiv.net" <' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '>';
-			mail('' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '', $subject, $body, $headers);
-			$error ++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\RateLimit $e) {
-			// Too many requests made to the API too quickly
-			$error ++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\InvalidRequest $e) {
-			// Invalid parameters were supplied to Stripe's API
-			$error ++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\Authentication $e) {
-			// Authentication with Stripe's API failed
-			// (maybe you changed API keys recently)
-			$error ++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\ApiConnection $e) {
-			// Network communication with Stripe failed
-			$error ++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Error\Base $e) {
-			// Display a very generic error to the user, and maybe send
-			// yourself an email
-			$error ++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (Exception $e) {
-			// Something else happened, completely unrelated to Stripe
-			$error ++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		}
-		return $return;
-	}
+			// By default, electronic transfert from bank to bank
+			$typefrom='PRE';
+			$typeto='VIR';
+
+			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
+			if (! ($bank_line_id_from > 0)) $error++;
+			if ((! $error) && ($accountto->currency_code == $accountfrom->currency_code)) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+			if ((! $error) && ($accountto->currency_code != $accountfrom->currency_code)) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount_to), '', '', $user);
+			if (! ($bank_line_id_to > 0)) $error++;
+
+		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (! ($result > 0)) $error++;
+		    if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (! ($result > 0)) $error++;
+		}            
+            
+$body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." a ete effectue sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date); 
+$subject = '[NOTIFICATION] Virement effectué';
+$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers); 
+  
+            return 1;
+        }
+        else
+        {
+      			$error++;
+            return -1;
+        }
+}
+elseif ($event->type == 'charge.succeeded') {
+
+//TODO: create fees
 
 }
+elseif ($event->type == 'charge.failed') {
+
+$subject = 'Your payment has been received: '.$event->data->object->id.'';
+$headers = 'From: "test webhook" <ptibogxiv@ptibogxiv.net>';
+//mail('ptibogxiv@msn.com', $subject, 'test', $headers); 
+
+}
+elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
+
+$stripe=new Stripe($db);
+$charge=$stripe->CreatePaymentStripe($event->data->object->amount/100,$event->data->object->currency,$event->data->object->metadata->source,$event->data->object->metadata->idsource,$event->data->object->id,$event->data->object->metadata->customer,$stripe->getStripeAccount($service));
+
+if (isset($charge->id) && $charge->statut=='error'){
+$msg=$charge->message;
+$code=$charge->code;
+$error++;
+}
+elseif (isset($charge->id) && $charge->statut=='success' && $event->data->object->metadata->source=='order') {
+$order=new Commande($db);
+$order->fetch($event->data->object->metadata->idsource);
+$invoice = new Facture($db);
+$idinv=$invoice->createFromOrder($order);
+ 
+if ($idinv > 0)
+{
+$result=$invoice->validate($user);
+if ($result > 0) {
+$invoice->fetch($idinv);
+$paiement = $invoice->getSommePaiement();
+$creditnotes=$invoice->getSumCreditNotesUsed();
+$deposits=$invoice->getSumDepositsUsed();
+$ref=$invoice->ref;
+$ifverif=$invoice->socid;
+$currency=$invoice->multicurrency_code;
+$total=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+}else{
+$msg=$invoice->error; 
+$error++;
+}
+}else{
+$msg=$invoice->error;
+$error++;
+} 
+}
+
+if (!$error){           
+$datepaye = dol_now();
+$paiementcode ="CB"; 
+$amounts=array(); 
+$amounts[$invoice->id] = $total;
+$multicurrency_amounts=array();
+//$multicurrency_amounts[$item] = $total; 
+	    $paiement = new Paiement($db);
+	    $paiement->datepaye     = $datepaye;
+	    $paiement->amounts      = $amounts;   // Array with all payments dispatching
+	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
+	    $paiement->paiementid   = dol_getIdFromCode($db,$paiementcode,'c_paiement');
+	    $paiement->num_paiement = $charge->message;
+	    $paiement->note         = '';
+}
+
+if (! $error){
+$paiement_id=$paiement->create($user, 0);
+  
+if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($invoice->lines)){
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$invoice->modelpdf;
+				$ret = $invoice->fetch($invoice->id); // Reload to get new records
+
+$invoice->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);}         
+if ($paiement_id < 0){
+	            $msg=$paiement->errors;
+	            $error++;
+}else{ 
+        if ($event->data->object->metadata->source=='order') {
+        $order->classifyBilled($user);
+        }        
+          }
+	    }
+      
+if (! $error){
+	    	$label='(CustomerInvoicePayment)';
+	    	if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
+	        $paiement->addPaymentToBank($user,'payment',$label,$conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS,'','');
+	        if ($result < 0)
+	        {
+	            $msg=$paiement->errors;
+	            $error++;
+	        } 
+$invoice->set_paid($user);                    
+}          
+
+$body = ""; 
+$subject = 'Facture '.$invoice->ref;
+$headers = 'From: "test webhook" <ptibogxiv@ptibogxiv.net>';
+//mail('ptibogxiv@msn.com', $subject, $body, $headers); 
+}
+elseif ($event->type == 'customer.deleted') {
+      $db->begin();
+      $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_stripe WHERE fk_key = '".$event->data->object->id."' "; 
+      dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+      $db->query($sql);
+      $db->commit();
+}
+
+
+
+?>
