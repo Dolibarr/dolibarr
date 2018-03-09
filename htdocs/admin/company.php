@@ -313,10 +313,9 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
-	$var=true;
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+	print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 	// Name
 
@@ -411,7 +410,6 @@ if ($action == 'edit' || $action == 'updateedit')
 	// IDs of the company (country-specific)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
-	$var=true;
 
 	$langs->load("companies");
 
@@ -697,11 +695,12 @@ else
 	//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 	//print '</div><br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("CompanyName").'</td><td>';
+	print '<tr class="oddeven"><td class="titlefield wordbreak">'.$langs->trans("CompanyName").'</td><td>';
 	if (! empty($conf->global->MAIN_INFO_SOCIETE_NOM)) print $conf->global->MAIN_INFO_SOCIETE_NOM;
 	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyName")).'</font>';
 	print '</td></tr>';
@@ -791,7 +790,7 @@ else
 	print '<tr class="oddeven"><td class="tdtop">'.$langs->trans("Note").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? nl2br($conf->global->MAIN_INFO_SOCIETE_NOTE) : '') . '</td></tr>';
 
 	print '</table>';
-
+	print "</div>";
 
 	print '<br>';
 
@@ -799,8 +798,10 @@ else
 	// IDs of the company (country-specific)
 	print '<form name="formsoc" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield wordbreak">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Managing Director(s)
 
@@ -956,12 +957,16 @@ else
 	print '<tr class="oddeven"><td class="tdtop">'.$langs->trans("CompanyObject").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? nl2br($conf->global->MAIN_INFO_SOCIETE_OBJECT) : '') . '</td></tr>';
 
 	print '</table>';
+	print "</div>";
+
 	print '</form>';
 
 	/*
 	 *  fiscal year beginning
 	 */
 	print '<br>';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
@@ -973,11 +978,13 @@ else
 	print dol_print_date(dol_mktime(12,0,0,$monthstart,1,2000,1),'%B','gm') . '</td></tr>';
 
 	print "</table>";
+	print "</div>";
 
 	/*
 	 *  tax options
 	 */
 	print '<br>';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
@@ -1005,7 +1012,7 @@ else
 	print "</td></tr>\n";
 
 	print "</table>";
-
+	print "</div>";
 
 	/*
 	 *  Local Taxes
@@ -1014,6 +1021,7 @@ else
 	{
 		// Local Tax 1
 		print '<br>';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
@@ -1061,11 +1069,13 @@ else
 		print "</td></tr>\n";
 
 		print "</table>";
+		print "</div>";
 	}
 	if ($mysoc->useLocalTax(2))    // True if we found at least on vat with a setup adding a localtax 1
 	{
 		// Local Tax 2
 		print '<br>';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td class="titlefield">'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
@@ -1113,6 +1123,7 @@ else
 		print "</td></tr>\n";
 
 		print "</table>";
+		print "</div>";
 	}
 
 

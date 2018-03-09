@@ -583,10 +583,10 @@ class Project extends CommonObject
                     $i++;
                 }
                 $this->db->free($result);
-
-                /* Return array */
-                return $elements;
             }
+
+            /* Return array even if empty*/
+            return $elements;
         }
         else
         {

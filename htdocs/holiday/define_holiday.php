@@ -118,7 +118,7 @@ if (empty($reshook))
     	    $userValue = $_POST['nb_holiday_'.$val['rowid']];
     	    $userValue = $userValue[$userID];
 
-    	    if (!empty($userValue))
+    	    if (!empty($userValue) || (string) $userValue == '0')
     	    {
     	        $userValue = price2num($userValue,5);
     	    } else {
@@ -174,11 +174,14 @@ $userstatic=new User($db);
 llxHeader('', $langs->trans('CPTitreMenu'));
 
 
+$typeleaves=$holiday->getTypes(1,1);
+
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
@@ -213,8 +216,9 @@ if (empty($user->rights->holiday->read_all))
 	$userchilds=$user->getAllChildIds(1);
 	$filters.=' AND u.rowid IN ('.join(', ',$userchilds).')';
 }
-
-$filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
+if (!empty($search_name)) {
+	$filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
+}
 if ($search_supervisor > 0) $filters.=natural_search(array('u.fk_user'), $search_supervisor, 2);
 
 $listUsers = $holiday->fetchUsers(false, true, $filters);
@@ -223,10 +227,8 @@ if (is_numeric($listUsers) && $listUsers < 0)
     setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
 
-$var=true;
 $i = 0;
 
-$typeleaves=$holiday->getTypes(1,1);
 
 if (count($typeleaves) == 0)
 {
@@ -239,8 +241,6 @@ else
 {
     $canedit=0;
     if (! empty($user->rights->holiday->define_holiday)) $canedit=1;
-
-    print '<input type="hidden" name="action" value="update" />';
 
     $moreforfilter='';
 

@@ -281,9 +281,9 @@ if ($id > 0 || ! empty($ref))
 
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-    $start = dol_print_date($object->date_start,'dayhour');
+    $start = dol_print_date($object->date_start,'day');
     print ($start?$start:'?');
-    $end = dol_print_date($object->date_end,'dayhour');
+    $end = dol_print_date($object->date_end,'day');
     print ' - ';
     print ($end?$end:'?');
     if ($object->hasDelay()) print img_warning("Late");
@@ -578,7 +578,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-			if ($nboftaskshown < count($tasksarray))
+			if ($nboftaskshown < count($tasksarray) && ! GETPOST('search_user_id','int'))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');

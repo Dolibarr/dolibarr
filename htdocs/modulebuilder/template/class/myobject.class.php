@@ -41,9 +41,13 @@ class MyObject extends CommonObject
 	 */
 	public $table_element = 'mymodule_myobject';
 	/**
-	 * @var array  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+	/**
+	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */

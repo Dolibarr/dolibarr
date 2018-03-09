@@ -113,7 +113,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$db->begin();
 
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
-	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
+	$sql1 .= " SET l.fk_code_ventilation=" . GETPOST('account_parent','int');
 	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
 
 	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
@@ -204,7 +204,7 @@ if (strlen(trim($search_account))) {
 	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= natural_search("fd.tva_tx", $search_vat);
+	$sql .= natural_search("fd.tva_tx", price2num($search_vat), 1);
 }
 if ($search_month > 0)
 {
@@ -223,7 +223,7 @@ if (strlen(trim($search_country))) {
 	$sql .= natural_search("co.label", $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
-	$sql .= natural_search("s.tva_intra", $search_tva_intra);
+	$sql .= natural_search("s.tva_intra", $search_tvaintra);
 }
 $sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";    // We don't share object for accountancy
 $sql .= $db->order($sortfield, $sortorder);
@@ -245,28 +245,19 @@ if ($result) {
 	$i = 0;
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_invoice)
-		$param .= "&search_invoice=" . $search_invoice;
-	if ($search_ref)
-		$param .= "&search_ref=" . $search_ref;
-	if ($search_label)
-		$param .= "&search_label=" . $search_label;
-	if ($search_desc)
-		$param .= "&search_desc=" . $search_desc;
-	if ($search_account)
-		$param .= "&search_account=" . $search_account;
-	if ($search_vat)
-		$param .= "&search_vat=" . $search_vat;
-	if ($search_day)         $param.='&search_day='.urlencode($search_day);
-	if ($search_month)       $param.='&search_month='.urlencode($search_month);
-	if ($search_year)        $param.='&search_year='.urlencode($search_year);
-	if ($search_country)
-		$param .= "&search_country=" . $search_country;
-	if ($search_tvaintra)
-		$param .= "&search_tvaintra=" . $search_tvaintra;
-
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_invoice)	$param .= "&search_invoice=" . urlencode($search_invoice);
+	if ($search_ref)		$param .= "&search_ref=" . urlencode($search_ref);
+	if ($search_label)		$param .= "&search_label=" . urlencode($search_label);
+	if ($search_desc)		$param .= "&search_desc=" . urlencode($search_desc);
+	if ($search_account)	$param .= "&search_account=" . urlencode($search_account);
+	if ($search_vat)		$param .= "&search_vat=" . urlencode($search_vat);
+	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
+	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
+	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+	if ($search_country)  	$param .= "&search_country=" . urlencode($search_country);
+	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -370,7 +361,7 @@ if ($result) {
 		print '</a>';
 		print '</td>';
 
-		print '<td align="center">' . $objp->country .'</td>';
+		print '<td>' . $objp->country .'</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 

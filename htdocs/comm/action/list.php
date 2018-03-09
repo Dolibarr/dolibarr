@@ -430,12 +430,12 @@ if ($resql)
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
 	if (! empty($arrayfields['a.datep2']['checked']))	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
 		print '</td>';
 	}
@@ -517,8 +517,8 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
+		// Ref
 		if (! empty($arrayfields['a.id']['checked'])) {
-			// Ref
 			print '<td>';
 			print $actionstatic->getNomUrl(1,-1);
 			print '</td>';

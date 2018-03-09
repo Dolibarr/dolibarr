@@ -850,7 +850,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php');
+			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -2453,7 +2453,7 @@ elseif (! empty($object->id))
 				print $form->select_date('','',1,1,'',"commande",1,1,1);
 				print "</td></tr>\n";
 
-				print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
+				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
 				$liv = array();
 				$liv[''] = '&nbsp;';
 				$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
@@ -2695,7 +2695,7 @@ elseif (! empty($object->id))
 		}
 
 		// Presend form
-		$modelmail='supplier_order_send';
+		$modelmail='order_supplier_send';
 		$defaulttopic='SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
 		$trackid = 'sor'.$object->id;

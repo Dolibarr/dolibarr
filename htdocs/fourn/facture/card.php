@@ -224,7 +224,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header('Location: list.php');
+			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -265,7 +265,7 @@ if (empty($reshook))
 			$action='';
 		}
 	}
-
+	
 	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
 		$object->fetch($id);
@@ -2928,7 +2928,7 @@ else
 		}
 
 		// Presend form
-		$modelmail='supplier_order_send';
+		$modelmail='invoice_supplier_send';
 		$defaulttopic='SendBillRef';
 		$diroutput = $conf->fournisseur->facture->dir_output;
 		$trackid = 'sin'.$object->id;

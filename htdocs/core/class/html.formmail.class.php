@@ -252,6 +252,14 @@ class FormMail extends Form
 		$langs->load("other");
 		$langs->load("mails");
 
+
+		// Clear temp files. Must be done at beginning, before call of triggers
+		if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
+		{
+			$this->clear_attached_files();
+		}
+
+		// Call hook getFormMail
 		$hookmanager->initHooks(array('formmail'));
 
 		$parameters=array(
@@ -306,7 +314,6 @@ class FormMail extends Form
 
 			if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
 			{
-				$this->clear_attached_files();
 				if (! empty($arraydefaultmessage['joinfiles']) && is_array($this->param['fileinit']))
 				{
 					foreach($this->param['fileinit'] as $file)
@@ -399,7 +406,7 @@ class FormMail extends Form
 
 
 
-			$out.= '<table class="border" width="100%">'."\n";
+			$out.= '<table class="border" width="100%" style="border-top: 1px solid #BBB;">'."\n";
 
 			// Substitution array
 			if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.

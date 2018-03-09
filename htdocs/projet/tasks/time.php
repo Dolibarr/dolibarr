@@ -349,9 +349,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-            print dol_print_date($projectstatic->date_start,'day');
-            $end=dol_print_date($projectstatic->date_end,'day');
-            if ($end) print ' - '.$end;
+            $start = dol_print_date($projectstatic->date_start,'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end,'day');
+            print ' - ';
+            print ($end?$end:'?');
+            if ($projectstatic->hasDelay()) print img_warning("Late");
             print '</td></tr>';
 
             // Budget
@@ -431,7 +434,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	if (empty($projectidforalltimes))
 	{
 		$head=task_prepare_head($object);
-		dol_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask');
+		dol_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 		if ($action == 'deleteline')
 		{
@@ -523,6 +526,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		dol_fiche_end();
 
+		print '<!-- List of time spent for task -->'."\n";
 
 		/*
 		 * Form to add time spent
@@ -537,6 +541,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -591,7 +596,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 			print '</td></tr>';
 
-			print '</table></form>';
+			print '</table>';
+			print '</div>';
+
+			print '</form>';
 
 			print '<br>';
 		}
@@ -599,7 +607,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	if ($projectstatic->id > 0)
 	{
-		if ($action == 'deleteline')
+		if ($action == 'deleteline' && ! empty($projectidforalltimes))
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
@@ -670,7 +678,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			if (! empty($projectidforalltimes))
 			{
-			    $title=$langs->trans("ListTaskTimeUserProject");
+				print '<!-- List of time spent for project -->'."\n";
+
+				$title=$langs->trans("ListTaskTimeUserProject");
 			    $linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
 			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 			    print load_fiche_titre($title,$linktotasks,'title_generic.png');
@@ -693,19 +703,24 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$arrayofselected=is_array($toselect)?$toselect:array();
 
-		$params='';
+		$param='';
 		if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-		if ($search_note != '') $params.= '&amp;search_note='.urlencode($search_note);
-		if ($search_duration != '') $params.= '&amp;search_field2='.urlencode($search_duration);
-		if ($optioncss != '') $param.='&optioncss='.$optioncss;
+		if ($search_month > 0) $param.= '&search_month='.urlencode($search_month);
+		if ($search_year > 0) $param.= '&search_year='.urlencode($search_year);
+		if ($search_user > 0) $param.= '&search_user='.urlencode($search_user);
+		if ($search_task_ref != '') $param.= '&search_task_ref='.urlencode($search_task_ref);
+		if ($search_task_label != '') $param.= '&search_task_label='.urlencode($search_task_label);
+		if ($search_note != '') $param.= '&search_note='.urlencode($search_note);
+		if ($search_duration != '') $param.= '&amp;search_field2='.urlencode($search_duration);
+		if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 		/*
 		// Add $param from extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 		*/
-		if ($id) $params.='&amp;id='.$id;
-		if ($projectid) $params.='&amp;projectid='.$projectid;
-		if ($withproject) $params.='&amp;withproject='.$withproject;
+		if ($id) $param.='&id='.urlencode($id);
+		if ($projectid) $param.='&projectid='.urlencode($projectid);
+		if ($withproject) $param.='&withproject='.urlencode($withproject);
 
 
 		$arrayofmassactions =  array(
@@ -791,16 +806,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '</tr>'."\n";
 
 		print '<tr class="liste_titre">';
-		if (! empty($arrayfields['t.task_date']['checked'])) print_liste_field_titre($arrayfields['t.task_date']['label'],$_SERVER['PHP_SELF'],'t.task_date,t.task_datehour,t.rowid','',$params,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.task_date']['checked'])) print_liste_field_titre($arrayfields['t.task_date']['label'],$_SERVER['PHP_SELF'],'t.task_date,t.task_datehour,t.rowid','',$param,'',$sortfield,$sortorder);
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
-            if (! empty($arrayfields['t.task_ref']['checked']))   print_liste_field_titre($arrayfields['t.task_ref']['label'],$_SERVER['PHP_SELF'],'pt.ref','',$params,'',$sortfield,$sortorder);
-            if (! empty($arrayfields['t.task_label']['checked'])) print_liste_field_titre($arrayfields['t.task_label']['label'],$_SERVER['PHP_SELF'],'pt.label','',$params,'',$sortfield,$sortorder);
+            if (! empty($arrayfields['t.task_ref']['checked']))   print_liste_field_titre($arrayfields['t.task_ref']['label'],$_SERVER['PHP_SELF'],'pt.ref','',$param,'',$sortfield,$sortorder);
+            if (! empty($arrayfields['t.task_label']['checked'])) print_liste_field_titre($arrayfields['t.task_label']['label'],$_SERVER['PHP_SELF'],'pt.label','',$param,'',$sortfield,$sortorder);
         }
-        if (! empty($arrayfields['author']['checked'])) print_liste_field_titre($arrayfields['author']['label'],$_SERVER['PHP_SELF'],'','',$params,'',$sortfield,$sortorder);
-		if (! empty($arrayfields['t.note']['checked'])) print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$params,'',$sortfield,$sortorder);
-		if (! empty($arrayfields['t.task_duration']['checked'])) print_liste_field_titre($arrayfields['t.task_duration']['label'],$_SERVER['PHP_SELF'],'t.task_duration','',$params,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['value']['checked'])) print_liste_field_titre($arrayfields['value']['label'],$_SERVER['PHP_SELF'],'','',$params,'align="right"',$sortfield,$sortorder);
+        if (! empty($arrayfields['author']['checked'])) print_liste_field_titre($arrayfields['author']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.note']['checked'])) print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$param,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.task_duration']['checked'])) print_liste_field_titre($arrayfields['t.task_duration']['label'],$_SERVER['PHP_SELF'],'t.task_duration','',$param,'align="right"',$sortfield,$sortorder);
+		if (! empty($arrayfields['value']['checked'])) print_liste_field_titre($arrayfields['value']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 		/*
     	// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -972,13 +987,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{
+					//$param = ($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'.($withproject?'&amp;withproject=1':'');
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.'">';
 					print img_edit();
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.'">';
 					print img_delete();
 					print '</a>';
 			    }

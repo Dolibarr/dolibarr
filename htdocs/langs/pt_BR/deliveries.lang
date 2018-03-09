@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 DeliveryRef=Ref. entrega
+DeliveryCard=Recibo de recebimento
 DeliveryStateSaved=Estado de entrega salvo
 SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega

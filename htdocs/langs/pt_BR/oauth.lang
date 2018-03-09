@@ -1,13 +1,19 @@
 # Dolibarr language file - Source file is en_US - oauth
 ConfigOAuth=Configuração Oauth
 ManualTokenGeneration=Geração manual do token
+TokenManager=Gerenciador de Token
+IsTokenGenerated=O token está gerado?
 NoAccessToken=Nenhum token de acesso guardado na base de dados local
 HasAccessToken=Um token foi gerado e salvo no banco de dados local
+NewTokenStored=Token recebido e salvo
+ToCheckDeleteTokenOnProvider=Clique aqui para verificar/apagar autorização salva pelo provedor OAuth %s
 TokenDeleted=Token excluído
 RequestAccess=Clique aqui para solicitar/renovar o acesso e receber um novo token para salvar
 DeleteAccess=Clique aqui para apagar o token
 UseTheFollowingUrlAsRedirectURI=Utilize o seguinte URL como o URI de redirecionamento ao criar a sua credencial de seu provedor de OAuth:
 ListOfSupportedOauthProviders=Forneça aqui a credencial fornecida pelo seu provedor OAuth2. Apenas provedores OAuth2 suportados estão visíveis aqui. Esta configuração talvez seja usada por outros módulos que necessitem de autenticação OAuth2.
+SeePreviousTab=Ver aba anterior
+OAuthIDSecret=Identificação OAuth e Senha
 TOKEN_REFRESH=Token Atualizar Presente
 TOKEN_EXPIRED=Token vencido
 TOKEN_EXPIRE_AT=Token expira no
