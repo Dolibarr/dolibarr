@@ -266,7 +266,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1,'customer',16);
+                print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
                 print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
                 $i++;
