@@ -79,5 +79,10 @@ class modSyslog extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'syslog';
+
+		// Cronjobs
+		$this->cronjobs = array(
+		    0=>array('label'=>'CompressSyslogs', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'compressSyslogs', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>1, 'unitfrequency'=> 3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>true),
+		);
 	}
 }
