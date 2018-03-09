@@ -32,6 +32,10 @@
 
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
+ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
+
 
 
 -- For 8.0
