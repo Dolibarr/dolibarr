@@ -36,6 +36,8 @@ $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$result = restrictedArea($user, 'stock', $id, '', 'advance_inventory');
+
 // Initialize technical objects
 $object=new Inventory($db);
 $extrafields = new ExtraFields($db);
@@ -80,8 +82,8 @@ if (empty($reshook))
 {
 	$error=0;
 
-	$permissiontoadd = $user->rights->stock->creer;
-	$permissiontodelete = $user->rights->stock->supprimer;
+	$permissiontoadd = $user->rights->stock->advance_inventory->create;
+	$permissiontodelete = $user->rights->stock->advance_inventory->write;
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 
 	// Actions cancel, add, update or delete
@@ -327,7 +329,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-    		if ($user->rights->inventory->write)
+            if ($user->rights->stock->advance_inventory->write)
     		{
     			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
     		}
@@ -336,7 +338,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
 
-    		if ($user->rights->inventory->delete)
+    		if ($user->rights->stock->advance_inventory->write)
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
     		}
