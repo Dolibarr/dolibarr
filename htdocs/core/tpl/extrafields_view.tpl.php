@@ -153,6 +153,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 				    	{
 				    		var val = $("select[name="+parent_list+"]").val();
 				    		var parentVal = parent_list + ":" + val;
+
 							if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
 					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();

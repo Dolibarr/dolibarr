@@ -5836,10 +5836,9 @@ abstract class CommonObject
 				    	function showOptions(child_list, parent_list)
 				    	{
 				    		var val = $("select[name="+parent_list+"]").val();
-
 				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
 
+							if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
 					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
 							} else {
