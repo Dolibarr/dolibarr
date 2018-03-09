@@ -331,13 +331,9 @@ if ($resql)
 
 	$num = $db->num_rows($resql);
 
-	/*$title=$langs->trans("DoneAndToDoActions");
-	if ($status == 'done') $title=$langs->trans("DoneActions");
-	if ($status == 'todo') $title=$langs->trans("ToDoActions");
-	*/
-	$title=$langs->trans("ListOfEvents");
-
-	$newtitle=$langs->trans($title);
+	// Local calendar
+	$newtitle ='<div class="nowrap clear inline-block minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	//$newtitle=$langs->trans($title);
 
 	$tabactive='cardlist';
 

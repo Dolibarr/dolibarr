@@ -11,13 +11,17 @@ namespace Stripe;
  * @property string $balance_transaction
  * @property int $created
  * @property string $currency
- * @property mixed $metadata
+ * @property StripeObject $metadata
  * @property string $transfer
  *
  * @package Stripe
  */
 class TransferReversal extends ApiResource
 {
+    use ApiOperations\Update {
+        save as protected _save;
+    }
+
     /**
      * @return string The API URL for this Stripe transfer reversal.
      */

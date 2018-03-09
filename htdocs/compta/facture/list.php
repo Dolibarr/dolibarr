@@ -276,7 +276,7 @@ if ($massaction == 'withdrawrequest')
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
 				}
-				if(!($objecttmp->statut > Facture::STATUS_DRAFT)){
+				if (!($objecttmp->statut > Facture::STATUS_DRAFT)){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				}
@@ -298,11 +298,11 @@ if ($massaction == 'withdrawrequest')
 					$numprlv = $db->num_rows($result_sql);
 				}
 
-				if($numprlv>0){
+				if ($numprlv>0){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
 				}
-				if(!empty($objecttmp->mode_reglement_id ) && $objecttmp->mode_reglement_id != 3){
+				if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
 				}
@@ -702,18 +702,18 @@ if ($resql)
 	if (! empty($arrayfields['f.date']['checked']))
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-		$formother->select_year($year?$year:-1,'year',1, 20, 5, 0, 0, '', 'width75');
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
+		$formother->select_year($year?$year:-1,'year',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	}
 	// Date due
 	if (! empty($arrayfields['f.date_lim_reglement']['checked']))
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month_lim" value="'.dol_escape_htmltag($month_lim).'">';
-		$formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5, 0, 0, '', 'width75');
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_lim" value="'.dol_escape_htmltag($month_lim).'">';
+		$formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
 		print '</td>';
 	}
@@ -756,7 +756,7 @@ if ($resql)
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 0, 1, 10);
+		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 10);
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_ht']['checked']))
@@ -775,14 +775,14 @@ if ($resql)
 	}
 	if (! empty($arrayfields['f.total_localtax1']['checked']))
 	{
-		// Amount
+		// Localtax1
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_localtax1" value="'.$search_montant_localtax1.'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['f.total_localtax2']['checked']))
 	{
-		// Amount
+		// Localtax2
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_localtax2" value="'.$search_montant_localtax2.'">';
 		print '</td>';
@@ -1192,22 +1192,18 @@ if ($resql)
 
 	print "</form>\n";
 
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		// Show list of available documents
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->facture->lire;
-		$delallowed=$user->rights->facture->creer;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->facture->lire;
+	$delallowed=$user->rights->facture->creer;
+
+	print $formfile->showdocuments('massfilesarea_invoices','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 else
 {

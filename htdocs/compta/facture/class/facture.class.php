@@ -239,7 +239,7 @@ class Facture extends CommonInvoice
 	 * 	@param	int		$forceduedate	1=Do not recalculate due date from payment condition but force it with value
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user,$notrigger=0,$forceduedate=0)
+	function create(User $user, $notrigger=0, $forceduedate=0)
 	{
 		global $langs,$conf,$mysoc,$hookmanager;
 		$error=0;
@@ -265,13 +265,13 @@ class Facture extends CommonInvoice
 			$this->multicurrency_tx = 1;
 		}
 
-		dol_syslog(get_class($this)."::create user=".$user->id);
+		dol_syslog(get_class($this)."::create user=".$user->id." date=".$this->date);
 
 		// Check parameters
-		if (empty($this->date) || empty($user->id))
+		if (empty($this->date))
 		{
-			$this->error="ErrorBadParameter";
-			dol_syslog(get_class($this)."::create Try to create an invoice with an empty parameter (user, date, ...)", LOG_ERR);
+			$this->error="Try to create an invoice with an empty parameter (date)";
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -3;
 		}
 		$soc = new Societe($this->db);
@@ -799,14 +799,17 @@ class Facture extends CommonInvoice
 		// Charge facture source
 		$facture=new Facture($this->db);
 
-                $this->fetch_optionals();
-                if(!empty($this->array_options)){
-                    $facture->array_options = $this->array_options;
-                }
+		// Retreive all extrafield
+		// fetch optionals attributes and labels
+		$this->fetch_optionals();
 
-                foreach($this->lines as &$line){
+        if(!empty($this->array_options)){
+                    $facture->array_options = $this->array_options;
+        }
+
+        foreach($this->lines as &$line){
                     $line->fetch_optionals();//fetch extrafields
-                }
+        }
 
 		$facture->fk_facture_source = $this->fk_facture_source;
 		$facture->type 			    = $this->type;
@@ -967,11 +970,6 @@ class Facture extends CommonInvoice
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-            // Call trigger
-            $result=$this->call_trigger('BILL_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1042,7 +1040,7 @@ class Facture extends CommonInvoice
 			$line->pa_ht			= $marginInfos[0];
 
             // get extrafields from original line
-			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			$object->lines[$i]->fetch_optionals();
 			foreach($object->lines[$i]->array_options as $options_key => $value)
 				$line->array_options[$options_key] = $value;
 
@@ -1258,8 +1256,8 @@ class Facture extends CommonInvoice
         $sql.= ', f.fk_incoterms, f.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid AND c.entity IN (' . getEntity('c_payment_term').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
 		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
@@ -1344,16 +1342,13 @@ class Facture extends CommonInvoice
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
-				// Retrieve all extrafield for invoice
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
-				*/
+				 */
 
 				$this->lines  = array();
 
@@ -2247,7 +2242,7 @@ class Facture extends CommonInvoice
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql.= " SET facnumber='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+			$sql.= " SET facnumber='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
 			if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
 				$sql.= ", datef='".$this->db->idate($this->date)."'";
@@ -3221,7 +3216,6 @@ class Facture extends CommonInvoice
 			}
 		}
 	}
-
 
 	/**
 	 *      Return next reference of customer invoice not already used (or last reference)

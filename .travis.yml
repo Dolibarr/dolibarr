@@ -327,6 +327,9 @@ script:
   php upgrade.php 6.0.0 7.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade600700.log
   php upgrade2.php 6.0.0 7.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_SUPPLIERPROPOSAL > $TRAVIS_BUILD_DIR/upgrade600700-2.log
   php step5.php 6.0.0 7.0.0 > $TRAVIS_BUILD_DIR/upgrade600700-3.log
+  php upgrade.php 7.0.0 8.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade700800.log
+  php upgrade2.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-2.log
+  php step5.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-3.log
   cd -
   set +e
   echo

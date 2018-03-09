@@ -673,7 +673,7 @@ if ($resql)
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="nowrap">';
-		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')),'operation','1,2',2,1);
+		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
 		print '</td>';
 		print '<td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq","alpha").'">';
@@ -852,7 +852,7 @@ if ($resql)
 	if (! empty($arrayfields['type']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
-        $form->select_types_paiements(empty($search_type)?'':$search_type, 'search_type', '', 2, 0, 1, 0, 1, 'maxwidth100');
+        $form->select_types_paiements(empty($search_type)?'':$search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
         print '</td>';
 	}
 	if (! empty($arrayfields['b.num_chq']['checked']))

@@ -26,6 +26,8 @@
  *    \brief      Page de configuration du module externalsite
  */
 
+if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -50,7 +52,7 @@ if ($action == 'update')
     $db->begin();
 
 	$label  = GETPOST('EXTERNALSITE_LABEL','alpha');
-    $exturl = GETPOST('EXTERNALSITE_URL','alpha');
+    $exturl = GETPOST('EXTERNALSITE_URL','none');
 
     $i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($label),'chaine',0,'',$conf->entity);
     $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($exturl),'chaine',0,'',$conf->entity);
@@ -104,9 +106,12 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_URL\" value=\"". (GETPOST('EXTERNALSITE_URL','alpha')?GETPOST('EXTERNALSITE_URL','alpha'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL)) . "\" size=\"40\"></td>";
+print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
+print (GETPOST('EXTERNALSITE_URL','none')?GETPOST('EXTERNALSITE_URL','none'):(empty($conf->global->EXTERNALSITE_URL)?'':$conf->global->EXTERNALSITE_URL));
+print '</textarea></td>';
 print "<td>http://localhost/myurl/";
-print "<br>http://wikipedia.org/";
+print "<br>https://wikipedia.org/";
+print "<br>&lt;iframe&gt;...&lt;/iframe&gt;";
 print "</td>";
 print "</tr>";
 

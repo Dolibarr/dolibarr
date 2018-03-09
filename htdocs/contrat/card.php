@@ -94,6 +94,7 @@ $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions
 $permissiondellink=$user->rights->contrat->creer;	// Used by the include of actions_dellink.inc.php
 
 
+
 /*
  * Actions
  */
@@ -657,43 +658,53 @@ if (empty($reshook))
 
 	else if ($action == 'updateline' && $user->rights->contrat->creer && ! GETPOST('cancel','alpha'))
 	{
-	  if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update)
-	  {
-		  setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
-		  $action = 'editline';
-		  $_GET['rowid'] = GETPOST('elrowid');
-		  $error++;
-	  }
+		$error = 0;
 
-	  if (!$error) {
-		  $objectline = new ContratLigne($db);
-		  if ($objectline->fetch(GETPOST('elrowid')))
-		  {
-			  $db->begin();
+		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update)
+		{
+			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
+			$action = 'editline';
+			$_GET['rowid'] = GETPOST('elrowid');
+			$error++;
+		}
 
-			  if ($date_start_real_update == '') $date_start_real_update=$objectline->date_ouverture;
-			  if ($date_end_real_update == '')   $date_end_real_update=$objectline->date_cloture;
+		if (! $error)
+		{
+			$objectline = new ContratLigne($db);
+			if ($objectline->fetch(GETPOST('elrowid')) < 0)
+			{
+				setEventMessages($objectline->error, $objectline->errors, 'errors');
+				$error++;
+			}
+		}
 
-			  $vat_rate = GETPOST('eltva_tx');
-			  // Define info_bits
-			  $info_bits = 0;
-			  if (preg_match('/\*/', $vat_rate))
+		$db->begin();
+
+		if (! $error)
+		{
+			if ($date_start_real_update == '') $date_start_real_update=$objectline->date_ouverture;
+			if ($date_end_real_update == '')   $date_end_real_update=$objectline->date_cloture;
+
+			$vat_rate = GETPOST('eltva_tx');
+			// Define info_bits
+			$info_bits = 0;
+			if (preg_match('/\*/', $vat_rate))
 				  $info_bits |= 0x01;
 
 			// Define vat_rate
 			$vat_rate = str_replace('*', '', $vat_rate);
-			  $localtax1_tx=get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
-			  $localtax2_tx=get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
+			$localtax1_tx=get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+			$localtax2_tx=get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 
-			  $txtva = $vat_rate;
+			$txtva = $vat_rate;
 
 			// Clean vat code
-			  $vat_src_code='';
-			  if (preg_match('/\((.*)\)/', $txtva, $reg))
-			  {
+			$vat_src_code='';
+			if (preg_match('/\((.*)\)/', $txtva, $reg))
+			{
 				  $vat_src_code = $reg[1];
 				  $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
-			  }
+			}
 
 			// ajout prix d'achat
 			$fk_fournprice = $_POST['fournprice'];
@@ -704,22 +715,22 @@ if (empty($reshook))
 
 			$fk_unit = GETPOST('unit', 'alpha');
 
-			  $objectline->description=GETPOST('product_desc','none');
-			  $objectline->price_ht=GETPOST('elprice');
-			  $objectline->subprice=GETPOST('elprice');
-			  $objectline->qty=GETPOST('elqty');
-			  $objectline->remise_percent=GETPOST('elremise_percent');
-			  $objectline->tva_tx=($txtva?$txtva:0);	// Field may be disabled, so we use vat rate 0
-			  $objectline->vat_src_code=$vat_src_code;
-			  $objectline->localtax1_tx=is_numeric($localtax1_tx)?$localtax1_tx:0;
-			  $objectline->localtax2_tx=is_numeric($localtax2_tx)?$localtax2_tx:0;
-			  $objectline->date_ouverture_prevue=$date_start_update;
-			  $objectline->date_ouverture=$date_start_real_update;
-			  $objectline->date_fin_validite=$date_end_update;
-			  $objectline->date_cloture=$date_end_real_update;
-			  $objectline->fk_user_cloture=$user->id;
-			  $objectline->fk_fournprice=$fk_fournprice;
-			  $objectline->pa_ht=$pa_ht;
+			$objectline->description=GETPOST('product_desc','none');
+			$objectline->price_ht=GETPOST('elprice');
+			$objectline->subprice=GETPOST('elprice');
+			$objectline->qty=GETPOST('elqty');
+			$objectline->remise_percent=GETPOST('elremise_percent');
+			$objectline->tva_tx=($txtva?$txtva:0);	// Field may be disabled, so we use vat rate 0
+			$objectline->vat_src_code=$vat_src_code;
+			$objectline->localtax1_tx=is_numeric($localtax1_tx)?$localtax1_tx:0;
+			$objectline->localtax2_tx=is_numeric($localtax2_tx)?$localtax2_tx:0;
+			$objectline->date_ouverture_prevue=$date_start_update;
+			$objectline->date_ouverture=$date_start_real_update;
+			$objectline->date_fin_validite=$date_end_update;
+			$objectline->date_cloture=$date_end_real_update;
+			$objectline->fk_user_cloture=$user->id;
+			$objectline->fk_fournprice=$fk_fournprice;
+			$objectline->pa_ht=$pa_ht;
 
 			if ($fk_unit > 0) {
 			  $objectline->fk_unit = GETPOST('unit');
@@ -727,30 +738,30 @@ if (empty($reshook))
 			  $objectline->fk_unit = null;
 			}
 
-			  // Extrafields
-			  $extrafieldsline = new ExtraFields($db);
-			  $extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-			  $array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
-			  $objectline->array_options=$array_options;
+			// Extrafields
+			$extrafieldsline = new ExtraFields($db);
+			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
+			$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+			$objectline->array_options=$array_options;
 
-			  // TODO verifier price_min si fk_product et multiprix
+			// TODO verifier price_min si fk_product et multiprix
 
-			  $result=$objectline->update($user);
-			  if ($result > 0)
-			  {
-				  $db->commit();
-			  }
-			  else
-			  {
+			$result=$objectline->update($user);
+			if ($result < 0)
+			{
+				$error++;
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
-				  $db->rollback();
-			  }
-		  }
-		  else
-		  {
-			setEventMessages($objectline->error, $objectline->errors, 'errors');
-		  }
-	  }
+			}
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
 	}
 
 	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer)
@@ -800,18 +811,30 @@ if (empty($reshook))
 	else if ($action == 'reopen' && $user->rights->contrat->creer)
 	{
 		$result = $object->reopen($user);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Close all lines
 	else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
-		$object->closeAll($user);
+		$result = $object->closeAll($user);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Close all lines
 	else if ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
-		$object->activateAll($user);
+		$result = $object->activateAll($user);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
@@ -853,13 +876,15 @@ if (empty($reshook))
 	}
 	else if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
 		if (! $error) {
-			$result = $object->insertExtraFields();
+			$result = $object->insertExtraFields('CONTRACT_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1501,8 +1526,10 @@ else
 
 		// Title line for service
 		$cursorline=1;
+		print '<div id="contrat-lines-container" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
 		while ($cursorline <= $nbofservices)
 		{
+			print '<div id="contrat-line-container'.$object->lines[$cursorline-1]->id.'" data-contratlineid = "'.$object->lines[$cursorline-1]->id.'" data-element="'.$object->lines[$cursorline-1]->element.'" >';
 			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="updateline">';
@@ -1682,7 +1709,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
-						$line->fetch_optionals($objp->rowid,$extralabelslines);
+						$line->fetch_optionals($objp->rowid);
 						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
 						print '</tr>';
 					}
@@ -1756,7 +1783,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
-						$line->fetch_optionals($objp->rowid,$extralabelslines);
+						$line->fetch_optionals($objp->rowid);
 						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
 						print '</tr>';
 					}
@@ -1848,7 +1875,7 @@ else
 			// Area with status and activation info of line
 			if ($object->statut > 0)
 			{
-				print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
+				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ?' boxtablenobottom':'').'" width="100%">';
 
 				print '<tr '.$bcnd[$var].'>';
 				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
@@ -1899,7 +1926,7 @@ else
 					print $langs->trans("DateEndReal").': ';
 					print dol_print_date($objp->date_fin_reelle, 'day');
 				}
-				if (! empty($objp->comment)) print "<br>".$objp->comment;
+				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';
 
 				print '<td align="center">&nbsp;</td>';
@@ -2015,9 +2042,10 @@ else
 
 				print '</form>';
 			}
-
+			print '</div>';
 			$cursorline++;
 		}
+		print '</div>';
 
 		// Form to add new line
 		if ($user->rights->contrat->creer && ($object->statut == 0))

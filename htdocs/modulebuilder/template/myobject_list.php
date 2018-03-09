@@ -30,6 +30,7 @@
 //if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
 //if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
 //if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
+//if (! defined('NOIPCHECK'))              define('NOIPCHECK','1');				// Do not check IP defined into conf $dolibarr_main_restrict_ip
 //if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
 //if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
 //if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
@@ -253,17 +254,31 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-
-$sql.= $db->plimit($limit+1, $offset);
-
-$resql=$db->query($sql);
-if (! $resql)
+// if total resultset is smaller then paging size (filtering), goto and load page 0
+if (($page * $limit) > $nbtotalofrecords)
 {
-	dol_print_error($db);
-	exit;
+	$page = 0;
+	$offset = 0;
 }
+// if total resultset is smaller the limit, no need to do paging.
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
+{
+	$resql = $result;
+	$num = $nbtotalofrecords;
+}
+else
+{
+	$sql.= $db->plimit($limit+1, $offset);
 
-$num = $db->num_rows($resql);
+	$resql=$db->query($sql);
+	if (! $resql)
+	{
+		dol_print_error($db);
+		exit;
+	}
+
+	$num = $db->num_rows($resql);
+}
 
 // Direct jump if only one record found
 if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
@@ -527,25 +542,21 @@ print '</form>'."\n";
 
 if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-		$formfile = new FormFile($db);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		// Show list of available documents
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+	$formfile = new FormFile($db);
 
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->mymodule->read;
-		$delallowed=$user->rights->mymodule->create;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->mymodule->read;
+	$delallowed=$user->rights->mymodule->create;
+
+	print $formfile->showdocuments('massfilesarea_mymodule','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 
 // End of page

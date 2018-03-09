@@ -286,9 +286,11 @@ if (empty($reshook))
 
     if ($action == 'update_extras')
     {
-        // Fill array 'array_options' with data from update form
+    	$object->oldcopy = dol_clone($object);
+
+    	// Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -299,7 +301,7 @@ if (empty($reshook))
             $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
             // some hooks
             if (empty($reshook)) {
-                $result = $object->insertExtraFields();
+            	$result = $object->insertExtraFields('FICHINTER_MODIFY');
        			if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1434,7 +1436,7 @@ else
 	{
 		$result = $object->fetch($id, $ref);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals();
 
 		if ($result > 0)
 		{
@@ -1878,7 +1880,7 @@ else
 				$sql.= "c.code as p_code, c.libelle as payment_type,";
 				$sql.= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank as b ON p.fk_bank = b.rowid';
 				$sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'bank_account as ba ON b.fk_account = ba.rowid';
 				$sql.= " WHERE e.rowid = '".$id."'";

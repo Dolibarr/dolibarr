@@ -103,7 +103,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
-$borderwith=2;
+$borderwidth=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -153,7 +153,7 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
 
-//if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
+if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
 
 
 // Set text color to black or white
@@ -409,6 +409,13 @@ td.onholidayallday {
 td.actionbuttons a {
     padding-left: 6px;
 }
+td.leftborder, td.hide0 {
+	border-left: 1px solid #ccc;
+}
+td.leftborder, td.hide6 {
+	border-right: 1px solid #ccc;
+}
+
 select.flat, form.flat select {
 	font-weight: normal;
 	font-size: unset;
@@ -589,7 +596,7 @@ textarea.centpercent {
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
-.nowraponall {
+.nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
 .wordwrap {
@@ -597,6 +604,9 @@ textarea.centpercent {
 }
 .wordbreak {
 	word-break: break-all;
+}
+.bold {
+	font-weight: bold !important;
 }
 .nobold {
 	font-weight: normal !important;
@@ -854,7 +864,9 @@ select.selectarrowonleft option {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+	.width25  { width: 25px; }
     .width50  { width: 50px; }
+    .width75  { width: 75px; }
     .width100 { width: 100px; }
     .width200 { width: 200px; }
 	.minwidth100 { min-width: 100px; }
@@ -874,6 +886,7 @@ select.selectarrowonleft option {
 .width25  { width: 25px; }
 .width75  { width: 75px; }
 .width50  { width: 50px; }
+.width75  { width: 75px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
@@ -1196,7 +1209,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'22':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
@@ -1231,6 +1244,12 @@ div.fichehalfright {
 div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
+}
+div.firstcolumn div.box {
+	padding-right: 10px;
+}
+div.secondcolumn div.box {
+	padding-left: 10px;
 }
 /* Force values on one colum for small screen */
 @media only screen and (max-width: 900px)
@@ -1270,6 +1289,12 @@ div.ficheaddleft {
     	<?php print "padding-".$left.": 0px;\n"; ?>
     	margin-top: 10px;
     }
+    div.firstcolumn div.box {
+		padding-right: 0px;
+	}
+	div.secondcolumn div.box {
+		padding-left: 0px;
+	}
 }
 
 /* For table into table into card */
@@ -1393,7 +1418,7 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 .tdhrthin {
 	margin: 0;
@@ -1575,12 +1600,8 @@ div.menu_titre {
 }
 .mainmenuaspan
 {
-<?php if ($disableimages) { ?>
-	padding-<?php print $left; ?>: 4px;
+	padding-<?php print $left; ?>: 2px;
 	padding-<?php print $right; ?>: 2px;
-<?php } else { ?>
-	padding-<?php print $right; ?>: 4px;
-<?php } ?>
 }
 
 div.mainmenu {
@@ -2178,6 +2199,9 @@ div.tabBarWithBottom {
 div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
 }
+.tableforservicepart1 .tdhrthin {
+	height: unset;
+}
 
 /* ============================================================================== */
 /* Boutons actions                                                                */
@@ -2450,7 +2474,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #f4f4f4;
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
@@ -2458,9 +2482,11 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
-
-.border tbody tr, .border tbody tr td, div.tabBar table.border tr {
+.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 22px;
+}
+tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
+    height: 22px;
 }
 
 table.border td, div.border div div.tagtd {
@@ -2486,9 +2512,19 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
-.noborderbottom {
+.nobordertop, .nobordertop tr:first-of-type td {
+    border-top: none !important;
+}
+.noborderbottom, .noborderbottom tr:last-of-type td {
     border-bottom: none !important;
 }
+.bordertop {
+	border-top: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+.borderbottom {
+	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
@@ -2508,7 +2544,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2569,7 +2605,7 @@ tr.liste_titre_filter td.liste_titre {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
-table.noborder td, div.noborder form, div.noborder form div {
+table.noborder td, div.noborder form, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
 }
 
@@ -2704,7 +2740,7 @@ div.pagination li span:focus {
     color: #000;
     background-color: #eee;
     border-color: #ddd;
-  	padding-top: 8px;
+  	/* padding-top: 8px; */
 }
 div.pagination li .active a,
 div.pagination li .active span,
@@ -2868,7 +2904,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 
@@ -2911,7 +2947,7 @@ tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, fo
 	text-shadow: none !important;
 }
 tr.liste_titre_topborder td {
-	border-top-width: <?php echo $borderwith; ?>px;
+	border-top-width: <?php echo $borderwidth; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
@@ -2971,7 +3007,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 
 .paymenttable, .margintable {
-	border-top-width: <?php echo $borderwith ?>px !important;
+	border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 	margin: 0px 0px 0px 0px !important;
@@ -2979,6 +3015,9 @@ tr.liste_sub_total, tr.liste_sub_total td {
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
 	padding-left: 2px;
+}
+.paymenttable, .margintable tr td {
+	height: 22px;
 }
 
 /* Disable shadows */
@@ -3039,14 +3078,15 @@ div .tdtop {
     border: none;
 }*/
 .boxstatsborder {
-    border: 1px solid #CCC !important;
+    /* border: 1px solid #CCC !important; */
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 3px;
-    border: 1px solid #CCC;
+    margin: 8px;
+    /* border: 1px solid #CCC; */
     text-align: center;
     border-radius: 2px;
+    background: #eee;
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
@@ -3065,6 +3105,12 @@ div .tdtop {
 }
 @media only screen and (max-width: 767px)
 {
+	.boxstats, .boxstats130 {
+		margin: 3px;
+	    border: 1px solid #ddd;
+    	box-shadow: none;
+    	background: #ddd;
+    }
 	.thumbstat {
 		flex: 1 1 110px;
 	}
@@ -3126,6 +3172,9 @@ span.dashboardlineko {
     margin-bottom: 8px !important;
     border-bottom-width: 1px;
 }
+.boxtablenotop {
+    /* border-top-width: 0 !important; */
+}
 .boxtablenobottom {
     /* border-bottom-width: 0 !important; */
 }
@@ -3136,8 +3185,8 @@ span.dashboardlineko {
 	text-align: center;
 }
 .boxworkingboard .tdboxstats {
-	padding-left: 0px !important;
-	padding-right: 0px !important;
+	padding-left: 1px !important;
+	padding-right: 1px !important;
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
@@ -3172,10 +3221,6 @@ tr.box_titre td.boxclose {
 }
 img.boxhandle, img.boxclose {
 	padding-left: 5px;
-}
-
-.noborderbottom {
-	border-bottom: none !important;
 }
 
 .formboxfilter {
@@ -3262,6 +3307,22 @@ a.impayee:link { font-weight: bold; color: #550000; }
 a.impayee:visited { font-weight: bold; color: #550000; }
 a.impayee:active { font-weight: bold; color: #550000; }
 a.impayee:hover { font-weight: bold; color: #550000; }
+
+
+
+/*
+ *  External web site
+ */
+
+.framecontent {
+    width: 100%;
+    height: 100%;
+}
+
+.framecontent iframe {
+    width: 100%;
+    height: 100%;
+}
 
 
 
@@ -3463,6 +3524,13 @@ div.ui-tooltip {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+.ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
+.ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
+html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
+{
+    border: unset;
+}
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
@@ -3667,7 +3735,7 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
-.cal_event              { font-size: 12px; }
+.cal_event              { font-size: 1em; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
 .cal_event a:visited    { color: #111111; font-weight: normal !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
@@ -5046,7 +5114,6 @@ border-top-right-radius: 6px;
   		color: #<?php echo $colortextbackhmenu; ?>;
 	}
 	.mainmenuaspan {
-    	/*display: none;*/
   		font-size: 12px;
     }
     .topmenuimage {
@@ -5071,8 +5138,9 @@ border-top-right-radius: 6px;
   		text-overflow: clip;
 	}
 	.mainmenuaspan {
-    	/*display: none;*/
   		font-size: 10px;
+  		padding-left: 0;
+  		padding-right: 0;
     }
     .topmenuimage {
     	background-size: 20px auto;

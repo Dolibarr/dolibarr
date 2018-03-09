@@ -741,9 +741,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -755,7 +757,7 @@ if (empty($reshook))
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
-				$result=$object->insertExtraFields();
+				$result=$object->insertExtraFields('INTERVENTION_MODIFY');
 				if ($result < 0)
 				{
 					$error++;
@@ -1476,7 +1478,7 @@ else if ($id > 0 || ! empty($ref))
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
 
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
 
@@ -1521,7 +1523,7 @@ else if ($id > 0 || ! empty($ref))
 
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
 

@@ -95,7 +95,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 	function info($langs)
 	{
 		global $conf,$langs;
-		
+
 		$langs->load("companies");
 		$langs->load("errors");
 
@@ -361,6 +361,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				//print html_entity_decode($odfHandler->__toString());
 				//print exit;
 
+				$object->fetch_optionals();
 
 				// Make substitutions into odt of freetext
 				try {
@@ -369,25 +370,26 @@ class doc_generic_product_odt extends ModelePDFProduct
 				catch(OdfException $e)
 				{
 				}
-				
-				// Make substitutions into odt
-				$array_global = $this->get_substitutionarray_each_var_object($object, $outputlangs);
+
+				// Define substitution array
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
+				//$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				//$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-                // retrieve contact information for use in product as contact_xxx tags
-        		$array_thirdparty_contact = array();
-        		if ($usecontact)
-            			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in product as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_global,$array_user,$array_soc,$array_thirdparty,$array_other,$array_thirdparty_contact);
+				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
-				$object->fetch_optionals();
+
 				// Call the ODTSubstitution hook
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				foreach($tmparray as $key=>$value)
 				{
 					try {

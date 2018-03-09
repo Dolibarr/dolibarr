@@ -38,8 +38,8 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 // Colors
 $colorbackhmenu1='80,90,120';      // topmenu
 $colorbackvmenu1='248,248,248';      // vmenu
-$colortopbordertitle1='120,120,120';    // top border of title
-$colorbacktitle1='230,230,233';      // title of tables,list
+$colortopbordertitle1='200,200,200';    // top border of title
+$colorbacktitle1='220,220,223';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -102,7 +102,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:0);
-$borderwith=2;
+$borderwidth=1;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -295,12 +295,12 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input {
-    line-height: 17px;
-	padding: 6px;
+    line-height: 1.3em;
+	padding: 5px;
 	padding-left: 5px;
 }
 select {
-	padding: 4px;
+	padding: 5px;
 	padding-left: 2px;
 }
 input, select {
@@ -356,23 +356,24 @@ input.buttonpayment {
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 30px;
+	padding-left: 38px;
 	text-align: <?php echo $left; ?>;
 	border: 1px solid #ddd;
 	background-color: #eee;
 	white-space: normal;
+	box-shadow: 1px 1px 8px #bbb;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png',1) ?>);
 	background-size: 26px;
 	background-repeat: no-repeat;
-	background-position: 2px 11px;
+	background-position: 5px 11px;
 }
 input.buttonpaymentcheque {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/cheque.png',1) ?>);
 	background-size: 24px;
 	background-repeat: no-repeat;
-	background-position: 2px 8px;
+	background-position: 5px 8px;
 }
 input.buttonpaymentpaypal {
 	background-image: url(<?php echo dol_buildpath($path.'/paypal/img/object_paypal.png',1) ?>);
@@ -389,11 +390,15 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
 }
+
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
     border-bottom: solid 1px rgba(0,0,0,0.4);
     margin-right: 1px !important;
+}
+td.weekend {
+	background-color: #eee;
 }
 td.onholidaymorning, td.onholidayafternoon {
 	background-color: #fdf6f2;
@@ -401,13 +406,19 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.leftborder, td.hide0 {
+	border-left: 1px solid #ccc;
+}
+td.leftborder, td.hide6 {
+	border-right: 1px solid #ccc;
+}
+
 td.actionbuttons a {
     padding-left: 6px;
 }
 select.flat, form.flat select {
 	font-weight: normal;
 	font-size: unset;
-    height: 2em;
 }
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
@@ -457,9 +468,6 @@ input[name=price], input[name=weight], input[name=volume], input[name=surface], 
 input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
-.trextrafieldseparator td {
-    border-bottom: 2px solid rgb(120,120,120) !important;
-}
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
@@ -587,7 +595,7 @@ textarea.centpercent {
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
-.nowraponall {
+.nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
 .wordwrap {
@@ -595,6 +603,9 @@ textarea.centpercent {
 }
 .wordbreak {
 	word-break: break-all;
+}
+.bold {
+	font-weight: bold !important;
 }
 .nobold {
 	font-weight: normal !important;
@@ -757,13 +768,16 @@ select.flat.selectlimit {
 .amountpaymentcomplete {
 	color: #008800;
 	font-weight: bold;
+	font-size: 1.4em;
 }
 .amountremaintopay {
 	color: #880000;
 	font-weight: bold;
+	font-size: 1.4em;
 }
 .amountremaintopayback {
 	font-weight: bold;
+	font-size: 1.4em;
 }
 .savingdocmask {
 	margin-top: 6px;
@@ -820,19 +834,15 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
     justify-content: flex-start;
 }
 .thumbstat {
-	flex: 1 1 116px;
+    min-width: 150px;
 }
 .thumbstat150 {
-	flex: 1 1 170px;
+    min-width: 170px;
 }
 .thumbstat, .thumbstat150 {
-    /* flex-grow: 1; */
-    /* flex-shrink: 1; */
-    /* flex-basis: 140px; */
-	display: inline;
-    width: 100%;
-    justify-content: flex-start;
-    align-self: flex-start;
+    flex-grow: 1;
+    flex-shrink: 0;
+    min-width: 150px;
 }
 
 select.selectarrowonleft {
@@ -853,7 +863,9 @@ select.selectarrowonleft option {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+	.width25  { width: 25px; }
     .width50  { width: 50px; }
+    .width75  { width: 75px; }
     .width100 { width: 100px; }
     .width200 { width: 200px; }
     .minwidth100 { min-width: 100px; }
@@ -979,7 +991,7 @@ select.selectarrowonleft option {
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     	min-height: 1.4em;
-    	line-height: 1.4em;
+    	/* line-height: 1.4em; */
     	/* padding: .4em .1em; */
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this ? */
@@ -1040,6 +1052,13 @@ select.selectarrowonleft option {
 	div.statusrefbis {
     	padding-right: 3px !important;
    	}
+	/* TODO
+	div.statusref {
+    	padding-top: 0px !important;
+    	padding-left: 0px !important;
+    	border: none !important;
+   	}
+	*/
 
    	input.buttonpayment {
 		min-width: 300px;
@@ -1223,6 +1242,12 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
+div.firstcolumn div.box {
+	padding-right: 10px;
+}
+div.secondcolumn div.box {
+	padding-left: 10px;
+}
 /* Force values on one colum for small screen */
 @media only screen and (max-width: 1000px)
 {
@@ -1260,6 +1285,12 @@ div.ficheaddleft {
     	<?php print "padding-".$left.": 0px;\n"; ?>
     	margin-top: 10px;
     }
+    div.firstcolumn div.box {
+		padding-right: 0px;
+	}
+	div.secondcolumn div.box {
+		padding-left: 0px;
+	}
 }
 
 /* For table into table into card */
@@ -1320,7 +1351,7 @@ div.attachareaformuserfileecm {
 div.arearef {
 	padding-top: 2px;
 	margin-bottom: 10px;
-	padding-bottom: 7px;
+	padding-bottom: 10px;
 }
 div.arearefnobottom {
 	padding-top: 2px;
@@ -1335,6 +1366,12 @@ div.divphotoref {
 div.paginationref {
 	padding-bottom: 10px;
 }
+/* TODO
+div.statusref {
+   	padding: 10px;
+   	border: 1px solid #bbb;
+   	border-radius: 6px;
+} */
 div.statusref {
 	float: right;
 	padding-left: 12px;
@@ -1380,8 +1417,14 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwith ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	/* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>); */
 }
+.trextrafieldseparator td {
+    /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
+    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+}
+
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
@@ -1454,14 +1497,14 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
     font-weight: normal;
-	padding: 0px 5px 0px 3px;
+	padding: 0px 4px 0px 4px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
     text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
-	padding: 0px 5px 0px 3px;
+	padding: 0px 4px 0px 4px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
@@ -1550,12 +1593,8 @@ div.menu_titre {
 }
 .mainmenuaspan
 {
-<?php if ($disableimages) { ?>
-	padding-<?php print $left; ?>: 4px;
+	padding-<?php print $left; ?>: 2px;
 	padding-<?php print $right; ?>: 2px;
-<?php } else { ?>
-	padding-<?php print $right; ?>: 4px;
-<?php } ?>
 }
 
 div.mainmenu {
@@ -2170,12 +2209,23 @@ div.tabBar div.titre {
 	padding-top: 20px;
 }
 
+/* tabBar used for creation/update/send forms */
 div.tabBarWithBottom {
 	padding-bottom: 18px;
 	border-bottom: 1px solid #aaa;
 }
+div.tabBarWithBottom tr {
+	background: unset !important;
+}
+div.tabBarWithBottom table.border>tbody>tr:last-of-type>td {
+	border-bottom: none !important;
+}
+
 div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
+}
+.tableforservicepart1 .tdhrthin {
+	height: unset;
 }
 
 div.popuptabset {
@@ -2234,9 +2284,10 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
 	margin: 0 0.2em 0 0.2em !important;
 
-	border-right: 1px solid #AAA !important;
-	border-left: 1px solid #AAA !important;
-	border-top: 2px solid rgb(<?php echo $colortopbordertitle1; ?>) !important;
+	border-right: 1px solid #CCC !important;
+	border-left: 1px solid #CCC !important;
+	/* border-top: <?php echo 2; ?>px solid rgb(<?php echo $colortopbordertitle1; ?>) !important; */
+	border-top: <?php echo 2; ?>px solid rgb(<?php echo $colorbackhmenu1 ?>) !important;
 }
 a.tab:hover
 {
@@ -2407,16 +2458,20 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
 table.borderplus {
 	border: 1px solid #BBB;
 }
-.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+.border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 22px;
 }
+tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
+    height: 22px;
+}
+
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
 }
@@ -2427,7 +2482,7 @@ div .tdtop {
 	padding-bottom: 0px;
 }
 
-table.border td, div.border div div.tagtd {
+table.border td, table.bordernooddeven td, div.border div div.tagtd {
 	padding: 5px 2px 5px 2px;
 	border-collapse: collapse;
 }
@@ -2453,30 +2508,49 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
-.noborderbottom {
+.nobordertop, .nobordertop tr:first-of-type td {
+    border-top: none !important;
+}
+.noborderbottom, .noborderbottom tr:last-of-type td {
     border-bottom: none !important;
 }
-.ficheaddleft table.noborder {
-	margin: 0px 0px 0px 0px;
+.bordertop {
+	border-top: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
+.borderbottom {
+	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+
+
+/*.ficheaddleft table.noborder {
+	margin: 0px 0px 0px 0px;
+}*/
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
+	/* border-top-width: 2px;
+	border-top-color: rgb(<?php echo $colorbackhmenu1 ?>);
+	border-top-style: solid; */
 
 	border-bottom-width: 1px;
-	border-bottom-color: #BBB;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-bottom-style: solid;
 
 	margin: 0px 0px 5px 0px;
 }
 div.tabBar div.ficheaddleft table.noborder:last-of-type {
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+div.tabBar table.border>tbody>tr:last-of-type>td {
+	border-bottom-width: 1px;
+	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom-style: solid;
 }
 div.tabBar div.ficheaddleft table.noborder {
     border-bottom: none;
@@ -2490,17 +2564,23 @@ table.paddingtopbottomonly tr td {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
 tr.liste_titre_filter td.liste_titre {
-    border-bottom: 1px solid #ddd;
+/*    border-bottom: 1px solid #ddd; */
 }
 .liste_titre_create td, .liste_titre_create th, .liste_titre_create .tagtd
 {
-    /*border-top-width: 1px;
+    border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
-    border-top-style: solid;*/
+    border-top-style: solid;
+}
+/*.liste_titre_create td.nobottom, tr#trlinefordates td {
+    background-color: rgb(<?php echo $colorbacktitle1; ?>) !important;
+}*/
+tr#trlinefordates td {
+    border-bottom: 0px !important;
 }
 .liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
-    border-top-width: 2px;
+    border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
@@ -2511,9 +2591,10 @@ table.liste tr, table.noborder tr, div.noborder form {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
 }
-table.liste td, table.noborder td, div.noborder form div {
+table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
 	line-height: 1.2em;
+	height: 22px;
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
@@ -2749,7 +2830,7 @@ td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.imp
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
 }
-td.evenodd, tr.nohoverpair td {
+td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
@@ -2786,7 +2867,7 @@ div.liste_titre {
 	padding-bottom: 2px;
 }
 div.liste_titre_bydiv {
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 
@@ -2811,7 +2892,7 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 {
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
-    border-bottom: 1px solid #ddd;
+/*    border-bottom: 1px solid #ddd; */
 
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>;
@@ -2819,10 +2900,11 @@ div.liste_titre_bydiv, .liste_titre div.tagtr, tr.liste_titre, tr.liste_titre_se
 }
 tr.liste_titre th, tr.liste_titre td, th.liste_titre
 {
-	border-bottom: 1px solid #888;
+	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 tr.liste_titre:first-child th, tr:first-child th.liste_titre {
-    border-bottom: 1px solid #ddd ! important;
+/*    border-bottom: 1px solid #ddd ! important; */
+	border-bottom: unset;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div
 {
@@ -2835,7 +2917,7 @@ tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, fo
 	text-shadow: none !important;
 }
 tr.liste_titre_topborder td {
-	border-top-width: <?php echo $borderwith; ?>px;
+	border-top-width: <?php echo $borderwidth; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
@@ -2850,7 +2932,8 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-    border-bottom: 1px solid #ddd;
+    /* border-bottom: 1px solid #ddd; */
+    border-bottom: unset;
 }
 
 
@@ -2884,23 +2967,33 @@ form.liste_total div {
 tr.liste_sub_total, tr.liste_sub_total td {
 	border-bottom: 1px solid #aaa;
 }
-
+/* to avoid too much border on contract card */
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
 	background: #FFF;
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
 	border-bottom: none;
 }
+table.tableforservicepart1:first-of-type tr:first-of-type td {
+    border-top: 1px solid #888;
+}
+table.tableforservicepart1 tr td {
+    border-top: 0px;
+}
 
 .paymenttable, .margintable {
-	border-top-width: <?php echo $borderwith ?>px !important;
+	/*border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
-	border-top-style: solid !important;
+	border-top-style: solid !important;*/
+	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
 	padding-left: 2px;
+}
+.paymenttable, .margintable tr td {
+	height: 22px;
 }
 
 /* Disable shadows */
@@ -2915,13 +3008,14 @@ div.tabBar .noborder {
 }
 
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
-	border-bottom: 1px solid #AAA !important;
+	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 
 /* Prepare to remove class pair - impair */
 
-.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre) {
+.noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
+.border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre) {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -2932,7 +3026,9 @@ div.tabBar .noborder {
 	border-bottom: 1px solid #ddd;
 }
 
-.noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre) {
+.noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
+.border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre)
+{
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -2944,10 +3040,6 @@ div.tabBar .noborder {
 }
 
 ul.noborder li:nth-child(even):not(.liste_titre) {
-	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
-	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
-	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
-	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
 	background-color: rgb(<?php echo $colorbacklinepair2; ?>) !important;
 }
 
@@ -2964,35 +3056,62 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     border: none;
 }*/
 .boxstatsborder {
-    border: 1px solid #CCC !important;
+    /* border: 1px solid #CCC !important; */
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 3px;
-    border: 1px solid #CCC;
+    margin: 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     text-align: center;
-    border-radius: 2px;
+
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    box-shadow: 1px 1px 6px #bbb;
+    border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
 	white-space: nowrap;
 	overflow: hidden;
     text-overflow: ellipsis;
 }
-.boxstats {
-    padding: 3px;
-    width: 104px;
-}
 .boxstats130 {
     width: 158px;
     height: 48px;
     padding: 3px
 }
+.boxstats {
+    padding: 3px;
+    width: 121px;
+}
 .boxstatscontent {
 	padding: 3px;
+}
+.boxstatsempty {
+    width: 121px;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.boxstats150empty {
+    width: 158px;
+    padding-left: 3px;
+    padding-right: 3px;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 @media only screen and (max-width: 767px)
 {
+	.boxstats, .boxstats130 {
+		margin: 3px;
+	    border: 1px solid #ccc;
+    	box-shadow: none;
+    }
+    .boxstats130 {
+    	text-align: <?php echo $left; ?>
+    }
 	.thumbstat {
 		flex: 1 1 110px;
 	}
@@ -3007,8 +3126,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     	width: 148px;
     }
     .boxstats {
-        width: 100px;
+        width: 111px;
     }
+    .boxstatsempty {
+    	width: 111px;
+	}
+
 }
 
 .boxstats:hover {
@@ -3069,6 +3192,15 @@ span.dashboardlineko {
 .boxtable {
     margin-bottom: 8px !important;
     border-bottom-width: 1px;
+
+    border-top: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	/* border-top: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
+}
+table.noborder.boxtable tr td {
+    height: unset;
+}
+.boxtablenotop {
+    border-top-width: 0 !important;
 }
 .boxtablenobottom {
     border-bottom-width: 0 !important;
@@ -3090,7 +3222,7 @@ a.valignmiddle.dashboardlineindicator {
 .box {
     padding-right: 0px;
     padding-left: 0px;
-    padding-bottom: 12px;
+    padding-bottom: 25px;
 }
 
 tr.box_titre {
@@ -3116,9 +3248,6 @@ img.boxhandle, img.boxclose {
 	padding-left: 5px;
 }
 
-.noborderbottom {
-	border-bottom: none !important;
-}
 .formboxfilter {
 	vertical-align: middle;
 	margin-bottom: 6px;
@@ -3206,6 +3335,20 @@ a.impayee:visited { font-weight: bold; color: #550000; }
 a.impayee:active { font-weight: bold; color: #550000; }
 a.impayee:hover { font-weight: bold; color: #550000; }
 
+
+/*
+ *  External web site
+ */
+
+.framecontent {
+    width: 100%;
+    height: 100%;
+}
+
+.framecontent iframe {
+    width: 100%;
+    height: 100%;
+}
 
 
 /*
@@ -3416,6 +3559,13 @@ div.ui-tooltip {
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+.ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
+.ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
+html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
+{
+    border: unset;
+}
+
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-trigger {
@@ -3617,13 +3767,15 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
-.cal_event { font-size: 12px; }
+.cal_event              { font-size: 1em; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
 .cal_event a:visited    { color: #111111; font-weight: normal !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
 .cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
+
+.calendarviewcontainertr { height: 100px; }
 
 
 /* ============================================================================== */
@@ -5043,8 +5195,8 @@ div.tabsElem a.tab {
     	margin-left: 1px;
 	}
 	.mainmenuaspan {
-    	/*display: none;*/
   		font-size: 10px;
+  		padding-left: 0;
   		padding-right: 0;
     }
     .topmenuimage {
