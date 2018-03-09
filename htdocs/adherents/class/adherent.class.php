@@ -33,7 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -1429,8 +1429,8 @@ class Adherent extends CommonObject
 						$result=$customer->create_from_member($this, $companyname, $companyalias);
 						if ($result < 0)
 						{
-							$this->error = $company->error;
-							$this->errors = $company->errors;
+							$this->error = $customer->error;
+							$this->errors = $customer->errors;
 							$error++;
 						}
 						else
