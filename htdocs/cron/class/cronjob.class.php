@@ -63,6 +63,11 @@ class Cronjob extends CommonObject
 	public $libname;
 	public $test;					// A test condition to know if job is visible/qualified
 
+	const STATUS_DISABLED = 0;
+	const STATUS_ENABLED = 1;
+	const STATUS_ARCHIVED = 2;
+
+
     /**
      *  Constructor
      *
@@ -988,7 +993,8 @@ class Cronjob extends CommonObject
 				$ret=dol_include_once($this->classesname);
 				if ($ret===false || (! class_exists($this->objectname)))
 				{
-					$this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					if ($ret===false) $this->error=$langs->trans('CronCannotLoadClass',$this->classesname,$this->objectname);
+					else $this->error=$langs->trans('CronCannotLoadObject',$this->classesname,$this->objectname);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
 					$this->lastresult = -1;

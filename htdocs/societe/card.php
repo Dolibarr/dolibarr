@@ -149,7 +149,7 @@ if (empty($reshook))
 				$listofproperties=array(
 					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
 					'model_pdf', 'fk_projet'
@@ -327,14 +327,16 @@ if (empty($reshook))
     if ($action == 'update_extras') {
         $object->fetch($socid);
 
+        $object->oldcopy = dol_clone($object);
+
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
         if ($ret < 0) $error++;
 
         if (! $error)
         {
-            $result = $object->insertExtraFields();
+            $result = $object->insertExtraFields('COMPANY_MODIFY');
    			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -511,6 +513,8 @@ if (empty($reshook))
         {
             if ($action == 'add')
             {
+            	$error = 0;
+
                 $db->begin();
 
                 if (empty($object->client))      $object->code_client='';
@@ -533,11 +537,21 @@ if (empty($reshook))
 
 					// Customer categories association
 					$custcats = GETPOST('custcats', 'array');
-					$object->setCategories($custcats, 'customer');
+					$result = $object->setCategories($custcats, 'customer');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
-					$object->setCategories($suppcats, 'supplier');
+					$result = $object->setCategories($suppcats, 'supplier');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
@@ -566,7 +580,7 @@ if (empty($reshook))
                         }
                     }
                     else
-	              {
+					{
 						switch($_FILES['photo']['error'])
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -593,7 +607,7 @@ if (empty($reshook))
                    	$error++;
                 }
 
-                if ($result >= 0)
+                if ($result >= 0 && ! $error)
                 {
                     $db->commit();
 
@@ -622,6 +636,8 @@ if (empty($reshook))
 
             if ($action == 'update')
             {
+            	$error = 0;
+
                 if (GETPOST('cancel','alpha'))
                 {
                 	if (! empty($backtopage))
@@ -647,16 +663,27 @@ if (empty($reshook))
                     setEventMessages($object->error, $object->errors, 'errors');
                   	$error++;
                 }
+
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if (!empty($user->rights->categorie->lire))
+				if (! $error && !empty($user->rights->categorie->lire))
 				{
 					// Customer categories association
 					$categories = GETPOST( 'custcats', 'array' );
-					$object->setCategories($categories, 'customer');
+					$result = $object->setCategories($categories, 'customer');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
 					// Supplier categories association
 					$categories = GETPOST('suppcats', 'array');
-					$object->setCategories($categories, 'supplier');
+					$result = $object->setCategories($categories, 'supplier');
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 
                 // Logo/Photo save
@@ -686,13 +713,18 @@ if (empty($reshook))
                             }
                             else
                             {
-                                // Create small thumbs for company (Ratio is near 16/9)
-                                // Used on logon for example
-                                $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+                            	// Create thumbs
+                            	$object->addThumbs($newfile);
 
-                                // Create mini thumbs for company (Ratio is near 16/9)
-                                // Used on menu or for setup page for example
-                                $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+                                // Index file in database
+                                if (! empty($conf->global->THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD))
+                                {
+                                	require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+                                	// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
+                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', 'uploaded', 1);
+                                	// now we index the uploaded logo file
+                                	addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
+                                }
                             }
                         }
                     }
@@ -1167,7 +1199,15 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+            {
+                print '<tr><td>'.fieldLabel('Region-State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            }
+            else
+            {
+                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            }
+
             if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code);
             else print $countrynotdefined;
             print '</td></tr>';
@@ -1412,7 +1452,7 @@ else
 
         if ($socid)
         {
-        	$res=$object->fetch_optionals($object->id,$extralabels);
+        	$res=$object->fetch_optionals();
             //if ($res < 0) { dol_print_error($db); exit; }
 
 	        $head = societe_prepare_head($object);
@@ -1724,7 +1764,15 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
+                {
+                    print '<tr><td>'.fieldLabel('Region-State','state_id').'</td><td colspan="3">';
+                }
+                else
+                {
+                    print '<tr><td>'.fieldLabel('State','state_id').'</td><td colspan="3">';
+                }
+
                 print $formcompany->select_state($object->state_id,$object->country_code);
                 print '</td></tr>';
             }
@@ -1997,7 +2045,7 @@ else
          * View
          */
 
-        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
+        if (!empty($object->id)) $res=$object->fetch_optionals();
         //if ($res < 0) { dol_print_error($db); exit; }
 
 

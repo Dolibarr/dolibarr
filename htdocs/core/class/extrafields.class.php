@@ -82,6 +82,7 @@ class ExtraFields
 	public static $type2label=array(
 	'varchar'=>'String',
 	'text'=>'TextLong',
+	'html'=>'HtmlText',
 	'int'=>'Int',
 	'double'=>'Float',
 	'date'=>'Date',
@@ -133,7 +134,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  int				$type               Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param  int				$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length of attribute
 	 *  @param  string			$elementtype        Element type ('member', 'product', 'thirdparty', ...)
@@ -143,15 +144,15 @@ class ExtraFields
 	 *  @param  array|string	$param				Params for field (ex for select list : array('options' => array(value'=>'label of option')) )
 	 *  @param  int				$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string			$perms				Permission to check
-	 *  @param	int				$list				Visibilty
-	 *  @param	int				$ishidden			Deprecated. Use visibility instead.
+	 *  @param	int				$list				Visibilty (0=never visible, 1=visible on list+forms, 2=list onyl, 3=form only)
+	 *  @param	int				$notused			Deprecated.
 	 *  @param  string  		$computed           Computed value
 	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $computed='', $entity='', $langfile='', $enabled='1')
+	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param='', $alwayseditable=0, $perms='', $list=-1, $notused=0, $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -168,7 +169,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $ishidden, $default_value, $computed, $entity, $langfile, $enabled);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $notused, $default_value, $computed, $entity, $langfile, $enabled);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -189,7 +190,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -232,9 +233,12 @@ class ExtraFields
 			} elseif ($type=='link') {
 				$typedb='int';
 				$lengthdb='11';
+			} elseif ($type=='html') {
+				$typedb='text';
+				$lengthdb=$length;
 			} elseif($type=='password') {
 				$typedb='varchar';
-				$lengthdb='50';
+				$lengthdb='128';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -275,7 +279,7 @@ class ExtraFields
 	 *
 	 *	@param	string			$attrname		code of attribute
 	 *	@param	string			$label			label of attribute
-	 *  @param	int				$type			Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
+	 *  @param	int				$type			Type of attribute ('int', 'varchar', 'text', 'html', 'date', 'datehour', 'float')
 	 *  @param	int				$pos			Position of attribute
 	 *  @param	string			$size			Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string			$elementtype	Element type ('member', 'product', 'thirdparty', ...)
@@ -285,7 +289,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Visibily
-	 *  @param	int				$ishidden		Deprecated. Use visibility instead.
+	 *  @param	int				$notused		Deprecated.
 	 *  @param  string          $default        Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string          $computed       Computed value
 	 *  @param  string          $entity     	Entity of extrafields
@@ -293,7 +297,7 @@ class ExtraFields
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $ishidden=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=-1, $notused=0, $default='', $computed='',$entity='', $langfile='', $enabled='1')
 	{
 		global $conf,$user;
 
@@ -483,7 +487,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'text', 'varchar', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	int		$length				Length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -493,7 +497,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Visibility
-	 *  @param	int		$ishidden			Deprecated. Use  visiblity instead.
+	 *  @param	int		$notused			Deprecated.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity	            Entity of extrafields
@@ -501,7 +505,7 @@ class ExtraFields
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $ishidden=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
+	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $notused=0, $default='', $computed='', $entity='', $langfile='', $enabled='1')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -529,6 +533,8 @@ class ExtraFields
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') || ($type=='checkbox') || ($type=='chkbxlst')) {
 				$typedb='text';
 				$lengthdb='';
+			} elseif ($type == 'html') {
+				$typedb='text';
 			} elseif ($type=='link') {
 				$typedb='int';
 				$lengthdb='11';
@@ -549,7 +555,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$ishidden,$default,$computed,$entity,$langfile,$enabled);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$notused,$default,$computed,$entity,$langfile,$enabled);
 				}
 				if ($result > 0)
 				{
@@ -600,7 +606,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Visiblity
-	 *  @param	int		$ishidden			Deprecated. Use visility instead.
+	 *  @param	int		$notused			Deprecated.
 	 *  @param  string  $default            Default value (in database. use the default_value feature for default value on screen).
 	 *  @param  string  $computed           Computed value
 	 *  @param  string  $entity     		Entity of extrafields
@@ -608,10 +614,10 @@ class ExtraFields
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$notused=0,$default='',$computed='',$entity='',$langfile='',$enabled='1')
 	{
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$ishidden.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$notused.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -737,7 +743,7 @@ class ExtraFields
 		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed";
-		$sql .= ",entity";
+		$sql.= ",entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -800,15 +806,17 @@ class ExtraFields
 							{
 								if ($obj = $this->db->fetch_object($resql_entity_name))
 								{
-									$this->attribute_entitylabel[$tab->name]=$obj->label;
+									$this->attribute_entitylabel[$tab->name]=$obj->label;	// Old usage
 									$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=$obj->label;
 								}
 							}
 						}
 					}
+
+					$this->attributes[$tab->elementtype]['loaded']=1;
 				}
 			}
-			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;
+			if ($elementtype) $this->attributes[$elementtype]['loaded']=1;	// If nothing found, we also save tag 'loaded'
 		}
 		else
 		{
@@ -933,6 +941,19 @@ class ExtraFields
 			$out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
+		{
+			if (! preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				$doleditor=new DolEditor($keyprefix.$key.$keysuffix,$value,'',200,'dolibarr_notes','In',false,false,false,ROWS_5,'90%');
+				$out=$doleditor->Create(1);
+			}
+			else
+			{
+				$out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam?$moreparam:'').'>';
+			}
+		}
+		elseif ($type == 'html')
 		{
 			if (! preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
@@ -1373,7 +1394,7 @@ class ExtraFields
 			$list=$this->attributes[$extrafieldsobjectkey]['list'][$key];
 			$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
-		else
+		else	// Old usage
 		{
 			$elementtype=$this->attribute_elementtype[$key];	// seems not used
 			$label=$this->attribute_label[$key];
@@ -1643,6 +1664,10 @@ class ExtraFields
 			}
 		}
 		elseif ($type == 'text')
+		{
+			$value=dol_htmlentitiesbr($value);
+		}
+		elseif ($type == 'html')
 		{
 			$value=dol_htmlentitiesbr($value);
 		}

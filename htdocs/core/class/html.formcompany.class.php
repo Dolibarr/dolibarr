@@ -266,10 +266,10 @@ class FormCompany
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 2) {
+						if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2) {
 							$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
 						}
-						else if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1) {
+						else if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
 							$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
 						}
 						else {

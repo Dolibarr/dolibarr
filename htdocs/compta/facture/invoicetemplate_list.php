@@ -419,19 +419,19 @@ if ($resql)
 	// Date invoice
 	if (! empty($arrayfields['f.date_last_gen']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
 	// Date next generation
 	if (! empty($arrayfields['f.date_when']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
-		$formother->select_year($search_year_date_when?$search_year_date_when:-1,'search_year_date_when',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
+		$formother->select_year($search_year_date_when?$search_year_date_when:-1,'search_year_date_when',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
 	// Extra fields
@@ -599,8 +599,10 @@ if ($resql)
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
 			   print '<td align="center">';
+			   print '<div class="nowraponall">';
 			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			   if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
+			   print '</div>';
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
@@ -636,7 +638,7 @@ if ($resql)
 				}
 				else
 				{
-					print $langs->trans("DateIsNotEnough");
+					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 				}
 			}
 			else

@@ -216,7 +216,7 @@ $max=5;
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
 $sql.= " date_cloture as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -262,7 +262,7 @@ if ($resql)
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -296,7 +296,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 	$now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client";
+	$sql.= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -341,7 +342,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
 				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 				print '</td></tr></table>';

@@ -22,6 +22,8 @@ JumpToLogin=Disconnected. Go to login page...
 MessageForm=Message on online payment form
 MessageOK=Message on validated payment return page
 MessageKO=Message on canceled payment return page
+ContentOfDirectoryIsNotEmpty=Content of this directory is not empty.
+DeleteAlsoContentRecursively=Check to delete all content recursiveley
 
 YearOfInvoice=Year of invoice date
 PreviousYearOfInvoice=Previous year of invoice date
@@ -214,6 +216,7 @@ StartUpload=Start upload
 CancelUpload=Cancel upload
 FileIsTooBig=Files is too big
 PleaseBePatient=Please be patient...
+NewPassword=New password
 ResetPassword=Reset password
 RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
 NewKeyIs=This is your new keys to login
@@ -227,7 +230,9 @@ Chart=Chart
 PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
-
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=Exports area
 AvailableFormats=Available formats

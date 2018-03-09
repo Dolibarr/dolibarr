@@ -31,6 +31,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
@@ -201,6 +202,23 @@ if (empty($reshook))
 				$_POST["price"] = 0;
 			}
 		}
+        if ($conf->multicurrency->enabled) {
+            if (empty($_POST["multicurrency_code"])) {
+                $error++;
+                $langs->load("errors");
+                setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Currency")), null, 'errors');
+            }
+            if ($_POST["multicurrency_tx"] <= 0 || $_POST["multicurrency_tx"] == '') {
+                $error++;
+                $langs->load("errors");
+                setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CurrencyRate")), null, 'errors');
+            }
+            if ($_POST["multicurrency_price"] < 0 || $_POST["multicurrency_price"] == '') {
+                $error++;
+                $langs->load("errors");
+                setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PriceCurrency")), null, 'errors');
+            }
+        }
 
 		if (! $error)
 		{
@@ -232,7 +250,11 @@ if (empty($reshook))
 				if (isset($_POST['ref_fourn_price_id']))
 					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-				$ret=$object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
+                if ($conf->multicurrency->enabled) {
+                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $_POST["multicurrency_price"], $_POST["multicurrency_price_base_type"], $_POST["multicurrency_tx"], $_POST["multicurrency_code"]);
+                } else {
+                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
+                }
 				if ($ret < 0)
 				{
 
@@ -526,12 +548,101 @@ if ($id > 0 || $ref)
 					</script>';
 				}
 
-				// Price qty min
-				print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
-				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($object->fourn_price)?price($object->fourn_price):'')).'">';
-				print '&nbsp;';
-				print $form->selectPriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):'HT'), "price_base_type");  // We keep 'HT' here, price_base_type is not yet supported for supplier prices
-				print '</td></tr>';
+                if ($conf->multicurrency->enabled) {
+                    // Currency
+                    print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
+                    print '<td>';
+                    $currencycodetouse = GETPOST('multicurrency_code')?GETPOST('multicurrency_code'):(isset($object->fourn_multicurrency_code)?$object->fourn_multicurrency_code:'');
+                    if (empty($currencycodetouse) && $object->fourn_multicurrency_tx == 1) $currencycodetouse=$conf->currency;
+                    print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
+                    print '</td>';
+                    print '</tr>';
+
+                    // Currency tx
+                    print '<tr><td class="fieldrequired">'.$langs->trans("CurrencyRate").'</td>';
+                    print '<td><input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx')?GETPOST('multicurrency_tx'):(isset($object->fourn_multicurrency_tx)?$object->fourn_multicurrency_tx:'')).'">';
+                    print '</td>';
+                    print '</tr>';
+
+                    // Currency price qty min
+                    print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
+                    $pricesupplierincurrencytouse=(GETPOST('multicurrency_price')?GETPOST('multicurrency_price'):(isset($object->fourn_multicurrency_price)?$object->fourn_multicurrency_price:''));
+                    print '<td><input class="flat" name="multicurrency_price" size="8" value="'.$pricesupplierincurrencytouse.'">';
+                    print '&nbsp;';
+                    print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type')?GETPOST('multicurrency_price_base_type'):'HT'), "multicurrency_price_base_type");  // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
+                    print '</td></tr>';
+
+                    // Price qty min
+                    print '<tr><td class="fieldrequired">' . $langs->trans("PriceQtyMin") . '</td>';
+                    print '<td><input class="flat" name="disabled_price" size="8" value="">';
+                    print '<input type="hidden" name="price" value="">';
+                    print '<input type="hidden" name="price_base_type" value="">';
+                    print '&nbsp;';
+                    print $form->selectPriceBaseType('', "disabled_price_base_type");
+                    print '</td></tr>';
+
+                    $currencies = array();
+                    $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE entity = '.$conf->entity;
+                    $resql = $db->query($sql);
+                    if ($resql) {
+                        $currency = new MultiCurrency($db);
+                        while ($obj = $db->fetch_object($resql)) {
+                            $currency->fetch($obj->rowid);
+                            $currencies[$currency->code] = $currency->rate->rate;
+                        }
+                    }
+                    $currencies = json_encode($currencies);
+
+                    print <<<SCRIPT
+    <script type="text/javascript">
+        function update_price_from_multicurrency() {
+            var multicurrency_price = $('input[name="multicurrency_price"]').val();
+            var multicurrency_tx = $('input[name="multicurrency_tx"]').val();
+            $('input[name="price"]').val(multicurrency_price / multicurrency_tx);
+            $('input[name="disabled_price"]').val(multicurrency_price / multicurrency_tx);
+        }
+        jQuery(document).ready(function () {
+            $('input[name="disabled_price"]').prop('disabled', true);
+            $('select[name="disabled_price_base_type"]').prop('disabled', true);
+            update_price_from_multicurrency();
+
+            $('input[name="multicurrency_price"]').keyup(function () {
+                update_price_from_multicurrency();
+            }).change(function () {
+                update_price_from_multicurrency();
+            }).on('paste', function () {
+                update_price_from_multicurrency();
+            });
+
+            $('input[name="multicurrency_tx"]').keyup(function () {
+                update_price_from_multicurrency();
+            }).change(function () {
+                update_price_from_multicurrency();
+            }).on('paste', function () {
+                update_price_from_multicurrency();
+            });
+
+            $('select[name="multicurrency_price_base_type"]').change(function () {
+                $('input[name="price_base_type"]').val($(this).val());
+                $('select[name="disabled_price_base_type"]').val($(this).val());
+            });
+
+            var currencies_array = $currencies;
+            $('select[name="multicurrency_code"]').change(function () {
+                $('input[name="multicurrency_tx"]').val(currencies_array[$(this).val()]);
+            });
+        });
+    </script>
+SCRIPT;
+                } else {
+                    // Price qty min
+                    print '<tr><td class="fieldrequired">' . $langs->trans("PriceQtyMin") . '</td>';
+                    print '<td><input class="flat" name="price" size="8" value="' . (GETPOST('price') ? price(GETPOST('price')) : (isset($object->fourn_price) ? price($object->fourn_price) : '')) . '">';
+                    print '&nbsp;';
+                    print $form->selectPriceBaseType((GETPOST('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type");  // We keep 'HT' here, price_base_type is not yet supported for supplier prices
+                    print '</td></tr>';
+                }
+
 
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
@@ -634,15 +745,17 @@ if ($id > 0 || $ref)
 				print_liste_field_titre("QtyMin",$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("VATRate",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("PriceQtyMinHT",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre("UnitPriceHT",$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
+                if ($conf->multicurrency->enabled) {
+                    print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, 'align="right"', $sortfield, $sortorder);
+                }
+                print_liste_field_titre("UnitPriceHT",$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
+                if ($conf->multicurrency->enabled) {
+                    print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, 'align="right"', $sortfield, $sortorder);
+                    print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+                }
 				print_liste_field_titre("DiscountQtyMin",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("NbDaysToDelivery",$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
 				print_liste_field_titre("ReputationForThisProduct",$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
-				// Charges ????
-				if ($conf->global->PRODUCT_CHARGES)
-				{
-					if (! empty($conf->margin->enabled)) print_liste_field_titre("UnitCharges");
-				}
 				print_liste_field_titre('');
 				print "</tr>\n";
 
@@ -685,11 +798,30 @@ if ($id > 0 || $ref)
 						print $productfourn->fourn_price?price($productfourn->fourn_price):"";
 						print '</td>';
 
+                        if ($conf->multicurrency->enabled) {
+                            // Price for the quantity in currency
+                            print '<td align="right">';
+                            print $productfourn->fourn_multicurrency_price ? price($productfourn->fourn_multicurrency_price) : "";
+                            print '</td>';
+                        }
+
 						// Unit price
 						print '<td align="right">';
 						print price($productfourn->fourn_unitprice);
 						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
 						print '</td>';
+
+                        if ($conf->multicurrency->enabled) {
+                            // Unit price in currency
+                            print '<td align="right">';
+                            print price($productfourn->fourn_multicurrency_unitprice);
+                            print '</td>';
+
+                            // Currency
+                            print '<td align="right">';
+                            print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
+                            print '</td>';
+                        }
 
 						// Discount
 						print '<td align="right">';
@@ -708,18 +840,6 @@ if ($id > 0 || $ref)
 						}
 						print'</td>';
 
-						// Charges ????
-						/*
-						if ($conf->global->PRODUCT_CHARGES)
-						{
-							if (! empty($conf->margin->enabled))
-							{
-								print '<td align="right">';
-								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
-								print '</td>';
-							}
-						}*/
-
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
@@ -727,7 +847,7 @@ if ($id > 0 || $ref)
 						}
 
 						// Modify-Remove
-						print '<td align="center">';
+						print '<td class="center nowraponall">';
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";

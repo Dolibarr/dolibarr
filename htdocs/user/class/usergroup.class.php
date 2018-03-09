@@ -116,12 +116,9 @@ class UserGroup extends CommonObject
 					$this->members=$this->listUsersForGroup();
 
 
-				// Retreive all extrafield for group
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				dol_include_once('/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 
 				// Sav current LDAP Current DN

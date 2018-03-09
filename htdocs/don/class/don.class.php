@@ -611,7 +611,7 @@ class Don extends CommonObject
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment AND cp.entity IN (".getEntity('c_paiement').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
         $sql.= " WHERE d.entity IN (".getEntity('donation').")";
         if (! empty($id))
@@ -666,12 +666,9 @@ class Don extends CommonObject
                 $this->modelpdf       = $obj->model_pdf;
                 $this->commentaire    = $obj->note;	// deprecated
 
-				// Retrieve all extrafield for thirdparty
+                // Retreive all extrafield
                 // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                $this->fetch_optionals($this->id,$extralabels);
+                $this->fetch_optionals();
             }
             return 1;
         }

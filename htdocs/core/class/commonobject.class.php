@@ -13,6 +13,7 @@
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2018      Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -547,9 +548,10 @@ abstract class CommonObject
 	 *
 	 * @param	string	$modulepart			Module related to document
 	 * @param	int		$initsharekey		Init the share key if it was not yet defined
+	 * @param	int		$relativelink		0=Return full external link, 1=Return link relative to root of file
 	 * @return	string						Link or empty string if there is no download link
 	 */
-	function getLastMainDocLink($modulepart, $initsharekey=0)
+	function getLastMainDocLink($modulepart, $initsharekey=0, $relativelink=0)
 	{
 		global $user, $dolibarr_main_url_root;
 
@@ -620,10 +622,17 @@ abstract class CommonObject
 		if (! empty($ecmfile->share)) $paramlink.=($paramlink?'&':'').'hashp='.$ecmfile->share;			// Hash for public share
 		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
 
-		$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
+		if ($relativelink)
+		{
+			$linktoreturn='document.php'.($paramlink?'?'.$paramlink:'');
+		}
+		else
+		{
+			$linktoreturn=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
+		}
 
 		// Here $ecmfile->share is defined
-		return $fulllink;
+		return $linktoreturn;
 	}
 
 
@@ -1222,7 +1231,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 *		Charge le projet d'id $this->fk_project dans this->projet
+	 *		Load the project with id $this->fk_project into this->project
 	 *
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
@@ -1242,7 +1251,25 @@ abstract class CommonObject
 	}
 
 	/**
-	 *		Charge le user d'id userid dans this->user
+	 *		Load the product with id $this->fk_product into this->product
+	 *
+	 *		@return		int			<0 if KO, >=0 if OK
+	 */
+	function fetch_product()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+		if (empty($this->fk_product)) return 0;
+
+		$product = new Product($this->db);
+		$result = $product->fetch($this->fk_product);
+
+		$this->product = $product;
+		return $result;
+	}
+
+	/**
+	 *		Load the user with id $userid into this->user
 	 *
 	 *		@param	int		$userid 		Id du contact
 	 *		@return	int						<0 if KO, >0 if OK
@@ -1348,6 +1375,7 @@ abstract class CommonObject
 	 *	@param	User|string	$fuser		Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *	@return	int						<0 if KO, >0 if OK
+	 *  @see updateExtraField
 	 */
 	function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='')
 	{
@@ -1797,29 +1825,57 @@ abstract class CommonObject
 	 *  Change the shipping method
 	 *
 	 *  @param      int     $shipping_method_id     Id of shipping method
+     *  @param      bool    $notrigger              false=launch triggers after, true=disable triggers
+     *  @param      User	$userused               Object user
+	 *
 	 *  @return     int              1 if OK, 0 if KO
 	 */
-	function setShippingMethod($shipping_method_id)
+	function setShippingMethod($shipping_method_id, $notrigger=false, $userused=null)
 	{
+        global $user;
+
+        if (empty($userused)) $userused=$user;
+
+        $error = 0;
+
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setShippingMethod was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
+
+        $this->db->begin();
+
 		if ($shipping_method_id<0) $shipping_method_id='NULL';
 		dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " SET fk_shipping_method = ".$shipping_method_id;
 		$sql.= " WHERE rowid=".$this->id;
-
-		if ($this->db->query($sql)) {
-			$this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
-			return 1;
-		} else {
+        $resql = $this->db->query($sql);
+		if (! $resql) {
 			dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
-			$this->error=$this->db->error();
-			return 0;
-		}
+			$this->error = $this->db->lasterror();
+			$error++;
+        } else {
+            if (!$notrigger)
+            {
+                // Call trigger
+                $this->context=array('shippingmethodupdate'=>1);
+                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+                if ($result < 0) $error++;
+                // End call trigger
+            }
+        }
+        if ($error)
+        {
+            $this->db->rollback();
+            return -1;
+        } else {
+            $this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
+            $this->db->commit();
+            return 1;
+        }
+
 	}
 
 
@@ -1895,14 +1951,24 @@ abstract class CommonObject
 	 *  Change the bank account
 	 *
 	 *  @param		int		$fk_account		Id of bank account
+	 *  @param      bool    $notrigger      false=launch triggers after, true=disable triggers
+	 *  @param      User	$userused		Object user
 	 *  @return		int				1 if OK, 0 if KO
 	 */
-	function setBankAccount($fk_account)
+	function setBankAccount($fk_account, $notrigger=false, $userused=null)
 	{
+        global $user;
+
+        if (empty($userused)) $userused=$user;
+
+        $error = 0;
+
 		if (! $this->table_element) {
 			dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
 			return -1;
 		}
+        $this->db->begin();
+
 		if ($fk_account<0) $fk_account='NULL';
 		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
 
@@ -1910,15 +1976,37 @@ abstract class CommonObject
 		$sql.= " SET fk_account = ".$fk_account;
 		$sql.= " WHERE rowid=".$this->id;
 
-		if ($this->db->query($sql)) {
-			$this->fk_account = ($fk_account=='NULL')?null:$fk_account;
-			return 1;
-		} else {
-			dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
-			$this->error=$this->db->error();
-			return 0;
-		}
-	}
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
+            $this->error = $this->db->lasterror();
+            $error++;
+        }
+        else
+        {
+            if (!$notrigger)
+            {
+                // Call trigger
+                $this->context=array('bankaccountupdate'=>1);
+                $result = $this->call_trigger(strtoupper(get_class($this)) . '_MODIFY', $userused);
+                if ($result < 0) $error++;
+                // End call trigger
+            }
+        }
+        if ($error)
+        {
+            $this->db->rollback();
+            return -1;
+        }
+        else
+        {
+            $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
+            $this->db->commit();
+            return 1;
+        }
+    }
+
 
 	// TODO: Move line related operations to CommonObjectLine?
 
@@ -2651,7 +2739,7 @@ abstract class CommonObject
 	 *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
 	 *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
 	 *  @param	int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
-	 *	@return	void
+	 *	@return	int						<0 if KO, >0 if OK
 	 *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
 	 */
 	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1)
@@ -2832,10 +2920,12 @@ abstract class CommonObject
 					}
 				}
 			}
+			return 1;
 		}
 		else
 		{
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -2969,6 +3059,7 @@ abstract class CommonObject
 
 		$fieldstatus="fk_statut";
 		if ($elementTable == 'mailing') $fieldstatus="statut";
+		if ($elementTable == 'cronjob') $fieldstatus="status";
 		if ($elementTable == 'user') $fieldstatus="statut";
 		if ($elementTable == 'expensereport') $fieldstatus="fk_statut";
 		if ($elementTable == 'commande_fournisseur_dispatch') $fieldstatus="status";
@@ -3493,7 +3584,7 @@ abstract class CommonObject
 	 *	Return HTML table for object lines
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *	If lines are into a template, title must also be into a template
-	 *	But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				Action code
 	 *	@param  string		$seller            	Object of seller third party
@@ -3600,8 +3691,7 @@ abstract class CommonObject
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield
-			$line->fetch_optionals($line->id,$extralabelslines);
-
+			$line->fetch_optionals();
 
 
 			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
@@ -3894,6 +3984,12 @@ abstract class CommonObject
 				$discount->fetch($line->fk_remise_except);
 				$this->tpl['description'] = $langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
 			}
+			elseif ($line->desc == '(EXCESS PAID)')
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				$this->tpl['description'] = $langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
+			}
 			else
 			{
 				$this->tpl['description'] = dol_trunc($line->desc,60);
@@ -4047,6 +4143,7 @@ abstract class CommonObject
 	 * @param 	int 		$hideref 		1 to hide product reference. 0 by default
 	 * @param   null|array  $moreparams     Array to provide more information
 	 * @return 	int 						>0 if OK, <0 if KO
+	 * @see	addFileIntoDatabaseIndex
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams=null)
 	{
@@ -4285,6 +4382,7 @@ abstract class CommonObject
 
 	/**
 	 *  Build thumb
+	 *  @TODO Move this into files.lib.php
 	 *
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
 	 *	@return		void
@@ -4424,10 +4522,11 @@ abstract class CommonObject
 			{
 				$extrafields->fetch_name_optionals_label($this->table_element);
 			}
-			$optionsArray = $extrafields->attributes[$this->table_element]['label'];
+			$optionsArray = (! empty($extrafields->attributes[$this->table_element]['label'])?$extrafields->attributes[$this->table_element]['label']:null);
 		}
 		else
 		{
+			global $extrafields;
 			dol_syslog("Warning: fetch_optionals was called with param optionsArray defined when you should pass null now", LOG_WARNING);
 		}
 
@@ -4528,8 +4627,9 @@ abstract class CommonObject
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int 						-1=error, O=did nothing, 1=OK
+	 *  @see updateExtraField, setValueFrom
 	 */
-	function insertExtraFields($trigger='',$userused=null)
+	function insertExtraFields($trigger='', $userused=null)
 	{
 		global $conf,$langs,$user;
 
@@ -4559,10 +4659,10 @@ abstract class CommonObject
 			foreach($new_array_options as $key => $value)
 			{
 			   	$attributeKey      = substr($key,8);   // Remove 'options_' prefix
-			   	$attributeType     = $extrafields->attribute_type[$attributeKey];
-			   	$attributeLabel    = $extrafields->attribute_label[$attributeKey];
-			   	$attributeParam    = $extrafields->attribute_param[$attributeKey];
-			   	$attributeRequired = $extrafields->attribute_required[$attributeKey];
+			   	$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			   	$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+			   	$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
+			   	$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 
 			   	if ($attributeRequired)
 			   	{
@@ -4595,7 +4695,44 @@ abstract class CommonObject
              				$this->array_options[$key] = null;
              			}
              			break;*/
-					case 'price':
+			   		case 'password':
+			   			$algo='';
+			   			if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']))
+			   			{
+			   				// If there is an encryption choice, we use it to crypt data before insert
+			   				$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
+			   				$algo=reset($tmparrays);
+			   				if ($algo != '')
+			   				{
+			   					//global $action;		// $action may be 'create', 'update', 'update_extras'...
+			   					//var_dump($action);
+			   					//var_dump($this->oldcopy);exit;
+			   					if (is_object($this->oldcopy))		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
+			   					{
+			   						//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
+				   					if ($this->array_options[$key] == $this->oldcopy->array_options[$key])	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+				   					{
+				   						$new_array_options[$key] = $this->array_options[$key];	// Value is kept
+				   					}
+									else
+									{
+										// var_dump($algo);
+										$newvalue = dol_hash($this->array_options[$key], $algo);
+										$new_array_options[$key] = $newvalue;
+									}
+			   					}
+			   					else
+			   					{
+			   						$new_array_options[$key] = $this->array_options[$key];	// Value is kept
+			   					}
+			   				}
+			   			}
+			   			else	// Common usage
+			   			{
+			   				$new_array_options[$key] = $this->array_options[$key];
+			   			}
+			   			break;
+			   		case 'price':
 						$new_array_options[$key] = price2num($this->array_options[$key]);
 						break;
 					case 'date':
@@ -4653,7 +4790,7 @@ abstract class CommonObject
 			{
 				$attributeKey = substr($key,8);   // Remove 'options_' prefix
 				// Add field of attribut
-				if ($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator
 					$sql.=",".$attributeKey;
 			}
 			$sql .= ") VALUES (".$this->id;
@@ -4661,8 +4798,8 @@ abstract class CommonObject
 			foreach($new_array_options as $key => $value)
 			{
 				$attributeKey = substr($key,8);   // Remove 'options_' prefix
-				// Add field o fattribut
-				if($extrafields->attribute_type[$attributeKey] != 'separate') // Only for other type of separate)
+				// Add field of attribute
+				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') // Only for other type than separator)
 				{
 					if ($new_array_options[$key] != '')
 					{
@@ -4683,16 +4820,14 @@ abstract class CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-			else
+
+			if (! $error && $trigger)
 			{
-				if ($trigger)
-				{
-					// Call trigger
-					$this->context=array('extrafieldaddupdate'=>1);
-					$result=$this->call_trigger($trigger, $userused);
-					if ($result < 0) $error++;
-					// End call trigger
-				}
+				// Call trigger
+				$this->context=array('extrafieldaddupdate'=>1);
+				$result=$this->call_trigger($trigger, $userused);
+				if ($result < 0) $error++;
+				// End call trigger
 			}
 
 			if ($error)
@@ -4711,15 +4846,19 @@ abstract class CommonObject
 
 	/**
 	 *	Update an exta field value for the current object.
-	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 *  This function delte record with all extrafields and insert them again from the array $this->array_options.
+	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
-	 *  @param  string      $key    Key of the extrafield
-	 *  @return int                 -1=error, O=did nothing, 1=OK
+	 *  @param  string      $key    		Key of the extrafield (without starting 'options_')
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	User		$userused		Object user
+	 *  @return int                 		-1=error, O=did nothing, 1=OK
+	 *  @see setValueFrom
 	 */
-	function updateExtraField($key)
+	function updateExtraField($key, $trigger, $userused)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$user;
+
+		if (empty($userused)) $userused=$user;
 
 		$error=0;
 
@@ -4734,9 +4873,12 @@ abstract class CommonObject
 			$target_extrafields=$extrafields->fetch_name_optionals_label($this->table_element);
 
 			$value=$this->array_options["options_".$key];
-			$attributeType  = $extrafields->attribute_type[$key];
-			$attributeLabel = $extrafields->attribute_label[$key];
-			$attributeParam = $extrafields->attribute_param[$key];
+
+			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$key];
+			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
+			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
+			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+
 			switch ($attributeType)
 			{
 				case 'int':
@@ -4766,7 +4908,7 @@ abstract class CommonObject
 					$this->array_options["options_".$key]=$this->db->idate($this->array_options["options_".$key]);
 					break;
 				case 'link':
-					$param_list=array_keys($attributeParam ['options']);
+					$param_list=array_keys($attributeParam['options']);
 					// 0 : ObjectName
 					// 1 : classPath
 					$InfoFieldList = explode(":", $param_list[0]);
@@ -4786,7 +4928,21 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
+				$error++;
 				$this->error=$this->db->lasterror();
+			}
+
+			if (! $error && $trigger)
+			{
+				// Call trigger
+				$this->context=array('extrafieldupdate'=>1);
+				$result=$this->call_trigger($trigger, $userused);
+				if ($result < 0) $error++;
+				// End call trigger
+			}
+
+			if ($error)
+			{
 				$this->db->rollback();
 				return -1;
 			}

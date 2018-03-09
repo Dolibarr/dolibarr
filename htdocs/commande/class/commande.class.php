@@ -1024,7 +1024,7 @@ class Commande extends CommonOrder
 
 		// get lines so they will be clone
 		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
+			$line->fetch_optionals();
 
         // Load source object
         $objFrom = clone $this;
@@ -1073,11 +1073,6 @@ class Commande extends CommonOrder
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-            // Call trigger
-            $result=$this->call_trigger('ORDER_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
         }
 
         unset($this->context['createfromclone']);
@@ -1150,7 +1145,7 @@ class Commande extends CommonOrder
 			$line->marque_tx		= $marginInfos[2];
 
             // get extrafields from original line
-			$object->lines[$i]->fetch_optionals($object->lines[$i]->rowid);
+			$object->lines[$i]->fetch_optionals();
 			foreach($object->lines[$i]->array_options as $options_key => $value)
 				$line->array_options[$options_key] = $value;
 
@@ -1588,8 +1583,8 @@ class Commande extends CommonOrder
         $sql.= ', ca.code as availability_code, ca.label as availability_label';
         $sql.= ', dr.code as demand_reason_code';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON c.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON c.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON c.fk_cond_reglement = cr.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON c.fk_mode_reglement = p.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
@@ -1674,12 +1669,9 @@ class Commande extends CommonOrder
 
                 if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
 
-                // Retrieve all extrafields for invoice
+                // Retreive all extrafield
                 // fetch optionals attributes and labels
-                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-               	$this->fetch_optionals($this->id,$extralabels);
+                $this->fetch_optionals();
 
                 $this->db->free($result);
 

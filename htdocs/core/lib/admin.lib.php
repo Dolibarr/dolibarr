@@ -870,7 +870,7 @@ function activateModule($value,$withdeps=1)
     // Test if Dolibarr version ok
     $verdol=versiondolibarrarray();
     $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
-    //print 'eee '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
+    //print 'version: '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
 	if (is_array($vermin) && versioncompare($verdol, $vermin) < 0) {
 		$ret['errors'][] = $langs->trans("ErrorModuleRequireDolibarrVersion", versiontostring($vermin));
 		return $ret;
@@ -1288,11 +1288,10 @@ function complete_elementList_with_modules(&$elementList)
 
                             $modules[$i] = $objMod;
                             $filename[$i]= $modName;
-                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                            $orders[$i]  = $objMod->family."_".$j;   // Sort on family then module number
+                            $dirmod[$i] = $dir;
                             //print "x".$modName." ".$orders[$i]."\n<br>";
-                            if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
-                            else $categ[$objMod->special]=1;
-                            $dirmod[$i] = $dirroot;
+
                             if (! empty($objMod->module_parts['contactelement']))
                             {
                             	$elementList[$objMod->name] = $langs->trans($objMod->name);
@@ -1500,7 +1499,7 @@ function showModulesExludedForExternal($modules)
 
 			//if (empty($conf->global->$moduleconst)) continue;
 			if (! in_array($modulename,$listofmodules)) continue;
-			//var_dump($modulename.'eee'.$langs->trans('Module'.$module->numero.'Name'));
+			//var_dump($modulename.' - '.$langs->trans('Module'.$module->numero.'Name'));
 
 			if ($i > 0) $text.=', ';
 			else $text.=' ';

@@ -128,7 +128,7 @@ if (empty($reshook))
     	    //If the user set a comment, we add it to the log comment
     	    $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
-    	    //print 'eee'.$val['rowid'].'-'.$userValue;
+    	    //print 'holiday: '.$val['rowid'].'-'.$userValue;
     		if ($userValue != '')
     		{
     			// We add the modification to the log (must be before update of sold because we read current value of sold)

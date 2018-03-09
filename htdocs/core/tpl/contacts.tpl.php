@@ -60,8 +60,9 @@ $userstatic=new User($db);
 ?>
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
+<div class="underbanner clearboth"></div>
 <div class="div-table-responsive">
-<div class="tagtable centpercent noborder allwidth">
+<div class="tagtable centpercent noborder nobordertop allwidth">
 
 <?php
 if ($permission) {

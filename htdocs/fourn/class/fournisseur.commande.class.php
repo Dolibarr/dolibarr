@@ -232,8 +232,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ', c.fk_incoterms, c.location_incoterms';
         $sql.= ', i.libelle as libelle_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid AND cr.entity IN (".getEntity('c_payment_term').")";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id AND p.entity IN (".getEntity('c_paiement').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
         $sql.= " WHERE c.entity = ".$conf->entity;
@@ -312,12 +312,9 @@ class CommandeFournisseur extends CommonOrder
 
             $this->db->free($resql);
 
-            // Retrieve all extrafields
+            // Retreive all extrafield
             // fetch optionals attributes and labels
-            require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-            $extrafields=new ExtraFields($this->db);
-            $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-            $this->fetch_optionals($this->id,$extralabels);
+            $this->fetch_optionals();
 
             if ($this->statut == 0) $this->brouillon = 1;
 
@@ -1368,11 +1365,6 @@ class CommandeFournisseur extends CommonOrder
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-			// Call trigger
-			$result=$this->call_trigger('ORDER_SUPPLIER_CLONE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
         }
 
 		unset($this->context['createfromclone']);
@@ -1541,13 +1533,17 @@ class CommandeFournisseur extends CommonOrder
                 $txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
             }
 
+            if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+                $pu = 0;
+            }
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
-			$pu_ht = $tabprice[3];
+            $pu = $pu_ht = $tabprice[3];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
@@ -2968,7 +2964,58 @@ class CommandeFournisseur extends CommonOrder
     					    }
     					    return 4;
     					}
-    				}
+    				}elseif(! empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED) )
+				{//set livraison to 'tot' if more products received than wished. (and if $closeopenorder is set to 1 of course...)
+
+					$close=0;
+
+					if( count($diff_array) > 0 )
+					{//there are some difference between  the two arrays
+
+						//scan the array of results
+						foreach($diff_array as $key => $value)
+						{//if the quantity delivered is greater or equal to wish quantity
+							if($qtydelivered[$key] >= $qtywished[$key] )
+							{
+								$close++;
+							}
+
+						}
+					}
+
+
+					if($close == count($diff_array))
+					{//all the products are received equal or more than the wished quantity
+						if ($closeopenorder)
+    						{
+    							$ret = $this->Livraison($user, $date_liv, 'tot', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+        						if ($ret<0) {
+        							return -1;
+        						}
+    					    		return 5;
+    						}
+    						else
+    						{
+    					   	 	//Diff => received partially
+    					  		$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+							if ($ret<0) {
+								return -1;
+							}
+							return 4;
+						}
+
+
+					}
+					else
+					{//all the products are not received
+						$ret = $this->Livraison($user, $date_liv, 'par', $comment);   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
+						if ($ret<0) {
+							return -1;
+						}
+						return 4;
+					}
+
+				}
     				else
     				{
     					//Diff => received partially
@@ -3109,40 +3156,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         {
             dol_print_error($this->db);
             return -1;
-        }
-    }
-
-    /**
-     *  Mise a jour de l'objet ligne de commande en base
-     *
-     *  @return		int		<0 si ko, >0 si ok
-     */
-    public function updateTotal()
-    {
-        $this->db->begin();
-
-        // Mise a jour ligne en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseurdet SET";
-        $sql.= " total_ht='".price2num($this->total_ht)."'";
-        $sql.= ",total_tva='".price2num($this->total_tva)."'";
-        $sql.= ",total_localtax1='".price2num($this->total_localtax1)."'";
-        $sql.= ",total_localtax2='".price2num($this->total_localtax2)."'";
-        $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
-        $sql.= " WHERE rowid = ".$this->rowid;
-
-        dol_syslog(get_class($this)."::updateTotal", LOG_DEBUG);
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -2;
         }
     }
 

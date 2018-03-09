@@ -194,6 +194,7 @@ class FormActions
             $projectid = $object->fk_project;
             if ($typeelement == 'project') $projectid = $object->id;
 
+            $buttontoaddnewevent='';
 			if (! empty($conf->agenda->enabled))
 			{
 				$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:'').($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">';

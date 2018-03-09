@@ -268,7 +268,7 @@ if ($type_element == 'supplier_order')
 	$thirdTypeSelect='supplier';
 }
 if ($type_element == 'contract')
-{ 	// Supplier : Show products from orders.
+{ 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
 	$documentstaticline=new ContratLigne($db);
@@ -491,6 +491,7 @@ if ($sql_select)
 			print img_object($langs->trans("ShowReduc"),'reduc').' ';
 			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
 			elseif ($objp->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
+			elseif ($objp->description == '(EXCESS PAID)') $txt=$langs->trans("ExcessPaid");
 			//else $txt=$langs->trans("Discount");
 			print $txt;
 			?>
@@ -509,6 +510,12 @@ if ($sql_select)
 					$discount=new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+				}
+				elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+				{
+					$discount=new DiscountAbsolute($db);
+					$discount->fetch($objp->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
 				}
 				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{

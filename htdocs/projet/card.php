@@ -161,6 +161,7 @@ if (empty($reshook))
 			$object->statut          = $status;
 			$object->opp_status      = $opp_status;
 			$object->opp_percent     = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -261,6 +262,7 @@ if (empty($reshook))
 			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount','alpha'));
 			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -599,6 +601,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
 
+	// Bill time
+	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<tr><td>'.$langs->trans("BillTime").'</td>';
+		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time','alpha')!=''?' checked="checked"':'').'"></td>';
+		print '</tr>';
+	}
+
 	if ($conf->categorie->enabled) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -660,7 +670,7 @@ elseif ($object->id > 0)
      * Show or edit
      */
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 	// To verify role of users
 	$userAccess = $object->restrictedProjectArea($user,'read');
@@ -826,6 +836,14 @@ elseif ($object->id > 0)
 		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
 
+		// Bill time
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time','alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
+			print '</tr>';
+		}
+
 		// Tags-Categories
 		if ($conf->categorie->enabled)
 		{
@@ -947,6 +965,14 @@ elseif ($object->id > 0)
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->description);
 		print '</td></tr>';
+
+		// Bill time
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td>'.yn($object->bill_time).'</td>';
+			print '</tr>';
+		}
 
 		// Categories
 		if($conf->categorie->enabled) {

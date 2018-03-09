@@ -67,9 +67,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	$canreadgroup=(! empty($user->admin) || $user->rights->user->group_advance->read);
 	$caneditgroup=(! empty($user->admin) || $user->rights->user->group_advance->write);
 }
-if(! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-	$caneditgroup = ($conf->entity == 1) && ! empty($user->admin) && empty($user->entity);
-}
+
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
@@ -1179,7 +1177,7 @@ else
 	{
 		$object->fetch($id, '', '', 1);
 		if ($res < 0) { dol_print_error($db,$object->error); exit; }
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 
 		// Check if user has rights
 		$object->getrights();

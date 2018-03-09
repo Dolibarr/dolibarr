@@ -176,59 +176,91 @@ elseif ($action == 'confirm_updateline' && GETPOST('save','alpha') && GETPOST('l
 }
 elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 {
-    // For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 	if (! empty($upload_dir))
 	{
-		$reshook=$hookmanager->initHooks(array('actionlinkedfiles'));
-
 		$filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
 		$filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
 
-		$parameters=array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);
-		$reshook=$hookmanager->executeHooks('renameUploadedFile', $parameters, $object);
+        if ($filenamefrom != $filenameto)
+        {
+	        // Security:
+	        // Disallow file with some extensions. We rename them.
+	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
+	        if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+	        {
+	            $filenameto.= '.noexe';
+	        }
 
-		if (empty($reshook))
-		{
-			// Security:
-			// Disallow file with some extensions. We rename them.
-			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-			if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
-			{
-				$filenameto.= '.noexe';
-			}
+	        if ($filenamefrom && $filenameto)
+	        {
+	            $srcpath = $upload_dir.'/'.$filenamefrom;
+	            $destpath = $upload_dir.'/'.$filenameto;
 
-			if ($filenamefrom && $filenameto)
-			{
-				$srcpath = $upload_dir.'/'.$filenamefrom;
-				$destpath = $upload_dir.'/'.$filenameto;
+	            $reshook=$hookmanager->initHooks(array('actionlinkedfiles'));
+	            $parameters=array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);
+	            $reshook=$hookmanager->executeHooks('renameUploadedFile', $parameters, $object);
 
-				if (!file_exists($destpath))
-				{
-					$result = dol_move($srcpath, $destpath);
-					if ($result)
-					{
-						if ($object->id)
-						{
-							$object->addThumbs($destpath);
-						}
+	            if (empty($reshook))
+	            {
+	            	if (! file_exists($destpath))
+	            	{
+	            		$result = dol_move($srcpath, $destpath);
+			            if ($result)
+			            {
+			            	if ($object->id)
+			            	{
+			                	$object->addThumbs($destpath);
+			            	}
 
-						// TODO Add revert function of addThumbs to remove for old name
-						//$object->delThumbs($srcpath);
+			                // TODO Add revert function of addThumbs to remove for old name
+			                //$object->delThumbs($srcpath);
 
-						setEventMessages($langs->trans("FileRenamed"), null);
-					}
-					else
-					{
-						$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
-						setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
-					}
-				}
-				else
-				{
-					$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
-					setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
-				}
-			}
-		}
+			                setEventMessages($langs->trans("FileRenamed"), null);
+			            }
+			            else
+			            {
+			                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+			                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+			            }
+	            	}
+	            	else
+	            	{
+	            		$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	            		setEventMessages($langs->trans("ErrorDestinationAlreadyExists", $filenameto), null, 'errors');
+	            	}
+	            }
+	        }
+        }
+    }
+
+    // Update properties in ECM table
+    if (GETPOST('ecmfileid', 'int') > 0)
+    {
+    	$shareenabled = GETPOST('shareenabled', 'alpha');
+
+    	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+	    $ecmfile=new EcmFiles($db);
+	    $result = $ecmfile->fetch(GETPOST('ecmfileid', 'int'));
+	    if ($result > 0)
+	    {
+	    	if ($shareenabled)
+		    {
+		    	if (empty($ecmfile->share))
+		    	{
+		    		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		    		$ecmfile->share = getRandomPassword(true);
+		    	}
+		    }
+		    else
+		    {
+		    	$ecmfile->share = '';
+		    }
+		    $result = $ecmfile->update($user);
+		    if ($result < 0)
+		    {
+		    	setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+	    }
     }
 }

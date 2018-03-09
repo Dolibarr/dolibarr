@@ -293,6 +293,25 @@ if (! empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SER
 	}
 }
 
+if (! defined('NOLOGIN') && ! defined('NOIPCHECK') && ! empty($dolibarr_main_restrict_ip))
+{
+	$listofip=explode(',', $dolibarr_main_restrict_ip);
+	$found = false;
+	foreach($listofip as $ip)
+	{
+		$ip=trim($ip);
+		if ($ip == $_SERVER['REMOTE_ADDR'])
+		{
+			$found = true;
+			break;
+		}
+	}
+	if (! $found)
+	{
+		print 'Access refused by IP protection';
+		exit;
+	}
+}
 
 // Loading of additional presentation includes
 if (! defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';	    // Need 660ko memory (800ko in 2.2)

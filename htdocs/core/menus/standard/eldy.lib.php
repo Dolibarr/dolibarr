@@ -70,7 +70,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	else $classname = 'class="tmenu"';
 	$idsel='home';
 
-	$menu->add('/index.php?mainmenu=home&amp;leftmenu=home', $langs->trans("Home"), 0, $showmode, $atarget, "home", '', 10, $id, $idsel, $classname);
+	$titlehome = $langs->trans("Home");
+	if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) $titlehome = '&nbsp; <span class="fa fa-home"></span> &nbsp;';
+	$menu->add('/index.php?mainmenu=home&amp;leftmenu=home', $titlehome, 0, $showmode, $atarget, "home", '', 10, $id, $idsel, $classname);
 
 	// Third parties
 	$tmpentry=array('enabled'=>(( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)), 'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->fournisseur->lire)), 'module'=>'societe|fournisseur');
@@ -361,7 +363,8 @@ function print_start_menu_entry($idsel,$classname,$showmode)
 	if ($showmode)
 	{
 		print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
-		print '<div class="tmenuleft tmenusep"></div><div class="tmenucenter">';
+		//print '<div class="tmenuleft tmenusep"></div>';
+		print '<div class="tmenucenter">';
 	}
 }
 
@@ -815,7 +818,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 				{
-					$newmenu->add("/compta/paiement/avalider.php?leftmenu=customers_bills_tovalid",$langs->trans("MenuToValid"),2,$user->rights->facture->lire,'',$mainmenu,'customer_bills_tovalid');
+					$newmenu->add("/compta/paiement/tovalidate.php?leftmenu=customers_bills_tovalid",$langs->trans("MenuToValid"),2,$user->rights->facture->lire,'',$mainmenu,'customer_bills_tovalid');
 				}
 				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_reports",$langs->trans("Reportings"),2,$user->rights->facture->lire,'',$mainmenu,'customers_bills_reports');
 

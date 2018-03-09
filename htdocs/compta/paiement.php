@@ -88,11 +88,11 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='yes'))
+	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes'))
 	{
 	    $error = 0;
 
-	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	    $datepaye = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 	    $paiement_id = 0;
 	    $totalpayment = 0;
 		$multicurrency_totalpayment = 0;
@@ -827,7 +827,7 @@ if (! GETPOST('action','aZ09'))
 
     $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
     $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement').')';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
     $sql.= ' WHERE p.fk_facture = f.rowid';
     $sql.= ' AND f.entity IN (' . getEntity('facture').')';

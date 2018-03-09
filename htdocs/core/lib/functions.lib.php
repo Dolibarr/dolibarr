@@ -121,11 +121,6 @@ function getEntity($element, $shared=1, $forceentity=null)
 {
 	global $conf, $mc;
 
-	// For backward compatibilty
-	if ($element == 'actioncomm') $element='agenda';
-	if ($element == 'fichinter')  $element='intervention';
-	if ($element == 'categorie')  $element='category';
-
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared, $forceentity);
@@ -2009,7 +2004,7 @@ function dol_now($mode='gmt')
 	}*/
 	else if ($mode == 'tzuser')				// Time for now with user timezone added
 	{
-		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
+		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
 		$ret=(int) dol_now('gmt')+($offsettz+$offsetdst);
@@ -2198,7 +2193,7 @@ function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
  */
 function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$separ="&nbsp;",$withpicto='',$titlealt='',$adddivfloat=0)
 {
-	global $conf,$user,$langs,$mysoc;
+	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
 	$phone = preg_replace("/[\s.-]/","",trim($phone));
@@ -2215,31 +2210,281 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		if (dol_strlen($phone) == 10) {
 			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,2).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2);
 		}
-		elseif (dol_strlen($newphone) == 7)
+		elseif (dol_strlen($phone) == 7)
 		{
 			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2);
 		}
-		elseif (dol_strlen($newphone) == 9)
+		elseif (dol_strlen($phone) == 9)
 		{
 			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2);
 		}
-		elseif (dol_strlen($newphone) == 11)
+		elseif (dol_strlen($phone) == 11)
 		{
 			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
 		}
-		elseif (dol_strlen($newphone) == 12)
+		elseif (dol_strlen($phone) == 12)
 		{
 			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
 
-	if (strtoupper($countrycode) == "CA")
+	elseif (strtoupper($countrycode) == "CA")
 	{
 		if (dol_strlen($phone) == 10) {
 			$newphone=($separ!=''?'(':'').substr($newphone,0,3).($separ!=''?')':'').$separ.substr($newphone,3,3).($separ!=''?'-':'').substr($newphone,6,4);
 		}
 	}
-
+	elseif (strtoupper($countrycode) == "PT" )
+	{//Portugal
+		if (dol_strlen($phone) == 13)
+		{//ex: +351_ABC_DEF_GHI
+			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "SR" )
+	{//Suriname
+		if (dol_strlen($phone) == 10)
+		{//ex: +597_ABC_DEF
+			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3);
+		}
+		elseif (dol_strlen($phone) == 11)
+		{//ex: +597_ABC_DEFG
+			$newphone= substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,4);
+		}
+	}
+	elseif (strtoupper($countrycode) == "DE" )
+	{//Allemagne
+		if (dol_strlen($phone) == 14)
+		{//ex:  +49_ABCD_EFGH_IJK
+			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,4).$separ.substr($newphone,11,3);
+		}
+		elseif (dol_strlen($phone) == 13)
+		{//ex: +49_ABC_DEFG_HIJ
+			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,4).$separ.substr($newphone,10,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "ES")
+	{//Espagne
+		if (dol_strlen($phone) == 12)
+		{//ex:  +34_ABC_DEF_GHI
+			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "BF")
+	{// Burkina Faso
+		if (dol_strlen($phone) == 12)
+		{//ex :  +22 A BC_DE_FG_HI
+			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "RO")
+	{// Roumanie
+		if (dol_strlen($phone) == 12)
+		{//ex :  +40 AB_CDE_FG_HI
+			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "TR")
+	{//Turquie
+		if (dol_strlen($phone) == 13)
+		{//ex :  +90 ABC_DEF_GHIJ
+			$newphone= substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,4);
+		}
+	}
+	elseif (strtoupper($countrycode) == "US")
+	{//Etat-Unis
+		if (dol_strlen($phone) == 12)
+		{//ex: +1 ABC_DEF_GHIJ
+			$newphone= substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,3).$separ.substr($newphone,8,4);
+		}
+	}
+	elseif (strtoupper($countrycode) == "MX")
+	{//Mexique
+		if (dol_strlen($phone) == 12)
+		{//ex: +52 ABCD_EFG_HI
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,3).$separ.substr($newphone,10,2);
+		}
+		elseif (dol_strlen($phone) == 11)
+		{//ex: +52 AB_CD_EF_GH
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+		}
+		elseif (dol_strlen($phone) == 13)
+		{//ex: +52 ABC_DEF_GHIJ
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,4);
+		}
+	}
+	elseif (strtoupper($countrycode) == "ML")
+	{//Mali
+		if(dol_strlen($phone) == 12)
+		{//ex: +223 AB_CD_EF_GH
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "TH")
+	{//Thaïlande
+		if(dol_strlen($phone) == 11)
+		{//ex: +66_ABC_DE_FGH
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,2).$separ.substr($newphone,8,3);
+		}
+		elseif(dol_strlen($phone) == 12)
+		{//ex: +66_A_BCD_EF_GHI
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,3);
+		}
+		}
+	elseif (strtoupper($countrycode) == "MU")
+	{//Maurice
+		if(dol_strlen($phone) == 11)
+		{//ex: +230_ABC_DE_FG
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+		}
+		elseif(dol_strlen($phone) == 12)
+		{//ex: +230_ABCD_EF_GH
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,4).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "ZA")
+	{//Afrique du sud
+		if(dol_strlen($phone) == 12)
+		{//ex: +27_AB_CDE_FG_HI
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "SY")
+	{//Syrie
+		if(dol_strlen($phone) == 12)
+		{//ex: +963_AB_CD_EF_GH
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+		elseif(dol_strlen($phone) == 13)
+		{//ex: +963_AB_CD_EF_GHI
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "AE")
+	{//Emirats Arabes Unis
+		if(dol_strlen($phone) == 12)
+		{//ex: +971_ABC_DEF_GH
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,2);
+		}
+		elseif(dol_strlen($phone) == 13)
+		{//ex: +971_ABC_DEF_GHI
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+		}
+		elseif(dol_strlen($phone) == 14)
+		{//ex: +971_ABC_DEF_GHIK
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,4);
+		}
+	}
+	elseif (strtoupper($countrycode) == "DZ")
+	{//Algérie
+		if(dol_strlen($phone) == 13)
+		{//ex: +213_ABC_DEF_GHI
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "BE")
+	{//Belgique
+		if(dol_strlen($phone) == 11)
+		{//ex: +32_ABC_DE_FGH
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,2).$separ.substr($newphone,8,3);
+		}
+		elseif(dol_strlen($phone) == 12)
+		{//ex: +32_ABC_DEF_GHI
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "PF")
+	{//Polynésie française
+		if(dol_strlen($phone) == 12)
+		{//ex: +689_AB_CD_EF_GH
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "CO")
+	{//Colombie
+		if(dol_strlen($phone) == 13)
+		{//ex: +57_ABC_DEF_GH_IJ
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "JO")
+	{//Jordanie
+		if(dol_strlen($phone) == 12)
+		{//ex: +962_A_BCD_EF_GH
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,1).$separ.substr($newphone,5,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "MG")
+	{//Madagascar
+		if(dol_strlen($phone) == 13)
+		{//ex: +261_AB_CD_EF_GHI
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "GB")
+	{//Royaume uni
+		if(dol_strlen($phone) == 13)
+		{//ex: +44_ABCD_EFG_HIJ
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,4).$separ.substr($newphone,7,3).$separ.substr($newphone,10,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "CH")
+	{//Suisse
+		if(dol_strlen($phone) == 12)
+		{//ex: +41_AB_CDE_FG_HI
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
+		}
+		elseif(dol_strlen($phone) == 15)
+		{// +41_AB_CDE_FGH_IJKL
+			$newphone =$newphone = substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,3).$separ.substr($newphone,8,3).$separ.substr($newphone,11,4);
+		}
+	}
+	elseif (strtoupper($countrycode) == "TN")
+	{//Tunisie
+		if(dol_strlen($phone) == 12)
+		{//ex: +216_AB_CDE_FGH
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+		}
+	}
+	elseif (strtoupper($countrycode) == "GF")
+	{//Guyane francaise
+		if(dol_strlen($phone) == 13)
+		{//ex: +594_ABC_DE_FG_HI  (ABC=594 de nouveau)
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "GP")
+	{//Guadeloupe
+		if(dol_strlen($phone) == 13)
+		{//ex: +590_ABC_DE_FG_HI  (ABC=590 de nouveau)
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "MQ")
+	{//Martinique
+		if(dol_strlen($phone) == 13)
+		{//ex: +596_ABC_DE_FG_HI  (ABC=596 de nouveau)
+			$newphone = substr($newphone,0,4).$separ.substr($newphone,4,3).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+		}
+	}
+	elseif (strtoupper($countrycode) == "IT")
+	{//Italie
+		if(dol_strlen($phone) == 12)
+		{//ex: +39_ABC_DEF_GHI
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,3);
+		}
+		elseif(dol_strlen($phone) == 13)
+		{//ex: +39_ABC_DEF_GH_IJ
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,3).$separ.substr($newphone,6,3).$separ.substr($newphone,9,2).$separ.substr($newphone,11,2);
+		}
+	}
+	elseif(strtoupper($countrycode) == "AU")
+	{//Australie
+		 if(dol_strlen($phone) == 12)
+		{//ex: +61_A_BCDE_FGHI
+			$newphone = substr($newphone,0,3).$separ.substr($newphone,3,1).$separ.substr($newphone,4,4).$separ.substr($newphone,8,4);
+		}
+	}
 	if (! empty($addlink))	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 	{
 		if (! empty($conf->browser->phone) || (! empty($conf->clicktodial->enabled) && ! empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
@@ -2288,23 +2533,33 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		$titlealt=($withpicto=='fax'?$langs->trans("Fax"):$langs->trans("Phone"));
 	}
 	$rep='';
-	$picto = '';
-	if($withpicto){
-		if($withpicto=='fax'){
-			$picto = 'phoning_fax';
-		}elseif($withpicto=='phone'){
-			$picto = 'phoning';
-		}elseif($withpicto=='mobile'){
-			$picto = 'phoning_mobile';
-		}else{
-			$picto = '';
+
+	if ($hookmanager) {
+            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
+            $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
+            $rep.=$hookmanager->resPrint;
+        }
+	 if (empty($reshook))
+        {
+		$picto = '';
+		if($withpicto){
+			if($withpicto=='fax'){
+				$picto = 'phoning_fax';
+			}elseif($withpicto=='phone'){
+				$picto = 'phoning';
+			}elseif($withpicto=='mobile'){
+				$picto = 'phoning_mobile';
+			}else{
+				$picto = '';
+			}
 		}
-	}
-	if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
-	else $rep.='<span style="margin-right: 10px;">';
-	$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
-	if ($adddivfloat) $rep.='</div>';
-	else $rep.='</span>';
+		if ($adddivfloat) $rep.='<div class="nospan float" style="margin-right: 10px">';
+		else $rep.='<span style="margin-right: 10px;">';
+		$rep.=($withpicto?img_picto($titlealt, 'object_'.$picto.'.png').' ':'').$newphone;
+		if ($adddivfloat) $rep.='</div>';
+		else $rep.='</span>';
+	  }
+
 	return $rep;
 }
 
@@ -3520,15 +3775,16 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param	string	$prefixcode		Prefix of public error code
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
+ * @param	string	$morecss		More css
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array())
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
 {
 	global $langs,$conf;
 
 	$langs->load("errors");
 	$now=dol_now();
-	print '<br><div class="center login_main_message"><div class="error">';
+	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
 	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
@@ -5560,7 +5816,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				$extrafieldstmp = new ExtraFields($db);
 				$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
-				$object->fetch_optionals($object->id, $extralabels);
+				$object->fetch_optionals();
 				foreach ($extrafieldstmp->attribute_label as $key => $label) {
 					$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 				}
@@ -5637,7 +5893,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			'__USER_LASTNAME__' => (string) $user->lastname,
 			'__USER_FIRSTNAME__' => (string) $user->firstname,
 			'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-			'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0')
+			'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+			'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
 			)
 		);
 	}
@@ -6315,7 +6572,7 @@ function dol_validElement($element)
  * 	Return img flag of country for a language code or country code
  *
  * 	@param	string	$codelang	Language code (en_IN, fr_CA...) or Country code (IN, FR)
- *  @param	string	$moreatt		Add more attribute on img tag (For example 'style="float: right"')
+ *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"')
  * 	@return	string				HTML img string with flag.
  */
 function picto_from_langcode($codelang, $moreatt = '')
@@ -6328,7 +6585,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 
 	if ($codelang == 'auto')
 	{
-		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png', $moreatt);
+		return '<span class="fa fa-globe"></span>';
 	}
 
 	$langtocountryflag = array(
@@ -6858,13 +7115,32 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
 
 	if ($alldata == 1)
 	{
-		if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath), 'mime'=>dol_mimetype($relativepath), );
+		if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param?'&'.$param:''), 'mime'=>dol_mimetype($relativepath), );
 		else return array();
 	}
 
 	// old behavior
 	if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param?'&'.$param:'')).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js($langs->trans('Preview')).'\')';
 	else return '';
+}
+
+
+/**
+ * Make content of an input box selected when we click into input field.
+ *
+ * @param string	$htmlname	Id of html object
+ * @param string	$addlink	Add a 'link to' after
+ */
+function ajax_autoselect($htmlname, $addlink='')
+{
+	global $langs;
+	$out = '<script type="text/javascript">
+               jQuery(document).ready(function () {
+				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
+				});
+		    </script>';
+	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+	return $out;
 }
 
 
