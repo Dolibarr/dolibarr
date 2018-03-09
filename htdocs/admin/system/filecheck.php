@@ -23,7 +23,7 @@
  *  \file       htdocs/admin/system/filecheck.php
  *  \brief      Page to check Dolibarr files integrity
  */
-set_time_limit(0);
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -39,6 +39,8 @@ $error=0;
 /*
  * View
  */
+
+@set_time_limit(300);
 
 llxHeader();
 
