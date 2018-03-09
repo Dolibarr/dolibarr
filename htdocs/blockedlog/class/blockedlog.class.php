@@ -103,6 +103,7 @@ class BlockedLog
 	public $ref_object = '';
 
 	public $object_data = null;
+	public $user_fullname='';
 
 	/**
 	 * Array of tracked event codes
