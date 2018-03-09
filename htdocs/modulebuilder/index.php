@@ -490,8 +490,7 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
-
+		
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname.'&nocache='.time());
 
@@ -526,8 +525,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
-
+		
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
 
@@ -1550,6 +1548,8 @@ elseif (! empty($module))
 
 						print '<br><br><br>';
 
+						if(function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass,true); // remove the include cache hell !
+						
 						if (empty($forceddirread))
 						{
 							$result = dol_include_once($pathtoclass);
