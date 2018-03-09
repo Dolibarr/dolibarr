@@ -3895,6 +3895,73 @@ class Societe extends CommonObject
 		return $error ? -1 : 1;
 	}
 
+	/**
+	 * Sets company to supplied users.
+	 *
+	 * @param 	int[]|int 	$users		 	User ID or array of user IDs
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	public function setSalesRep($salesrep)
+	{
+		global $user;
+		
+		// Handle single user
+		if (!is_array($salesrep)) {
+			$salesrep = array($salesrep);
+		}
+
+		// Get current users
+		$existing = $this->get_users();
+
+		// Diff
+		if (is_array($existing)) {
+			$to_del = array_diff($existing, $salesrep);
+			$to_add = array_diff($salesrep, $existing);
+		} else {
+			$to_del = array(); // Nothing to delete
+			$to_add = $salesrep;
+		}
+
+		$error = 0;
+
+		// Process
+		foreach ($to_del as $del) {
+			$this->del_commercial($user, $del);
+		}
+		foreach ($to_add as $add) {
+			$result = $this->add_commercial($user, $add);
+			if ($result < 0)
+			{
+				$error++;
+				$this->error = $c->error;
+				$this->errors = $c->errors;
+				break;
+			}
+		}
+
+		return $error ? -1 : 1;
+	}
+	
+	/**
+	 * Get all linked user to company
+	 *
+	 * @return	Array
+	 */
+	public function get_users() {
+		$sql = 'SELECT fk_user FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
+		$sql.= 'WHERE fk_soc = '.$this->id;
+		
+		$resql = $this->db->query($sql);
+		
+		$users = array();
+		
+		while ($obj = $this->db->fetch_object($resql)) {
+			$users[] = $obj->fk_user;
+		}
+		
+		return $users;
+	}
+
 
 	/**
 	 * Function used to replace a thirdparty id with another one.

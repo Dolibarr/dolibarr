@@ -1463,7 +1463,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0)
+	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0)
 	{
 		global $conf,$user,$langs;
 
@@ -1489,6 +1489,7 @@ class Form
 		}
 
 		$out='';
+		$outarray = array();
 
 		// Forge request to select users
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
@@ -1617,6 +1618,7 @@ class Form
 						$out.=' - '.$disableline;	// This is text from $enableonlytext parameter
 					}
 					$out.= '</option>';
+					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
 					$i++;
 				}
@@ -1633,6 +1635,7 @@ class Form
 			dol_print_error($this->db);
 		}
 
+		if ($outputmode) return $outarray;
 		return $out;
 	}
 
