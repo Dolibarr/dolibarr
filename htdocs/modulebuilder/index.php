@@ -1548,7 +1548,7 @@ elseif (! empty($module))
 
 						print '<br><br><br>';
 
-						opcache_invalidate($dirread.'/'.$pathtoclass,true); // remove the include cache hell !
+						if(function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass,true); // remove the include cache hell !
 						
 						if (empty($forceddirread))
 						{
