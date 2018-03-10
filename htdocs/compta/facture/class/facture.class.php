@@ -297,7 +297,7 @@ class Facture extends CommonInvoice
 			$result=$_facrec->fetch($this->fac_rec);
 			$result=$_facrec->fetchObjectLinked();       // This load $_facrec->linkedObjectsIds
 
-			$originaldatewhen = $_facrec->date _when;
+			$originaldatewhen = $_facrec->date_when;
 
 			$this->socid 		     = $_facrec->socid;  // Invoice created on same thirdparty than template
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
