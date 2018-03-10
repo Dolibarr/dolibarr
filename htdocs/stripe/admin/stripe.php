@@ -206,8 +206,14 @@ print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" val
 print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 print '</td></tr>';
 } else {
-print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
-print '<td>'.$langs->trans("StripeConnect_Mode").'</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
+	print '<td><b>'.$langs->trans("StripeConnect_Mode").'</b><br/>';
+  print $langs->trans("STRIPE_APPLICATION_FEE_PLATFORM");
+  print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
+  print '% + ';
+  print price($conf->global->STRIPE_APPLICATION_FEE);
+  print $langs->getCurrencySymbol($conf->currency).' avec un minimum de '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
+  print '</td></tr>';
 }
 
 if (! empty($conf->banque->enabled))  //deplace here for separate stripe setting of general and common online payment settings
