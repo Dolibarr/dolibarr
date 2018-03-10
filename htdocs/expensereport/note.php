@@ -19,9 +19,9 @@
  */
 
 /**
- *  \file       htdocs/commande/note.php
- *  \ingroup    commande
- *  \brief      Fiche de notes sur une commande
+ *  \file       htdocs/expensereport/note.php
+ *  \ingroup    expensereport
+ *  \brief      Tab for notes on expense reports
  */
 
 require '../main.inc.php';
@@ -90,7 +90,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-
+var_dump($value_public);
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
