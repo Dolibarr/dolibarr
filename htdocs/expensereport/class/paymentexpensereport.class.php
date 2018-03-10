@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,9 @@ class PaymentExpenseReport extends CommonObject
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
+        //Unknow field
+        var $chid;
+        var $total;
 
 	/**
 	 *	Constructor
@@ -104,6 +108,9 @@ class PaymentExpenseReport extends CommonObject
 
 		$this->db->begin();
 
+                //Fix me fields
+                $this->chid = $this->fk_expensereport;
+        
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
@@ -505,7 +512,10 @@ class PaymentExpenseReport extends CommonObject
             $acc = new Account($this->db);
             $acc->fetch($accountid);
 
-            $total=$this->total;
+            //Fix me field
+            $this->total = $this->amount;
+            $total = $this->total;
+            
             if ($mode == 'payment_expensereport') $amount=$total;
 
             // Insert payment into llx_bank
