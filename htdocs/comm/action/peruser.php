@@ -245,7 +245,9 @@ $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
-$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, 7, 'd');
+
+$nb_weeks_to_show = !empty($conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER) ? (int)$conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER * 7 : 7;
+$lastdaytoshow=dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
 //print $firstday.'-'.$first_month.'-'.$first_year;
 //print dol_print_date($firstdaytoshow,'dayhour');
 //print dol_print_date($lastdaytoshow,'dayhour');
@@ -465,7 +467,7 @@ if ($filtert > 0 || $usergroup > 0)
 }
 // Sort on date
 $sql.= ' ORDER BY fk_user_action, datep'; //fk_user_action
-//print $sql;exit;
+
 
 dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql=$db->query($sql);
@@ -619,183 +621,193 @@ echo '<input type="hidden" name="newdate" id="newdate">' ;
 
 //print "begin_d=".$begin_d." end_d=".$end_d;
 
-
+$currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
-echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
-echo '<tr class="liste_titre">';
-echo '<td></td>';
-$i=0;	// 0 = sunday,
-while ($i < 7)
-{
-	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-	{
-		$i++;
-		continue;
-	}
-	echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-	echo $langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7));
-	print "<br>";
-	if ($i) print dol_print_date(dol_time_plus_duree($firstdaytoshow, $i, 'd'),'day');
-	else print dol_print_date($firstdaytoshow,'day');
-	echo "</td>\n";
-	$i++;
-}
-echo "</tr>\n";
-
-echo '<tr class="liste_titre">';
-echo '<td></td>';
-$i=0;
-while ($i < 7)
-{
-	if (($i + 1) < $begin_d || ($i + 1) > $end_d)
-	{
-		$i++;
-		continue;
-	}
-	for ($h = $begin_h; $h < $end_h; $h++)
-	{
-		echo '<td align="center">';
-		print '<small style="font-family: courier">'.sprintf("%02d",$h).'</small>';
-		print "</td>";
-	}
-	echo "</td>\n";
-	$i++;
-}
-echo "</tr>\n";
-
-
-// Define $usernames
-$usernames = array(); //init
-$usernamesid = array();
-/* Use this to have list of users only if users have events */
-if (! empty($conf->global->AGENDA_SHOWOWNERONLY_ONPERUSERVIEW))
-{
-	foreach ($eventarray as $daykey => $notused)
-	{
-	   // Get all assigned users for each event
-	   foreach ($eventarray[$daykey] as $index => $event)
-	   {
-		   	$event->fetch_userassigned();
-			$listofuserid=$event->userassigned;
-			foreach($listofuserid as $userid => $tmp)
-			{
-			   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
-			}
-	   }
-	}
-}
-/* Use this list to have for all users */
-else
-{
-	$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
-	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
-	$sql.= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user').")";
-	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
-	//print $sql;
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-	    $num = $db->num_rows($resql);
-	    $i = 0;
-	    if ($num)
-	    {
-	        while ($i < $num)
-	        {
-	            $obj = $db->fetch_object($resql);
-				$usernamesid[$obj->rowid]=$obj->rowid;
-				$i++;
-	        }
-	    }
-	}
-	else dol_print_error($db);
-}
-//var_dump($usernamesid);
-foreach($usernamesid as $id)
-{
-	$tmpuser=new User($db);
-	$result=$tmpuser->fetch($id);
-	$usernames[]=$tmpuser;
-}
-
-/*
-if ($filtert > 0)
-{
-	$tmpuser = new User($db);
-	$tmpuser->fetch($filtert);
-	$usernames[] = $tmpuser;
-}
-else if ($usergroup)
-{
-	$tmpgroup = new UserGroup($db);
-	$tmpgroup->fetch($usergroup);
-	$usernames = $tmpgroup->listUsersForGroup();
-}
-else
-{
-	$tmpgroup = new UserGroup($db);
-	//$tmpgroup->fetch($usergroup); No fetch, we want all users for all groups
-	$usernames = $tmpgroup->listUsersForGroup();
-}*/
-
-// Load array of colors by type
-$colorsbytype=array();
-$labelbytype=array();
-$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
-$resql=$db->query($sql);
-while ($obj = $db->fetch_object($resql))
-{
-	$colorsbytype[$obj->code]=$obj->color;
-	$labelbytype[$obj->code]=$obj->libelle;
-}
-
-// Loop on each user to show calendar
-$todayarray=dol_getdate($now,'fast');
-$sav = $tmpday;
-$showheader = true;
-$var = false;
-foreach ($usernames as $username)
-{
-	$var = ! $var;
-	echo "<tr>";
-	echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
-	print $username->getNomUrl(-1,'',0,0,20,1,'');
-	print '</td>';
-	$tmpday = $sav;
-
-	// Lopp on each day of week
-	$i = 0;
-	for ($iter_day = 0; $iter_day < 8; $iter_day++)
+while($currentdaytoshow<$lastdaytoshow) {
+	
+	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
+	
+	echo '<tr class="liste_titre">';
+	echo '<td></td>';
+	$i=0;	// 0 = sunday,
+	while ($i < 7)
 	{
 		if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 		{
 			$i++;
 			continue;
 		}
-
-        // Show days of the current week
-		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime,'fast');
-		$tmpday = $tmparray['mday'];
-		$tmpmonth = $tmparray['mon'];
-		$tmpyear = $tmparray['year'];
-
-		$style='cal_current_month';
-		if ($iter_day == 6) $style.=' cal_other_month';
-		$today=0;
-		if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
-		if ($today) $style='cal_today_peruser';
-
-		show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype, $var);
-
+		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
+		echo $langs->trans("Day".(($i+(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:1)) % 7));
+		print "<br>";
+		if ($i) print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'),'day');
+		else print dol_print_date($currentdaytoshow,'day');
+		echo "</td>\n";
 		$i++;
 	}
 	echo "</tr>\n";
-	$showheader = false;
+	
+	echo '<tr class="liste_titre">';
+	echo '<td></td>';
+	$i=0;
+	while ($i < 7)
+	{
+		if (($i + 1) < $begin_d || ($i + 1) > $end_d)
+		{
+			$i++;
+			continue;
+		}
+		for ($h = $begin_h; $h < $end_h; $h++)
+		{
+			echo '<td align="center">';
+			print '<small style="font-family: courier">'.sprintf("%02d",$h).'</small>';
+			print "</td>";
+		}
+		echo "</td>\n";
+		$i++;
+	}
+	echo "</tr>\n";
+	
+	
+	// Define $usernames
+	$usernames = array(); //init
+	$usernamesid = array();
+	/* Use this to have list of users only if users have events */
+	if (! empty($conf->global->AGENDA_SHOWOWNERONLY_ONPERUSERVIEW))
+	{
+		foreach ($eventarray as $daykey => $notused)
+		{
+		   // Get all assigned users for each event
+		   foreach ($eventarray[$daykey] as $index => $event)
+		   {
+			   	$event->fetch_userassigned();
+				$listofuserid=$event->userassigned;
+				foreach($listofuserid as $userid => $tmp)
+				{
+				   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
+				}
+		   }
+		}
+	}
+	/* Use this list to have for all users */
+	else
+	{
+		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
+		$sql.= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user').")";
+		if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
+		//print $sql;
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+		    $num = $db->num_rows($resql);
+		    $i = 0;
+		    if ($num)
+		    {
+		        while ($i < $num)
+		        {
+		            $obj = $db->fetch_object($resql);
+					$usernamesid[$obj->rowid]=$obj->rowid;
+					$i++;
+		        }
+		    }
+		}
+		else dol_print_error($db);
+	}
+	//var_dump($usernamesid);
+	foreach($usernamesid as $id)
+	{
+		$tmpuser=new User($db);
+		$result=$tmpuser->fetch($id);
+		$usernames[]=$tmpuser;
+	}
+	
+	/*
+	if ($filtert > 0)
+	{
+		$tmpuser = new User($db);
+		$tmpuser->fetch($filtert);
+		$usernames[] = $tmpuser;
+	}
+	else if ($usergroup)
+	{
+		$tmpgroup = new UserGroup($db);
+		$tmpgroup->fetch($usergroup);
+		$usernames = $tmpgroup->listUsersForGroup();
+	}
+	else
+	{
+		$tmpgroup = new UserGroup($db);
+		//$tmpgroup->fetch($usergroup); No fetch, we want all users for all groups
+		$usernames = $tmpgroup->listUsersForGroup();
+	}*/
+	
+	// Load array of colors by type
+	$colorsbytype=array();
+	$labelbytype=array();
+	$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
+	$resql=$db->query($sql);
+	while ($obj = $db->fetch_object($resql))
+	{
+		$colorsbytype[$obj->code]=$obj->color;
+		$labelbytype[$obj->code]=$obj->libelle;
+	}
+	
+	// Loop on each user to show calendar
+	$todayarray=dol_getdate($now,'fast');
+	$sav = $tmpday;
+	$showheader = true;
+	$var = false;
+	foreach ($usernames as $username)
+	{
+		$var = ! $var;
+		echo "<tr>";
+		echo '<td class="tdoverflowmax100 cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
+		print $username->getNomUrl(-1,'',0,0,20,1,'');
+		print '</td>';
+		$tmpday = $sav;
+	
+		// Lopp on each day of week
+		$i = 0;
+		for ($iter_day = 0; $iter_day < 8; $iter_day++)
+		{
+			
+			if (($i + 1) < $begin_d || ($i + 1) > $end_d)
+			{
+				$i++;
+				continue;
+			}
+	
+	        // Show days of the current week
+			$curtime = dol_time_plus_duree($currentdaytoshow, $iter_day, 'd');
+			$tmparray = dol_getdate($curtime,'fast');
+			$tmpday = $tmparray['mday'];
+			$tmpmonth = $tmparray['mon'];
+			$tmpyear = $tmparray['year'];
+	
+			$style='cal_current_month';
+			if ($iter_day == 6) $style.=' cal_other_month';
+			$today=0;
+			if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
+			if ($today) $style='cal_today_peruser';
+	
+			show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype, $var);
+	
+			$i++;
+		}
+		echo "</tr>\n";
+		$showheader = false;
+	}
+	
+	echo "</table>\n";
+	echo "<br />";
+	
+	$currentdaytoshow =  dol_time_plus_duree($currentdaytoshow, 7, 'd');
+
 }
 
-echo "</table>\n";
 echo '</div>';
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE))
@@ -910,7 +922,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$colorindexused[$user->id] = 0;			// Color index for current user (user->id) is always 0
 	$nextindextouse=count($colorindexused);	// At first run this is 0, so first user has 0, next 1, ...
 	//if ($username->id && $day==1) var_dump($eventarray);
-
+	
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused)
 	{

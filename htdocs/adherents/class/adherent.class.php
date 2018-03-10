@@ -33,7 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -1429,8 +1429,8 @@ class Adherent extends CommonObject
 						$result=$customer->create_from_member($this, $companyname, $companyalias);
 						if ($result < 0)
 						{
-							$this->error = $company->error;
-							$this->errors = $company->errors;
+							$this->error = $customer->error;
+							$this->errors = $customer->errors;
 							$error++;
 						}
 						else
@@ -1602,8 +1602,9 @@ class Adherent extends CommonObject
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-					$newlang = $_REQUEST['lang_id'];
+				$lang_id=GETPOST('lang_id');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($lang_id))
+					$newlang = $lang_id;
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 					$newlang = $customer->default_lang;
 				if (! empty($newlang)) {

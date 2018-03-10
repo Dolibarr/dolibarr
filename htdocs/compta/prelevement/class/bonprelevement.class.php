@@ -726,16 +726,12 @@ class BonPrelevement extends CommonObject
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		//if ($banque || $agence) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
 		$sql.= " WHERE f.fk_statut = 1";
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.rowid = pfd.fk_facture";
 		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";
 		$sql.= " AND f.total_ttc > 0";
-		//if ($banque || $agence) $sql.= " AND f.fk_soc = sr.rowid";
-		//if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-		//if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
 		dol_syslog(get_class($this)."::SommeAPrelever");
 		$resql = $this->db->query($sql);
@@ -805,9 +801,8 @@ class BonPrelevement extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 			$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-			//if ($banque || $agence) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
 			$sql.= " WHERE f.rowid = pfd.fk_facture";
-			$sql.= " AND f.entity = ".$conf->entity;
+			$sql.= " AND f.entity IN (".getEntity('facture').')';
 			$sql.= " AND s.rowid = f.fk_soc";
 			//if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
 			$sql.= " AND f.fk_statut = 1";
@@ -1340,6 +1335,7 @@ class BonPrelevement extends CommonObject
 			$sql.= " AND soc.rowid = f.fk_soc";
 			$sql.= " AND rib.fk_soc = f.fk_soc";
 			$sql.= " AND rib.default_rib = 1";
+			$sql.= " AND rib.type = 'ban'";
 			//print $sql;
 
 			// Define $fileDebiteurSection. One section DrctDbtTxInf per invoice.

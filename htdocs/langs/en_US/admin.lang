@@ -1444,6 +1444,9 @@ SyslogFilename=File name and path
 YouCanUseDOL_DATA_ROOT=You can use DOL_DATA_ROOT/dolibarr.log for a log file in Dolibarr "documents" directory. You can set a different path to store this file.
 ErrorUnknownSyslogConstant=Constant %s is not a known Syslog constant
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
+CompressSyslogs=Syslog files compression and backup
+SyslogFileNumberOfSaves=Log backups
+ConfigureCleaningCronjobToSetFrequencyOfSaves=Configure cleaning scheduled job to set log backup frequency
 ##### Donations #####
 DonationsSetup=Donation module setup
 DonationsReceiptModel=Template of donation receipt

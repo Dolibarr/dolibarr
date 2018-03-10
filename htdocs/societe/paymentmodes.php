@@ -23,9 +23,9 @@
  */
 
 /**
- *	    \file       htdocs/societe/rib.php
+ *	    \file       htdocs/societe/paymentmodes.php
  *      \ingroup    societe
- *		\brief      BAN tab for companies
+ *		\brief      Tab of payment modes for the customer
  */
 
 require '../main.inc.php';
@@ -162,7 +162,7 @@ if (empty($reshook))
 					$account->setAsDefault($id);	// This will make sure there is only one default rib
 				}
 
-				$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
+				$url=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
 			}
@@ -261,7 +261,7 @@ if (empty($reshook))
 			{
 				$db->commit();
 
-				$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
+				$url=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
 			}
@@ -332,19 +332,23 @@ if (empty($reshook))
 	$id = $savid;
 }
 
-if (class_exists('Stripe'))
+if (! empty($conf->stripe->enabled) && class_exists('Stripe'))
 {
 	$stripe=new Stripe($db);
-	$customerstripe=$stripe->CustomerStripe($socid,$stripe->GetStripeAccount($conf->entity));
+
+	if (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')) $service = 'StripeTest';
+	else $service = 'StripeLive';
+
+	$customerstripe=$stripe->customerStripe($socid, $stripe->getStripeAccount($service));
 	if ($customerstripe->id) {
-	$cu = \Stripe\Customer::retrieve("".$customerstripe->id."");} 
+	$cu = \Stripe\Customer::retrieve("".$customerstripe->id."");}
 
 	$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 	if ($action == 'setassourcedefault')
 	{
 	$cu->default_source = "$source"; // obtained with Stripe.js
 	$cu->save();
- 
+
 	header('Location: '.$url);
 	exit;
 	}
@@ -366,7 +370,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader();
-    
+
 $head=societe_prepare_head($object);
 
 if (! $id)
@@ -381,14 +385,14 @@ if (empty($account->socid)) $account->socid=$object->id;
 
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-	print '<form action="rib.php?socid='.$object->id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id","int").'">';
 }
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-	print '<form action="rib.php?socid='.$object->id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 }
@@ -414,9 +418,12 @@ if ($socid && $action != 'edit' && $action != "create")
 	{
 		print load_fiche_titre($langs->trans('StripeGateways'), '', '');
 
-		if (is_object($stripe) && $stripe->GetStripeAccount($conf->entity))
+		if (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')) $service = 'StripeTest';
+		else $service = 'StripeLive';
+
+		if (is_object($stripe) && $stripe->getStripeAccount($service))
 		{
-			$customerstripe=$stripe->CustomerStripe($object->id,$stripe->GetStripeAccount($conf->entity));
+			$customerstripe=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
 		}
 
 		if ($customerstripe->id) {
@@ -538,7 +545,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	// List of bank accounts
 
-	$morehtmlright='<a href="rib.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
+	$morehtmlright='<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
 
 	print load_fiche_titre($langs->trans("AllRIB"), $morehtmlright, '');
 
@@ -636,7 +643,7 @@ if ($socid && $action != 'edit' && $action != "create")
 			// Default
 			print '<td align="center" width="70">';
 			if (!$rib->default_rib) {
-				print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&ribid='.$rib->id.'&action=setasbankdefault">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&ribid='.$rib->id.'&action=setasbankdefault">';
 				print img_picto($langs->trans("Disabled"),'off');
 				print '</a>';
 			} else {
@@ -704,13 +711,13 @@ if ($socid && $action != 'edit' && $action != "create")
 			print '<td align="right">';
 			if ($user->rights->societe->creer)
 			{
-				print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"),'edit');
 				print '</a>';
 
 		   		print '&nbsp;';
 
-		   		print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
+		   		print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
 		   		print img_picto($langs->trans("Delete"),'delete');
 		   		print '</a>';
 			}
@@ -741,7 +748,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
 		if ($user->rights->societe->creer)
 		{
-			print '<a class="butAction" href="rib.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
 		}
 
 		print '</div>';
@@ -879,7 +886,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));
-		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur), 0);
+		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur','alpha')?GETPOST('frstrecur','alpha'):$account->frstrecur), 0);
 		print '</td></tr>';
 
 		print '</table>';

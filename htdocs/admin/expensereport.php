@@ -195,7 +195,7 @@ else if ($action == 'setoptions')
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('',$langs->trans("ExpenseReportsSetup"));
 
 $form=new Form($db);
 

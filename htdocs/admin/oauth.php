@@ -95,6 +95,7 @@ print '<table class="noborder" width="100%">';
 
 $i=0;
 
+// $list is defined into oauth.lib.php
 foreach ($list as $key)
 {
     $supported=0;

@@ -34,7 +34,7 @@
 function facturefourn_prepare_head($object)
 {
 	global $db, $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -102,7 +102,7 @@ function facturefourn_prepare_head($object)
 function ordersupplier_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -110,15 +110,6 @@ function ordersupplier_prepare_head($object)
 	$head[$h][1] = $langs->trans("OrderCard");
 	$head[$h][2] = 'card';
 	$h++;
-
-	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
-	{
-		$langs->load("stocks");
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("OrderDispatch");
-		$head[$h][2] = 'dispatch';
-		$h++;
-	}
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -130,7 +121,16 @@ function ordersupplier_prepare_head($object)
 		$h++;
 	}
 
-    // Show more tabs from modules
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+	{
+		$langs->load("stocks");
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("OrderDispatch");
+		$head[$h][2] = 'dispatch';
+		$h++;
+	}
+
+	// Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
@@ -193,7 +193,7 @@ function supplierorder_admin_prepare_head()
 	$head[$h][1] = $langs->trans("SuppliersInvoice");
 	$head[$h][2] = 'invoice';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_payment.php";
 	$head[$h][1] = $langs->trans("SuppliersPayment");
 	$head[$h][2] = 'supplierpayment';

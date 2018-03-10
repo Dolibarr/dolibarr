@@ -32,6 +32,10 @@
 
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
+ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
+ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
+
 
 
 -- For 8.0
@@ -57,6 +61,21 @@ create table llx_c_type_container
 
 ALTER TABLE llx_c_type_container ADD UNIQUE INDEX uk_c_type_container_id (code, entity);
 
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN discount_type integer DEFAULT 0 NOT NULL AFTER fk_soc;
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_discount_type (discount_type);
+ALTER TABLE llx_societe ADD COLUMN remise_supplier real DEFAULT 0 AFTER remise_client;
+CREATE TABLE llx_societe_remise_supplier
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,			-- multi company id
+  fk_soc			integer NOT NULL,
+  tms				timestamp,
+  datec				datetime,							-- creation date
+  fk_user_author	integer,							-- creation user
+  remise_supplier	double(6,3)  DEFAULT 0 NOT NULL,	-- discount
+  note				text
+)ENGINE=innodb;
 insert into llx_c_type_container (code,label,module,active) values ('page',     'Page',     'system', 1);
 insert into llx_c_type_container (code,label,module,active) values ('banner',   'Banner',   'system', 1);
 insert into llx_c_type_container (code,label,module,active) values ('blogpost', 'BlogPost', 'system', 1);
@@ -80,3 +99,25 @@ ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KE
 ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
+
+ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
+
+-- Add field for payment modes
+ALTER TABLE llx_societe_rib ADD COLUMN type varchar(32) DEFAULT 'ban' after rowid;
+ALTER TABLE llx_societe_rib ADD COLUMN last_four varchar(4);
+ALTER TABLE llx_societe_rib ADD COLUMN card_type varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN cvn varchar(255);										
+ALTER TABLE llx_societe_rib ADD COLUMN exp_date_month INTEGER;
+ALTER TABLE llx_societe_rib ADD COLUMN exp_date_year INTEGER;
+ALTER TABLE llx_societe_rib ADD COLUMN country_code varchar(10);
+ALTER TABLE llx_societe_rib ADD COLUMN approved integer DEFAULT 0;
+ALTER TABLE llx_societe_rib ADD COLUMN email varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN ending_date date;
+ALTER TABLE llx_societe_rib ADD COLUMN max_total_amount_of_all_payments double(24,8);
+ALTER TABLE llx_societe_rib ADD COLUMN preapproval_key varchar(255);
+ALTER TABLE llx_societe_rib ADD COLUMN starting_date date;
+ALTER TABLE llx_societe_rib ADD COLUMN total_amount_of_all_payments double(24,8);
+ALTER TABLE llx_societe_rib ADD COLUMN stripe_card_ref varchar(128);
+ALTER TABLE llx_societe_rib ADD COLUMN status integer NOT NULL DEFAULT 1;
+   
+
