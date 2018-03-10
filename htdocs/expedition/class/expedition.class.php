@@ -1096,6 +1096,18 @@ class Expedition extends CommonObject
 		$error=0;
 		$this->error='';
 
+		$this->db->begin();
+
+		if (!$error) {
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('SHIPPING_DELETE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+		}
+
 		// Add a protection to refuse deleting if shipment has at least one delivery
 		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
 		if (count($this->linkedObjectsIds) > 0)
@@ -1104,9 +1116,11 @@ class Expedition extends CommonObject
 			return -1;
 		}
 
-		$this->db->begin();
+
+
+
 		// Stock control
-		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
+		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0 && !$error)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
@@ -1203,11 +1217,6 @@ class Expedition extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-						// Call trigger
-						$result=$this->call_trigger('SHIPPING_DELETE',$user);
-						if ($result < 0) { $error++; }
-						// End call triggers
-
 						if (! empty($this->origin) && $this->origin_id > 0)
 						{
 							$this->fetch_origin();
@@ -2440,7 +2449,7 @@ class ExpeditionLigne extends CommonObjectLine
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
-			
+
 			$this->db->rollback();
 			return -1*$error;
 		}
