@@ -208,7 +208,7 @@ print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
 	print '<td><b>'.$langs->trans("StripeConnect_Mode").'</b><br/>';
-  print $langs->trans("STRIPE_APPLICATION_FEE_PLATFORM");
+  print $langs->trans("STRIPE_APPLICATION_FEE_PLATFORM").' ';
   print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
   print '% + ';
   print price($conf->global->STRIPE_APPLICATION_FEE);
