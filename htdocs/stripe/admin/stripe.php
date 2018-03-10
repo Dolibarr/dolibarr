@@ -191,11 +191,21 @@ if (empty($conf->stripeconnect->enabled))
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 	print '</td></tr>';
 
-	print '<tr class="oddeven"><td>';
-	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_PUBLISHABLE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY.'">';
-	print ' &nbsp; '.$langs->trans("Example").': pk_live_xxxxxxxxxxxxxxxxxxxxxxxx';
-	print '</td></tr>';
+  print '<tr class="oddeven"><td>';
+  print '<span>'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+  print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
+  print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+  print '</td></tr>';
+} else {
+	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
+	print '<td><b>'.$langs->trans("StripeConnect_Mode").'</b><br/>';
+  print $langs->trans("STRIPE_APPLICATION_FEE_PLATFORM").' ';
+  print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
+  print '% + ';
+  print price($conf->global->STRIPE_APPLICATION_FEE);
+  print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
+  print '</td></tr>';
+}
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
