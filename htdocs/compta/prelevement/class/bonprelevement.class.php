@@ -1310,10 +1310,14 @@ class BonPrelevement extends CommonObject
 			 */
 			// SEPA Initialisation
 			$CrLf = "\n";
-			$date_actu = dol_now();
-			$dateTime_ECMA = dol_print_date($date_actu, '%Y-%m-%dT%H:%M:%S');
+			
+			$now = dol_now();
+			
+			$dateTime_ECMA = dol_print_date($now, '%Y-%m-%dT%H:%M:%S');
 
-                        if(!empty($executiondate)) $date_actu=$executiondate; 
+			$date_actu = $now;
+                        if (!empty($executiondate)) $date_actu=$executiondate;
+			
 			$dateTime_YMD  = dol_print_date($date_actu, '%Y%m%d');
 			$dateTime_YMDHMS = dol_print_date($date_actu, '%Y%m%d%H%M%S');
 			$fileDebiteurSection = '';
