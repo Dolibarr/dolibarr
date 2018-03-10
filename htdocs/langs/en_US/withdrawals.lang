@@ -98,6 +98,10 @@ ModeFRST=One-off payment
 PleaseCheckOne=Please check one only
 DirectDebitOrderCreated=Direct debit order %s created
 AmountRequested=Amount requested
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Execution date
+CreateForSepa=Create direct debit file
 
 ### Notifications 
 InfoCreditSubject=Payment of direct debit payment order %s by the bank
