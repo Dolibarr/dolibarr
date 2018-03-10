@@ -9,6 +9,7 @@
  * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
  * Copyright (C) 2017       Rui Strecht      		<rui.strecht@aliartalentos.com>
  * Copyright (C) 2017       Juanjo Menent      		<jmenent@2byte.es>
+ * Copyright (C) 2018       Nicolas ZABOURI      	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +138,7 @@ $fieldstosearchall = array(
 	's.siren'=>"ProfId1",
 	's.siret'=>"ProfId2",
 	's.ape'=>"ProfId3",
+	's.phone'=>"Phone",
 );
 if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof4']='ProfId4';
 if (($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof5']='ProfId5';
