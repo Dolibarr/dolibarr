@@ -1278,7 +1278,7 @@ class BonPrelevement extends CommonObject
 	 * File is generated with name this->filename
 	 *
 	 *  @param		string	$format		FRST, RCUR or ALL
-         * @param string $executiondate
+         * @param string $executiondate		Date to execute transfer
 	 *	@return		int					0 if OK, <0 if KO
 	 */
 	function generate($format='ALL',$executiondate='')
