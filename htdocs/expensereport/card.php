@@ -2028,15 +2028,14 @@ else
 								print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 								print '</td>';
 							}
-							// print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
-							print '<td style="text-align:center;">';
+							print '<td class="center">';
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
-							print '<td style="text-align:left;">'.$line->comments.'</td>';
+							print '<td style="text-align:left;">'.dol_escape_htmltag($line->comments).'</td>';
 							print '<td style="text-align:right;">'.vatrate($line->vatrate,true).'</td>';
 							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
-							print '<td style="text-align:right;">'.$line->qty.'</td>';
+							print '<td style="text-align:right;">'.dol_escape_htmltag($line->qty).'</td>';
 
 							if ($action != 'editline')
 							{
@@ -2096,7 +2095,7 @@ else
 
 								// Add comments
 								print '<td>';
-								print '<textarea name="comments" class="flat_ndf centpercent">'.$line->comments.'</textarea>';
+								print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments).'</textarea>';
 								print '</td>';
 
 								// VAT
@@ -2147,7 +2146,7 @@ else
 					print '<td colspan="3"></td>';
 					print '</tr>';
 
-					print '<tr '.$bc[true].'>';
+					print '<tr class="oddeven">';
 
 					print '<td></td>';
 
@@ -2179,7 +2178,7 @@ else
 
 					// Add comments
 					print '<td>';
-					print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
+					print '<textarea class="flat_ndf centpercent" name="comments">'.dol_escape_htmltag($comments).'</textarea>';
 					print '</td>';
 
 					// Select VAT
