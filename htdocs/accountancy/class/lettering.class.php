@@ -39,6 +39,8 @@ class lettering extends BookKeeping
 	 */
 	public function lettrageTiers($socid)
 	{
+		global $conf;
+
 		$error = 0;
 
 		$object = new Societe($this->db);
@@ -56,18 +58,18 @@ class lettering extends BookKeeping
 		/**
 		 * Prise en charge des lettering complexe avec prelevment , virement
 		 */
-		$sql = "SELECT DISTINCT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.thirdparty_code, ";
+		$sql = "SELECT DISTINCT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.subledger_account, ";
 		$sql .= " bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant ";
 		$sql .= " , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering, bu.url_id , bu.type ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  " . MAIN_DB_PREFIX . "bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
 		$sql .= " WHERE   ( ";
 		if (! empty($object->code_compta))
-			$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
+			$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 		if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur))
 			$sql .= "  OR  ";
 		if (! empty($object->code_compta_fournisseur))
-			$sql .= "   bk.thirdparty_code = '" . $object->code_compta_fournisseur . "' ";
+			$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 
 		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
 		$sql .= "  AND (bk.lettering_code != '' OR bk.lettering_code IS NULL) ";
@@ -91,16 +93,17 @@ class lettering extends BookKeeping
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = payf.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
 					$sql .= " WHERE payfacf.fk_paiementfourn = '" . $obj->url_id . "' ";
-					$sql .= " AND code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4) ";
+					$sql .= " AND facf.entity = ".$conf->entity;
+					$sql .= " AND code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
 					$sql .= " AND ( ";
 					if (! empty($object->code_compta)) {
-						$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
+						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 					}
 					if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
 						$sql .= "  OR  ";
 					}
 					if (! empty($object->code_compta_fournisseur)) {
-						$sql .= "   bk.thirdparty_code = '" . $object->code_compta_fournisseur . "' ";
+						$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 					}
 					$sql .= " )  ";
 
@@ -118,16 +121,17 @@ class lettering extends BookKeeping
 						$sql = 'SELECT bk.rowid, facf.ref, facf.ref_supplier ';
 						$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
 						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (" . implode(',', $ids_fact) . "))";
-						$sql .= " WHERE bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=3) ";
+						$sql .= " WHERE bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
+						$sql .= " AND facf.entity = ".$conf->entity;
 						$sql .= " AND ( ";
 						if (! empty($object->code_compta)) {
-							$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
+							$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 						}
 						if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
 							$sql .= "  OR  ";
 						}
 						if (! empty($object->code_compta_fournisseur)) {
-							$sql .= "   bk.thirdparty_code = '" . $object->code_compta_fournisseur . "' ";
+							$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 						}
 						$sql .= " )  ";
 
@@ -149,16 +153,17 @@ class lettering extends BookKeeping
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
 					$sql .= " WHERE payfac.fk_paiement = '" . $obj->url_id . "' ";
-					$sql .= " AND bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4) ";
+					$sql .= " AND bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
+					$sql .= " AND fac.entity = ".$conf->entity;
 					$sql .= " AND ( ";
 					if (! empty($object->code_compta)) {
-						$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
+						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 					}
 					if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
 						$sql .= "  OR  ";
 					}
 					if (! empty($object->code_compta_fournisseur)) {
-						$sql .= "   bk.thirdparty_code = '" . $object->code_compta_fournisseur . "' ";
+						$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 					}
 					$sql .= " )  ";
 
@@ -176,16 +181,17 @@ class lettering extends BookKeeping
 						$sql = 'SELECT bk.rowid, fac.ref, fac.ref_supplier ';
 						$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (" . implode(',', $ids_fact) . "))";
-						$sql .= " WHERE code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=2) ";
+						$sql .= " WHERE code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
+						$sql .= " AND fac.entity = ".$conf->entity;
 						$sql .= " AND ( ";
 						if (! empty($object->code_compta)) {
-							$sql .= "  bk.thirdparty_code = '" . $object->code_compta . "'  ";
+							$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 						}
 						if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
 							$sql .= "  OR  ";
 						}
 						if (! empty($object->code_compta_fournisseur)) {
-							$sql .= "   bk.thirdparty_code = '" . $object->code_compta_fournisseur . "' ";
+							$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 						}
 						$sql .= " )  ";
 

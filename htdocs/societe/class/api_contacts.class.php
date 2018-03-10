@@ -357,6 +357,30 @@ class Contacts extends DolibarrApi
 		return $result;
     }
 
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object) {
+
+    	$object = parent::_cleanObjectDatas($object);
+
+    	unset($object->total_ht);
+    	unset($object->total_tva);
+    	unset($object->total_localtax1);
+    	unset($object->total_localtax2);
+    	unset($object->total_ttc);
+
+    	unset($object->note);
+    	unset($object->lines);
+    	unset($object->thirdparty);
+
+    	return $object;
+    }
+
 	/**
 	 * Validate fields before create or update object
      *
@@ -372,6 +396,7 @@ class Contacts extends DolibarrApi
 				throw new RestException(400, "$field field missing");
 			$contact[$field] = $data[$field];
 		}
+
 		return $contact;
 	}
 }

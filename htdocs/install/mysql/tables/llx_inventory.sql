@@ -22,15 +22,16 @@ CREATE TABLE llx_inventory
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
   entity integer DEFAULT 0, 
   ref varchar(48),
-  datec datetime DEFAULT NULL,
+  date_creation datetime DEFAULT NULL,
   tms timestamp, 
-  fk_user_author	integer,					-- user making creation
-  fk_user_modif     integer,                   -- user making last change
-  fk_user_valid		integer,                   -- valideur de la fiche
+  fk_user_creat	integer,					-- user making creation
+  fk_user_modif integer,                    -- user making last change
+  fk_user_valid integer,                    -- valideur de la fiche
   fk_warehouse integer DEFAULT 0, 
   status integer DEFAULT 0, 
   title varchar(255) NOT NULL, 
   date_inventory datetime DEFAULT NULL,
+  date_validation datetime DEFAULT NULL,
   import_key               varchar(14)       	-- import key
 ) 
 ENGINE=InnoDB;

@@ -155,6 +155,8 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
+
+	dol_set_focus('input[name="ref"]');
 }
 
 // Part to edit record
@@ -192,7 +194,7 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals();
 
     $head = inventoryPrepareHead($object);
 	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'inventory');

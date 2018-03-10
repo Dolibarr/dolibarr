@@ -74,7 +74,7 @@ if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_A
 $wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 
 
@@ -173,11 +173,12 @@ $message.='<br>';
 $message.='<br>';
 print $message;
 
-$message=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
+$message =$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptionsNotAdmin",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login);
+$message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptionsNotAutoEvent",'systemauto','systemauto').'<br>';
 
 print info_admin($message);
 

@@ -97,7 +97,7 @@ class MembersTypes extends DolibarrApi
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('adherent').')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('member_type').')';
 
         // Add sql filters
         if ($sqlfilters)
@@ -209,7 +209,7 @@ class MembersTypes extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $this->task->error);
+        	throw new RestException(500, $membertype->error);
         }
     }
 

@@ -162,9 +162,9 @@ SizeUnitinch=นิ้ว
 SizeUnitfoot=เท้า
 SizeUnitpoint=จุด
 BugTracker=ติดตามข้อผิดพลาด
-SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br />Check your inbox.
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
 BackToLoginPage=กลับไปหน้าเข้าสู่ระบบ
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br />Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=<b>โหมดการตรวจสอบเป็น%</b> s <br> ในโหมดนี้ Dolibarr ไม่สามารถรู้หรือเปลี่ยนรหัสผ่านของคุณ <br> ติดต่อผู้ดูแลระบบของคุณถ้าคุณต้องการที่จะเปลี่ยนรหัสผ่านของคุณ
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
 ProfIdShortDesc=<b>ศ Id% s</b> ข้อมูลขึ้นอยู่กับประเทศของบุคคลที่สาม <br> <b>ตัวอย่างเช่นสำหรับประเทศ% s ก็รหัส%</b> s
 DolibarrDemo=Dolibarr ERP / CRM สาธิต
@@ -225,7 +225,11 @@ IfAmountHigherThan=หากจำนวนเงินที่สูงกว�
 SourcesRepository=พื้นที่เก็บข้อมูลสำหรับแหล่งที่มา
 Chart=Chart
 PassEncoding=Password encoding
-
+PermissionsAdd=Permissions added
+PermissionsDelete=Permissions removed
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+YourPasswordHasBeenReset=Your password has been reset successfully
+ApplicantIpAddress=IP address of applicant
 ##### Export #####
 ExportsArea=พื้นที่การส่งออก
 AvailableFormats=รูปแบบที่ใช้ได้

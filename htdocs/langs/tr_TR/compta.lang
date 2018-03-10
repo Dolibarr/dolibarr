@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Hesaplama kurallarını değiştirmek için <a href="%s">Vergi modülü ayarları</a> na git
 TaxModuleSetupToModifyRulesLT=Hesaplama kurallarını değiştirmek için <a href="%s">Firma ayarları</a>na git
 OptionMode=Muhasebe seçeneği
@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Herhangi bir faturaya bağlı olmayan ödemeler, herh
 PaymentsNotLinkedToUser=Herhangi bir kullanıcıya bağlı olmayan ödemeler
 Profit=Kar
 AccountingResult=Muhasebe sonucu
+BalanceBefore=Balance (before)
 Balance=Bakiye
 Debit=Borç
 Credit=Alacak

@@ -136,17 +136,25 @@ if ($action == 'update') {
 			$accounting = new AccountingAccount($db);
 
 			//$msg .= '<div><span  class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
+			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0; $ok = 0; $ko = 0;
-			foreach ( $chk_prod as $productid ) {
-
+			foreach ( $chk_prod as $productid )
+			{
 				$accounting_account_id = GETPOST('codeventil_' . $productid);
 
-				$result = $accounting->fetch($accounting_account_id, null, 1);
-				if ($result < 0) {
+				$result = 0;
+				if ($accounting_account_id > 0)
+				{
+					$arrayofdifferentselectedvalues[$accounting_account_id]=$accounting_account_id;
+					$result = $accounting->fetch($accounting_account_id, null, 1);
+				}
+				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
 					$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : id=' . $accounting_account_id . '<br/> <pre>' . $sql . '</pre></font></div>';
+					$ko++;
 				} else {
+					$db->begin();
 
 					$sql = " UPDATE " . MAIN_DB_PREFIX . "product";
 					if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
@@ -158,23 +166,23 @@ if ($action == 'update') {
 					$sql .= " WHERE rowid = " . $productid;
 
 					dol_syslog("/accountancy/admin/productaccount.php sql=" . $sql, LOG_DEBUG);
-					if ($db->query($sql)) {
+					if ($db->query($sql))
+					{
 					    $ok++;
-						//$msg .= '<div><font color="green">' . $langs->trans("Product") . ' ' . $productid . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '</font></div>';
+					    $db->commit();
 					} else {
 					    $ko++;
-						//$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+					    $db->rollback();
 					}
 				}
 
-				$cpt ++;
+				$cpt++;
 			}
-		} else {
-			//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("AnyLineVentilate") . '</span></div>';
+
 		}
+
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');
 		if ($ok) setEventMessages($langs->trans("XLineSuccessfullyBinded", $ok), null, 'mesgs');
-		//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("EndProcessing") . '</span></div>';
 	}
 }
 

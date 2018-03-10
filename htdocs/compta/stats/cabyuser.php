@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+$langs->load("accountancy");
+
 $socid = GETPOST('socid','int');
 
 // Security check

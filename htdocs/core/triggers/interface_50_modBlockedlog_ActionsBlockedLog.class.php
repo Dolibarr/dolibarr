@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
         if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
 
 		// Test if event/record is qualified
-		$listofqualifiedelement = array('payment', 'facture');
+		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription','payment_various');
 		if (! in_array($object->element, $listofqualifiedelement)) return 1;
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -68,11 +69,17 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$amounts = 0;
 		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
 			|| $action==='BILL_SUPPLIER_VALIDATE' || $action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL'
+			|| $action==='MEMBER_SUBSCRIPTION_CREATE' || $action==='MEMBER_SUBSCRIPTION_MODIFY' || $action==='MEMBER_SUBSCRIPTION_DELETE'
+			|| $action==='DON_VALIDATE' || $action==='DON_MODIFY' || $action==='DON_DELETE'
 			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
 		)
 		{
 			$qualified++;
-			$amounts=  (double) $object->total_ttc;
+
+			if (in_array($action, array(
+				'MEMBER_SUBSCRIPTION_CREATE','MEMBER_SUBSCRIPTION_MODIFY','MEMBER_SUBSCRIPTION_DELETE',
+				'DON_VALIDATE','DON_MODIFY','DON_DELETE'))) $amounts = (double) $object->amount;
+			else $amounts = (double) $object->total_ttc;
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
@@ -80,8 +87,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$qualified++;
 			$amounts=  (double) $object->total_ttc;
 		}*/
-		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE'
-			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE')			// 'PAYMENT_ADD_TO_BANK'
+		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE' || $action === 'DONATION_PAYMENT_CREATE'
+			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE')
 		{
 			$qualified++;
 			$amounts = 0;
@@ -91,10 +98,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				}
 			}
 		}
-		if (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
+		elseif (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
 		{
 			$qualified++;
-			$amounts= (double) $object->amount;
+			$amounts = (double) $object->amount;
 		}
 
 		// Another protection.
@@ -104,20 +111,21 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // not implemented action log
 		}
 
-
 		$result = $b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
+
 		if ($result < 0)
 		{
 			$this->error = $b->error;
-			$this->errors = $b->erros;
+			$this->errors = $b->errors;
 			return -1;
 		}
 
 		$res = $b->create($user);
 
-		if ($res<0)
+		if ($res < 0)
 		{
-			setEventMessages($b->error, $b->errors, 'errors');
+			$this->error = $b->error;
+			$this->errors = $b->errors;
 			return -1;
 		}
 		else

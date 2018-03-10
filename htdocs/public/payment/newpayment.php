@@ -230,7 +230,11 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 	{
 		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
 	}
-	if ($SECUREKEY != $token) $valid=false;
+	if ($SECUREKEY != $token)
+	{
+		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) $valid=false;	// PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
+		else dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+	}
 
 	if (! $valid)
 	{
@@ -260,11 +264,12 @@ else if (! empty($conf->global->$paramcreditor)) $creditor=$conf->global->$param
  * Actions
  */
 
+// Action dopayment is called after choosing the payment mode
 if ($action == 'dopayment')
 {
 	if ($paymentmethod == 'paypal')
 	{
-		$PAYPAL_API_PRICE=price2num(GETPOST("newamount"),'MT');
+		$PAYPAL_API_PRICE=price2num(GETPOST("newamount",'alpha'),'MT');
 		$PAYPAL_PAYMENT_TYPE='Sale';
 
 		$origfulltag=GETPOST("fulltag",'alpha');
@@ -280,10 +285,18 @@ if ($action == 'dopayment')
 		$desc=GETPOST("desc",'alpha');
 
 		$mesg='';
-		if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+		if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))
+		{
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
+			$action='';
+		}
 		//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 		//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
-		elseif (! $origfulltag)        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+		elseif (! $origfulltag)
+		{
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+			$action='';
+		}
 
 		//var_dump($_POST);
 		if (empty($mesg))
@@ -306,6 +319,7 @@ if ($action == 'dopayment')
 			dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG);
 			dol_syslog("PAYPAL_API_PRICE: $PAYPAL_API_PRICE", LOG_DEBUG);
 			dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG);
+			// All those fields may be empty when making a payment for a free amount for example
 			dol_syslog("shipToName: $shipToName", LOG_DEBUG);
 			dol_syslog("shipToStreet: $shipToStreet", LOG_DEBUG);
 			dol_syslog("shipToCity: $shipToCity", LOG_DEBUG);
@@ -323,9 +337,10 @@ if ($action == 'dopayment')
 			//$_SESSION["FinalPaymentAmt"]=$PAYPAL_API_PRICE;
 
 			// A redirect is added if API call successfull
-			print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
+			$mesg = print_paypal_redirect($PAYPAL_API_PRICE,$PAYPAL_API_DEVISE,$PAYPAL_PAYMENT_TYPE,$PAYPAL_API_OK,$PAYPAL_API_KO, $FULLTAG);
 
-			exit;
+			// If we are here, it means the Paypal redirect was not done, so we show error message
+			$action = '';
 		}
 	}
 
@@ -362,7 +377,7 @@ if ($action == 'dopayment')
 
 	if ($paymentmethod == 'stripe')
 	{
-		if (GETPOST('newamount')) $amount = GETPOST('newamount');
+		if (GETPOST('newamount','alpha')) $amount = price2num(GETPOST('newamount','alpha'),'MT');
 		else
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
@@ -375,10 +390,12 @@ if ($action == 'dopayment')
 // Called when choosing Stripe mode, after the 'dopayment'
 if ($action == 'charge')
 {
+	$amountstripe = $amount;
+
 	// Correct the amount according to unit of currency
 	// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
 	$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-	if (! in_array($currency, $arrayzerounitcurrency)) $amount=$amount * 100;
+	if (! in_array($currency, $arrayzerounitcurrency)) $amountstripe=$amountstripe * 100;
 
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
@@ -407,7 +424,7 @@ if ($action == 'charge')
 		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
 		$charge = \Stripe\Charge::create(array(
 		'customer' => $customer->id,
-		'amount'   => price2num($amount, 'MU'),
+		'amount'   => price2num($amountstripe, 'MU'),
 		'currency' => $currency,
 		'description' => 'Stripe payment: '.$FULLTAG,
 		'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name),
@@ -525,7 +542,7 @@ if (! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBO
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
 }
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
 }
@@ -643,7 +660,7 @@ if (! $source)
 	if (empty($amount) || ! is_numeric($amount))
 	{
 		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -657,7 +674,7 @@ if (! $source)
 
 	// Tag
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -734,7 +751,7 @@ if ($source == 'order')
 	if (empty($amount) || ! is_numeric($amount))
 	{
 		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -748,7 +765,7 @@ if ($source == 'order')
 
 	// Tag
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -846,27 +863,34 @@ if ($source == 'invoice')
 	print '</td></tr>'."\n";
 
 	// Amount
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentAmount");
+	if (empty($amount) && empty($object->paye)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
+	if (empty($object->paye))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+		if (empty($amount) || ! is_numeric($amount))
+		{
+			print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"), 'MT').'">';
+		}
+		else {
+			print '<b>'.price($amount).'</b>';
+			print '<input type="hidden" name="amount" value="'.$amount.'">';
+			print '<input type="hidden" name="newamount" value="'.$amount.'">';
+		}
+		// Currency
+		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+		print '<input type="hidden" name="currency" value="'.$currency.'">';
 	}
-	else {
-		print '<b>'.price($amount).'</b>';
-		print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+	else
+	{
+		print price($object->total_ttc, 1, $langs);
 	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
 	// Tag
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -1068,7 +1092,7 @@ if ($source == 'contractline')
 	if (empty($amount) || ! is_numeric($amount))
 	{
 		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -1082,7 +1106,7 @@ if ($source == 'contractline')
 
 	// Tag
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -1191,7 +1215,7 @@ if ($source == 'membersubscription')
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
 		print '</td></tr>'."\n";
 
-		if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
+		if (empty($amount) && ! GETPOST('newamount','alpha')) $_GET['newamount']=$member->last_subscription_amount;
 	}
 
 	// Amount
@@ -1204,27 +1228,31 @@ if ($source == 'membersubscription')
 		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) print ')';
 	}
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	$valtoshow='';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-		$valtoshow=GETPOST("newamount",'int');
+		$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 		// force default subscription amount to value defined into constant...
-		if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-				$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+		if (empty($valtoshow))
+		{
+			if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
 			}
-		}
-		else {
-			if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-				$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+			else {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
 			}
 		}
 	}
 	if (empty($amount) || ! is_numeric($amount))
 	{
-		//$valtoshow=GETPOST("newamount",'int');
+		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 		if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
 		print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-		print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
+		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	}
 	else {
 		$valtoshow=$amount;
@@ -1241,7 +1269,7 @@ if ($source == 'membersubscription')
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -1290,31 +1318,38 @@ if ($action != 'dopayment')
 {
 	if ($found && ! $error)	// We are in a management option and no error
 	{
-		// Buttons for all payments registration methods
-
-		if (! empty($conf->paybox->enabled))
+		if ($source == 'invoice' && $object->paye)
 		{
-			// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
-			print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
+			print '<br><br>'.$langs->trans("InvoicePaid");
 		}
-
-		if (! empty($conf->stripe->enabled))
+		else
 		{
-			// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
-			print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
-		}
+			// Buttons for all payments registration methods
 
-		if (! empty($conf->paypal->enabled))
-		{
-			if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
-
-			if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
+			if (! empty($conf->paybox->enabled))
 			{
-				print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
+				print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 			}
-			if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+
+			if (! empty($conf->stripe->enabled))
 			{
-				print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
+				print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+			}
+
+			if (! empty($conf->paypal->enabled))
+			{
+				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
+
+				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'integral')
+				{
+					print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalOrCBDoPayment").'">';
+				}
+				if ($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY == 'paypalonly')
+				{
+					print '<br><input class="button buttonpayment buttonpaymentpaypal" type="submit" name="dopayment_paypal" value="'.$langs->trans("PaypalDoPayment").'">';
+				}
 			}
 		}
 	}
@@ -1410,7 +1445,7 @@ if (preg_match('/^dopayment/',$action))
 
 	    <div class="form-row left">
 	    <label for="card-element">
-	    Credit or debit card
+	    '.$langs->trans("CreditOrDebitCard").'
 	    </label>
 	    <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
@@ -1420,7 +1455,7 @@ if (preg_match('/^dopayment/',$action))
 	    <div id="card-errors" role="alert"></div>
 	    </div>
 	    <br>
-	    <button class="button" id="buttontopay">'.$langs->trans("ToPay").'</button>
+	    <button class="butAction" id="buttontopay">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>
 
@@ -1519,3 +1554,4 @@ htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
 llxFooter('', 'public');
 
 $db->close();
+

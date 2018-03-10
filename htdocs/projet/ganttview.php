@@ -140,9 +140,9 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
 
     // Date start - end
     print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-	$start = dol_print_date($object->date_start,'dayhour');
+	$start = dol_print_date($object->date_start,'day');
 	print ($start?$start:'?');
-	$end = dol_print_date($object->date_end,'dayhour');
+	$end = dol_print_date($object->date_end,'day');
 	print ' - ';
 	print ($end?$end:'?');
 	if ($object->hasDelay()) print img_warning("Late");
@@ -246,15 +246,21 @@ if (count($tasksarray)>0)
 	$tasks=array();
 	$task_dependencies=array();
 	$taskcursor=0;
-	foreach($tasksarray as $key => $val)
+	foreach($tasksarray as $key => $val)	// Task array are sorted by "project, position, dateo"
 	{
-		$task->fetch($val->id);
+		$task->fetch($val->id, '');
+
+		$idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project);	// If start with -, id is a project id
 
 		$tasks[$taskcursor]['task_id']=$val->id;
+		$tasks[$taskcursor]['task_alternate_id']=($taskcursor+1);		// An id that has same order than position (requird by ganttchart)
 		$tasks[$taskcursor]['task_project_id']=$val->fk_project;
-		$tasks[$taskcursor]['task_parent']=($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project);
-        $tasks[$taskcursor]['task_is_group'] = 0;
+		$tasks[$taskcursor]['task_parent']=$idparent;
+
+		$tasks[$taskcursor]['task_is_group'] = 0;
         $tasks[$taskcursor]['task_css'] = 'gtaskblue';
+        $tasks[$taskcursor]['task_position'] = $val->rang;
+        $tasks[$taskcursor]['task_planned_workload'] = $val->planned_workload;
 
         if ($val->fk_parent != 0 && $task->hasChildren()> 0){
             $tasks[$taskcursor]['task_is_group']=1;
@@ -275,6 +281,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_start_date']=$val->date_start;
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;
 		$tasks[$taskcursor]['task_color']='b4d1ea';
+
 		$idofusers=$task->getListContactId('internal');
 		$idofcontacts=$task->getListContactId('external');
   		$s='';
@@ -319,6 +326,20 @@ if (count($tasksarray)>0)
 		//print "xxx".$val->id.$tasks[$taskcursor]['task_resources'];
         $tasks[$taskcursor]['note']=$task->note_public;
 		$taskcursor++;
+	}
+
+	// Search parent to set task_parent_alternate_id (requird by ganttchart)
+	foreach($tasks as $tmpkey => $tmptask)
+	{
+		foreach($tasks as $tmptask2)
+		{
+			if ($tmptask2['task_id'] == $tmptask['task_parent'])
+			{
+				$tasks[$tmpkey]['task_parent_alternate_id']=$tmptask2['task_alternate_id'];
+				break;
+			}
+		}
+		if (empty($tasks[$tmpkey]['task_parent_alternate_id'])) $tasks[$tmpkey]['task_parent_alternate_id'] = $tasks[$tmpkey]['task_parent'];
 	}
 
 	print "\n";

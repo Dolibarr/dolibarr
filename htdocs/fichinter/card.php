@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2015 	Charlie Benke           <charlies@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  *
@@ -308,7 +308,7 @@ if (empty($reshook))
 										$outputlangs = $langs;
 										$newlang='';
 										if (empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-										if (empty($newlang)) $newlang=$srcobject->client->default_lang;
+										if (empty($newlang)) $newlang=$srcobject->thirdparty->default_lang;
 										if (! empty($newlang)) {
 											$outputlangs = new Translate("",$conf);
 											$outputlangs->setDefaultLang($newlang);
@@ -316,7 +316,7 @@ if (empty($reshook))
 										$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
 									} else {
 										$prod->fetch($lines[$i]->fk_product);
-										$label .= $lines[$i]->product_label;
+										$label = $lines[$i]->product_label;
 									}
 
 									if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
@@ -470,7 +470,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
-		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
+		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter&restore_lastsearch_values=1');
 		exit;
 	}
 
@@ -741,9 +741,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from update form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -755,7 +757,7 @@ if (empty($reshook))
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
 			{
-				$result=$object->insertExtraFields();
+				$result=$object->insertExtraFields('INTERVENTION_MODIFY');
 				if ($result < 0)
 				{
 					$error++;
@@ -887,7 +889,7 @@ if ($action == 'create')
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
-			$soc = $objectsrc->client;
+			$soc = $objectsrc->thirdparty;
 
 			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private','none')));
 			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public','none'));
@@ -1476,7 +1478,7 @@ else if ($id > 0 || ! empty($ref))
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
 
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
 
@@ -1521,7 +1523,7 @@ else if ($id > 0 || ! empty($ref))
 
 					$extrafieldsline = new ExtraFields($db);
 					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
-					$line->fetch_optionals($line->rowid, $extralabelslines);
+					$line->fetch_optionals();
 
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
 

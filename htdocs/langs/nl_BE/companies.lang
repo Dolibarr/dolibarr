@@ -3,7 +3,6 @@ ConfirmDeleteCompany=Weet u zeker dat u dit bedrijf en alle geërfde gegevens wi
 ConfirmDeleteContact=Weet u zeker dat u deze contactpersoon en alle geërfde gegevens wilt verwijderen ?
 ToCreateContactWithSameName=Maakt automatisch een contact/adres met dezelfde informatie als de derde onder de derde. In de meeste gevallen is het voldoende om een derde partij aan te maken.
 RegisteredOffice=Maarschappelijke zetel
-PostOrFunction=Functie
 StateShort=Staat
 PhoneShort=Telefoonnummer
 No_Email=Geen globale e-mailings sturen

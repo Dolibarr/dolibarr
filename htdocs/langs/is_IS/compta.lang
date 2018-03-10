@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
 OptionMode=Valkostur fyrir bókhalds
@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Greiðslur ekki tengd við hvaða nótum svo ekki ten
 PaymentsNotLinkedToUser=Greiðslur tengist ekki allir notandi
 Profit=Hagnaður
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Jafnvægi
 Debit=Debit
 Credit=Greiðslukort

@@ -3,10 +3,10 @@ WorkflowSetup=Workflow Moduleinstellungen
 WorkflowDesc=Dieses Modul ermöglicht, das Verhalten von automatischen Aktionen in den Anwendungen zu verändern. Standardmäßig wird der Prozess offen sein (Sie können die Dinge in der gewünschten Reihenfolge tun). Sie können automatische Aktionen aktivieren, die Sie interessieren.
 ThereIsNoWorkflowToModify=Es sind keine Workflow-Änderungen möglich mit den aktivierten Modulen.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstellen Sie automatisch einen Kundenauftrag, nachdem ein kommerzielles Angebot unterschrieben wurde (neue Bestellung hat denselben Betrag wie Angebot)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellen Sie automatisch eine Kundenrechnung, nachdem ein kommerzielles Angebot unterzeichnet wurde (die neue Rechnung hat den gleichen Betrag wie das Angebot)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellen Sie automatisch eine Kundenrechnung, nachdem eine Kundenbestellung geschlossen wurde (die neue Rechnung hat den gleichen Betrag wie die Bestellung)
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)

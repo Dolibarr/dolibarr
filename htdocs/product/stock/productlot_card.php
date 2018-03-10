@@ -122,9 +122,11 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
     {
-        // Fill array 'array_options' with data from update form
+    	$object->oldcopy = dol_clone($object);
+
+    	// Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -135,7 +137,7 @@ if (empty($reshook))
             $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
             // some hooks
             if (empty($reshook)) {
-                $result = $object->insertExtraFields();
+                $result = $object->insertExtraFields('PRODUCT_LOT_MODIFY');
        			if ($result < 0)
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -305,7 +307,7 @@ if ($action == 'create')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	$res = $object->fetch_optionals($object->id, $extralabels);
+	$res = $object->fetch_optionals();
 
     //print load_fiche_titre($langs->trans("Batch"));
 

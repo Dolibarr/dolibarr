@@ -59,14 +59,15 @@ class ExpeditionLineBatch extends CommonObject
 	function fetchFromStock($id_stockdluo)
 	{
         $sql = "SELECT";
-		$sql.= " t.sellby,";
-		$sql.= " t.eatby,";
-		$sql.= " t.batch,";
-		$sql.= " e.fk_entrepot";
+	$sql.= " pb.batch,";
+	$sql.= " pl.sellby,";
+	$sql.= " pl.eatby,";
+	$sql.= " ps.fk_entrepot";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as t inner join ";
-        $sql.= MAIN_DB_PREFIX."product_stock as e on t.fk_product_stock=e.rowid ";
-        $sql.= " WHERE t.rowid = ".(int) $id_stockdluo;
+        $sql.= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+        $sql.= " JOIN ".MAIN_DB_PREFIX."product_stock as ps on pb.fk_product_stock=ps.rowid";
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."product_lot as pl on pl.batch = pb.batch AND pl.fk_product = ps.fk_product";
+	$sql.= " WHERE pb.rowid = ".(int) $id_stockdluo;
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

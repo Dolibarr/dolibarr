@@ -76,7 +76,7 @@ $tablib[1] = "Websites";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.status FROM ".MAIN_DB_PREFIX."website as f";
+$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.status FROM ".MAIN_DB_PREFIX.'website as f WHERE f.entity IN ('.getEntity('website').')';
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -401,6 +401,23 @@ $titre=$langs->trans("WebsiteSetup");
 $linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($titre,$linkback,'title_setup');
 
+// Onglets
+$head=array();
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/website.php";
+$head[$h][1] = $langs->trans("WebSites");
+$head[$h][2] = 'website';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
+$head[$h][1] = $langs->trans("Options");
+$head[$h][2] = 'options';
+$h++;
+
+dol_fiche_head($head, 'website', '', -1);
+
+
 print $langs->trans("WebsiteSetupDesc").'<br>';
 print "<br>\n";
 
@@ -520,7 +537,6 @@ if ($id)
 
     print '</table>';
     print '</form>';
-
 
 
     // List of websites in database
@@ -649,7 +665,9 @@ if ($id)
     }
 }
 
-print '<br>';
+dol_fiche_end();
+
+//print '<br>';
 
 
 llxFooter();

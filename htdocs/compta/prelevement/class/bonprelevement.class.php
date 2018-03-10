@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2016 Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2018      Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -284,7 +285,7 @@ class BonPrelevement extends CommonObject
 		$sql.= ", p.fk_user_credit";
 		$sql.= ", p.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity IN (".getEntity('facture').")";
 		if ($rowid > 0) $sql.= " AND p.rowid = ".$rowid;
 		else $sql.= " AND p.ref = '".$this->db->escape($ref)."'";
 
@@ -519,6 +520,9 @@ class BonPrelevement extends CommonObject
                      */
 					if ($error == 0)
 					{
+						$this->date_credit = $date;
+						$this->statut = 1;
+
 						$this->db->commit();
 						return 0;
 					}
@@ -584,13 +588,16 @@ class BonPrelevement extends CommonObject
 				// TODO Call trigger to create a notification using notification module
 			}
 			else
-		   {
+			{
 				$error++;
 			}
 
 			if ($error == 0)
 			{
+				$this->date_trans = $date;
+				$this->statut = 1;
 				$this->db->commit();
+
 				return 0;
 			}
 			else
@@ -720,16 +727,12 @@ class BonPrelevement extends CommonObject
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		//if ($banque || $agence) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
 		$sql.= " WHERE f.fk_statut = 1";
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND f.rowid = pfd.fk_facture";
 		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";
 		$sql.= " AND f.total_ttc > 0";
-		//if ($banque || $agence) $sql.= " AND f.fk_soc = sr.rowid";
-		//if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-		//if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
 		dol_syslog(get_class($this)."::SommeAPrelever");
 		$resql = $this->db->query($sql);
@@ -758,9 +761,10 @@ class BonPrelevement extends CommonObject
 	 *	@param	int		$agence		dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode		real=do action, simu=test only
 	 *  @param	string	$format		FRST, RCUR or ALL
+         * @param       string  $executiondate	Date to execute the transfer
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
-	function Create($banque=0, $agence=0, $mode='real', $format='ALL')
+	function Create($banque=0, $agence=0, $mode='real', $format='ALL',$executiondate='')
 	{
 		global $conf,$langs;
 
@@ -774,6 +778,8 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 
 		$datetimeprev = time();
+                //Choice the date of the execution direct debit
+                if(!empty($executiondate)) $datetimeprev = $executiondate;
 
 		$month = strftime("%m", $datetimeprev);
 		$year = strftime("%Y", $datetimeprev);
@@ -799,9 +805,8 @@ class BonPrelevement extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 			$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-			//if ($banque || $agence) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
 			$sql.= " WHERE f.rowid = pfd.fk_facture";
-			$sql.= " AND f.entity = ".$conf->entity;
+			$sql.= " AND f.entity IN (".getEntity('facture').')';
 			$sql.= " AND s.rowid = f.fk_soc";
 			//if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
 			$sql.= " AND f.fk_statut = 1";
@@ -849,15 +854,22 @@ class BonPrelevement extends CommonObject
 				foreach ($factures as $key => $fac)
 				{
 					$fact = new Facture($this->db);
-					if ($fact->fetch($fac[0]) >= 0)		// Field 0 of $fac is rowid of invoice
+					$resfetch = $fact->fetch($fac[0]);
+					if ($resfetch >= 0)		// Field 0 of $fac is rowid of invoice
 					{
 						if ($soc->fetch($fact->socid) >= 0)
 						{
 							$bac = new CompanyBankAccount($this->db);
 							$bac->fetch(0, $soc->id);
 
-							if ($format == 'FRST' && $bac->frstrecur != 'FRST') continue;
-							if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR')) continue;
+							if ($format == 'FRST' && $bac->frstrecur != 'FRST')
+							{
+								continue;
+							}
+							if ($format == 'RCUR' && ($bac->frstrecur != 'RCUR' && $bac->frstrecur != 'RECUR'))
+							{
+								continue;
+							}
 
 							if ($bac->verif() >= 1)
 							{
@@ -865,28 +877,29 @@ class BonPrelevement extends CommonObject
 								/* second tableau necessaire pour BonPrelevement */
 								$factures_prev_id[$i] = $fac[0];
 								$i++;
+								//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 							}
 							else
 							{
-								dol_syslog(__METHOD__."::Check RIB Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_ERR);
+								dol_syslog(__METHOD__."::Check RIB Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_WARNING);
 								$this->invoice_in_error[$fac[0]]="Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 								$this->thirdparty_in_error[$soc->id]="Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 							}
 						}
 						else
 						{
-							dol_syslog(__METHOD__."::Check RIB Failed to read company", LOG_ERR);
+							dol_syslog(__METHOD__."::Check RIB Failed to read company", LOG_WARNING);
 						}
 					}
 					else
 					{
-						dol_syslog(__METHOD__."::Check RIB Failed to read invoice", LOG_ERR);
+						dol_syslog(__METHOD__."::Check RIB Failed to read invoice", LOG_WARNING);
 					}
 				}
 			}
 			else
 			{
-				dol_syslog(__METHOD__."::Check RIB No invoice to process", LOG_ERR);
+				dol_syslog(__METHOD__."::Check RIB No invoice to process", LOG_WARNING);
 			}
 		}
 
@@ -1068,7 +1081,7 @@ class BonPrelevement extends CommonObject
 					$this->factures = $factures_prev_id;
 
 					// Generation of SEPA file $this->filename
-					$this->generate($format);
+					$this->generate($format,$executiondate);
 				}
 				dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
 			}
@@ -1265,9 +1278,10 @@ class BonPrelevement extends CommonObject
 	 * File is generated with name this->filename
 	 *
 	 *  @param		string	$format		FRST, RCUR or ALL
+         * @param string $executiondate		Date to execute transfer
 	 *	@return		int					0 if OK, <0 if KO
 	 */
-	function generate($format='ALL')
+	function generate($format='ALL',$executiondate='')
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1296,10 +1310,16 @@ class BonPrelevement extends CommonObject
 			 */
 			// SEPA Initialisation
 			$CrLf = "\n";
-			$date_actu = dol_now();
+			
+			$now = dol_now();
+			
+			$dateTime_ECMA = dol_print_date($now, '%Y-%m-%dT%H:%M:%S');
+
+			$date_actu = $now;
+                        if (!empty($executiondate)) $date_actu=$executiondate;
+			
 			$dateTime_YMD  = dol_print_date($date_actu, '%Y%m%d');
 			$dateTime_YMDHMS = dol_print_date($date_actu, '%Y%m%d%H%M%S');
-			$dateTime_ECMA = dol_print_date($date_actu, '%Y-%m-%dT%H:%M:%S');
 			$fileDebiteurSection = '';
 			$fileEmetteurSection = '';
 			$i = 0;
@@ -1326,6 +1346,7 @@ class BonPrelevement extends CommonObject
 			$sql.= " AND soc.rowid = f.fk_soc";
 			$sql.= " AND rib.fk_soc = f.fk_soc";
 			$sql.= " AND rib.default_rib = 1";
+			$sql.= " AND rib.type = 'ban'";
 			//print $sql;
 
 			// Define $fileDebiteurSection. One section DrctDbtTxInf per invoice.

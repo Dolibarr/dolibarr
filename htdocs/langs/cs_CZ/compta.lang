@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Přejít na <a href="%s">Nastavení daní</a> pro změnu výpočtu daní
 TaxModuleSetupToModifyRulesLT=Jděte na <a href="%s">Nastavení firmy</a> pro úpravu podmínek pro kalkulaci
 OptionMode=Volba pro účetnictví
@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Platby nepropojené s jakoukoli fakturu, takže nejso
 PaymentsNotLinkedToUser=Platby nepropojené s libovolným uživatelem
 Profit=Zisk
 AccountingResult=Účetní výsledek
+BalanceBefore=Balance (before)
 Balance=Zůstatek
 Debit=Debet
 Credit=Kredit

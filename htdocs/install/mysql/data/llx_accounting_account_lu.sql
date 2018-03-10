@@ -1,5 +1,6 @@
 --
 -- Descriptif plan comptable LU PCN
+-- ID 11000 - 12999
 --
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (11000,'PCN-LUXEMBURG','CAPIT','XXXXXX','1','','Capital ou dotation des succursales et comptes de l''exploitant','1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (11001,'PCN-LUXEMBURG','CAPIT','XXXXXX','101',11000,'Capital souscrit (Sociétés de capitaux - Montant total)','1');

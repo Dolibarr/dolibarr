@@ -123,6 +123,30 @@ $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
 // Check security token
 $valid=true;
+if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+{
+	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+	{
+		if ($SOURCE && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $SOURCE . $REF, 2);    // Use the source in the hash to avoid duplicates if the references are identical
+		else $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+	}
+	else
+	{
+		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
+	}
+	if ($SECUREKEY != $token)
+	{
+		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) $valid=false;	// PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
+		else dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+	}
+
+	if (! $valid)
+	{
+		print '<div class="error">Bad value for key.</div>';
+		//print 'SECUREKEY='.$SECUREKEY.' token='.$token.' valid='.$valid;
+		exit;
+	}
+}
 
 
 /*
@@ -131,7 +155,7 @@ $valid=true;
 
 if (GETPOST('action','aZ09') == 'dopayment')
 {
-    $PRICE=price2num(GETPOST("newamount"),'MT');
+    $PRICE=price2num(GETPOST("newamount",'alpha'),'MT');
     $email=GETPOST("email");
 
     $origfulltag=GETPOST("fulltag",'alpha');
@@ -251,7 +275,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr class="liste_total"><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="left" colspan="2">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found=false;
 $error=0;
@@ -281,7 +305,7 @@ if (! GETPOST("source") && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -297,7 +321,7 @@ if (! GETPOST("source") && $valid)
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -368,7 +392,7 @@ if (GETPOST("source") == 'order' && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -383,7 +407,7 @@ if (GETPOST("source") == 'order' && $valid)
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -456,7 +480,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -471,7 +495,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -632,7 +656,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	if (empty($amount) || ! is_numeric($amount))
 	{
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount","alpha"),'MT').'">';
 	}
 	else {
 		print '<b>'.price($amount).'</b>';
@@ -647,7 +671,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";
@@ -730,7 +754,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
 		print '</td></tr>'."\n";
 
-		if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
+		if (empty($amount) && ! GETPOST('newamount','alpha')) $_GET['newamount']=$member->last_subscription_amount;
 	}
 
 	// Amount
@@ -738,12 +762,31 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
+	$valtoshow='';
 	if (empty($amount) || ! is_numeric($amount))
 	{
-	    $valtoshow=GETPOST("newamount",'int');
+		$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
+		// force default subscription amount to value defined into constant...
+		if (empty($valtoshow))
+		{
+			if (! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
+			}
+			else {
+				if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+					$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+				}
+			}
+		}
+	}
+	if (empty($amount) || ! is_numeric($amount))
+	{
+	    //$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
         print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
+	    print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	}
 	else {
 	    $valtoshow=$amount;
@@ -760,7 +803,7 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	// Tag
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("PaymentCode");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$fulltag.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
 	print '<input type="hidden" name="tag" value="'.$tag.'">';
 	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
 	print '</td></tr>'."\n";

@@ -509,6 +509,8 @@ class Account extends CommonObject
 	{
 		global $langs,$conf, $hookmanager;
 
+		$error=0;
+
 		// Clean parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
 		if (! $this->min_desired) $this->min_desired=0;
@@ -668,7 +670,7 @@ class Account extends CommonObject
 	 *      @param  int     $notrigger  1=Disable triggers
 	 *		@return	int					<0 if KO, >0 if OK
 	 */
-	function update(User $user = null, $notrigger = 0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $langs,$conf, $hookmanager;
 
@@ -913,12 +915,9 @@ class Account extends CommonObject
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
 				$this->date_update    = $this->db->jdate($obj->date_update);
 
-				// Retreive all extrafield for thirdparty
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				return 1;
 			}
@@ -1138,6 +1137,8 @@ class Account extends CommonObject
 	 */
 	function solde($option=0)
 	{
+		$solde=0;
+
 		$sql = "SELECT sum(amount) as amount";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql.= " WHERE fk_account = ".$this->id;
@@ -1152,8 +1153,13 @@ class Account extends CommonObject
 				$solde = $obj->amount;
 			}
 			$this->db->free($resql);
-			return $solde;
+		} else {
+			$this->errors[]=$this->db->lasterror;
+			return -1;
 		}
+
+		return $solde;
+
 	}
 
 	/**
@@ -1596,7 +1602,7 @@ class Account extends CommonObject
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'ABC12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'AA12';
 		$this->iban            = 'FR999999999';
 		$this->domiciliation   = 'My bank address';
@@ -1907,7 +1913,7 @@ class AccountLine extends CommonObject
 	 */
 	function update_conciliation(User $user, $cat)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$this->db->begin();
 
@@ -2135,9 +2141,10 @@ class AccountLine extends CommonObject
 	 *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *		@param	int		$maxlen			Longueur max libelle
 	 *		@param	string	$option			Option ('showall')
+	 * 		@param	int     $notooltip		1=Disable tooltip
 	 *		@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0,$option='')
+	function getNomUrl($withpicto=0,$maxlen=0,$option='',$notooltip=0)
 	{
 		global $langs;
 
@@ -2225,6 +2232,41 @@ class AccountLine extends CommonObject
             if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
             if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
         }*/
+	}
+
+
+	/**
+	 *	Return if a bank line was dispatched into bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	public function getVentilExportCompta()
+	{
+		$alreadydispatched = 0;
+
+		$type = 'bank';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$alreadydispatched = $obj->nb;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched)
+		{
+			return 1;
+		}
+		return 0;
 	}
 
 }

@@ -297,12 +297,14 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *		@param	DoliDB		$db			Handler acces base
 	 *		@param	string		$code		Code a verifier
 	 *		@param	Societe		$soc		Objet societe
+	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $soc)
+	function verif_dispo($db, $code, $soc, $type=0)
 	{
-		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE code_client = '".$code."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
+		if ($type == 1) $sql.= " WHERE code_fournisseur = '".$code."'";
+		else $sql.= " WHERE code_client = '".$code."'";
 		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
 
 		$resql=$db->query($sql);

@@ -450,11 +450,16 @@ class Contracts extends DolibarrApi
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 
+      // TODO Check the lineid $lineid is a line of ojbect
+
       $updateRes = $this->contract->deleteline($lineid, DolibarrApiAccess::$user);
       if ($updateRes > 0) {
         return $this->get($id);
       }
-      return false;
+      else
+      {
+      	throw new RestException(405, $this->contract->error);
+      }
     }
 
     /**
@@ -489,7 +494,7 @@ class Contracts extends DolibarrApi
         }
         else
         {
-        	throw new RestException(500, $this->task->error);
+        	throw new RestException(500, $this->contract->error);
         }
     }
 

@@ -177,16 +177,27 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
+	// update order min amount
+	if ($action == 'setorder_min_amount')
+	{
+		$object->fetch($id);
+		$object->order_min_amount=GETPOST('order_min_amount');
+		$result=$object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
 	if ($action == 'update_extras') {
         $object->fetch($id);
 
+        $object->oldcopy = dol_clone($object);
+
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
         if ($ret < 0) $error++;
         if (! $error)
         {
-			$result = $object->insertExtraFields();
+        	$result = $object->insertExtraFields('COMPANY_MODIFY');
 			if ($result < 0)
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -211,7 +222,7 @@ if ($id > 0 && empty($object->id))
 {
 	// Load data of third party
 	$res=$object->fetch($id);
-	if ($object->id <= 0) dol_print_error($db,$object->error,$object->errors);
+	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
 }
 
 $title=$langs->trans("CustomerCard");
@@ -220,7 +231,7 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
 
-if ($id > 0)
+if ($object->id > 0)
 {
 	$head = societe_prepare_head($object);
 
@@ -403,7 +414,17 @@ if ($id > 0)
 
 	    print '</td>';
 	    print '</tr>';
+
+		print '<tr class="nowrap">';
+	    print '<td>';
+	    print $form->editfieldkey("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer);
+	    print '</td><td>';
+	    print $form->editfieldval("OrderMinAmount",'order_min_amount',$object->order_min_amount,$object,$user->rights->societe->creer,$limit_field_type,($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
+
+	    print '</td>';
+	    print '</tr>';
 	}
+
 
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
@@ -529,7 +550,7 @@ if ($id > 0)
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
+	print '<div class="underbanner clearboth"></div>';
 
 	$boxstat = '';
 
@@ -538,7 +559,7 @@ if ($id > 0)
 
 	// Lien recap
 	$boxstat.='<div class="box">';
-	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom" width="100%">';
+	$boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat.='<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
 
 	if (! empty($conf->propal->enabled))
@@ -549,7 +570,7 @@ if ($id > 0)
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllProposals");
-		$link='';
+		$link=DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -561,13 +582,13 @@ if ($id > 0)
 
 	if (! empty($conf->commande->enabled))
 	{
-		// Box proposals
+		// Box commandes
 		$tmp = $object->getOutstandingOrders();
 		$outstandingOpened=$tmp['opened'];
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllOrders");
-		$link='';
+		$link=DOL_URL_ROOT.'/commande/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -579,12 +600,13 @@ if ($id > 0)
 
 	if (! empty($conf->facture->enabled))
 	{
+		// Box factures
 		$tmp = $object->getOutstandingBills();
 		$outstandingOpened=$tmp['opened'];
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllInvoices");
-		$link='';
+		$link=DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -773,7 +795,7 @@ if ($id > 0)
 	}
 
     /*
-     *   Last sendings
+     *   Last shipments
      */
     if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
         $sendingstatic = new Expedition($db);
@@ -1245,7 +1267,7 @@ if ($id > 0)
 
 	print '</div>';
 
-	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+	if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_CUSTOMER_CARD))
 	{
 		// List of contacts
 		show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
@@ -1271,7 +1293,8 @@ if ($id > 0)
 }
 else
 {
-	dol_print_error($db,'Bad value for socid parameter');
+	$langs->load("errors");
+	print $langs->trans('ErrorRecordNotFound');
 }
 
 // End of page

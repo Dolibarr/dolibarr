@@ -156,6 +156,7 @@ ErrorPriceExpression20=Prazan izraz
 ErrorPriceExpression21=Prazan rezultat "%s"
 ErrorPriceExpression22=Negativan rezultat "%s"
 ErrorPriceExpression23=Unknown or non set variable '%s' in %s
+ErrorPriceExpression24=Variable '%s' exists but has no value
 ErrorPriceExpressionInternal=Interna greška "%s"
 ErrorPriceExpressionUnknown=Nepoznata greška "%s"
 ErrorSrcAndTargetWarehouseMustDiffers=Izvorni i ciljani magacini moraju biti različiti

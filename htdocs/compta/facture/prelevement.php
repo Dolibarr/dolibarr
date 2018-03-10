@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 if (!$user->rights->facture->lire) accessforbidden();
 
@@ -136,8 +140,16 @@ if ($object->id > 0)
 	if ($object->paye) $resteapayer=0;
 	$resteapayeraffiche=$resteapayer;
 
-	$absolute_discount=$object->thirdparty->getAvailableDiscounts('','fk_facture_source IS NULL');
-	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+	}
+
+	$absolute_discount=$object->thirdparty->getAvailableDiscounts('',$filterabsolutediscount);
+	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('',$filtercreditnote);
 	$absolute_discount=price2num($absolute_discount,'MT');
 	$absolute_creditnote=price2num($absolute_creditnote,'MT');
 
@@ -249,61 +261,13 @@ if ($object->id > 0)
 
 	// Discounts
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-	if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
-	else print $langs->trans("CompanyHasNoRelativeDiscount");
-	print '. ';
-	if ($absolute_discount > 0)
-	{
-		if ($object->statut > Facture::STATUS_DRAFT || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
-		{
-			if ($object->statut == Facture::STATUS_DRAFT)
-			{
-				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency)).'. ';
-			}
-			else
-			{
-				if ($object->statut < Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
-				{
-					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
-					print '<br>'.$text.'.<br>';
-				}
-				else
-				{
-					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
-					$text2=$langs->trans("AbsoluteDiscountUse");
-					print $form->textwithpicto($text,$text2);
-				}
-			}
-		}
-		else
-		{
-			// Remise dispo de type non avoir
-			$filter='fk_facture_source IS NULL';
-			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$object->thirdparty->id,$absolute_discount,$filter,$resteapayer,'',1);
-		}
-	}
-	if ($absolute_creditnote > 0)
-	{
-		// If validated, we show link "add credit note to payment"
-		if ($object->statut != Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_CREDIT_NOTE)
-		{
-			if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
-			{
-				$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
-				print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
-			}
-			else print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
-		}
-		else
-		{
-			// Remise dispo de type avoir
-			$filter='fk_facture_source IS NOT NULL';
-			if (! $absolute_discount) print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id_for_payment',$object->thirdparty->id,$absolute_creditnote,$filter,$resteapayer,'',1);
-		}
-	}
-	if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+
+	$thirdparty = $object->thirdparty;
+	$discount_type = 0;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?facid=' . $object->id);
+	$cannotApplyDiscount = 1;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 	print '</td></tr>';
 
 	// Date invoice
@@ -512,20 +476,16 @@ if ($object->id > 0)
 	dol_fiche_end();
 
 
-	$numopen = 0; $numclosed = 0;
+	$numopen = 0; $pending = 0; $numclosed = 0;
 
-	/*
-	 * Withdrawal opened requests
-	 */
+
+	// How many Direct debit opened requests ?
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
 	$sql .= " , pfd.date_traite as date_traite";
 	$sql .= " , pfd.amount";
-	$sql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	$sql .= " , ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE fk_facture = ".$object->id;
-	$sql .= " AND pfd.fk_user_demande = u.rowid";
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
@@ -535,11 +495,34 @@ if ($object->id > 0)
 		$num = $db->num_rows($result_sql);
 		$numopen = $num;
 	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+	// For wich amount ?
+
+	$sql = "SELECT SUM(pfd.amount) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql .= " WHERE fk_facture = ".$object->id;
+	$sql .= " AND pfd.traite = 0";
+
+	$result_sql = $db->query($sql);
+	if ($result_sql)
+	{
+		$obj = $db->fetch_object($result_sql);
+		if ($obj) $pending = $obj->amount;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 
 
 	/*
 	 * Buttons
 	 */
+
 	print "\n<div class=\"tabsAction\">\n";
 
 	// Add a transfer request
@@ -549,11 +532,13 @@ if ($object->id > 0)
 	    {
     		if ($user->rights->prelevement->bons->creer)
     		{
+    			$remaintopaylesspendingdebit = $resteapayer - $pending;
+
     			print '<form method="POST" action="">';
     			print '<input type="hidden" name="id" value="' . $object->id . '" />';
     			print '<input type="hidden" name="action" value="new" />';
     			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
-    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
+    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $remaintopaylesspendingdebit . '" size="10" />';
     			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
     			print '</form>';
     		}
@@ -600,10 +585,24 @@ if ($object->id > 0)
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+	$sql.= " , pfd.date_traite as date_traite, pfd.amount,";
+	$sql.= " u.rowid as user_id, u.lastname, u.firstname, u.login";
+	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql.= " WHERE fk_facture = ".$object->id;
+	$sql.= " AND pfd.traite = 0";
+	$sql.= " ORDER BY pfd.date_demande DESC";
+
+	$result_sql = $db->query($sql);
+
+	$num = 0;
 	if ($result_sql)
 	{
 		$i = 0;
 
+		$num = $db->num_rows($result);
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
@@ -633,18 +632,16 @@ if ($object->id > 0)
 		dol_print_error($db);
 	}
 
-	// Closed requests
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande,";
-	$sql.= " pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
+	// Past requests
+
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql.= " pb.ref,";
 	$sql.= " u.rowid as user_id, u.lastname, u.firstname, u.login";
-	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd,";
-	$sql.= " ".MAIN_DB_PREFIX."prelevement_bons as pb,";
-	$sql.= " ".MAIN_DB_PREFIX."user as u";
+	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
 	$sql.= " WHERE fk_facture = ".$object->id;
-	$sql.= " AND pfd.fk_user_demande = u.rowid";
-	$sql.= " AND pb.rowid = pfd.fk_prelevement_bons";
 	$sql.= " AND pfd.traite = 1";
 	$sql.= " ORDER BY pfd.date_demande DESC";
 
@@ -668,10 +665,13 @@ if ($object->id > 0)
 			print '<td align="center">'.price($obj->amount).'</td>';
 
 			print '<td align="center">';
-			$withdrawreceipt=new BonPrelevement($db);
-			$withdrawreceipt->id=$obj->fk_prelevement_bons;
-			$withdrawreceipt->ref=$obj->ref;
-			print $withdrawreceipt->getNomUrl(1);
+			if ($obj->fk_prelevement_bons > 0)
+			{
+				$withdrawreceipt=new BonPrelevement($db);
+				$withdrawreceipt->id=$obj->fk_prelevement_bons;
+				$withdrawreceipt->ref=$obj->ref;
+				print $withdrawreceipt->getNomUrl(1);
+			}
 			print "</td>\n";
 
 			print '<td>&nbsp;</td>';

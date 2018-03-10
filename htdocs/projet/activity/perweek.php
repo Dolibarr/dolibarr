@@ -41,7 +41,6 @@ $mode=GETPOST("mode",'alpha');
 $id=GETPOST('id','int');
 $taskid=GETPOST('taskid','int');
 
-
 $mine=0;
 if ($mode == 'mine') $mine=1;
 
@@ -328,12 +327,14 @@ if ($id)
 
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
-if ($search_task_ref)   $morewherefilter.=natural_search("t.ref", $search_task_ref);
-if ($search_task_label) $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
-if ($search_thirdparty) $morewherefilter.=natural_search("s.nom", $search_thirdparty);
+
+if ($search_project_ref) $morewherefilter.=natural_search("p.ref", $search_project_ref);
+if ($search_task_ref)    $morewherefilter.=natural_search("t.ref", $search_task_ref);
+if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
+if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
 
 $tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
-if ($morewherefilter)	// Get all task with no filter so we can show total of time spent for not visible tasks
+if ($morewherefilter)	// Get all task without any filter, so we can show total of time spent for not visible tasks
 {
 	$tasksarraywithoutfilter=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, '', $onlyopenedproject, '', ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 }
@@ -346,7 +347,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 
 llxHeader("",$title,"",'','','',array('/core/js/timesheet.js'));
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
+//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
 
 $param='';
 $param.=($mode?'&mode='.$mode:'');
@@ -375,7 +376,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head=project_timesheet_prepare_head($mode, $usertoprocess);
-dol_fiche_head($head, 'inputperweek', '', -1, 'task');
+dol_fiche_head($head, 'inputperweek', $langs->trans('TimeSpent'), -1, 'task');
 
 // Show description of content
 print '<div class="hideonsmartphone">';
@@ -402,7 +403,7 @@ dol_fiche_end();
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen?' centpercent':'').'">'.$nav.'</div>';     // We move this before the assign to components so, the default submit button is not the assign to.
 
-print '<div class="float valignmiddle">';
+print '<div class="colorback float valignmiddle">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 print '<div class="taskiddiv inline-block">';
@@ -431,7 +432,7 @@ if (! empty($conf->categorie->enabled))
 
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
+$moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
 $includeonly='hierachyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
@@ -460,7 +461,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-for($i=0;$i<7;$i++)
+for($idw=0;$idw<7;$idw++)
 {
 	print '<td class="liste_titre"></td>';
 }
@@ -476,7 +477,7 @@ print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("ThirdParty").'</td>';
 //print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
+print '<td align="right" class="leftborder plannedworkload maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
 /*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
@@ -488,12 +489,22 @@ $startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['fi
 
 // Get if user is available or not for each day
 $holiday = new Holiday($db);
-$isavailable=array();
 
-for ($i=0;$i<7;$i++)
+$isavailable=array();
+if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 {
-	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $i, 'd');	// $firstdaytoshow is a date with hours = 0
-	$dayinloop = dol_time_plus_duree($startday, $i, 'd');
+	$tmparray=explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	if (count($tmparray) >= 2)
+	{
+		$numstartworkingday = $tmparray[0];
+		$numendworkingday = $tmparray[1];
+	}
+}
+
+for ($idw=0; $idw<7; $idw++)
+{
+	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd');	// $firstdaytoshow is a date with hours = 0
+	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
 
 	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
 	//$tmparray = dol_getdate($dayinloop);
@@ -504,17 +515,51 @@ for ($i=0;$i<7;$i++)
 
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow);
 	$isavailable[$dayinloopfromfirstdaytoshow]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
-	print '<td width="6%" align="center" class="hide'.$i.'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</td>';
+
+	$cssweekend='';
+	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+	{
+		$cssweekend='weekend';
+	}
+
+	print '<td width="6%" align="center" class="bold hide'.$idw.($cssweekend?' '.$cssweekend:'').'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</td>';
 }
 print '<td></td>';
 print "</tr>\n";
+
+$colspan=7;
+
+if ($conf->use_javascript_ajax)
+{
+	print '<tr class="liste_total">';
+    print '<td class="liste_total" colspan="'.$colspan.'">';
+	print $langs->trans("Total");
+	print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
+	print '</td>';
+
+	for ($idw = 0; $idw < 7; $idw++)
+	{
+		$cssweekend='';
+		/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		{
+			$cssweekend='weekend';
+		}*/
+
+		print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+	}
+	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
+	print '</tr>';
+}
+
+
 
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
 
 if (count($tasksarray) > 0)
 {
-	//var_dump($tasksarray);
+	//var_dump($tasksarray);				// contains only selected tasks
+	//var_dump($tasksarraywithoutfilter);	// contains all tasks (if there is a filter, not defined if no filter)
 	//var_dump($tasksrole);
 
 	$j=0;
@@ -537,7 +582,6 @@ if (count($tasksarray) > 0)
 	$totalforeachday=array();
 	foreach($listofdistinctprojectid as $tmpprojectid)
 	{
-		$lineother='';
 		$projectstatic->id=$tmpprojectid;
 		$projectstatic->loadTimeSpent($firstdaytoshow, 0, $usertoprocess->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		for ($idw = 0; $idw < 7; $idw++)
@@ -546,21 +590,42 @@ if (count($tasksarray) > 0)
 			$totalforeachday[$tmpday]+=$projectstatic->weekWorkLoad[$tmpday];
 		}
 	}
-	$lineother='';
+
 	//var_dump($totalforeachday);
+	//var_dump($totalforvisibletasks);
 
-	$colspan=7;
-
-	// There is a diff between total shown on screen and total spent by user, so we add a line with all other cumulated time of user
+	// Is there a diff between selected/filtered tasks and all tasks ?
+	$isdiff = 0;
 	if (count($totalforeachday))
 	{
-		print '<tr class="oddeven">';
+		for ($idw = 0; $idw < 7; $idw++)
+		{
+			$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+			$timeonothertasks=($totalforeachday[$tmpday] - $totalforvisibletasks[$tmpday]);
+			if ($timeonothertasks)
+			{
+				$isdiff=1;
+				break;
+			}
+		}
+	}
+
+	// There is a diff between total shown on screen and total spent by user, so we add a line with all other cumulated time of user
+	if ($isdiff)
+	{
+		print '<tr class="oddeven othertaskwithtime">';
         print '<td colspan="'.$colspan.'">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
 		for ($idw = 0; $idw < 7; $idw++)
 		{
-			print '<td align="center">';
+			$cssweekend='';
+			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+			{
+				$cssweekend='weekend';
+			}
+
+			print '<td class="center hide'.$idw.' '.($cssweekend?' '.$cssweekend:'').'">';
 			$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 			$timeonothertasks=($totalforeachday[$tmpday] - $totalforvisibletasks[$tmpday]);
 			if ($timeonothertasks)
@@ -581,15 +646,19 @@ if (count($tasksarray) > 0)
                 <td class="liste_total" colspan="'.$colspan.'">';
 				print $langs->trans("Total");
 				print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
-				print '</td>
-                <td class="liste_total hide0" align="center"><div id="totalDay[0]">&nbsp;</div></td>
-                <td class="liste_total hide1" align="center"><div id="totalDay[1]">&nbsp;</div></td>
-                <td class="liste_total hide2" align="center"><div id="totalDay[2]">&nbsp;</div></td>
-                <td class="liste_total hide3" align="center"><div id="totalDay[3]">&nbsp;</div></td>
-                <td class="liste_total hide4" align="center"><div id="totalDay[4]">&nbsp;</div></td>
-                <td class="liste_total hide5" align="center"><div id="totalDay[5]">&nbsp;</div></td>
-                <td class="liste_total hide6" align="center"><div id="totalDay[6]">&nbsp;</div></td>
-                <td class="liste_total"></td>
+				print '</td>';
+
+				for ($idw = 0; $idw < 7; $idw++)
+				{
+					$cssweekend='';
+					/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+					{
+						$cssweekend='weekend';
+					}*/
+
+					print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+				}
+                print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
 }
@@ -624,11 +693,11 @@ if ($conf->use_javascript_ajax)
 					}
 				});'."\n";
 
-	$i=0;
-	while ($i < 7)
+	$idw=0;
+	while ($idw < 7)
 	{
-		print '    updateTotal('.$i.',\''.$modeinput.'\');';
-		$i++;
+		print '    updateTotal('.$idw.',\''.$modeinput.'\');';
+		$idw++;
 	}
 	print "\n});\n";
 	print '</script>';

@@ -132,7 +132,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-$sql.= " WHERE p.entity = ".getEntity('survey');
+$sql.= " WHERE p.entity IN (".getEntity('survey').")";
 if ($search_status != '-1' && $search_status != '') $sql.=natural_search("p.status", $search_status, 2);
 if ($search_expired == 'expired') $sql.=" AND p.date_fin < '".$db->idate($now)."'";
 if ($search_expired == 'opened')  $sql.=" AND p.date_fin >= '".$db->idate($now)."'";

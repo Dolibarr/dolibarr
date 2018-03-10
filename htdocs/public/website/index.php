@@ -191,8 +191,7 @@ if (! file_exists($original_file_osencoded))
 // Output page content
 define('USEDOLIBARRSERVER', 1);
 print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html with CSS link and html header + Body that was saved into tpl dir -->'."\n";
-include_once $original_file_osencoded;
-
+include_once $original_file_osencoded;		// Note: The pageXXX.tpl.php showed here contains a formatage with dolWebsiteOutput() at end of page.
 
 if (is_object($db)) $db->close();
 

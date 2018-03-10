@@ -343,7 +343,7 @@ if ($step == 1 || ! $datatoimport)
 	dol_fiche_head($head, 'step1', $langs->trans("NewImport"), -1);
 
 
-	print $langs->trans("SelectImportDataSet").'<br>';
+	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
 
 	// Affiche les modules d'imports
 	print '<table class="noborder" width="100%">';
@@ -1475,10 +1475,11 @@ if ($step == 5 && $datatoimport)
         	$sourcelinenb=0; $endoffile=0;
 
             // Loop on each input file record
-            while ($sourcelinenb < $nboflines && ! $endoffile)
+            while (($sourcelinenb < $nboflines) && ! $endoffile)
             {
                 $sourcelinenb++;
                 // Read line and store it into $arrayrecord
+                //dol_syslog("line ".$sourcelinenb.' - '.$nboflines.' - '.$excludefirstline.' - '.$endatlinenb);
                 $arrayrecord=$obj->import_read_record();
                 if ($arrayrecord === false)
                 {
@@ -1487,7 +1488,7 @@ if ($step == 5 && $datatoimport)
                 	continue;
                 }
                 if ($excludefirstline && ($sourcelinenb < $excludefirstline)) continue;
-                if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
+                if ($endatlinenb && ($sourcelinenb > $endatlinenb)) break;
 
                 // Run import
                 $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid,$updatekeys);
@@ -1857,7 +1858,7 @@ if ($step == 6 && $datatoimport)
 				continue;
 			}
 			if ($excludefirstline && ($sourcelinenb < $excludefirstline)) continue;
-			if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
+			if ($endatlinenb && ($sourcelinenb > $endatlinenb)) break;
 
 			// Run import
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid,$updatekeys);
@@ -1941,7 +1942,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	$height='24';
 
 	print "\n\n<!-- Box ".$pos." start -->\n";
-	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
+	print '<div class="box boximport" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	if ($pos && $pos > count($fieldssource))	// No fields

@@ -384,29 +384,29 @@ if ($resql)
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall)					$param.='&sall='.$sall;
-	if ($socid > 0)             $param.='&socid='.$socid;
-	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
-	if ($search_orderday)      		$param.='&search_orderday='.$search_orderday;
-	if ($search_ordermonth)      		$param.='&search_ordermonth='.$search_ordermonth;
-	if ($search_orderyear)       		$param.='&search_orderyear='.$search_orderyear;
-	if ($search_deliveryday)   		$param.='&search_deliveryday='.$search_deliveryday;
-	if ($search_deliverymonth)   		$param.='&search_deliverymonth='.$search_deliverymonth;
-	if ($search_deliveryyear)    		$param.='&search_deliveryyear='.$search_deliveryyear;
-	if ($search_ref)      		$param.='&search_ref='.$search_ref;
-	if ($search_company)  		$param.='&search_company='.$search_company;
-	if ($search_ref_customer)	$param.='&search_ref_customer='.$search_ref_customer;
-	if ($search_user > 0) 		$param.='&search_user='.$search_user;
-	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
-	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
-	if ($search_total_vat != '') $param.='&search_total_vat='.$search_total_vat;
-	if ($search_total_ttc != '') $param.='&search_total_ttc='.$search_total_ttc;
-	if ($search_project_ref >= 0)  	$param.="&search_project_ref=".$search_project_ref;
-	if ($show_files)            $param.='&show_files=' .$show_files;
-	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
-	if ($billed != '')			$param.='&billed='.$billed;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($sall)					$param.='&sall='.urlencode($sall);
+	if ($socid > 0)             $param.='&socid='.urlencode($socid);
+	if ($viewstatut != '')      $param.='&viewstatut='.urlencode($viewstatut);
+	if ($search_orderday)      		$param.='&search_orderday='.urlencode($search_orderday);
+	if ($search_ordermonth)      		$param.='&search_ordermonth='.urlencode($search_ordermonth);
+	if ($search_orderyear)       		$param.='&search_orderyear='.urlencode($search_orderyear);
+	if ($search_deliveryday)   		$param.='&search_deliveryday='.urlencode($search_deliveryday);
+	if ($search_deliverymonth)   		$param.='&search_deliverymonth='.urlencode($search_deliverymonth);
+	if ($search_deliveryyear)    		$param.='&search_deliveryyear='.urlencode($search_deliveryyear);
+	if ($search_ref)      		$param.='&search_ref='.urlencode($search_ref);
+	if ($search_company)  		$param.='&search_company='.urlencode($search_company);
+	if ($search_ref_customer)	$param.='&search_ref_customer='.urlencode($search_ref_customer);
+	if ($search_user > 0) 		$param.='&search_user='.urlencode($search_user);
+	if ($search_sale > 0) 		$param.='&search_sale='.urlencode($search_sale);
+	if ($search_total_ht != '') $param.='&search_total_ht='.urlencode($search_total_ht);
+	if ($search_total_vat != '') $param.='&search_total_vat='.urlencode($search_total_vat);
+	if ($search_total_ttc != '') $param.='&search_total_ttc='.urlencode($search_total_ttc);
+	if ($search_project_ref >= 0)  	$param.="&search_project_ref=".urlencode($search_project_ref);
+	if ($show_files)            $param.='&show_files=' .urlencode($show_files);
+	if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
+	if ($billed != '')			$param.='&billed='.urlencode($billed);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -664,13 +664,13 @@ if ($resql)
 			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
-		print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
+		print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 		print '</td>';
 	}
 	// Status billed
 	if (! empty($arrayfields['c.facture']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
+		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 		print $form->selectyesno('billed', $billed, 1, 0, 1);
 		print '</td>';
 	}
@@ -701,7 +701,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -1101,25 +1101,18 @@ if ($resql)
 
 	print '</form>'."\n";
 
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-	{
-		/*
-	     * Show list of available documents
-	     */
-		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		$urlsource.=str_replace('&amp;','&',$param);
+	$hidegeneratedfilelistifempty=1;
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->commande->lire;
-		$delallowed=$user->rights->commande->creer;
+	// Show list of available documents
+	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource.=str_replace('&amp;','&',$param);
 
-		print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-	}
-	else
-	{
-		print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-	}
+	$filedir=$diroutputmassaction;
+	$genallowed=$user->rights->commande->lire;
+	$delallowed=$user->rights->commande->creer;
 
+	print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 else
 {

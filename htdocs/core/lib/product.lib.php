@@ -311,7 +311,7 @@ function show_stats_for_company($product,$socid)
 	$nblines = 0;
 
 	print '<tr class="liste_titre">';
-	print '<td align="left" class="tdtop" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td align="left" width="25%">'.$langs->trans("Referers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfThirdParties").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("NbOfObjectReferers").'</td>';
 	print '<td align="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
@@ -502,5 +502,44 @@ function measuring_units_string($unit,$measuring_style='')
         $measuring_units[99] = $langs->transnoentitiesnoconv("VolumeUnitgallon");
 	}
 
+	return $measuring_units[$unit];
+}
+
+/**
+ *	Transform a given unit into the square of that unit, if known
+ *
+ *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
+ * 	@see	formproduct->load_measuring_units
+ */
+function measuring_units_squared($unit)
+{
+	$measuring_units=array();
+	$measuring_units[0] = 0;   // m -> m3
+	$measuring_units[-1] = -2; // dm-> dm2
+	$measuring_units[-2] = -4; // cm -> cm2
+	$measuring_units[-3] = -6; // mm -> mm2
+	$measuring_units[98] = 98; // foot -> foot2
+	$measuring_units[99] = 99; // inch -> inch2
+	return $measuring_units[$unit];
+}
+
+
+/**
+ *	Transform a given unit into the cube of that unit, if known
+ *
+ *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
+ * 	@see	formproduct->load_measuring_units
+ */
+function measuring_units_cubed($unit)
+{
+	$measuring_units=array();
+	$measuring_units[0] = 0;   // m -> m2
+	$measuring_units[-1] = -3; // dm-> dm3
+	$measuring_units[-2] = -6; // cm -> cm3
+	$measuring_units[-3] = -9; // mm -> mm3
+	$measuring_units[98] = 88; // foot -> foot3
+	$measuring_units[99] = 89; // inch -> inch3
 	return $measuring_units[$unit];
 }

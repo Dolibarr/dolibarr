@@ -754,12 +754,12 @@ class Product extends CommonObject
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units)
 		{
 			$this->surface = $this->length * $this->width;
-			$this->surface_units = $this->length_units + $this->width_units;
+			$this->surface_units = measuring_units_squared($this->length_units);
 		}
 		if (empty($this->volume) && !empty($this->surface_units) && !empty($this->height) && $this->length_units == $this->height_units)
 		{
 			$this->volume =  $this->surface * $this->height;
-			$this->volume_units = $this->surface_units + $this->height_units;
+			$this->volume_units = measuring_units_cubed($this->height_units);
 		}
 
 		$this->surface = price2num($this->surface);
@@ -1483,12 +1483,14 @@ class Product extends CommonObject
 	 * 	@param		int		$rowid	Line id to delete
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function log_price_delete($user,$rowid)
+	function log_price_delete($user, $rowid)
 	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+		$sql.= " WHERE fk_product_price=".$rowid;
+		$resql=$this->db->query($sql);
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
 		$sql.= " WHERE rowid=".$rowid;
-
-		dol_syslog(get_class($this)."::log_price_delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1499,7 +1501,6 @@ class Product extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-
 	}
 
 
@@ -1524,6 +1525,7 @@ class Product extends CommonObject
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " ,pfp.default_vat_code";
+        $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
@@ -1560,6 +1562,11 @@ class Product extends CommonObject
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
+                $this->fourn_multicurrency_price       = $obj->multicurrency_price;
+                $this->fourn_multicurrency_unitprice   = $obj->multicurrency_unitprice;
+                $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
+                $this->fourn_multicurrency_id          = $obj->fk_multicurrency;
+                $this->fourn_multicurrency_code        = $obj->multicurrency_code;
 				$result=$obj->fk_product;
 				return $result;
 			}
@@ -1569,6 +1576,7 @@ class Product extends CommonObject
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
 				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
 				$sql.= " ,pfp.default_vat_code";
+                $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.fk_product = ".$product_id;
 				if ($fourn_ref != 'none') $sql.= " AND pfp.ref_fourn = '".$fourn_ref."'";
@@ -1609,6 +1617,11 @@ class Product extends CommonObject
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
+                        $this->fourn_multicurrency_price       = $obj->multicurrency_price;
+                        $this->fourn_multicurrency_unitprice   = $obj->multicurrency_unitprice;
+                        $this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
+                        $this->fourn_multicurrency_id          = $obj->fk_multicurrency;
+                        $this->fourn_multicurrency_code        = $obj->multicurrency_code;
 						$result=$obj->fk_product;
 						return $result;
 					}
@@ -1642,13 +1655,13 @@ class Product extends CommonObject
 	 *  @param		double	$newminprice	    New price min
 	 *  @param		int		$level			    0=standard, >0 = level if multilevel prices
 	 *  @param     	int		$newnpr             0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 *  @param     	int		$newpsq             1 if it has price by quantity
+	 *  @param     	int		$newpbq             1 if it has price by quantity
 	 *  @param 		int 	$ignore_autogen     Used to avoid infinite loops
      *	@param      array	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
      *  @param      string  $newdefaultvatcode  Default vat code
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpbq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
 	{
 		global $conf,$langs;
 
@@ -1667,7 +1680,7 @@ class Product extends CommonObject
 		// Price will be modified ONLY when the first one is the one that is being modified
 		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen && ($level == 1))
 		{
-			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpsq);
+			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpbq);
 		}
 
 		if (! empty($newminprice) && ($newminprice > $newprice))
@@ -1781,7 +1794,7 @@ class Product extends CommonObject
 				$this->localtax2_type = $localtaxtype2;
 
 				// Price by quantity
-				$this->price_by_qty = $newpsq;
+				$this->price_by_qty = $newpbq;
 
 				$this->_log_price($user,$level);	// Save price for level into table product_price
 
@@ -1950,19 +1963,15 @@ class Product extends CommonObject
 
 				$this->db->free($resql);
 
-
-				// Retreive all extrafield for current object
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				// Load multiprices array
-				if (! empty($conf->global->PRODUIT_MULTIPRICES))
+				if (! empty($conf->global->PRODUIT_MULTIPRICES))				// prices per segment
 				{
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
@@ -1989,12 +1998,13 @@ class Product extends CommonObject
 							$this->multiprices_recuperableonly[$i]=$result["recuperableonly"];
 
 							// Price by quantity
+							/*
 							$this->prices_by_qty[$i]=$result["price_by_qty"];
 							$this->prices_by_qty_id[$i]=$result["rowid"];
 							// Récuperation de la liste des prix selon qty si flag positionné
 							if ($this->prices_by_qty[$i] == 1)
 							{
-								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise";
+								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
 								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 								$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[$i];
 								$sql.= " ORDER BY quantity ASC";
@@ -2010,7 +2020,8 @@ class Product extends CommonObject
 										$resultat[$ii]["unitprice"]= $result["unitprice"];
 										$resultat[$ii]["quantity"]= $result["quantity"];
 										$resultat[$ii]["remise_percent"]= $result["remise_percent"];
-										$resultat[$ii]["remise"]= $result["remise"];
+										$resultat[$ii]["remise"]= $result["remise"];					// deprecated
+										$resultat[$ii]["price_base_type"]= $result["price_base_type"];
 										$ii++;
 									}
 									$this->prices_by_qty_list[$i]=$resultat;
@@ -2020,7 +2031,7 @@ class Product extends CommonObject
 									dol_print_error($this->db);
 									return -1;
 								}
-							}
+							}*/
 						}
 						else
 						{
@@ -2028,7 +2039,12 @@ class Product extends CommonObject
 							return -1;
 						}
 					}
-				} else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))			// prices per customers
+				{
+					// Nothing loaded by default. List may be very long.
+				}
+				else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))	// prices per quantity
 				{
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 					$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
@@ -2047,7 +2063,7 @@ class Product extends CommonObject
 						// Récuperation de la liste des prix selon qty si flag positionné
 						if ($this->prices_by_qty[0] == 1)
 						{
-							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise";
+							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 							$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[0];
 							$sql.= " ORDER BY quantity ASC";
@@ -2063,7 +2079,8 @@ class Product extends CommonObject
 									$resultat[$ii]["unitprice"]= $result["unitprice"];
 									$resultat[$ii]["quantity"]= $result["quantity"];
 									$resultat[$ii]["remise_percent"]= $result["remise_percent"];
-									$resultat[$ii]["remise"]= $result["remise"];
+									//$resultat[$ii]["remise"]= $result["remise"];					// deprecated
+									$resultat[$ii]["price_base_type"]= $result["price_base_type"];
 									$ii++;
 								}
 								$this->prices_by_qty_list[0]=$resultat;
@@ -2081,6 +2098,10 @@ class Product extends CommonObject
 						return -1;
 					}
 				}
+				else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))	// prices per customer and quantity
+				{
+					// Not yet implemented
+				}
 
                 if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression))
                 {
@@ -2097,8 +2118,7 @@ class Product extends CommonObject
                 }
 
 				// We should not load stock during the fetch. If someone need stock of product, he must call load_stock after fetching product.
-				//$res=$this->load_stock();
-				// instead we just init the stock_warehouse array
+				// Instead we just init the stock_warehouse array
 				$this->stock_warehouse = array();
 
 				return 1;
@@ -3384,7 +3404,7 @@ class Product extends CommonObject
 	 * 	@param		int		$id					Id of product to search childs of
 	 *  @param		int		$firstlevelonly		Return only direct child
 	 *  @param		int		$level				Level of recursing call (start to 1)
-	 *  @return     array       				Prod
+	 *  @return     array       				Return array(prodid=>array(0=prodid, 1=>qty, 2=> ...)
 	 */
 	function getChildsArbo($id, $firstlevelonly=0, $level=1)
 	{
@@ -4083,9 +4103,11 @@ class Product extends CommonObject
 	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
 	 * 	@param		int		$maxWidth		Max width of original image when size='small'
 	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
+	 *  @param      int     $notitle         Do not add title tag on image
+	 *  @param		int		$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
 	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
 	 */
-	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160,$nolink=0)
+	function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5,$showfilename=0,$showaction=0,$maxHeight=120,$maxWidth=160,$nolink=0,$notitle=0,$usesharelink=0)
 	{
 		global $conf,$user,$langs;
 
@@ -4184,15 +4206,39 @@ class Product extends CommonObject
 						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
 						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
 						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
+						if ($notitle) $alt='';
 
-						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+						if ($usesharelink)
 						{
-							$return.= '<!-- Show thumb -->';
-							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+							if ($val['share'])
+							{
+								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+								{
+									$return.= '<!-- Show original file (thumb not yet available with shared links) -->';
+									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+								}
+								else {
+									$return.= '<!-- Show original file -->';
+									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+								}
+							}
+							else
+							{
+								$return.= '<!-- Show nophoto file (because file is not shared) -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
+							}
 						}
-						else {
-							$return.= '<!-- Show original file -->';
-							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+						else
+						{
+							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+							{
+								$return.= '<!-- Show thumb -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+							}
+							else {
+								$return.= '<!-- Show original file -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+							}
 						}
 
 						if (empty($nolink)) $return.= '</a>';

@@ -16,7 +16,6 @@
  * or see http://www.gnu.org/
  */
 
-
 /*
  * Code to ouput content when action is presend
  *
@@ -25,6 +24,14 @@
  * $defaulttopic
  * $diroutput
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 if ($action == 'presend')
 {
@@ -66,7 +73,7 @@ if ($action == 'presend')
 	{
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
-		$outputlangs->loadLangs(array('commercial','bills','orders','contracts','members','propal','supplier_proposal','interventions'));
+		$outputlangs->loadLangs(array('commercial','bills','orders','contracts','members','propal','products','supplier_proposal','interventions'));
 	}
 
 	$topicmail='';
@@ -155,7 +162,6 @@ if ($action == 'presend')
 	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
-
 	$parameters = array(
 		'mode' => 'formemail'
 	);

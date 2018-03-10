@@ -269,7 +269,6 @@ else
 	$sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
 	$sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
-	//$sql.= ' pfp.ref_fourn as ref_supplier, ';
 	$sql.= ' MIN(pfp.unitprice) as minsellprice';
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
 		$sql .= ', pac.rowid prod_comb_id';
@@ -655,7 +654,7 @@ else
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 			// Hook fields
-			$parameters=array('arrayfields'=>$arrayfields);
+			$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 			$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -716,7 +715,7 @@ else
 				// Ref
 				if (! empty($arrayfields['p.ref']['checked']))
 				{
-					print '<td class="tdoverflowmax150">';
+					print '<td class="tdoverflowmax200">';
 					print $product_static->getNomUrl(1);
 					print "</td>\n";
 					if (! $i) $totalarray['nbfield']++;
@@ -724,7 +723,7 @@ else
 	   			// Ref supplier
 				if (! empty($arrayfields['pfp.ref_fourn']['checked']))
 				{
-					print '<td class="tdoverflowmax150">';
+					print '<td class="tdoverflowmax200">';
 					print $product_static->getNomUrl(1);
 					print "</td>\n";
 					if (! $i) $totalarray['nbfield']++;
@@ -781,7 +780,7 @@ else
 				}
 
 				// Better buy price
- 				if (! empty($arrayfields['p.minbuyprice']['checked']))
+				if (! empty($arrayfields['p.minbuyprice']['checked']))
 				{
 					print  '<td align="right">';
 					if ($obj->tobuy && $obj->minsellprice != '')
@@ -794,7 +793,7 @@ else
 								if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 								{
 									$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-									print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+									print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"),$htmltext);
 								}
 								else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
 							}

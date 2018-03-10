@@ -56,6 +56,7 @@ Address=Адрес
 State=Област
 StateShort=State
 Region=Регион
+Region-State=Region - State
 Country=Държава
 CountryCode=Код на държавата
 CountryId=ID на държава

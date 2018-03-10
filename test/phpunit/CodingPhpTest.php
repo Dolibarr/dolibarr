@@ -196,10 +196,10 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/(...................)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'dol_escape_htmltag(' && $val[1] != 'l_string_nohtmltag(')
+            	if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(')
                 {
                     $ok=false;
                     break;
@@ -221,21 +221,20 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             $this->assertTrue($ok, 'Found a use of print_liste_field_titre with fist parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
 
 
-            // Test that output of $_SERVER\[\'PHP_SELF\'\] is escaped (not done for the moment, did not found a way to forge value of $_SERVER['PHP_SELF'] by extern access).
-            /*$ok=true;
+            // Test we don't have <br />
+            $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/(...................)\$_SERVER\[\'PHP_SELF\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/<br \/>/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'dol_escape_htmltag(')
+            	if ($file['name'] != 'functions.lib.php')
                 {
                     $ok=false;
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a $_SERVER[\'PHP_SELF\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'PHP_SELF\']). Bad.');
-            */
+            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['fullname'].' You may use <br> instead.');
         }
 
         return;

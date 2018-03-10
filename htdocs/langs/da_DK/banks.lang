@@ -89,6 +89,7 @@ AccountIdShort=Antal
 LineRecord=Transaktion
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Afstemt af
 DateConciliating=Aftemningsdato
 BankLineConciliated=Entry reconciled

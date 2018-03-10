@@ -212,7 +212,7 @@ class ActionComm extends CommonObject
         $now=dol_now();
 
         // Check parameters
-        if (empty($this->userownerid))
+        if (! isset($this->userownerid) || $this->userownerid === '')	// $this->userownerid may be 0 (anonymous event) of > 0
         {
             dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
         	$this->errors[]='ErrorPropertyUserowneridNotDefined';
@@ -465,7 +465,10 @@ class ActionComm extends CommonObject
 		// Load source object
 		$objFrom = clone $this;
 
+		// Retreive all extrafield
+		// fetch optionals attributes and labels
 		$this->fetch_optionals();
+
 //		$this->fetch_userassigned();
 		$this->fetchResources();
 
@@ -1048,7 +1051,7 @@ class ActionComm extends CommonObject
 	    		$response = new WorkboardResponse();
 	    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	    		$response->label = $langs->trans("ActionsToDo");
-	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?status=todo&amp;mainmenu=agenda';
+	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?actioncode=0&amp;status=todo&amp;mainmenu=agenda';
 	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	    		$response->img = img_object('',"action",'class="inline-block valigntextmiddle"');
     		}
@@ -1233,8 +1236,12 @@ class ActionComm extends CommonObject
 
 		$result='';
 
-		// Set label of typ
-		$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		// Set label of type
+		$labeltype = '';
+		if ($this->type_code)
+		{
+			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code)?$langs->transnoentities("Action".$this->type_code):$this->type_label;
+		}
 		if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 		    if ($this->type_code != 'AC_OTH_AUTO') $labeltype = $langs->trans('ActionAC_MANUAL');
@@ -1286,7 +1293,7 @@ class ActionComm extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		//print 'rrr'.$this->libelle.'-'.$withpicto;
+		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
         {
@@ -1306,7 +1313,10 @@ class ActionComm extends CommonObject
         {
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))	// Add code into ()
             {
-                $libelle.=(($this->type_code && $libelle!=$langs->transnoentities("Action".$this->type_code) && $langs->transnoentities("Action".$this->type_code)!="Action".$this->type_code)?' ('.$langs->transnoentities("Action".$this->type_code).')':'');
+            	if ($labeltype)
+            	{
+                	$libelle.=(preg_match('/'.preg_quote($labeltype,'/').'/', $libelle)?'':' ('.$langs->transnoentities("Action".$this->type_code).')');
+            	}
             }
         }
 
@@ -1326,7 +1336,7 @@ class ActionComm extends CommonObject
      *		@param	string		$type			'event' or 'journal'
      *		@param	int			$cachedelay		Do not rebuild file if date older than cachedelay seconds
      *		@param	string		$filename		Force filename
-     *		@param	array		$filters		Array of filters
+     *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
      *		@return int     					<0 if error, nb of events in new file if ok
      */
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)
@@ -1407,7 +1417,9 @@ class ActionComm extends CommonObject
                 if ($key == 'idfrom')       $sql.=" AND a.id >= ".(is_numeric($value)?$value:0);
                 if ($key == 'idto')         $sql.=" AND a.id <= ".(is_numeric($value)?$value:0);
                 if ($key == 'project')      $sql.=" AND a.fk_project=".(is_numeric($value)?$value:0);
-    	        // We must filter on assignement table
+                if ($key == 'actiontype')    $sql.=" AND c.type = '".$this->db->escape($value)."'";
+                if ($key == 'notactiontype') $sql.=" AND c.type <> '".$this->db->escape($value)."'";
+                // We must filter on assignement table
 				if ($key == 'logint')       $sql.= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
                 if ($key == 'logina')
                 {
@@ -1633,6 +1645,7 @@ class ActionComm extends CommonObject
 
     	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
     	{
+    		$langs->load("agenda");
     		$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
     		return 0;
     	}

@@ -19,6 +19,14 @@
 // Need global variable $title to be defined by caller (like dol_loginfunction)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
@@ -55,7 +63,7 @@ print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disable
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
 $(document).ready(function () {
-	// Set focus on correct field
+	/* Set focus on correct field */
 	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
@@ -102,6 +110,7 @@ if ($disablenofollow) echo '</a>';
 <img alt="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </div>
 
+<br>
 
 <div id="login_right">
 
@@ -110,7 +119,8 @@ if ($disablenofollow) echo '</a>';
 <tr>
 <td class="nowrap center valignmiddle">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
-<span class="span-icon-user">
+<!-- <span class="span-icon-user">-->
+<span class="fa fa-user">
 <input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </span>
 </td>
@@ -119,7 +129,8 @@ if ($disablenofollow) echo '</a>';
 <tr>
 <td class="nowrap center valignmiddle">
 <?php if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
-<span class="span-icon-password">
+<!--<span class="span-icon-password">-->
+<span class="fa fa-key">
 <input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password" type="password" size="20" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE)?'off':'on'; ?>" />
 </span>
 </td></tr>
@@ -236,9 +247,9 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 </form>
 
 
-
-
-<?php if (! empty($_SESSION['dol_loginmesg']))
+<?php
+// Show error message if defined
+if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
 	<div class="center login_main_message"><div class="error">
@@ -259,7 +270,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
     {
         $xml = simplexml_load_string($resgetcommitstrip['content']);
         $little = $xml->channel->item[0]->children('content',true);
-        print $little->encoded;
+        print preg_replace('/width="650" height="658"/', '', $little->encoded);
     }
 }
 

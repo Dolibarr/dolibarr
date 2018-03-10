@@ -26,7 +26,7 @@
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
- *  MEMBER_NEWFORM_EDITAMOUNT           Amount can be edited
+ *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
@@ -418,10 +418,12 @@ $extrafields->fetch_name_optionals_label('adherent');    // fetch optionals attr
 llxHeaderVierge($langs->trans("NewSubscription"));
 
 
-print load_fiche_titre($langs->trans("NewSubscription"));
+print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
 
+print '<div class="center subscriptionformhelptext">';
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+print '</div>';
 
 dol_htmloutput_errors($errmsg);
 

@@ -240,13 +240,13 @@ if ($id > 0 || $ref)
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="infotrans">';
-		print '<table class="border" width="100%">';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
-		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransData").'</td><td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
 		print $form->select_date('','','','','',"userfile",1,1);
 		print '</td></tr>';
-		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode",$object->methodes_trans);
 		print '</td></tr>';
 /*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
@@ -256,6 +256,7 @@ if ($id > 0 || $ref)
 		print '</table><br>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
+		print '<br>';
 	}
 
 	if (! empty($object->date_trans) && $object->date_credit == 0 && $user->rights->prelevement->bons->credit && $action=='setcredited')
@@ -263,16 +264,17 @@ if ($id > 0 || $ref)
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="infocredit">';
-		print '<table class="border" width="100%">';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
-		print '<tr '.$bc[false].'><td>'.$langs->trans('CreditDate').'</td><td>';
+		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
 		print $form->select_date('','','','','',"infocredit",1,1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
 		print '</form>';
+		print '<br>';
 	}
 
 

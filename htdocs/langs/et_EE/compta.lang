@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Billing / Payment
+MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Mine <a href="%s">Maksude mooduli seadistusse</a> arvutusreeglite muutmiseks
 TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
 OptionMode=Raamatupidamise võimalused
@@ -24,6 +24,7 @@ PaymentsNotLinkedToInvoice=Makseid ei ole seotud ühegi arvega, seega ei ole nad
 PaymentsNotLinkedToUser=Ühegi kasutajaga sidumata maksed
 Profit=Kasum
 AccountingResult=Accounting result
+BalanceBefore=Balance (before)
 Balance=Saldo
 Debit=Deebet
 Credit=Kreedit

@@ -419,22 +419,53 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 
 if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 {
+	$error = 0;
+
 	$objectname = $tabobj;
 
 	$srcdir = $dirread.'/'.strtolower($module);
 	$destdir = $dirins.'/'.strtolower($module);
 	dol_mkdir($destdir);
 
-	$addfieldentry = array(
-	'name'=>GETPOST('propname','aZ09'),'label'=>GETPOST('proplabel','alpha'),'type'=>GETPOST('proptype','alpha'),
-	'arrayofkeyval'=>GETPOST('proparrayofkeyval','none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-	'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
-	'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
-	'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp','alpha'));
-
-	if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
+	// We click on add property
+	if (! GETPOST('regenerateclasssql') && ! GETPOST('regeneratemissing'))
 	{
-		$addfieldentry['arrayofkeyval'] = dol_json_decode($addfieldentry['arrayofkeyval'], true);
+		if (! GETPOST('propname','aZ09'))
+		{
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name")), null, 'errors');
+		}
+		if (! GETPOST('proplabel','alpha'))
+		{
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
+		}
+		if (! GETPOST('proptype','alpha'))
+		{
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
+		}
+
+		if (! $error)
+		{
+			$addfieldentry = array(
+			'name'=>GETPOST('propname','aZ09'),'label'=>GETPOST('proplabel','alpha'),'type'=>GETPOST('proptype','alpha'),
+			'arrayofkeyval'=>GETPOST('proparrayofkeyval','none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+			'visible'=>GETPOST('propvisible','int'),'enabled'=>GETPOST('propenabled','int'),
+			'position'=>GETPOST('propposition','int'),'notnull'=>GETPOST('propnotnull','int'),'index'=>GETPOST('propindex','int'),'searchall'=>GETPOST('propsearchall','int'),
+			'isameasure'=>GETPOST('propisameasure','int'), 'comment'=>GETPOST('propcomment','alpha'),'help'=>GETPOST('prophelp','alpha'));
+
+			if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
+			{
+				$addfieldentry['arrayofkeyval'] = dol_json_decode($addfieldentry['arrayofkeyval'], true);
+			}
+		}
+	}
+
+	if (GETPOST('regeneratemissing'))
+	{
+		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
+		$error++;
 	}
 
 	// Edit the class file to write properties
@@ -459,8 +490,7 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
-
+		
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname.'&nocache='.time());
 
@@ -495,8 +525,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
-
+		
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
 
@@ -1431,6 +1460,7 @@ elseif (! empty($module))
 						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
+						$pathtoscript   = strtolower($module).'/scripts/'.strtolower($tabobj).'.php';
 
 						$realpathtoclass    = dol_buildpath($pathtoclass, 0, 1);
 						$realpathtoapi      = dol_buildpath($pathtoapi, 0, 1);
@@ -1445,6 +1475,7 @@ elseif (! empty($module))
 						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 1);
 						$realpathtolib      = dol_buildpath($pathtolib, 0, 1);
 						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 1);
+						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 1);
 
 						print '<div class="fichehalfleft">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
@@ -1507,11 +1538,18 @@ elseif (! empty($module))
 						print '<br>';
 
 						print '<br>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("ScriptFile").' : <strong>'.($realpathtoscript?'':'<strike>').$pathtoscript.($realpathtoscript?'':'</strike>').'</strong>';
+						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoscript).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print '<br>';
+
+						print '<br>';
 
 						print '</div>';
 
 						print '<br><br><br>';
 
+						if(function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass,true); // remove the include cache hell !
+						
 						if (empty($forceddirread))
 						{
 							$result = dol_include_once($pathtoclass);
@@ -1539,9 +1577,15 @@ elseif (! empty($module))
 							//$propstat = $reflector->getStaticProperties();
 							//var_dump($reflectorpropdefault);
 
+							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+
+							print '<input class="button" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
+							print '<input class="button" type="submit" name="regeneratemissing" value="'.$langs->trans("RegenerateMissingFiles").'">';
+							print '<br><br>';
+
+
 							print load_fiche_titre($langs->trans("Properties"), '', '');
 
-							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
 							print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 							print '<input type="hidden" name="action" value="addproperty">';
@@ -1581,19 +1625,19 @@ elseif (! empty($module))
 							{
 								// Line to add a property
 								print '<tr>';
-								print '<td><input class="text" name="propname" value="'.dol_escape_htmltag(GETPOST('propname','alpha')).'"></td>';
-								print '<td><input class="text" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel','alpha')).'"></td>';
-								print '<td><input class="text" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype','alpha')).'"></td>';
-								print '<td><input class="text" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval','none')).'"></td>';
+								print '<td><input class="text maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname','alpha')).'"></td>';
+								print '<td><input class="text maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel','alpha')).'"></td>';
+								print '<td><input class="text maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype','alpha')).'"></td>';
+								print '<td><input class="text maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval','none')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull','alpha')).'"></td>';
-								print '<td><input class="text" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault','alpha')).'"></td>';
+								print '<td><input class="text maxwidth50" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex','alpha')).'"></td>';
 								print '<td class="right"><input class="text right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propvisible" value="'.dol_escape_htmltag(GETPOST('propvisible','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure','alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall','alpha')).'"></td>';
-								print '<td><input class="text" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment','alpha')).'"></td>';
+								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment','alpha')).'"></td>';
 								print '<td align="center">';
 								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
 								print '</td></tr>';

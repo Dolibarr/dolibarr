@@ -21,4 +21,4 @@ ProductDoesNotUseBatchSerial=Dieses Produkt verwendet keine Lose oder Seriennumm
 ProductLotSetup=Verwaltung von Modul Charge / Seriennummern
 ShowCurrentStockOfLot=Warenbestand anzeigen für Produkt/Charge
 ShowLogOfMovementIfLot=Zeige Bewegungen für Produkt/Chargen
-StockDetailPerBatch=Stock detail per lot
+StockDetailPerBatch=Lagerdetail pro Los

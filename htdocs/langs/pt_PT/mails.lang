@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=Emails from file
 MailingModuleDescEmailsFromUser=Emails input by user
 MailingModuleDescDolibarrUsers=Users with Emails
 MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Linha %s em Ficheiro
@@ -110,7 +111,7 @@ ToAddRecipientsChooseHere=Para Adicionar destinatarios, escoja os que figuran em
 NbOfEMailingsReceived=Mailings em masa recibidos
 NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID registo
-DeliveryReceipt=Delivery Ack.
+DeliveryReceipt=Recibo de entrega
 YouCanUseCommaSeparatorForSeveralRecipients=Pode usar o carácter de separação <b>coma </b> para especificar multiplos destinatarios.
 TagCheckMail=Track mail opening
 TagUnsubscribe=Endereço de cancelamento de subscrição

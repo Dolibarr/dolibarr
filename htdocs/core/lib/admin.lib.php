@@ -580,7 +580,7 @@ function modules_prepare_head()
  */
 function security_prepare_head()
 {
-    global $langs, $conf, $user;
+    global $db, $langs, $conf, $user;
     $h = 0;
     $head = array();
 
@@ -616,8 +616,26 @@ function security_prepare_head()
     $head[$h][2] = 'audit';
     $h++;
 
+
+    // Show permissions lines
+    $nbPerms=0;
+    $sql = "SELECT COUNT(r.id) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+    $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+    $sql.= " AND entity = ".$conf->entity;
+    $sql.= " AND bydefault = 1";
+    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+    	$obj = $db->fetch_object($resql);
+    	if ($obj) $nbPerms = $obj->nb;
+    }
+    else dol_print_error($db);
+
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
+    if ($nbPerms > 0) $head[$h][1].= ' <span class="badge">'.$nbPerms.'</span>';
     $head[$h][2] = 'default';
     $h++;
 
@@ -852,7 +870,7 @@ function activateModule($value,$withdeps=1)
     // Test if Dolibarr version ok
     $verdol=versiondolibarrarray();
     $vermin=isset($objMod->need_dolibarr_version)?$objMod->need_dolibarr_version:0;
-    //print 'eee '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
+    //print 'version: '.versioncompare($verdol,$vermin).' - '.join(',',$verdol).' - '.join(',',$vermin);exit;
 	if (is_array($vermin) && versioncompare($verdol, $vermin) < 0) {
 		$ret['errors'][] = $langs->trans("ErrorModuleRequireDolibarrVersion", versiontostring($vermin));
 		return $ret;
@@ -1270,11 +1288,10 @@ function complete_elementList_with_modules(&$elementList)
 
                             $modules[$i] = $objMod;
                             $filename[$i]= $modName;
-                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+                            $orders[$i]  = $objMod->family."_".$j;   // Sort on family then module number
+                            $dirmod[$i] = $dir;
                             //print "x".$modName." ".$orders[$i]."\n<br>";
-                            if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
-                            else $categ[$objMod->special]=1;
-                            $dirmod[$i] = $dirroot;
+
                             if (! empty($objMod->module_parts['contactelement']))
                             {
                             	$elementList[$objMod->name] = $langs->trans($objMod->name);
@@ -1482,7 +1499,7 @@ function showModulesExludedForExternal($modules)
 
 			//if (empty($conf->global->$moduleconst)) continue;
 			if (! in_array($modulename,$listofmodules)) continue;
-			//var_dump($modulename.'eee'.$langs->trans('Module'.$module->numero.'Name'));
+			//var_dump($modulename.' - '.$langs->trans('Module'.$module->numero.'Name'));
 
 			if ($i > 0) $text.=', ';
 			else $text.=' ';

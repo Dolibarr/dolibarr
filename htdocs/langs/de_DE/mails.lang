@@ -69,11 +69,11 @@ ActivateCheckReadKey=Schlüssel um die URL für "Lesebestätigung" und "Abmelden
 EMailSentToNRecipients=E-Mail versandt an %s Empfänger.
 EMailSentForNElements=%s e-Mails verschickt
 XTargetsAdded=<b>%s</b> Empfänger der Liste zugefügt
-OnlyPDFattachmentSupported=If the PDF documents were already generated for the objects to send, they will be attached to email. If not, no email will be sent (also, note that only pdf documents are supported as attachment in mass sending in this version).
-AllRecipientSelected=The recipients of the %s record selected (if their email is known).
-GroupEmails=Group emails
-OneEmailPerRecipient=One email per recipient (by default, one email per record selected)
-WarningIfYouCheckOneRecipientPerEmail=Warning, if you check this box, it means only one email will be sent for several different record selected, so, if your message contains substitution variables that refers to data of a record, it becomes not possible to replace them.
+OnlyPDFattachmentSupported=Wenn das PDF Dokument schon erstellt wurde, wird es als Anhang versendet. Falls nicht, wird kein E-Mail versendet. (Es werden nur PDF Dokumente für den Massenversand in dieser Version verwendet).
+AllRecipientSelected=Die Empfänger der %sDatensätze selektiert (Wenn eine E-Mailadresse hinterlegt ist)
+GroupEmails=Gruppenmails
+OneEmailPerRecipient=Ein E-Mail pro Empfänger (Standardmässig, ein E-Mail pro Datensatz ausgewählt)
+WarningIfYouCheckOneRecipientPerEmail=Achtung: Wenn diese Checkbox angekreuzt ist, wird nur eine E-Mail für mehrere Datensätze versendet. Falls Sie Variablen verwenden die sich auf den Datensatz beziehen, werden diese Variablen nicht ersetzt).
 ResultOfMailSending=Sende-Ergebnis der E-Mail-Kampagne
 NbSelected=Anz. gewählte
 NbIgnored=Anz. ignoriert
@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=E-Mailadressen aus Datei
 MailingModuleDescEmailsFromUser=E-Mailadressen Eingabe durch Benutzer
 MailingModuleDescDolibarrUsers=Benutzer mit E-Mailadresse
 MailingModuleDescThirdPartiesByCategories=Partner (nach Kategorien)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Zeile %s in der Datei
@@ -159,7 +160,7 @@ NoContactWithCategoryFound=Kein Kontakt/Adresse mit einer Kategorie gefunden
 NoContactLinkedToThirdpartieWithCategoryFound=Kein Kontakt/Adresse mit einer Kategorie gefunden
 OutGoingEmailSetup=eMail Postausgang Einstellungen
 InGoingEmailSetup=eMail Posteingang Einstellungen
-OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
+OutGoingEmailSetupForEmailing=Einstellung ausgehende E-Mails (für den Massenversand)
 DefaultOutgoingEmailSetup=Standardeinstellungen für ausgehende E-Mails
 Information=Information
 

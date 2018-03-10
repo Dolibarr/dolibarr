@@ -341,11 +341,6 @@ class ExpenseReport extends CommonObject
                 $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook < 0) $error++;
             }
-
-            // Call trigger
-            $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
         }
 
         unset($this->context['createfromclone']);
@@ -455,7 +450,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_statut as status, d.fk_c_paiement,";
         $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id AND dp.entity IN (".getEntity('c_paiement').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
         //$sql.= $restrict;
@@ -1091,7 +1086,7 @@ class ExpenseReport extends CommonObject
 		{
             $num = $this->ref;
         }
-        if (empty($num)) return -1;
+        if (empty($num) || $num < 0) return -1;
 
         $this->newref = $num;
 
@@ -2326,6 +2321,41 @@ class ExpenseReport extends CommonObject
         else
             return ($this->datevalid?$this->datevalid:$this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
     }
+
+    /**
+     *	Return if an expensereport was dispatched into bookkeeping
+     *
+     *	@return     int         <0 if KO, 0=no, 1=yes
+     */
+    public function getVentilExportCompta()
+    {
+    	$alreadydispatched = 0;
+
+    	$type = 'expense_report';
+
+    	$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$obj = $this->db->fetch_object($resql);
+    		if ($obj)
+    		{
+    			$alreadydispatched = $obj->nb;
+    		}
+    	}
+    	else
+    	{
+    		$this->error = $this->db->lasterror();
+    		return -1;
+    	}
+
+    	if ($alreadydispatched)
+    	{
+    		return 1;
+    	}
+    	return 0;
+    }
+
 }
 
 

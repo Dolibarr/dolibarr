@@ -128,7 +128,7 @@ class Fichinter extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." fi.entity IN (".getEntity($this->element, 1).")";
+		$sql.= " ".$clause." fi.entity IN (".getEntity($this->element).")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -157,7 +157,7 @@ class Fichinter extends CommonObject
 	 */
 	function create($user, $notrigger=0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
@@ -383,14 +383,13 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
-				*/
+				 */
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -1107,11 +1106,6 @@ class Fichinter extends CommonObject
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-			// Call trigger
-			$result=$this->call_trigger('INTERVENTION_CLONE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1223,6 +1217,8 @@ class Fichinter extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		$this->lines = array();
+
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;

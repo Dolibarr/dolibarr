@@ -7,7 +7,7 @@ MailCard=EMailing card
 MailRecipients=Recipients
 MailRecipient=Recipient
 MailTitle=Përshkrimi
-MailFrom=Sender
+MailFrom=Dërguesi
 MailErrorsTo=Errors to
 MailReply=Reply to
 MailTo=Receiver(s)
@@ -87,6 +87,7 @@ MailingModuleDescEmailsFromFile=Emails from file
 MailingModuleDescEmailsFromUser=Emails input by user
 MailingModuleDescDolibarrUsers=Users with Emails
 MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
+SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s in file

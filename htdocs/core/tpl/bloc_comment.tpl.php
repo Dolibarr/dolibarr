@@ -1,4 +1,12 @@
 <?php
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 // Require
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -35,7 +43,7 @@ print '<td colspan="3">';
 
 $desc = GETPOST('comment_description');
 
-$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '100%');
+$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
 print $doleditor->Create(1);
 
 print '</td>';

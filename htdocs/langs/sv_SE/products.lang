@@ -196,6 +196,7 @@ CurrentProductPrice=Nuvarande pris
 AlwaysUseNewPrice=Använd alltid nuvarande pris för produkt / tjänst
 AlwaysUseFixedPrice=Använd fast pris
 PriceByQuantity=Olika priser m.a.p. mängd
+DisablePriceByQty=Disable prices by quantity
 PriceByQuantityRange=Pris för mängdgaffel
 MultipriceRules=Price segment rules
 UseMultipriceRules=Use price segment rules (defined into product module setup) to autocalculate prices of all other segment according to first segment

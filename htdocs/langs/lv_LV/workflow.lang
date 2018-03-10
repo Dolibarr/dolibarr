@@ -16,5 +16,5 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer ord
 # Autoclassify supplier order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source supplier proposal(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source supplier order(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-AutomaticCreation=Automatic creation
+AutomaticCreation=Automātiska veidošana
 AutomaticClassification=Automātiskā klasifikācija

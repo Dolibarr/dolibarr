@@ -524,8 +524,8 @@ class Propal extends CommonObject
 
 			$this->line->vat_src_code=$vat_src_code;
 			$this->line->tva_tx=$txtva;
-			$this->line->localtax1_tx=$txlocaltax1;
-			$this->line->localtax2_tx=$txlocaltax2;
+			$this->line->localtax1_tx=($total_localtax1?$localtaxes_type[1]:0);
+			$this->line->localtax2_tx=($total_localtax2?$localtaxes_type[3]:0);
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 			$this->line->fk_product=$fk_product;
@@ -804,6 +804,8 @@ class Propal extends CommonObject
 
 		if ($this->statut == self::STATUS_DRAFT)
 		{
+			$this->db->begin();
+
 			$line=new PropaleLigne($this->db);
 
 			// For triggers
@@ -813,15 +815,18 @@ class Propal extends CommonObject
 			{
 				$this->update_price(1);
 
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->db->rollback();
 				return -1;
 			}
 		}
 		else
 		{
+			$this->error='ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 	}
@@ -1205,7 +1210,7 @@ class Propal extends CommonObject
 
 		// get extrafields so they will be clone
 		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
+			$line->fetch_optionals();
 
 		// Load dest object
 		$clonedObj = clone $this;
@@ -1284,11 +1289,6 @@ class Propal extends CommonObject
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$clonedObj,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-			// Call trigger
-			$result=$clonedObj->call_trigger('PROPAL_CLONE',$user);
-			if ($result < 0) { $error++; }
-			// End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1316,7 +1316,7 @@ class Propal extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 
-		$sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql.= ", p.datec";
 		$sql.= ", p.date_valid as datev";
@@ -1343,8 +1343,8 @@ class Propal extends CommonObject
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
@@ -1362,6 +1362,7 @@ class Propal extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id                   = $obj->rowid;
+				$this->entity               = $obj->entity;
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
@@ -1434,12 +1435,9 @@ class Propal extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				// Retreive all extrafield for invoice
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				$this->db->free($resql);
 
@@ -1568,6 +1566,7 @@ class Propal extends CommonObject
 		$sql.= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql.= ' d.fk_unit,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
+		$sql.= ' p.weight, p.weight_units, p.volume, p.volume_units,';
 		$sql.= ' d.date_start, d.date_end';
 		$sql.= ' ,d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as d';
@@ -1633,6 +1632,10 @@ class Propal extends CommonObject
 				$line->product_desc     = $objp->product_desc; 		// Description produit
 				$line->fk_product_type  = $objp->fk_product_type;
 				$line->fk_unit          = $objp->fk_unit;
+				$line->weight = $objp->weight;
+				$line->weight_units = $objp->weight_units;
+				$line->volume = $objp->volume;
+				$line->volume_units = $objp->volume_units;
 
 				$line->date_start  		= $this->db->jdate($objp->date_start);
 				$line->date_end  		= $this->db->jdate($objp->date_end);
@@ -1746,8 +1749,8 @@ class Propal extends CommonObject
 				// to  not lose the linked files
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->propal->dir_output.'/'.$oldref;
-				$dirdest = $conf->propal->dir_output.'/'.$newref;
+				$dirsource = $conf->propal->multidir_output[$this->entity].'/'.$oldref;
+				$dirdest = $conf->propal->multidir_output[$this->entity].'/'.$newref;
 
 				if (file_exists($dirsource))
 				{
@@ -1756,7 +1759,7 @@ class Propal extends CommonObject
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+						$listoffiles=dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref,'/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
@@ -2812,9 +2815,9 @@ class Propal extends CommonObject
 					{
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
-						if ($conf->propal->dir_output && !empty($this->ref))
+						if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref))
 						{
-							$dir = $conf->propal->dir_output . "/" . $ref ;
+							$dir = $conf->propal->multidir_output[$this->entity] . "/" . $ref ;
 							$file = $dir . "/" . $ref . ".pdf";
 							if (file_exists($file))
 							{

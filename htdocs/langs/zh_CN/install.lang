@@ -141,6 +141,7 @@ KeepDefaultValuesProxmox=您使用Proxmox的虚拟设备的Dolibarr安装向导�
 UpgradeExternalModule=Run dedicated upgrade process of external modules
 SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=修正了非规范化数据
@@ -196,6 +197,7 @@ MigrationEventsContact=Migration of events to add event contact into assignement
 MigrationRemiseEntity=更新 llx_societe_remise 的实际栏位参数值
 MigrationRemiseExceptEntity=更新 llx_societe_remise_except 的实际栏位参数值
 MigrationReloadModule=重载模块%s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=显示不可用的选项
 HideNotAvailableOptions=隐藏不可用的选项
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

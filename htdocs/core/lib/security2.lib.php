@@ -80,7 +80,8 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     		        $newdir=dol_osencode($dir);
 
     		        // Check if file found (do not use dol_is_file to avoid loading files.lib.php)
-    		        if (is_file($newdir.'/'.$authfile)) $fullauthfile=$newdir.'/'.$authfile;
+    		        $tmpnewauthfile = $newdir.(preg_match('/\/$/',$newdir)?'':'/').$authfile;
+    		        if (is_file($tmpnewauthfile)) $fullauthfile=$tmpnewauthfile;
     		    }
 
     		    $result=false;
@@ -89,7 +90,7 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     			{
     				// Call function to check user/password
     				$function='check_user_password_'.$mode;
-    				$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
+    				$login=call_user_func($function, $usertotest, $passwordtotest, $entitytotest);
     				if ($login)	// Login is successfull
     				{
     					$test=false;            // To stop once at first login success
@@ -444,6 +445,7 @@ function encodedecode_dbpassconf($level=0)
  *
  * @param		boolean		$generic		true=Create generic password (32 chars/numbers), false=Use the configured password generation module
  * @return		string						New value for password
+ * @see dol_hash
  */
 function getRandomPassword($generic=false)
 {

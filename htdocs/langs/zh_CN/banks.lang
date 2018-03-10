@@ -89,6 +89,7 @@ AccountIdShort=数字
 LineRecord=交易
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=由调和
 DateConciliating=核对日期
 BankLineConciliated=Entry reconciled

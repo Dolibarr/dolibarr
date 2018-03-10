@@ -102,10 +102,10 @@ if (GETPOST('removAll','alpha'))
  */
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
-	$trackid = GETPOST('trackid','aZ09');
+	if (empty($trackid)) $trackid = GETPOST('trackid','aZ09');
+
 	$subject='';$actionmsg='';$actionmsg2='';
 
-	if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
 
 	if (is_object($object))
@@ -113,7 +113,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$result=$object->fetch($id);
 
 		$sendtosocid=0;    // Thirdparty on object
-		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user')))
+		if (method_exists($object,"fetch_thirdparty") && ! in_array($object->element, array('societe','member','user','expensereport')))
 		{
 			$result=$object->fetch_thirdparty();
 			if ($object->element == 'user' && $result == 0) $result=1;    // Even if not found, we consider ok
@@ -318,8 +318,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
-
 			// Feature to push mail sent into Sent folder
+			/* This code must be now included into the hook mail, method sendMailAfter
 			if (! empty($conf->dolimail->enabled))
 			{
 				$mailfromid = explode("#", $_POST['frommail'],3);	// $_POST['frommail'] = 'aaa#Sent# <aaa@aaa.com>'	// TODO Use a better way to define Sent dir.
@@ -328,7 +328,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$mbid = $mailfromid[1];
 
-					/*IMAP Postbox*/
+					// IMAP Postbox
 					$mailboxconfig = new IMAP($db);
 					$mailboxconfig->fetch($mbid);
 					if ($mailboxconfig->mailbox_imap_host) $ref=$mailboxconfig->get_ref();
@@ -360,6 +360,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					}
 				}
 			}
+			*/
 
 			// Make substitution in email content
 			$substitutionarray=getCommonSubstitutionArray($langs, 0, null, $object);
@@ -392,9 +393,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
-					$error=0;
-
-					// FIXME This must be moved into the trigger for action $trigger_name
+					// Two hooks are available into method $mailfile->sendfile, so dedicated code is no more required
+					/*
 					if (! empty($conf->dolimail->enabled))
 					{
 						$mid = (GETPOST('mid','int') ? GETPOST('mid','int') : 0);	// Original mail id is set ?
@@ -412,7 +412,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 							if ($movemail) setEventMessages($langs->trans("MailMovedToImapFolder",$folder), null, 'mesgs');
 							else setEventMessages($langs->trans("MailMovedToImapFolder_Warning",$folder), null, 'warnings');
 						}
-					}
+					}*/
 
 					// Initialisation of datas
 					if (is_object($object))
@@ -438,29 +438,20 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
     						$interface=new Interfaces($db);
     						$result=$interface->run_triggers($trigger_name,$object,$user,$langs,$conf);
 							if ($result < 0) {
-    							$error++; $errors=$interface->errors;
+    							setEventMessages($interface->error, $interface->errors, 'errors');
     						}
 						}
 					}
 
-					if ($error)
-					{
-						dol_print_error($db);
-					}
-					else
-					{
-						// Redirect here
-						// This avoid sending mail twice if going out and then back to page
-						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-						setEventMessages($mesg, null, 'mesgs');
-						if ($conf->dolimail->enabled)
-						{
-						    header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').'&'.($paramname2?$paramname2:'mid').'='.$parm2val);
-						    exit;
-						}
-						header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:''));
-						exit;
-					}
+					// Redirect here
+					// This avoid sending mail twice if going out and then back to page
+					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+					setEventMessages($mesg, null, 'mesgs');
+
+					$moreparam='';
+					if (isset($paramname2) || isset($paramval2)) $moreparam.= '&'.($paramname2?$paramname2:'mid').'='.$paramval2;
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').$moreparam);
+					exit;
 				}
 				else
 				{

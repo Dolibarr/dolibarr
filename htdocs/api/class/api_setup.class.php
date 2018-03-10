@@ -66,7 +66,8 @@ class Setup extends DolibarrApi
 
         $sql = "SELECT id, code, type, libelle as label, module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.entity IN (".getEntity('c_paiement').")";
+        $sql.= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
@@ -538,7 +539,8 @@ class Setup extends DolibarrApi
 
         $sql = "SELECT rowid as id, code, sortorder, libelle as label, libelle_facture as descr, type_cdr, nbjour, decalage, module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-        $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.entity IN (".getEntity('c_payment_term').")";
+        $sql.= " AND t.active = ".$active;
         // Add sql filters
         if ($sqlfilters)
         {
@@ -628,7 +630,6 @@ class Setup extends DolibarrApi
     		else
     		{
     			throw new RestException(500, $langs->trans('XmlNotFound') . ': ' . $xmlfile);
-    			$error++;
     		}
     	}
     	else
@@ -639,20 +640,19 @@ class Setup extends DolibarrApi
     		if (! $xmlarray['curl_error_no'] && $xmlarray['http_code'] != '404')
     		{
     			$xmlfile = $xmlarray['content'];
-    			//print "eee".$xmlfile."eee";
+    			//print "xmlfilestart".$xmlfile."endxmlfile";
     			$xml = simplexml_load_string($xmlfile);
     		}
     		else
     		{
     			$errormsg=$langs->trans('XmlNotFound') . ': ' . $xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
     			throw new RestException(500, $errormsg);
-    			$error++;
     		}
     	}
 
 
 
-    	if (! $error && $xml)
+    	if ($xml)
     	{
     		$checksumconcat = array();
     		$file_list = array();
@@ -873,7 +873,6 @@ class Setup extends DolibarrApi
     		else
     		{
     			throw new RestException(500, 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile);
-    			$error++;
     		}
 
 
