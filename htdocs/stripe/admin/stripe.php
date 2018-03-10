@@ -212,7 +212,7 @@ print '</td></tr>';
   print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
   print '% + ';
   print price($conf->global->STRIPE_APPLICATION_FEE);
-  print ' '.$langs->getCurrencySymbol($conf->currency).' avec un minimum de '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
+  print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
   print '</td></tr>';
 }
 
