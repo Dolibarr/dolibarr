@@ -52,22 +52,15 @@ $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth'), GETPOST('date_debutday'), GETPOST('date_debutyear'));
-$date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth'), GETPOST('date_finday'), GETPOST('date_finyear'));
-$date = dol_mktime(0, 0, 0, GETPOST('datemonth'), GETPOST('dateday'), GETPOST('dateyear'));
-$fk_projet=GETPOST('fk_projet');
-$vatrate=GETPOST('vatrate');
+$date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth','int'), GETPOST('date_debutday','int'), GETPOST('date_debutyear','int'));
+$date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth','int'), GETPOST('date_finday','int'), GETPOST('date_finyear','int'));
+$date = dol_mktime(0, 0, 0, GETPOST('datemonth','int'), GETPOST('dateday','int'), GETPOST('dateyear','int'));
+$fk_projet=GETPOST('fk_projet','int');
+$vatrate=GETPOST('vatrate','alpha');
 $ref=GETPOST("ref",'alpha');
-$comments=GETPOST('comments');
+$comments=GETPOST('comments','none');
 $fk_c_type_fees=GETPOST('fk_c_type_fees','int');
-
-// If socid provided by ajax company selector
-if (! empty($_REQUEST['socid_id']))
-{
-	$_GET['socid'] = $_GET['socid_id'];
-	$_POST['socid'] = $_POST['socid_id'];
-	$_REQUEST['socid'] = $_REQUEST['socid_id'];
-}
+$socid = GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('socid_id','int');
 
 // Security check
 $id=GETPOST("id",'int');
@@ -154,7 +147,7 @@ if (empty($reshook))
     // Action clone object
     if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->expensereport->creer)
     {
-        if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+        if (1==0 && ! GETPOST('clone_content','alpha') && ! GETPOST('clone_receivers','alpha'))
         {
             setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
         }
@@ -181,7 +174,7 @@ if (empty($reshook))
         }
     }
 
-    if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
+    if ($action == 'confirm_delete' && GETPOST("confirm",'alpha') == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
     {
     	$object = new ExpenseReport($db);
     	$result = $object->fetch($id);
@@ -288,7 +281,7 @@ if (empty($reshook))
     {
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'alpha'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -313,7 +306,7 @@ if (empty($reshook))
             $action = 'edit_extras';
     }
 
-    if ($action == "confirm_validate" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
+    if ($action == "confirm_validate" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer)
     {
     	$error = 0;
 
@@ -439,7 +432,7 @@ if (empty($reshook))
 		}
     }
 
-    if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->creer)
+    if ($action == "confirm_save_from_refuse" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
@@ -556,7 +549,7 @@ if (empty($reshook))
     }
 
     // Approve
-    if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->approve)
+    if ($action == "confirm_approve" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->approve)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
@@ -679,12 +672,12 @@ if (empty($reshook))
    		setEventMessages($object->error, $object->errors, 'errors');
    	}
 
-    if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->approve)
+    if ($action == "confirm_refuse" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->approve)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
-    	$result = $object->setDeny($user,GETPOST('detail_refuse'));
+    	$result = $object->setDeny($user, GETPOST('detail_refuse', 'alpha'));
 
     	if ($result > 0)
     	{
@@ -800,14 +793,14 @@ if (empty($reshook))
     }
 
     //var_dump($user->id == $object->fk_user_validator);exit;
-    if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_cancel') && $id > 0 && $user->rights->expensereport->creer)
+    if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha')=="yes" && GETPOST('detail_cancel', 'alpha') && $id > 0 && $user->rights->expensereport->creer)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
     	if ($user->id == $object->fk_user_valid || $user->id == $object->fk_user_author)
     	{
-    		$result = $object->set_cancel($user,GETPOST('detail_cancel'));
+    		$result = $object->set_cancel($user, GETPOST('detail_cancel', 'alpha'));
 
     		if ($result > 0)
     		{
@@ -923,7 +916,7 @@ if (empty($reshook))
     	}
     }
 
-    if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->creer)
+    if ($action == "confirm_brouillonner" && GETPOST('confirm', 'alpha')=="yes" && $id > 0 && $user->rights->expensereport->creer)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
@@ -1091,10 +1084,10 @@ if (empty($reshook))
     	if (empty($vatrate)) $vatrate = "0.000";
     	$vatrate = price2num($vatrate);
 
-		$value_unit=price2num(GETPOST('value_unit'),'MU');
-    	$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
+		$value_unit=price2num(GETPOST('value_unit', 'alpha'),'MU');
+    	$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
 
-    	$qty  = GETPOST('qty','int');
+    	$qty = GETPOST('qty','int');
     	if (empty($qty)) $qty=1;
 
     	if (! $fk_c_type_fees > 0)
@@ -1128,7 +1121,7 @@ if (empty($reshook))
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
     	}
     	// Si aucun prix n'est rentré
-    	if($value_unit==0)
+    	if ($value_unit==0)
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PriceUTTC")), null, 'errors');
@@ -1175,17 +1168,17 @@ if (empty($reshook))
     	$action='';
     }
 
-    if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes" && $user->rights->expensereport->creer)
+    if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer)
     {
     	$object = new ExpenseReport($db);
     	$object->fetch($id);
 
     	$object_ligne = new ExpenseReportLine($db);
-    	$object_ligne->fetch(GETPOST("rowid"));
+    	$object_ligne->fetch(GETPOST("rowid", 'int'));
     	$total_ht = $object_ligne->total_ht;
     	$total_tva = $object_ligne->total_tva;
 
-    	$result=$object->deleteline(GETPOST("rowid"), $user);
+    	$result=$object->deleteline(GETPOST("rowid", 'int'), $user);
     	if ($result >= 0)
     	{
     		if ($result > 0)
@@ -1224,19 +1217,19 @@ if (empty($reshook))
     	$object->fetch($id);
 
     	$rowid = $_POST['rowid'];
-    	$type_fees_id = GETPOST('fk_c_type_fees');
-		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
+    	$type_fees_id = GETPOST('fk_c_type_fees', 'int');
+		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
     	$projet_id = $fk_projet;
-    	$comments = GETPOST('comments');
-    	$qty = GETPOST('qty');
-    	$value_unit = GETPOST('value_unit');
-    	$vatrate = GETPOST('vatrate');
+    	$comments = GETPOST('comments', 'none');
+    	$qty = GETPOST('qty', 'int');
+    	$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
+    	$vatrate = GETPOST('vatrate', 'alpha');
 
         // if VAT is not used in Dolibarr, set VAT rate to 0 because VAT rate is necessary.
         if (empty($vatrate)) $vatrate = "0.000";
         $vatrate = price2num($vatrate);
 
-    	if (! GETPOST('fk_c_type_fees') > 0)
+    	if (! GETPOST('fk_c_type_fees', 'int') > 0)
     	{
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
@@ -1352,7 +1345,7 @@ if ($action == 'create')
 	print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
 	print '<td>';
 	$defaultselectuser=$user->id;
-	if (GETPOST('fk_user_author') > 0) $defaultselectuser=GETPOST('fk_user_author');
+	if (GETPOST('fk_user_author', 'int') > 0) $defaultselectuser=GETPOST('fk_user_author', 'int');
     $include_users = 'hierarchyme';
     if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
@@ -1370,7 +1363,7 @@ if ($action == 'create')
 	{
     	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
     	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;   // Can force default approver
-    	if (GETPOST('fk_user_validator') > 0) $defaultselectuser=GETPOST('fk_user_validator');
+    	if (GETPOST('fk_user_validator', 'int') > 0) $defaultselectuser=GETPOST('fk_user_validator', 'int');
     	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", 0, $include_users);
     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	}
@@ -1628,7 +1621,7 @@ else
 
 				if ($action == 'delete_line')
 				{
-					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$formconfirm=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid','int'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 				}
 
 				// Print form confirm
@@ -2004,7 +1997,7 @@ else
 					{
 						$numline = $i + 1;
 
-						if ($action != 'editline' || $line->rowid != GETPOST('rowid'))
+						if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int'))
 						{
 							print '<tr class="oddeven">';
 
@@ -2035,15 +2028,14 @@ else
 								print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 								print '</td>';
 							}
-							// print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
-							print '<td style="text-align:center;">';
+							print '<td class="center">';
 							$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 							print $labeltype;
 							print '</td>';
-							print '<td style="text-align:left;">'.$line->comments.'</td>';
+							print '<td style="text-align:left;">'.dol_escape_htmltag($line->comments).'</td>';
 							print '<td style="text-align:right;">'.vatrate($line->vatrate,true).'</td>';
 							print '<td style="text-align:right;">'.price($line->value_unit).'</td>';
-							print '<td style="text-align:right;">'.$line->qty.'</td>';
+							print '<td style="text-align:right;">'.dol_escape_htmltag($line->qty).'</td>';
 
 							if ($action != 'editline')
 							{
@@ -2069,7 +2061,7 @@ else
 							print '</tr>';
 						}
 
-						if ($action == 'editline' && $line->rowid == GETPOST('rowid'))
+						if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int'))
 						{
 								print '<tr class="oddeven">';
 
@@ -2103,7 +2095,7 @@ else
 
 								// Add comments
 								print '<td>';
-								print '<textarea name="comments" class="flat_ndf centpercent">'.$line->comments.'</textarea>';
+								print '<textarea name="comments" class="flat_ndf centpercent">'.dol_escape_htmltag($line->comments).'</textarea>';
 								print '</td>';
 
 								// VAT
@@ -2113,12 +2105,12 @@ else
 
 								// Unit price
 								print '<td style="text-align:right;">';
-								print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.$line->value_unit.'" />';
+								print '<input type="text" min="0" class="maxwidth100" name="value_unit" value="'.dol_escape_htmltag($line->value_unit).'" />';
 								print '</td>';
 
 								// Quantity
 								print '<td style="text-align:right;">';
-								print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.$line->qty.'" />';
+								print '<input type="number" min="0" class="maxwidth100" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';
 								print '</td>';
 
 								if ($action != 'editline')
@@ -2154,7 +2146,7 @@ else
 					print '<td colspan="3"></td>';
 					print '</tr>';
 
-					print '<tr '.$bc[true].'>';
+					print '<tr class="oddeven">';
 
 					print '<td></td>';
 
@@ -2167,7 +2159,7 @@ else
 					if (! empty($conf->projet->enabled))
 					{
 						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
+						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 
@@ -2186,7 +2178,7 @@ else
 
 					// Add comments
 					print '<td>';
-					print '<textarea class="flat_ndf centpercent" name="comments">'.$comments.'</textarea>';
+					print '<textarea class="flat_ndf centpercent" name="comments">'.dol_escape_htmltag($comments).'</textarea>';
 					print '</td>';
 
 					// Select VAT
@@ -2198,12 +2190,12 @@ else
 
 					// Unit price
 					print '<td align="right">';
-					print '<input type="text" class="right maxwidth50" name="value_unit" value="'.$value_unit.'">';
+					print '<input type="text" class="right maxwidth50" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
 					print '</td>';
 
 					// Quantity
 					print '<td align="right">';
-					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.($qty?$qty:1).'">';    // We must be able to enter decimal qty
+					print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty?$qty:1).'">';    // We must be able to enter decimal qty
 					print '</td>';
 
 					if ($action != 'editline')
@@ -2409,7 +2401,7 @@ print '</div>';
 
 
 // Select mail models is same action as presend
-if (GETPOST('modelselected')) {
+if (GETPOST('modelselected', 'alpha')) {
 	$action = 'presend';
 }
 

@@ -72,6 +72,14 @@ if ($user->societe_id > 0)
 	//$socid = $user->societe_id;
 	accessforbidden();
 }
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$result = restrictedArea($user, 'stock', $objectid);
+}
+else
+{
+	$result = restrictedArea($user, 'stock', $objectid, '', 'advance_inventory');	
+}
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));
