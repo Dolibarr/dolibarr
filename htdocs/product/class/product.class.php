@@ -2271,6 +2271,35 @@ class Product extends CommonObject
 					}
 				}
 			}
+			
+			// If stock decrease is on invoice validation, the theorical stock continue to 
+			// count the orders to ship in theorical stock when some are already removed b invoice validation.
+			// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation.
+			if (! empty($conf->global->STOCK_CALCULATE_ON_BILL))
+			{
+				if (! empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS))
+				{
+					$adeduire = 0;
+					$sql = "SELECT sum(fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet fd ";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."facture f ON fd.fk_facture = f.rowid ";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element el ON el.fk_target = f.rowid and el.targettype = 'facture' and sourcetype = 'commande'";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."commande c ON el.fk_source = c.rowid ";
+					$sql .= " WHERE c.fk_statut IN (".$filtrestatut.") AND c.facture = 0 AND fd.fk_product = ".$this->id;
+					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
+
+					$resql = $this->db->query($sql);
+					if ( $resql )
+					{
+						if ($this->db->num_rows($resql) > 0)
+						{
+							$obj = $this->db->fetch_object($resql);
+							$adeduire += $obj->count;
+						}
+					}
+
+					$this->stats_commande['qty'] -= $adeduire;
+				}
+			}
 
 			return 1;
 		}
