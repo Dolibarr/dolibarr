@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -294,7 +294,7 @@ class FormMail extends Form
 			}
 
 			// Get message template for $this->param["models"] into c_email_templates
-			$arraydefaultmessage=array();
+			$arraydefaultmessage = -1;
 			if ($this->param['models'] != 'none')
 			{
 				$model_id=0;
@@ -302,12 +302,10 @@ class FormMail extends Form
 				{
 					$model_id=$this->param["models_id"];
 				}
-				$arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));		// we set -1 if model_id empty
-			}
-			//var_dump($this->param["models"]);
-			//var_dump($model_id);
-			//var_dump($arraydefaultmessage);
 
+				// we set -1 if model_id empty
+				$arraydefaultmessage = $this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, ($model_id ? $model_id : -1));
+			}
 
 			// Define list of attached files
 			$listofpaths=array();
@@ -317,7 +315,7 @@ class FormMail extends Form
 
 			if (GETPOST('mode','alpha') == 'init' || (GETPOST('modelmailselected','alpha') && GETPOST('modelmailselected','alpha') != '-1'))
 			{
-				if (! empty($arraydefaultmessage['joinfiles']) && is_array($this->param['fileinit']))
+				if (! empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit']))
 				{
 					foreach($this->param['fileinit'] as $file)
 					{
@@ -765,8 +763,11 @@ class FormMail extends Form
 				$defaulttopic=GETPOST('subject','none');
 				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
 				{
-					if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage['topic']) $defaulttopic=$arraydefaultmessage['topic'];
-					elseif (! is_numeric($this->withtopic))	 $defaulttopic=$this->withtopic;
+					if ($arraydefaultmessage && $arraydefaultmessage->topic) {
+						$defaulttopic = $arraydefaultmessage->topic;
+					} elseif (! is_numeric($this->withtopic)) {
+						$defaulttopic = $this->withtopic;
+					}
 				}
 
 				$defaulttopic=make_substitutions($defaulttopic,$this->substit);
@@ -857,8 +858,11 @@ class FormMail extends Form
 				$defaultmessage=GETPOST('message','none');
 				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
 				{
-					if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) $defaultmessage=$arraydefaultmessage['content'];
-	   				elseif (! is_numeric($this->withbody))	$defaultmessage=$this->withbody;
+					if ($arraydefaultmessage && $arraydefaultmessage->content) {
+						$defaultmessage = $arraydefaultmessage['content'];
+					} elseif (! is_numeric($this->withbody)) {
+						$defaultmessage = $this->withbody;
+					}
 				}
 
 				// Complete substitution array
@@ -884,7 +888,7 @@ class FormMail extends Form
 
 				//Add lines substitution key from each line
 				$lines = '';
-				$defaultlines = $arraydefaultmessage['content_lines'];
+				$defaultlines = $arraydefaultmessage->content_lines;
 				if (isset($defaultlines))
 				{
 					foreach ($this->substit_lines as $substit_line)
@@ -995,11 +999,11 @@ class FormMail extends Form
 	 *      @param	int			$id				Id of template to find, or -1 for first found with lower position, or 0 for first found whatever is position
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @param	string		$label			Label of template
-	 *      @return array						array('topic'=>,'content'=>,..)
+	 *      @return ModelMail
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1, $label='')
 	{
-		$ret=array();
+		$ret = new ModelMail();
 
 		$sql = "SELECT label, topic, joinfiles, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
@@ -1019,15 +1023,16 @@ class FormMail extends Form
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$obj = $db->fetch_object($resql);	// Get first found
-			if ($obj)
-			{
-				$ret['label']=$obj->label;
-				$ret['lang']=$obj->lang;
-				$ret['topic']=$obj->topic;
-				$ret['joinfiles']=$obj->joinfiles;
-				$ret['content']=$obj->content;
-				$ret['content_lines']=$obj->content_lines;
+			// Get first found
+			$obj = $db->fetch_object($resql);
+
+			if ($obj) {
+				$ret->label = $obj->label;
+				$ret->lang = $obj->lang;
+				$ret->topic = $obj->topic;
+				$ret->content = $obj->content;
+				$ret->content_lines = $obj->content_lines;
+				$ret->joinfiles = $obj->joinfiles;
 			}
 			else								// If there is no template at all
 			{
@@ -1044,12 +1049,12 @@ class FormMail extends Form
 				elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 				elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
 
-				$ret['label']='default';
-				$ret['lang']=$outputlangs->defaultlang;
-				$ret['topic']='';
-				$ret['joinfiles']=1;
-				$ret['content']=$defaultmessage;
-				$ret['content_lines']='';
+				$ret->label = 'default';
+				$ret->lang = $outputlangs->defaultlang;
+				$ret->topic = '';
+				$ret->joinfiles = 1;
+				$ret->content = $defaultmessage;
+				$ret->content_lines ='';
 			}
 
 			$db->free($resql);
@@ -1310,4 +1315,5 @@ class ModelMail
 	public $content;
 	public $content_lines;
 	public $lang;
+	public $joinfiles;
 }
