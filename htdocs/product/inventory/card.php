@@ -36,7 +36,14 @@ $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$result = restrictedArea($user, 'stock', $id, '', 'advance_inventory');
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$result = restrictedArea($user, 'stock', $id);
+}
+else
+{
+	$result = restrictedArea($user, 'stock', $id, '', 'advance_inventory');
+}
 
 // Initialize technical objects
 $object=new Inventory($db);
@@ -82,8 +89,16 @@ if (empty($reshook))
 {
 	$error=0;
 
-	$permissiontoadd = $user->rights->stock->advance_inventory->create;
-	$permissiontodelete = $user->rights->stock->advance_inventory->write;
+	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+	{
+		$permissiontoadd = $user->rights->stock->write;
+		$permissiontodelete = $user->rights->stock->write;
+	}
+	else
+	{
+		$permissiontoadd = $user->rights->stock->advance_inventory->create;
+		$permissiontodelete = $user->rights->stock->advance_inventory->write;
+	}
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 
 	// Actions cancel, add, update or delete
