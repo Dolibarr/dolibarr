@@ -90,7 +90,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabl
     }
     else {$key=1;}
 $ret=$mc->switchEntity($key);
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");		// to work if your module directory is into a subdir of root htdocs directory
+if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
 if (! $res) die("Include of main fails");
 }
 
@@ -105,7 +105,7 @@ if ($event->type == 'payout.created') {
         {
 $body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." est attendu sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date); 
 $subject = '[NOTIFICATION] Virement programmée';
-$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>'; TODO  convert in dolibarr standard
 mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers); 
             return 1;
         }
@@ -165,7 +165,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
             
 $body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." a ete effectue sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date); 
 $subject = '[NOTIFICATION] Virement effectué';
-$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>'; TODO  convert in dolibarr standard
 mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers); 
   
             return 1;
@@ -181,10 +181,25 @@ elseif ($event->type == 'charge.succeeded') {
 //TODO: create fees
 
 }
+elseif ($event->type == 'customer.source.created') {
+
+//TODO: save customer's source
+
+} 
+elseif ($event->type == 'customer.source.updated') {
+
+//TODO: update customer's source
+
+}
+elseif ($event->type == 'customer.source.delete') {
+
+//TODO: delete customer's source
+
+}
 elseif ($event->type == 'charge.failed') {
 
 $subject = 'Your payment has been received: '.$event->data->object->id.'';
-$headers = 'From: "test webhook" <ptibogxiv@ptibogxiv.net>';
+$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 //mail('ptibogxiv@msn.com', $subject, 'test', $headers); 
 
 }
@@ -282,8 +297,8 @@ $invoice->set_paid($user);
 
 $body = ""; 
 $subject = 'Facture '.$invoice->ref;
-$headers = 'From: "test webhook" <ptibogxiv@ptibogxiv.net>';
-//mail('ptibogxiv@msn.com', $subject, $body, $headers); 
+$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+//mail('ptibogxiv@msn.com', $subject, $body, $headers); TODO  convert in dolibarr standard
 }
 elseif ($event->type == 'customer.deleted') {
       $db->begin();
