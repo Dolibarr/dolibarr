@@ -2160,7 +2160,7 @@ else
 					if (! empty($conf->projet->enabled))
 					{
 						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
+						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 
