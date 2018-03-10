@@ -1081,24 +1081,32 @@ class Expedition extends CommonObject
 
 	/**
 	 * 	Delete shipment.
-	 *  Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
+	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	function delete()
 	{
 		global $conf, $langs, $user;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		if ($conf->productbatch->enabled)
-		{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-		}
+
 		$error=0;
 		$this->error='';
 
 		$this->db->begin();
 
-		if (!$error) {
+		// Add a protection to refuse deleting if shipment has at least one delivery
+		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
+		if (count($this->linkedObjectsIds) > 0)
+		{
+			$this->error='ErrorThereIsSomeDeliveries';
+			$error++;
+		}
+
+		if (! $error) 
+		{
 			if (! $notrigger)
 			{
 				// Call trigger
@@ -1108,19 +1116,8 @@ class Expedition extends CommonObject
 			}
 		}
 
-		// Add a protection to refuse deleting if shipment has at least one delivery
-		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
-		if (count($this->linkedObjectsIds) > 0)
-		{
-			$this->error='ErrorThereIsSomeDeliveries';
-			return -1;
-		}
-
-
-
-
 		// Stock control
-		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0 && !$error)
+		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
