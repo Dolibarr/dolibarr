@@ -18,7 +18,7 @@
  use Luracast\Restler\RestException;
 
 require 'ticketsup.class.php';
-dol_include_once('/ticketsup/lib/ticketsup.lib.php');
+require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
 
 /**
  * API class for ticketsup object

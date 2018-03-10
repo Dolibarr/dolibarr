@@ -35,8 +35,8 @@ if (file_exists("../main.inc.php")) {
     die("Include of main fails");
 }
 
-dol_include_once('/ticketsup/lib/ticketsup.lib.php');
-dol_include_once('/ticketsup/class/ticketsup.class.php');
+require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
+require_once 'class/ticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";

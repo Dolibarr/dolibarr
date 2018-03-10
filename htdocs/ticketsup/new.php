@@ -33,8 +33,8 @@ if (file_exists("../main.inc.php")) {
 }
 
 require_once 'class/actions_ticketsup.class.php';
-require_once 'class/html.formticketsup.class.php';
-require_once 'lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 // Load traductions files requiredby by page
