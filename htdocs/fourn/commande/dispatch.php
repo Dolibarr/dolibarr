@@ -457,7 +457,7 @@ if ($id > 0 || ! empty($ref)) {
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="dispatch">';
 
-		print '<div class="div-table-responsive">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
 		// Set $products_dispatched with qty dispatched for each product id
