@@ -346,12 +346,12 @@ if (! empty($id) || ! empty($ref))
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
 			}
-
+                
 		?>
 
 		<script type="text/javascript">
 
-			variants_available = <?php echo json_encode($prodattr_alljson) ?>;
+			variants_available = <?php echo json_encode($prodattr_alljson); ?>;
 			variants_selected = {
 				index: [],
 				info: []
@@ -425,8 +425,11 @@ if (! empty($id) || ! empty($ref))
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
-		print '<input type="hidden" name="action" value="create">'."\n";
-
+		print '<input type="hidden" name="action" value="' .  (($valueid > 0) ? "update" : "create") .'">'."\n";
+                if($valueid > 0) {
+                    print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
+                }
+                    
 		print dol_fiche_head();
 
 		?>
@@ -485,7 +488,7 @@ if (! empty($id) || ! empty($ref))
 		<?php
 		}
 
-		if (is_array($selectedvariant)) {
+		if (is_array($productCombination2ValuePairs1)) {
 		?>
 		<hr>
 		<table class="border" style="width: 100%">
@@ -494,18 +497,17 @@ if (! empty($id) || ! empty($ref))
 				<td class="tdtop">
 					<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-					if (is_array($selectedvariant))
+					if (is_array($productCombination2ValuePairs1))
 					{
-    					foreach ($selectedvariant as $key => $val) {
-    				        $tmp = explode(':',$val);
-    				        $result1 = $prodattr->fetch($tmp[0]);
-    				        $result2 = $prodattr_val->fetch($tmp[1]);
-    				        if ($result1 > 0 && $result2 > 0)
-    				        {
-    					       print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
-    					       // TODO Add delete link
-    				        }
-    					}
+                                            foreach ($productCombination2ValuePairs1 as $key => $val) {
+                                            $result1 = $prodattr->fetch($val->fk_prod_attr);
+                                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+                                                if ($result1 > 0 && $result2 > 0)
+                                                {
+                                                       print $prodattr->label . ' - '.$prodattr_val->value.'<br>';
+                                                       // TODO Add delete link
+                                                }
+                                            }
 					}
 					?>
 					</div>
@@ -533,7 +535,7 @@ if (! empty($id) || ! empty($ref))
         ?>
 
 		<div style="text-align: center">
-		<input type="submit" name="create" <?php if (! is_array($selectedvariant)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
+		<input type="submit" name="create" <?php if (! is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
 		&nbsp;
 		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
 		</div>
