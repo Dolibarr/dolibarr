@@ -186,12 +186,22 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		}
 		if (count($receiver)>0)
 		{
-			foreach($receiver as $key=>$val)
+		    foreach($receiver as $key=>$val)
 			{
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') // Id of third party
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+				}
+				elseif(preg_match('/^user_/', $val))
+				{
+				    $receiver_fk_user = (int)preg_replace('/^user_/', '', $val);
+				    if($receiver_fk_user>0) {
+                        $u_receiver = new User($db);
+                        $u_receiver->fetch($receiver_fk_user);
+
+                        $tmparray[] = $u_receiver->email;
+				    }
 				}
 				elseif ($val)	// Id du contact
 				{
@@ -222,6 +232,16 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($val == 'thirdparty') // Id of third party
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+				}
+				elseif(preg_match('/^user_/', $val))
+				{
+				    $receiver_fk_user = (int)preg_replace('/^user_/', '', $val);
+				    if($receiver_fk_user>0) {
+				        $u_receiver = new User($db);
+				        $u_receiver->fetch($receiver_fk_user);
+
+				        $tmparray[] = $u_receiver->email;
+				    }
 				}
 				elseif ($val)	// Id du contact
 				{

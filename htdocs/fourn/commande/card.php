@@ -2498,7 +2498,7 @@ elseif (! empty($object->id))
 				print $form->select_date('','',1,1,'',"commande",1,1,1);
 				print "</td></tr>\n";
 
-				print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
+				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
 				$liv = array();
 				$liv[''] = '&nbsp;';
 				$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");

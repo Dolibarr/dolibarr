@@ -1400,7 +1400,6 @@ class Commande extends CommonOrder
             $this->line->total_localtax1=$total_localtax1;
             $this->line->total_localtax2=$total_localtax2;
             $this->line->total_ttc=$total_ttc;
-            $this->line->product_type=$type;
             $this->line->special_code=$special_code;
             $this->line->origin=$origin;
             $this->line->origin_id=$origin_id;
