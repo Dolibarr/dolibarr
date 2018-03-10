@@ -79,6 +79,10 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",         GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",        GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS",   GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_ENABLED", GETPOST("MAIN_MAIL_EMAIL_DKIM_ENABLED"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_DOMAIN", GETPOST("MAIN_MAIL_EMAIL_DKIM_DOMAIN"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_SELECTOR", GETPOST("MAIN_MAIL_EMAIL_DKIM_SELECTOR"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY", GETPOST("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY"),'chaine',0,'',$conf->entity);
 	// Content parameters
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",       GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		  GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
@@ -152,26 +156,32 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").hide();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").hide();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").hide();
                             ';
 		if ($linuxlike)
 		{
 			print '
-			               jQuery("#MAIN_MAIL_SMTP_SERVER").hide();
-			               jQuery("#MAIN_MAIL_SMTP_PORT").hide();
-			               jQuery("#smtp_server_mess").show();
-			               jQuery("#smtp_port_mess").show();
-			               ';
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").hide();
+                            jQuery("#MAIN_MAIL_SMTP_PORT").hide();
+                            jQuery("#smtp_server_mess").show();
+                            jQuery("#smtp_port_mess").show();';
 		}
 		else
 		{
-			print '
-			               jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
-			               jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
-			               jQuery("#smtp_server_mess").hide();
-			               jQuery("#smtp_port_mess").hide();
-			               ';
-		}
-		print '
+            print '
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
+                            jQuery("#smtp_server_mess").hide();
+                            jQuery("#smtp_port_mess").hide();';
+        }
+        print '
                         }
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\')
                         {
@@ -180,6 +190,14 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").hide();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").hide();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").hide();
                             jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER").show();
@@ -194,6 +212,14 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val('.$conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED.');
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").show();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").show();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").show();
                             jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER").show();
@@ -206,16 +232,16 @@ if ($action == 'edit')
                     jQuery("#MAIN_MAIL_SENDMODE").change(function() {
                         initfields();
                     });
-					jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
+                    jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
 						if (jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val() == 1)
 							jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
 					});
 					jQuery("#MAIN_MAIL_EMAIL_STARTTLS").change(function() {
 						if (jQuery("#MAIN_MAIL_EMAIL_TLS").val() == 1)
 							jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
-					});
+                    });
                })';
-		print '</script>'."\n";
+        print '</script>'."\n";
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -374,9 +400,9 @@ if ($action == 'edit')
 		print '</td></tr>';
 	}
 
-	// TLS
+    // TLS
 
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
@@ -389,7 +415,6 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// STARTTLS
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
@@ -402,8 +427,35 @@ if ($action == 'edit')
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-	// Separator
+	// DKIM
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer'))))
+	{
+		if (function_exists('openssl_open'))
+		{
+			print $form->selectyesno('MAIN_MAIL_EMAIL_DKIM_ENABLED',(! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED)?$conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED:0),1);
+		}
+		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	}
+	else print yn(0).' ('.$langs->trans("NotSupported").')';
+	print '</td></tr>';
 
+    // Domain
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
+    print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_DOMAIN" name="MAIN_MAIL_EMAIL_DKIM_DOMAIN" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN)?$conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN:'');
+    print '"></td></tr>';
+
+    // Selector
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
+    print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_SELECTOR" name="MAIN_MAIL_EMAIL_DKIM_SELECTOR" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR)?$conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR:'');
+    print '"></td></tr>';
+
+    // PRIVATE KEY
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
+    print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">' . (! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY)?$conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY:'').'</textarea>';
+    print '</td></tr>';
+
+    // Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
@@ -565,7 +617,36 @@ else
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-	// Separator
+	// DKIM
+
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer')))
+	{
+		if (function_exists('openssl_open'))
+		{
+			print yn($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED);
+		}
+		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	}
+	else print yn(0).' ('.$langs->trans("NotSupported").')';
+	print '</td></tr>';
+
+    // Domain
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
+    print '<td>' . $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
+    print '</td></tr>';
+
+    // Selector
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
+    print '<td>' . $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+    print '</td></tr>';
+
+    // PRIVATE KEY
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
+    print '<td>' . $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
+    print '</td></tr>';
+
+    // Separator
 
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
