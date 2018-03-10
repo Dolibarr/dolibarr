@@ -86,11 +86,11 @@ class Facture extends CommonInvoice
 	//var $amount;
 	public $remise_absolue;
 	public $remise_percent;
-	public $total_ht=0.0;
-	public $total_tva=0.0;
-	public $total_localtax1=0.0;
-	public $total_localtax2=0.0;
-	public $total_ttc=0.0;
+	public $total_ht=0;
+	public $total_tva=0;
+	public $total_localtax1=0;
+	public $total_localtax2=0;
+	public $total_ttc=0;
 	public $revenuestamp;
 
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
