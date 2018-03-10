@@ -1602,8 +1602,9 @@ class Adherent extends CommonObject
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-					$newlang = $_REQUEST['lang_id'];
+				$lang_id=GETPOST('lang_id');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($lang_id))
+					$newlang = $lang_id;
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 					$newlang = $customer->default_lang;
 				if (! empty($newlang)) {

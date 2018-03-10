@@ -140,7 +140,7 @@ class Facture extends CommonInvoice
 	public $situation_counter;
 
 	/**
-	 * @var bool Final situation flag
+	 * @var int Final situation flag
 	 */
 	public $situation_final;
 
@@ -303,13 +303,13 @@ class Facture extends CommonInvoice
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
-			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
+			$this->fk_project        = (int)GETPOST('projectid','int') > 0 ? (int)GETPOST('projectid','int') : $_facrec->fk_project;
 			$this->note_public       = GETPOST('note_public','none') ? GETPOST('note_public','none') : $_facrec->note_public;
 			$this->note_private      = GETPOST('note_private','none') ? GETPOST('note_private','none') : $_facrec->note_private;
 			$this->modelpdf          = GETPOST('model') ? GETPOST('model') : $_facrec->modelpdf;
-			$this->cond_reglement_id = GETPOST('cond_reglement_id') > 0 ? GETPOST('cond_reglement_id') : $_facrec->cond_reglement_id;
-			$this->mode_reglement_id = GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $_facrec->mode_reglement_id;
-			$this->fk_account        = GETPOST('fk_account') > 0 ? GETPOST('fk_account') : $_facrec->fk_account;
+			$this->cond_reglement_id = (int)GETPOST('cond_reglement_id') > 0 ? (int)GETPOST('cond_reglement_id') : $_facrec->cond_reglement_id;
+			$this->mode_reglement_id = (int)GETPOST('mode_reglement_id') > 0 ? (int)GETPOST('mode_reglement_id') : $_facrec->mode_reglement_id;
+			$this->fk_account        = (int)GETPOST('fk_account') > 0 ? (int)GETPOST('fk_account') : $_facrec->fk_account;
 
 			// Set here to have this defined for substitution into notes, should be recalculated after adding lines to get same result
 			$this->total_ht          = $_facrec->total_ht;
@@ -860,7 +860,7 @@ class Facture extends CommonInvoice
 		}
 		elseif ($this->type == self::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
 		{
-			$this->fetchObjectLinked('', '', $object->id, 'facture');
+			$this->fetchObjectLinked('', '', $facture->id, 'facture');
 
 			foreach ($this->linkedObjectsIds as $typeObject => $Tfk_object)
 			{
@@ -1519,7 +1519,7 @@ class Facture extends CommonInvoice
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
-	function update($user=null, $notrigger=0)
+	function update(User $user, $notrigger=0)
 	{
 		$error=0;
 
@@ -1535,17 +1535,6 @@ class Facture extends CommonInvoice
 		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
-		if (empty($this->situation_cycle_ref)) {
-			$this->situation_cycle_ref = 'null';
-		}
-
-		if (empty($this->situation_counter)) {
-			$this->situation_counter = 'null';
-		}
-
-		if (empty($this->situation_final)) {
-			$this->situation_final = '0';
-		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -1585,9 +1574,9 @@ class Facture extends CommonInvoice
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
-		$sql.= ", situation_cycle_ref=".$this->situation_cycle_ref;
-		$sql.= ", situation_counter=".$this->situation_counter;
-		$sql.= ", situation_final=".$this->situation_final;
+		$sql.= ", situation_cycle_ref=".(empty($this->situation_cycle_ref)?"null":$this->situation_cycle_ref);
+		$sql.= ", situation_counter=".(empty($this->situation_counter)?"null":$this->situation_counter);
+		$sql.= ", situation_final=".(empty($this->situation_counter)?"0":$this->situation_counter);
 
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -1810,9 +1799,9 @@ class Facture extends CommonInvoice
 		dol_syslog(get_class($this)."::delete rowid=".$rowid.", ref=".$this->ref.", thirdparty=".$this->thirdparty->name, LOG_DEBUG);
 
 		// Test to avoid invoice deletion (allowed if draft)
-		$test = $this->is_erasable();
+		$result = $this->is_erasable();
 
-		if ($test <= 0) return 0;
+		if ($result <= 0) return 0;
 
 		$error=0;
 
@@ -2556,7 +2545,7 @@ class Facture extends CommonInvoice
 	 * 		@param		double		$pu_ht_devise		Unit price in currency
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_options=0, $situation_percent=100, $fk_prev_id='', $fk_unit = null, $pu_ht_devise = 0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_options=0, $situation_percent=100, $fk_prev_id=0, $fk_unit = null, $pu_ht_devise = 0)
 	{
 		// Deprecation warning
 		if ($label) {
@@ -3061,7 +3050,7 @@ class Facture extends CommonInvoice
 
 		// For triggers
 		$result = $line->fetch($rowid);
-		if (! ($result > 0)) dol_print_error($db, $line->error, $line->errors);
+		if (! ($result > 0)) dol_print_error($this->db, $line->error, $line->errors);
 
 		if ($line->delete($user) > 0)
 		{
@@ -4379,7 +4368,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->subprice)) $this->subprice=0;
 		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
-		if (empty($this->fk_prev_id)) $this->fk_prev_id = 'null';
+		if (empty($this->fk_prev_id)) $this->fk_prev_id = 0;
 		if (! isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
@@ -4462,7 +4451,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= " ".price2num($this->total_localtax1).",";
 		$sql.= " ".price2num($this->total_localtax2);
 		$sql.= ", " . $this->situation_percent;
-		$sql.= ", " . $this->fk_prev_id;
+		$sql.= ", " . (!empty($this->fk_prev_id)?$this->fk_prev_id:"null");
 		$sql.= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$user->id;

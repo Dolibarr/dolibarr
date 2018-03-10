@@ -676,7 +676,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 {
 	/**
 	 * Quantity
-	 * @var int
+	 * @var double
 	 */
 	public $qty;
 
