@@ -761,7 +761,7 @@ class BonPrelevement extends CommonObject
 	 *	@param	int		$agence		dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode		real=do action, simu=test only
 	 *  @param	string	$format		FRST, RCUR or ALL
-         * @param       string  $executiondate
+         * @param       string  $executiondate	Date to execute the transfer
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
 	function Create($banque=0, $agence=0, $mode='real', $format='ALL',$executiondate='')
