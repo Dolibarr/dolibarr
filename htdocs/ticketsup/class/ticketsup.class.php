@@ -1141,7 +1141,7 @@ class Ticketsup extends CommonObject
         return $this->libStatut($this->fk_statut, $mode);
     }
 
-    
+
     /**
      *    Return status label of object
      *
@@ -1492,7 +1492,7 @@ class Ticketsup extends CommonObject
      *  Send notification of changes by email
      *
      * 	@param  User   $user    		User that create
-     * 	@param  string $log_message 		Log message
+     * 	@param  string $message 		Log message
      * 	@return int                 	<0 if KO, >0 if OK (number of emails sent)
      */
     private function sendLogByEmail($user, $message)
