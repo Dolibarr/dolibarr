@@ -1,0 +1,10 @@
+[main]
+host = https://www.transifex.com
+
+[dolibarr_tickets.ticketsuplang]
+file_filter = langs/<lang>/ticketsup.lang
+source_file = langs/en_US/ticketsup.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+
