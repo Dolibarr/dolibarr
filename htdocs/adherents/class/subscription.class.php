@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- *
+ * Copyright (C) 2018     	ptibogxiv		<support@ptibogxiv.net> 
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -41,6 +42,7 @@ class Subscription extends CommonObject
 	var $dateh;				// Subscription start date (date subscription)
 	var $datef;				// Subscription end date
 	var $fk_adherent;
+  var $fk_type;     // Type of member for archive the changes
 	var $amount;
 	var $fk_bank;
 
@@ -82,8 +84,16 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, datec, dateadh, datef, subscription, note)";
-        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($this->datec)."',";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
+            if ($this->fk_type == NULL) {
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$member=new Adherent($this->db);
+		$result=$member->fetch($this->fk_adherent);
+    $type=$member->typeid;
+    }else {
+    $type=$this->fk_type;
+    }
+    $sql.= " VALUES (".$this->fk_adherent.", '".$type."', '".$this->db->idate($this->datec)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",";
@@ -131,7 +141,7 @@ class Subscription extends CommonObject
 		$sql.=" tms,";
 		$sql.=" dateadh as dateh,";
 		$sql.=" datef,";
-		$sql.=" subscription, note, fk_bank";
+		$sql.=" subscription, note, fk_bank, fk_type";
 		$sql.=" FROM ".MAIN_DB_PREFIX."subscription";
 		$sql.="	WHERE rowid=".$rowid;
 
@@ -145,7 +155,7 @@ class Subscription extends CommonObject
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
-
+				$this->fk_type        = $obj->fk_type;
 				$this->fk_adherent    = $obj->fk_adherent;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
