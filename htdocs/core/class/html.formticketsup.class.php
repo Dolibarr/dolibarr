@@ -499,7 +499,7 @@ class FormTicketsup
         }
         print '</select>';
         if ($user->admin && !$noadmininfo) {
-            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"), 1);
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
     }
 
@@ -597,7 +597,7 @@ class FormTicketsup
         }
         print '</select>';
         if ($user->admin && !$noadmininfo) {
-            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"), 1);
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
     }
 
@@ -694,7 +694,7 @@ class FormTicketsup
         }
         print '</select>';
         if ($user->admin && !$noadmininfo) {
-            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"), 1);
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
     }
 

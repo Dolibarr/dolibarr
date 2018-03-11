@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 $langs->load("admin");
 
 $extrafields = new ExtraFields($db);
@@ -50,11 +50,7 @@ if (!$user->admin) {
 /*
  * Actions
  */
-if (versioncompare(versiondolibarrarray(), array(3, 5, 0)) > 0) {
-    include DOL_DOCUMENT_ROOT . '/core/actions_extrafields.inc.php';
-} elseif (versioncompare(versiondolibarrarray(), array(3, 4, 0)) > 0) {
-    include DOL_DOCUMENT_ROOT . '/core/admin_extrafields.inc.php';
-}
+include DOL_DOCUMENT_ROOT . '/core/actions_extrafields.inc.php';
 
 /*
  * View
@@ -74,9 +70,9 @@ $head = ticketsupAdminPrepareHead();
 dol_fiche_head(
     $head,
     'attributes',
-    $langs->trans("Module110120Name"),
+    $langs->trans("Module56000Name"),
     0,
-    "ticketsup@ticketsup"
+    "ticketsup"
 );
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
