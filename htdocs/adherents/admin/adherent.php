@@ -223,7 +223,7 @@ if ($conf->facture->enabled)
 	print "</tr>\n";
 }
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {   //enhance membership fopr more automatic and support all foundation memebership settings
-// type of adhesion flow  date to date or fix date(with or withou prorata)
+// type of adhesion flow  date to date or fix date(with or withou prorata) Value is use for the prorata calcul on month base
 print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_SUBSCRIPTION_PRORATA").'</td>';
 print '<td>';
 print $form->selectarray('ADHERENT_SUBSCRIPTION_PRORATA', array('0'=>$langs->trans("ADHERENT_SUBSCRIBE_NO_MONTH_START"),'1'=>$langs->trans("ADHERENT_SUBSCRIPTION_ANNUAL"),'2'=>$langs->trans("ADHERENT_SUBSCRIPTION_SEM"),'3'=>$langs->trans("ADHERENT_SUBSCRIPTION_QUA"),'4'=>$langs->trans("ADHERENT_SUBSCRIPTION_TRI"),'12'=>$langs->trans("ADHERENT_SUBSCRIPTION_MEN")), (empty($conf->global->ADHERENT_SUBSCRIPTION_PRORATA)?'0':$conf->global->ADHERENT_SUBSCRIPTION_PRORATA), 0);
@@ -236,7 +236,6 @@ if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA > '0')
 print '<tr class="oddeven"><td>'.$langs->trans("FiscalMonthStart").'</td>';
 print '<td>';
 print $formother->select_month($conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'SOCIETE_SUBSCRIBE_MONTH_START',0,1);
-//print $form->selectarray('SOCIETE_SUBSCRIBE_MONTH_START', array('1'=>'1','2'=>'2','3'=>'3','4'=>'4','5'=>'5','6'=>'6','7'=>'7','8'=>'8','9'=>'9','10'=>'10','11'=>'11','12'=>'12'), (empty($conf->global->SOCIETE_SUBSCRIBE_MONTH_START)?'0':$conf->global->SOCIETE_SUBSCRIBE_MONTH_START), 0);
 print '</td>';
 print "</tr>\n";
 }
