@@ -29,9 +29,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
 
+
 /**
- *    \class      ActionsTicketsup
- *    \brief      Class Actions of the module ticketsup
+ *  Class Actions of the module ticketsup
  */
 class ActionsTicketsup
 {
@@ -76,9 +76,10 @@ class ActionsTicketsup
     }
 
     /**
-     *     Enter description here ...
+     *     doActions
      *
-     *     @param string $action Action type
+     *     @param 	string 		$action 	Action type
+     *     @return	int						0
      */
     public function doActions(&$action = '')
     {
@@ -601,17 +602,18 @@ class ActionsTicketsup
                 }
             }
         }
+        
+        return 0;
     }
 
     /**
      * Add new message on a ticket (private area)
      *
-     * @param unknown $user
-     * @param unknown $action
+     * @param User 		$user		Object user
+     * @param string	$action		Action
      */
     private function newMessage($user, &$action)
     {
-
         global $mysoc, $conf, $langs;
 
         if (!class_exists('Contact')) {
@@ -818,8 +820,8 @@ class ActionsTicketsup
     /**
      * Add new message on a ticket (public area)
      *
-     * @param unknown $user
-     * @param unknown $action
+     * @param User		$user		Object user
+     * @param string	$action		Action
      */
     private function newMessagePublic($user, &$action)
     {
@@ -961,10 +963,13 @@ class ActionsTicketsup
 
     /**
      * Fetch object
-     *
+     * 
+     * @param	int		$id				Id
+     * @param	int		$track_id		Track id
+     * @param	string	$ref			Ref
      * @return void
      */
-    public function fetch($id = '', $track_id = '', $ref = '')
+    public function fetch($id = 0, $track_id = 0, $ref = '')
     {
         $this->getInstanceDao();
         return $this->dao->fetch($id, $track_id, $ref);
@@ -972,7 +977,8 @@ class ActionsTicketsup
 
     /**
      * print statut
-     *
+     * 
+     * @param		int		$mode		Mode
      * @return void
      */
     public function getLibStatut($mode = 0)
@@ -985,7 +991,8 @@ class ActionsTicketsup
     /**
      *     Get ticket info
      *
-     *     @param id    Object id
+     *     @param 		int		$id    Object id
+     *     @return		void
      */
     public function getInfo($id)
     {
@@ -999,7 +1006,8 @@ class ActionsTicketsup
     /**
      *     Get action title
      *
-     *     @param action    Type of action
+     *     @param 	string	$action     Type of action
+     *     @return 	string				Label
      */
     public function getTitle($action = '')
     {
@@ -1021,7 +1029,8 @@ class ActionsTicketsup
     /**
      * View html list of logs
      *
-     * @param boolean $show_user Show user who make action
+     * @param 	boolean 	$show_user 	Show user who make action
+     * @return	void
      */
     public function viewTicketLogs($show_user = true)
     {
@@ -1083,7 +1092,8 @@ class ActionsTicketsup
     /**
      * View list of logs with timeline view
      *
-     * @param boolean $show_user Show user who make action
+     * @param 	boolean 	$show_user 	Show user who make action
+     * @return	void
      */
     public function viewTimelineTicketLogs($show_user = true)
     {
@@ -1129,8 +1139,9 @@ class ActionsTicketsup
     /**
      * Show ticket original message
      *
-     * @param User $user	$user wich display
-     * @param string $action
+     * @param 	User 		$user		Object user
+     * @param 	string 		$action		Action
+     * @return	void
      */
     public function viewTicketOriginalMessage($user, $action = '')
     {
@@ -1185,8 +1196,9 @@ class ActionsTicketsup
     /**
      * View html list of message for ticket
      *
-     * @param boolean $show_private Show private messages
-     * @param boolean $show_user    Show user who make action
+     * @param 	boolean $show_private Show private messages
+     * @param 	boolean $show_user    Show user who make action
+     * @return	void
      */
     public function viewTicketMessages($show_private, $show_user = true)
     {
@@ -1256,8 +1268,9 @@ class ActionsTicketsup
     /**
      * View list of message for ticket with timeline display
      *
-     * @param boolean $show_private Show private messages
-     * @param boolean $show_user    Show user who make action
+     * @param 	boolean $show_private Show private messages
+     * @param 	boolean $show_user    Show user who make action
+     * @return	void
      */
     public function viewTicketTimelineMessages($show_private, $show_user = true)
     {
@@ -1309,6 +1322,13 @@ class ActionsTicketsup
     	}
     }
 
+    /**
+     * load_previous_next_ref
+     * 
+     * @param string		$filter			Filter
+     * @param int			$fieldid		Id
+     * @return int			0
+     */
     public function load_previous_next_ref($filter, $fieldid)
     {
         $this->getInstanceDao();
@@ -1399,12 +1419,12 @@ class ActionsTicketsup
 
     /**
      * Copy files into ticket directory
-     *
      * Used for files linked into messages
+     * 
+     * @return	void
      */
     public function copyFilesForTicket()
     {
-
         global $conf;
 
         // Create form object
@@ -1446,9 +1466,9 @@ class ActionsTicketsup
 
     /**
      * Print html navbar with link to set ticket status
-     *
-     * @global type $langs
-     * @param  type $selected : 0=>'NotRead', 1=>'Read', 3=>'Answered', 4=>'Assigned', 5 => 'InProgress', 6=> 'Waiting', 8=>'Closed', 9=>'Deleted'
+     * $selected : 0=>'NotRead', 1=>'Read', 3=>'Answered', 4=>'Assigned', 5 => 'InProgress', 6=> 'Waiting', 8=>'Closed', 9=>'Deleted'
+     * 
+     * @return	void
      */
     public function viewStatusActions()
     {
@@ -1487,7 +1507,11 @@ class ActionsTicketsup
     }
 
     
-    
+  	/**
+  	 * deleteObjectLinked
+  	 * 
+  	 * @return number
+  	 */  
     public function deleteObjectLinked()
     {
     	return $this->dao->deleteObjectLinked();
@@ -1496,10 +1520,10 @@ class ActionsTicketsup
     /**
      * Hook to add email element template
      *
-     * @param array 		$parameters
-     * @param Object 		$object
-     * @param string 		$action
-     * @param HookManager 	$hookmanager
+     * @param array 		$parameters		Parameters
+     * @param Object 		$object			Object
+     * @param string 		$action			Action
+     * @param HookManager 	$hookmanager	Hookmanager
      * @return int
      */
     public function emailElementlist($parameters, &$object, &$action, $hookmanager)

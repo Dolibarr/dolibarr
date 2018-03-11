@@ -139,15 +139,4 @@ class mod_ticketsup_simple extends ModeleNumRefTicketsup
         return $this->prefix . $yymm . "-" . $num;
     }
 
-    /**
-     *     Return next reference not yet used as a reference
-     *
-     *  @param  Societe $objsoc    Object third party
-     *  @param  Project $ticketsup Object ticketsup
-     *  @return string              Next not used reference
-     */
-    public function ticketsup_get_num($objsoc = 0, $ticketsup = '')
-    {
-        return $this->getNextValue($objsoc, $ticketsup);
-    }
 }

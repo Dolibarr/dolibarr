@@ -18,12 +18,10 @@
  */
 
 /**
- *    \file        lib/ticketsup.lib.php
+ *    \file       core/lib/ticketsup.lib.php
  *    \ingroup    ticketsup
- *    \brief        This file is an example module library
- *                Put some comments here
+ *    \brief      This file is an example module library
  */
-
 function ticketsupAdminPrepareHead()
 {
     global $langs, $conf;
@@ -60,16 +58,15 @@ function ticketsupAdminPrepareHead()
 }
 
 /**
- *        \file       htdocs/hosting/lib/hosting.lib.php
- *        \brief      Ensemble de fonctions de base pour le module hosting
- *      \ingroup    business
- *      \version    $Id$
+ *  Prepare head for ticket card
+ *  
+ *  @param	Object	$object		Object Ticket
+ *  @return array				Array of tabs	
  */
-
 function ticketsup_prepare_head($object)
 {
-
     global $db, $langs, $conf, $user;
+
     $h = 0;
     $head = array();
     $head[$h][0] = dol_buildpath('/ticketsup/card.php', 1) . '?action=view&track_id=' . $object->track_id;

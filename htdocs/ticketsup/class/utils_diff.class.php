@@ -69,8 +69,7 @@ class Diff
         $table = self::computeTable($sequence1, $sequence2, $start, $end1, $end2);
 
         // generate the partial diff
-        $partialDiff =
-        self::generatePartialDiff($table, $sequence1, $sequence2, $start);
+        $partialDiff = self::generatePartialDiff($table, $sequence1, $sequence2, $start);
 
         // generate the full diff
         $diff = array();
@@ -148,8 +147,7 @@ class Diff
                 ) {
                     $table[$index1][$index2] = $table[$index1 - 1][$index2 - 1] + 1;
                 } else {
-                    $table[$index1][$index2] =
-                        max($table[$index1 - 1][$index2], $table[$index1][$index2 - 1]);
+                    $table[$index1][$index2] = max($table[$index1 - 1][$index2], $table[$index1][$index2 - 1]);
                 }
             }
         }
@@ -306,29 +304,26 @@ class Diff
             switch ($diff[$index][1]) {
                 // display the content on the left and right
                 case self::UNMODIFIED:
-                    $leftCell =
-                    self::getCellContent(
+                    $leftCell = self::getCellContent(
                         $diff,
                         $indentation,
                         $separator,
                         $index,
                         self::UNMODIFIED
                     );
-                        $rightCell = $leftCell;
+                    $rightCell = $leftCell;
                     break;
 
                 // display the deleted on the left and inserted content on the right
                 case self::DELETED:
-                    $leftCell =
-                    self::getCellContent(
+                    $leftCell = self::getCellContent(
                         $diff,
                         $indentation,
                         $separator,
                         $index,
                         self::DELETED
                     );
-                        $rightCell =
-                        self::getCellContent(
+                    $rightCell = self::getCellContent(
                             $diff,
                             $indentation,
                             $separator,
@@ -340,8 +335,7 @@ class Diff
                 // display the inserted content on the right
                 case self::INSERTED:
                     $leftCell = '';
-                    $rightCell =
-                    self::getCellContent(
+                    $rightCell = self::getCellContent(
                         $diff,
                         $indentation,
                         $separator,
@@ -388,14 +382,8 @@ class Diff
      * $index       - the current index, passes by reference
      * $type        - the type of line
      */
-    private static function getCellContent(
-        $diff,
-        $indentation,
-        $separator,
-        &$index,
-        $type
-    ) {
-
+    private static function getCellContent($diff, $indentation, $separator, &$index, $type) 
+    {
         // initialise the HTML
         $html = '';
 

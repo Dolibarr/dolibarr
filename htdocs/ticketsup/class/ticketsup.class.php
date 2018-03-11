@@ -536,11 +536,10 @@ class Ticketsup extends CommonObject
      * @param  string $sortorder Sort order
      * @param  string $sortfield Sort field
      * @param  int    $limit     page number
-     * @param  int    $offset
+     * @param  int    $offset	 Offset
      * @param  int    $arch      archive or not (not used)
-     * @param  array  $filter
-     *            output
-     * @return int <0 if KO, >0 if OK
+     * @param  array  $filter	 Filter
+     * @return int 				 <0 if KO, >0 if OK
      */
     public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
     {
@@ -1012,7 +1011,7 @@ class Ticketsup extends CommonObject
      *
      *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    public function load_cache_types_tickets()
+    public function loadCacheTypesTickets()
     {
         global $langs;
 

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2015    Jean-François FERRY    <hello@librethic.io>
- *                    2016            Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) - 2013-2015 Jean-François FERRY    <hello@librethic.io>
+ * Copyright (C) 2016        Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ if (!class_exists('FormCompany')) {
 /**
  * Classe permettant la generation du formulaire d'un nouveau ticket
  *
- * @package ticketsup
-
+ * \ingroup ticketsup
+ *
  * \remarks Utilisation: $formticketsup = new FormTicketsup($db)
  * \remarks $formticketsup->proprietes=1 ou chaine ou tableau de valeurs
  * \remarks $formticketsup->show_form() affiche le formulaire
@@ -74,7 +74,6 @@ class FormTicketsup
     public $withcancel;
 
     /**
-     *
      * @var array $substit Substitutions
      */
     public $substit = array();
@@ -414,9 +413,9 @@ class FormTicketsup
      *      @param  string $filtertype  To filter on field type in llx_c_ticketsup_type (array('code'=>xx,'label'=>zz))
      *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int    $empty       1=peut etre vide, 0 sinon
-     *         @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
+     *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *         @return void
+     *      @return void
      */
     public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
     {
@@ -432,7 +431,7 @@ class FormTicketsup
             $filterarray = explode(',', $filtertype);
         }
 
-        $ticketstat->load_cache_types_tickets();
+        $ticketstat->loadCacheTypesTickets();
 
         print '<select id="select' . $htmlname . '" class="flat select_tickettype" name="' . $htmlname . '">';
         if ($empty) {

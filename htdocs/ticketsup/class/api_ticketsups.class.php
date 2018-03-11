@@ -472,7 +472,7 @@ class Ticketsups extends DolibarrApi
      * @todo use an array for properties to clean
      *
      */
-    public function _cleanObjectDatas($object)
+    function _cleanObjectDatas($object)
     {
 
         // Remove $db object property for object

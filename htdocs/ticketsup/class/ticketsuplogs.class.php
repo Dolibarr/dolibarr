@@ -61,7 +61,7 @@ class Ticketsuplogs// extends CommonObject
      *
      *  @param  User $user      User that creates
      *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-     *  @return int                      <0 if KO, Id of created object if OK
+     *  @return int             <0 if KO, Id of created object if OK
      */
     public function create($user, $notrigger = 0)
     {
@@ -144,7 +144,7 @@ class Ticketsuplogs// extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param  int $id Id object
+     *  @param  int $id 		Id object
      *  @return int              <0 if KO, >0 if OK
      */
     public function fetch($id)
@@ -189,7 +189,7 @@ class Ticketsuplogs// extends CommonObject
      *
      *  @param  User $user      User that modifies
      *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-     *  @return int                     <0 if KO, >0 if OK
+     *  @return int             <0 if KO, >0 if OK
      */
     public function update($user = 0, $notrigger = 0)
     {
@@ -263,9 +263,9 @@ class Ticketsuplogs// extends CommonObject
     /**
      *  Delete object in database
      *
-     *    @param  User $user      User that deletes
-     *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-     *  @return int                     <0 if KO, >0 if OK
+     *  @param  User $user      	User that deletes
+     *  @param  int  $notrigger 	0=launch triggers after, 1=disable triggers
+     *  @return int                 <0 if KO, >0 if OK
      */
     public function delete($user, $notrigger = 0)
     {
@@ -315,10 +315,10 @@ class Ticketsuplogs// extends CommonObject
     }
 
     /**
-     *    Initialise object with example values
-     *    Id must be 0 if object instance is a specimen
+     *  Initialise object with example values
+     *  Id must be 0 if object instance is a specimen
      *
-     *    @return void
+     *  @return void
      */
     public function initAsSpecimen()
     {
