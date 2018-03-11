@@ -2246,9 +2246,10 @@ class Ticketsup extends CommonObject
      *    @param	int    	$statut 	Status of lines to get (-1=all)
      *    @param	string 	$source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
      *    @param	int    	$list   	0:Return array contains all properties, 1:Return array contains just id
+     *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
      *    @return 	array          		Array of contacts
      */
-    function liste_contact($statut = -1, $source = 'external', $list = 0)
+    function liste_contact($statut = -1, $source = 'external', $list = 0, $code = '')
     {
         global $langs;
 
