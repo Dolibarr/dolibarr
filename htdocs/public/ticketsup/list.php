@@ -1,5 +1,5 @@
 <?php
-/*  Copyright (C) - 2013-2016    Jean-François FERRY    <jfefe@aternatik.fr>
+/*  Copyright (C) 2013-2016    Jean-François FERRY    <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,28 +34,10 @@ if (!defined("NOLOGIN")) {
 }
 // If this page is public (can be called outside logged session)
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res = 0;
-if (!$res && file_exists("../main.inc.php")) {
-    $res = @include '../main.inc.php';
-}
-
-if (!$res && file_exists("../../main.inc.php")) {
-    $res = @include '../../main.inc.php';
-}
-
-if (!$res && file_exists("../../../main.inc.php")) {
-    $res = @include '../../../main.inc.php';
-}
-
-if (!$res) {
-    die("Include of main fails");
-}
-
-// Change this following line to use the correct relative path from htdocs
-dol_include_once('/ticketsup/class/actions_ticketsup.class.php');
-dol_include_once('/ticketsup/class/html.formticketsup.class.php');
-dol_include_once('/ticketsup/lib/ticketsup.lib.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/html.formticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/lib/ticketsup.lib.php';
 
 // Load traductions files requiredby by page
 $langs->load("companies");
@@ -671,7 +653,7 @@ if ($action == "view_ticketlist") {
             }
         }
     } else {
-        print '<div class="error">Not Allowed<br /><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
+        print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
     }
 } else {
     print '<p style="text-align: center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
