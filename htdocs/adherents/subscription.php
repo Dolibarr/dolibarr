@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018     	ptibogxiv		<support@ptibogxiv.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -322,16 +323,25 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+			else
+			{
+				// If an invoice was created, it is into $object->invoice
+			}
         }
 
         if (! $error)
         {
-            $db->commit();
+//            $db->commit();
         }
         else
         {
             $db->rollback();
             $action = 'addsubscription';
+        }
+
+        if (! $error)
+        {
+        	setEventMessages("SubscriptionRecorded", null, 'mesgs');
         }
 
         // Send email
@@ -343,12 +353,36 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
                 $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
 
-                $result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+                // Attach a file ?
+                $file='';
+                $listofpaths=array();
+                $listofnames=array();
+                $listofmimes=array();
+                if (is_object($object->invoice))
+                {
+                	$invoicediroutput = $conf->facture->dir_output;
+                	$fileparams = dol_most_recent_file($invoicediroutput . '/' . $object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
+                	$file = $fileparams['fullname'];
+
+                	$listofpaths=array($file);
+                	$listofnames=array(basename($file));
+                	$listofmimes=array(dol_mimetype($file));
+                }
+
+                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
-        			setEventMessages($errmsg, null, 'errors');
+                	setEventMessages($object->error, $object->errors, 'errors');
                 }
+                else
+                {
+                	setEventMessages($langs->trans("EmailSentToMember", $object->email), null, 'mesgs');
+                }
+            }
+            else
+            {
+            	setEventMessages($langs->trans("NoEmailSentToMember"), null, 'mesgs');
             }
         }
 
@@ -609,7 +643,7 @@ if ($rowid > 0)
         $sql.= " c.datec,";
         $sql.= " c.dateadh as dateh,";
         $sql.= " c.datef,";
-        $sql.= " c.fk_bank,";
+        $sql.= " c.fk_bank,c.fk_type, ";
         $sql.= " b.rowid as bid,";
         $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
@@ -631,6 +665,7 @@ if ($rowid > 0)
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref',$_SERVER["PHP_SELF"],'c.rowid','',$param,'',$sortfield,$sortorder);
             print '<td align="center">'.$langs->trans("DateCreation").'</td>';
+            print '<td align="center">'.$langs->trans("MemberType").'</td>';
             print '<td align="center">'.$langs->trans("DateStart").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
             print '<td align="right">'.$langs->trans("Amount").'</td>';
@@ -648,10 +683,12 @@ if ($rowid > 0)
 
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
+                $subscriptionstatic->label=$objp->label;
 
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
+                print '<td align="center"><a href="'.DOL_DOCUMENT_ROOT.'/adherents/type.php?rowid='.$objp->fk_type.'">'.img_object($langs->trans("ShowType"),'group').' '.dol_escape_htmltag($subscriptionstatic->label)."</a></td>";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->subscription).'</td>';
@@ -823,41 +860,71 @@ if ($rowid > 0)
             $paymentdate=dol_mktime(0, 0, 0, GETPOST('paymentmonth'), GETPOST('paymentday'), GETPOST('paymentyear'));
         }
 
-        print '<tr>';
         // Date start subscription
-        print '<td class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
-        if (GETPOST('reday'))
-        {
-            $datefrom=dol_mktime(0,0,0,GETPOST('remonth'),GETPOST('reday'),GETPOST('reyear'));
-        }
-        if (! $datefrom)
-        {
-        	$datefrom=$object->datevalid;
-        	if ($object->datefin > 0)
+        print '<tr><td width="30%" class="fieldrequired">'.$langs->trans("DateSubscription").'</td><td>';
+
+            if ($object->datefin > 0)
             {
-                $datefrom=dol_time_plus_duree($object->datefin,1,'d');
+            $year = strftime("%Y",$today);
+            $datefrom1=dol_mktime(0,0,0,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,1,$year);
+            $datefrom2=dol_time_plus_duree($object->datefin,1,'d');
+            if  ($datefrom2 < $datefrom1) {
+            $datefrom=$datefrom1;
             }
-        }
-        print $form->select_date($datefrom,'','','','',"subscription",1,1,1);
+            else {
+            $datefrom=$datefrom2;
+              }
+            }
+            else
+			{
+        $datefrom=dol_now();
+            }
+
+        print $form->select_date($datefrom,'','','','',"subscription",1,0,1);
         print "</td></tr>";
 
-        // Date end subscription
-        if (GETPOST('endday'))
-        {
-            $dateto=dol_mktime(0,0,0,GETPOST('endmonth'),GETPOST('endday'),GETPOST('endyear'));
-        }
-        if (! $dateto)
-        {
-            $dateto=-1;		// By default, no date is suggested
-        }
+// Date end subscription
+if (NULL == $object->datefin) {
+$datefin=$today;
+} else {
+$datefin=$object->datefin;
+}
+          $year = strftime("%Y",$datefrom);
+            if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA > '0') {
+          $dateto1=dol_mktime(0,0,0,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,1,$year);
+           if ($object->datefin > $today){
+           $dateto1=dol_mktime(0,0,0,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,1,$year+1);
+           }
+           elseif ($dateto1 > $today){
+           $dateto1=dol_mktime(0,0,0,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,1,$year);
+           }
+           else {
+           $dateto1=dol_mktime(0,0,0,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,1,$year+1);
+           }
+           $dateto=dol_time_plus_duree($dateto1,-1,'d');
+            }
+            else {
+            $dateto=dol_time_plus_duree($datefin,+1,'y'); //premiere fin adhesion
+            }
+            
+            		// By default, no date is suggested
+
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
         print $form->select_date($dateto,'end','','','',"subscription",1,0,1);
         print "</td></tr>";
 
+
         if ($adht->subscription)
         {
+        if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA < '2') { 
+        $montant=$adht->price;
+        }
+        else {     
+        $montant=(ceil((($dateto-$datefrom)/31558464)*$conf->global->ADHERENT_SUBSCRIPTION_PRORATA)/$conf->global->ADHERENT_SUBSCRIPTION_PRORATA)*$adht->price;
+        }
+        if ($object->datefin > 0) {$amount=$montant;} else  {$amount=$montant+$adht->welcome;}
             // Amount
-            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.GETPOST('subscription').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="10" value="' . $amount . '"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
             print '<tr><td>'.$langs->trans("Label").'</td>';
@@ -998,7 +1065,7 @@ if ($rowid > 0)
             $helpcontent.='<b>'.$langs->trans("MailText").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-            print $form->textwithpicto($tmp,$helpcontent,1,'help');
+            print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
         }
         print '</td></tr>';
         print '</tbody>';
