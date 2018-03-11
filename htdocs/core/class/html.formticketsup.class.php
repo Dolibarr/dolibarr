@@ -29,13 +29,11 @@ if (!class_exists('FormCompany')) {
 }
 
 /**
- * Classe permettant la generation du formulaire d'un nouveau ticket
+ * Classe permettant la generation du formulaire d'un nouveau ticket.
  *
- * \ingroup ticketsup
- *
- * \remarks Utilisation: $formticketsup = new FormTicketsup($db)
- * \remarks $formticketsup->proprietes=1 ou chaine ou tableau de valeurs
- * \remarks $formticketsup->show_form() affiche le formulaire
+ * Utilisation: $formticketsup = new FormTicketsup($db)
+ * $formticketsup->proprietes=1 ou chaine ou tableau de valeurs
+ * $formticketsup->show_form() affiche le formulaire
  */
 class FormTicketsup
 {
@@ -85,7 +83,7 @@ class FormTicketsup
     /**
      * Constructor
      *
-     * @param DoliDB $DB Database handler
+     * @param DoliDB $db Database handler
      */
     public function __construct($db)
     {

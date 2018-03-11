@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
 
 
 /**
- *    Put here description of your class
+ *    Class to manage ticket
  */
 class Ticketsup extends CommonObject
 {
@@ -533,13 +533,14 @@ class Ticketsup extends CommonObject
     /**
      * Load all objects in memory from database
      *
-     * @param  string $sortorder Sort order
-     * @param  string $sortfield Sort field
-     * @param  int    $limit     page number
-     * @param  int    $offset	 Offset
-     * @param  int    $arch      archive or not (not used)
-     * @param  array  $filter	 Filter
-     * @return int 				 <0 if KO, >0 if OK
+     * @param	User	$user		Object user
+     * @param  	string 	$sortorder 	Sort order
+     * @param  	string 	$sortfield 	Sort field
+     * @param  	int    	$limit     	page number
+     * @param  	int    	$offset	 	Offset
+     * @param  	int    	$arch      	archive or not (not used)
+     * @param  	array  	$filter	 	Filter
+     * @return 	int 				<0 if KO, >0 if OK
      */
     public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
     {
@@ -1288,10 +1289,11 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *     \brief      Renvoie nom clicable (avec eventuellement le picto)
-     *     \param        withpicto        0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *     \param        option            Sur quoi pointe le lien
-     *     \return        string            Chaine avec URL
+     *     Renvoie nom clicable (avec eventuellement le picto)
+     *     
+     *     @param        int		$withpicto        0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *     @param        string		$option           Sur quoi pointe le lien
+     *     @return       string     			      Chaine avec URL
      */
     public function getNomUrl($withpicto = 0, $option = '')
     {
@@ -1324,9 +1326,10 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *    \brief      Mark a message as read
-     *    \param       User
-     *       \return     boolean
+     *    Mark a message as read
+     *    
+     *    @param      User		$user		Object user
+     *    @return     int					<0 if KO, >0 if OK
      */
     public function markAsRead($user, $notrigger = 0)
     {
@@ -1371,11 +1374,12 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *    \brief      Mark a message as read
-     *    \param       User
-     *    \param    int    $id_assign_user    ID of user assigned
-     *    \param      int $notrigger        Disable trigger
-     *       \return     boolean
+     *    Mark a message as read
+     *    
+     *    @param    User	$user				Object user
+     *    @param    int 	$id_assign_user		ID of user assigned
+     *    @param    int 	$notrigger        	Disable trigger
+     *    @return   int							<0 if KO, >0 if OK
      */
     public function assignUser($user, $id_assign_user, $notrigger = 0)
     {
@@ -1424,12 +1428,12 @@ class Ticketsup extends CommonObject
      *         1- create entry into database for message storage
      *         2- if trigger, send an email to ticket contacts
      *
-     *   @param  User   $user    User that create
-     *   @param  string $message Log message
-     *  @param  int    $noemail 0=send email after, 1=disable emails
-     *   @return int                 <0 if KO, >0 if OK
+     *   @param  User   $user    	User that create
+     *   @param  string $message 	Log message
+     *   @param  int    $noemail 	0=send email after, 1=disable emails
+     *   @return int                <0 if KO, >0 if OK
      */
-    public function createTicketLog($user, $message, $noemail = 0)
+    public function createTicketLog(User $user, $message, $noemail = 0)
     {
         global $conf, $langs;
 
@@ -1481,9 +1485,9 @@ class Ticketsup extends CommonObject
     /**
      *     Send notification of changes by email
      *
-     * @param  User   $user    User that create
-     * @param  string $message Log message
-     * @return int                 <0 if KO, >0 if OK (number of emails sent)
+     * @param  User   $user    		User that create
+     * @param  string $message 		Log message
+     * @return int                 	<0 if KO, >0 if OK (number of emails sent)
      */
     private function sendLogByEmail($user, $log_message)
     {
@@ -1613,9 +1617,9 @@ class Ticketsup extends CommonObject
     /**
      *  Add message into database
      *
-     *  @param  User $user      User that creates
-     *  @param  int  $notrigger 0=launch triggers after, 1=disable triggers
-     *  @return int                      <0 if KO, Id of created object if OK
+     *  @param  User $user      	User that creates
+     *  @param  int  $notrigger 	0=launch triggers after, 1=disable triggers
+     *  @return int                 <0 if KO, Id of created object if OK
      */
     public function createTicketMessage($user, $notrigger = 0)
     {
@@ -1725,8 +1729,9 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *    \brief      Close a ticket
-     *       \return     boolean
+     *    Close a ticket
+     *    
+     *    @return     int		<0 if KO, >0 if OK
      */
     public function close()
     {
@@ -1793,11 +1798,11 @@ class Ticketsup extends CommonObject
     /**
      *     Search and fetch thirparties by email
      *
-     *     @param  string $email   Email
-     *     @param  int    $type    Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
-     *     @param  array  $filters Array of couple field name/value to filter the companies with the same name
-     *     @param  string $clause  Clause for filters
-     *     @return array        Array of thirdparties object
+     *     @param  string $email   		Email
+     *     @param  int    $type    		Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
+     *     @param  array  $filters 		Array of couple field name/value to filter the companies with the same name
+     *     @param  string $clause  		Clause for filters
+     *     @return array        		Array of thirdparties object
      */
     public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
     {
@@ -1860,10 +1865,10 @@ class Ticketsup extends CommonObject
     /**
      *     Search and fetch contacts by email
      *
-     *     @param  string $email Email
-     *     @param  array  $socid Limit to a thirdparty
-     *     @param  string $case  Respect case
-     *     @return array        Array of contacts object
+     *     @param  string $email 	Email
+     *     @param  array  $socid 	Limit to a thirdparty
+     *     @param  string $case  	Respect case
+     *     @return array        	Array of contacts object
      */
     public function searchContactByEmail($email, $socid = '', $case = '')
     {
@@ -1953,7 +1958,7 @@ class Ticketsup extends CommonObject
 
     /**
      *     Link element with a project
-     * Override core function because of key name 'fk_project' used for this module
+     * 	   Override core function because of key name 'fk_project' used for this module
      *
      *     @param  int $projectid Project id to link element to
      *     @return int                        <0 if KO, >0 if OK
@@ -2104,16 +2109,11 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *  Check if contact are linked to the ticket
-     *     If yes, send mail and save trace into llx_notify.
+     *  Check if contact are linked to the ticket. If yes, send mail and save trace into llx_notify.
      *
-     *     @param  string $action     Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-     *     @param  int    $socid      Id of third party
+     *     @param  string $subject	  Subject
      *     @param  string $texte      Message to send
-     *     @param  string $objet_type Type of object the notification deals on (facture, order, propal, order_supplier...). Just for log in llx_notify.
-     *     @param  int    $objet_id   Id of object the notification deals on
-     *     @param  string $file       Attach a file
-     *     @return int                    <0 if KO, or number of changes if OK
+     *     @return int                <0 if KO, or number of changes if OK
      */
     public function messageSend($subject, $texte)
     {
@@ -2234,7 +2234,7 @@ class Ticketsup extends CommonObject
 
     /**
      *    Get array of all contacts for a ticket
-     *         Override method of file commonobject.class.php to add phone number
+     *    Override method of file commonobject.class.php to add phone number
      *
      *    @param  int    $statut Status of lines to get (-1=all)
      *    @param  string $source Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
@@ -2338,10 +2338,10 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     * Get a default reference
+     * Get a default reference.
      *
-     * @global type $conf
-     * @return string   Reference
+     * @param	Societe		$thirdparty		Thirdparty
+     * @return 	string   					Reference
      */
     public function getDefaultRef($thirdparty = '')
     {
@@ -2379,20 +2379,20 @@ class Ticketsup extends CommonObject
     }
 
     /**
- *  Show tab footer of a card
- *
- *  @param  string $paramid       Name of parameter to use to name the id into the URL next/previous link
- *  @param  string $morehtml      More html content to output just before the nav bar
- *  @param  int    $shownav       Show Condition (navigation is shown if value is 1)
- *  @param  string $fieldid       Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
- *  @param  string $fieldref      Nom du champ objet ref (object->ref) a utiliser pour select next et previous
- *  @param  string $morehtmlref   More html to show after ref
- *  @param  string $moreparam     More param to add in nav link url.
- *    @param  int    $nodbprefix    Do not include DB prefix to forge table name
- *    @param  string $morehtmlleft  More html code to show before ref
- *    @param  string $morehtmlright More html code to show before navigation arrows
- *  @return void
- */
+	 *  Show tab footer of a card
+	 *
+	 *  @param  string $paramid       Name of parameter to use to name the id into the URL next/previous link
+	 *  @param  string $morehtml      More html content to output just before the nav bar
+	 *  @param  int    $shownav       Show Condition (navigation is shown if value is 1)
+	 *  @param  string $fieldid       Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
+	 *  @param  string $fieldref      Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+	 *  @param  string $morehtmlref   More html to show after ref
+	 *  @param  string $moreparam     More param to add in nav link url.
+	 *  @param  int    $nodbprefix    Do not include DB prefix to forge table name
+	 *  @param  string $morehtmlleft  More html code to show before ref
+	 *  @param  string $morehtmlright More html code to show before navigation arrows
+	 *  @return void
+	 */
     public function ticketsup_banner_tab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '')
     {
         global $conf, $form, $user, $langs;
@@ -2451,11 +2451,11 @@ class Ticketsup extends CommonObject
     }
 
     /**
- *  Affiche la premiere photo du ticket
- *
- *  @param  string $sdir Repertoire a scanner
- *  @return boolean                 true si photo dispo, false sinon
- */
+	 *  Affiche la premiere photo du ticket
+	 *
+	 *  @param  string 	$sdir 		Repertoire a scanner
+	 *  @return boolean             true si photo dispo, false sinon
+	 */
     public function is_photo_available($sdir)
     {
         include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -2487,16 +2487,15 @@ class Ticketsup extends CommonObject
      *  Show photos of a product (nbmax maximum), into several columns
      *    TODO Move this into html.formproduct.class.php
      *
-     *  @param string $sdir         Directory to scan
-     *  @param int    $size         0=original size, 1='small' use thumbnail if possible
-     *  @param int    $nbmax        Nombre maximum de photos (0=pas de max)
-     *  @param int    $nbbyrow      Number of image per line or -1 to use div. Used only if size=1.
-     *     @param int    $showfilename 1=Show filename
-     *     @param int    $showaction   1=Show icon with action links (resize, delete)
-     *     @param int    $maxHeight    Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
-     *     @param int    $maxWidth     Max width of original image when size='small'
-
-     *  @param  int    $nolink       Do not add a href link to view enlarged imaged into a new tab
+     *  @param 	string $sdir         Directory to scan
+     *  @param 	int    $size         0=original size, 1='small' use thumbnail if possible
+     *  @param 	int    $nbmax        Nombre maximum de photos (0=pas de max)
+     *  @param 	int    $nbbyrow      Number of image per line or -1 to use div. Used only if size=1.
+     *  @param 	int    $showfilename 1=Show filename
+     *  @param 	int    $showaction   1=Show icon with action links (resize, delete)
+     *  @param 	int    $maxHeight    Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
+     *  @param 	int    $maxWidth     Max width of original image when size='small'
+     *  @param 	int    $nolink       Do not add a href link to view enlarged imaged into a new tab
      *  @return string                    Html code to show photo. Number of photos shown is saved in this->nbphoto
      */
     public function show_photos($sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0)
@@ -2662,12 +2661,12 @@ class Ticketsup extends CommonObject
     }
 }
 
+
 /**
- * Session line Class
+ * Ticket line Class
  */
 class TicketsLine
 {
-
     public $id;
 
     /**
@@ -2676,112 +2675,108 @@ class TicketsLine
     public $ref;
 
     /**
- * Hash to identify ticket
-*/
+	 * Hash to identify ticket
+	 */
     public $track_id;
 
     /**
- * Thirdparty ID
-*/
+	 * Thirdparty ID
+	*/
     public $fk_soc;
 
     /**
- * Project ID
-*/
+	 * Project ID
+	 */
     public $fk_project;
 
     /**
- * Person email who have create ticket
-*/
+	 * Person email who have create ticket
+	 */
     public $origin_email;
 
     /**
- * User id who have create ticket
-*/
+	 * User id who have create ticket
+	 */
     public $fk_user_create;
 
     /**
- * User id who have ticket assigned
-*/
+	 * User id who have ticket assigned
+	 */
     public $fk_user_assign;
 
     /**
- * Ticket subject
-*/
+	 * Ticket subject
+	 */
     public $subject;
 
     /**
- * Ticket message
-*/
+	 * Ticket message
+	 */
     public $message;
 
     /**
- * Ticket statut
-*/
+ 	 * Ticket statut
+	 */
     public $fk_statut;
 
     /**
- * State resolution
-*/
+	 * State resolution
+	 */
     public $resolution;
 
     /**
- * Progress in percent
-*/
+	 * Progress in percent
+	 */
     public $progress;
 
     /**
- * Duration for ticket
-*/
+	 * Duration for ticket
+	 */
     public $timing;
 
     /**
- * Type code
-*/
+	 * Type code
+	 */
     public $type_code;
 
     /**
- * Category code
-*/
+	 * Category code
+	 */
     public $category_code;
 
     /**
- * Severity code
-*/
+	 * Severity code
+	 */
     public $severity_code;
 
     /**
- * Type label
-*/
+	 * Type label
+	 */
     public $type_label;
 
     /**
- * Category label
-*/
+	 * Category label
+	 */
     public $category_label;
 
     /**
- * Severity label
-*/
+	 * Severity label
+	 */
     public $severity_label;
 
     /**
- * Création date
-*/
+ 	 * Creation date
+	 */
     public $datec = '';
 
     /**
- * Read date
-*/
+ 	 * Read date
+	 */
     public $date_read = '';
 
     /**
- * Close ticket date
-*/
+ 	 * Close ticket date
+	 */
     public $date_close = '';
 
-    public function __construct()
-    {
-        return 1;
-    }
 }
