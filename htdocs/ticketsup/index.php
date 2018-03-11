@@ -1,6 +1,5 @@
 <?php
-/**
- * Copyright (C) - 2013-2016     Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) - 2013-2016     Jean-François FERRY    <hello@librethic.io>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +21,9 @@
  *    @package ticketsup
  */
 
-$res = 0;
-if (file_exists("../main.inc.php")) {
-    $res = include "../main.inc.php"; // From htdocs directory
-} elseif (!$res && file_exists("../../main.inc.php")) {
-    $res = include "../../main.inc.php"; // From "custom" directory
-} else {
-    die("Include of main fails");
-}
-
-require_once 'class/actions_ticketsup.class.php';
-require_once 'class/ticketsupstats.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT . '/ticketsup/class/actions_ticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ticketsup/class/ticketsupstats.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
 
 // Load traductions files requiredby by page

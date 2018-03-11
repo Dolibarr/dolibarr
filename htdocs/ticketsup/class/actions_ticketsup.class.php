@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2015    Jean-François FERRY    <hello@librethic.io>
- *                    2016            Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2015 Jean-François FERRY <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
  */
 
 require_once "ticketsup.class.php";
-
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';

@@ -1,6 +1,5 @@
 <?php
-/*
- * Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +26,9 @@ require_once DOL_DOCUMENT_ROOT . "/core/class/commonobject.class.php";
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
+
 /**
- *    Put here description of your class
+ * Class of log for ticketsup
  */
 class Ticketsuplogs// extends CommonObject
 {

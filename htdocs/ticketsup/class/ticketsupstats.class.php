@@ -23,9 +23,9 @@
 require_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
 require_once 'ticketsup.class.php';
 
+
 /**
- *       \class      DeplacementStats
- *       \brief      Classe permettant la gestion des stats des deplacements et notes de frais
+ * Classe permettant la gestion des stats des deplacements et notes de frais
  */
 class TicketsupStats extends Stats
 {

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011-2016    Jean-François Ferry    <hello@librethic.io>
- * Copyright (C) 2011       Regis Houssin        <regis@dolibarr.fr>
- *                  2016        Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2011-2016 Jean-François Ferry    <hello@librethic.io>
+ * Copyright (C) 2011      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,10 @@
  *        \ingroup    ticketsup
  *        \brief      Contacts des tickets
  */
-$res = 0;
-if (file_exists("../main.inc.php")) {
-    $res = include "../main.inc.php"; // From htdocs directory
-} elseif (!$res && file_exists("../../main.inc.php")) {
-    $res = include "../../main.inc.php"; // From "custom" directory
-} else {
-    die("Include of main fails");
-}
 
-require_once 'class/ticketsup.class.php';
+require '../main.inc.php';
+
+require_once DOL_DOCUMENT_ROOT . '/ticketsup/class/ticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
 
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';

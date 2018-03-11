@@ -1,6 +1,5 @@
 <?php
-/*
- * Copyright (C) 2002-2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
@@ -26,17 +25,9 @@
  *  \brief      files linked to a ticket
  */
 
-$res = 0;
-if (file_exists("../main.inc.php")) {
-    $res = include "../main.inc.php"; // From htdocs directory
-} elseif (!$res && file_exists("../../main.inc.php")) {
-    $res = include "../../main.inc.php"; // From "custom" directory
-} else {
-    die("Include of main fails");
-}
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
-require_once 'class/ticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ticketsup/class/ticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";

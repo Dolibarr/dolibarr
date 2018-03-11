@@ -1,7 +1,6 @@
 <?php
-/*
- * Copyright (C) - 2013-2018    Jean-François Ferry    <hello@librethic.io>
- *                    2016            Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT . "/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
 //require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+
 
 /**
  *    Put here description of your class

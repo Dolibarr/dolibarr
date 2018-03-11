@@ -1,22 +1,20 @@
 <?php
-
-/*
-
-class.Diff.php
-
-A class containing a diff implementation
-
-Created by Stephen Morley - http://stephenmorley.org/ - and released under the
-terms of the CC0 1.0 Universal legal code:
-
-http://creativecommons.org/publicdomain/zero/1.0/legalcode
-
+/* Copyright (C) 2016      Jean-François Ferry  <hello@librethic.io>
+ * 
+ * A class containing a diff implementation
+ *
+ * Created by Stephen Morley - http://stephenmorley.org/ - and released under the
+ * terms of the CC0 1.0 Universal legal code:
+ * 
+ * http://creativecommons.org/publicdomain/zero/1.0/legalcode
  */
 
-// A class containing functions for computing diffs and formatting the output.
+
+/**
+ * A class containing functions for computing diffs and formatting the output.
+ */
 class Diff
 {
-
     // define the constants
     const UNMODIFIED = 0;
     const DELETED = 1;

@@ -37,11 +37,9 @@ print_titre($langs->trans('RelatedTickets'));
     <td align="center"><?php echo $langs->trans("Status"); ?></td>
 </tr>
 <?php
-$var=true;
 foreach ($linkedObjectBlock as $object) {
-    $var=!$var;
 ?>
-<tr <?php echo $bc[$var]; ?>>
+<tr class="oddeven">
     <td>
         <a href="<?php echo dol_buildpath("/ticketsup/card.php", 1).'?track_id='.$object->track_id; ?>">
     <?php echo img_object($langs->trans("ShowTicket"), "ticketsup@ticketsup") . ' ' . (! empty($object->subject) ? ' '.$object->subject : ''); ?>
