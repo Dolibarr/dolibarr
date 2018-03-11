@@ -18,14 +18,14 @@
 # Generic
 #
 
-Module110120Name = Tickets
-Module110120Desc = Ticket system for incident management
+Module56000Name=Tickets
+Module56000Desc=Ticket system for incident management
 
-Permission110121=See tickets
-Permission110122=Modify tickets
-Permission110123=Delete tickets
-Permission110124=Manage tickets
-Permission110125=See tickets of all thirdparties (not effective for external users, always be limited to the thirdparty they depend on)
+Permission56001=See tickets
+Permission56002=Modify tickets
+Permission56003=Delete tickets
+Permission56004=Manage tickets
+Permission56005=See tickets of all thirdparties (not effective for external users, always be limited to the thirdparty they depend on)
 
 TicketsupDictType=Tickets type
 TicketsupDictCategory=Tickets categories
@@ -70,22 +70,22 @@ Category=Category
 Severity=Severity
 
 # Email templates
-MailToSendTicketsupMessage = To send email from ticket message
+MailToSendTicketsupMessage=To send email from ticket message
 
 #
 # Admin page
 #
-TicketsupSetup = Ticket module setup
-TicketSupSettings = Settings
-TicketsupSetupPage =
-TicketsupPublicAccess = A public interface requiring no identification is available at the following url
-TicketsupSetupDictionaries = The type of application categories and severity level are configurable from dictionaries
+TicketsupSetup=Ticket module setup
+TicketSupSettings=Settings
+TicketsupSetupPage=
+TicketsupPublicAccess=A public interface requiring no identification is available at the following url
+TicketsupSetupDictionaries=The type of application categories and severity level are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
-TicketEmailNotificationFrom = Notification email from
-TicketEmailNotificationFromHelp = Used into ticket message answer by example
-TicketEmailNotificationTo = Notifications email to
-TicketEmailNotificationToHelp = Send email notifications to this address.
+TicketEmailNotificationFrom=Notification email from
+TicketEmailNotificationFromHelp=Used into ticket message answer by example
+TicketEmailNotificationTo=Notifications email to
+TicketEmailNotificationToHelp=Send email notifications to this address.
 TicketNewEmailBodyLabel=Text message sent after creating a ticket (public interface)
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
 TicketParamPublicInterface=Public interface setup
@@ -128,9 +128,9 @@ TicketNotNotifyTiersAtCreate=Do not notify the company to the creation
 #
 # About page
 #
-About = About
-TicketSupAbout = About ticket module
-TicketSupAboutModule = The development of this module has been initiated by the company Libr&thic.
+About=About
+TicketSupAbout=About ticket module
+TicketSupAboutModule=The development of this module has been initiated by the company Libr&thic.
 TicketSupAboutModuleHelp=You can get help by using the contact form on the website <a href="http://librethic.io">librethic.io</a>
 TicketSupAboutModuleImprove=Feel free to suggest improvements! Please visit <a href="https://code.librethic.io/Dolibarr/modules/ticketsup">the project page</a> on Doliforge website to report bugs and add tasks.
 TicketSupAboutModuleThanks=Thanks to <a href="http://sayatnowa.com">nwa</a> who creates icons for this module./
