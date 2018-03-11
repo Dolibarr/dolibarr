@@ -774,7 +774,7 @@ class ActionsTicketsup
                             $message = $message_intro . $message;
 
                             // Add signature
-                            $message .= '<br />' . $message_signature;
+                            $message .= '<br>' . $message_signature;
 
                             if (!empty($this->dao->origin_email)) {
                                 $sendto[] = $this->dao->origin_email;
@@ -1118,7 +1118,7 @@ class ActionsTicketsup
     					$userstat = new User($this->db);
     					$res = $userstat->fetch($arraylogs['fk_user_create']);
     					if ($res) {
-    						print '<br /><small>'.$userstat->getNomUrl(1).'</small>';
+    						print '<br><small>'.$userstat->getNomUrl(1).'</small>';
     					}
     				}
     			}
@@ -1296,11 +1296,11 @@ class ActionsTicketsup
                             $userstat = new User($this->db);
                             $res = $userstat->fetch($arraymsgs['fk_user_action']);
                             if ($res) {
-                                print '<br />';
+                                print '<br>';
                                 print $userstat->getNomUrl(1);
                             }
                         } else {
-                            print '<br />';
+                            print '<br>';
                             print $langs->trans('Customer');
                         }
                     }
@@ -1496,7 +1496,7 @@ class ActionsTicketsup
         // Sort results to be similar to status object list
         sort($exclude_status);
 
-        //print '<br /><div>';
+        //print '<br><div>';
         foreach ($this->dao->statuts_short as $status => $statut_label) {
             if (!in_array($status, $exclude_status)) {
                 print '<div class="tagtd">';
@@ -1506,7 +1506,7 @@ class ActionsTicketsup
                 print '</div>';
             }
         }
-        print '</div></div><br />';
+        print '</div></div><br>';
     }
 
 

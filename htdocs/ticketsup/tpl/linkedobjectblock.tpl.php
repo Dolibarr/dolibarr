@@ -31,7 +31,7 @@ if (empty($conf) || ! is_object($conf))
 $langs = $GLOBALS['langs'];
 $langs->load('ticketsup@ticketsup');
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-echo '<br />';
+echo '<br>';
 print_titre($langs->trans('RelatedTickets'));
 ?>
 <table class="noborder" width="100%">
