@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2016	Jean-François FERRY	<hello@librethic.io>
+/* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
