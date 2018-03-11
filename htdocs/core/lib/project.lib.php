@@ -1427,7 +1427,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
