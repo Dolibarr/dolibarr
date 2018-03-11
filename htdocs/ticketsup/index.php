@@ -347,7 +347,7 @@ if ($result) {
 
         $db->free();
     } else {
-        print '<tr><td colspan="5"><div class="info">' . $langs->trans('NoTicketsFound') . '</div></td></tr>';
+        print '<tr><td colspan="6"><div class="info">' . $langs->trans('NoTicketsFound') . '</div></td></tr>';
     }
 
     print "</table>";
