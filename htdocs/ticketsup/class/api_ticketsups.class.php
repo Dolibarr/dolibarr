@@ -303,7 +303,7 @@ class Ticketsups extends DolibarrApi
     public function post($request_data = null)
     {
         $ticketstatic = new Ticketsup($this->db);
-        if (! DolibarrApiAccess::$user->rights->ticketsup->create) {
+        if (! DolibarrApiAccess::$user->rights->ticketsup->write) {
 			throw new RestException(401);
 		}
         // Check mandatory fields
@@ -334,7 +334,7 @@ class Ticketsups extends DolibarrApi
     public function postNewMessage($request_data = null)
     {
         $ticketstatic = new Ticketsup($this->db);
-        if (! DolibarrApiAccess::$user->rights->ticketsup->create) {
+        if (! DolibarrApiAccess::$user->rights->ticketsup->write) {
       throw new RestException(401);
     }
         // Check mandatory fields
@@ -365,7 +365,7 @@ class Ticketsups extends DolibarrApi
      */
     public function put($id, $request_data = null)
     {
-        if (! DolibarrApiAccess::$user->rights->ticketsup->create) {
+        if (! DolibarrApiAccess::$user->rights->ticketsup->write) {
 			throw new RestException(401);
 		}
 
@@ -398,7 +398,7 @@ class Ticketsups extends DolibarrApi
      */
     public function delete($id)
     {
-        if (! DolibarrApiAccess::$user->rights->ticketsup->supprimer) {
+        if (! DolibarrApiAccess::$user->rights->ticketsup->delete) {
 			throw new RestException(401);
 		}
         $result = $this->ticketsup->fetch($id);

@@ -1,6 +1,5 @@
 <?php
-/* Module descriptor for ticket system
- * Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +13,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Module descriptor for ticket system
  */
 
 /**
  *     \defgroup    ticketsup    Ticketsup module
- *     \brief        Ticketsup module descriptor.
+ *     \brief       Ticketsup module descriptor.
  *     \file        core/modules/modTicketsup.class.php
- *     \ingroup    ticketsup
- *     \brief        Description and activation file for module Ticketsup
+ *     \ingroup     ticketsup
+ *     \brief       Description and activation file for module Ticketsup
  */
 require_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
+
 
 /**
  * Description and activation class for module Ticketsup
@@ -45,12 +47,9 @@ class modTicketsup extends DolibarrModules
         // Id for module (must be unique).
         // Use a free id here
         // (See in Home -> System information -> Dolibarr for list of used modules id).
-        $this->numero = 110120;
+        $this->numero = 56000;
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'ticketsup';
-
-        $this->editor_name = "Dolibarr";
-	$this->editor_web = "https://dolibrr.org";
 
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
@@ -70,9 +69,6 @@ class modTicketsup extends DolibarrModules
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-        // Where to store the module in setup page
-        // (0=common,1=interface,2=others,3=very specific)
-        $this->special = 2;
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png
         // use this->picto='pictovalue'
@@ -119,7 +115,7 @@ class modTicketsup extends DolibarrModules
         $this->requiredby = array();
         // Minimum version of PHP required by module
         $this->phpmin = array(5, 3);
-        $this->langfiles = array("ticketsup"); 
+        $this->langfiles = array("ticketsup");
         // Constants
         // List of particular constants to add when module is enabled
         // (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -168,43 +164,36 @@ class modTicketsup extends DolibarrModules
         $r = 0;
 
         $r++;
-        $this->rights[$r][0] = 110120; // id de la permission
-        $this->rights[$r][1] = "Créer un ticket"; // libelle de la permission
-        $this->rights[$r][2] = 'c'; // type de la permission (deprecie a ce jour)
-        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-        $this->rights[$r][4] = 'create';
-
-        $r++;
-        $this->rights[$r][0] = 110121; // id de la permission
-        $this->rights[$r][1] = "Lire les tickets"; // libelle de la permission
+        $this->rights[$r][0] = 56001; // id de la permission
+        $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';
 
         $r++;
-        $this->rights[$r][0] = 110122; // id de la permission
-        $this->rights[$r][1] = "Modifier les tickets"; // libelle de la permission
+        $this->rights[$r][0] = 56002; // id de la permission
+        $this->rights[$r][1] = "Create les tickets"; // libelle de la permission
         $this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'write';
 
         $r++;
-        $this->rights[$r][0] = 110123; // id de la permission
-        $this->rights[$r][1] = "Supprimer les tickets"; // libelle de la permission
+        $this->rights[$r][0] = 56003; // id de la permission
+        $this->rights[$r][1] = "Delete les tickets"; // libelle de la permission
         $this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'delete';
 
         $r++;
-        $this->rights[$r][0] = 110124; // id de la permission
-        $this->rights[$r][1] = "Gérer les tickets"; // libelle de la permission
+        $this->rights[$r][0] = 56004; // id de la permission
+        $this->rights[$r][1] = "Manage tickets"; // libelle de la permission
         //$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'manage';
 
         $r++;
-        $this->rights[$r][0] = 110125; // id de la permission
-        $this->rights[$r][1] = 'Voir tous les tickets (non effectif pour les utilisateurs externes, toujours limités au tiers dont ils dépendent)'; // libelle de la permission
+        $this->rights[$r][0] = 56005; // id de la permission
+        $this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'view';
@@ -250,7 +239,7 @@ class modTicketsup extends DolibarrModules
             'langs' => 'ticketsup@ticketsup',
             'position' => 102,
             'enabled' => 1,
-            'perms' => '$user->rights->ticketsup->create',
+            'perms' => '$user->rights->ticketsup->write',
             'target' => '',
             'user' => 2);
         $r++;

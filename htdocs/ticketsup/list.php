@@ -159,7 +159,7 @@ if (empty($reshook))
 {
     // Selection of new fields
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-    
+
     // Purge search criteria
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
@@ -175,7 +175,7 @@ if (empty($reshook))
     {
         $massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
-    
+
     // Mass actions
     $objectclass='Ticketsup';
     $objectlabel='Ticketsup';
@@ -285,14 +285,14 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 else
 {
     $sql.= $db->plimit($limit+1, $offset);
-    
+
     $resql=$db->query($sql);
     if (! $resql)
     {
         dol_print_error($db);
         exit;
     }
-    
+
     $num = $db->num_rows($resql);
 }
 
@@ -513,7 +513,7 @@ foreach($object->fields as $key => $val)
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
             $object->printSelectStatus(dol_escape_htmltag($search[$key]));
             print '</td>';
-            
+
         } elseif ($key == 'type_code') {
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
             $formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1);
@@ -527,7 +527,7 @@ foreach($object->fields as $key => $val)
             $formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1);
             print '</td>';
         } else {
-            
+
             print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
         }
     }
@@ -586,14 +586,14 @@ while ($i < min($num, $limit))
 {
     $obj = $db->fetch_object($resql);
     if (empty($obj)) break;		// Should not happen
-    
+
     // Store properties in $object
     $object->id = $obj->rowid;
     foreach($object->fields as $key => $val)
     {
         if (isset($obj->$key)) $object->$key = $obj->$key;
     }
-    
+
     // Show here line of result
     print '<tr class="oddeven">';
     foreach($object->fields as $key => $val)
@@ -633,9 +633,9 @@ while ($i < min($num, $limit))
     }
     print '</td>';
     if (! $i) $totalarray['nbfield']++;
-    
+
     print '</tr>';
-    
+
     $i++;
 }
 
@@ -691,18 +691,18 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 {
     $hidegeneratedfilelistifempty=1;
     if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
-    
+
     require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
     $formfile = new FormFile($db);
-    
+
     // Show list of available documents
     $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
     $urlsource.=str_replace('&amp;','&',$param);
-    
+
     $filedir=$diroutputmassaction;
     $genallowed=$user->rights->ticketsup->read;
-    $delallowed=$user->rights->ticketsup->create;
-    
+    $delallowed=$user->rights->ticketsup->write;
+
     print $formfile->showdocuments('massfilesarea_ticketsup','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 

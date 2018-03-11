@@ -134,7 +134,7 @@ class ActionsTicketsup
             ////}
         }
 
-        if (GETPOST('add_ticket') && $user->rights->ticketsup->create) {
+        if (GETPOST('add_ticket') && $user->rights->ticketsup->write) {
             $error = 0;
 
             if (!GETPOST("subject")) {
@@ -602,7 +602,7 @@ class ActionsTicketsup
                 }
             }
         }
-        
+
         return 0;
     }
 
@@ -707,7 +707,7 @@ class ActionsTicketsup
                         if ($conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKETS_NOTIFICATION_EMAIL_TO, $sendto)) {
                             if(!empty($conf->global->TICKETS_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
                         }
-						
+
                         // altairis: dont try to send email if no recipient
                         if (!empty($sendto)) {
                             $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
@@ -779,13 +779,13 @@ class ActionsTicketsup
                             if (!empty($this->dao->origin_email)) {
                                 $sendto[] = $this->dao->origin_email;
                             }
-                            
+
                             if ($this->dao->fk_soc > 0 && ! in_array($this->dao->origin_email, $sendto)) {
 	                            $this->dao->socid = $this->dao->fk_soc;
 	                            $this->dao->fetch_thirdparty();
                                 if(!empty($this->dao->thirdparty->email)) $sendto[] = $this->dao->thirdparty->email;
                             }
-                             
+
                             // altairis: Add global email address reciepient
                             if ($conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKETS_NOTIFICATION_EMAIL_TO, $sendto)) {
                                 if(!empty($conf->global->TICKETS_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
@@ -963,7 +963,7 @@ class ActionsTicketsup
 
     /**
      * Fetch object
-     * 
+     *
      * @param	int		$id				Id
      * @param	int		$track_id		Track id
      * @param	string	$ref			Ref
@@ -977,7 +977,7 @@ class ActionsTicketsup
 
     /**
      * print statut
-     * 
+     *
      * @param		int		$mode		Mode
      * @return void
      */
@@ -1088,7 +1088,7 @@ class ActionsTicketsup
             print '<div class="info">' . $langs->trans('NoLogForThisTicket') . '</div>';
         }
     }
-    
+
     /**
      * View list of logs with timeline view
      *
@@ -1098,10 +1098,10 @@ class ActionsTicketsup
     public function viewTimelineTicketLogs($show_user = true)
     {
     	global $conf, $langs, $bc;
-    
+
     	// Load logs in cache
     	$ret = $this->dao->loadCacheLogsTicket();
-    
+
     	if (is_array($this->dao->cache_logs_ticket) && count($this->dao->cache_logs_ticket) > 0) {
     		print '<section id="cd-timeline">';
 
@@ -1110,13 +1110,13 @@ class ActionsTicketsup
     			print '<div class="cd-timeline-img">';
     			//print '<img src="img/history.png" alt="">';
     			print '</div> <!-- cd-timeline-img -->';
-    			
+
     			print '<div class="cd-timeline-content">';
     			print dol_nl2br($arraylogs['message']);
-    			
+
     			print '<span class="cd-date">';
     			print dol_print_date($arraylogs['datec'], 'dayhour');
-    			
+
     			if ($show_user) {
     				if ($arraylogs['fk_user_create'] > 0) {
     					$userstat = new User($this->db);
@@ -1148,13 +1148,13 @@ class ActionsTicketsup
     	global $langs;
     	if (!empty($user->rights->ticketsup->manage) && $action == 'edit_message_init') {
     		// MESSAGE
-    	
+
     		print '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
     		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
     		print '<input type="hidden" name="track_id" value="' . $this->dao->track_id . '">';
     		print '<input type="hidden" name="action" value="set_message">';
     	}
- 
+
     	// Initial message
     	print '<table class="border" width="100%">';
     	print '<tr class="liste_titre"><td class="nowrap" colspan="2">';
@@ -1163,9 +1163,9 @@ class ActionsTicketsup
     		print '<a  href="' . $_SERVER['PHP_SELF'] . '?action=edit_message_init&amp;track_id=' . $this->dao->track_id . '">' . img_edit($langs->trans('Modify')) . ' ' . $langs->trans('Modify') . '</a>';
     	}
     	print '</td></tr>';
-    	
+
     	print '<tr>';
-    	
+
     	print '<td>';
     	if (!empty($user->rights->ticketsup->manage) && $action == 'edit_message_init') {
     		// MESSAGE
@@ -1181,7 +1181,7 @@ class ActionsTicketsup
     		} else {
     			print dol_nl2br($this->dao->message);
     		}
-    		
+
     		//print '<div>' . $this->dao->message . '</div>';
     	}
     	print '</td>';
@@ -1209,7 +1209,7 @@ class ActionsTicketsup
         $action = GETPOST('action');
 
         $this->viewTicketOriginalMessage($user, $action);
-        
+
         if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
             print_titre($langs->trans('TicketMailExchanges'));
 
@@ -1264,7 +1264,7 @@ class ActionsTicketsup
             print '<div class="info">' . $langs->trans('NoMsgForThisTicket') . '</div>';
         }
     }
-    
+
     /**
      * View list of message for ticket with timeline display
      *
@@ -1275,11 +1275,11 @@ class ActionsTicketsup
     public function viewTicketTimelineMessages($show_private, $show_user = true)
     {
     	global $conf, $langs, $user, $bc;
-    
+
     	// Load logs in cache
     	$ret = $this->dao->loadCacheMsgsTicket();
     	$action = GETPOST('action');
-    
+
     	if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
     		print '<section id="cd-timeline">';
 
@@ -1291,13 +1291,13 @@ class ActionsTicketsup
     				print '<div class="cd-timeline-img">';
     				print '<img src="img/messages.png" alt="">';
     				print '</div> <!-- cd-timeline-img -->';
-    						
+
     				print '<div class="cd-timeline-content">';
     				print $arraymsgs['message'];
-    						
+
     				print '<span class="cd-date">';
     				print dol_print_date($arraymsgs['datec'], 'dayhour');
-    						
+
                     if ($show_user) {
                         if ($arraymsgs['fk_user_action'] > 0) {
                             $userstat = new User($this->db);
@@ -1324,7 +1324,7 @@ class ActionsTicketsup
 
     /**
      * load_previous_next_ref
-     * 
+     *
      * @param string		$filter			Filter
      * @param int			$fieldid		Id
      * @return int			0
@@ -1420,7 +1420,7 @@ class ActionsTicketsup
     /**
      * Copy files into ticket directory
      * Used for files linked into messages
-     * 
+     *
      * @return	void
      */
     public function copyFilesForTicket()
@@ -1467,7 +1467,7 @@ class ActionsTicketsup
     /**
      * Print html navbar with link to set ticket status
      * $selected : 0=>'NotRead', 1=>'Read', 3=>'Answered', 4=>'Assigned', 5 => 'InProgress', 6=> 'Waiting', 8=>'Closed', 9=>'Deleted'
-     * 
+     *
      * @return	void
      */
     public function viewStatusActions()
@@ -1506,17 +1506,17 @@ class ActionsTicketsup
         print '</div></div><br />';
     }
 
-    
+
   	/**
   	 * deleteObjectLinked
-  	 * 
+  	 *
   	 * @return number
-  	 */  
+  	 */
     public function deleteObjectLinked()
     {
     	return $this->dao->deleteObjectLinked();
     }
-    
+
     /**
      * Hook to add email element template
      *
@@ -1529,13 +1529,13 @@ class ActionsTicketsup
     public function emailElementlist($parameters, &$object, &$action, $hookmanager)
     {
     	global $langs;
-    	
+
     	$error = 0;
-    	
+
     	if (in_array('admin', explode(':', $parameters['context']))) {
             $this->results = array('ticketsup_send' => $langs->trans('MailToSendTicketsupMessage'));
     	}
-    	
+
     	if (! $error) {
             return 0; // or return 1 to replace standard code
     	} else {

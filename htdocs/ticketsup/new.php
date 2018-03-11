@@ -44,7 +44,7 @@ $notnotifytiersatcreate = !empty($notNotifyTiers);
 $action = GETPOST('action', 'alpha', 3);
 
 // Protection if external user
-if (!$user->rights->ticketsup->read || !$user->rights->ticketsup->create) {
+if (!$user->rights->ticketsup->read || !$user->rights->ticketsup->write) {
     accessforbidden();
 }
 
