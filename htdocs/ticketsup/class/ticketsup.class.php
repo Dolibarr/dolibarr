@@ -1328,7 +1328,7 @@ class Ticketsup extends CommonObject
 
         return $result;
     }
-
+    
     /**
      * Mark a message as read
      * 
@@ -1342,7 +1342,7 @@ class Ticketsup extends CommonObject
 
         if ($this->statut != 9) { // no closed
             $this->db->begin();
-
+	
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup";
             $sql .= " SET fk_statut = 1, date_read='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
@@ -1925,7 +1925,7 @@ class Ticketsup extends CommonObject
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup";
             $sql .= " SET fk_soc = " . ($id > 0 ? $id : "null");
             $sql .= " WHERE rowid = " . $this->id;
-            dol_syslog(get_class($this) . '::set_customer sql=' . $sql);
+            dol_syslog(get_class($this) . '::setCustomer sql=' . $sql);
             $resql = $this->db->query($sql);
             if ($resql) {
                 return 1;
@@ -2082,6 +2082,7 @@ class Ticketsup extends CommonObject
     /**
      * Return id of all contacts for ticket
      *
+     * @return	array		Array of contacts for tickets
      */
     public function getTicketAllContacts()
     {
@@ -2238,10 +2239,10 @@ class Ticketsup extends CommonObject
      *    Get array of all contacts for a ticket
      *    Override method of file commonobject.class.php to add phone number
      *
-     *    @param  int    $statut Status of lines to get (-1=all)
-     *    @param  string $source Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
-     *    @param  int    $list   0:Return array contains all properties, 1:Return array contains just id
-     *    @return array                    Array of contacts
+     *    @param  int    $statut 	Status of lines to get (-1=all)
+     *    @param  string $source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+     *    @param  int    $list   	0:Return array contains all properties, 1:Return array contains just id
+     *    @return array          	Array of contacts
      */
     public function listeContact($statut = -1, $source = 'external', $list = 0)
     {
@@ -2394,7 +2395,7 @@ class Ticketsup extends CommonObject
 	 *  @param  string $morehtmlright More html code to show before navigation arrows
 	 *  @return void
 	 */
-    function ticketsup_banner_tab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '')
+    public function ticketsupBannerTab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '')
     {
         global $conf, $form, $user, $langs;
 
