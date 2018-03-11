@@ -144,6 +144,7 @@ if ($action == 'unset')
  */
 
 $form = new Form($db);
+$formother=new FormOther($db);
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 
