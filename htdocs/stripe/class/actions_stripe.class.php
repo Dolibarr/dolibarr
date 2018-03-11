@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+// TODO File not used. To remove.
+
 /**
  *	\file       htdocs/stripe/class/actions_stripe.class.php
  *	\ingroup    stripe
@@ -62,7 +64,7 @@ class ActionsStripeconnect
 	 * @param	Object	$object			Object
 	 * @param	string	$action			Action
 	 */
-	function formObjectOptions($parameters=false, &$object, &$action='')
+	function formObjectOptions($parameters, &$object, &$action)
 	{
 		global $db,$conf,$user,$langs,$form;
 
@@ -171,7 +173,7 @@ class ActionsStripeconnect
 	 * @param string	$action		action
 	 * @return int					0
 	 */
-	function addMoreActionsButtons($parameters=false, &$object, &$action='')
+	function addMoreActionsButtons($parameters, &$object, &$action)
 	{
 		global $db,$conf,$user,$langs,$form;
 		if (is_object($object) && $object->element == 'facture'){
