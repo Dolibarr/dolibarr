@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI	    <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,11 +292,15 @@ if (empty($reshook))
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-        if ($ret < 0) $error++;
+        if ($ret < 0) { $error++; }
         if (! $error)
         {
             $result = $object->insertExtraFields();
-            if ($result < 0) $error++;
+            if ($result < 0) 
+	    {
+		    $error++;
+		    $errors = $object->errors;
+	    }
         }
         if ($error) $action = 'edit_extras';
     }
