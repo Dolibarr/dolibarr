@@ -54,8 +54,8 @@ class Ticketsup extends CommonObject
      * @var string String with name of icon for ticketsupcore. Must be the part after the 'object_' into object_ticketsupcore.png
      */
     public $picto = 'ticketsup@ticketsup';
-    
-    
+
+
     /**
      * @var string Hash to identify ticket
      */
@@ -192,9 +192,9 @@ class Ticketsup extends CommonObject
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>501, 'notnull'=>1)
-      
+
     );
-    
+
     /**
      *  Constructor
      *
@@ -533,14 +533,15 @@ class Ticketsup extends CommonObject
     /**
      * Load all objects in memory from database
      *
-     * @param	User	$user		Object user
-     * @param  	string 	$sortorder 	Sort order
-     * @param  	string 	$sortfield 	Sort field
-     * @param  	int    	$limit     	page number
-     * @param  	int    	$offset	 	Offset
-     * @param  	int    	$arch      	archive or not (not used)
-     * @param  	array  	$filter	 	Filter
-     * @return 	int 				<0 if KO, >0 if OK
+     * @param  User   $user      User for action
+     * @param  string $sortorder Sort order
+     * @param  string $sortfield Sort field
+     * @param  int    $limit     page number
+     * @param  int    $offset    Offset for query
+     * @param  int    $arch      archive or not (not used)
+     * @param  array  $filter    Filter for query
+     *            output
+     * @return int <0 if KO, >0 if OK
      */
     public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
     {
@@ -1002,7 +1003,7 @@ class Ticketsup extends CommonObject
         $this->tms = '';
     }
 
-    
+
     public function printSelectStatus($selected = "")
     {
         print Form::selectarray('search_fk_statut', $this->statuts_short, $selected, $show_empty = 1, $key_in_label = 0, $value_as_key = 0, $option = '', $translate = 1, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '');
@@ -1052,7 +1053,7 @@ class Ticketsup extends CommonObject
      *
      *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    function load_cache_categories_tickets()
+    public function loadCacheCategoriesTickets()
     {
         global $langs;
 
@@ -1092,7 +1093,7 @@ class Ticketsup extends CommonObject
      *
      *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    public function load_cache_severities_tickets()
+    public function loadCacheSeveritiesTickets()
     {
         global $langs;
 
@@ -1105,7 +1106,7 @@ class Ticketsup extends CommonObject
         $sql .= " FROM " . MAIN_DB_PREFIX . "c_ticketsup_severity";
         $sql .= " WHERE active > 0";
         $sql .= " ORDER BY pos";
-        dol_syslog(get_class($this) . "::load_cache_severities_tickets sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this) . "::loadCacheSeveritiesTickets sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
@@ -1128,25 +1129,27 @@ class Ticketsup extends CommonObject
         }
     }
 
+
     /**
-     *    Return status label of object
-     *    
-     *    @param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     *    @return     string      Label
+     * Return status label of object
+     *
+     * @param      int		$mode     0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     * @return     string    			  Label
      */
     public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->fk_statut, $mode);
+        return $this->libStatut($this->fk_statut, $mode);
     }
 
+    
     /**
      *    Return status label of object
-     *    
+     *
      *    @param      string 	$statut      id statut
      *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      *    @return     string     			 Label
      */
-    public function LibStatut($statut, $mode = 0)
+    function LibStatut($statut, $mode = 0)
     {
         global $langs;
 
@@ -1291,11 +1294,11 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *     Renvoie nom clicable (avec eventuellement le picto)
-     *     
-     *     @param        int		$withpicto        0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *     @param        string		$option           Sur quoi pointe le lien
-     *     @return       string     			      Chaine avec URL
+     * Return clickable link to object
+     *
+     * @param        int		  $withpicto      0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     * @param        string		$option         Sur quoi pointe le lien
+     * @return       string     			        Chaine avec URL
      */
     public function getNomUrl($withpicto = 0, $option = '')
     {
@@ -1326,13 +1329,13 @@ class Ticketsup extends CommonObject
 
         return $result;
     }
-    
+
     /**
      *    Mark a message as read
-     *    
-     *    @param    User		$user			Object user
-     *    @param	int			$notrigger		No trigger
-     *    @return   int							<0 if KO, >0 if OK
+     *
+     *    @param    User		$user			    Object user
+     *    @param	  int			$notrigger		No trigger
+     *    @return   int							      <0 if KO, >0 if OK
      */
     public function markAsRead($user, $notrigger = 0)
     {
@@ -1340,7 +1343,7 @@ class Ticketsup extends CommonObject
 
         if ($this->statut != 9) { // no closed
             $this->db->begin();
-	
+
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup";
             $sql .= " SET fk_statut = 1, date_read='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
@@ -1378,7 +1381,7 @@ class Ticketsup extends CommonObject
 
     /**
      *    Mark a message as read
-     *    
+     *
      *    @param    User	$user				Object user
      *    @param    int 	$id_assign_user		ID of user assigned
      *    @param    int 	$notrigger        	Disable trigger
@@ -1431,10 +1434,10 @@ class Ticketsup extends CommonObject
      *         1- create entry into database for message storage
      *         2- if trigger, send an email to ticket contacts
      *
-     *   @param  User   $user    	User that create
-     *   @param  string $message 	Log message
-     *   @param  int    $noemail 	0=send email after, 1=disable emails
-     *   @return int                <0 if KO, >0 if OK
+     *   @param  User   $user    User that create
+     *   @param  string $message Log message
+     *  @param  int    $noemail 0=send email after, 1=disable emails
+     *   @return int                 <0 if KO, >0 if OK
      */
     public function createTicketLog(User $user, $message, $noemail = 0)
     {
@@ -1486,13 +1489,13 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *     Send notification of changes by email
+     *  Send notification of changes by email
      *
-     * @param  User   $user    		User that create
-     * @param  string $message 		Log message
-     * @return int                 	<0 if KO, >0 if OK (number of emails sent)
+     * 	@param  User   $user    		User that create
+     * 	@param  string $log_message 		Log message
+     * 	@return int                 	<0 if KO, >0 if OK (number of emails sent)
      */
-    private function sendLogByEmail($user, $log_message)
+    private function sendLogByEmail($user, $message)
     {
         global $conf, $langs;
 
@@ -1501,8 +1504,8 @@ class Ticketsup extends CommonObject
         $langs->load('ticketsup@ticketsup');
 
         // Retrieve email of all contacts (internal and external)
-        $contacts = $this->liste_contact(-1, 'internal');
-        $contacts = array_merge($contacts, $this->liste_contact(-1, 'external'));
+        $contacts = $this->listeContact(-1, 'internal');
+        $contacts = array_merge($contacts, $this->listeContact(-1, 'external'));
 
         /* If origin_email and no socid, we add email to the list * */
         if (!empty($this->origin_email) && empty($this->fk_soc)) {
@@ -1733,7 +1736,7 @@ class Ticketsup extends CommonObject
 
     /**
      *    Close a ticket
-     *    
+     *
      *    @return     int		<0 if KO, >0 if OK
      */
     public function close()
@@ -2034,7 +2037,7 @@ class Ticketsup extends CommonObject
      */
     public function getInfosTicketInternalContact()
     {
-        return $this->liste_contact(-1, 'internal');
+        return $this->listeContact(-1, 'internal');
     }
 
     /**
@@ -2054,7 +2057,7 @@ class Ticketsup extends CommonObject
      */
     public function getInfosTicketExternalContact()
     {
-        return $this->liste_contact(-1, 'external');
+        return $this->listeContact(-1, 'external');
     }
 
     /**
@@ -2099,7 +2102,7 @@ class Ticketsup extends CommonObject
     /**
      * Return id of all contacts for ticket
      *
-     * @param int $exclude_self exclude_self    Exclude current user form list
+     * @return	array		Array of contacts
      */
     public function getTicketAllCustomerContacts()
     {
@@ -2112,11 +2115,11 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *  Check if contact are linked to the ticket. If yes, send mail and save trace into llx_notify.
+     * Send message
      *
-     *     @param  string $subject	  Subject
-     *     @param  string $texte      Message to send
-     *     @return int                <0 if KO, or number of changes if OK
+     *  @param  string $subject	  Subject
+     *  @param  string $texte      Message to send
+     *  @return int                <0 if KO, or number of changes if OK
      */
     public function messageSend($subject, $texte)
     {
@@ -2138,7 +2141,8 @@ class Ticketsup extends CommonObject
                 $sendto = $obj->firstname . " " . $obj->lastname . " <" . $obj->email . ">";
                 $actiondefid = $obj->adid;
 
-                if (dol_strlen($sendto)) {
+                if (dol_strlen($sendto))
+                {
                     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
                     $application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
 
@@ -2239,12 +2243,12 @@ class Ticketsup extends CommonObject
      *    Get array of all contacts for a ticket
      *    Override method of file commonobject.class.php to add phone number
      *
-     *    @param  int    $statut 	Status of lines to get (-1=all)
-     *    @param  string $source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
-     *    @param  int    $list   	0:Return array contains all properties, 1:Return array contains just id
-     *    @return array          	Array of contacts
+     *    @param	int    	$statut 	Status of lines to get (-1=all)
+     *    @param	string 	$source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
+     *    @param	int    	$list   	0:Return array contains all properties, 1:Return array contains just id
+     *    @return 	array          		Array of contacts
      */
-    public function liste_contact($statut = -1, $source = 'external', $list = 0, $code = '')
+    function liste_contact($statut = -1, $source = 'external', $list = 0)
     {
         global $langs;
 
@@ -2296,8 +2300,7 @@ class Ticketsup extends CommonObject
         }
 
         $sql .= " ORDER BY t.lastname ASC";
-        //echo $sql; exit;
-        dol_syslog(get_class($this) . "::liste_contact sql=" . $sql);
+
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
@@ -2454,12 +2457,12 @@ class Ticketsup extends CommonObject
     }
 
     /**
-	 *  Affiche la premiere photo du ticket
+	 *  Return if at least one photo is available
 	 *
-	 *  @param  string 	$sdir 		Repertoire a scanner
-	 *  @return boolean             true si photo dispo, false sinon
+	 *  @param      string		$sdir       Directory to scan
+	 *  @return     boolean     			True if at least one photo is available, False if not
 	 */
-    public function is_photo_available($sdir)
+    function is_photo_available($sdir)
     {
         include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -2501,7 +2504,7 @@ class Ticketsup extends CommonObject
      *  @param 	int    $nolink       Do not add a href link to view enlarged imaged into a new tab
      *  @return string                    Html code to show photo. Number of photos shown is saved in this->nbphoto
      */
-    public function show_photos($sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0)
+    function show_photos($sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0)
     {
         global $conf, $user, $langs;
 

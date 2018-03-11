@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013-2016    Jean-François FERRY    <hello@librethic.io>
+/* 
+ * Copyright (C) 2013-2018    Jean-François FERRY    <hello@librethic.io>
  *                  2016        Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,13 @@
 /**
  *    \file       core/lib/ticketsup.lib.php
  *    \ingroup    ticketsup
- *    \brief      This file is an example module library
+ *    \brief        This file is a library for TicketSup module
+ */
+
+/**
+ * Build tabs for admin page
+ * 
+ * @return array
  */
 function ticketsupAdminPrepareHead()
 {
@@ -54,10 +60,10 @@ function ticketsupAdminPrepareHead()
 }
 
 /**
- *  Prepare head for ticket card
+ *  Build tabs for a Ticketsup object
  *
- *  @param	Object	$object		Object Ticket
- *  @return array				Array of tabs
+ *  @param	Ticketsup	  $object		Object Ticket
+ *  @return array				          Array of tabs
  */
 function ticketsup_prepare_head($object)
 {
