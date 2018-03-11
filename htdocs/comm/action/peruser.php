@@ -801,7 +801,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 	}
 	
 	echo "</table>\n";
-	echo "<br />";
+	echo "<br>";
 	
 	$currentdaytoshow =  dol_time_plus_duree($currentdaytoshow, 7, 'd');
 
