@@ -122,7 +122,7 @@ class FormTicketsup
 
         $langs->load("other");
         $langs->load("mails");
-        $langs->load("ticketsup@ticketsup");
+        $langs->load("ticketsup");
 
         $form = new Form($this->db);
         $formcompany = new FormCompany($this->db);

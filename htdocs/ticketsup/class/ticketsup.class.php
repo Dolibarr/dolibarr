@@ -53,7 +53,7 @@ class Ticketsup extends CommonObject
     /**
      * @var string String with name of icon for ticketsupcore. Must be the part after the 'object_' into object_ticketsupcore.png
      */
-    public $picto = 'ticketsup@ticketsup';
+    public $picto = 'ticketsup';
 
 
     /**
@@ -1309,9 +1309,9 @@ class Ticketsup extends CommonObject
         $lien = '<a href="' . dol_buildpath("/ticketsup/card.php?track_id=" . $this->track_id, 1) . '">';
         $lienfin = '</a>';
 
-        $picto = 'ticketsup@ticketsup';
+        $picto = 'ticketsup';
         if (!$this->public) {
-            $picto = 'ticketsup@ticketsup';
+            $picto = 'ticketsup';
         }
 
         $label = $langs->trans("ShowTicket") . ': ' . $this->ref . ' - ' . $this->subject;
@@ -1501,7 +1501,7 @@ class Ticketsup extends CommonObject
 
         $nb_sent = 0;
 
-        $langs->load('ticketsup@ticketsup');
+        $langs->load('ticketsup');
 
         // Retrieve email of all contacts (internal and external)
         $contacts = $this->listeContact(-1, 'internal');

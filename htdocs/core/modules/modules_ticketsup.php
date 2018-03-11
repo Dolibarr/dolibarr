@@ -49,7 +49,7 @@ abstract class ModeleNumRefTicketsup
     public function info()
     {
         global $langs;
-        $langs->load("ticketsup@ticketsup");
+        $langs->load("ticketsup");
         return $langs->trans("NoDescription");
     }
 
@@ -61,7 +61,7 @@ abstract class ModeleNumRefTicketsup
     public function getExample()
     {
         global $langs;
-        $langs->load("ticketsup@ticketsup");
+        $langs->load("ticketsup");
         return $langs->trans("NoExample");
     }
 

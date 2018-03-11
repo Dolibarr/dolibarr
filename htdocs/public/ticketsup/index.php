@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 // Load traductions files requiredby by page
 $langs->load("companies");
 $langs->load("other");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 $langs->load("errors");
 
 // Get parameters

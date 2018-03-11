@@ -31,7 +31,7 @@ function ticketsupAdminPrepareHead()
 {
     global $langs, $conf;
 
-    $langs->load("ticketsup@ticketsup");
+    $langs->load("ticketsup");
 
     $h = 0;
     $head = array();
