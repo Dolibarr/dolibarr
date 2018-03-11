@@ -134,8 +134,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                    }
 	
 	                    $message .= '</ul>';
-	                    $message .= '<p>' . $langs->trans('Message') . ' : <br />' . $object->message . '</p>';
-	                    $message .= '<p><a href="' . dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a><br /></p>';
+	                    $message .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
+	                    $message .= '<p><a href="' . dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
 	
 	                    $sendto = $userstat->email;
 	                    $from = dolGetFirstLastname($user->firstname, $user->lastname) . '<' . $user->email . '>';
@@ -202,7 +202,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                      $message_admin.='<p>'.$langs->trans('Company'). ' : '.$object->thirdparty->name.'</p>';
 	            }
 	
-	            $message_admin.='<p>'.$langs->trans('Message').' : <br />'.$object->message.'</p>';
+	            $message_admin.='<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 	            $message_admin.='<p><a href="'.dol_buildpath('/ticketsup/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 	
 	            $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKETS_NOTIFICATION_EMAIL_FROM.'>';
@@ -250,7 +250,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		                }
 		            }
 		            $message_customer.='</ul>';
-		            $message_customer.='<p>'.$langs->trans('Message').' : <br />'.$object->message.'</p>';
+		            $message_customer.='<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 		            $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE?$conf->global->TICKETS_URL_PUBLIC_INTERFACE.'/':dol_buildpath('/ticketsup/public/view.php', 2)).'?track_id='.$object->track_id;
 		            $message_customer.='<p>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 		            $message_customer.='<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';

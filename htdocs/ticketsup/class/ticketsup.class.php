@@ -533,14 +533,15 @@ class Ticketsup extends CommonObject
     /**
      * Load all objects in memory from database
      *
-     * @param	User	$user		Object user
-     * @param  	string 	$sortorder 	Sort order
-     * @param  	string 	$sortfield 	Sort field
-     * @param  	int    	$limit     	page number
-     * @param  	int    	$offset	 	Offset
-     * @param  	int    	$arch      	archive or not (not used)
-     * @param  	array  	$filter	 	Filter
-     * @return 	int 				<0 if KO, >0 if OK
+     * @param  User   $user      User for action
+     * @param  string $sortorder Sort order
+     * @param  string $sortfield Sort field
+     * @param  int    $limit     page number
+     * @param  int    $offset    Offset for query
+     * @param  int    $arch      archive or not (not used)
+     * @param  array  $filter    Filter for query
+     *            output
+     * @return int <0 if KO, >0 if OK
      */
     public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
     {
@@ -1052,7 +1053,7 @@ class Ticketsup extends CommonObject
      *
      *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    function load_cache_categories_tickets()
+    public function loadCacheCategoriesTickets()
     {
         global $langs;
 
@@ -1128,17 +1129,19 @@ class Ticketsup extends CommonObject
         }
     }
 
+
     /**
-     *    Return status label of object
+     * Return status label of object
      *
-     *    @param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     *    @return     string    			Label
+     * @param      int		$mode     0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     * @return     string    			  Label
      */
     public function getLibStatut($mode = 0)
     {
-        return $this->LibStatut($this->fk_statut, $mode);
+        return $this->libStatut($this->fk_statut, $mode);
     }
 
+    
     /**
      *    Return status label of object
      *
@@ -1291,11 +1294,11 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *     Renvoie nom clicable (avec eventuellement le picto)
+     * Return clickable link to object
      *
-     *     @param        int		$withpicto        0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *     @param        string		$option           Sur quoi pointe le lien
-     *     @return       string     			      Chaine avec URL
+     * @param        int		  $withpicto      0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     * @param        string		$option         Sur quoi pointe le lien
+     * @return       string     			        Chaine avec URL
      */
     public function getNomUrl($withpicto = 0, $option = '')
     {
@@ -1330,9 +1333,9 @@ class Ticketsup extends CommonObject
     /**
      *    Mark a message as read
      *
-     *    @param    User		$user			Object user
-     *    @param	int			$notrigger		No trigger
-     *    @return   int							<0 if KO, >0 if OK
+     *    @param    User		$user			    Object user
+     *    @param	  int			$notrigger		No trigger
+     *    @return   int							      <0 if KO, >0 if OK
      */
     public function markAsRead($user, $notrigger = 0)
     {
@@ -1431,10 +1434,10 @@ class Ticketsup extends CommonObject
      *         1- create entry into database for message storage
      *         2- if trigger, send an email to ticket contacts
      *
-     *   @param  User   $user    	User that create
-     *   @param  string $message 	Log message
-     *   @param  int    $noemail 	0=send email after, 1=disable emails
-     *   @return int                <0 if KO, >0 if OK
+     *   @param  User   $user    User that create
+     *   @param  string $message Log message
+     *  @param  int    $noemail 0=send email after, 1=disable emails
+     *   @return int                 <0 if KO, >0 if OK
      */
     public function createTicketLog(User $user, $message, $noemail = 0)
     {
@@ -1492,7 +1495,7 @@ class Ticketsup extends CommonObject
      * 	@param  string $log_message 		Log message
      * 	@return int                 	<0 if KO, >0 if OK (number of emails sent)
      */
-    private function sendLogByEmail($user, $log_message)
+    private function sendLogByEmail($user, $message)
     {
         global $conf, $langs;
 
@@ -1501,8 +1504,8 @@ class Ticketsup extends CommonObject
         $langs->load('ticketsup@ticketsup');
 
         // Retrieve email of all contacts (internal and external)
-        $contacts = $this->liste_contact(-1, 'internal');
-        $contacts = array_merge($contacts, $this->liste_contact(-1, 'external'));
+        $contacts = $this->listeContact(-1, 'internal');
+        $contacts = array_merge($contacts, $this->listeContact(-1, 'external'));
 
         /* If origin_email and no socid, we add email to the list * */
         if (!empty($this->origin_email) && empty($this->fk_soc)) {
@@ -2034,7 +2037,7 @@ class Ticketsup extends CommonObject
      */
     public function getInfosTicketInternalContact()
     {
-        return $this->liste_contact(-1, 'internal');
+        return $this->listeContact(-1, 'internal');
     }
 
     /**
@@ -2054,7 +2057,7 @@ class Ticketsup extends CommonObject
      */
     public function getInfosTicketExternalContact()
     {
-        return $this->liste_contact(-1, 'external');
+        return $this->listeContact(-1, 'external');
     }
 
     /**
@@ -2112,7 +2115,7 @@ class Ticketsup extends CommonObject
     }
 
     /**
-     *  Check if contact are linked to the ticket. If yes, send mail and save trace into llx_notify.
+     * Send message
      *
      *  @param  string $subject	  Subject
      *  @param  string $texte      Message to send
@@ -2243,10 +2246,9 @@ class Ticketsup extends CommonObject
      *    @param	int    	$statut 	Status of lines to get (-1=all)
      *    @param	string 	$source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
      *    @param	int    	$list   	0:Return array contains all properties, 1:Return array contains just id
-     *    @param	string	$code		Code
      *    @return 	array          		Array of contacts
      */
-    function liste_contact($statut = -1, $source = 'external', $list = 0, $code = '')
+    function liste_contact($statut = -1, $source = 'external', $list = 0)
     {
         global $langs;
 
@@ -2298,8 +2300,7 @@ class Ticketsup extends CommonObject
         }
 
         $sql .= " ORDER BY t.lastname ASC";
-        //echo $sql; exit;
-        dol_syslog(get_class($this) . "::liste_contact sql=" . $sql);
+
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);

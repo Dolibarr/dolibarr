@@ -275,7 +275,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                     }
                 }
                 $message_admin .= '</ul>';
-                $message_admin .= '<p>' . $langs->trans('Message') . ' : <br />' . $object->message . '</p>';
+                $message_admin .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
                 $message_admin .= '<p><a href="' . dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
@@ -367,7 +367,7 @@ if ($action != "infos_success") {
     $formticket->showForm();
 } else {
     print '<div class="ok">' . $langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>');
-    print '<br />';
+    print '<br>';
     print $langs->trans('PleaseRememberThisId');
 }
 print '</div>';

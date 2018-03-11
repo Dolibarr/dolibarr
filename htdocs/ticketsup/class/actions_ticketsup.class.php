@@ -343,7 +343,7 @@ class ActionsTicketsup
                 if ($ret) {
                     // Si déjà un user assigné on le supprime des contacts
                     if ($useroriginassign > 0) {
-                        $internal_contacts = $this->dao->liste_contact(-1, 'internal');
+                        $internal_contacts = $this->dao->listeContact(-1, 'internal');
 
                         foreach ($internal_contacts as $key => $contact) {
                             if ($contact['code'] == "SUPPORTTEC" && $contact['id'] == $useroriginassign) {
@@ -609,8 +609,8 @@ class ActionsTicketsup
     /**
      * Add new message on a ticket (private area)
      *
-     * @param User 		$user		Object user
-     * @param string	$action		Action
+     * @param User $user        User for action
+     * @param string $action    Action string
      */
     private function newMessage($user, &$action)
     {
@@ -820,8 +820,8 @@ class ActionsTicketsup
     /**
      * Add new message on a ticket (public area)
      *
-     * @param User		$user		Object user
-     * @param string	$action		Action
+     * @param User $user        User for action
+     * @param string $action    Action string
      */
     private function newMessagePublic($user, &$action)
     {
@@ -964,9 +964,9 @@ class ActionsTicketsup
     /**
      * Fetch object
      * 
-     * @param	int		$id				Id
-     * @param	int		$track_id		Track id
-     * @param	string	$ref			Ref
+     * @param int    $id        ID of ticket
+     * @param string $track_id  Track ID of ticket (for public area)
+     * @param string $ref       Reference of ticket
      * @return void
      */
     public function fetch($id = 0, $track_id = 0, $ref = '')
@@ -977,8 +977,7 @@ class ActionsTicketsup
 
     /**
      * print statut
-     * 
-     * @param		int		$mode		Mode
+     * @param int $mode Display mode
      * @return void
      */
     public function getLibStatut($mode = 0)
@@ -989,10 +988,9 @@ class ActionsTicketsup
     }
 
     /**
-     *     Get ticket info
+     * Get ticket info
      *
-     *     @param 		int		$id    Object id
-     *     @return		void
+     * @param  int $id    Object id
      */
     public function getInfo($id)
     {
@@ -1004,10 +1002,9 @@ class ActionsTicketsup
     }
 
     /**
-     *     Get action title
+     * Get action title
      *
-     *     @param 	string	$action     Type of action
-     *     @return 	string				Label
+     * @param string $action    Type of action
      */
     public function getTitle($action = '')
     {
@@ -1029,8 +1026,7 @@ class ActionsTicketsup
     /**
      * View html list of logs
      *
-     * @param 	boolean 	$show_user 	Show user who make action
-     * @return	void
+     * @param boolean $show_user Show user who make action
      */
     public function viewTicketLogs($show_user = true)
     {
@@ -1092,8 +1088,7 @@ class ActionsTicketsup
     /**
      * View list of logs with timeline view
      *
-     * @param 	boolean 	$show_user 	Show user who make action
-     * @return	void
+     * @param boolean $show_user Show user who make action
      */
     public function viewTimelineTicketLogs($show_user = true)
     {
@@ -1139,9 +1134,8 @@ class ActionsTicketsup
     /**
      * Show ticket original message
      *
-     * @param 	User 		$user		Object user
-     * @param 	string 		$action		Action
-     * @return	void
+     * @param User $user	$user wich display
+     * @param string $action    Action mode
      */
     public function viewTicketOriginalMessage($user, $action = '')
     {
@@ -1196,9 +1190,8 @@ class ActionsTicketsup
     /**
      * View html list of message for ticket
      *
-     * @param 	boolean $show_private Show private messages
-     * @param 	boolean $show_user    Show user who make action
-     * @return	void
+     * @param boolean $show_private Show private messages
+     * @param boolean $show_user    Show user who make action
      */
     public function viewTicketMessages($show_private, $show_user = true)
     {
@@ -1268,9 +1261,8 @@ class ActionsTicketsup
     /**
      * View list of message for ticket with timeline display
      *
-     * @param 	boolean $show_private Show private messages
-     * @param 	boolean $show_user    Show user who make action
-     * @return	void
+     * @param boolean $show_private Show private messages
+     * @param boolean $show_user    Show user who make action
      */
     public function viewTicketTimelineMessages($show_private, $show_user = true)
     {
@@ -1419,12 +1411,12 @@ class ActionsTicketsup
 
     /**
      * Copy files into ticket directory
+     *
      * Used for files linked into messages
-     * 
-     * @return	void
      */
     public function copyFilesForTicket()
     {
+
         global $conf;
 
         // Create form object
@@ -1466,9 +1458,8 @@ class ActionsTicketsup
 
     /**
      * Print html navbar with link to set ticket status
-     * $selected : 0=>'NotRead', 1=>'Read', 3=>'Answered', 4=>'Assigned', 5 => 'InProgress', 6=> 'Waiting', 8=>'Closed', 9=>'Deleted'
-     * 
-     * @return	void
+     *
+     * @global type $langs
      */
     public function viewStatusActions()
     {
@@ -1520,10 +1511,10 @@ class ActionsTicketsup
     /**
      * Hook to add email element template
      *
-     * @param array 		$parameters		Parameters
-     * @param Object 		$object			Object
-     * @param string 		$action			Action
-     * @param HookManager 	$hookmanager	Hookmanager
+     * @param array 		$parameters   Parameters
+     * @param Ticketsup		$object       Object for action
+     * @param string 		$action       Action string
+     * @param HookManager 	$hookmanager  Hookmanager object
      * @return int
      */
     public function emailElementlist($parameters, &$object, &$action, $hookmanager)
