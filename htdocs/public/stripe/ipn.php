@@ -48,7 +48,8 @@ if (isset($_GET['connect'])){
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
 	}
-}else {
+}
+else {
 	if (isset($_GET['test']))
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
@@ -90,7 +91,7 @@ $user->getrights();
 if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled)) {
 	$sql = "SELECT entity";
 	$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
-	$sql.= " WHERE service = '$service' and tokenstring = '%".$event->account."%'";
+	$sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
 
 	dol_syslog(get_class($db) . "::fetch", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -116,10 +117,11 @@ $stripe=new Stripe($db);
 if ($event->type == 'payout.created') {
 	$error=0;
 
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT",date('Y-m-d H:i:s',$event->data->object->arrival_date),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0)
 	{
+		// TODO Use CMail and translation
 		$body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." est attendu sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date);
 		$subject = '[NOTIFICATION] Virement programmée';
 		$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>'; // TODO  convert in dolibarr standard
@@ -180,9 +182,10 @@ elseif ($event->type == 'payout.paid') {
 			if (! ($result > 0)) $error++;
 		}
 
+		// TODO Use CMail and translation
 		$body = "Un virement de ".price2num($event->data->object->amount/100)." ".$event->data->object->currency." a ete effectue sur votre compte le ".date('d-m-Y H:i:s',$event->data->object->arrival_date);
 		$subject = '[NOTIFICATION] Virement effectué';
-		$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>'; // TODO  convert in dolibarr standard
+		$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 		mail(''.$conf->global->MAIN_INFO_SOCIETE_MAIL.'', $subject, $body, $headers);
 
 		return 1;

@@ -150,24 +150,17 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td class="titlefield">';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
-if (empty($conf->global->STRIPECONNECT_LIVE) && ! empty($conf->stripeconnect->enabled)) {
-if (!empty($conf->global->STRIPE_LIVE))
-	print '<A href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-print '</A>';
-}
-else {
 if (!empty($conf->global->STRIPE_LIVE))
 {
-	print '<A href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
+	print '</a>';
 }
 else
 {
-	print '<A href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
-}
-print '</A>';
+	print '</a>';
 }
 print '</td></tr>';
 
@@ -191,22 +184,24 @@ if (empty($conf->stripeconnect->enabled))
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
 	print '</td></tr>';
 
-  print '<tr class="oddeven"><td>';
-  print '<span>'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
-  print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
-  print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
-  print '</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print '<span>'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
+	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
+	print '</td></tr>';
 } else {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
 	print '<td><b>'.$langs->trans("StripeConnect_Mode").'</b><br/>';
-  print $langs->trans("STRIPE_APPLICATION_FEE_PLATFORM").' ';
-  print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
-  print '% + ';
-  print price($conf->global->STRIPE_APPLICATION_FEE);
-  print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
-  print '</td></tr>';
+	print $langs->trans("STRIPE_APPLICATION_FEE_PLATFORM").' ';
+	print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
+	print '% + ';
+	print price($conf->global->STRIPE_APPLICATION_FEE);
+	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
+	print '</td></tr>';
 }
 
+if (empty($conf->stripeconnect->enabled))
+{
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_SECRET_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_SECRET_KEY" value="'.$conf->global->STRIPE_LIVE_SECRET_KEY.'">';
@@ -233,7 +228,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("UsageParameter").'</td>';
+print '<td class="titlefield">'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
