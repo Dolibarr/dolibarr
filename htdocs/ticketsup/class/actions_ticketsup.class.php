@@ -609,8 +609,8 @@ class ActionsTicketsup
     /**
      * Add new message on a ticket (private area)
      *
-     * @param User $user
-     * @param string $action
+     * @param User $user        User for action
+     * @param string $action    Action string
      */
     private function newMessage($user, &$action)
     {
@@ -820,8 +820,8 @@ class ActionsTicketsup
     /**
      * Add new message on a ticket (public area)
      *
-     * @param User $user
-     * @param string $action
+     * @param User $user        User for action
+     * @param string $action    Action string
      */
     private function newMessagePublic($user, &$action)
     {
@@ -964,9 +964,9 @@ class ActionsTicketsup
     /**
      * Fetch object
      * 
-     * @param string $id
-     * @param string $track_id
-     * @param string $ref
+     * @param int    $id        ID of ticket
+     * @param string $track_id  Track ID of ticket (for public area)
+     * @param string $ref       Reference of ticket
      * @return void
      */
     public function fetch($id = 0, $track_id = 0, $ref = '')
@@ -1321,7 +1321,7 @@ class ActionsTicketsup
      * @param int			$fieldid		Id
      * @return int			0
      */
-    public function load_previous_next_ref($filter, $fieldid)
+    function load_previous_next_ref($filter, $fieldid)
     {
         $this->getInstanceDao();
         return $this->dao->load_previous_next_ref($filter, $fieldid);

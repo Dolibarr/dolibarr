@@ -1129,21 +1129,25 @@ class Ticketsup extends CommonObject
         }
     }
 
+
     /**
-     *    \brief      Return status label of object
-     *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     *       \return     string      Label
+     * Return status label of object
+     * 
+     * @param number $mode  0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     * @return string
      */
     public function getLibStatut($mode = 0)
     {
         return $this->libStatut($this->fk_statut, $mode);
     }
 
+    
     /**
-     *    \brief      Return status label of object
-     *    \param      statut      id statut
-     *    \param      mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     *       \return     string      Label
+     * Return status label of object
+     * 
+     * @param int $statut   id statut
+     * @param number $mode  0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     * @return string
      */
     public function libStatut($statut, $mode = 0)
     {
@@ -2390,7 +2394,7 @@ class Ticketsup extends CommonObject
 	 *  @param  string $morehtmlright More html code to show before navigation arrows
 	 *  @return void
 	 */
-    public function ticketsup_banner_tab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '')
+    function ticketsup_banner_tab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '')
     {
         global $conf, $form, $user, $langs;
 
@@ -2453,7 +2457,7 @@ class Ticketsup extends CommonObject
 	 *  @param  string 	$sdir 		Repertoire a scanner
 	 *  @return boolean             true si photo dispo, false sinon
 	 */
-    public function is_photo_available($sdir)
+    function is_photo_available($sdir)
     {
         include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -2495,7 +2499,7 @@ class Ticketsup extends CommonObject
      *  @param 	int    $nolink       Do not add a href link to view enlarged imaged into a new tab
      *  @return string                    Html code to show photo. Number of photos shown is saved in this->nbphoto
      */
-    public function show_photos($sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0)
+    function show_photos($sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0)
     {
         global $conf, $user, $langs;
 
