@@ -45,30 +45,12 @@ if (!defined('NOREQUIREHTML')) {
 define("NOLOGIN", 1); // This means this output page does not require to be logged.
 define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res = 0;
-if (!$res && file_exists("../main.inc.php")) {
-    $res = @include "../main.inc.php";
-}
-
-if (!$res && file_exists("../../main.inc.php")) {
-    $res = @include "../../main.inc.php";
-}
-
-if (!$res && file_exists("../../../main.inc.php")) {
-    $res = @include "../../../main.inc.php";
-}
-
-if (!$res) {
-    die("Include of main fails");
-}
-
-dol_include_once('/ticketsup/class/ticketsup.class.php');
-dol_include_once('/ticketsup/class/html.formticketsup.class.php');
-dol_include_once('/ticketsup/lib/ticketsup.lib.php');
-
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/html.formticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Load traductions files requiredby by page
 $langs->load("companies");

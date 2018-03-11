@@ -17,8 +17,8 @@
 
 /**
  *       \file       ticketsup/public/index.php
- *        \ingroup    ticketsup
- *        \brief      Public file to add and manage ticket
+ *       \ingroup    ticketsup
+ *       \brief      Public file to add and manage ticket
  */
 
 if (!defined('NOCSRFCHECK')) {
@@ -34,28 +34,10 @@ if (!defined("NOLOGIN")) {
 }
 // If this page is public (can be called outside logged session)
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res = 0;
-if (!$res && file_exists("../main.inc.php")) {
-    $res = @include '../main.inc.php';
-}
-
-if (!$res && file_exists("../../main.inc.php")) {
-    $res = @include '../../main.inc.php';
-}
-
-if (!$res && file_exists("../../../main.inc.php")) {
-    $res = @include '../../../main.inc.php';
-}
-
-if (!$res) {
-    die("Include of main fails");
-}
-
-// Change this following line to use the correct relative path from htdocs
-dol_include_once('/ticketsup/class/actions_ticketsup.class.php');
-dol_include_once('/ticketsup/class/html.formticketsup.class.php');
-dol_include_once('/ticketsup/lib/ticketsup.lib.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/html.formticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticketsup/lib/ticketsup.lib.php';
 
 // Load traductions files requiredby by page
 $langs->load("companies");
@@ -300,13 +282,13 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticketsup');
         $object->viewTicketMessages(false);
 
-        print '<br />';
+        print '<br>';
 
         // Logs list
         print load_fiche_titre($langs->trans('TicketHistory'), '', 'history@ticketsup');
         $object->viewTicketLogs(false);
     } else {
-        print '<div class="error">Not Allowed<br /><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
+        print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';
     }
 } else {
     print '<p style="text-align: center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
