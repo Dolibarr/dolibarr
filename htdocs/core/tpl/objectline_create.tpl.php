@@ -65,7 +65,7 @@ if ($nolinesbefore) {
 	<?php } ?>
 	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
-	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
+	<?php if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) { $colspan++;?>
 	<td class="linecoluht_currency" align="right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 	<?php } ?>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
@@ -266,7 +266,7 @@ else {
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
 	</td>
 
-	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
+	<?php if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) { $colspan++;?>
 	<td class="nobottom linecoluht_currency" align="right">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
 	</td>
@@ -402,7 +402,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 		}
 	}
 
-	if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+	if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) $colspan+=2;
 
 	if (! empty($usemargins))
 	{
