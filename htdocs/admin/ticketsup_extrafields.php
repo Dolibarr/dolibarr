@@ -1,6 +1,5 @@
 <?php
-/* Ticket incident/support management
- * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
+/* Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +20,8 @@
  *        \ingroup    ticketsup
  *        \brief      Page to setup extra fields of ticket
  */
-$res = '';
-if (file_exists("../../main.inc.php")) {
-    $res = include "../../main.inc.php"; // From htdocs directory
-} elseif (!$res && file_exists("../../../main.inc.php")) {
-    $res = include "../../../main.inc.php"; // From "custom" directory
-} else {
-    die("Include of main fails");
-}
-// Libraries
+
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
