@@ -1,7 +1,6 @@
 <?php
-/* Ticket incident/support management
- * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
- *                  2016  Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2016	Jean-François FERRY	<hello@librethic.io>
+ * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +21,8 @@
  *     \ingroup    ticketsup
  *     \brief        This file is a module setup page
  */
-// Dolibarr environment
-$res = '';
-if (file_exists("../../main.inc.php")) {
-    $res = include "../../main.inc.php"; // From htdocs directory
-} elseif (!$res && file_exists("../../../main.inc.php")) {
-    $res = include "../../../main.inc.php"; // From "custom" directory
-} else {
-    die("Include of main fails");
-}
 
-// Libraries
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticketsup/class/ticketsup.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
