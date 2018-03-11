@@ -205,24 +205,24 @@ if ($status == 'todo') $title=$langs->trans("ToDoActions");
 $param='';
 if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) {
 	if(is_array($actioncode)) {
-		foreach($actioncode as $str_action) $param.="&actioncode[]=".$str_action;
-	} else $param.="&actioncode=".$actioncode;
+		foreach($actioncode as $str_action) $param.="&actioncode[]=".urlencode($str_action);
+	} else $param.="&actioncode=".urlencode($actioncode);
 }
-if ($resourceid > 0) $param.="&resourceid=".$resourceid;
-if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
-if ($filter)  $param.="&filter=".$filter;
-if ($filtert) $param.="&filtert=".$filtert;
-if ($usergroup) $param.="&usergroup=".$usergroup;
-if ($socid)   $param.="&socid=".$socid;
+if ($resourceid > 0) $param.="&resourceid=".urlencode($resourceid);
+if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".urlencode($status);
+if ($filter)  $param.="&filter=".urlencode($filter);
+if ($filtert) $param.="&filtert=".urlencode($filtert);
+if ($usergroup) $param.="&usergroup=".urlencode($usergroup);
+if ($socid)   $param.="&socid=".urlencode($socid);
 if ($showbirthday) $param.="&showbirthday=1";
-if ($pid)     $param.="&projectid=".$pid;
-if ($type)   $param.="&type=".$type;
-if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser') $param.='&action='.$action;
-if ($begin_h != '') $param.='&begin_h='.$begin_h;
-if ($end_h != '') $param.='&end_h='.$end_h;
-if ($begin_d != '') $param.='&begin_d='.$begin_d;
-if ($end_d != '') $param.='&end_d='.$end_d;
-$param.="&maxprint=".$maxprint;
+if ($pid)     $param.="&projectid=".urlencode($pid);
+if ($type)   $param.="&type=".urlencode($type);
+if ($action == 'show_day' || $action == 'show_week' || $action == 'show_month' || $action != 'show_peruser') $param.='&action='.urlencode($action);
+if ($begin_h != '') $param.='&begin_h='.urlencode($begin_h);
+if ($end_h != '') $param.='&end_h='.urlencode($end_h);
+if ($begin_d != '') $param.='&begin_d='.urlencode($begin_d);
+if ($end_d != '') $param.='&end_d='.urlencode($end_d);
+$param.="&maxprint=".urlencode($maxprint);
 
 
 $prev = dol_get_first_day_week($day, $month, $year);
@@ -246,7 +246,7 @@ $next_day   = $next['day'];
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow=dol_mktime(0,0,0,$first_month,$first_day,$first_year);
 
-$nb_weeks_to_show = !empty($conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER) ? (int)$conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER * 7 : 7;
+$nb_weeks_to_show = (! empty($conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER)) ? ((int) $conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER * 7) : 7;
 $lastdaytoshow=dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
 //print $firstday.'-'.$first_month.'-'.$first_year;
 //print dol_print_date($firstdaytoshow,'dayhour');
@@ -284,9 +284,8 @@ $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$la
 //$nav.='</form>';
 
 // Must be after the nav definition
-$param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
+$param.='&year='.urlencode($year).'&month='.urlencode($month).($day?'&day='.urlencode($day):'');
 //print 'x'.$param;
-
 
 
 
