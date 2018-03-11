@@ -146,6 +146,7 @@ CREATE TABLE llx_ticketsup
 	tms timestamp
 )ENGINE=innodb;
 
+ALTER TABLE llx_ticketsup ADD COLUMN notify_tiers_at_create integer;
 ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_rowid_track_id (rowid, track_id);
 ALTER TABLE llx_ticketsup ADD INDEX id_ticketsup_track_id (track_id);
 

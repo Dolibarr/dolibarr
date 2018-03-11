@@ -205,7 +205,7 @@ class Translate
         // Check cache
 		if (! empty($this->_tab_loaded[$newdomain]))	// File already loaded for this domain
 		{
-			//dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
+			dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
 			return 0;
 		}
 
@@ -231,7 +231,7 @@ class Translate
 
 			$filelangexists=is_file($file_lang_osencoded);
 
-			//dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' newdomain='.$domain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
+			dol_syslog(get_class($this).'::Load Try to read for alt='.$alt.' langofdir='.$langofdir.' newdomain='.$domain.' modulename='.$modulename.' file_lang='.$file_lang." => filelangexists=".$filelangexists);
 
 			if ($filelangexists)
 			{

@@ -47,10 +47,14 @@ if (!$user->admin) {
     accessforbidden();
 }
 
+
 /*
  * Actions
  */
+
 include DOL_DOCUMENT_ROOT . '/core/actions_extrafields.inc.php';
+
+
 
 /*
  * View
@@ -63,17 +67,11 @@ $page_name = "TicketsupSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans("TicketsupSetup"), $linkback, 'setup');
+print load_fiche_titre($langs->trans("TicketsupSetup"), $linkback, 'title_setup');
 
 $head = ticketsupAdminPrepareHead();
 
-dol_fiche_head(
-    $head,
-    'attributes',
-    $langs->trans("Module56000Name"),
-    0,
-    "ticketsup"
-);
+dol_fiche_head($head, 'attributes', $langs->trans("Module56000Name"), -1, "ticketsup");
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -29,7 +29,7 @@ if (empty($conf) || ! is_object($conf))
 <?php
 
 $langs = $GLOBALS['langs'];
-$langs->load('ticketsup@ticketsup');
+$langs->load('ticketsup');
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 echo '<br>';
 print_titre($langs->trans('RelatedTickets'));
@@ -47,7 +47,7 @@ foreach ($linkedObjectBlock as $object) {
 <tr class="oddeven">
     <td>
         <a href="<?php echo dol_buildpath("/ticketsup/card.php", 1).'?track_id='.$object->track_id; ?>">
-    <?php echo img_object($langs->trans("ShowTicket"), "ticketsup@ticketsup") . ' ' . (! empty($object->subject) ? ' '.$object->subject : ''); ?>
+    <?php echo img_object($langs->trans("ShowTicket"), "ticketsup") . ' ' . (! empty($object->subject) ? ' '.$object->subject : ''); ?>
         </a>
     </td>
     <td align="center"><?php echo dol_print_date($object->datec, 'day'); ?></td>

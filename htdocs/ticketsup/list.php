@@ -35,7 +35,6 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load traductions files requiredby by page
-// Load traductions files requiredby by page
 $langs->loadLangs(
     array(
         "ticketsup",
@@ -60,7 +59,7 @@ $id			= GETPOST('id','int');
 $msg_id = GETPOST('msg_id', 'int');
 $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
-
+$search_fk_status = GETPOST('search_fk_status', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
 // Load variable for pagination
@@ -186,24 +185,20 @@ if (empty($reshook))
 }
 
 
-/***************************************************
- * PAGE
- *
- * Put here all code to build page
- ****************************************************/
+
+/*
+ * View
+ */
+
 $help_url = 'FR:DocumentationModuleTicket';
 llxHeader('', $langs->trans('TicketList'), $help_url);
 
 $form = new Form($db);
-
 $formTicket = new FormTicketsup($db);
 
 $user_assign = new User($db);
 $user_create = new User($db);
 $socstatic = new Societe($db);
-
-
-$search_fk_status = GETPOST('search_fk_status', 'alpha');
 
 
 // Build and execute select
@@ -447,7 +442,7 @@ print '<input type="hidden" name="mode" value="' . $mode . '" >';
 print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'img/ticketsup-32.png', 1);
 
 if ($mode == 'my_assign') {
-    print '<div class="info">' . $langs->trans('TicketAssignedToMeInfos') . '</div>';
+    print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';
 }
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendTicketsupRef";

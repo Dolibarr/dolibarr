@@ -122,7 +122,7 @@ class FormTicketsup
 
         $langs->load("other");
         $langs->load("mails");
-        $langs->load("ticketsup@ticketsup");
+        $langs->load("ticketsup");
 
         $form = new Form($this->db);
         $formcompany = new FormCompany($this->db);
@@ -148,6 +148,7 @@ class FormTicketsup
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
+        print '<div class="tabBar tabBarWithBottom">';
         print '<table class="border"  width="' . $width . '">';
 
 
@@ -194,7 +195,7 @@ class FormTicketsup
                                 }
                             });
                         });
-            
+
                         function runJsCodeForEvent'.$htmlname.'(obj) {
                             console.log("Run runJsCodeForEvent'.$htmlname.'");
                             var id = $("#'.$htmlname.'").val();
@@ -392,6 +393,7 @@ class FormTicketsup
         }
 
         print '</table>';
+        print '</div>';
 
         print '<center>';
         print '<input class="button" type="submit" name="add_ticket" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';

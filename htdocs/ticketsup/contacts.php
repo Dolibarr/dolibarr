@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 
 // Load traductions files requiredby by page
 $langs->load("companies");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 // Get parameters
 $socid = GETPOST("socid", 'int');
@@ -144,7 +144,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
             $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
         }
         $head = ticketsup_prepare_head($object);
-        dol_fiche_head($head, 'tabTicketContacts', $langs->trans("Ticket"), 0, 'ticketsup@ticketsup');
+        dol_fiche_head($head, 'tabTicketContacts', $langs->trans("Ticket"), 0, 'ticketsup');
         $object->label = $object->ref;
         // Author
         if ($object->fk_user_create > 0) {

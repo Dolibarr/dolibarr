@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticketsup/lib/ticketsup.lib.php';
 // Load traductions files requiredby by page
 $langs->load("companies");
 $langs->load("other");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');

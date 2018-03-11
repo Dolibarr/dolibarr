@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
 // Load traductions files requiredby by page
 $langs->load("companies");
 $langs->load("other");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -55,17 +55,17 @@ $endyear = $year;
 
 $object = new ActionsTicketsup($db);
 
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
 
-/***************************************************
- * PAGE
- *
- * Put here all code to build page
- ****************************************************/
+/*
+ * Actions
+ */
+
+// None
+
+
+/*
+ * View
+ */
 
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
@@ -241,10 +241,10 @@ if (count($dataseries) >1) {
         $px1->SetCssPrefix("cssboxes");
         $px1->mode = 'depth';
         //$px1->SetTitle($langs->trans("TicketStatByStatus"));
-    
+
         $px1->draw($filenamenb, $fileurlnb);
         print $px1->show();
-    
+
         print $stringtoshow;
     }
 }
@@ -295,7 +295,7 @@ if ($result) {
 
     $i = 0;
 
-    $transRecordedType = $langs->trans("LastNewTickets", $max);
+    $transRecordedType = $langs->trans("LatestNewTickets", $max);
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>' . $transRecordedType . '</th>';
     print '<th>' . $langs->trans('Ref') . '</th>';
@@ -347,7 +347,7 @@ if ($result) {
 
         $db->free();
     } else {
-        print '<tr><td colspan="6"><div class="info">' . $langs->trans('NoTicketsFound') . '</div></td></tr>';
+        print '<tr><td colspan="6" class="opacitymedium">' . $langs->trans('NoTicketsFound') . '</td></tr>';
     }
 
     print "</table>";

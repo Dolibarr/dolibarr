@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $langs->load("companies");
 $langs->load("other");
 $langs->load("mails");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 // Get parameters
 $id = GETPOST('id', 'int');

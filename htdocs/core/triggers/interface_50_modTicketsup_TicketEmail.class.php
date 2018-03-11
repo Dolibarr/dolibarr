@@ -50,7 +50,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
         $this->family = "ticketsup";
         $this->description = "Triggers of the module ticketsup";
         $this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
-        $this->picto = 'ticketsup@ticketsup';
+        $this->picto = 'ticketsup';
     }
 
     /**
@@ -176,7 +176,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	            $filename = array();
 	            $mimetype = array();
 	
-	            $langs->load('ticketsup@ticketsup');
+	            $langs->load('ticketsup');
 	
 	            $object->fetch('', $object->track_id);
 	
