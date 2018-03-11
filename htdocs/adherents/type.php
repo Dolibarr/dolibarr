@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018		ptibogxiv				<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +59,13 @@ if (! $sortfield) {  $sortfield="d.lastname"; }
 
 $label=GETPOST("label","alpha");
 $subscription=GETPOST("subscription","int");
+$family=GETPOST("family","int");
 $vote=GETPOST("vote","int");
 $comment=GETPOST("comment");
 $mail_valid=GETPOST("mail_valid");
+$welcome=GETPOST("welcome","alpha");
+$price=GETPOST("price","alpha");
+$automatic=GETPOST("automatic","int");
 
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'adherent_type');
@@ -103,11 +108,15 @@ if ($cancel) {
 
 if ($action == 'add' && $user->rights->adherent->configurer)
 {
-	$object->label			= trim($label);
-	$object->subscription	= (int) trim($subscription);
-	$object->note			= trim($comment);
-	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+    $object->welcome     = trim($welcome);
+    $object->price       = trim($price);
+    $object->automatic   = (boolean) trim($automatic);
+    $object->family   = (boolean) trim($family);
+		$object->label			= trim($label);
+		$object->subscription	= (int) trim($subscription);
+		$object->note			= trim($comment);
+		$object->mail_valid		= (boolean) trim($mail_valid);
+		$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -156,11 +165,16 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 
 	$object->oldcopy = clone $object;
 
-	$object->label			= trim($label);
-	$object->subscription	= (int) trim($subscription);
-	$object->note			= trim($comment);
-	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+		$object->id             = $rowid;
+		$object->label        = trim($label);
+		$object->subscription   = (int) trim($subscription);
+		$object->note           = trim($comment);
+		$object->mail_valid     = (boolean) trim($mail_valid);
+		$object->vote           = (boolean) trim($vote);
+    $object->family           = (boolean) trim($family);
+    $object->welcome     = trim($welcome);
+    $object->price       = trim($price);
+    $object->automatic   = (boolean) trim($automatic);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -214,7 +228,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 {
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.welcome, d.price, d.vote, d.automatic, d.family";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -247,8 +261,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
+    print '<th align="center">'.$langs->trans("GroupSubscription").'</th>';
 		print '<th align="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th align="center">'.$langs->trans("VoteAllowed").'</th>';
+    print '<th align="center">'.$langs->trans("AutoSubscription").'</th>';
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
@@ -268,8 +284,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+      print '<td align="center">'.yn($objp->family).'</td>';
 			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
+      print '<td align="center">'.yn($objp->automatic).'</td>';
 			if ($user->rights->adherent->configurer)
 				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			else
@@ -311,12 +329,30 @@ if ($action == 'create')
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
 
+  print '<tr><td>'.$langs->trans("GroupSubscription").'</td><td>';
+	print $form->selectyesno("family",0,1);
+	print '</td></tr>';
+
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("subscription",1,1);
+	print '</td></tr>';
+  
+  print '<tr ><td>'.$langs->trans("SubscriptionWelcome").'</td><td>';
+	print '<input size="10" type="text" value="' . price($object->welcome) . '" name="welcome">';
+  print ' '.$langs->trans("Currency".$conf->currency);    
+	print '</td></tr>';
+    
+  print '<tr ><td>'.$langs->trans("SubscriptionPrice").'</td><td>';
+	print '<input size="10" type="text" value="' . price($object->price) . '" name="price">';   
+  print ' '.$langs->trans("Currency".$conf->currency);    
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $form->selectyesno("vote",0,1);
+	print '</td></tr>';
+  
+  print '<tr><td>'.$langs->trans("AutoSubscription").'</td><td>';
+	print $form->selectyesno("automatic",1,1);
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -384,12 +420,31 @@ if ($rowid > 0)
 
 		print '<table class="border" width="100%">';
 
+    print '<tr><td class="titlefield">'.$langs->trans("GroupSubscription").'</td><td>';
+		print yn($object->family);
+		print '</tr>';
+
 		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print yn($object->subscription);
 		print '</tr>';
-
+    if ($object->subscription == '1')
+	{        
+    print '<tr><td>'.$langs->trans("SubscriptionWelcome").'</td><td>';
+		print price($object->welcome);
+    print ' '.$langs->trans("Currency".$conf->currency);
+		print '</tr>';
+    
+    print '<tr><td>'.$langs->trans("SubscriptionPrice").'</td><td>';
+		print price($object->price);
+    print ' '.$langs->trans("Currency".$conf->currency);
+		print '</tr>';                
+}
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
+		print '</tr>';
+
+    print '<tr><td>'.$langs->trans("AutoSubscription").'</td><td>';
+		print yn($object->automatic);
 		print '</tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -709,12 +764,30 @@ if ($rowid > 0)
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
+    print '<tr><td>'.$langs->trans("GroupSubscription").'</td><td>';
+		print $form->selectyesno("family",$object->family,1);
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 		print $form->selectyesno("subscription",$object->subscription,1);
 		print '</td></tr>';
 
+    print '<tr ><td>'.$langs->trans("SubscriptionWelcome").'</td><td>';
+		print '<input size="10" type="text" value="' . price($object->welcome) . '" name="welcome">';
+    print ' '.$langs->trans("Currency".$conf->currency);    
+		print '</td></tr>';
+    
+    print '<tr ><td>'.$langs->trans("SubscriptionPrice").'</td><td>';
+		print '<input size="10" type="text" value="' . price($object->price) . '" name="price">';   
+    print ' '.$langs->trans("Currency".$conf->currency);    
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote",$object->vote,1);
+		print '</td></tr>';
+    
+    print '<tr><td>'.$langs->trans("AutoSubscription").'</td><td>';
+		print $form->selectyesno("automatic",$object->automatic,1);
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
