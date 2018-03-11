@@ -155,7 +155,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
             $object->label .= $fuser->getNomUrl(0);
         }
         $linkback = '<a href="' . dol_buildpath('/ticketsup/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
-        $object->ticketsup_banner_tab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
+        $object->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
 
         dol_fiche_end();
         print '<br>';
