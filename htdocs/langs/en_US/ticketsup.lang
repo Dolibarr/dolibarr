@@ -19,7 +19,7 @@
 #
 
 Module56000Name=Tickets
-Module56000Desc=Ticket system for incident management
+Module56000Desc=Ticket system for issue or request management
 
 Permission56001=See tickets
 Permission56002=Modify tickets
