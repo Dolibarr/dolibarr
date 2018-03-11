@@ -224,7 +224,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             $object->dao->label .= $object->dao->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
         }
         $linkback = '<a href="' . dol_buildpath('/ticketsup/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
-        $object->dao->ticketsup_banner_tab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
+        $object->dao->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
 
         print '<div class="fichecenter"><div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';

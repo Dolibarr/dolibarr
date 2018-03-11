@@ -475,7 +475,7 @@ class ActionsTicketsup
         // Set parent company
         if ($action == 'set_thirdparty' && $user->rights->societe->creer) {
             if ($this->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
-                $result = $this->dao->set_customer(GETPOST('editcustomer', 'int'));
+                $result = $this->dao->setCustomer(GETPOST('editcustomer', 'int'));
                 $url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
                 header("Location: " . $url);
                 exit();
@@ -1329,7 +1329,7 @@ class ActionsTicketsup
      * @param int			$fieldid		Id
      * @return int			0
      */
-    public function load_previous_next_ref($filter, $fieldid)
+    function load_previous_next_ref($filter, $fieldid)
     {
         $this->getInstanceDao();
         return $this->dao->load_previous_next_ref($filter, $fieldid);
