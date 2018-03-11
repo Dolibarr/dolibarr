@@ -23,7 +23,7 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . 'class/actions_ticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ticketsup/class/actions_ticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 // Load traductions files requiredby by page
 $langs->load("companies");
 $langs->load("other");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 // Get parameters
 $id = GETPOST('id', 'int');
