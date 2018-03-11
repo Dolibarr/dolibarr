@@ -624,7 +624,7 @@ class FormTicketsup
             $filterarray = explode(',', $filtertype);
         }
 
-        $ticketstat->load_cache_severities_tickets();
+        $ticketstat->loadCacheSeveritiesTickets();
 
         print '<select id="select' . $htmlname . '" class="flat select_ticketseverity" name="' . $htmlname . '">';
         if ($empty) {

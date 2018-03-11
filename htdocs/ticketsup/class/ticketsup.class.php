@@ -1092,7 +1092,7 @@ class Ticketsup extends CommonObject
      *
      *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
      */
-    public function load_cache_severities_tickets()
+    public function loadCacheSeveritiesTickets()
     {
         global $langs;
 
@@ -1105,7 +1105,7 @@ class Ticketsup extends CommonObject
         $sql .= " FROM " . MAIN_DB_PREFIX . "c_ticketsup_severity";
         $sql .= " WHERE active > 0";
         $sql .= " ORDER BY pos";
-        dol_syslog(get_class($this) . "::load_cache_severities_tickets sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this) . "::loadCacheSeveritiesTickets sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
