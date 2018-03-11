@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2018		ptibogxiv				<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,10 @@ class AdherentType extends CommonObject
 	 * @since 5.0
 	 */
 	public $subscription;
+  public $welcome;
+	public $price;
+	public $automatic;
+	public $family;
 	/** @var string 	Public note */
 	public $note;
 	/** @var integer	Can vote */
@@ -167,6 +172,12 @@ class AdherentType extends CommonObject
 		$sql.= "statut = ".$this->statut.",";
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
+    $sql.= "welcome = '".$this->welcome."',";
+    $sql.= "price = '".$this->price."',";
+    $sql.= "note = '".$this->db->escape($this->note)."',";
+    $sql.= "vote = '".$this->vote."',";
+    $sql.= "automatic = '".$this->automatic."',";
+    $sql.= "family = '".$this->family."',";    
 		$sql.= "note = '".$this->db->escape($this->note)."',";
 		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
@@ -263,7 +274,7 @@ class AdherentType extends CommonObject
 	 */
 	function fetch($rowid)
 	{
-		$sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
+    $sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.welcome, d.price, d.automatic, d.family, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".$rowid;
 
@@ -276,14 +287,18 @@ class AdherentType extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id             = $obj->rowid;
-				$this->ref            = $obj->rowid;
-				$this->label          = $obj->label;
-				$this->statut         = $obj->statut;
-				$this->subscription   = $obj->subscription;
-				$this->mail_valid     = $obj->mail_valid;
-				$this->note           = $obj->note;
-				$this->vote           = $obj->vote;
+                $this->id             = $obj->rowid;
+                $this->ref            = $obj->rowid;
+                $this->welcome        = $obj->welcome;
+                $this->price         = $obj->price;
+                $this->label          = $obj->label;
+                $this->statut         = $obj->statut;
+                $this->subscription   = $obj->subscription;
+                $this->automatic      = $obj->automatic;
+                $this->family         = $obj->family;
+                $this->mail_valid     = $obj->mail_valid;
+                $this->note           = $obj->note;
+                $this->vote           = $obj->vote;
 			}
 
 			return 1;
@@ -562,3 +577,4 @@ class AdherentType extends CommonObject
 	}
 
 }
+
