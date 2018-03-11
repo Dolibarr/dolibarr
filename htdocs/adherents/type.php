@@ -228,7 +228,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 {
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.welcome, d.price, d.vote, d.automatic, d.family";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.welcome, d.price, d.vote, d.automatic, d.family";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
 
