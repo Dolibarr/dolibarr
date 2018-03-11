@@ -1,7 +1,6 @@
 <?php
-/* 
- * Copyright (C) 2013-2018    Jean-François FERRY    <hello@librethic.io>
- *                  2016        Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
+ * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +24,7 @@
 
 /**
  * Build tabs for admin page
- * 
+ *
  * @return array
  */
 function ticketsupAdminPrepareHead()
@@ -37,7 +36,7 @@ function ticketsupAdminPrepareHead()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/admin/admin_ticketsup.php';
+    $head[$h][0] = DOL_URL_ROOT.'/admin/ticketsup.php';
     $head[$h][1] = $langs->trans("TicketSupSettings");
     $head[$h][2] = 'settings';
     $h++;
