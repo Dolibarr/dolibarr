@@ -23,7 +23,7 @@
  *    \brief      File with class to manage the numbering module Simple for ticketsup references
  */
 
-dol_include_once('/ticketsup/core/modules/modules_ticketsup.php');
+require_once DOL_DOCUMENT_ROOT.'/core/modules/modules_ticketsup.php';
 
 /**
  *     Class to manage the numbering module Simple for ticketsup references

@@ -29,7 +29,8 @@ if (file_exists("../../main.inc.php")) {
 } else {
     die("Include of main fails");
 }
-require_once '../lib/ticketsup.lib.php';
+// Libraries
+require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
