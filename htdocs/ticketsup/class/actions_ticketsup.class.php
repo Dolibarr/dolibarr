@@ -976,14 +976,10 @@ class ActionsTicketsup
     }
 
     /**
-     * print statut
-<<<<<<< HEAD
+     * Print statut
      *
-     * @param		int		$mode		Mode
-=======
-     * @param int $mode Display mode
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
-     * @return void
+     * @param		int		$mode		Display mode
+     * @return 		void
      */
     public function getLibStatut($mode = 0)
     {
