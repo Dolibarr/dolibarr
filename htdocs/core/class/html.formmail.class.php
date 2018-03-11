@@ -859,7 +859,7 @@ class FormMail extends Form
 				if (! GETPOST('modelselected','alpha') || GETPOST('modelmailselected') != '-1')
 				{
 					if ($arraydefaultmessage && $arraydefaultmessage->content) {
-						$defaultmessage = $arraydefaultmessage['content'];
+						$defaultmessage = $arraydefaultmessage->content;
 					} elseif (! is_numeric($this->withbody)) {
 						$defaultmessage = $this->withbody;
 					}
