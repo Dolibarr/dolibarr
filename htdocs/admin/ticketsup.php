@@ -235,9 +235,9 @@ $head = ticketsupAdminPrepareHead();
 dol_fiche_head(
     $head,
     'settings',
-    $langs->trans("Module110120Name"),
+    $langs->trans("Module56000Name"),
     0,
-    "ticketsup@ticketsup"
+    "ticketsup"
 );
 
 print '<div class="info"><p>' . $langs->trans("TicketsupSetupDictionaries") . ' : <a href="' . dol_buildpath('/admin/dict.php', 1) . '" >' . dol_buildpath('/admin/dict.php', 2) . '</a></p></div>';
@@ -546,7 +546,7 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 // Email d'envoi des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationFrom") . '</td>';
 print '<td align="left">';
-print '<input type="text"   name="TICKETS_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
+print '<input type="text" name="TICKETS_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
