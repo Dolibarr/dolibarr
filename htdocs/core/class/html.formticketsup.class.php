@@ -31,9 +31,11 @@ if (!class_exists('FormCompany')) {
 /**
  * Classe permettant la generation du formulaire d'un nouveau ticket.
  *
- * Utilisation: $formticketsup = new FormTicketsup($db)
- * $formticketsup->proprietes=1 ou chaine ou tableau de valeurs
- * $formticketsup->show_form() affiche le formulaire
+ * @package Ticketsup
+
+ * \remarks Utilisation: $formticketsup = new FormTicketsup($db)
+ * \remarks $formticketsup->proprietes=1 ou chaine ou tableau de valeurs
+ * \remarks $formticketsup->show_form() affiche le formulaire
  */
 class FormTicketsup
 {
@@ -72,6 +74,7 @@ class FormTicketsup
     public $withcancel;
 
     /**
+     *
      * @var array $substit Substitutions
      */
     public $substit = array();
@@ -526,7 +529,7 @@ class FormTicketsup
             $filterarray = explode(',', $filtertype);
         }
 
-        $ticketstat->load_cache_categories_tickets();
+        $ticketstat->loadCacheCategoriesTickets();
 
         print '<select id="select' . $htmlname . '" class="flat select_ticketcategory" name="' . $htmlname . '">';
         if ($empty) {

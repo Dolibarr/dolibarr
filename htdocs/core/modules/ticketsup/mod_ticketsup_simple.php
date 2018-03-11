@@ -23,7 +23,7 @@
  *    \brief      File with class to manage the numbering module Simple for ticketsup references
  */
 
-dol_include_once('/ticketsup/core/modules/modules_ticketsup.php');
+require_once DOL_DOCUMENT_ROOT.'/core/modules/modules_ticketsup.php';
 
 /**
  *     Class to manage the numbering module Simple for ticketsup references
@@ -73,7 +73,8 @@ class mod_ticketsup_simple extends ModeleNumRefTicketsup
         $posindice = 8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup";
-        $sql .= " WHERE ref LIKE '" . $this->prefix . "____-%'";
+        $search = $this->prefix . "____-%";
+        $sql .= " WHERE ref LIKE '" . $search ."'";
         $sql .= " AND entity = " . $conf->entity;
         $resql = $db->query($sql);
         if ($resql) {
@@ -107,7 +108,8 @@ class mod_ticketsup_simple extends ModeleNumRefTicketsup
         $posindice = 8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup";
-        $sql .= " WHERE ref like '" . $this->prefix . "____-%'";
+        $search = $this->prefix . "____-%";
+        $sql .= " WHERE ref LIKE '" . $search ."'";
         $sql .= " AND entity = " . $conf->entity;
 
         $resql = $db->query($sql);

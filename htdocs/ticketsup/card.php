@@ -533,7 +533,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         $userstatic = new User($db);
         foreach (array('internal', 'external') as $source) {
             $tmpobject = $object->dao;
-            $tab = $tmpobject->liste_contact(-1, $source);
+            $tab = $tmpobject->listeContact(-1, $source);
             $num = count($tab);
             $i = 0;
             while ($i < $num) {

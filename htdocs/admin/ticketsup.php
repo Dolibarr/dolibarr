@@ -34,10 +34,10 @@ if (file_exists("../../main.inc.php")) {
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once "../class/ticketsup.class.php";
-require_once "../lib/ticketsup.lib.php";
+require_once DOL_DOCUMENT_ROOT."/ticketsup/class/ticketsup.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 // Translations
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 // Access control
 if (!$user->admin) {

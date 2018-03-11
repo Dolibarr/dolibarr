@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013-2016    Jean-François FERRY    <hello@librethic.io>
+/* 
+ * Copyright (C) 2013-2018    Jean-François FERRY    <hello@librethic.io>
  *                  2016        Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,13 @@
 /**
  *    \file       core/lib/ticketsup.lib.php
  *    \ingroup    ticketsup
- *    \brief      This file is an example module library
+ *    \brief        This file is a library for TicketSup module
+ */
+
+/**
+ * Build tabs for admin page
+ * 
+ * @return array
  */
 function ticketsupAdminPrepareHead()
 {
@@ -31,17 +37,13 @@ function ticketsupAdminPrepareHead()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = dol_buildpath("/ticketsup/admin/admin_ticketsup.php", 1);
+    $head[$h][0] = DOL_URL_ROOT.'/admin/admin_ticketsup.php';
     $head[$h][1] = $langs->trans("TicketSupSettings");
     $head[$h][2] = 'settings';
     $h++;
-    $head[$h][0] = dol_buildpath("/ticketsup/admin/ticketsup_extrafields.php", 1);
+    $head[$h][0] = DOL_URL_ROOT.'/admin/ticketsup_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsTicketSup");
     $head[$h][2] = 'attributes';
-    $h++;
-    $head[$h][0] = dol_buildpath("/ticketsup/admin/about.php", 1);
-    $head[$h][1] = $langs->trans("About");
-    $head[$h][2] = 'about';
     $h++;
 
     // Show more tabs from modules
@@ -58,10 +60,10 @@ function ticketsupAdminPrepareHead()
 }
 
 /**
- *  Prepare head for ticket card
- *  
- *  @param	Object	$object		Object Ticket
- *  @return array				Array of tabs	
+ *  Build tabs for a Ticketsup object
+ *
+ *  @param	Ticketsup	  $object		Object Ticket
+ *  @return array				          Array of tabs
  */
 function ticketsup_prepare_head($object)
 {
@@ -69,21 +71,21 @@ function ticketsup_prepare_head($object)
 
     $h = 0;
     $head = array();
-    $head[$h][0] = dol_buildpath('/ticketsup/card.php', 1) . '?action=view&track_id=' . $object->track_id;
+    $head[$h][0] = DOL_URL_ROOT.'/ticketsup/card.php?action=view&track_id=' . $object->track_id;
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'tabTicketsup';
     $h++;
 
     if (empty($user->socid)) {
-        $head[$h][0] = dol_buildpath('/ticketsup/contacts.php', 1) . '?track_id=' . $object->track_id;
+    	$head[$h][0] = DOL_URL_ROOT.'/ticketsup/contacts.php?track_id=' . $object->track_id;
         $head[$h][1] = $langs->trans('Contacts');
         $head[$h][2] = 'tabTicketContacts';
         $h++;
     }
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticketsup');
-    
-    
+
+
     // Attached files
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
     $upload_dir = $conf->ticketsup->dir_output . "/" . $object->track_id;
@@ -99,15 +101,15 @@ function ticketsup_prepare_head($object)
 
 
     // History
-    $head[$h][0] = dol_buildpath('/ticketsup/history.php', 1) . '?track_id=' . $object->track_id;
+    $head[$h][0] = DOL_URL_ROOT.'/ticketsup/history.php?track_id=' . $object->track_id;
     $head[$h][1] = $langs->trans('TicketHistory');
     $head[$h][2] = 'tabTicketLogs';
     $h++;
 
-   
+
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticketsup','remove');
 
-    
+
     return $head;
 }
 

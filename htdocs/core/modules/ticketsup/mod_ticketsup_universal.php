@@ -22,7 +22,7 @@
  *    \brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
  */
 
-dol_include_once('/ticketsup/core/modules/modules_ticketsup.php');
+require_once DOL_DOCUMENT_ROOT.'/core/modules/modules_ticketsup.php';
 
 /**
  *     Classe du modele de numerotation de reference de projet Universal
