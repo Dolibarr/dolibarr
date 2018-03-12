@@ -1081,9 +1081,10 @@ class Contact extends CommonObject
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
      *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param		int			$notooltip					1=Disable tooltip
 	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1, $notooltip=0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1115,13 +1116,16 @@ class Contact extends CommonObject
 
         $linkstart = '<a href="'.$url.'"';
         $linkclose="";
-    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-        {
-            $label=$langs->trans("ShowContact");
-            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-        }
-       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-       	$linkclose.= ' class="classfortooltip">';
+		if (empty($notooltip)) {
+	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+    	    {
+        	    $label=$langs->trans("ShowContact");
+            	$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+    	   	$linkclose.= ' class="classfortooltip"';
+		}
+		$linkclose.='>';
 
 		if (! is_object($hookmanager))
 		{
