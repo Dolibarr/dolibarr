@@ -38,16 +38,6 @@ if (empty($user->id)) {
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
-
-if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
-}
-
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
-
-
 /**
  * Class for PHPUnit tests
  *
@@ -55,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class TicketsupTest extends \PHPUnit_Framework_TestCase
+class TicketsupTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -139,7 +129,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		// Try to create one with bad values
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$localobject->initAsSpecimen();
 		$localobject->fk_statut = '\'1=1';
 		$result=$localobject->create($user);
@@ -148,13 +138,12 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(-1, $result, $localobject->error);
 
 		// Try to create one with correct values
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertGreaterThan(0, $result, $localobject->error);
-
 
 		return $result;
 	}
@@ -176,7 +165,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -410,7 +399,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
