@@ -143,6 +143,7 @@ CREATE TABLE llx_ticketsup
 	datec datetime,
 	date_read datetime,
 	date_close datetime,
+	notify_tiers_at_create tinyint,
 	tms timestamp
 )ENGINE=innodb;
 
