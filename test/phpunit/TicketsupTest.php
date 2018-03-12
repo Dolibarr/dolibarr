@@ -145,7 +145,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, -1, $localobject->error);
+		$this->assertEquals(-1, $result, $localobject->error);
 
 		// Try to create one with correct values
 		$localobject=new \Ticketsup($this->savdb);
@@ -153,7 +153,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0, $localobject->error);
+		$this->assertGreaterThan(0, $result, $localobject->error);
 
 
 		return $result;
@@ -180,7 +180,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 
 		return $localobject;
 	}
@@ -205,7 +205,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->markAsRead($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -231,7 +231,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->setProject($project_id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -257,7 +257,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->setContract($contract_id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -283,7 +283,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->setProgression($percent);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -310,7 +310,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
         ;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -337,7 +337,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -364,7 +364,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->createTicketLog($user, $message, $noemail);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -388,7 +388,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->close();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject->id;
 	}
 
@@ -404,7 +404,6 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testTicketsupDelete($id)
 	{
-
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
@@ -416,7 +415,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $result;
 	}
 }

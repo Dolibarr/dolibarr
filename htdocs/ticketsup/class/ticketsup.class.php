@@ -332,9 +332,9 @@ class Ticketsup extends CommonObject
             $sql .= "severity_code,";
             $sql .= "datec,";
             $sql .= "date_read,";
-            $sql .= "date_close";
-            $sql .= ", entity";
-            $sql .= ", notify_tiers_at_create";
+            $sql .= "date_close,";
+            $sql .= "entity,";
+            $sql .= "notify_tiers_at_create";
             $sql .= ") VALUES (";
             $sql .= " " . (!isset($this->ref) ? '' : "'" . $this->db->escape($this->ref) . "'") . ",";
             $sql .= " " . (!isset($this->track_id) ? 'NULL' : "'" . $this->db->escape($this->track_id) . "'") . ",";
@@ -894,12 +894,12 @@ class Ticketsup extends CommonObject
 
         if (!$error) {
         	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup_logs";
-        	$sql .= " WHERE rowid=" . $this->id;
+        	$sql .= " WHERE fk_track_id = '" . $this->track_id . "'";
         	$resql = $this->db->query($sql);
         }
         if (!$error) {
-        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup_mesgs";
-        	$sql .= " WHERE rowid=" . $this->id;
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup_msg";
+        	$sql .= " WHERE fk_track_id = '" . $this->track_id . "'";
         	$resql = $this->db->query($sql);
         }
 
