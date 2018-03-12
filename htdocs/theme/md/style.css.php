@@ -3039,6 +3039,9 @@ div .tdtop {
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
 }
+#tablelines tr td {
+    height: unset;
+}
 
 
 /* Prepare to remove class pair - impair */

@@ -224,3 +224,6 @@ CREATE TABLE llx_c_ticketsup_type
   description	varchar(255)
 )ENGINE=innodb;
 
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN date_start_fill integer DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN date_end_fill integer DEFAULT 0;

@@ -553,7 +553,7 @@ if (empty($reshook))
 	   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
 	)
 	{
-		$idwarehouse = GETPOST('idwarehouse');
+		$idwarehouse = GETPOST('idwarehouse','int');
 
 		$object->fetch($id);
 		$object->fetch_thirdparty();
@@ -640,8 +640,8 @@ if (empty($reshook))
 	else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement)
 	{
 		$object->fetch($id);
-		$close_code = $_POST["close_code"];
-		$close_note = $_POST["close_note"];
+		$close_code = GETPOST("close_code",'none');
+		$close_note = GETPOST("close_note",'none');
 		if ($close_code) {
 			$result = $object->set_paid($user, $close_code, $close_note);
 			if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
@@ -651,8 +651,8 @@ if (empty($reshook))
 	} // Classify "abandoned"
 	else if ($action == 'confirm_canceled' && $confirm == 'yes') {
 		$object->fetch($id);
-		$close_code = $_POST["close_code"];
-		$close_note = $_POST["close_note"];
+		$close_code = GETPOST("close_code",'none');
+		$close_note = GETPOST("close_note",'none');
 		if ($close_code) {
 			$result = $object->set_canceled($user, $close_code, $close_note);
 			if ($result<0) setEventMessages($object->error, $object->errors, 'errors');
@@ -1419,6 +1419,7 @@ if (empty($reshook))
 			}
 		}
 
+		// Situation invoices
 		if (GETPOST('type') == Facture::TYPE_SITUATION && (!empty($_POST['situations'])))
 		{
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -1455,16 +1456,16 @@ if (empty($reshook))
 				$object->fetch_thirdparty();
 				$object->date = $datefacture;
 				$object->date_pointoftax = $date_pointoftax;
-				$object->note_public = trim($_POST['note_public']);
-				$object->note = trim($_POST['note']);
-				$object->ref_client = $_POST['ref_client'];
-				$object->ref_int = $_POST['ref_int'];
-				$object->modelpdf = $_POST['model'];
-				$object->fk_project = $_POST['projectid'];
-				$object->cond_reglement_id = $_POST['cond_reglement_id'];
-				$object->mode_reglement_id = $_POST['mode_reglement_id'];
-				$object->remise_absolue = $_POST['remise_absolue'];
-				$object->remise_percent = $_POST['remise_percent'];
+				$object->note_public = trim(GETPOST('note_public','none'));
+				$object->note = trim(GETPOST('note','none'));
+				$object->ref_client = GETPOST('ref_client','alpha');
+				$object->ref_int = GETPOST('ref_int','alpha');
+				$object->modelpdf = GETPOST('model','alpha');
+				$object->fk_project = GETPOST('projectid','int');
+				$object->cond_reglement_id = GETPOST('cond_reglement_id','int');
+				$object->mode_reglement_id = GETPOST('mode_reglement_id','int');
+				$object->remise_absolue = GETPOST('remise_absolue','int');
+				$object->remise_percent = GETPOST('remise_percent','int');
 
 				// Proprietes particulieres a facture de remplacement
 
@@ -1533,14 +1534,14 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$predef='';
-		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$product_desc=(GETPOST('dp_desc','none')?GETPOST('dp_desc','none'):'');
 		$price_ht = GETPOST('price_ht');
 		$price_ht_devise = GETPOST('multicurrency_price_ht');
 		$prod_entry_mode = GETPOST('prod_entry_mode','alpha');
 		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
-			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+			$tva_tx = (GETPOST('tva_tx','alpha') ? GETPOST('tva_tx','alpha') : 0);
 		}
 		else
 		{
