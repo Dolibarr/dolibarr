@@ -692,7 +692,7 @@ if ($id > 0)
 			$total_insurance = 0;
 			$total_interest = 0;
 			$total_capital = 0;
-			print '<table class="noborder paymenttable">';
+			print '<table class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -729,7 +729,9 @@ if ($id > 0)
 				$staytopay = $object->capital - $totalpaid;
 
 				print '<tr><td colspan="5" align="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td align="right"><b>'.price($staytopay, 0, $langs, 0, 0, -1, $conf->currency).'</b></td></tr>';
+				print '<td align="right"'.($staytopay?' class="amountremaintopay"':'class="amountpaymentcomplete"').'>';
+				print price($staytopay, 0, $langs, 0, 0, -1, $conf->currency);
+				print '</td></tr>';
 			}
 			print "</table>";
 			$db->free($resql);
