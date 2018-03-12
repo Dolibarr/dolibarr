@@ -145,7 +145,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, -1);
+		$this->assertEquals($result, -1, $localobject->error);
 
 		// Try to create one with correct values
 		$localobject=new \Ticketsup($this->savdb);
@@ -153,7 +153,7 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->error);
 
 
 		return $result;
