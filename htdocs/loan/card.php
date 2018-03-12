@@ -422,11 +422,11 @@ if ($id > 0)
 
 		print '<script type="text/javascript">' . "\n";
 		print '  	function popEcheancier() {' . "\n";
-		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="100%" frameborder="0" src="createschedule.php?loanid=' . $object->id . '"></iframe></div>\');' . "\n";
+		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="98%" frameborder="0" src="createschedule.php?loanid=' . $object->id . '"></iframe></div>\');' . "\n";
 		print '  		$div.dialog({' . "\n";
 		print '  			modal:true' . "\n";
 		print '  			,width:"90%"' . "\n";
-		print '  			,height:$(window).height() - 150' . "\n";
+		print '  			,height:$(window).height() - 160' . "\n";
 		print '  		});' . "\n";
 		print '  	}' . "\n";
 		print '</script>';
