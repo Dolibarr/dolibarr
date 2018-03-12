@@ -413,24 +413,52 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
+
+	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+	{
+		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	}
+
+	//if ($conf->agenda->enabled && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
+
+	print '<div class="fichecenter">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield" width="100%">';
+
+	if ($object->client)
+	{
+		print '<tr><td class="titlefield">';
+		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print $object->code_client;
+		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		print '</td></tr>';
+		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+		$resql=$db->query($sql);
+		if (!$resql) dol_print_error($db);
+
+		$obj = $db->fetch_object($resql);
+		$nbFactsClient = $obj->nb;
+		$thirdTypeArray['customer']=$langs->trans("customer");
+		if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
+		if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
+		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
+		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
+	}
+
 	if (! (empty($conf->stripe->enabled)))
 	{
-		print '<div class="fichecenter">';
-		print '<div class="fichehalfleft">';
-
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		$stripe = new Stripe($db);
 
 		// Prospect/Customer
-		print '<tr><td class="titlefield">'.$langs->trans('StripeCustomerRef').'</td><td>';
-		print $object->getStripeCustomerAccount();
+		print '<tr><td class="titlefield">'.$langs->trans('StripeCustomerId').'</td><td>';
+		print $stripe->getStripeCustomerAccount($object->id);
 		print '</td></tr>';
 
-		print '</table>';
-		print '</div>';
-		print '</div>';
-		print '</div>';
 	}
+
+	print '</table>';
+	print '</div>';
 
 	if (! (empty($conf->stripe->enabled)))
 	{

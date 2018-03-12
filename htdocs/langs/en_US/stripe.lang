@@ -49,4 +49,4 @@ OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
 BankAccountForBankTransfer=Bank account for fund payouts
 StripeAccount=Stripe account
 StripeChargeList=List of Stripe charges
-StripeCustomer=Stripe customer id
+StripeCustomerId=Stripe customer id
