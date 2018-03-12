@@ -894,12 +894,12 @@ class Ticketsup extends CommonObject
 
         if (!$error) {
         	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup_logs";
-        	$sql .= " WHERE fk_track_id = '" . $this->track_id . "'";
+        	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
         	$resql = $this->db->query($sql);
         }
         if (!$error) {
         	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup_msg";
-        	$sql .= " WHERE fk_track_id = '" . $this->track_id . "'";
+        	$sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
         	$resql = $this->db->query($sql);
         }
 
