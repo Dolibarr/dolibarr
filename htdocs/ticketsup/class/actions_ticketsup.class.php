@@ -93,7 +93,7 @@ class ActionsTicketsup
         if (GETPOST('addfile')) {
             // altairis : allow files from public interface
             if (GETPOST('track_id')) {
-                $res = $this->dao->fetch('', GETPOST('track_id'));
+                $res = $this->dao->fetch('', GETPOST('track_id','alpha'));
             }
 
             ////if($res > 0)
@@ -139,11 +139,11 @@ class ActionsTicketsup
 
             if (!GETPOST("subject")) {
                 $error++;
-                array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
+                $this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject"));
                 $action = 'create_ticket';
             } elseif (!GETPOST("message")) {
                 $error++;
-                array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
+                $this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("message"));
                 $action = 'create_ticket';
             }
 
@@ -170,8 +170,8 @@ class ActionsTicketsup
                 $id = $this->dao->create($user);
                 if ($id <= 0) {
                     $error++;
-                    $errors = ($this->dao->error ? array($this->dao->error) : $this->dao->errors);
-                    array_push($this->errors, $this->dao->error ? array($this->dao->error) : $this->dao->errors);
+                    $this->errors = $this->dao->error;
+                    $this->errors = $this->dao->errors;
                     $action = 'create_ticket';
                 }
 
@@ -235,7 +235,7 @@ class ActionsTicketsup
 
                         $id = $fichinter->create($user);
                         if ($id <= 0) {
-                            setEventMessage($fichinter->error, 'errors');
+                            setEventMessages($fichinter->error, null, 'errors');
                         }
                     }
 
@@ -249,10 +249,10 @@ class ActionsTicketsup
                     exit;
                 } else {
                     $this->db->rollback();
-                    setEventMessage($this->errors, 'errors');
+                    setEventMessages($this->error, $this->errors, 'errors');
                 }
             } else {
-                setEventMessage($this->errors, 'errors');
+                setEventMessages($this->error, $this->errors, 'errors');
             }
         }
 
@@ -294,7 +294,8 @@ class ActionsTicketsup
                 $ret = $this->dao->update(GETPOST('id'), $user);
                 if ($ret <= 0) {
                     $error++;
-                    $errors = ($this->dao->error ? array($this->dao->error) : $this->dao->errors);
+                    $this->errors = $this->dao->error;
+                    $this->errors = $this->dao->errors;
                     $action = 'edit';
                 }
 
@@ -314,9 +315,9 @@ class ActionsTicketsup
                 $log_action = $langs->trans('TicketLogMesgReadBy', $user->getFullName($langs));
                 $ret = $this->dao->createTicketLog($user, $log_action);
                 if ($ret > 0) {
-                    setEventMessage($langs->trans('TicketMarkedAsRead'));
+                    setEventMessages($langs->trans('TicketMarkedAsRead'), null, 'mesgs');
                 } else {
-                    setEventMessage($langs->trans('TicketMarkedAsReadButLogActionNotSaved'), 'errors');
+                    setEventMessages($langs->trans('TicketMarkedAsReadButLogActionNotSaved'), null, 'errors');
                 }
                 header("Location: card.php?track_id=" . $this->dao->track_id . "&action=view");
                 exit;
@@ -362,9 +363,9 @@ class ActionsTicketsup
                 $log_action = $langs->trans('TicketLogAssignedTo', $this->dao->user->getFullName($langs));
                 $ret = $this->dao->createTicketLog($user, $log_action);
                 if ($ret > 0) {
-                    setEventMessage($langs->trans('TicketAssigned'));
+                    setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
                 } else {
-                    setEventMessage($langs->trans('TicketAssignedButLogActionNotSaved'), 'errors');
+                    setEventMessages($langs->trans('TicketAssignedButLogActionNotSaved'), null, 'errors');
                 }
                 header("Location: card.php?track_id=" . $this->dao->track_id . "&action=view");
                 exit;
@@ -393,7 +394,7 @@ class ActionsTicketsup
                 $log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
                 $ret = $this->dao->createTicketLog($user, $log_action);
                 if ($ret > 0) {
-                    setEventMessage($langs->trans('TicketUpdated'));
+                    setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
                 }
             }
             $action = 'view';
@@ -411,7 +412,7 @@ class ActionsTicketsup
                 header("Location: " . $url);
                 exit;
             } else {
-                setEventMessage($this->dao->error, 'errors');
+                setEventMessages($this->dao->error, null, 'errors');
                 $action = 'add_message';
             }
         }
@@ -427,15 +428,15 @@ class ActionsTicketsup
                 $log_action = $langs->trans('TicketLogClosedBy', $user->getFullName($langs));
                 $ret = $this->dao->createTicketLog($user, $log_action);
                 if ($ret > 0) {
-                    setEventMessage('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>');
+                    setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>');
                 } else {
-                    setEventMessage($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), 'warnings');
+                    setEventMessages($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), null, 'warnings');
                 }
                 $url = 'card.php?action=view&track_id=' . GETPOST('track_id', 'alpha');
                 header("Location: " . $url);
             } else {
                 $action = '';
-                setEventMessage($this->error, 'errors');
+                setEventMessages($this->error, $this->errors, 'errors');
             }
         }
 
@@ -446,14 +447,14 @@ class ActionsTicketsup
                 $log_action = $langs->trans('TicketLogClosedBy', $_SESSION['email_customer']);
                 $ret = $this->dao->createTicketLog($user, $log_action);
                 if ($ret > 0) {
-                    setEventMessage('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>');
+                    setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
                 } else {
-                    setEventMessage($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), 'warnings');
+                    setEventMessages($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), null, 'warnings');
                 }
                 $url = 'view.php?action=view_ticket&track_id=' . GETPOST('track_id', 'alpha');
                 header("Location: " . $url);
             } else {
-                setEventMessage($this->error, 'errors');
+                setEventMessages($this->error, $this->errors, 'errors');
                 $action = '';
             }
         }
@@ -461,7 +462,7 @@ class ActionsTicketsup
         if ($action == 'confirm_delete_ticket' && GETPOST('confirm', 'alpha') == "yes" && $user->rights->ticketsup->delete) {
             if ($this->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
                 if ($this->dao->delete($user) > 0) {
-                    setEventMessage('<div class="confirm">' . $langs->trans('TicketDeletedSuccess') . '</div>');
+                    setEventMessages('<div class="confirm">' . $langs->trans('TicketDeletedSuccess') . '</div>', null, 'mesgs');
                     Header("Location: index.php");
                     exit;
                 } else {
@@ -523,7 +524,7 @@ class ActionsTicketsup
 
             $ret = $this->dao->update($user);
             if ($ret > 0) {
-                setEventMessage($langs->trans('TicketUpdated'));
+                setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
                 $url = 'card.php?action=view&track_id=' . $this->dao->track_id;
                 header("Location: " . $url);
                 exit();
@@ -580,7 +581,7 @@ class ActionsTicketsup
 
                     $ret = $this->dao->createTicketLog($user, $log_action);
                     if ($ret > 0) {
-                        setEventMessage($langs->trans('TicketMessageSuccesfullyUpdated'));
+                        setEventMessages($langs->trans('TicketMessageSuccesfullyUpdated'), null, 'mesgs');
                     }
                 }
             }
@@ -646,13 +647,13 @@ class ActionsTicketsup
             $id = $this->dao->createTicketMessage($user);
             if ($id <= 0) {
                 $error++;
-                $errors = ($this->dao->error ? array($this->dao->error) : $this->dao->errors);
-                array_push($this->errors, $this->dao->error ? array($this->dao->error) : $this->dao->errors);
+                $this->errors = $this->dao->error;
+                $this->errors = $this->dao->errors;
                 $action = 'add_message';
             }
 
             if (!$error && $id > 0) {
-                setEventMessage($langs->trans('TicketMessageSuccessfullyAdded'));
+                setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
                 /*
                  * Send email to linked contacts
@@ -809,11 +810,11 @@ class ActionsTicketsup
                 return 1;
             } else {
                 return -1;
-                setEventMessage($this->dao->error, 'errors');
+                setEventMessages($this->dao->error, $this->dao->errors, 'errors');
             }
         } else {
             return -1;
-            setEventMessage($this->errors, 'errors');
+            setEventMessages($this->error, $this->errors, 'errors');
         }
     }
 
@@ -849,13 +850,13 @@ class ActionsTicketsup
             $id = $this->dao->createTicketMessage($user);
             if ($id <= 0) {
                 $error++;
-                $errors = ($this->dao->error ? array($this->dao->error) : $this->dao->errors);
-                array_push($this->errors, $this->dao->error ? array($this->dao->error) : $this->dao->errors);
+                $this->errors = $this->dao->error;
+                $this->errors = $this->dao->errors;
                 $action = 'add_message';
             }
 
             if (!$error && $id > 0) {
-                setEventMessage($langs->trans('TicketMessageSuccessfullyAdded'));
+                setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
                 // Retrieve internal contact datas
                 $internal_contacts = $this->dao->getInfosTicketInternalContact();
@@ -954,10 +955,10 @@ class ActionsTicketsup
                 header("Location: " . $url);
                 exit;
             } else {
-                setEventMessage($this->dao->error, 'errors');
+            	setEventMessages($this->dao->error, $this->dao->errors, 'errors');
             }
         } else {
-            setEventMessage($this->errors, 'errors');
+            setEventMessages($this->error, $this->errors, 'errors');
         }
     }
 
@@ -1385,18 +1386,18 @@ class ActionsTicketsup
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
                 if ($mailfile->error) {
-                    setEventMessage($mailfile->error, 'errors');
+                    setEventMessages($mailfile->error, null, 'errors');
                 } else {
                     $result = $mailfile->sendfile();
                     if ($result) {
-                        setEventMessage($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiver, 2)), 'mesgs');
+                        setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiver, 2)), null, 'mesgs');
                     } else {
                         $langs->load("other");
                         if ($mailfile->error) {
-                            setEventMessage($langs->trans('ErrorFailedToSendMail', $from, $receiver), 'errors');
+                            setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiver), null, 'errors');
                             dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiver) . ' : ' . $mailfile->error);
                         } else {
-                            setEventMessage('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', 'errors');
+                            setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
                         }
                     }
                 }
@@ -1406,23 +1407,18 @@ class ActionsTicketsup
             }
         } else {
             $langs->load("other");
-            setEventMessage($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage') . '!', 'warnings');
+            setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');
         }
     }
 
     /**
      * Copy files into ticket directory
-     *
      * Used for files linked into messages
-<<<<<<< HEAD
      *
      * @return	void
-=======
->>>>>>> branch 'develop' of git@github.com:Dolibarr/dolibarr.git
      */
     public function copyFilesForTicket()
     {
-
         global $conf;
 
         // Create form object

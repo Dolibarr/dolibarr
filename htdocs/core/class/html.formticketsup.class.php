@@ -155,12 +155,12 @@ class FormTicketsup
         if ($this->withref) {
             // Ref
             $defaultref = $ticketstat->getDefaultRef();
-            print '<tr><td><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
+            print '<tr><td class="titlefield"><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
         }
 
         // FK_USER_CREATE
         if ($this->withusercreate > 0 && $this->fk_user_create) {
-            print '<tr><td width="35%">' . $langs->trans("CreatedBy") . '</td><td>';
+            print '<tr><td class="titlefield">' . $langs->trans("CreatedBy") . '</td><td>';
             $langs->load("users");
             $fuser = new User($this->db);
 
@@ -178,7 +178,7 @@ class FormTicketsup
             // altairis: force company and contact id for external user
             if (empty($user->socid)) {
                 // Company
-                print '<tr><td>' . $langs->trans("Customer") . '</td><td>';
+                print '<tr><td class="titlefield">' . $langs->trans("Customer") . '</td><td>';
                 $events = array();
                 $events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
                 print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events);
@@ -245,7 +245,7 @@ class FormTicketsup
                 $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external');
                 print '</td></tr>';
             } else {
-                print '<tr><td><input type="hidden" name="socid" value="' . $user->socid . '"/></td>';
+                print '<tr><td class="titlefield"><input type="hidden" name="socid" value="' . $user->socid . '"/></td>';
                 print '<td><input type="hidden" name="contactid" value="' . $user->contactid . '"/></td>';
                 print '<td><input type="hidden" name="type" value="Z"/></td></tr>';
             }
@@ -253,8 +253,8 @@ class FormTicketsup
 
         // TITLE
         if ($this->withemail) {
-            print '<tr><td width="35%"><label for="email"><span class="fieldrequired">' . $langs->trans("Email") . '</span></label></td><td>';
-            print '<input  class="text" size="40" id="email" name="email" value="' . (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $subject) . '" />';
+            print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">' . $langs->trans("Email") . '</span></label></td><td>';
+            print '<input  class="text minwidth200" id="email" name="email" value="' . (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $subject) . '" />';
             print '</td></tr>';
         }
 
@@ -282,7 +282,7 @@ class FormTicketsup
         }
 
         // Type
-        print '<tr><td><span class="fieldrequired"><label for="selecttype_code">' . $langs->trans("TicketTypeRequest") . '</span></label></td><td>';
+        print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">' . $langs->trans("TicketTypeRequest") . '</span></label></td><td>';
         print $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
         print '</td></tr>';
 

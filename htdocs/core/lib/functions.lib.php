@@ -6149,12 +6149,19 @@ function setEventMessage($mesgs, $style='mesgs')
  */
 function setEventMessages($mesg, $mesgs, $style='mesgs')
 {
-	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
-	if (empty($mesgs)) setEventMessage($mesg, $style);
+	if (empty($mesg) && empty($mesgs))
+	{
+		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
+	}
 	else
 	{
-		if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
-		setEventMessage($mesgs, $style);
+		if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
+		if (empty($mesgs)) setEventMessage($mesg, $style);
+		else
+		{
+			if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
+			setEventMessage($mesgs, $style);
+		}
 	}
 }
 
