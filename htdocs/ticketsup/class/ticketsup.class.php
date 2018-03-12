@@ -2262,7 +2262,7 @@ class Ticketsup extends CommonObject
      *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
      *    @return 	array          		Array of contacts
      */
-    function liste_contact($statut = -1, $source = 'external', $list = 0, $code = '')
+    function listeContact($statut = -1, $source = 'external', $list = 0, $code = '')
     {
         global $langs;
 
