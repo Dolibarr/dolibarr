@@ -131,11 +131,11 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 		// Try to create one with bad values
 		$localobject=new Ticketsup($this->savdb);
 		$localobject->initAsSpecimen();
-		$localobject->fk_statut = '\'1=1';
+		$localobject->ref = '';
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(-1, $result, $localobject->error);
+		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
 
 		// Try to create one with correct values
 		$localobject=new Ticketsup($this->savdb);
@@ -143,7 +143,7 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertGreaterThan(0, $result, $localobject->error);
+		$this->assertGreaterThan(0, $result, $localobject->error.join(',', $localobject->errors));
 
 		return $result;
 	}
