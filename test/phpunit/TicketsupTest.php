@@ -18,11 +18,10 @@
 
 /**
  *      \file       test/unit/TicketsupTest.php
-*		\ingroup    test
-*      \brief      PHPUnit test
-*		\remarks	To run this script as CLI:  phpunit filename.php
-*/
-namespace test\unit;
+ *		\ingroup    test
+ *      \brief      PHPUnit test
+ *		\remarks	To run this script as CLI:  phpunit filename.php
+ */
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
