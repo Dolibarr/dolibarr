@@ -98,12 +98,20 @@ class Stripe extends CommonObject
 	public function getStripeCustomerAccount($id)
 	{
 		global $conf;
-
+		if (empty($conf->global->STRIPECONNECT_LIVE)) {
+			$mode = 0;
+		} else {
+			if (empty($conf->global->STRIPE_LIVE)) {
+				$mode = 0;
+			} else {
+				$mode = $conf->global->STRIPE_LIVE;
+			}
+		}
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "llx_societe_accounts as sa";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "llx_societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
 		$sql.= " AND sa.entity IN (".getEntity('societe').")";
-		$sql.= " AND site = 'stripe'";
+		$sql.= " AND sa.site = 'stripe' AND sa.status = ".$mode;
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
