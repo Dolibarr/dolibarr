@@ -27,6 +27,7 @@ CREATE TABLE llx_societe_account(
 	site              varchar(128),				-- name of external web site
 	fk_website        integer,					-- id of local web site
 	note_private      text,
+        key_account       varchar(128),
     date_last_login   datetime,
     date_previous_login datetime,
 	date_creation datetime NOT NULL, 
