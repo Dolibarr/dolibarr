@@ -52,7 +52,7 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Return stripe account
+	 * Return main company OAuth Connect stripe account
 	 *
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
 	 * @return 	int					???
@@ -92,17 +92,18 @@ class Stripe extends CommonObject
 	/**
 	 * getStripeCustomerAccount
 	 *
-	 * @param	int		$id		???
-	 * @return	int				???
+	 * @param	int		$id		Id of third party
+	 * @return	string			Stripe customer ref 'cu_xxxxxxxxxxxxx'
 	 */
 	public function getStripeCustomerAccount($id)
 	{
 		global $conf;
 
-		$sql = "SELECT s.key_account as key_account, s.entity, e.fk_object";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "stripe_entity as s";
-		$sql .= " JOIN " . MAIN_DB_PREFIX . "entity_extrafields as e ON s.entity=e.fk_object";
-		$sql .= " WHERE e.fk_soc=" . $id . " ";
+		$sql = "SELECT sa.key_account as key_account, sa.entity";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "llx_societe_accounts as sa";
+		$sql.= " WHERE sa.fk_soc = " . $id;
+		$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND site = 'stripe'";
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

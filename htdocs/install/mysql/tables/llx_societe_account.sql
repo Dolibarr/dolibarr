@@ -12,17 +12,20 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
+--
+-- Table to store accounts of thirdparties on websites
 
-
-CREATE TABLE llx_website_account(
+CREATE TABLE llx_societe_account(
 	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	login             varchar(64) NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity	integer DEFAULT 1, 
+	login             varchar(128) NOT NULL, 
     pass_encoding     varchar(24) NOT NULL,
     pass_crypted      varchar(128),
     pass_temp         varchar(128),			    -- temporary password when asked for forget password
     fk_soc integer,
-	fk_website        integer NOT NULL,
+	site              varchar(128),				-- name of external web site
+	fk_website        integer,					-- id of local web site
 	note_private      text,
     date_last_login   datetime,
     date_previous_login datetime,

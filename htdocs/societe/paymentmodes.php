@@ -413,6 +413,24 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
+	if (! (empty($conf->stripe->enabled)))
+	{
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
+
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield" width="100%">';
+
+		// Prospect/Customer
+		print '<tr><td class="titlefield">'.$langs->trans('StripeCustomerRef').'</td><td>';
+		print $object->getStripeCustomerAccount();
+		print '</td></tr>';
+
+		print '</table>';
+		print '</div>';
+		print '</div>';
+		print '</div>';
+	}
 
 	if (! (empty($conf->stripe->enabled)))
 	{
@@ -979,7 +997,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 		// RUM
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
-		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum','alpha').'"><br>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum','alpha').'"> <div class="opacitymedium">'.$langs->trans("RUMWillBeGenerated").'</div></td></tr>';
 
 		print '<tr><td>'.$langs->trans("WithdrawMode").'</td><td>';
 		$tblArraychoice = array("FRST" => $langs->trans("FRST"), "RECUR" => $langs->trans("RECUR"));

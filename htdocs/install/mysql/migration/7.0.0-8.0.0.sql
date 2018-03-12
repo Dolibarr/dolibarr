@@ -228,3 +228,43 @@ CREATE TABLE llx_c_ticketsup_type
 
 ALTER TABLE llx_facturedet_rec ADD COLUMN date_start_fill integer DEFAULT 0;
 ALTER TABLE llx_facturedet_rec ADD COLUMN date_end_fill integer DEFAULT 0;
+
+
+
+CREATE TABLE llx_societe_account(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity	integer DEFAULT 1, 
+	login             varchar(128) NOT NULL, 
+    pass_encoding     varchar(24) NOT NULL,
+    pass_crypted      varchar(128),
+    pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    fk_soc integer,
+	site              varchar(128),
+	fk_website        integer,
+	note_private      text,
+    date_last_login   datetime,
+    date_previous_login datetime,
+	date_creation datetime NOT NULL, 
+	tms timestamp NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status integer 
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+
+-- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_rowid (rowid);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_login (login);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_status (status);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_website (fk_website);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_soc (fk_soc);
+-- END MODULEBUILDER INDEXES
+
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website_soc(entity, fk_soc, login, site, fk_website);
+
+ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
+ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
+
