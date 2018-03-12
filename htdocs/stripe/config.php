@@ -33,15 +33,6 @@ global $conf;
 //use \includes\stripe as stripe;
 $stripe = array();
 
-if ((empty($conf->global->STRIPECONNECT_LIVE) && ! (empty($conf->stripeconnect->enabled))) || GETPOST('forcesandbox','alpha'))
-{
-	$stripe = array(
-		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
-		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
-	);
-}
-else 
-{
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
 {
 	$stripe = array(
@@ -55,7 +46,6 @@ else
 		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
 		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
 	);
-}
 }
 
 require_once DOL_DOCUMENT_ROOT."/includes/stripe/lib/Stripe.php";
