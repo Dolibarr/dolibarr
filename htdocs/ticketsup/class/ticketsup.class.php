@@ -341,12 +341,12 @@ class Ticketsup extends CommonObject
             $sql .= " " . (!isset($this->fk_soc) ? '0' : "'" . $this->db->escape($this->fk_soc) . "'") . ",";
             $sql .= " " . (!isset($this->fk_project) ? '0' : "'" . $this->db->escape($this->fk_project) . "'") . ",";
             $sql .= " " . (!isset($this->origin_email) ? 'NULL' : "'" . $this->db->escape($this->origin_email) . "'") . ",";
-            $sql .= " " . (!isset($this->fk_user_create) ? ($user->id ? $user->id : 'NULL') : "'" . $this->fk_user_create . "'") . ",";
-            $sql .= " " . (!isset($this->fk_user_assign) ? 'NULL' : "'" . $this->fk_user_assign . "'") . ",";
+            $sql .= " " . ($this->fk_user_create > 0 ? ($user->id > 0 ? $user->id : 'NULL') : $this->fk_user_create) . ",";
+            $sql .= " " . ($this->fk_user_assign > 0 ? 'NULL' : $this->fk_user_assign) . ",";
             $sql .= " " . (!isset($this->subject) ? 'NULL' : "'" . $this->db->escape($this->subject) . "'") . ",";
             $sql .= " " . (!isset($this->message) ? 'NULL' : "'" . $this->db->escape($this->message) . "'") . ",";
-            $sql .= " " . (!isset($this->fk_statut) ? '0' : "'" . $this->fk_statut . "'") . ",";
-            $sql .= " " . (!isset($this->resolution) ? 'NULL' : "'" . $this->resolution . "'") . ",";
+            $sql .= " " . (!isset($this->fk_statut) ? '0' : "'" . $this->db->escape($this->fk_statut) . "'") . ",";
+            $sql .= " " . (!isset($this->resolution) ? 'NULL' : "'" . $this->db->escape($this->resolution) . "'") . ",";
             $sql .= " " . (!isset($this->progress) ? '0' : "'" . $this->db->escape($this->progress) . "'") . ",";
             $sql .= " " . (!isset($this->timing) ? 'NULL' : "'" . $this->db->escape($this->timing) . "'") . ",";
             $sql .= " " . (!isset($this->type_code) ? 'NULL' : "'" . $this->db->escape($this->type_code) . "'") . ",";
@@ -1464,8 +1464,8 @@ class Ticketsup extends CommonObject
         $sql .= ") VALUES (";
         $sql .= " " . $conf->entity . ",";
         $sql .= " '" . $this->db->idate(dol_now()) . "',";
-        $sql .= " '" . $this->track_id . "',";
-        $sql .= " " . ($user->id ? "'" . $user->id . "'" : 'NULL') . ",";
+        $sql .= " '" . $this->db->escape($this->track_id) . "',";
+        $sql .= " " . ($user->id > 0 ? $user->id : 'NULL') . ",";
         $sql .= " '" . $this->db->escape($message) . "'";
         $sql .= ")";
 
@@ -1596,9 +1596,8 @@ class Ticketsup extends CommonObject
 
         $sql = "SELECT rowid, fk_user_create, datec, message";
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup_logs";
-        $sql .= " WHERE fk_track_id ='" . $this->track_id . "'";
+        $sql .= " WHERE fk_track_id ='" . $this->db->escape($this->track_id) . "'";
         $sql .= " ORDER BY datec DESC";
-        dol_syslog(get_class($this) . "::load_cache_actions_ticket sql=" . $sql, LOG_DEBUG);
 
         $resql = $this->db->query($sql);
         if ($resql) {
@@ -1615,7 +1614,7 @@ class Ticketsup extends CommonObject
             return $num;
         } else {
             $this->error = "Error " . $this->db->lasterror();
-            dol_syslog(get_class($this) . "::load_cache_actions_ticket " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this) . "::loadCacheLogsTicket " . $this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1651,7 +1650,7 @@ class Ticketsup extends CommonObject
         $sql .= "private";
         $sql .= ") VALUES (";
         $sql .= " " . (!isset($this->fk_track_id) ? "'" . $this->db->escape($this->track_id) . "'" : "'" . $this->db->escape($this->fk_track_id) . "'") . ",";
-        $sql .= " " . (!isset($this->fk_user_action) ? $user->id : "'" . $this->fk_user_action . "'") . ",";
+        $sql .= " " . ($this->fk_user_action > 0 ? $this->fk_user_action : $user->id) . ",";
         $sql .= " '" . $this->db->idate(dol_now()) . "',";
         $sql .= " " . (!isset($this->message) ? 'NULL' : "'" . $this->db->escape($this->message) . "'") . ",";
         $sql .= " " . (empty($this->private) ? '0' : "'" . $this->db->escape($this->private) . "'") . "";
@@ -1709,7 +1708,7 @@ class Ticketsup extends CommonObject
 
         $sql = "SELECT rowid, fk_user_action, datec, message, private";
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup_msg";
-        $sql .= " WHERE fk_track_id ='" . $this->track_id . "'";
+        $sql .= " WHERE fk_track_id ='" . $this->db->escape($this->track_id) . "'";
         $sql .= " ORDER BY datec DESC";
         dol_syslog(get_class($this) . "::load_cache_actions_ticket sql=" . $sql, LOG_DEBUG);
 
@@ -1747,7 +1746,7 @@ class Ticketsup extends CommonObject
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup";
-            $sql .= " SET fk_statut=8, progress=100,date_close='" . $this->db->idate(dol_now()) . "'";
+            $sql .= " SET fk_statut=8, progress=100, date_close='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this) . "::close sql=" . $sql);
@@ -2162,12 +2161,7 @@ class Ticketsup extends CommonObject
                             $link = '/comm/propal.php?id=' . $objet_id;
                             break;
                         case 'facture':
-                            if (DOL_VERSION < '6.0.0') {
-                                $link = '/compta/facture.php?facid=' . $objet_id;
-                        	} else {
-                                $link = '/compta/facture/card.php?facid=' . $objet_id;
-                            }
-
+                            $link = '/compta/facture/card.php?facid=' . $objet_id;
                             break;
                         case 'order':
                             $link = '/commande/card.php?facid=' . $objet_id;
@@ -2217,7 +2211,7 @@ class Ticketsup extends CommonObject
                         $sendto = htmlentities($sendto);
 
                         $sql = "INSERT INTO " . MAIN_DB_PREFIX . "notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-                        $sql .= " VALUES ('" . $this->db->idate($now) . "', " . $actiondefid . ", " . $obj->cid . ", '" . $objet_type . "', " . $objet_id . ", '" . $this->db->escape($obj->email) . "')";
+                        $sql .= " VALUES ('" . $this->db->idate($now) . "', " . $actiondefid . ", " . $obj->cid . ", '" . $this->db->escape($objet_type) . "', " . $objet_id . ", '" . $this->db->escape($obj->email) . "')";
                         dol_syslog("Notify::send sql=" . $sql);
                         if (!$this->db->query($sql)) {
                             dol_print_error($this->db);
@@ -2286,7 +2280,7 @@ class Ticketsup extends CommonObject
 
         $sql .= " WHERE ec.element_id =" . $this->id;
         $sql .= " AND ec.fk_c_type_contact=tc.rowid";
-        $sql .= " AND tc.element='" . $this->element . "'";
+        $sql .= " AND tc.element='" . $this->db->escape($this->element) . "'";
         if ($source == 'internal') {
             $sql .= " AND tc.source = 'internal'";
         }
