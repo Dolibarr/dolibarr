@@ -170,7 +170,7 @@ class ActionsTicketsup
                 $id = $this->dao->create($user);
                 if ($id <= 0) {
                     $error++;
-                    $this->errors = $this->dao->error;
+                    $this->error = $this->dao->error;
                     $this->errors = $this->dao->errors;
                     $action = 'create_ticket';
                 }
