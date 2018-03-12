@@ -893,6 +893,26 @@ class Ticketsup extends CommonObject
         }
 
         if (!$error) {
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup_logs";
+        	$sql .= " WHERE rowid=" . $this->id;
+        	$resql = $this->db->query($sql);
+        }
+        if (!$error) {
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup_mesgs";
+        	$sql .= " WHERE rowid=" . $this->id;
+        	$resql = $this->db->query($sql);
+        }
+
+        // Removed extrafields
+        if (!$error) {
+        	$result = $this->deleteExtraFields();
+        	if ($result < 0) {
+        		$error++;
+        		dol_syslog(get_class($this) . "::delete error -3 " . $this->error, LOG_ERR);
+        	}
+        }
+
+        if (!$error) {
             $sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticketsup";
             $sql .= " WHERE rowid=" . $this->id;
 
@@ -901,15 +921,6 @@ class Ticketsup extends CommonObject
             if (!$resql) {
                 $error++;
                 $this->errors[] = "Error " . $this->db->lasterror();
-            }
-        }
-
-        // Removed extrafields
-        if (!$error) {
-            $result = $this->deleteExtraFields();
-            if ($result < 0) {
-                $error++;
-                dol_syslog(get_class($this) . "::delete error -3 " . $this->error, LOG_ERR);
             }
         }
 
@@ -1385,13 +1396,13 @@ class Ticketsup extends CommonObject
      *    @param    User	$user				Object user
      *    @param    int 	$id_assign_user		ID of user assigned
      *    @param    int 	$notrigger        	Disable trigger
-     *    @return   int							<0 if KO, >0 if OK
+     *    @return   int							<0 if KO, 0=Nothing done, >0 if OK
      */
     public function assignUser($user, $id_assign_user, $notrigger = 0)
     {
         global $conf, $langs;
 
-        if ($id_assign_user > 0) { // no closed
+        if ($id_assign_user > 0) {
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup";
@@ -1401,7 +1412,10 @@ class Ticketsup extends CommonObject
 
             dol_syslog(get_class($this) . "::assignUser sql=" . $sql);
             $resql = $this->db->query($sql);
-            if ($resql) {
+            if ($resql)
+            {
+            	$this->fk_user_assign = $id_assign_user;	// May be used by trigger
+
                 if (!$notrigger) {
                 	// Call trigger
                 	$result=$this->call_trigger('TICKET_ASSIGNED', $user);
@@ -1427,6 +1441,8 @@ class Ticketsup extends CommonObject
                 return -1;
             }
         }
+
+        return 0;
     }
 
     /**
@@ -1756,27 +1772,30 @@ class Ticketsup extends CommonObject
 
                 // Valid and close fichinter linked
                 $this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
-                foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
-                    $fichinter = new Fichinter($this->db);
-                    $fichinter->fetch($fichinter_id);
-                    if($fichinter->statut == 0) {
-                        $result = $fichinter->setValid($user);
-                        if (!$result) {
-                            $this->errors[] = $fichinter->error;
-                            $error++;
-                        }
-                    }
-                    if ($fichinter->statut < 3) {
-                        $result = $fichinter->setStatut(3);
-                        if (!$result) {
-                            $this->errors[] = $fichinter->error;
-                            $error++;
-                        }
-                    }
+                if ($this->linkedObjectsIds)
+                {
+	                foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
+	                    $fichinter = new Fichinter($this->db);
+	                    $fichinter->fetch($fichinter_id);
+	                    if($fichinter->statut == 0) {
+	                        $result = $fichinter->setValid($user);
+	                        if (!$result) {
+	                            $this->errors[] = $fichinter->error;
+	                            $error++;
+	                        }
+	                    }
+	                    if ($fichinter->statut < 3) {
+	                        $result = $fichinter->setStatut(3);
+	                        if (!$result) {
+	                            $this->errors[] = $fichinter->error;
+	                            $error++;
+	                        }
+	                    }
+	                }
                 }
 
             	// Call trigger
-            	$result=$this->call_trigger('TICKET_CLOSED', $user);
+            	$result=$this->call_trigger('TICKET_CLOSE', $user);
             	if ($result < 0) {
                     $error++;
                 }
