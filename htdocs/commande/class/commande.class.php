@@ -3135,6 +3135,12 @@ class Commande extends CommonOrder
             // End call triggers
         }
 
+		if ($this->nb_expedition() != 0)
+		{
+			$this->errors[] = $langs->trans('SomeShipmentExists');
+			$error++;
+		}
+
         if (! $error)
         {
         	// Delete order details
