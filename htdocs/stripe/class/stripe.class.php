@@ -55,7 +55,7 @@ class Stripe extends CommonObject
 	 * Return main company OAuth Connect stripe account
 	 *
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
-	 * @return 	int					???
+	 * @return 	string				Stripe account 'acc_....'
 	 */
 	public function getStripeAccount($mode='StripeTest')
 	{
@@ -106,7 +106,7 @@ class Stripe extends CommonObject
 		$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 
-		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getStripeCustomerAccount Try to find the cu_.... of thirdparty id=".$id, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -145,10 +145,9 @@ class Stripe extends CommonObject
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$soc = new Societe($this->db);
-			$soc->fetch($id);
 			$num = $this->db->num_rows($resql);
-			if ($num) {
+			if ($num)
+			{
 				$obj = $this->db->fetch_object($resql);
 				$tiers = $obj->key_account;
 				if ($conf->entity == 1) {
@@ -159,8 +158,11 @@ class Stripe extends CommonObject
 					));
 				}
 			}
-			else
+			elseif ($createifnotlinkedtostripe)
 			{
+				$soc = new Societe($this->db);
+				$soc->fetch($id);
+
 				if ($conf->entity == 1) {
 					$customer = \Stripe\Customer::create(array(
 					"email" => $soc->email,

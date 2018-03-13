@@ -69,6 +69,21 @@ $hookmanager->initHooks(array('thirdpartybancard','globalcard'));
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartybancard'));
 
+if (! empty($conf->stripe->enabled))
+{
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+	{
+		$service = 'StripeLive';
+		$servicestatus = 0;
+	}
+
+	$stripe = new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus);		// Get thirdparty cu_...
+}
+
 
 
 /*
@@ -90,7 +105,6 @@ if (empty($reshook))
 			exit;
 		}
 	}
-
 
 	if ($action == 'update' && ! $_POST["cancel"])
 	{
@@ -332,32 +346,29 @@ if (empty($reshook))
 	$id = $savid;
 }
 
+// Action for stripe
 if (! empty($conf->stripe->enabled) && class_exists('Stripe'))
 {
-	$stripe=new Stripe($db);
-
-	if (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')) $service = 'StripeTest';
-	else $service = 'StripeLive';
-
-	$customerstripe=$stripe->customerStripe($socid, $stripe->getStripeAccount($service));
-	if ($customerstripe->id) {
-	$cu = \Stripe\Customer::retrieve("".$customerstripe->id."");}
-
-	$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 	if ($action == 'setassourcedefault')
 	{
-	$cu->default_source = "$source"; // obtained with Stripe.js
-	$cu->save();
+		$cu = \Stripe\Customer::retrieve($stripecu);
 
-	header('Location: '.$url);
-	exit;
+		$cu->default_source = "$source"; // obtained with Stripe.js
+		$cu->save();
+
+		$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+		header('Location: '.$url);
+		exit;
 	}
 	elseif ($action == 'delete')
 	{
-	$cu->sources->retrieve("$source")->detach();
+		$cu = \Stripe\Customer::retrieve($stripecu);
 
-	header('Location: '.$url);
-	exit;
+		$cu->sources->retrieve("$source")->detach();
+
+		$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+		header('Location: '.$url);
+		exit;
 	}
 }
 
@@ -446,13 +457,13 @@ if ($socid && $action != 'edit' && $action != "create")
 		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
 	}
 
-	if (! (empty($conf->stripe->enabled)))
+	if (! empty($conf->stripe->enabled))
 	{
-		$stripe = new Stripe($db);
 
-		// Prospect/Customer
+
+		// Stripe customer key 'cu_....' stored into llx_societe_account
 		print '<tr><td class="titlefield">'.$langs->trans('StripeCustomerId').'</td><td>';
-		print $stripe->getStripeCustomerAccount($object->id);
+		print $stripecu;
 		print '</td></tr>';
 
 	}
@@ -460,22 +471,23 @@ if ($socid && $action != 'edit' && $action != "create")
 	print '</table>';
 	print '</div>';
 
+	print '<br>';
+
 	if (! (empty($conf->stripe->enabled)))
 	{
-		print load_fiche_titre($langs->trans('StripeGateways'), '', '');
+		print load_fiche_titre($langs->trans('StripeGateways').($stripeacc ? ' ('.$stripeacc.')':''), '', '');
 
-		if (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')) $service = 'StripeTest';
-		else $service = 'StripeLive';
-
-		if (is_object($stripe) && $stripe->getStripeAccount($service))
+		$listofsources = array();
+		if (is_object($stripe) && $stripeacc)
 		{
-			$customerstripe=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
+			$customerstripe=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
+
+			if ($customerstripe->id) {
+				$listofsources=$customerstripe->sources->data;
+			}
 		}
 
-		if ($customerstripe->id) {
-			$input=$customerstripe->sources->data;
-		}
-
+		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste" width="100%">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td align="left">'.$langs->trans('Type').'</td>';
@@ -484,9 +496,9 @@ if ($socid && $action != 'edit' && $action != "create")
 		print '<td align="center">'.$langs->trans('Default').'</td>';
 		print "<td></td></tr>\n";
 
-		if (is_array($input))
+		if (is_array($listofsources))
 		{
-			foreach ($input as $src)
+			foreach ($listofsources as $src)
 			{
 				print '<tr>';
 				print '<td>';
@@ -581,11 +593,12 @@ if ($socid && $action != 'edit' && $action != "create")
 				print '</td></tr>';
 			}
 		}
-		if (empty($input))
+		if (empty($listofsources))
 		{
 			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</td></tr>';
 		}
 		print "</table>";
+		print "</div>";
 	}
 
 
@@ -599,7 +612,7 @@ if ($socid && $action != 'edit' && $action != "create")
 	$var = false;
 	if (is_array($rib_list))
 	{
-		print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste" width="100%">';
 
 		print '<tr class="liste_titre">';
