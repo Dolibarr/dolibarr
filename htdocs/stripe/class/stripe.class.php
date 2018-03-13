@@ -93,25 +93,18 @@ class Stripe extends CommonObject
 	 * getStripeCustomerAccount
 	 *
 	 * @param	int		$id		Id of third party
-	 * @return	string			Stripe customer ref 'cu_xxxxxxxxxxxxx'
+	 * @param	int		$status		Status
+	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx'
 	 */
-	public function getStripeCustomerAccount($id)
+	public function getStripeCustomerAccount($id, $status=0)
 	{
 		global $conf;
-		if (empty($conf->global->STRIPECONNECT_LIVE)) {
-			$mode = 0;
-		} else {
-			if (empty($conf->global->STRIPE_LIVE)) {
-				$mode = 0;
-			} else {
-				$mode = $conf->global->STRIPE_LIVE;
-			}
-		}
+
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "llx_societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
 		$sql.= " AND sa.entity IN (".getEntity('societe').")";
-		$sql.= " AND sa.site = 'stripe' AND sa.status = ".$mode;
+		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
