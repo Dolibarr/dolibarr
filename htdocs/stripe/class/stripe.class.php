@@ -124,25 +124,19 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * customerStripe
+	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet)
 	 *
-	 * @param	int		$id		Id of third party
-	 * @return	string				Stripe account ref 'acc_xxxxxxxxxxxxx'
-	 * @return \Stripe\StripeObject|\Stripe\ApiResource
+	 * @param	int		$id								Id of third party
+	 * @param	string	$key							Stripe account acc_....
+	 * @param	int		$status							Status (0=test, 1=live)
+	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
+	 * @return \Stripe\StripeObject|\Stripe\ApiResource|null 	Stripe Customer or null if not found
 	 */
-	public function customerStripe($id,$key)
+	public function customerStripe($id, $key, $status=0, $createifnotlinkedtostripe=0)
 	{
 		global $conf;
-		if (empty($conf->global->STRIPECONNECT_LIVE)) {
-			$mode = 0;
-		} else {
-			if (empty($conf->global->STRIPE_LIVE)) {
-				$mode = 0;
-			} else {
-				$mode = $conf->global->STRIPE_LIVE;
-			}
-		}
-		$sql = "SELECT sa.key_account as key_account, sa.entity";
+
+		$sql = "SELECT sa.key_account as key_account, sa.entity";			// key_account is cu_....
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
 		$sql.= " AND sa.entity IN (".getEntity('societe').")";
@@ -164,24 +158,28 @@ class Stripe extends CommonObject
 					"stripe_account" => $key
 					));
 				}
-			} else {
+			}
+			else
+			{
 				if ($conf->entity == 1) {
 					$customer = \Stripe\Customer::create(array(
 					"email" => $soc->email,
+					"business_vat_id" => $soc->tva_intra,
 					"description" => $soc->name
 					));
 				} else {
 					$customer = \Stripe\Customer::create(array(
 					"email" => $soc->email,
+					"business_vat_id" => $soc->tva_intra,
 					"description" => $soc->name
 					), array(
 					"stripe_account" => $key
 					));
 				}
-				$customer_id = "" . $customer->id . "";
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc,key_account,site,status,entity)";
-				$sql .= " VALUES ($id,'$customer_id','stripe'," . $mode . "," . $conf->entity . ")";
-				dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
+				$customer_id = $customer->id;
+
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, key_account, site, status, entity)";
+				$sql .= " VALUES (".$id.", '".$this->db->escape($customer_id)."', 'stripe', " . $status . "," . $conf->entity . ")";
 				$resql = $this->db->query($sql);
 			}
 		}
@@ -189,25 +187,28 @@ class Stripe extends CommonObject
 	}
 
 	/**
-	 * createPaymentStripe        Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
+	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
 	 *
-	 * @param int $amount			    amount to pay
-	 * @param string $currency		EUR, GPB...
+	 * @param int $amount				Amount to pay
+	 * @param string $currency			EUR, GPB...
 	 * @param string $origin			order, invoice, contract...
 	 * @param int $item				    if of element to pay
 	 * @param string $source			src_xxxxx or card_xxxxx or ac_xxxxx
-	 * @param string $customer		Stripe account ref 'cu_xxxxxxxxxxxxx' via customerStripe()
+	 * @param string $customer			Stripe account ref 'cu_xxxxxxxxxxxxx' via customerStripe()
 	 * @param string $account			Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
-	 * @param	int		$status	     	Status
+	 * @param	int		$status			Status (0=test, 1=live)
 	 * @return Stripe
 	 */
 	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0)
 	{
 		global $conf;
 
+		if (empty($status)) $service = 'StripeTest';
+		else $service = 'StripeLive';
+
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
-		$sql.= " WHERE sa.key_account = " . $customer;
+		$sql.= " WHERE sa.key_account = '" . $this->db->escape($customer) . "'";
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 
@@ -223,7 +224,7 @@ class Stripe extends CommonObject
 		} else {
 			$key = NULL;
 		}
-    
+
 		$stripeamount = round($amount * 100);
 		$societe = new Societe($this->db);
 		$societe->fetch($fksoc);
@@ -292,9 +293,6 @@ class Stripe extends CommonObject
 				}
 				if (isset($charge->id)) {}
 			}
-
-			if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')) $service = 'StripeTest';
-			else $service = 'StripeLive';
 
 			$return->statut = 'success';
 			$return->id = $charge->id;
