@@ -849,10 +849,10 @@ if ($rowid > 0)
 		print "<table class=\"border\" width=\"100%\">\n";
              print '<tbody>';
 
-		$today=dol_now();
-        $datefrom=0;
-        $dateto=0;
-        $paymentdate=-1;
+			$today=dol_now();
+    $datefrom=0;
+    $dateto=0;
+    $paymentdate=-1;
 
 $year = strftime("%Y",$today);
 $month = strftime("%m",$today);
@@ -864,32 +864,34 @@ $datefin=dol_now()-86400;
 $datefin=$object->datefin+86400;
 }
 
-$cotisationfin = strftime("%Y",$datefin);
-$cotisationfin2 = strftime("%m",$datefin);
-$cotisationfin3 = strftime("%d",$datefin);
+$cotis1 = dol_mktime(00,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year);
+$cotis0 = dol_time_plus_duree($cotis1,-1,'y');
+$cotis2 = dol_time_plus_duree($cotis1,+1,'y');
 
-$startcotis0 = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'01',$year-1);
-$startcotis1 = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'01',$year);
-$startcotis2 = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'01',$year+1);
+$startcotis0 = dol_time_plus_duree($cotis0,-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
+$startcotis1 = dol_time_plus_duree($cotis1,-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
+$startcotis2 = dol_time_plus_duree($cotis2,-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
 
 if ($startcotis1>$today){
 if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA == '0') { 
-$next = mktime(0,00,00,$month-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,$day,$year);
+$next = dol_time_plus_duree($today,+$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,'m');
 $date = $dateb = $today;
 }else{
 $next = $startcotis1;
-if (dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year-1)>$today && $datefin<$today){$date=dol_now();}else{$date = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year-1);}
-$dateb = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year-1);}
+if ($cotis0>$today && $datefin<$today){$date=dol_now();}else{
+$date = $cotis0;}
+$dateb = $cotis0;}
 $dateto = strtotime(date("Y-m-d", $dateb) . " + 1 year - 1 day");  
 }else{
 if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA == '0') {
-$next = mktime(0,00,00,$month-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,$day,$year+1);
+$next = $startcotis2;
 $date = $dateb =$today;
 }else{ 
 $next = $startcotis2; 
-if (dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year)>$today && $datefin<$today){$date=dol_now();}else{$date = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year);}
-$dateb = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START,'01',$year);} 
-$dateto = strtotime(date("Y-m-d", $dateb) . " + 1 year - 1 day");
+if ($cotis1>$today && $datefin<$today){$date=dol_now();}else{
+$date = $cotis1;}
+$dateb = $cotis1;} 
+$dateto = strtotime(date("Y-m-d", dol_time_plus_duree($cotis2,-1,'d')));
 } 
 
 if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA=='1' or $conf->global->ADHERENT_SUBSCRIPTION_PRORATA=='0'){$tx="1";}
@@ -900,7 +902,7 @@ $newy = strftime("%Y",$newdate);
 $newm = strftime("%m",$newdate);
 $newd = strftime("%d",$newdate);
 $renewadherent = strtotime("+ ".$conf->global->ADHERENT_WELCOME_MONTH." month",$newdate);
-$datefrom = strtotime(date("Y-m-d", $date) . " + $monthnb month"); 
+$datefrom = strtotime(date("Y-m-d", dol_time_plus_duree($date,+$monthnb,'m'))); 
 
 $d = strftime("%Y",$datefrom);
 $f = strftime("%Y",$dateto);
