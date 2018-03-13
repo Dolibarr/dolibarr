@@ -341,8 +341,8 @@ class Ticketsup extends CommonObject
             $sql .= " " . (!isset($this->fk_soc) ? '0' : "'" . $this->db->escape($this->fk_soc) . "'") . ",";
             $sql .= " " . (!isset($this->fk_project) ? '0' : "'" . $this->db->escape($this->fk_project) . "'") . ",";
             $sql .= " " . (!isset($this->origin_email) ? 'NULL' : "'" . $this->db->escape($this->origin_email) . "'") . ",";
-            $sql .= " " . ($this->fk_user_create > 0 ? ($user->id > 0 ? $user->id : 'NULL') : $this->fk_user_create) . ",";
-            $sql .= " " . ($this->fk_user_assign > 0 ? 'NULL' : $this->fk_user_assign) . ",";
+            $sql .= " " . ($this->fk_user_create > 0 ? $this->fk_user_create : ($user->id > 0 ? $user->id : 'NULL')) . ",";
+            $sql .= " " . ($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL') . ",";
             $sql .= " " . (!isset($this->subject) ? 'NULL' : "'" . $this->db->escape($this->subject) . "'") . ",";
             $sql .= " " . (!isset($this->message) ? 'NULL' : "'" . $this->db->escape($this->message) . "'") . ",";
             $sql .= " " . (!isset($this->fk_statut) ? '0' : "'" . $this->db->escape($this->fk_statut) . "'") . ",";
@@ -2262,7 +2262,7 @@ class Ticketsup extends CommonObject
      *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
      *    @return 	array          		Array of contacts
      */
-    function liste_contact($statut = -1, $source = 'external', $list = 0, $code = '')
+    function listeContact($statut = -1, $source = 'external', $list = 0, $code = '')
     {
         global $langs;
 
