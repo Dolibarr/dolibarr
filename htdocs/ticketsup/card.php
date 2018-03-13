@@ -77,10 +77,28 @@ if (GETPOST('modelselected')) {
 // Store current page url
 $url_page_current = dol_buildpath('/ticketsup/card.php', 1);
 
-/***************************************************
- * PAGE
- *
- ****************************************************/
+if ($action == 'view' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen' || $action == 'editsubject' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
+	$res = $object->fetch($id, $track_id, $ref);
+}
+
+// Security check
+$result = restrictedArea($user, 'ticketsup', $object->dao->id);
+
+
+
+/*
+ * Actions
+ */
+
+$permissiondellink = $user->rights->ticketsup->write;
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be include, not include_once
+
+
+
+
+/*
+ * View
+ */
 
 $userstat = new User($db);
 $form = new Form($db);
@@ -90,21 +108,14 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
     $res = $object->fetch($id, $track_id, $ref);
 
     if ($res > 0) {
-        // Security check
-        $result = restrictedArea($user, 'ticketsup', $object->dao->id);
-
         // or for unauthorized internals users
         if (!$user->societe_id && ($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY && $object->dao->fk_user_assign != $user->id) && !$user->rights->ticketsup->manage) {
             accessforbidden('', 0);
         }
-        
-
-        $permissiondellink = $user->rights->ticketsup->write;
-        include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be include, not include_once
-        
 
         $help_url = 'FR:DocumentationModuleTicket';
         $page_title = $object->getTitle($action);
+
         llxHeader('', $page_title, $help_url);
 
         // Confirmation close
@@ -193,7 +204,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             } else {
                 print "ErrorRecordNotFound";
             }
-        } elseif ($object->dao->fk_soc > 0) {
+        } elseif ($socid > 0) {
             $object->dao->fetch_thirdparty();
             $head = societe_prepare_head($object->dao->thirdparty);
             dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
@@ -208,7 +219,9 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
 
         $head = ticketsup_prepare_head($object->dao);
-        dol_fiche_head($head, 'tabTicketsup', $langs->trans("Ticket"), 0, 'ticketsup');
+
+        dol_fiche_head($head, 'tabTicketsup', $langs->trans("Ticket"), -1, 'ticketsup');
+
         $object->dao->label = $object->dao->ref;
         // Author
         if ($object->dao->fk_user_create > 0) {
@@ -409,11 +422,11 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             }
         }
         print '</table>';
-        
+
         // View Original message
         $object->viewTicketOriginalMessage($user, $action);
-        
-        
+
+
 
         // Fin colonne gauche et début colonne droite
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -579,9 +592,9 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 				<div class="tagtd">' . $tab[$i]['libelle'] . '</div>';
 
                 print '<div class="tagtd">';
-                
+
                 print dol_print_phone($tab[$i]['phone'], '', '', '', AC_TEL).'<br>';
-                
+
                 if (! empty($tab[$i]['phone_perso'])) {
                     //print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
                     print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', '', '', AC_TEL).'<br>';
@@ -594,7 +607,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 
                 print '<div class="tagtd" align="center">';
                 if ($object->statut >= 0) {
-                    echo '<a href="contacts.php?track_id=' . $object->dao->track_id . '&amp;action=swapstatut&amp;ligne=' . $tab[$i]['rowid'] . '">';
+                    echo '<a href="contact.php?track_id=' . $object->dao->track_id . '&amp;action=swapstatut&amp;ligne=' . $tab[$i]['rowid'] . '">';
                 }
 
                 if ($tab[$i]['source'] == 'internal') {
@@ -622,13 +635,13 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
 
         print '</div><!-- contact list -->';
-                
+
         // Contract
         if ($action == 'sel_contract') {
             if (!empty($conf->contrat->enabled)) {
                 $langs->load('contrats');
                 print load_fiche_titre($langs->trans('LinkToAContract'), '', 'title_commercial.png');
-        
+
                 $form_contract = new FormContract($db);
                 $form_contract->formSelectContract(
                     $url_page_current.'?track_id='.$object->dao->track_id,
@@ -641,7 +654,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 
         print '</div></div></div>';
         print '<div style="clear:both"></div>';
-                
+
         print dol_fiche_end();
 
         /* ActionBar */
@@ -650,7 +663,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         // Show button to mark as read
         if (($object->dao->fk_statut == '0' || empty($object->dao->date_read)) && !$user->societe_id) {
             print '<div class="inline-block divButAction">';
-            print '<a class="butAction"  href="card.php?track_id=' . $object->dao->track_id . '&action=mark_ticket_read">' . img_picto('', 'mark-read@ticketsup') . ' ' . $langs->trans('MarkAsRead') . '</a>';
+            print '<a class="butAction"  href="card.php?track_id=' . $object->dao->track_id . '&action=mark_ticket_read">' . img_picto('', 'mark-read@ticketsup', 'height="12px"') . ' ' . $langs->trans('MarkAsRead') . '</a>';
             print '</div';
         }
 
@@ -711,7 +724,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         } elseif ($action == 'add_message') {
             $action='new_message';
             $modelmail='ticketsup_send';
-            
+
             print '<div>';
             print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticketsup');
 
@@ -724,7 +737,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
                 $newlang = $object->default_lang;
             }
-                
+
             $formticket = new FormTicketsup($db);
 
             $formticket->action = $action;
@@ -734,16 +747,16 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             $formticket->withfile = 2;
             $formticket->param = array('fk_user_create' => $user->id);
             $formticket->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            
+
             // Tableau des parametres complementaires du post
             $formticket->param['models']=$modelmail;
             $formticket->param['models_id']=GETPOST('modelmailselected', 'int');
             //$formticket->param['socid']=$object->dao->fk_soc;
             $formticket->param['returnurl']=$_SERVER["PHP_SELF"].'?track_id='.$object->dao->track_id;
-            
+
 
             $formticket->withsubstit = 1;
-            
+
             if ($object->dao->fk_soc > 0) {
                 $object->dao->fetch_thirdparty();
                 $formticket->substit['__THIRDPARTY_NAME__'] = $object->dao->thirdparty->name;
@@ -761,13 +774,13 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
                 $userstat->fetch($object->dao->fk_user_assign);
                 $formticket->substit['__TICKETSUP_USER_ASSIGN__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
             }
-            
+
             if ($object->dao->fk_user_create > 0) {
                 $userstat->fetch($object->dao->fk_user_create);
                 $formticket->substit['__TICKETSUP_USER_CREATE__'] = dolGetFirstLastname($userstat->firstname, $userstat->lastname);
             }
-            
-            
+
+
             $formticket->showMessageForm('100%');
             print '</div>';
         }

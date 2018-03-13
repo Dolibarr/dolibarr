@@ -169,19 +169,19 @@ class Ticketsup extends CommonObject
     public $regeximgext = '\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff';
 
     public $fields=array(
-        'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
-        'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1),
+        'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
+    	'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
+    	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
         'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-2, 'enabled'=>0, 'position'=>20, 'notnull'=>1, 'index'=>1),
-        'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
         'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
         'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
         'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToProject"),
-        'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
+        'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>1, 'enabled'=>1, 'position'=>11, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
         'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
         'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AuthorAssign', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
-        'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+        'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>12, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>60, 'notnull'=>-1,),
-        'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
+        'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
         'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-2, 'enabled'=>1, 'position'=>40, 'notnull'=>1),
         'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
@@ -2411,9 +2411,10 @@ class Ticketsup extends CommonObject
 	 *  @param  int    $nodbprefix    Do not include DB prefix to forge table name
 	 *  @param  string $morehtmlleft  More html code to show before ref
 	 *  @param  string $morehtmlright More html code to show before navigation arrows
+	 *  @param	string	$onlybanner		1
 	 *  @return void
 	 */
-    public function ticketsupBannerTab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '')
+    public function ticketsupBannerTab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '', $onlybanner=0)
     {
         global $conf, $form, $user, $langs;
 
@@ -2425,7 +2426,7 @@ class Ticketsup extends CommonObject
         }
 
         $modulepart = 'ticketsup';
-        print '<div class="arearef heightref valignmiddle" width="100%">';
+        print '<div class="'.($onlybanner?'arearefnobottom':'arearef').' heightref valignmiddle" width="100%">';
 
         $width = 80;
         $height = 70;

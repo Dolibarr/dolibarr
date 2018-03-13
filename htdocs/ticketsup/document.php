@@ -109,7 +109,7 @@ if ($object->id) {
     }
 
     $form = new Form($db);
-    if ($object->fk_soc > 0) {
+    if ($socid > 0) {
         $object->fetch_thirdparty();
         $head = societe_prepare_head($object->thirdparty);
         dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');

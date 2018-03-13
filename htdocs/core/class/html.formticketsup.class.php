@@ -418,9 +418,10 @@ class FormTicketsup
      *      @param  int    $empty       1=peut etre vide, 0 sinon
      *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
+     *      @param	string	$morecss	More CSS
      *      @return void
      */
-    public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+    public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
     {
         global $langs, $user;
 
@@ -436,7 +437,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheTypesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_tickettype" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat select_tickettype'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -503,6 +504,8 @@ class FormTicketsup
         if ($user->admin && !$noadmininfo) {
             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
+
+        print ajax_combobox('select'.$htmlname);
     }
 
     /**
@@ -513,11 +516,12 @@ class FormTicketsup
      *      @param  string $filtertype  To filter on field type in llx_c_ticketsup_category (array('code'=>xx,'label'=>zz))
      *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int    $empty       1=peut etre vide, 0 sinon
-     *         @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
+     *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *         @return void
+     *      @param	string	$morecss	More CSS
+     *      @return void
      */
-    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
     {
         global $langs, $user;
 
@@ -533,7 +537,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheCategoriesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketcategory" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat select_ticketcategory'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -601,6 +605,8 @@ class FormTicketsup
         if ($user->admin && !$noadmininfo) {
             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
+
+        print ajax_combobox('select'.$htmlname);
     }
 
     /**
@@ -611,11 +617,12 @@ class FormTicketsup
      *      @param  string $filtertype  To filter on field type in llx_c_ticketsup_severity (array('code'=>xx,'label'=>zz))
      *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int    $empty       1=peut etre vide, 0 sinon
-     *         @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
+     *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *         @return void
+     *      @param	string	$morecss	More CSS
+     *      @return void
      */
-    public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+    public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
     {
         global $langs, $user;
 
@@ -631,7 +638,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheSeveritiesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketseverity" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat select_ticketseverity'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -698,6 +705,8 @@ class FormTicketsup
         if ($user->admin && !$noadmininfo) {
             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
+
+        print ajax_combobox('select'.$htmlname);
     }
 
     /**

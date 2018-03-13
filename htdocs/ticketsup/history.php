@@ -88,7 +88,7 @@ if ($action == 'view') {
             accessforbidden('', 0);
         }
 
-        if ($object->dao->fk_soc > 0) {
+        if ($socid > 0) {
             $object->dao->fetch_thirdparty();
             $head = societe_prepare_head($object->dao->thirdparty);
             dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
