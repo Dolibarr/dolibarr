@@ -3127,8 +3127,12 @@ class Commande extends CommonOrder
             // End call triggers
         }
         
-        if ($this->nb_expedition() != 0) $error++;
-
+        if ($this->nb_expedition() != 0) 
+	{
+		$this->errors[] = $langs->trans('SomeShipmentExists');
+		$error++;
+	}
+	    
         //TODO: Check for error after each action. If one failed we rollback, don't waste time to do action if previous fail
         if (! $error)
         {
