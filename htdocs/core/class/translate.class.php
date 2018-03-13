@@ -205,7 +205,7 @@ class Translate
         // Check cache
 		if (! empty($this->_tab_loaded[$newdomain]))	// File already loaded for this domain
 		{
-			dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
+			//dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
 			return 0;
 		}
 
