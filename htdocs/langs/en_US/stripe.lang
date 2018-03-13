@@ -50,3 +50,4 @@ BankAccountForBankTransfer=Bank account for fund payouts
 StripeAccount=Stripe account
 StripeChargeList=List of Stripe charges
 StripeCustomerId=Stripe customer id
+StripePaymentModes=Stripe payment modes

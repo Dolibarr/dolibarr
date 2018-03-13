@@ -675,7 +675,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
 
-	print load_fiche_titre($langs->trans("AllRIB"), $morehtmlright, '');
+	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 
 	$rib_list = $object->get_all_rib();
 	$var = false;
