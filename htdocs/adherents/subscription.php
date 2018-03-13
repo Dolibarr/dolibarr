@@ -874,7 +874,7 @@ $startcotis2 = dol_mktime(0,00,00,$conf->global->SOCIETE_SUBSCRIBE_MONTH_START-$
 
 if ($startcotis1>$today){
 if ($conf->global->ADHERENT_SUBSCRIPTION_PRORATA == '0') { 
-$next = mktime(5,00,00,$month-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,$day,$year);
+$next = mktime(0,00,00,$month-$conf->global->SOCIETE_SUBSCRIBE_MONTH_PRESTART,$day,$year);
 $date = $dateb = $today;
 }else{
 $next = $startcotis1;
