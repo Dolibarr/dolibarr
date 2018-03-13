@@ -161,37 +161,31 @@ class modTicketsup extends DolibarrModules
 
         // Permissions
         $this->rights = array(); // Permission array used by this module
-        $r = 0;
 
-        $r++;
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';
 
-        $r++;
         $this->rights[$r][0] = 56002; // id de la permission
         $this->rights[$r][1] = "Create les tickets"; // libelle de la permission
         $this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'write';
 
-        $r++;
         $this->rights[$r][0] = 56003; // id de la permission
         $this->rights[$r][1] = "Delete les tickets"; // libelle de la permission
         $this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'delete';
 
-        $r++;
         $this->rights[$r][0] = 56004; // id de la permission
         $this->rights[$r][1] = "Manage tickets"; // libelle de la permission
         //$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'manage';
 
-        $r++;
         $this->rights[$r][0] = 56005; // id de la permission
         $this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
@@ -211,7 +205,7 @@ class modTicketsup extends DolibarrModules
             'url' => '/ticketsup/index.php',
             'langs' => 'ticketsup', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position' => 100,
-            'enabled' => '1', // Define condition to show or hide menu entry. Use '$conf->ticketsup->enabled' if entry must be visible if module is enabled.
+            'enabled' => '$conf->ticketsup->enabled', // Define condition to show or hide menu entry. Use '$conf->ticketsup->enabled' if entry must be visible if module is enabled.
             'perms' => '$user->rights->ticketsup->read', // Use 'perms'=>'$user->rights->ticketsup->level1->level2' if you want your menu with a permission rules
             'target' => '',
             'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
@@ -225,7 +219,7 @@ class modTicketsup extends DolibarrModules
             'url' => '/ticketsup/index.php',
             'langs' => 'ticketsup',
             'position' => 101,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 2);
@@ -238,7 +232,7 @@ class modTicketsup extends DolibarrModules
             'url' => '/ticketsup/new.php?action=create_ticket',
             'langs' => 'ticketsup',
             'position' => 102,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->write',
             'target' => '',
             'user' => 2);
@@ -252,7 +246,7 @@ class modTicketsup extends DolibarrModules
             'url' => '/ticketsup/list.php',
             'langs' => 'ticketsup',
             'position' => 103,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 2);
@@ -266,7 +260,7 @@ class modTicketsup extends DolibarrModules
             'url' => '/ticketsup/list.php?search_fk_status=non_closed',
             'langs' => 'ticketsup',
             'position' => 104,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 2);
@@ -280,7 +274,7 @@ class modTicketsup extends DolibarrModules
             'url' => '/ticketsup/list.php?mode=my_assign',
             'langs' => 'ticketsup',
             'position' => 105,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 0);
@@ -293,7 +287,7 @@ class modTicketsup extends DolibarrModules
             'url' => '/ticketsup/list.php?mode=my_assign&search_fk_status=non_closed',
             'langs' => 'ticketsup',
             'position' => 106,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 0);

@@ -67,9 +67,13 @@ $object = new ActionsTicketsup($db);
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
-$form = new Form($db);
+$linkback='';
+print load_fiche_titre($langs->trans('TicketsIndex'),$linkback,'title_ticketsup.png');
+
 
 $dir = '';
 $filenamenb = $dir . "/" . $prefix . "ticketsupinyear-" . $endyear . ".png";
