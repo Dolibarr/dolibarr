@@ -626,8 +626,16 @@ if ($socid && $action != 'edit' && $action != "create")
 							}
 							else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 							print '</td>';
+							// Default
 							print '<td align="center">';
-							print yn($obj->default_rib);
+							if (empty($obj->default_rib))
+							{
+								//print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
+								print img_picto($langs->trans("Default"),'off');
+								//print '</a>';
+							} else {
+								print img_picto($langs->trans("Default"),'on');
+							}
 							print '</td>';
 							print '<td>';
 							if (empty($obj->stripe_card_ref)) print $langs->trans("Local");
@@ -734,9 +742,9 @@ if ($socid && $action != 'edit' && $action != "create")
 				print '<td align="center" width="50">';
 				if (($customerstripe->default_source != $src->id))
 				{
-				                print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
-				                print img_picto($langs->trans("Default"),'off');
-				                print '</a>';
+					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
+					print img_picto($langs->trans("Default"),'off');
+					print '</a>';
 				} else {
 					print img_picto($langs->trans("Default"),'on');
 				}
