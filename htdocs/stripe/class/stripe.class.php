@@ -295,7 +295,7 @@ class Stripe extends CommonObject
 				if (isset($charge->id)) {}
 			}
 
-			if (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')) $service = 'StripeTest';
+			if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')) $service = 'StripeTest';
 			else $service = 'StripeLive';
 
 			$return->statut = 'success';
