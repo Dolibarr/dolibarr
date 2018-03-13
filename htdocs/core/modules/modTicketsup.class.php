@@ -300,13 +300,12 @@ class modTicketsup extends DolibarrModules
     }
 
     /**
-     * Function called when module is enabled.
-     * The init function add constants, boxes, permissions and menus
-     * (defined in constructor) into Dolibarr database.
-     * It also creates data directories
+     *	Function called when module is enabled.
+     *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *	It also creates data directories
      *
-     *     @param  string $options Options when enabling module ('', 'noboxes')
-     *     @return int                    1 if OK, 0 if KO
+     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+     *	@return     int             	1 if OK, 0 if KO
      */
     public function init($options = '')
     {
@@ -319,36 +318,7 @@ class modTicketsup extends DolibarrModules
             array("sql" => "insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values ('','TICKETMESSAGE_SENTBYMAIL','Send email for ticket','Executed when a response is made on a ticket','ticketsup','');", "ignoreerror" => 1),
         );
 
-        $result = $this->loadTables();
-
         return $this->_init($sql, $options);
     }
 
-    /**
-     * Function called when module is disabled.
-     * Remove from database constants, boxes and permissions from Dolibarr database.
-     * Data directories are not deleted
-     *
-     *     @param  string $options Options when enabling module ('', 'noboxes')
-     *     @return int                    1 if OK, 0 if KO
-     */
-    public function remove($options = '')
-    {
-        $sql = array();
-
-        return $this->_remove($sql, $options);
-    }
-
-    /**
-     * Create tables, keys and data required by module
-     * Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-     * and create data commands must be stored in directory /ticketsup/sql/
-     * This function is called by this->init
-     *
-     *     @return int        <=0 if KO, >0 if OK
-     */
-    private function loadTables()
-    {
-        return $this->_load_tables();
-    }
 }
