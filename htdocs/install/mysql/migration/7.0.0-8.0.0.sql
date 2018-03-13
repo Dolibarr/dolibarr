@@ -294,3 +294,7 @@ ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_key_account_
 ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
 ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
 
+
+ALTER TABLE llx_societe_rib MODIFY COLUMN max_total_amount_of_all_payments double(24,8);
+ALTER TABLE llx_societe_rib MODIFY COLUMN total_amount_of_all_payments double(24,8);
+  
