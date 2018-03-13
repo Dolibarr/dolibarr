@@ -122,7 +122,9 @@ $langs->load('other');
 /** Users */
 $ok=0; 
 $stripe=new Stripe($db);
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
+if (empty($conf->stripe->enabled)) return 0;
+
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
 }
