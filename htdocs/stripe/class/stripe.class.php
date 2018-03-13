@@ -101,7 +101,7 @@ class Stripe extends CommonObject
 		global $conf;
 
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "llx_societe_account as sa";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
 		$sql.= " WHERE sa.fk_soc = " . $id;
 		$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
