@@ -164,6 +164,7 @@ class ActionComm extends CommonObject
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
+    var $elementid;    // Id of record alternative for API
     var $elementtype;   // Type of record. This if property ->element of object linked to.
 
     // Ical
@@ -547,7 +548,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_user_author, a.fk_user_mod,";
         $sql.= " a.fk_user_action, a.fk_user_done,";
         $sql.= " a.fk_contact, a.percent as percentage,";
-        $sql.= " a.fk_element, a.elementtype,";
+        $sql.= " a.fk_element as elementid, a.elementtype,";
         $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
         $sql.= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
         $sql.= " s.nom as socname,";
@@ -621,7 +622,8 @@ class ActionComm extends CommonObject
                 $this->societe->id			= $obj->fk_soc;			// deprecated
                 $this->contact->id			= $obj->fk_contact;		// deprecated
 
-                $this->fk_element			= $obj->fk_element;
+                $this->fk_element			= $obj->elementid;
+		$this->elementid			= $obj->elementid;
                 $this->elementtype			= $obj->elementtype;
 
                 $this->fetchResources();
