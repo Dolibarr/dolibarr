@@ -20,9 +20,9 @@
  */
 
 /**
- * \file        class/websiteaccount.class.php
- * \ingroup     website
- * \brief       This file is a CRUD class file for WebsiteAccount (Create/Read/Update/Delete)
+ * \file        class/societeaccount.class.php
+ * \ingroup     societe
+ * \brief       This file is a CRUD class file for SocieteAccount (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -31,24 +31,24 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for WebsiteAccount
+ * Class for SocieteAccount
  */
-class WebsiteAccount extends CommonObject
+class SocieteAccount extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'websiteaccount';
+	public $element = 'societeaccount';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'website_account';
+	public $table_element = 'societe_account';
 	/**
-	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var array  Does societeaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 	/**
-	 * @var string String with name of icon for websiteaccount. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for societeaccount. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'lock';
 
@@ -76,12 +76,15 @@ class WebsiteAccount extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
-		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Login',),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
+		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>-1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
+		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
 		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
-		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>1, 'index'=>1),
+		'site' => array('type'=>'varchar(128)', 'label'=>'Site', 'visible'=>-1, 'enabled'=>1, 'position'=>41),
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>1, 'index'=>1),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
@@ -94,9 +97,13 @@ class WebsiteAccount extends CommonObject
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'default'=>1, 'arrayofkeyval'=>array('1'=>'Active','0'=>'Disabled')),
 	);
 	public $rowid;
-	public $login;
+	public $entity;
+	public $key_account;
 	public $pass_encoding;
 	public $pass_crypted;
+	public $pass_temp;
+	public $fk_soc;
+	public $site;
 	public $date_last_login;
 	public $date_previous_login;
 	public $note_private;
@@ -106,7 +113,6 @@ class WebsiteAccount extends CommonObject
 	public $fk_user_modif;
 	public $import_key;
 	public $status;
-	public $fk_soc;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -117,21 +123,21 @@ class WebsiteAccount extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'website_accountdet';
+	//public $table_element_line = 'societe_accountdet';
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_website_account';
+	//public $fk_element = 'fk_societe_account';
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'WebsiteAccountline';
+	//public $class_element_line = 'societeAccountline';
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
-	//protected $childtables=array('website_accountdet');
+	//protected $childtables=array('societe_accountdet');
 	/**
-	 * @var WebsiteAccountLine[]     Array of subtable lines
+	 * @var societeAccountLine[]     Array of subtable lines
 	 */
 	//public $lines = array();
 
@@ -235,7 +241,7 @@ class WebsiteAccount extends CommonObject
 	{
 		$this->lines=array();
 
-		// Load lines with object WebsiteAccountLine
+		// Load lines with object societeAccountLine
 
 		return count($this->lines)?1:0;
 	}
@@ -287,12 +293,12 @@ class WebsiteAccount extends CommonObject
 
         $this->ref = $this->login;
 
-        $label = '<u>' . $langs->trans("WebsiteAccount") . '</u>';
+        $label = '<u>' . $langs->trans("SocieteAccount") . '</u>';
         $label.= '<br>';
         $label.= '<b>' . $langs->trans('Login') . ':</b> ' . $this->ref;
         //$label.= '<b>' . $langs->trans('WebSite') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/website/websiteaccount_card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/societe/societeaccount_card.php',1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
@@ -307,7 +313,7 @@ class WebsiteAccount extends CommonObject
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label=$langs->trans("ShowWebsiteAccount");
+                $label=$langs->trans("ShowsocieteAccount");
                 $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
@@ -486,10 +492,10 @@ class WebsiteAccount extends CommonObject
 }
 
 /**
- * Class WebsiteAccountLine. You can also remove this and generate a CRUD class for lines objects.
+ * Class societeAccountLine. You can also remove this and generate a CRUD class for lines objects.
  */
 /*
-class WebsiteAccountLine
+class societeAccountLine
 {
 	// @var int ID
 	public $id;

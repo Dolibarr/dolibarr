@@ -208,6 +208,9 @@ function societe_prepare_head(Societe $object)
         else {
             dol_print_error($db);
         }
+
+        //if (! empty($conf->stripe->enabled) && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
+
 		if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;

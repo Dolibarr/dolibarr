@@ -33,13 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("banks");
-$langs->load("bills");
+$langs->loadLangs(array("companies","commercial","banks","bills"));
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -50,6 +48,7 @@ $id=GETPOST("id","int");
 $source=GETPOST("source","alpha");
 $ribid=GETPOST("ribid","int");
 $action=GETPOST("action", 'alpha', 3);
+$cancel=GETPOST('cancel', 'alpha');
 
 $object = new Societe($db);
 $object->fetch($socid);
@@ -89,6 +88,11 @@ if (! empty($conf->stripe->enabled))
 /*
  *	Actions
  */
+
+if ($cancel)
+{
+	$action='';
+}
 
 $parameters=array('id'=>$socid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -344,33 +348,86 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	$id = $savid;
+
+	// Action for stripe
+	if (! empty($conf->stripe->enabled) && class_exists('Stripe'))
+	{
+		if ($action == 'setkey_account')
+		{
+			$error = 0;
+
+			$newcu = GETPOST('key_account', 'alpha');
+
+			$db->begin();
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
+			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
+			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+
+			$resql = $db->query($sql);
+			$num = $db->num_rows($resql);
+			if (empty($num))
+			{
+				$societeaccount = new SocieteAccount($db);
+				$societeaccount->fk_soc = $object->id;
+				$societeaccount->login = '';
+				$societeaccount->pass_encoding = '';
+				$societeaccount->site = 'stripe';
+				$societeaccount->status = $servicestatus;
+				$societeaccount->key_account = $newcu;
+				$result = $societeaccount->create($user);
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				$stripecu = $newcu;
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+
+		if ($action == 'setassourcedefault')
+		{
+			try {
+				$cu = \Stripe\Customer::retrieve($stripecu);
+				$cu->default_source = (string) $source;
+				$result = $cu->save();
+
+				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+				header('Location: '.$url);
+				exit;
+			}
+			catch(Exception $e)
+			{
+
+			}
+		}
+		elseif ($action == 'delete')
+		{
+			try {
+				$cu = \Stripe\Customer::retrieve($stripecu);
+
+				$cu->sources->retrieve("$source")->detach();
+
+				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+				header('Location: '.$url);
+				exit;
+			}
+			catch(Exception $e)
+			{
+
+			}
+		}
+	}
 }
 
-// Action for stripe
-if (! empty($conf->stripe->enabled) && class_exists('Stripe'))
-{
-	if ($action == 'setassourcedefault')
-	{
-		$cu = \Stripe\Customer::retrieve($stripecu);
-
-		$cu->default_source = "$source"; // obtained with Stripe.js
-		$cu->save();
-
-		$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
-		header('Location: '.$url);
-		exit;
-	}
-	elseif ($action == 'delete')
-	{
-		$cu = \Stripe\Customer::retrieve($stripecu);
-
-		$cu->sources->retrieve("$source")->detach();
-
-		$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
-		header('Location: '.$url);
-		exit;
-	}
-}
 
 
 /*
@@ -459,13 +516,15 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	if (! empty($conf->stripe->enabled))
 	{
-
-
+		$permissiontowrite = $user->rights->societe->creer;
 		// Stripe customer key 'cu_....' stored into llx_societe_account
-		print '<tr><td class="titlefield">'.$langs->trans('StripeCustomerId').'</td><td>';
-		print $stripecu;
+		print '<tr><td class="titlefield">';
+		//print $langs->trans('StripeCustomerId');
+		print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 1, 'socid');
+		print '</td><td>';
+		//print $stripecu;
+		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 1, '', 'socid');
 		print '</td></tr>';
-
 	}
 
 	print '</table>';
@@ -475,24 +534,30 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	if (! (empty($conf->stripe->enabled)))
 	{
-		print load_fiche_titre($langs->trans('StripeGateways').($stripeacc ? ' ('.$stripeacc.')':''), '', '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc ? ' ('.$stripeacc.')':''), '', '');
 
 		$listofsources = array();
 		if (is_object($stripe) && $stripeacc)
 		{
-			$customerstripe=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
-
-			if ($customerstripe->id) {
-				$listofsources=$customerstripe->sources->data;
+			try {
+				$customerstripe=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
+				if ($customerstripe->id) {
+					$listofsources=$customerstripe->sources->data;
+				}
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Failed to get strip customer for thirdparty id =".$object->id);
 			}
 		}
 
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste" width="100%">'."\n";
 		print '<tr class="liste_titre">';
-		print '<td align="left">'.$langs->trans('Type').'</td>';
-		print '<td align="left">'.$langs->trans('Informations').'</td>';
-		print '<td align="left"></td>';
+		print '<td>'.$langs->trans('ID').'</td>';
+		print '<td>'.$langs->trans('Type').'</td>';
+		print '<td>'.$langs->trans('Informations').'</td>';
+		print '<td></td>';
 		print '<td align="center">'.$langs->trans('Default').'</td>';
 		print "<td></td></tr>\n";
 
@@ -500,7 +565,10 @@ if ($socid && $action != 'edit' && $action != "create")
 		{
 			foreach ($listofsources as $src)
 			{
-				print '<tr>';
+				print '<tr class="oddeven">';
+				print '<td>';
+				print $src->id;
+				print '</td>';
 				print '<td>';
 				if ($src->object=='card')
 				{
@@ -511,7 +579,7 @@ if ($socid && $action != 'edit' && $action != "create")
 					elseif ($src->brand == 'JCB') {$brand='cc-jcb';}
 					elseif ($src->brand == 'Diners Club') {$brand='cc-diners-club';}
 					else {$brand='credit-card';}
-					print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
+					print '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
 				}
 				elseif ($src->object=='source' && $src->type=='card')
 				{
@@ -522,11 +590,11 @@ if ($socid && $action != 'edit' && $action != "create")
 					elseif ($src->card->brand == 'JCB') {$brand='cc-jcb';}
 					elseif ($src->card->brand == 'Diners Club') {$brand='cc-diners-club';}
 					else {$brand='credit-card';}
-					print '<span class="fa fa-'.$brand.' fa-3x fa-fw"></span>';
+					print '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
 				}
 				elseif ($src->object=='source' && $src->type=='sepa_debit')
 				{
-					print '<span class="fa fa-university fa-3x fa-fw"></span>';
+					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
 
 				print'</td><td valign="middle">';
@@ -570,13 +638,13 @@ if ($socid && $action != 'edit' && $action != "create")
 				print '</td>';
 				// Default
 				print '<td align="center" width="50">';
-				if (($cu->default_source!=$src->id))
+				if (($customerstripe->default_source != $src->id))
 				{
 				                print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
-				                print "<SPAN class='fa fa-circle  fa-2x'></SPAN>";
+				                print img_picto($langs->trans("Default"),'off');
 				                print '</a>';
 				} else {
-				                print "<SPAN class=' fa fa-check-circle  fa-2x'></SPAN>";
+					print img_picto($langs->trans("Default"),'on');
 				}
 				print '</td>';
 				print '<td align="center">';
@@ -587,7 +655,7 @@ if ($socid && $action != 'edit' && $action != "create")
 				//            	print '</a>';
 				//           		print '&nbsp;';
 				           		print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=delete">';
-				           		print "<SPAN class='fa fa-trash fa-2x'></SPAN>";
+				           		print img_delete($langs->trans("Delete"));
 				           		print '</a>';
 				}
 				print '</td></tr>';
@@ -603,8 +671,9 @@ if ($socid && $action != 'edit' && $action != "create")
 
 
 	// List of bank accounts
+	print '<br>';
 
-	$morehtmlright='<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
+	$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
 
 	print load_fiche_titre($langs->trans("AllRIB"), $morehtmlright, '');
 

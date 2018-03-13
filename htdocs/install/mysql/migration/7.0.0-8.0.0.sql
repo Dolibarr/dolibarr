@@ -260,7 +260,7 @@ CREATE TABLE llx_societe_account(
 	entity	integer DEFAULT 1, 
 	key_account       varchar(128),
 	login             varchar(128) NOT NULL, 
-    pass_encoding     varchar(24) NOT NULL,
+    pass_encoding     varchar(24),
     pass_crypted      varchar(128),
     pass_temp         varchar(128),			    -- temporary password when asked for forget password
     fk_soc integer,
@@ -278,6 +278,7 @@ CREATE TABLE llx_societe_account(
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+-- VMYSQL4.3 ALTER TABLE llx_societe_account MODIFY COLUMN pass_encoding varchar(24) NULL;
 
 ALTER TABLE llx_societe_account ADD COLUMN key_account varchar(128);
 
@@ -288,6 +289,7 @@ ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_website (fk_web
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_soc (fk_soc);
 
 ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website_soc(entity, fk_soc, login, site, fk_website);
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_key_account_soc(entity, fk_soc, key_account, site, fk_website);
 
 ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
 ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);

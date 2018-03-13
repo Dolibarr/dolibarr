@@ -21,7 +21,7 @@ CREATE TABLE llx_societe_account(
 	entity	integer DEFAULT 1, 
 	key_account       varchar(128),
 	login             varchar(128) NOT NULL, 
-	pass_encoding     varchar(24) NOT NULL,
+	pass_encoding     varchar(24),
 	pass_crypted      varchar(128),
 	pass_temp         varchar(128),			    -- temporary password when asked for forget password
 	fk_soc integer,
