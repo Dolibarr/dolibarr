@@ -185,24 +185,13 @@ CREATE TABLE llx_ticketsup_extrafields
   import_key       varchar(14)
 )ENGINE=innodb;
 
-ALTER TABLE llx_c_ticketsup_category ADD INDEX idx_code (code);
 
-CREATE TABLE llx_c_ticketsup_category
+
+-- Create dictionaries tables for ticket
+create table llx_c_ticketsup_severity
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
-  code			varchar(32)				NOT NULL,
-  pos			varchar(32)				NOT NULL,
-  label			varchar(128)			NOT NULL,
-  active		integer DEFAULT 1,
-  use_default	integer DEFAULT 1,
-  description	varchar(255)
-)ENGINE=innodb;
-
-ALTER TABLE llx_c_ticketsup_severity ADD INDEX idx_code (code);
-
-CREATE TABLE llx_c_ticketsup_severity
-(
-  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
   code			varchar(32)				NOT NULL,
   pos			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
@@ -212,11 +201,10 @@ CREATE TABLE llx_c_ticketsup_severity
   description	varchar(255)
 )ENGINE=innodb;
 
-ALTER TABLE llx_c_ticketsup_type ADD INDEX idx_code (code);
-
-CREATE TABLE llx_c_ticketsup_type
+create table llx_c_ticketsup_type
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
   code			varchar(32)				NOT NULL,
   pos			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
@@ -224,6 +212,41 @@ CREATE TABLE llx_c_ticketsup_type
   use_default	integer DEFAULT 1,
   description	varchar(255)
 )ENGINE=innodb;
+
+create table llx_c_ticketsup_category
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
+  code			varchar(32)				NOT NULL,
+  pos			varchar(32)				NOT NULL,
+  label			varchar(128)			NOT NULL,
+  active		integer DEFAULT 1,
+  use_default	integer DEFAULT 1,
+  description	varchar(255)
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_ticketsup_category ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticketsup_severity ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticketsup_type     ADD UNIQUE INDEX uk_code (code, entity);
+
+
+
+-- Load data
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('LOW',      '10', 'Low',                 '', 1, 0, NULL);
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('NORMAL',   '20', 'Normal',              '', 1, 1, NULL);
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('HIGH',     '30', 'High',                '', 1, 0, NULL);
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('BLOCKING', '40', 'Critical / blocking', '', 1, 0, NULL);
+
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 1, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem'  ,            1, 0, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('REQUEST', '25', 'Change or enhancement request', 1, 0, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project', 0, 0, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',   1, 0, NULL);
+
+INSERT INTO llx_c_ticketsup_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
+
+
+
 
 
 ALTER TABLE llx_facturedet_rec ADD COLUMN date_start_fill integer DEFAULT 0;

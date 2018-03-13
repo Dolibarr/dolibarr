@@ -18,6 +18,7 @@
 create table llx_c_ticketsup_category
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
   code			varchar(32)				NOT NULL,
   pos			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,

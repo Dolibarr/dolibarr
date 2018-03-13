@@ -439,7 +439,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="' . $mode . '" >';
 
 
-print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'img/ticketsup-32.png', 1);
+print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'title_ticketsup');
 
 if ($mode == 'my_assign') {
     print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';

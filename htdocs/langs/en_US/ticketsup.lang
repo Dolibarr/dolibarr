@@ -29,7 +29,7 @@ Permission56005=See tickets of all thirdparties (not effective for external user
 
 TicketsupDictType=Tickets type
 TicketsupDictCategory=Tickets categories
-TicketsupDictSeverity=Severity classifications
+TicketsupDictSeverity=Tickets severity
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
@@ -39,8 +39,8 @@ TicketTypeShortOTHER=Other
 
 TicketSeverityShortLOW=Low
 TicketSeverityShortNORMAL=Normal
-TicketSeverityShortLOWHIGH=Important
-TicketSeverityShortHIGH=Critical
+TicketSeverityShortHIGH=High
+TicketSeverityShortBLOCKING=Critical/Blocking
 
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketsupMyAssign=My tickets

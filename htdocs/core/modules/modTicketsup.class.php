@@ -311,8 +311,7 @@ class modTicketsup extends DolibarrModules
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticketsup',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticketsup',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticketsup',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
-            array("sql" => "insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values ('','TICKETMESSAGE_SENTBYMAIL','Envoi message de réponse par mail','Executed when a response is made on a ticket','ticketsup','');", "ignoreerror" => 1),
-
+            array("sql" => "insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values ('','TICKETMESSAGE_SENTBYMAIL','Send email for ticket','Executed when a response is made on a ticket','ticketsup','');", "ignoreerror" => 1),
         );
 
         $result = $this->loadTables();
@@ -345,6 +344,6 @@ class modTicketsup extends DolibarrModules
      */
     private function loadTables()
     {
-        return $this->_load_tables('/ticketsup/sql/');
+        return $this->_load_tables();
     }
 }

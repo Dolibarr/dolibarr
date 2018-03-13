@@ -72,7 +72,7 @@ $form = new Form($db);
 if ($action == 'create_ticket') {
     $formticket = new FormTicketsup($db);
 
-    print load_fiche_titre($langs->trans('NewTicket'), '', 'img/ticketsup-32.png', 1);
+    print load_fiche_titre($langs->trans('NewTicket'), '', 'title_ticketsup');
 
     $formticket->withfromsocid = $socid ? $socid : $user->societe_id;
     $formticket->withfromcontactid = $contactid ? $contactid : '';
