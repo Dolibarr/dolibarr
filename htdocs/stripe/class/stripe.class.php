@@ -126,8 +126,8 @@ class Stripe extends CommonObject
 	/**
 	 * customerStripe
 	 *
-	 * @param int	 $id		???
-	 * @param string $key		???
+	 * @param	int		$id		Id of third party
+	 * @return	string				Stripe account ref 'acc_xxxxxxxxxxxxx'
 	 * @return \Stripe\StripeObject|\Stripe\ApiResource
 	 */
 	public function customerStripe($id,$key)
@@ -142,10 +142,11 @@ class Stripe extends CommonObject
 				$mode = $conf->global->STRIPE_LIVE;
 			}
 		}
-		$sql = "SELECT rowid,fk_soc,fk_key,mode,entity";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_stripe";
-		$sql .= " WHERE fk_soc = " . $id . " ";
-		$sql .= " AND  mode=" . $mode . " AND entity IN (" . getEntity('stripe') . ")";
+		$sql = "SELECT sa.key_account as key_account, sa.entity";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
+		$sql.= " WHERE sa.fk_soc = " . $id;
+		$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -155,7 +156,7 @@ class Stripe extends CommonObject
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
-				$tiers = $obj->fk_key;
+				$tiers = $obj->key_account;
 				if ($conf->entity == 1) {
 					$customer = \Stripe\Customer::retrieve("$tiers");
 				} else {
@@ -178,8 +179,8 @@ class Stripe extends CommonObject
 					));
 				}
 				$customer_id = "" . $customer->id . "";
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_stripe (fk_soc,fk_key,mode,entity)";
-				$sql .= " VALUES ($id,'$customer_id'," . $mode . "," . $conf->entity . ")";
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc,key_account,site,status,entity)";
+				$sql .= " VALUES ($id,'$customer_id','stripe'," . $mode . "," . $conf->entity . ")";
 				dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 			}
@@ -188,44 +189,41 @@ class Stripe extends CommonObject
 	}
 
 	/**
-	 * createPaymentStripe
+	 * createPaymentStripe        Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
 	 *
-	 * @param unknown $amount			???
-	 * @param unknown $currency			???
-	 * @param unknown $origin			???
-	 * @param unknown $item				???
-	 * @param unknown $source			???
-	 * @param unknown $customer			???
-	 * @param unknown $account			???
+	 * @param int $amount			    amount to pay
+	 * @param string $currency		EUR, GPB...
+	 * @param string $origin			order, invoice, contract...
+	 * @param int $item				    if of element to pay
+	 * @param string $source			src_xxxxx or card_xxxxx or ac_xxxxx
+	 * @param string $customer		Stripe account ref 'cu_xxxxxxxxxxxxx' via customerStripe()
+	 * @param string $account			Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
+	 * @param	int		$status	     	Status
 	 * @return Stripe
 	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account)
+	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0)
 	{
 		global $conf;
 
-		if (empty($conf->global->STRIPECONNECT_LIVE)) {
-			$mode = 0;
-		} else {
-			if (empty($conf->global->STRIPE_LIVE)) {
-				$mode = 0;
-			} else {
-				$mode = $conf->global->STRIPE_LIVE;
-			}
-		}
-		$sql = "SELECT fk_soc,fk_key,mode,entity";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_stripe";
-		$sql .= " WHERE fk_key = '$customer' ";
-		$sql .= " AND mode=" . $mode . " ";
+		$sql = "SELECT sa.key_account as key_account, sa.entity";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
+		$sql.= " WHERE sa.key_account = " . $customer;
+		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 
 		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
-				$entite = $obj->entity;
-				$fksoc = $obj->fk_soc;
+				$key = $obj->fk_soc;
+			} else {
+				$key = NULL;
 			}
+		} else {
+			$key = NULL;
 		}
+    
 		$stripeamount = round($amount * 100);
 		$societe = new Societe($this->db);
 		$societe->fetch($fksoc);
