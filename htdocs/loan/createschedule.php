@@ -89,7 +89,7 @@ if ($action == 'updateecheancier') {
 }
 
 $echeance = new LoanSchedule($db);
-$echeance->fetchall($object->id);
+$echeance->fetchAll($object->id);
 
 top_htmlhead('', '');
 $var = ! $var;

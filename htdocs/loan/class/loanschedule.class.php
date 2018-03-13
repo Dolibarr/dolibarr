@@ -386,7 +386,7 @@ class LoanSchedule extends CommonObject
 	 *  @param	int		$loanid     Id object
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function fetchall($loanid)
+	function fetchAll($loanid)
 	{
 		global $langs;
 
@@ -409,7 +409,7 @@ class LoanSchedule extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql.= " WHERE t.fk_loan = ".$loanid;
 
-		dol_syslog(get_class($this)."::fetchall", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 
 		if ($resql)

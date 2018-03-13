@@ -3525,6 +3525,24 @@ function img_allow($allow, $titlealt = 'default')
 	return '-';
 }
 
+/**
+ *	Return image of a credit card according to its brand name
+ *
+ *	@param	string	$brand		Brand name of credit card
+ *	@return string     			Return img tag
+ */
+function img_credit_card($brand)
+{
+	if ($brand == 'Visa') {$brand='cc-visa';}
+	elseif ($brand == 'MasterCard') {$brand='cc-mastercard';}
+	elseif ($brand == 'American Express') {$brand='cc-amex';}
+	elseif ($brand == 'Discover') {$brand='cc-discover';}
+	elseif ($brand == 'JCB') {$brand='cc-jcb';}
+	elseif ($brand == 'Diners Club') {$brand='cc-diners-club';}
+	elseif (! in_array($brand, array('cc-visa','cc-mastercard','cc-amex','cc-discover','cc-jcb','cc-diners-club'))) {$brand='credit-card';}
+
+	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+}
 
 /**
  *	Show MIME img of a file

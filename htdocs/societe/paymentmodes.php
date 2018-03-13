@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -409,7 +410,7 @@ if (empty($reshook))
 
 			}
 		}
-		elseif ($action == 'delete')
+		elseif ($action == 'deletecard')
 		{
 			try {
 				$cu = \Stripe\Customer::retrieve($stripecu);
@@ -534,7 +535,12 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	if (! (empty($conf->stripe->enabled)))
 	{
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc ? ' ('.$stripeacc.')':''), '', '');
+		$morehtmlright='';
+		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		{
+			$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").'</a>';
+		}
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' ('.$stripeacc.')':''), $morehtmlright, '');
 
 		$listofsources = array();
 		if (is_object($stripe) && $stripeacc)
@@ -554,43 +560,131 @@ if ($socid && $action != 'edit' && $action != "create")
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste" width="100%">'."\n";
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('ID').'</td>';
+		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		{
+			print '<td>'.$langs->trans('LocalID').'</td>';
+		}
+		print '<td>'.$langs->trans('StripeID').'</td>';
 		print '<td>'.$langs->trans('Type').'</td>';
 		print '<td>'.$langs->trans('Informations').'</td>';
 		print '<td></td>';
 		print '<td align="center">'.$langs->trans('Default').'</td>';
+		print '<td>'.$langs->trans('Note').'</td>';
 		print "<td></td></tr>\n";
 
-		if (is_array($listofsources))
+		$nbremote = 0;
+		$nblocal = 0;
+		$arrayofstripecard = array();
+
+		// Show local sources
+		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+		{
+			//$societeaccount = new SocieteAccount($db);
+			$companypaymentmodetemp = new CompanyPaymentMode($db);
+
+			$sql='SELECT rowid FROM '.MAIN_DB_PREFIX."societe_rib";
+			$sql.=" WHERE type in ('card', 'paypal')";
+			$sql.=" AND fk_soc = ".$object->id;
+
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$num_rows = $db->num_rows($resql);
+				if ($num_rows)
+				{
+					$i=0;
+					while ($i < $num_rows)
+					{
+						$nblocal++;
+
+						$obj = $db->fetch_object($resql);
+						if ($obj)
+						{
+							$companypaymentmodetemp->fetch($obj->rowid);
+
+							$arrayofstripecard[$obj->stripe_card_ref]=$obj->stripe_card_ref;
+
+							print '<tr>';
+							print '<td>';
+							print $obj->rowid;
+							print '</td>';
+							print '<td>';
+							print $obj->stripe_card_ref;
+							print '</td>';
+							print '<td>';
+							print img_credit_card($companypaymentmodetemp->type);
+							print '</td>';
+							print '<td>';
+							if ($companypaymentmodetemp->last_four) print '**** '.$companypaymentmodetemp->last_four;
+							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) print ' - '.$companypaymentmodetemp->exp_date_month.'/'.$companypaymentmodetemp->exp_date_year.'';
+							print '</td><td>';
+							if ($companypaymentmodetemp->country_code)
+							{
+								$img=picto_from_langcode($companypaymentmodetemp->country_code);
+								print $img?$img.' ':'';
+								print getCountry($companypaymentmodetemp->country_code,1);
+							}
+							else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+							print '</td>';
+							print '<td align="center">';
+							print yn($obj->default_rib);
+							print '</td>';
+							print '<td>';
+							if (empty($obj->stripe_card_ref)) print $langs->trans("Local");
+							else print $langs->trans("LocalAndRemote");
+							print '</td>';
+							print '<td align="center">';
+							if ($user->rights->societe->creer)
+							{
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
+								print img_picto($langs->trans("Modify"),'edit');
+								print '</a>';
+								print '&nbsp;';
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';
+								print img_delete($langs->trans("Delete"));
+								print '</a>';
+							}
+							print '</td>';
+							print '</tr>';
+						}
+						$i++;
+					}
+				}
+				else
+				{
+					print $langs->trans("NoPaymentMethodOnFile");
+				}
+			}
+			else dol_print_error($db);
+		}
+
+		// Show remote sources (not already shown as local source)
+		if (is_array($listofsources) && count($listofsources))
 		{
 			foreach ($listofsources as $src)
 			{
+				if (! empty($arrayofstripecard[$src->id])) continue;	// Already in previous list
+
+				$nbremote++;
+
 				print '<tr class="oddeven">';
+				// Local ID
+				if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
+				{
+					print '<td>';
+					print '</td>';
+				}
 				print '<td>';
 				print $src->id;
 				print '</td>';
 				print '<td>';
 				if ($src->object=='card')
 				{
-					if ($src->brand == 'Visa') {$brand='cc-visa';}
-					elseif ($src->brand == 'MasterCard') {$brand='cc-mastercard';}
-					elseif ($src->brand == 'American Express') {$brand='cc-amex';}
-					elseif ($src->brand == 'Discover') {$brand='cc-discover';}
-					elseif ($src->brand == 'JCB') {$brand='cc-jcb';}
-					elseif ($src->brand == 'Diners Club') {$brand='cc-diners-club';}
-					else {$brand='credit-card';}
-					print '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+					print img_credit_card($src->brand);
 				}
 				elseif ($src->object=='source' && $src->type=='card')
 				{
-					if ($src->card->brand == 'Visa') {$brand='cc-visa';}
-					elseif ($src->card->brand == 'MasterCard') {$brand='cc-mastercard';}
-					elseif ($src->card->brand == 'American Express') {$brand='cc-amex';}
-					elseif ($src->card->brand == 'Discover') {$brand='cc-discover';}
-					elseif ($src->card->brand == 'JCB') {$brand='cc-jcb';}
-					elseif ($src->card->brand == 'Diners Club') {$brand='cc-diners-club';}
-					else {$brand='credit-card';}
-					print '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+					print img_credit_card($src->card->brand);
 				}
 				elseif ($src->object=='source' && $src->type=='sepa_debit')
 				{
@@ -647,23 +741,25 @@ if ($socid && $action != 'edit' && $action != "create")
 					print img_picto($langs->trans("Default"),'on');
 				}
 				print '</td>';
+				print '<td>';
+				print $langs->trans("Remote");
+				print '</td>';
 				print '<td align="center">';
 				if ($user->rights->societe->creer)
 				{
-				//            	print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$src->id.'&action=edit">';
-				//            	print img_picto($langs->trans("Modify"),'edit');
-				//            	print '</a>';
-				//           		print '&nbsp;';
-				           		print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=delete">';
-				           		print img_delete($langs->trans("Delete"));
-				           		print '</a>';
+					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletecard">';
+					print img_delete($langs->trans("Delete"));
+					print '</a>';
 				}
-				print '</td></tr>';
+				print '</td>';
+
+				print '</tr>';
 			}
 		}
-		if (empty($listofsources))
+
+		if ($nbremote == 0 && $nblocal == 0)
 		{
-			print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</td></tr>';
+			print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table>";
 		print "</div>";

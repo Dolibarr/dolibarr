@@ -5527,7 +5527,7 @@ abstract class CommonObject
 		$label = $val['label'];
 		$type  = $val['type'];
 		$size  = $val['css'];
-		
+
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
 		{
@@ -6674,6 +6674,9 @@ abstract class CommonObject
 
 		// TODO...
 	}
+
+
+	/* Part for comments */
 
 	/**
 	 * Load comments linked with current task
