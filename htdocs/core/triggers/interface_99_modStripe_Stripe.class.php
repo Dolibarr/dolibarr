@@ -121,18 +121,27 @@ $langs->load("mails");
 $langs->load('other');	
 /** Users */
 $ok=0; 
-$stripe=new Stripe($db);    
+$stripe=new Stripe($db);
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
+{
+	$service = 'StripeTest';
+}
+else
+{
+	$service = 'StripeLive';
+}
+		
 if ($action == 'COMPANY_MODIFY') {
 			dol_syslog(
 				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
 			);
-if ($stripe->GetStripeAccount($conf->entity)&&$object->client!=0) {  
-$cu=$stripe->CustomerStripe($object->id,$stripe->GetStripeAccount($conf->entity));
+if ($stripe->getStripeAccount($service) && $object->client!=0) {  
+$cu=$stripe->CustomerStripe($object->id,$stripe->getStripeAccount($service));
 if ($cu) {    
       if ($conf->entity=='1'){
 $customer = \Stripe\Customer::retrieve("$cu->id");
       }else{
-$customer = \Stripe\Customer::retrieve("$cu->id",array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));
+$customer = \Stripe\Customer::retrieve("$cu->id",array("stripe_account" => $stripe->getStripeAccount($service)));
       }
 if (!empty($object->email)) {$customer->email = "$object->email";}
 $customer->description = "$object->name";
@@ -143,12 +152,12 @@ elseif ($action == 'COMPANY_DELETE') {
 			dol_syslog(
 				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
 			);
-$cu=$stripe->CustomerStripe($object->id,$stripe->GetStripeAccount($conf->entity));
+$cu=$stripe->CustomerStripe($object->id,$stripe->getStripeAccount($service));
 if ($cu) {     
       if ($conf->entity==1){
       $customer = \Stripe\Customer::retrieve("$cu->id");
       }else{
-      $customer = \Stripe\Customer::retrieve("$cu->id",array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));
+      $customer = \Stripe\Customer::retrieve("$cu->id",array("stripe_account" => $stripe->getStripeAccount($service)));
       }
 $customer->delete();
 }
