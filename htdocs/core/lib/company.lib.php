@@ -178,6 +178,8 @@ function societe_prepare_head(Societe $object)
     // Bank accounts
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
+    	$nbBankAccount=0;
+		$foundonexternalonlinesystem=0;
     	$langs->load("banks");
 
         $title = $langs->trans("BankAccounts");
@@ -185,11 +187,16 @@ function societe_prepare_head(Societe $object)
 		{
 			$langs->load("stripe");
 			$title = $langs->trans("BankAccountsAndGateways");
+
+			$servicestatus = 0;
+			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha')) $servicestatus = 1;
+
+			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+			$societeaccount = new SocieteAccount($db);
+			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus);		// Get thirdparty cu_...
+			if ($stripecu) $foundonexternalonlinesystem++;
 		}
 
-        $nbBankAccount=0;
-        $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
-        $head[$h][1] = $title;
         $sql = "SELECT COUNT(n.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
         $sql.= " WHERE fk_soc = ".$object->id;
@@ -211,7 +218,10 @@ function societe_prepare_head(Societe $object)
 
         //if (! empty($conf->stripe->enabled) && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
-		if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
+        $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
+        $head[$h][1] = $title;
+        if ($foundonexternalonlinesystem) $head[$h][1].= ' <span class="badge">...</span>';
+       	elseif ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
     }

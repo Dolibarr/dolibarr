@@ -94,32 +94,15 @@ class Stripe extends CommonObject
 	 *
 	 * @param	int		$id		Id of third party
 	 * @param	int		$status		Status
-	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx'
+	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
 	 */
 	public function getStripeCustomerAccount($id, $status=0)
 	{
 		global $conf;
 
-		$sql = "SELECT sa.key_account as key_account, sa.entity";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
-		$sql.= " WHERE sa.fk_soc = " . $id;
-		$sql.= " AND sa.entity IN (".getEntity('societe').")";
-		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
-
-		dol_syslog(get_class($this) . "::getStripeCustomerAccount Try to find the cu_.... of thirdparty id=".$id, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
-				$key = $obj->key_account;
-			} else {
-				$key = NULL;
-			}
-		} else {
-			$key = NULL;
-		}
-
-		return $key;
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+		$societeaccount = new SocieteAccount($this->db);
+		return $societeaccount->getCustomerAccount($object->id, 'stripe', $status);		// Get thirdparty cu_...
 	}
 
 

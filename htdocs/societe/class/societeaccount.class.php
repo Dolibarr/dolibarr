@@ -247,6 +247,40 @@ class SocieteAccount extends CommonObject
 	}
 
 	/**
+	 * Try to find the external customer id of a thirdparty for an another site/system.
+	 *
+	 * @param	int		$id			Id of third party
+	 * @param	string	$site		Site (example: 'stripe', '...')
+	 * @param	int		$status		Status (0=test, 1=live)
+	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+	 */
+	public function getCustomerAccount($id, $site, $status=0)
+	{
+		global $conf;
+
+		$sql = "SELECT sa.key_account as key_account, sa.entity";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
+		$sql.= " WHERE sa.fk_soc = " . $id;
+		$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the system customer id of thirdparty id=".$id." (exemple: cu_.... for stripe)", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$key = $obj->key_account;
+			} else {
+				$key = '';
+			}
+		} else {
+			$key = '';
+		}
+
+		return $key;
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
