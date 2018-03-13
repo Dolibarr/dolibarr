@@ -19,17 +19,17 @@ CREATE TABLE llx_societe_account(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity	integer DEFAULT 1, 
+	key_account       varchar(128),
 	login             varchar(128) NOT NULL, 
-    pass_encoding     varchar(24) NOT NULL,
-    pass_crypted      varchar(128),
-    pass_temp         varchar(128),			    -- temporary password when asked for forget password
-    fk_soc integer,
+	pass_encoding     varchar(24) NOT NULL,
+	pass_crypted      varchar(128),
+	pass_temp         varchar(128),			    -- temporary password when asked for forget password
+	fk_soc integer,
 	site              varchar(128),				-- name of external web site
 	fk_website        integer,					-- id of local web site
 	note_private      text,
-        key_account       varchar(128),
-    date_last_login   datetime,
-    date_previous_login datetime,
+	date_last_login   datetime,
+	date_previous_login datetime,
 	date_creation datetime NOT NULL, 
 	tms timestamp NOT NULL, 
 	fk_user_creat integer NOT NULL, 

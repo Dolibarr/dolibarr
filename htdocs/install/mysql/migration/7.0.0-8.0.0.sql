@@ -235,6 +235,7 @@ CREATE TABLE llx_societe_account(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	entity	integer DEFAULT 1, 
+	key_account       varchar(128),
 	login             varchar(128) NOT NULL, 
     pass_encoding     varchar(24) NOT NULL,
     pass_crypted      varchar(128),
@@ -255,13 +256,13 @@ CREATE TABLE llx_societe_account(
 ) ENGINE=innodb;
 
 
--- BEGIN MODULEBUILDER INDEXES
+ALTER TABLE llx_societe_account ADD COLUMN key_account varchar(128);
+
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_rowid (rowid);
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_login (login);
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_status (status);
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_website (fk_website);
 ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_soc (fk_soc);
--- END MODULEBUILDER INDEXES
 
 ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website_soc(entity, fk_soc, login, site, fk_website);
 
