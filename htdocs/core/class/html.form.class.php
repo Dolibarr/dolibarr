@@ -81,9 +81,10 @@ class Form
 	 * @param	string	$moreparam		More param to add on a href URL.
 	 * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
+	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @return	string					HTML edit field
 	 */
-	function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0)
+	function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0, $paramid='id')
 	{
 		global $conf,$langs;
 
@@ -117,7 +118,7 @@ class Form
 			if (! empty($notabletag)) $ret.=' ';
 			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
 			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
-			if ($htmlname && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+			if ($htmlname && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			if (! empty($notabletag) && $notabletag == 1) $ret.=' : ';
 			if (! empty($notabletag) && $notabletag == 3) $ret.=' ';
 			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
@@ -142,9 +143,10 @@ class Form
 	 * @param	string	$moreparam		More param to add on a href URL
 	 * @param   int     $notabletag     Do no output table tags
 	 * @param	string	$formatfunc		Call a specific function to output field
+	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @return  string					HTML edit field
 	 */
-	function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0, $formatfunc='')
+	function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0, $formatfunc='', $paramid='id')
 	{
 		global $conf,$langs,$db;
 
@@ -166,7 +168,7 @@ class Form
 				$ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam?'?'.$moreparam:'').'">';
 				$ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
 				$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				$ret.='<input type="hidden" name="id" value="'.$object->id.'">';
+				$ret.='<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				if (empty($notabletag)) $ret.='<tr><td>';
 				if (preg_match('/^(string|email)/',$typeofdata))
