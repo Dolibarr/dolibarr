@@ -291,11 +291,11 @@ TicketNotificationNumberEmailSent=Notification email sent : %s
 #
 # Boxes
 #
-BoxLastTicketsup=Last tickets
-BoxLastTicketsupDescription=Last %s tickets saved
+BoxLastTicketsup=Latest created tickets
+BoxLastTicketsupDescription=Latest %s created tickets
 BoxLastTicketsupContent=
 BoxLastTicketsupNoRecordedTickets=No recent unread tickets
-BoxLastModifiedTicketsup=Last modified tickets
-BoxLastModifiedTicketsupDescription=Last %s tickets modified
+BoxLastModifiedTicketsup=Latest modified tickets
+BoxLastModifiedTicketsupDescription=Latest %s modified tickets
 BoxLastModifiedTicketsupContent=
 BoxLastModifiedTicketsupNoRecordedTickets=No recent modified tickets

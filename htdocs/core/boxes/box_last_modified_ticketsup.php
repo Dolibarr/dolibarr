@@ -18,9 +18,9 @@
  */
 
 /**
- *     \file        ticketsup/core/boxes/ticketsup_latest.php
- *     \ingroup    ticketsup
- *     \brief        This box shows latest UNREAD tickets
+ *     \file        core/boxes/box_last_modified_ticketsup.php
+ *     \ingroup     ticketsup
+ *     \brief       This box shows latest modified tickets
  */
 require_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
 

@@ -162,30 +162,35 @@ class modTicketsup extends DolibarrModules
         // Permissions
         $this->rights = array(); // Permission array used by this module
 
+        $r=0;
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';
 
+        $r++;
         $this->rights[$r][0] = 56002; // id de la permission
         $this->rights[$r][1] = "Create les tickets"; // libelle de la permission
         $this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'write';
 
+        $r++;
         $this->rights[$r][0] = 56003; // id de la permission
         $this->rights[$r][1] = "Delete les tickets"; // libelle de la permission
         $this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'delete';
 
+        $r++;
         $this->rights[$r][0] = 56004; // id de la permission
         $this->rights[$r][1] = "Manage tickets"; // libelle de la permission
         //$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
         $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'manage';
 
+        $r++;
         $this->rights[$r][0] = 56005; // id de la permission
         $this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
