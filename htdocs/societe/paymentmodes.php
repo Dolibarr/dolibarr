@@ -570,7 +570,7 @@ if ($socid && $action != 'edit' && $action != "create")
 				print '</td>';
 				// Default
 				print '<td align="center" width="50">';
-				if (($cu->default_source!=$src->id))
+				if (($customerstripe->default_source!=$src->id))
 				{
 				                print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
 				                print "<SPAN class='fa fa-circle  fa-2x'></SPAN>";
