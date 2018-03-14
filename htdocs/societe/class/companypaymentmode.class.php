@@ -78,8 +78,6 @@ class CompanyPaymentMode extends CommonObject
 	public $fields=array(
 		'rowid' =>array('type'=>'integer', 'label'=>'Rowid', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
 		'fk_soc' =>array('type'=>'integer', 'label'=>'Fk soc', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>20),
-		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25),
 		'label' =>array('type'=>'varchar(30)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-2, 'position'=>30),
 		'bank' =>array('type'=>'varchar(255)', 'label'=>'Bank', 'enabled'=>1, 'visible'=>-2, 'position'=>35),
 		'code_banque' =>array('type'=>'varchar(128)', 'label'=>'Code banque', 'enabled'=>1, 'visible'=>-2, 'position'=>40),
@@ -95,7 +93,6 @@ class CompanyPaymentMode extends CommonObject
 		'rum' =>array('type'=>'varchar(32)', 'label'=>'Rum', 'enabled'=>1, 'visible'=>-2, 'position'=>90),
 		'date_rum' =>array('type'=>'date', 'label'=>'Date rum', 'enabled'=>1, 'visible'=>-2, 'position'=>95),
 		'frstrecur' =>array('type'=>'varchar(16)', 'label'=>'Frstrecur', 'enabled'=>1, 'visible'=>-2, 'position'=>100),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
 		'type' =>array('type'=>'varchar(32)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-2, 'position'=>110),
 		'last_four' =>array('type'=>'varchar(4)', 'label'=>'Last four', 'enabled'=>1, 'visible'=>-2, 'position'=>115),
 		'card_type' =>array('type'=>'varchar(255)', 'label'=>'Card type', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
@@ -112,21 +109,47 @@ class CompanyPaymentMode extends CommonObject
 		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>175),
 		'starting_date' =>array('type'=>'date', 'label'=>'Starting date', 'enabled'=>1, 'visible'=>-2, 'position'=>180),
 		'ending_date' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>1, 'visible'=>-2, 'position'=>185),
-		//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>20),
+		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
+	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
 	public $rowid;
 	public $fk_soc;
 	public $label;
-	public $amount;
-	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
-	public $tms;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
+	public $bank;
+	public $code_banque;
+	public $code_guichet;
+	public $number;
+	public $cle_rib;
+	public $bic;
+	public $iban_prefix;
+	public $domiciliation;
+	public $proprio;
+	public $owner_address;
+	public $default_rib;
+	public $rum;
+	public $date_rum;
+	public $frstrecur;
+	public $type;
+	public $last_four;
+	public $card_type;
+	public $cvn;
+	public $exp_date_month;
+	public $exp_date_year;
+	public $country_code;
+	public $approved;
+	public $email;
+	public $max_total_amount_of_all_payments;
+	public $preapproval_key;
+	public $total_amount_of_all_payments;
+	public $stripe_card_ref;
 	public $status;
+	public $starting_date;
+	public $ending_date;
+	public $datec;
+	public $tms;
+	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
 

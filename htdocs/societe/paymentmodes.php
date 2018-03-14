@@ -32,6 +32,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
@@ -111,7 +112,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && ! $_POST["cancel"])
+	if ($action == 'update')
 	{
 		// Modification
 		if (! GETPOST('label'))
@@ -188,19 +189,14 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'add' && ! $_POST["cancel"])
+	if ($action == 'add')
 	{
 		$error=0;
 
-		if (! GETPOST('label'))
+		if (! GETPOST('label','alpha') || ! GETPOST('bank','alpha'))
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
-			$action='create';
-			$error++;
-		}
-		if (! GETPOST('bank'))
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
+			if (! GETPOST('label','alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			if (! GETPOST('bank','alpha'))  setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
 			$action='create';
 			$error++;
 		}
@@ -291,6 +287,68 @@ if (empty($reshook))
 		}
 	}
 
+	if ($action == 'addcard')
+	{
+		$error=0;
+
+		if (! GETPOST('label','alpha') || ! GETPOST('proprio','alpha') || ! GETPOST('cardnumber','alpha') || ! GETPOST('exp_date_month','alpha') || ! GETPOST('exp_date_year','alpha') || ! GETPOST('cvn','alpha'))
+		{
+			if (! GETPOST('label','alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			if (! GETPOST('proprio','alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NameOnCard")), null, 'errors');
+			if (! GETPOST('cardnumber','alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardNumber")), null, 'errors');
+			if (! (GETPOST('exp_date_month','alpha') > 0) || ! (GETPOST('exp_date_year','alpha') > 0)) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ExpiryDate")), null, 'errors');
+			if (! GETPOST('cvn','alpha')) setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CVN")), null, 'errors');
+			$action='createcard';
+			$error++;
+		}
+
+		if (! $error)
+		{
+			// Ajout
+			$paymentmode = new CompanyPaymentMode($db);
+
+			$paymentmode->fk_soc          = $object->id;
+			$paymentmode->bank            = GETPOST('bank','alpha');
+			$paymentmode->label           = GETPOST('label','alpha');
+			$paymentmode->number          = GETPOST('cardnumber','alpha');
+			$paymentmode->last_four       = substr(GETPOST('cardnumber','alpha'), -4);
+			$paymentmode->proprio         = GETPOST('proprio','alpha');
+			$paymentmode->exp_date_month  = GETPOST('exp_date_month','int');
+			$paymentmode->exp_date_year   = GETPOST('exp_date_year','int');
+			$paymentmode->cvn             = GETPOST('cvn','alpha');
+			$paymentmode->datec           = dol_now();
+			$paymentmode->default_rib     = 0;
+			$paymentmode->type            = 'card';
+			$paymentmode->country_code    = $mysoc->country_code;
+
+			$db->begin();
+
+			if (! $error)
+			{
+				$result = $paymentmode->create($user);
+				if ($result < 0)
+				{
+					$error++;
+					setEventMessages($paymentmode->error, $paymentmode->errors, 'errors');
+					$action='createcard';     // Force chargement page création
+				}
+			}
+
+			if (! $error)
+			{
+				$db->commit();
+
+				$url=$_SERVER["PHP_SELF"].'?socid='.$object->id;
+				header('Location: '.$url);
+				exit;
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+	}
+
 	if ($action == 'setasbankdefault')
 	{
 		$account = new CompanyBankAccount($db);
@@ -307,7 +365,29 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
+	if ($action == 'confirm_deletecard' && GETPOST('confirm','alpha') == 'yes')
+	{
+		$paymentmode = new CompanyPaymentMode($db);
+		if ($paymentmode->fetch($ribid?$ribid:$id))
+		{
+			$result = $paymentmode->delete($user);
+			if ($result > 0)
+			{
+				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
+				header('Location: '.$url);
+				exit;
+			}
+			else
+			{
+				setEventMessages($paymentmode->error, $paymentmode->errors, 'errors');
+			}
+		}
+		else
+		{
+			setEventMessages($paymentmode->error, $paymentmode->errors, 'errors');
+		}
+	}
+	if ($action == 'confirm_delete' && GETPOST('confirm','alpha') == 'yes')
 	{
 		$account = new CompanyBankAccount($db);
 		if ($account->fetch($ribid?$ribid:$id))
@@ -393,8 +473,25 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
+		if ($action == 'setlocalassourcedefault')
+		{
+			try {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib set default_rib = 0 WHERE type = 'card' AND default_rib <> 0";
+				$db->query($sql);
 
-		if ($action == 'setassourcedefault')
+				$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib set default_rib = 1 WHERE type = 'card' AND rowid = ".GETPOST('id','int');
+				$db->query($sql);
+
+				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+				header('Location: '.$url);
+				exit;
+			}
+			catch(Exception $e)
+			{
+
+			}
+		}
+		elseif ($action == 'setassourcedefault')
 		{
 			try {
 				$cu = \Stripe\Customer::retrieve($stripecu);
@@ -436,6 +533,7 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 $formfile = new FormFile($db);
 
 llxHeader();
@@ -452,30 +550,37 @@ else
 }
 if (empty($account->socid)) $account->socid=$object->id;
 
-if ($socid && $action == 'edit' && $user->rights->societe->creer)
+if ($socid && ($action == 'edit' || $action == 'editcard') && $user->rights->societe->creer)
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id","int").'">';
 }
-if ($socid && $action == 'create' && $user->rights->societe->creer)
+if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights->societe->creer)
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="add">';
+	$actionforadd='add';
+	if ($action == 'createcard') $actionforadd='addcard';
+	print '<input type="hidden" name="action" value="'.$actionforadd.'">';
 }
 
 
 // View
-if ($socid && $action != 'edit' && $action != "create")
+if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' && $action != 'createcard')
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
-	// Confirm delete third party
+	// Confirm delete ban
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
+	}
+	// Confirm delete card
+	if ($action == 'deletecard')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteACard"), $langs->trans("ConfirmDeleteCard", $account->getRibLabel()), "confirm_deletecard", '', 0, 1);
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -533,6 +638,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	print '<br>';
 
+	// Stripe payment modes
 	if (! (empty($conf->stripe->enabled)))
 	{
 		$morehtmlright='';
@@ -628,17 +734,17 @@ if ($socid && $action != 'edit' && $action != "create")
 							print '</td>';
 							// Default
 							print '<td align="center">';
-							if (empty($obj->default_rib))
+							if (empty($companypaymentmodetemp->default_rib))
 							{
-								//print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=setlocalassourcedefault">';
 								print img_picto($langs->trans("Default"),'off');
-								//print '</a>';
+								print '</a>';
 							} else {
 								print img_picto($langs->trans("Default"),'on');
 							}
 							print '</td>';
 							print '<td>';
-							if (empty($obj->stripe_card_ref)) print $langs->trans("Local");
+							if (empty($companypaymentmodetemp->stripe_card_ref)) print $langs->trans("Local");
 							else print $langs->trans("LocalAndRemote");
 							print '</td>';
 							print '<td align="center">';
@@ -973,7 +1079,7 @@ if ($socid && $action != 'edit' && $action != "create")
 
 	dol_fiche_end();
 /*
-	if ($socid && $action != 'edit' && $action != 'create')
+	if ($socid && $action != 'edit' && $action != 'create' && $action != 'createcard')
 	{
 		// Barre d'actions
 		print '<div class="tabsAction">';
@@ -1031,7 +1137,7 @@ if ($socid && $action != 'edit' && $action != "create")
     */
 }
 
-// Edit
+// Edit BAN
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
@@ -1136,7 +1242,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 }
 
 
-// Create
+// Create BAN
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
@@ -1151,7 +1257,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-	print '<td><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
+	print '<td><input size="30" type="text" id="label" name="label" value="'.GETPOST('label').'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
 	print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
@@ -1225,6 +1331,55 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	dol_fiche_end();
 
+	dol_set_focus('#label');
+
+	print '<div class="center">';
+	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '</div>';
+}
+
+// Create Card
+if ($socid && $action == 'createcard' && $user->rights->societe->creer)
+{
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+
+	print '<div class="nofichecenter">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent">';
+
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
+	print '<td><input size="30" type="text" id="label" name="label" value="'.GETPOST('label','alpha').'"></td></tr>';
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("NameOnCard").'</td>';
+	print '<td><input size="30" type="text" name="proprio" value="'.GETPOST('proprio','alpha').'"></td></tr>';
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("CardNumber").'</td>';
+	print '<td><input size="30" type="text" name="cardnumber" value="'.GETPOST('cardnumber','alpha').'"></td></tr>';
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
+	print '<td>';
+	print $formother->select_month(GETPOST('exp_date_month','int'), 'exp_date_month', 1);
+	print $formother->select_year(GETPOST('exp_date_year','int'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
+	print '</td></tr>';
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("CVN").'</td>';
+	print '<td><input size="8" type="text" name="cvn" value="'.GETPOST('cvn','alpha').'"></td></tr>';
+
+	print '</table>';
+
+	print '</div>';
+
+	dol_fiche_end();
+
+	dol_set_focus('#label');
+
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -1236,7 +1391,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	print '</form>';
 }
-if ($socid && $action == 'create' && $user->rights->societe->creer)
+if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights->societe->creer)
 {
 	print '</form>';
 }

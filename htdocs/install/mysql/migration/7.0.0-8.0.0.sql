@@ -119,6 +119,10 @@ ALTER TABLE llx_societe_rib ADD COLUMN starting_date date;
 ALTER TABLE llx_societe_rib ADD COLUMN total_amount_of_all_payments double(24,8);
 ALTER TABLE llx_societe_rib ADD COLUMN stripe_card_ref varchar(128);
 ALTER TABLE llx_societe_rib ADD COLUMN status integer NOT NULL DEFAULT 1;
+
+UPDATE llx_societe_rib set type = 'ban' where type = '' OR type IS NULL;
+-- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY COLUMN type varchar(32) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN type SET NOT NULL;
    
 CREATE TABLE llx_ticketsup
 (
