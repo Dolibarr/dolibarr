@@ -933,3 +933,6 @@ PayedTo=Payed to
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
+Local=Local
+Remote=Remote
+LocalAndRemote=Local and remote

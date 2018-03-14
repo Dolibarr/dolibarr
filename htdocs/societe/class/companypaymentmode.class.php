@@ -258,13 +258,18 @@ class CompanyPaymentMode extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    	$id   	Id object
+	 * @param 	string 	$ref  	Ref
+	 * @param	int		$socid	Id of company to get first default payment mode
+	 * @param	string	$type	Filter on type ('ban', 'card', ...)
+	 * @return 	int         	<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $socid = 0, $type = '')
 	{
-		$result = $this->fetchCommon($id, $ref);
+		if ($socid) $sql.= " AND fk_soc  = ".$this->db->escape($socid)." AND default_rib = 1";
+		if ($type)  $sql.= " AND type = '".$this->db->escape($type)."'";
+
+		$result = $this->fetchCommon($id, $ref, $morewhere);
 		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
@@ -366,6 +371,67 @@ class CompanyPaymentMode extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		return $result;
+	}
+
+	/**
+	 * Set a Payment mode as Default
+	 *
+	 * @param   int     $id    		Payment mode ID
+	 * @param	string	$alltypes	1=The default is for all payment types instead of per type
+	 * @return  int             	0 if KO, 1 if OK
+	 */
+	function setAsDefault($id=0, $alltypes=0)
+	{
+		$sql1 = "SELECT rowid as id, fk_soc, type FROM ".MAIN_DB_PREFIX."societe_rib";
+		$sql1.= " WHERE rowid = ".($id?$id:$this->id);
+
+		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
+		$result1 = $this->db->query($sql1);
+		if ($result1)
+		{
+			if ($this->db->num_rows($result1) == 0)
+			{
+				return 0;
+			}
+			else
+			{
+				$obj = $this->db->fetch_object($result1);
+
+				$type = '';
+				if (empty($alltypes)) $type = $obj->type;
+
+				$this->db->begin();
+
+				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
+				$sql2.= " WHERE default_rib <> 0 AND fk_soc = ".$obj->fk_soc;
+				if ($type) $sql2.= " AND type = '".$this->db->escape($type)."'";
+				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
+				$result2 = $this->db->query($sql2);
+
+				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1";
+				$sql3.= " WHERE rowid = ".$obj->id;
+				if ($type) $sql3.= " AND type = '".$this->db->escape($type)."'";
+				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
+				$result3 = $this->db->query($sql3);
+
+				if (!$result2 || !$result3)
+				{
+					dol_print_error($this->db);
+					$this->db->rollback();
+					return -1;
+				}
+				else
+				{
+					$this->db->commit();
+					return 1;
+				}
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
 	}
 
 	/**

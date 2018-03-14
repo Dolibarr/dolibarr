@@ -6481,19 +6481,21 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param	int    $id				Id object
+	 * @param	string $ref				Ref
+	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchCommon($id, $ref = null)
+	public function fetchCommon($id, $ref = null, $morewhere = '')
 	{
 		if (empty($id) && empty($ref)) return false;
 
 		$sql = 'SELECT '.$this->get_field_list();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
-		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
+		if (!empty($id)) $sql.= ' WHERE rowid = '.$id;
 		else $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
+		if ($morewhere) $sql.=$morewhere;
 
 		$res = $this->db->query($sql);
 		if ($res)

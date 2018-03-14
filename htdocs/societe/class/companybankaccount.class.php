@@ -197,7 +197,7 @@ class CompanyBankAccount extends Account
 	 * 	Load record from database
 	 *
 	 *	@param	int		$id			Id of record
-	 * 	@param	int		$socid		Id of company. If this is filled, function will return the default RIB of company
+	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first default RIB of company
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	function fetch($id, $socid=0)
@@ -208,7 +208,7 @@ class CompanyBankAccount extends Account
 		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id)    $sql.= " WHERE rowid = ".$id;
-		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
+		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1 AND type ='ban'";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
