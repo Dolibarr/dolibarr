@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2009-2016 Regis Houssin  <regis@dolibarr.fr>
- * Copyright (C) 2011      Herve Prot     <herve.prot@symeos.com>
- * Copyright (C) 2014      Philippe Grand <philippe.grand@atoo-net.com>
+/* Copyright (C) 2018 ptibogxiv  <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/multicompany/actions_multicompany.class.php
- *	\ingroup    multicompany
- *	\brief      File Class multicompany
+*	\file       htdocs/stripe/class/actions_stripe.class.php
+- *	\ingroup    stripe
+- *	\brief      File Class actionsstripeconnect
  */
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';;
 $langs->load("stripeconnect@stripeconnect");
@@ -56,7 +54,7 @@ class ActionsStripeconnect
 	/**
 	 *
 	 */
-	function formObjectOptions($parameters=false, &$object, &$action='')
+	function formObjectOptions($parameters, &$object, &$action)
 	{
 		global $db,$conf,$user,$langs,$form;
 
