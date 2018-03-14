@@ -1384,7 +1384,7 @@ if (preg_match('/^dopayment/',$action))
 		/*
 		print '<script src="https://checkout.stripe.com/checkout.js"
 		class="stripe-button"
-		data-key="'.$stripe['publishable_key'].'"
+		data-key="'.$stripearrayofkeys['publishable_key'].'"
 		data-amount="'.$ttc.'"
 		data-currency="'.$conf->currency.'"
 		data-description="'.$ref.'">
@@ -1469,7 +1469,7 @@ if (preg_match('/^dopayment/',$action))
 		?>
 
 	    // Create a Stripe client
-	    var stripe = Stripe('<?php echo $stripe['publishable_key']; ?>');
+	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
 	    // Create an instance of Elements
 	    var elements = stripe.elements();
