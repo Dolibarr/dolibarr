@@ -181,12 +181,15 @@ if (empty($reshook))
 
 				// Merge categories
 				$static_cat = new Categorie($db);
+				
 				$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
 				$custcats = $static_cat->containing($object->id, 'customer', 'id');
 				$custcats = array_merge($custcats,$custcats_ori);
 				$object->setCategories($custcats, 'customer');
+				
 				$suppcats_ori = $static_cat->containing($soc_origin->id, 'supplier', 'id');
 				$suppcats = $static_cat->containing($object->id, 'supplier', 'id');
+				$suppcats = array_merge($suppcats,$suppcats_ori);
 				$object->setCategories($suppcats, 'supplier');
 
 				// If thirdparty has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
