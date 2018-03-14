@@ -88,7 +88,7 @@ class box_members extends ModeleBoxes
 			$sql.= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql.= " t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE a.entity = ".$conf->entity;
+			$sql.= " WHERE a.entity IN (".getEntity('member').")";
 			$sql.= " AND a.fk_adherent_type = t.rowid";
 			$sql.= " ORDER BY a.tms DESC";
 			$sql.= $db->plimit($max, 0);

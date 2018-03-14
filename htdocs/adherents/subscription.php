@@ -284,7 +284,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 {
                     if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
                     if ($_POST["paymentsave"] != 'invoiceonly' && ! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-                    if ($_POST["paymentsave"] != 'invoiceonly' && ! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
+                    if ($_POST["paymentsave"] != 'invoiceonly' && ! ($_POST["accountid"] > 0)) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
                 }
                 else
                 {
@@ -293,6 +293,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 if ($errmsg)
                 {
         			setEventMessages($errmsg, null, 'errors');
+        			$error++;
                 	$action='addsubscription';
                 }
             }

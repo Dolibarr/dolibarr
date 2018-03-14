@@ -171,6 +171,7 @@ then
 	cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
 	mkdir -p "$documentdir/ecm/Administrative documents"
 	mkdir -p "$documentdir/ecm/Images"
+	rm -f "$documentdir/doctemplates/"*/index.html
 	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 else

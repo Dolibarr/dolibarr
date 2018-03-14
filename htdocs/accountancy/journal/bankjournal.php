@@ -455,6 +455,7 @@ if (! $error && $action == 'writebookkeeping') {
 					// No subledger_account value for the bank line but add a specific label_operation
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->label_operation = $reflabel;
+					$bookkeeping->entity = $conf->entity;
 
 					$totaldebit += $bookkeeping->debit;
 					$totalcredit += $bookkeeping->credit;
@@ -561,8 +562,8 @@ if (! $error && $action == 'writebookkeeping') {
 								$bookkeeping->label_compte = '';
 							}
 						}
-
 						$bookkeeping->label_operation = $reflabel;
+						$bookkeeping->entity = $conf->entity;
 
 						$totaldebit += $bookkeeping->debit;
 						$totalcredit += $bookkeeping->credit;
@@ -608,8 +609,8 @@ if (! $error && $action == 'writebookkeeping') {
 						$bookkeeping->fk_user_author = $user->id;
 						$bookkeeping->date_create = $now;
 						$bookkeeping->label_compte = '';
-
 						$bookkeeping->label_operation = $reflabel;
+						$bookkeeping->entity = $conf->entity;
 
 						$totaldebit += $bookkeeping->debit;
 						$totalcredit += $bookkeeping->credit;

@@ -202,7 +202,7 @@ if ($object->id > 0)
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask');
+	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask', 0, '', 'reposition');
 
 
 	$param=(GETPOST('withproject')?'&withproject=1':'');

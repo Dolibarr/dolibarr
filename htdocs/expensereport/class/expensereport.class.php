@@ -2482,23 +2482,21 @@ class ExpenseReportLine
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
         $sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
         $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date, rule_warning_message, fk_c_exp_tax_cat)';
-        $sql.= " VALUES (".$this->fk_expensereport.",";
-        $sql.= " ".$this->fk_c_type_fees.",";
-        $sql.= " ".($this->fk_projet>0?$this->fk_projet:'null').",";
-        $sql.= " ".$this->vatrate.",";
+        $sql.= " VALUES (".$this->db->escape($this->fk_expensereport).",";
+        $sql.= " ".$this->db->escape($this->fk_c_type_fees).",";
+        $sql.= " ".$this->db->escape($this->fk_projet>0?$this->fk_projet:'null').",";
+        $sql.= " ".$this->db->escape($this->vatrate).",";
         $sql.= " '".$this->db->escape($this->vat_src_code)."',";
         $sql.= " '".$this->db->escape($this->comments)."',";
-        $sql.= " ".$this->qty.",";
-        $sql.= " ".$this->value_unit.",";
-        $sql.= " ".$this->total_ht.",";
-        $sql.= " ".$this->total_tva.",";
-        $sql.= " ".$this->total_ttc.",";
+        $sql.= " ".$this->db->escape($this->qty).",";
+        $sql.= " ".$this->db->escape($this->value_unit).",";
+        $sql.= " ".$this->db->escape($this->total_ht).",";
+        $sql.= " ".$this->db->escape($this->total_tva).",";
+        $sql.= " ".$this->db->escape($this->total_ttc).",";
         $sql.= "'".$this->db->idate($this->date)."',";
 		$sql.= " '".$this->db->escape($this->rule_warning_message)."',";
-		$sql.= " ".$this->fk_c_exp_tax_cat;
+		$sql.= " ".$this->db->escape($this->fk_c_exp_tax_cat);
         $sql.= ")";
-
-        dol_syslog("ExpenseReportLine::insert sql=".$sql);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2603,21 +2601,21 @@ class ExpenseReportLine
         // Update line in database
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
-        $sql.= ",value_unit=".$this->value_unit;
-        $sql.= ",qty=".$this->qty;
+        $sql.= ",value_unit=".$this->db->escape($this->value_unit);
+        $sql.= ",qty=".$this->db->escape($this->qty);
         $sql.= ",date='".$this->db->idate($this->date)."'";
-        $sql.= ",total_ht=".$this->total_ht."";
-        $sql.= ",total_tva=".$this->total_tva."";
-        $sql.= ",total_ttc=".$this->total_ttc."";
-        $sql.= ",tva_tx=".$this->vatrate;
+        $sql.= ",total_ht=".$this->db->escape($this->total_ht)."";
+        $sql.= ",total_tva=".$this->db->escape($this->total_tva)."";
+        $sql.= ",total_ttc=".$this->db->escape($this->total_ttc)."";
+        $sql.= ",tva_tx=".$this->db->escape($this->vatrate);
 		$sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
         $sql.= ",rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
-		$sql.= ",fk_c_exp_tax_cat=".$this->fk_c_exp_tax_cat;
-        if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->fk_c_type_fees;
+		$sql.= ",fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
+        if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
         else $sql.= ",fk_c_type_fees=null";
-        if ($this->fk_projet) $sql.= ",fk_projet=".$this->fk_projet;
+        if ($this->fk_projet) $sql.= ",fk_projet=".$this->db->escape($this->fk_projet);
         else $sql.= ",fk_projet=null";
-        $sql.= " WHERE rowid = ".$this->rowid;
+        $sql.= " WHERE rowid = ".$this->db->escape($this->rowid);
 
         dol_syslog("ExpenseReportLine::update sql=".$sql);
 

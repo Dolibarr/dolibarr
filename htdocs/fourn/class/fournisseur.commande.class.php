@@ -218,7 +218,7 @@ class CommandeFournisseur extends CommonOrder
         // Check parameters
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_vat,";
+        $sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_vat,";
         $sql.= " c.localtax1, c.localtax2, ";
         $sql.= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
         $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
@@ -253,6 +253,8 @@ class CommandeFournisseur extends CommonOrder
             }
 
             $this->id					= $obj->rowid;
+            $this->entity				= $obj->entity;
+
             $this->ref					= $obj->ref;
             $this->ref_supplier			= $obj->ref_supplier;
             $this->socid				= $obj->fk_soc;
@@ -318,8 +320,6 @@ class CommandeFournisseur extends CommonOrder
             $this->fetch_optionals($this->id,$extralabels);
 
             if ($this->statut == 0) $this->brouillon = 1;
-
-			$this->fetchObjectLinked();
 
 			//$result=$this->fetch_lines();
             $this->lines=array();

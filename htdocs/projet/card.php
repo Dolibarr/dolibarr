@@ -407,7 +407,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-			header("Location: index.php");
+			header("Location: list.php?restore_lastsearch_values=1");
 			exit;
 		}
 		else
