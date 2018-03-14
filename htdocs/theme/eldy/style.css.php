@@ -801,6 +801,9 @@ select.flat.selectlimit {
 .fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
 	color: #055;
 }
+.fa-trash, .fa-crop, .fa-pencil {
+	font-size: 1.4em;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
@@ -1325,11 +1328,11 @@ div.nopadding {
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
-.pictoedit, .pictowarning, .pictodelete {
+.pictowarning {
     vertical-align: text-bottom;
 }
-.fiche img.pictoedit {
-    opacity: 0.7;
+.fiche img.pictoedit, .fiche span.pictoedit {
+    opacity: 0.4;
 }
 .colorthumb {
 	padding-left: 1px !important;

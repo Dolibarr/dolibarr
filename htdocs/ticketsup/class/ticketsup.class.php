@@ -2612,7 +2612,7 @@ class Ticketsup extends CommonObject
                                 }
                                 if ($user->rights->produit->creer || $user->rights->service->creer) {
                                     // Link to resize
-                                    $return .= '<a href="' . DOL_URL_ROOT . '/core/photos_resize.php?modulepart=' . urlencode('ticketsup') . '&id=' . $this->id . '&amp;file=' . urlencode($pdir . $viewfilename) . '" title="' . dol_escape_htmltag($langs->trans("Resize")) . '">' . img_picto($langs->trans("Resize"), DOL_URL_ROOT . '/theme/common/transform-crop-and-resize', '', 1) . '</a> &nbsp; ';
+                                    $return .= '<a href="' . DOL_URL_ROOT . '/core/photos_resize.php?modulepart=' . urlencode('ticketsup') . '&id=' . $this->id . '&amp;file=' . urlencode($pdir . $viewfilename) . '" title="' . dol_escape_htmltag($langs->trans("Resize")) . '">' . img_picto($langs->trans("Resize"), 'resize', '') . '</a> &nbsp; ';
 
                                     // Link to delete
                                     $return .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=delete&amp;file=' . urlencode($pdir . $viewfilename) . '">';
@@ -2641,7 +2641,7 @@ class Ticketsup extends CommonObject
                             if ($showaction) {
                                 if ($user->rights->produit->creer || $user->rights->service->creer) {
                                     // Link to resize
-                                    $return .= '<a href="' . DOL_URL_ROOT . '/core/photos_resize.php?modulepart=' . urlencode('ticketsup') . '&id=' . $this->id . '&amp;file=' . urlencode($pdir . $viewfilename) . '" title="' . dol_escape_htmltag($langs->trans("Resize")) . '">' . img_picto($langs->trans("Resize"), DOL_URL_ROOT . '/theme/common/transform-crop-and-resize', '', 1) . '</a> &nbsp; ';
+                                    $return .= '<a href="' . DOL_URL_ROOT . '/core/photos_resize.php?modulepart=' . urlencode('ticketsup') . '&id=' . $this->id . '&amp;file=' . urlencode($pdir . $viewfilename) . '" title="' . dol_escape_htmltag($langs->trans("Resize")) . '">' . img_picto($langs->trans("Resize"), 'resize', '') . '</a> &nbsp; ';
 
                                     // Link to delete
                                     $return .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=delete&amp;file=' . urlencode($pdir . $viewfilename) . '">';

@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      ptibogxiv        <support@ptibogxiv.net>
+ * Copyright (C) 2018      ptibogxiv            <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -703,10 +703,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		// Stripe customer key 'cu_....' stored into llx_societe_account
 		print '<tr><td class="titlefield">';
 		//print $langs->trans('StripeCustomerId');
-		print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 1, 'socid');
+		print $form->editfieldkey("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
 		print '</td><td>';
 		//print $stripecu;
-		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 1, '', 'socid');
+		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
 		print '</td><td align="right">';
 		if (empty($stripecu))
 		{
@@ -734,7 +734,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").'</a>';
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with Stripe Connect account '.$stripeacc.')':' (Stripe connection with default API credentials)'), $morehtmlright, '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
 		$listofsources = array();
 		if (is_object($stripe))
@@ -835,7 +835,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							if (empty($companypaymentmodetemp->stripe_card_ref)) print $langs->trans("Local");
 							else print $langs->trans("LocalAndRemote");
 							print '</td>';
-							print '<td align="center">';
+							print '<td align="right" class="nowraponall">';
 							if ($user->rights->societe->creer)
 							{
 								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
@@ -843,7 +843,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print '</a>';
 								print '&nbsp;';
 								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';
-								print img_delete($langs->trans("Delete"));
+								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}
 							print '</td>';
@@ -942,11 +942,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<td>';
 				print $langs->trans("Remote");
 				print '</td>';
-				print '<td align="center">';
+				print '<td align="right" class="nowraponall">';
 				if ($user->rights->societe->creer)
 				{
 					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletecard">';
-					print img_delete($langs->trans("Delete"));
+					print img_picto($langs->trans("Delete"), 'delete');
 					print '</a>';
 				}
 				print '</td>';
@@ -1130,7 +1130,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td>';
 
 			// Edit/Delete
-			print '<td align="right">';
+			print '<td align="right" class="nowraponall">';
 			if ($user->rights->societe->creer)
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
