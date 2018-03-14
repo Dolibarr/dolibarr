@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
@@ -76,7 +76,7 @@ if (! empty($conf->stripe->enabled))
 	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
 	{
 		$service = 'StripeLive';
-		$servicestatus = 0;
+		$servicestatus = 1;
 	}
 
 	$stripe = new Stripe($db);
@@ -397,7 +397,7 @@ if (empty($reshook))
 		if ($action == 'setassourcedefault')
 		{
 			try {
-				$cu = \Stripe\Customer::retrieve($stripecu);
+				$cu=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
 				$cu->default_source = (string) $source;
 				$result = $cu->save();
 
@@ -413,7 +413,7 @@ if (empty($reshook))
 		elseif ($action == 'deletecard')
 		{
 			try {
-				$cu = \Stripe\Customer::retrieve($stripecu);
+				$cu=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
 
 				$cu->sources->retrieve("$source")->detach();
 
