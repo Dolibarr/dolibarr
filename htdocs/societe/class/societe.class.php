@@ -12,6 +12,7 @@
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,6 +116,13 @@ class Societe extends CommonObject
 	var $state_id;
 	var $state_code;
 	var $state;
+
+	/**
+	 * Id of region
+	 * @var int
+	 */
+	var $region_code;
+	var $region;
 
 	/**
 	 * State code
@@ -3243,15 +3251,7 @@ class Societe extends CommonObject
 		$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
 		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
-
-		/* Disabled: we don't want any SQL request into method setMySoc. This method set object from env only.
-        If we need label, label must be loaded by output that need it from id (label depends on output language)
-        require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
-        if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
-            $this->state_id= $conf->global->MAIN_INFO_SOCIETE_STATE;
-            $this->state = getState($this->state_id);
-        }
-		*/
+		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
 
 		$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
