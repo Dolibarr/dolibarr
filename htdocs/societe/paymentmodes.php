@@ -79,7 +79,7 @@ if (! empty($conf->stripe->enabled))
 	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
 	{
 		$service = 'StripeLive';
-		$servicestatus = 0;
+		$servicestatus = 1;
 	}
 
 	$stripe = new Stripe($db);
@@ -602,7 +602,7 @@ if (empty($reshook))
 		elseif ($action == 'setassourcedefault')
 		{
 			try {
-				$cu = \Stripe\Customer::retrieve($stripecu);
+				$cu=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
 				$cu->default_source = (string) $source;
 				$result = $cu->save();
 
@@ -618,7 +618,7 @@ if (empty($reshook))
 		elseif ($action == 'deletecard')
 		{
 			try {
-				$cu = \Stripe\Customer::retrieve($stripecu);
+				$cu=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
 
 				$cu->sources->retrieve("$source")->detach();
 
