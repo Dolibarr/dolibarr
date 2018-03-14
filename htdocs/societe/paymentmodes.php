@@ -809,7 +809,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print img_credit_card($companypaymentmodetemp->type);
 							print '</td>';
 							print '<td>';
-							if ($companypaymentmodetemp->last_four) print '**** '.$companypaymentmodetemp->last_four;
+							if ($companypaymentmodetemp->last_four) print '....'.$companypaymentmodetemp->last_four;
 							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) print ' - '.$companypaymentmodetemp->exp_date_month.'/'.$companypaymentmodetemp->exp_date_year.'';
 							print '</td><td>';
 							if ($companypaymentmodetemp->country_code)
@@ -892,7 +892,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print'</td><td valign="middle">';
 				if ($src->object=='card')
 				{
-					print '**** '.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
+					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
 					print '</td><td>';
 					if ($src->country)
 					{
@@ -904,7 +904,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 				elseif ($src->object=='source' && $src->type=='card')
 				{
-					print $src->owner->name.'<br>**** '.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print $src->owner->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
 
 				 	if ($src->card->country)
