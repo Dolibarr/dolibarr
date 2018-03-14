@@ -135,7 +135,7 @@ class InterfaceStripe
 		if ($action == 'COMPANY_MODIFY') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 			if ($stripe->getStripeAccount($service) && $object->client != 0) {
-				$cu = $stripe->customerStripe($object->id, $stripe->getStripeAccount($service));
+				$cu = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				if ($cu) {
 					if ($conf->entity == '1') {
 						$customer = \Stripe\Customer::retrieve("$cu->id");
@@ -153,7 +153,7 @@ class InterfaceStripe
 			}
 		} elseif ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-			$cu = $stripe->customerStripe($object->id, $stripe->getStripeAccount($service));
+			$cu = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
 			if ($cu) {
 				if ($conf->entity == 1) {
 					$customer = \Stripe\Customer::retrieve("$cu->id");

@@ -99,7 +99,7 @@ class ActionsStripeconnect
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
 			if ($stripe->getStripeAccount($service)&&$object->client!=0) {
-				$customer=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
+				$customer=$stripe->customerStripe($object,$stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {
@@ -117,8 +117,9 @@ class ActionsStripeconnect
 			$this->resprints.= '</td>';
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
-			if ($stripe->getStripeAccount($service)&&$object->fk_soc>'0') {
-				$customer=$stripe->customerStripe($object->fk_soc,$stripe->getStripeAccount($service));
+			if ($stripe->getStripeAccount($service) && $object->fk_soc > 0) {
+				$object->fetch_thirdparty();
+				$customer=$stripe->customerStripe($object->thirdparty, $stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {
@@ -135,7 +136,8 @@ class ActionsStripeconnect
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
 			if (7==4) {
-				$customer=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
+				$object->fetch_thirdparty();
+				$customer=$stripe->customerStripe($object,$stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {
@@ -154,7 +156,8 @@ class ActionsStripeconnect
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
 			if (7==4) {
-				$customer=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
+				$object->fetch_thirdparty();
+				$customer=$stripe->customerStripe($object,$stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {

@@ -20,7 +20,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';						// This set stripe global env
 
 
 /**
@@ -86,6 +86,7 @@ class Stripe extends CommonObject
     		dol_print_error($this->db);
     	}
 
+    	dol_syslog("No dedicated Stipe Connect account available for entity".$conf->entity);
 		return $key;
 	}
 
@@ -102,30 +103,33 @@ class Stripe extends CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 		$societeaccount = new SocieteAccount($this->db);
-		return $societeaccount->getCustomerAccount($id, 'stripe', $status);		// Get thirdparty cu_...
+		return $societeaccount->getCustomerAccount($id, 'stripe', $status);		// Get thirdparty cus_...
 	}
 
 
 	/**
 	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet)
 	 *
-	 * @param	int		$id								Id of third party
-	 * @param	string	$key							Stripe account acc_....
+	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on strip also update the stripe_account table for current entity)
+	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							Status (0=test, 1=live)
 	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
-	 * @return \Stripe\StripeObject|\Stripe\ApiResource|null 	Stripe Customer or null if not found
+	 * @return 	\Stripe\StripeCustomer|null 			Stripe Customer or null if not found
 	 */
-	public function customerStripe($id, $key, $status=0, $createifnotlinkedtostripe=0)
+	public function customerStripe($object, $key='', $status=0, $createifnotlinkedtostripe=0)
 	{
-		global $conf;
+		global $conf, $user;
 
-		$sql = "SELECT sa.key_account as key_account, sa.entity";			// key_account is cu_....
+		$customer = null;
+
+		$sql = "SELECT sa.key_account as key_account, sa.entity";			// key_account is cus_....
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
-		$sql.= " WHERE sa.fk_soc = " . $id;
+		$sql.= " WHERE sa.fk_soc = " . $object->id;
 		$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
+		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
 
-		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -133,41 +137,52 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$tiers = $obj->key_account;
-				if ($conf->entity == 1) {
-					$customer = \Stripe\Customer::retrieve("$tiers");
-				} else {
-					$customer = \Stripe\Customer::retrieve("$tiers", array(
-					"stripe_account" => $key
-					));
+				try {
+					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+						$customer = \Stripe\Customer::retrieve("$tiers");
+					} else {
+						$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
+					}
+				}
+				catch(Exception $e)
+				{
+
 				}
 			}
 			elseif ($createifnotlinkedtostripe)
 			{
-				$soc = new Societe($this->db);
-				$soc->fetch($id);
+				$dataforcustomer = array(
+					"email" => $object->email,
+					"business_vat_id" => $object->tva_intra,
+					"description" => $object->name,
+					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity)
+				);
 
-				if ($conf->entity == 1) {
-					$customer = \Stripe\Customer::create(array(
-					"email" => $soc->email,
-					"business_vat_id" => $soc->tva_intra,
-					"description" => $soc->name
-					));
-				} else {
-					$customer = \Stripe\Customer::create(array(
-					"email" => $soc->email,
-					"business_vat_id" => $soc->tva_intra,
-					"description" => $soc->name
-					), array(
-					"stripe_account" => $key
-					));
+				//$a = \Stripe\Stripe::getApiKey();
+				//var_dump($a);var_dump($key);exit;
+				try {
+					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+						$customer = \Stripe\Customer::create($dataforcustomer);
+					} else {
+						$customer = \Stripe\Customer::create($dataforcustomer, array("stripe_account" => $key));
+					}
+					$customer_id = $customer->id;
+
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
+					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer_id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
+					$resql = $this->db->query($sql);
+					if (! $resql)
+					{
+						$this->error = $this->db->lasterror();
+					}
 				}
-				$customer_id = $customer->id;
-
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, key_account, site, status, entity)";
-				$sql .= " VALUES (".$id.", '".$this->db->escape($customer_id)."', 'stripe', " . $status . "," . $conf->entity . ")";
-				$resql = $this->db->query($sql);
+				catch(Exception $e)
+				{
+					//print $e->getMessage();
+				}
 			}
 		}
+
 		return $customer;
 	}
 
@@ -178,8 +193,8 @@ class Stripe extends CommonObject
 	 * @param string $currency			EUR, GPB...
 	 * @param string $origin			order, invoice, contract...
 	 * @param int $item				    if of element to pay
-	 * @param string $source			src_xxxxx or card_xxxxx or ac_xxxxx
-	 * @param string $customer			Stripe account ref 'cu_xxxxxxxxxxxxx' via customerStripe()
+	 * @param string $source			src_xxxxx or card_xxxxx
+	 * @param string $customer			Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param string $account			Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
 	 * @param	int		$status			Status (0=test, 1=live)
 	 * @return Stripe

@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $langs->loadLangs(array("companies","commercial","banks","bills"));
 
+
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
@@ -82,8 +83,8 @@ if (! empty($conf->stripe->enabled))
 	}
 
 	$stripe = new Stripe($db);
-	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus);		// Get thirdparty cu_...
+	$stripeacc = $stripe->getStripeAccount($service);								// Get Stripe OAuth connect account (no network access here)
+	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus);		// Get remote Stripe customer 'cus_...' (no network access here)
 }
 
 
@@ -474,6 +475,7 @@ if (empty($reshook))
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
 		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid'));
 	}
+
 	$id = $socid;
 	$upload_dir = $conf->societe->multidir_output[$object->entity];
 	$permissioncreate=$user->rights->societe->creer;
@@ -484,6 +486,29 @@ if (empty($reshook))
 	// Action for stripe
 	if (! empty($conf->stripe->enabled) && class_exists('Stripe'))
 	{
+		if ($action == 'synccustomertostripe')
+		{
+			if ($object->client == 0)
+			{
+				$error++;
+				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
+			}
+			else
+			{
+				// Creation of Stripe customer + update of societe_account
+				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus, 1);
+				if (! $cu)
+				{
+					$error++;
+					setEventMessages($stripe->error, $stripe->errors, 'errors');
+				}
+				else
+				{
+					$stripecu = $cu->id;
+				}
+			}
+		}
+
 		if ($action == 'setkey_account')
 		{
 			$error = 0;
@@ -655,7 +680,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if ($object->client)
 	{
 		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print $langs->trans('CustomerCode').'</td><td colspan="2">';
 		print $object->code_client;
 		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		print '</td></tr>';
@@ -682,6 +707,17 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '</td><td>';
 		//print $stripecu;
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 1, '', 'socid');
+		print '</td><td align="right">';
+		if (empty($stripecu))
+		{
+			print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="action" value="synccustomertostripe">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="socid" value="'.$object->id.'">';
+			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
+			print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+			print '</form>';
+		}
 		print '</td></tr>';
 	}
 
@@ -698,20 +734,20 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").'</a>';
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' ('.$stripeacc.')':''), $morehtmlright, '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' ('.$stripeacc.')':' (API mode)'), $morehtmlright, '');
 
 		$listofsources = array();
-		if (is_object($stripe) && $stripeacc)
+		if (is_object($stripe))
 		{
 			try {
-				$customerstripe=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
+				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
 					$listofsources=$customerstripe->sources->data;
 				}
 			}
 			catch(Exception $e)
 			{
-				dol_syslog("Failed to get strip customer for thirdparty id =".$object->id);
+				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
 			}
 		}
 
@@ -815,10 +851,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						}
 						$i++;
 					}
-				}
-				else
-				{
-					print $langs->trans("NoPaymentMethodOnFile");
 				}
 			}
 			else dol_print_error($db);

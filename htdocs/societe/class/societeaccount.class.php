@@ -263,8 +263,10 @@ class SocieteAccount extends CommonObject
 		$sql.= " WHERE sa.fk_soc = " . $id;
 		$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
+		//$sql.= " ORDER BY sa.key_account DESC";
 
-		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the system customer id of thirdparty id=".$id." (exemple: cu_.... for stripe)", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the system customer id of thirdparty id=".$id." (exemple: cus_.... for stripe)", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
