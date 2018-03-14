@@ -466,7 +466,7 @@ function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entc
  *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @return   mixed       				String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
-function getState($id,$withcode='',$dbtouse=0,$withregion='',$outputlangs='',$entconv=1)
+function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$entconv=1)
 {
     global $db,$langs;
 
