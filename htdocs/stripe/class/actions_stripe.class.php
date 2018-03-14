@@ -19,16 +19,16 @@
 /**
 *	\file       htdocs/stripe/class/actions_stripe.class.php
 - *	\ingroup    stripe
-- *	\brief      File Class actionsstripeconnect
+- *	\brief      File Class actionsstripe
  */
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';;
-$langs->load("stripeconnect@stripeconnect");
+$langs->load("stripe@stripe");
 
 /**
- *	\class      ActionsMulticompany
- *	\brief      Class Actions of the module multicompany
+ *	\class      ActionsStripe
+ *	\brief      Class Actions of the module stripe
  */
-class ActionsStripeconnect
+class ActionsStripe
 {
 	/** @var DoliDB */
 	var $db;
