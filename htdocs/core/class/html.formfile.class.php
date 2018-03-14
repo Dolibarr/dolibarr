@@ -616,7 +616,7 @@ class FormFile
 			$out.= '<tr class="liste_titre">';
 
 			$addcolumforpicto=($delallowed || $printer || $morepicto);
-			$out.= '<th align="center" colspan="'.(3+($addcolumforpicto?'2':'1')).'" class="formdoc liste_titre maxwidthonsmartphone">';
+			$out.= '<th align="center" colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone">';
 
 			// Model
 			if (! empty($modellist))
@@ -778,7 +778,7 @@ class FormFile
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
 						if (empty($res))
 						{
-							$out .= $hookmanager->resPrint;		// Complete line
+							$out.= $hookmanager->resPrint;		// Complete line
 							$out.= '</tr>';
 						}
 						else $out = $hookmanager->resPrint;		// Replace line
@@ -811,7 +811,7 @@ class FormFile
 
 		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
 			{
-				$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
+				$out.='<tr><td colspan="'.(3+($addcolumforpicto?1:0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
 			}
 
 		}
@@ -861,7 +861,7 @@ class FormFile
 			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
 			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
 		}
-		
+
 		$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
 
 		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)

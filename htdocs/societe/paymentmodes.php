@@ -734,7 +734,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").'</a>';
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' ('.$stripeacc.')':' (API mode)'), $morehtmlright, '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with Stripe Connect account '.$stripeacc.')':' (Stripe connection with default API credentials)'), $morehtmlright, '');
 
 		$listofsources = array();
 		if (is_object($stripe))
@@ -1152,7 +1152,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			$colspan=8;
 			if (! empty($conf->prelevement->enabled)) $colspan+=2;
-			print '<tr '.$bc[0].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
+			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
 		}
 
 		print '</table>';
