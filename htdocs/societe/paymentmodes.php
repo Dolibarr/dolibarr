@@ -596,13 +596,14 @@ if (empty($reshook))
 			}
 			catch(Exception $e)
 			{
-
+				$error++;
+				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
 		elseif ($action == 'setassourcedefault')
 		{
 			try {
-				$cu=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
+				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				$cu->default_source = (string) $source;
 				$result = $cu->save();
 
@@ -612,15 +613,20 @@ if (empty($reshook))
 			}
 			catch(Exception $e)
 			{
-
+				$error++;
+				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
 		elseif ($action == 'deletecard')
 		{
 			try {
-				$cu=$stripe->customerStripe($object->id, $stripeacc, $servicestatus);
-
-				$cu->sources->retrieve("$source")->detach();
+				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
+				$card=$cu->sources->retrieve("$source");
+				if ($card)
+				{
+					$card->delete();
+					// $card->detach();  Does not work with card_, only with src_
+				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 				header('Location: '.$url);
@@ -628,7 +634,8 @@ if (empty($reshook))
 			}
 			catch(Exception $e)
 			{
-
+				$error++;
+				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
 	}
