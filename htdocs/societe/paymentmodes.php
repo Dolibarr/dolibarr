@@ -753,6 +753,15 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '</td><td>';
 		//print $stripecu;
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
+		if ($stripecu)
+		{
+			$url='https://dashboard.stripe.com/test/customers/'.$stripecu;
+			if ($servicestatus)
+			{
+				$url='https://dashboard.stripe.com/customers/'.$stripecu;
+			}
+			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+		}
 		print '</td><td align="right">';
 		if (empty($stripecu))
 		{
@@ -850,6 +859,15 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '</td>';
 							print '<td>';
 							print $companypaymentmodetemp->stripe_card_ref;
+							/*if ($companypaymentmodetemp->stripe_card_ref)
+							{
+								$url='https://dashboard.stripe.com/test/card/'.$companypaymentmodetemp->stripe_card_ref;
+								if ($servicestatus)
+								{
+									$url='https://dashboard.stripe.com/card/'.$companypaymentmodetemp->stripe_card_ref;
+								}
+								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+							}*/
 							print '</td>';
 							print '<td>';
 							print img_credit_card($companypaymentmodetemp->type);

@@ -140,7 +140,7 @@ class Form
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
 	 * @param	object	$extObject		External object
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
-	 * @param	string	$moreparam		More param to add on a href URL
+	 * @param	string	$moreparam		More param to add on the form action href URL
 	 * @param   int     $notabletag     Do no output table tags
 	 * @param	string	$formatfunc		Call a specific function to output field
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')

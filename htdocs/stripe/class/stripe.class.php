@@ -146,7 +146,7 @@ class Stripe extends CommonObject
 				}
 				catch(Exception $e)
 				{
-
+					$this->error = $e->getMessage();
 				}
 			}
 			elseif ($createifnotlinkedtostripe)
@@ -230,7 +230,7 @@ class Stripe extends CommonObject
 					}
 					catch(Exception $e)
 					{
-
+						$this->error = $e->getMessage();
 					}
 				}
 				elseif ($createifnotlinkedtostripe)
