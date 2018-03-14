@@ -60,3 +60,4 @@ CVN=CVN
 DeleteACard=Delete Card record
 ConfirmDeleteCard=Are you sure you want to delete this Card record?
 CreateCustomerOnStripe=Create customer on Stripe
+CreateCardOnStripe=Create card on Stripe

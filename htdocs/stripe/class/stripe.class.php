@@ -110,13 +110,13 @@ class Stripe extends CommonObject
 	/**
 	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet)
 	 *
-	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on strip also update the stripe_account table for current entity)
+	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							Status (0=test, 1=live)
 	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
 	 * @return 	\Stripe\StripeCustomer|null 			Stripe Customer or null if not found
 	 */
-	public function customerStripe($object, $key='', $status=0, $createifnotlinkedtostripe=0)
+	public function customerStripe(Societe $object, $key='', $status=0, $createifnotlinkedtostripe=0)
 	{
 		global $conf, $user;
 
@@ -166,10 +166,9 @@ class Stripe extends CommonObject
 					} else {
 						$customer = \Stripe\Customer::create($dataforcustomer, array("stripe_account" => $key));
 					}
-					$customer_id = $customer->id;
 
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer_id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
+					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);
 					if (! $resql)
 					{
@@ -178,12 +177,99 @@ class Stripe extends CommonObject
 				}
 				catch(Exception $e)
 				{
-					//print $e->getMessage();
+					$this->error = $e->getMessage();
 				}
 			}
 		}
+		else
+		{
+			dol_print_error($this->db);
+		}
 
 		return $customer;
+	}
+
+	/**
+	 * Get the Stripe card of a company payment mode (with option to create it if not linked yet)
+	 *
+	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
+	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
+	 * @param	string					$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int						$status							Status (0=test, 1=live)
+	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
+	 * @return 	\Stripe\StripeCard|null 								Stripe Card or null if not found
+	 */
+	public function cardStripe($cu, CompanyPaymentMode $object, $key='', $status=0, $createifnotlinkedtostripe=0)
+	{
+		global $conf, $user;
+
+		$customer = null;
+
+		$sql = "SELECT sa.stripe_card_ref as stripe_card_ref";			// key_account is cus_....
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_rib as sa";
+		$sql.= " WHERE sa.rowid = " . $object->id;
+		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND sa.type = 'card'";
+
+		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$cardref = $obj->stripe_card_ref;
+				if ($cardref)
+				{
+					try {
+						if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+							$card = \Stripe\Card::retrieve("$cardref");
+						} else {
+							$card = \Stripe\Card::retrieve("$cardref", array("stripe_account" => $key));
+						}
+					}
+					catch(Exception $e)
+					{
+
+					}
+				}
+				elseif ($createifnotlinkedtostripe)
+				{
+					$dataforcard = array(
+						"source" => 'eee',
+						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity)
+					);
+
+					//$a = \Stripe\Stripe::getApiKey();
+					//var_dump($a);var_dump($key);exit;
+					try {
+						if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+							$card = $cu->sources->create($dataforcard);
+						} else {
+							$card = $cu->sources->create($dataforcard, array("stripe_account" => $key));
+						}
+
+						$sql = "UPDATE INTO " . MAIN_DB_PREFIX . "societe_rib (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
+						$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($card->id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
+						$resql = $this->db->query($sql);
+						if (! $resql)
+						{
+							$this->error = $this->db->lasterror();
+						}
+					}
+					catch(Exception $e)
+					{
+						$this->error = $e->getMessage();
+					}
+				}
+			}
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+
+		return $card;
 	}
 
 	/**

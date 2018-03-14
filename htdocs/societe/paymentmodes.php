@@ -508,6 +508,42 @@ if (empty($reshook))
 				}
 			}
 		}
+		if ($action == 'synccardtostripe')
+		{
+			$companypaymentmode = new CompanyPaymentMode($db);
+			$companypaymentmode->fetch($id);
+
+			if ($companypaymentmode->type != 'card')
+			{
+				$error++;
+				setEventMessages('ThisPaymentModeIsNotACard', null, 'errors');
+			}
+			else
+			{
+				// Get the Stripe customer
+				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+				if (! $cu)
+				{
+					$error++;
+					setEventMessages($stripe->error, $stripe->errors, 'errors');
+				}
+
+				if (! $error)
+				{
+					// Creation of Stripe card + update of societe_account
+					$card = $stripe->cardStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
+					if (! $card)
+					{
+						$error++;
+						setEventMessages($stripe->error, $stripe->errors, 'errors');
+					}
+					else
+					{
+						$stripecard = $card->id;
+					}
+				}
+			}
+		}
 
 		if ($action == 'setkey_account')
 		{
@@ -611,6 +647,16 @@ $formfile = new FormFile($db);
 llxHeader();
 
 $head=societe_prepare_head($object);
+
+// Show sandbox warning
+/*if (! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
+{
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
+}*/
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
+{
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
+}
 
 // Load Bank account
 if (! $id)
@@ -810,7 +856,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '</td>';
 							print '<td>';
 							if ($companypaymentmodetemp->last_four) print '....'.$companypaymentmodetemp->last_four;
-							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) print ' - '.$companypaymentmodetemp->exp_date_month.'/'.$companypaymentmodetemp->exp_date_year.'';
+							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year.'';
 							print '</td><td>';
 							if ($companypaymentmodetemp->country_code)
 							{
@@ -838,6 +884,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td align="right" class="nowraponall">';
 							if ($user->rights->societe->creer)
 							{
+								if ($stripecu && empty($companypaymentmodetemp->stripe_card_ref))
+								{
+									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="button">'.$langs->trans("CreateCardOnStripe").'</a>';
+								}
+
 								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
 								print img_picto($langs->trans("Modify"),'edit');
 								print '</a>';
