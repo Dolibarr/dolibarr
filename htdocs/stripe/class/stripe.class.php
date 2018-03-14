@@ -155,7 +155,7 @@ class Stripe extends CommonObject
 					"email" => $object->email,
 					"business_vat_id" => $object->tva_intra,
 					"description" => $object->name,
-					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity)
+					"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 				);
 
 				//$a = \Stripe\Stripe::getApiKey();
@@ -190,7 +190,7 @@ class Stripe extends CommonObject
 	}
 
 	/**
-	 * Get the Stripe card of a company payment mode (with option to create it if not linked yet)
+	 * Get the Stripe card of a company payment mode (with option to create it on Stripe if not linked yet)
 	 *
 	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
@@ -205,7 +205,7 @@ class Stripe extends CommonObject
 
 		$customer = null;
 
-		$sql = "SELECT sa.stripe_card_ref as stripe_card_ref";			// key_account is cus_....
+		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn";			// stripe_card_ref is card_....
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_rib as sa";
 		$sql.= " WHERE sa.rowid = " . $object->id;
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
@@ -235,9 +235,15 @@ class Stripe extends CommonObject
 				}
 				elseif ($createifnotlinkedtostripe)
 				{
+					$exp_date_month=$obj->exp_date_month;
+					$exp_date_year=$obj->exp_date_year;
+					$number=$obj->number;
+					$cvc=$obj->cvn;								// cvn in database, cvc for stripe
+					$cardholdername=$obj->proprio;
+
 					$dataforcard = array(
-						"source" => 'eee',
-						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity)
+						"source" => array('object'=>'card', 'exp_month'=>$exp_date_month, 'exp_year'=>$exp_date_year, 'number'=>$number, 'cvc'=>$cvc, 'name'=>$cardholdername),
+						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']))
 					);
 
 					//$a = \Stripe\Stripe::getApiKey();
@@ -249,12 +255,23 @@ class Stripe extends CommonObject
 							$card = $cu->sources->create($dataforcard, array("stripe_account" => $key));
 						}
 
-						$sql = "UPDATE INTO " . MAIN_DB_PREFIX . "societe_rib (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-						$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($card->id)."', 'stripe', " . $status . ", " . $conf->entity . ", '".$this->db->idate(dol_now())."', ".$user->id.")";
-						$resql = $this->db->query($sql);
-						if (! $resql)
+						if ($card)
 						{
-							$this->error = $this->db->lasterror();
+							$sql = "UPDATE " . MAIN_DB_PREFIX . "societe_rib";
+							$sql.= " SET stripe_card_ref = '".$this->db->escape($card->id)."', card_type = '".$this->db->escape($card->brand)."',";
+							$sql.= " country_code = '".$this->db->escape($card->country)."',";
+							$sql.= " approved = ".($card->cvc_check == 'pass' ? 1 : 0);
+							$sql.= " WHERE rowid = " . $object->id;
+							$sql.= " AND type = 'card'";
+							$resql = $this->db->query($sql);
+							if (! $resql)
+							{
+								$this->error = $this->db->lasterror();
+							}
+						}
+						else
+						{
+							$this->error = 'Call to cu->source->create return empty card';
 						}
 					}
 					catch(Exception $e)
