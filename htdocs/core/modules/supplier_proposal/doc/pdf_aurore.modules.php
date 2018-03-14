@@ -65,9 +65,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "aurore";
