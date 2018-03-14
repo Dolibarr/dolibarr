@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +79,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("town",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("zipcode",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", GETPOST("state_id",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL", GETPOST("tel",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX", GETPOST("fax",'alpha'),'chaine',0,'',$conf->entity);
@@ -726,8 +728,9 @@ else
 	print '</td></tr>';
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
-	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print getState($conf->global->MAIN_INFO_SOCIETE_STATE);
+	if (! empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT)) print '<tr class="oddeven"><td>'.$langs->trans("Region-State").'</td><td>';
+	else print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
+	if (! empty($conf->global->MAIN_INFO_SOCIETE_STATE)) print getState($conf->global->MAIN_INFO_SOCIETE_STATE,$conf->global->MAIN_SHOW_STATE_CODE,0,$conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 	else print '&nbsp;';
 	print '</td></tr>';
 
