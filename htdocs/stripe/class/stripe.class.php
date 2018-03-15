@@ -292,19 +292,22 @@ class Stripe extends CommonObject
 	/**
 	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
 	 *
-	 * @param int 		$amount			Amount to pay
-	 * @param string 	$currency		EUR, GPB...
-	 * @param string 	$origin			Object type to pay (order, invoice, contract...)
-	 * @param int 		$item			Object id to pay
-	 * @param string 	$source			src_xxxxx or card_xxxxx
-	 * @param string 	$customer		Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param string 	$account		Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
-	 * @param	int		$status			Status (0=test, 1=live)
+	 * @param int 		$amount									Amount to pay
+	 * @param string 	$currency								EUR, GPB...
+	 * @param string 	$origin									Object type to pay (order, invoice, contract...)
+	 * @param int 		$item									Object id to pay
+	 * @param string 	$source									src_xxxxx or card_xxxxx
+	 * @param string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
+	 * @param	int		$status									Status (0=test, 1=live)
+	 * @param	int		$usethirdpartyemailforreceiptemail		Use thirdparty email as receipt email
 	 * @return Stripe
 	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0)
+	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status=0, $usethirdpartyemailforreceiptemail=0)
 	{
 		global $conf;
+
+		$error = 0;
 
 		if (empty($status)) $service = 'StripeTest';
 		else $service = 'StripeLive';
@@ -335,16 +338,18 @@ class Stripe extends CommonObject
 		$societe = new Societe($this->db);
 		if ($key > 0) $societe->fetch($key);
 
+		$description = "";
+		$ref = "";
 		if ($origin == order) {
 			$order = new Commande($this->db);
 			$order->fetch($item);
 			$ref = $order->ref;
-			$description = "ORD=" . $ref . ".CUS=" . $societe->code_client;
+			$description = "ORD=" . $ref . ".CUS=" . $societe->id;
 		} elseif ($origin == invoice) {
 			$invoice = new Facture($this->db);
 			$invoice->fetch($item);
 			$ref = $invoice->ref;
-			$description = "INV=" . $ref . ".CUS=" . $societe->code_client;
+			$description = "INV=" . $ref . ".CUS=" . $societe->id;
 		}
 
 		$metadata = array(
@@ -369,18 +374,22 @@ class Stripe extends CommonObject
 						"source" => "$source"
 					));
 				} else {
-					$charge = \Stripe\Charge::create(array(
+					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
 						// "statement_descriptor" => " ",
 						"description" => "$description",
 						"metadata" => $metadata,
-						"receipt_email" => $societe->email,
 						"source" => "$source",
 						"customer" => "$customer"
-					), array(
-					"idempotency_key" => "$ref"
-					));
+					);
+
+					if ($societe->email && $usethirdpartyemailforreceiptemail)
+					{
+						$paymentarray["receipt_email"] = $societe->email;
+					}
+
+					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref"));
 				}
 			} else {
 
@@ -408,17 +417,18 @@ class Stripe extends CommonObject
 			$return->statut = 'success';
 			$return->id = $charge->id;
 			if ($charge->source->type == 'card') {
-				$return->message = $charge->source->card->brand . " ****" . $charge->source->card->last4;
+				$return->message = $charge->source->card->brand . " ...." . $charge->source->card->last4;
 			} elseif ($charge->source->type == 'three_d_secure') {
 				$stripe = new Stripe($this->db);
 				$src = \Stripe\Source::retrieve("" . $charge->source->three_d_secure->card . "", array(
 				"stripe_account" => $stripe->getStripeAccount($service)
 				));
-				$return->message = $src->card->brand . " ****" . $src->card->last4;
+				$return->message = $src->card->brand . " ...." . $src->card->last4;
 			} else {
 				$return->message = $charge->id;
 			}
 		} catch (\Stripe\Error\Card $e) {
+			include DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			// Since it's a decline, \Stripe\Error\Card will be caught
 			$body = $e->getJsonBody();
 			$err = $body['error'];
@@ -429,36 +439,37 @@ class Stripe extends CommonObject
 			$return->code = $err['code'];
 			$return->message = $err['message'];
 			$body = "Error: <br>" . $return->id . " " . $return->message . " ";
-			$subject = '[NOTIFICATION] Erreur de paiement';
-			$headers = 'From: "noreply" <' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '>';
-			mail('' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '', $subject, $body, $headers);
-			$error ++;
+			$subject = '[Alert] Payment error using Stripe';
+			$cmailfile = new CMailFile($subject, $conf->global->ONLINE_PAYMENT_SENDEMAIL, $conf->global->MAIN_INFO_SOCIETE_MAIL, $body);
+			$cmailfile->sendfile();
+
+			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
 		} catch (\Stripe\Error\RateLimit $e) {
 			// Too many requests made to the API too quickly
-			$error ++;
+			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
 		} catch (\Stripe\Error\InvalidRequest $e) {
 			// Invalid parameters were supplied to Stripe's API
-			$error ++;
+			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
 		} catch (\Stripe\Error\Authentication $e) {
 			// Authentication with Stripe's API failed
 			// (maybe you changed API keys recently)
-			$error ++;
+			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
 		} catch (\Stripe\Error\ApiConnection $e) {
 			// Network communication with Stripe failed
-			$error ++;
+			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
 		} catch (\Stripe\Error\Base $e) {
 			// Display a very generic error to the user, and maybe send
 			// yourself an email
-			$error ++;
+			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
 		} catch (Exception $e) {
 			// Something else happened, completely unrelated to Stripe
-			$error ++;
+			$error++;
 			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
 		}
 		return $return;
