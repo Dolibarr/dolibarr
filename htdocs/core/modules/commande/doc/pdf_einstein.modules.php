@@ -97,10 +97,9 @@ class pdf_einstein extends ModelePDFCommandes
 	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("products");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills", "products"));
 
 		$this->db = $db;
 		$this->name = "einstein";

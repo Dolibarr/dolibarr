@@ -2859,27 +2859,23 @@ class Societe extends CommonObject
 			$chaine=trim($this->idprof1);
 			$chaine=preg_replace('/(\s)/','',$chaine);
 
+			if (!is_numeric($chaine)) return -1;
 			if (dol_strlen($chaine) != 9) return -1;
 
-			$sum = 0;
+			// on prend chaque chiffre un par un
+			// si son index (position dans la chaîne en commence à 0 au premier caractère) est impair
+			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
+			// on ajoute cette valeur à la somme totale
 
-			for ($i = 0 ; $i < 10 ; $i = $i+2)
+			for ($index = 0; $index < 9; $index ++)
 			{
-				$sum = $sum + substr($this->idprof1, (8 - $i), 1);
+				$number = (int) $siren[$index];
+				if (($index % 2) != 0) { if (($number *= 2) > 9) $number -= 9; }
+				$sum += $number;
 			}
 
-			for ($i = 1 ; $i < 9 ; $i = $i+2)
-			{
-				$ps = 2 * substr($this->idprof1, (8 - $i), 1);
-
-				if ($ps > 9)
-				{
-					$ps = substr($ps, 0,1) + substr($ps, 1, 1);
-				}
-				$sum = $sum + $ps;
-			}
-
-			if (substr($sum, -1) != 0) return -1;
+			// le numéro est valide si la somme des chiffres est multiple de 10
+			if (($sum % 10) != 0) return -1;
 		}
 
 		// Verifie SIRET si pays FR
@@ -2888,7 +2884,23 @@ class Societe extends CommonObject
 			$chaine=trim($this->idprof2);
 			$chaine=preg_replace('/(\s)/','',$chaine);
 
+			if (!is_numeric($chaine)) return -1;
 			if (dol_strlen($chaine) != 14) return -1;
+			
+			// on prend chaque chiffre un par un
+			// si son index (position dans la chaîne en commence à 0 au premier caractère) est pair
+			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
+			// on ajoute cette valeur à la somme totale
+		
+			for ($index = 0; $index < 14; $index ++)
+			{
+				$number = (int) $chaine[$index];
+				if (($index % 2) == 0) { if (($number *= 2) > 9) $number -= 9; }
+				$sum += $number;
+			}
+		
+			// le numéro est valide si la somme des chiffres est multiple de 10
+			if (($sum % 10) != 0) return -1;
 		}
 
 		//Verify CIF/NIF/NIE if pays ES

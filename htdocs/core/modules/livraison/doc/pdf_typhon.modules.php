@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
- * Copyright (C) 2011-2012 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
 
  * This program is free software; you can redistribute it and/or modify
@@ -65,11 +65,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("sendings");
-		$langs->load("companies");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills", "sendings", "companies"));
 
 		$this->db = $db;
 		$this->name = "typhon";
