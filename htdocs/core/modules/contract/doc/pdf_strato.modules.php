@@ -128,7 +128,7 @@ class pdf_strato extends ModelePDFContract
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 		
 		// Translations
-		$langs->loadLangs(array("main", "dict", "companies", "contracts"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
 		if ($conf->contrat->dir_output)
 		{
