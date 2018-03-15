@@ -792,7 +792,7 @@ class FormTicketsup
         $model_id=0;
         if (array_key_exists('models_id', $this->param)) {
             $model_id=$this->param["models_id"];
-            $arraydefaultmessage=$this->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
+            $arraydefaultmessage=$formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
         }
 
         $result = $formmail->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
@@ -803,8 +803,6 @@ class FormTicketsup
         foreach ($formmail->lines_model as $line) {
             $modelmail_array[$line->id]=$line->label;
         }
-
-
 
         print '<table class="border"  width="' . $width . '">';
 
@@ -922,8 +920,8 @@ class FormTicketsup
 
         // MESSAGE
         $defaultmessage="";
-        if (count($arraydefaultmessage) > 0 && $arraydefaultmessage['content']) {
-            $defaultmessage=$arraydefaultmessage['content'];
+        if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage->content) {
+            $defaultmessage=$arraydefaultmessage->content;
         }
         $defaultmessage=str_replace('\n', "\n", $defaultmessage);
 
@@ -1018,84 +1016,5 @@ class FormTicketsup
 
         print "</form>\n";
         print "<!-- End form TICKET -->\n";
-    }
-
-    /**
-     *      Return template of email
-     *      Search into table c_email_templates
-     *
-     *         @param  DoliDB    $db            Database handler
-     *         @param  string    $type_template Get message for key module
-     *      @param  string    $user          Use template public or limited to this user
-     *      @param  Translate $outputlangs   Output lang object
-     *      @param  int       $id            Id template to find
-     *      @param  int       $active        1=Only active template, 0=Only disabled, -1=All
-     *      @return array                        array('topic'=>,'content'=>,..)
-     */
-    private function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1)
-    {
-        $ret=array();
-
-        $sql = "SELECT label, topic, content, lang";
-        $sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
-        $sql.= " WHERE type_template='".$db->escape($type_template)."'";
-        $sql.= " AND entity IN (".getEntity("c_email_templates").")";
-        $sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
-        if ($active >= 0) {
-            $sql.=" AND active = ".$active;
-        }
-        if (is_object($outputlangs)) {
-            $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
-        }
-        if (!empty($id)) {
-            $sql.= " AND rowid=".$id;
-        }
-        $sql.= $db->order("lang,label", "ASC");
-        //print $sql;
-
-        $resql = $db->query($sql);
-        if ($resql) {
-            $obj = $db->fetch_object($resql);    // Get first found
-            if ($obj) {
-                $ret['label']=$obj->label;
-                $ret['topic']=$obj->topic;
-                $ret['content']=$obj->content;
-                $ret['lang']=$obj->lang;
-            } else {
-                $defaultmessage='';
-                if ($type_template=='facture_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice");
-                } elseif ($type_template=='facture_relance') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder");
-                } elseif ($type_template=='propal_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal");
-                } elseif ($type_template=='supplier_proposal_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
-                } elseif ($type_template=='order_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder");
-                } elseif ($type_template=='order_supplier_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
-                } elseif ($type_template=='invoice_supplier_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
-                } elseif ($type_template=='shipping_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping");
-                } elseif ($type_template=='fichinter_send') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter");
-                } elseif ($type_template=='thirdparty') {
-                    $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty");
-                }
-
-                $ret['label']='default';
-                $ret['topic']='';
-                $ret['content']=$defaultmessage;
-                $ret['lang']=$outputlangs->defaultlang;
-            }
-
-            $db->free($resql);
-            return $ret;
-        } else {
-            dol_print_error($db);
-            return -1;
-        }
     }
 }
