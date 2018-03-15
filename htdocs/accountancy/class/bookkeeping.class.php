@@ -1101,7 +1101,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element . $mode . " as ab";
-		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$value."'");
+		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$this->db->escape($value)."'");
 		$sql .= ' WHERE ab.piece_num=' . $piece_num ;
 		$resql = $this->db->query($sql);
 
@@ -1184,7 +1184,7 @@ class BookKeeping extends CommonObject
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE import_key = '" . $importkey . "'";
+		$sql .= " WHERE import_key = '" . $this->db->escape($importkey) . "'";
 
 		$resql = $this->db->query($sql);
 
@@ -1222,7 +1222,7 @@ class BookKeeping extends CommonObject
 		$sql.= " FROM " . MAIN_DB_PREFIX . $this->table_element.$mode;
 		$sql.= " WHERE 1 = 1";
 		if (! empty($delyear)) $sql.= " AND YEAR(doc_date) = " . $delyear;		 // FIXME Must use between
-		if (! empty($journal)) $sql.= " AND code_journal = '".$journal."'";
+		if (! empty($journal)) $sql.= " AND code_journal = '".$this->db->escape($journal)."'";
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		$resql = $this->db->query($sql);
 
