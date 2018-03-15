@@ -320,16 +320,16 @@ if (empty($reshook))
 			$object->skype       = trim($_POST["skype"]);
 			$object->birth       = $birthdate;
 
-			$object->typeid      = $_POST["typeid"];
+			$object->typeid      = GETPOST("typeid",'int');
 			//$object->note        = trim($_POST["comment"]);
-			$object->morphy      = $_POST["morphy"];
+			$object->morphy      = GETPOST("morphy",'alpha');
 
 			if (GETPOST('deletephoto')) $object->photo='';
 			elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 
 			// Get status and public property
-			$object->statut      = $_POST["statut"];
-			$object->public      = $_POST["public"];
+			$object->statut      = GETPOST("statut",'alpha');
+			$object->public      = GETPOST("public",'alpha');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -445,29 +445,29 @@ if (empty($reshook))
 			$datesubscription=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		}
 
-		$typeid=$_POST["typeid"];
-		$civility_id=$_POST["civility_id"];
-		$lastname=$_POST["lastname"];
-		$firstname=$_POST["firstname"];
-		$societe=$_POST["societe"];
-		$address=$_POST["address"];
-		$zip=$_POST["zipcode"];
-		$town=$_POST["town"];
-		$state_id=$_POST["state_id"];
-		$country_id=$_POST["country_id"];
+		$typeid=GETPOST("typeid",'int');
+		$civility_id=GETPOST("civility_id",'int');
+		$lastname=GETPOST("lastname",'alpha');
+		$firstname=GETPOST("firstname",'alpha');
+		$societe=GETPOST("societe",'alpha');
+		$address=GETPOST("address",'alpha');
+		$zip=GETPOST("zipcode",'alpha');
+		$town=GETPOST("town",'alpha');
+		$state_id=GETPOST("state_id",'int');
+		$country_id=GETPOST("country_id",'int');
 
-		$phone=$_POST["phone"];
-		$phone_perso=$_POST["phone_perso"];
-		$phone_mobile=$_POST["phone_mobile"];
-		$skype=$_POST["member_skype"];
-		$email=$_POST["member_email"];
-		$login=$_POST["member_login"];
-		$pass=$_POST["password"];
-		$photo=$_POST["photo"];
-		//$comment=$_POST["comment"];
-		$morphy=$_POST["morphy"];
-		$subscription=$_POST["subscription"];
-		$public=$_POST["public"];
+		$phone=GETPOST("phone",'alpha');
+		$phone_perso=GETPOST("phone_perso",'alpha');
+		$phone_mobile=GETPOST("phone_mobile",'alpha');
+		$skype=GETPOST("member_skype",'alpha');
+		$email=GETPOST("member_email",'alpha');
+		$login=GETPOST("member_login",'alpha');
+		$pass=GETPOST("password",'alpha');
+		$photo=GETPOST("photo",'alpha');
+		//$comment=GETPOST("comment",'none');
+		$morphy=GETPOST("morphy",'alpha');
+		$subscription=GETPOST("subscription",'alpha');
+		$public=GETPOST("public",'alpha');
 
 		$userid=$_POST["userid"];
 		$socid=$_POST["socid"];
@@ -1093,14 +1093,14 @@ else
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Morale");
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
-		print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
+		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy")?GETPOST("morphy",'alpha'):$object->morphy));
 		print "</td></tr>";
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 		if ($user->rights->adherent->creer)
 		{
-			print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
+			print $form->selectarray("typeid", $adht->liste_array(), (GETPOSTISSET("typeid")?GETPOST("typeid",'int'):$object->typeid));
 		}
 		else
 		{
