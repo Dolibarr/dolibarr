@@ -93,7 +93,7 @@ class pdf_merou extends ModelePdfExpedition
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 		
 		// Translations
-		$langs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 		
 		if ($conf->expedition->dir_output)
 		{
