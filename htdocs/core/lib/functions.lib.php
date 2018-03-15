@@ -4696,7 +4696,7 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 {
 	global $db, $mysoc;
 
-	dol_syslog("getTaxesFromId vatrowid=".$vatrate);
+	dol_syslog("getTaxesFromId vat id or rate = ".$vatrate);
 
 	// Search local taxes
 	$sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy";
@@ -4713,8 +4713,9 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 		}
 
 		$sql.=", ".MAIN_DB_PREFIX."c_country as c";
-		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // local tax in spain use the buyer country ??
-		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // vat in spain use the buyer country ??
+		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";*/
+		$sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
 		$sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
 		if ($vatratecode) $sql.= " AND t.code = '".$vatratecode."'";
 	}
