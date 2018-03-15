@@ -1254,7 +1254,7 @@ class BookKeeping extends CommonObject
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE piece_num = " . $piecenum;
+		$sql .= " WHERE piece_num = " . (int) $piecenum;
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 		$resql = $this->db->query($sql);

@@ -153,13 +153,13 @@ else if ($action == "add") {
 		$book->label_operation= $label_operation;
 		$book->debit = $debit;
 		$book->credit = $credit;
-		$book->doc_date = GETPOST('doc_date');
-		$book->doc_type = GETPOST('doc_type');
+		$book->doc_date = GETPOST('doc_date','alpha');
+		$book->doc_type = GETPOST('doc_type','alpha');
 		$book->piece_num = $piece_num;
-		$book->doc_ref = GETPOST('doc_ref');
-		$book->code_journal = GETPOST('code_journal');
-		$book->fk_doc = GETPOST('fk_doc');
-		$book->fk_docdet = GETPOST('fk_docdet');
+		$book->doc_ref = GETPOST('doc_ref','alpha');
+		$book->code_journal = GETPOST('code_journal','alpha');
+		$book->fk_doc = GETPOST('fk_doc','alpha');
+		$book->fk_docdet = GETPOST('fk_docdet','alpha');
 
 		if (floatval($debit) != 0.0) {
 			$book->montant = $debit;
@@ -210,7 +210,7 @@ else if ($action == "confirm_create") {
 
 	$book = new BookKeeping($db);
 
-	if (! GETPOST('code_journal') || GETPOST('code_journal') == '-1') {
+	if (! GETPOST('code_journal','alpha') || GETPOST('code_journal','alpha') == '-1') {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
 		$action='create';
 		$error++;
@@ -226,11 +226,11 @@ else if ($action == "confirm_create") {
 		$book->label_compte = '';
 		$book->debit = 0;
 		$book->credit = 0;
-		$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
-		$book->doc_type = GETPOST('doc_type');
-		$book->piece_num = GETPOST('next_num_mvt');
-		$book->doc_ref = GETPOST('doc_ref');
-		$book->code_journal = GETPOST('code_journal');
+		$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth','int'), GETPOST('doc_dateday','int'), GETPOST('doc_dateyear','int'));
+		$book->doc_type = GETPOST('doc_type','alpha');
+		$book->piece_num = GETPOST('next_num_mvt','alpha');
+		$book->doc_ref = GETPOST('doc_ref','alpha');
+		$book->code_journal = GETPOST('code_journal','alpha');
 		$book->fk_doc = 0;
 		$book->fk_docdet = 0;
 		$book->montant = 0;
@@ -265,8 +265,8 @@ if ($action == 'setdate') {
 }
 
 if ($action == 'setjournal') {
-	$journaldoc = trim(GETPOST('code_journal'));
-	$result = $object->updateByMvt($piece_num,'code_journal',$journaldoc,$mode);
+	$journaldoc = trim(GETPOST('code_journal','alpha'));
+	$result = $object->updateByMvt($piece_num, 'code_journal', $journaldoc, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -279,7 +279,7 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
-	$refdoc = trim(GETPOST('doc_ref'));
+	$refdoc = trim(GETPOST('doc_ref','alpha'));
 	$result = $object->updateByMvt($piece_num,'doc_ref',$refdoc,$mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -476,11 +476,11 @@ if ($action == 'create')
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdocref">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print '<input type="text" size="20" name="doc_ref" value="'.$book->doc_ref.'">';
+			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($book->doc_ref).'">';
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-		print $book->doc_ref ;
+			print $book->doc_ref ;
 		}
 		print '</td>';
 		print '</tr>';

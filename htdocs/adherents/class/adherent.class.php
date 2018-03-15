@@ -439,8 +439,8 @@ class Adherent extends CommonObject
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", public = '".$this->db->escape($this->public)."'";
-		$sql.= ", statut = ".$this->statut;
-		$sql.= ", fk_adherent_type = ".$this->typeid;
+		$sql.= ", statut = ".$this->db->escape($this->statut);
+		$sql.= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
 		if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
