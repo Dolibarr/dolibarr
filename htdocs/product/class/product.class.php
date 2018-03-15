@@ -3575,7 +3575,7 @@ class Product extends CommonObject
 		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
 		    $linkclose.= ' class="classfortooltip"';
 
-		    if (! is_object($hookmanager))
+		    /*if (! is_object($hookmanager))
 	        {
 	            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 	            $hookmanager=new HookManager($this->db);
@@ -3584,6 +3584,7 @@ class Product extends CommonObject
 	        $parameters=array('id'=>$this->id);
 	        $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 	        if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+	        */
 		}
 
         if ($option == 'supplier' || $option == 'category') {
@@ -3615,6 +3616,19 @@ class Product extends CommonObject
 		}
 		$result.= $newref;
 		$result.= $linkend;
+
+		global $action;
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('productdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
+
 		return $result;
 	}
 

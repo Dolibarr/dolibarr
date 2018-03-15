@@ -1273,7 +1273,7 @@ class ActionComm extends CommonObject
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
 		    $linkclose.=' class="'.$classname.' classfortooltip"';
 
-		    if (! is_object($hookmanager))
+		    /*if (! is_object($hookmanager))
 		    {
 		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		        $hookmanager=new HookManager($this->db);
@@ -1282,6 +1282,7 @@ class ActionComm extends CommonObject
 		    $parameters=array('id'=>$this->id);
 		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		    $linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
+		    */
 		}
 		else $linkclose.=' class="'.$classname.'"';
 
@@ -1326,6 +1327,18 @@ class ActionComm extends CommonObject
         if ($withpicto)	$result.=img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"':'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
         $result.=$libelleshort;
         $result.=$linkend;
+
+        global $action;
+        if (! is_object($hookmanager))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+        	$hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('actiondao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
         return $result;
     }
