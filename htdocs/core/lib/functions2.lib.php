@@ -1451,7 +1451,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     foreach ($tab as $key => $value)
     {
         if ($i > 0) $sql.=',';
-        $sql.="'".$key."'";
+        $sql.="'".$this->db->escape($key)."'";
         $i++;
     }
     $sql.= ")";
@@ -1472,7 +1472,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";
-            $sql.= " '".$key."','".$db->escape($value)."')";
+            $sql.= " '".$this->db->escape($key)."','".$db->escape($value)."')";
 
             dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
             $result=$db->query($sql);

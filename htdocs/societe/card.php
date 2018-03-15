@@ -1649,12 +1649,12 @@ else
             }
             else if ($object->codeclient_modifiable())
             {
-                print '<input type="text" name="code_client" id="customer_code" size="16" value="'.$object->code_client.'" maxlength="15">';
+            	print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
             }
             else
             {
                 print $object->code_client;
-                print '<input type="hidden" name="code_client" value="'.$object->code_client.'">';
+                print '<input type="hidden" name="code_client" value="'.dol_escape_htmltag($object->code_client).'">';
             }
             print '</td><td>';
             $s=$modCodeClient->getToolTip($langs,$object,0);
