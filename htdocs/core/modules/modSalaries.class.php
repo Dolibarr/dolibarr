@@ -136,6 +136,13 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][4] = 'delete';
 		$this->rights[$r][5] = '';
 
+		$this->rights[$r][0] = 515;
+		$this->rights[$r][1] = 'Read all salaries';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'payment';
+		$this->rights[$r][5] = 'readall';
+
 		$r++;
 		$this->rights[$r][0] = 517;
 		$this->rights[$r][1] = 'Export employee contracts and salaries payments';
