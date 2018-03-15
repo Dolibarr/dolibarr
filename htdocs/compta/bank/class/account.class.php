@@ -505,7 +505,7 @@ class Account extends CommonObject
 	 *  @param  int     $notrigger  1=Disable triggers
 	 *  @return int        			< 0 if KO, > 0 if OK
 	 */
-	function create(User $user = null, $notrigger=0)
+	function create(User $user, $notrigger=0)
 	{
 		global $langs,$conf, $hookmanager;
 

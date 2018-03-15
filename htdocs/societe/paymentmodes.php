@@ -624,8 +624,9 @@ if (empty($reshook))
 				$card=$cu->sources->retrieve("$source");
 				if ($card)
 				{
-					$card->delete();
 					// $card->detach();  Does not work with card_, only with src_
+					if (method_exists($card, 'detach')) $card->detach();
+					else $card->delete();
 				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
