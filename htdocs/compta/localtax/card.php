@@ -54,7 +54,7 @@ $hookmanager->initHooks(array('localtaxvatcard','globalcard'));
 
 //add payment of localtax
 if($_POST["cancel"] == $langs->trans("Cancel")){
-	header("Location: reglement.php?localTaxType=".$lttype);
+	header("Location: list.php?localTaxType=".$lttype);
 	exit;
 }
 
@@ -78,7 +78,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     if ($ret > 0)
     {
         $db->commit();
-        header("Location: reglement.php?localTaxType=".$lttype);
+        header("Location: list.php?localTaxType=".$lttype);
         exit;
     }
     else
@@ -111,7 +111,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/localtax/reglement.php?localTaxType='.$localtax->ltt);
+				header("Location: ".DOL_URL_ROOT.'/compta/localtax/list.php?localTaxType='.$localtax->ltt);
 				exit;
 			}
 			else

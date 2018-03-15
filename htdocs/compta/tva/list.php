@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/tva/reglement.php
+ *	    \file       htdocs/compta/tva/list.php
  *      \ingroup    tax
  *		\brief      List of VAT payments
  */
