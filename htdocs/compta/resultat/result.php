@@ -373,7 +373,10 @@ else if ($modecompta=="BOOKKEEPING")
 			// Column group
 			print '<td class="width200">';
 			print $cat['code'];
-			print '</td><td>';
+			print '</td>';
+
+			// Label of group
+			print '<td>';
 			print $cat['label'];
 			if (count($cpts) > 0)	// Show example of 5 first accounting accounts
 			{

@@ -276,31 +276,25 @@ class AccountancyCategory
 	 *
 	 * @return array       Result in table
 	 */
-	public function getCatsCpts() {
+	public function getCatsCpts()
+	{
 		global $mysoc;
+
 		$sql = "";
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
-			$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id . ")";
-			$sql .= " AND cat.rowid = t.fk_accounting_category";
-			$sql .= " ORDER BY cat.position ASC";
-		} else {
-			$sql = "SELECT c.rowid, c.code, c.label, c.category_type ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
+		$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1";
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND cat.rowid = t.fk_accounting_category";
+		$sql .= " ORDER BY cat.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -390,26 +384,17 @@ class AccountancyCategory
 	{
 		global $db, $langs, $user, $mysoc;
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1 ";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id;
-			$sql .= " ORDER BY c.position ASC";
-		} else {	// Note: this should not happen
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1 ";
+		if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " ORDER BY c.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
