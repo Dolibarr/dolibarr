@@ -114,7 +114,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 		
 		// Translations
-		$langs->loadLangs(array("main", "interventions", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
 
 		if ($conf->ficheinter->dir_output)
 		{
