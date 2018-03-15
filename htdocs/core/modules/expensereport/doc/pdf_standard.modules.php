@@ -156,7 +156,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 		
 		// Translations
-		$langs->loadLangs(array("main", "trips", "projects", "dict"));
+		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
 		$nblignes = count($object->lines);
 
