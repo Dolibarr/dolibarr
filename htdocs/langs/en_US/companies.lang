@@ -77,6 +77,7 @@ Web=Web
 Poste= Position
 DefaultLang=Language by default
 VATIsUsed=Sales tax is used
+VATIsUsedWhenSelling=This define if this thirdparty includes a sale tax or not when it makes an invoice to its own customers
 VATIsNotUsed=Sales tax is not used
 CopyAddressFromSoc=Fill address with third party address
 ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects

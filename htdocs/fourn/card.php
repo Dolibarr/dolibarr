@@ -194,7 +194,9 @@ if ($object->id > 0)
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans('VATIsUsed').'</td><td>';
+	print '<td class="titlefield">';
+	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
+	print '</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -290,7 +292,7 @@ if ($object->id > 0)
 	//else print $langs->trans("DiscountNone");
 	print '</td>';
 	print '</tr>';
-	
+
 	print '<tr class="nowrap">';
 	print '<td>';
 	print $form->editfieldkey("OrderMinAmount",'supplier_order_min_amount',$object->supplier_order_min_amount,$object,$user->rights->societe->creer);

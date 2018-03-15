@@ -278,29 +278,38 @@ if ($object->id > 0)
 		print '</tr>';
 	}
 
+	// This fields are used to know VAT to include in an invoice when the thirdparty is making a sale, so when it is a supplier.
+	// We don't need them into customer profile.
+	// Except for spain and localtax where localtax depends on buyer and not seller
+
 	// VAT is used
+	/*
 	print '<tr>';
-	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td>';
+	print '<td class="nowrap">';
+	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
+	print '</td>';
 	print '<td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
+	*/
 
-	// Local Taxes
-	// TODO Move this on same record than VATIsUsed
-	if ($mysoc->localtax1_assuj=="1")
+	if ($mysoc->country_code == 'ES')
 	{
-		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
-		print yn($object->localtax1_assuj);
-		print '</td></tr>';
+		// Local Taxes
+		if ($mysoc->localtax1_assuj=="1")
+		{
+			print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
+			print yn($object->localtax1_assuj);
+			print '</td></tr>';
+		}
+		if ($mysoc->localtax1_assuj=="1")
+		{
+			print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
+			print yn($object->localtax2_assuj);
+			print '</td></tr>';
+		}
 	}
-	if ($mysoc->localtax1_assuj=="1")
-	{
-		print '<tr><td class="nowrap">'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
-		print yn($object->localtax2_assuj);
-		print '</td></tr>';
-	}
-
 
 	// TVA Intra
 	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
