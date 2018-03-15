@@ -705,3 +705,6 @@ ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (f
 
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
+
+DROP TABLE llx_c_accountancy_category;
+

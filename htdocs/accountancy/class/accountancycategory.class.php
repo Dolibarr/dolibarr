@@ -357,7 +357,6 @@ class AccountancyCategory 	// extends CommonObject
 	 * Function to select all accounting accounts from an accounting category
 	 *
 	 * @param int $id Id
-	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function display($id) {
@@ -365,7 +364,7 @@ class AccountancyCategory 	// extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = " . $id;
 
-		$this->lines_display = array ();
+		$this->lines_display = array());
 
 		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
