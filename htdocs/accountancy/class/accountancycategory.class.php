@@ -375,7 +375,7 @@ class AccountancyCategory
 	}
 
 	/**
-	 * Return list of personalized groups
+	 * Return list of personalized groups that are active
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @return	array							Array of groups
@@ -510,14 +510,14 @@ class AccountancyCategory
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		else
 		{
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		//echo $sql;
 
