@@ -888,6 +888,7 @@ function activateModule($value,$withdeps=1)
     }
 
     $result=$objMod->init();    // Enable module
+
     if ($result <= 0)
     {
         $ret['errors'][]=$objMod->error;
