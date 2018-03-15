@@ -2090,7 +2090,7 @@ function dol_print_url($url,$target='_blank',$max=32,$withpicto=0)
  */
 function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1,$withpicto=0)
 {
-	global $conf,$user,$langs;
+	global $conf,$user,$langs,$hookmanager;
 
 	$newemail=$email;
 
@@ -2125,7 +2125,15 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
 		}
 	}
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("EMail"), 'object_email.png').' ':'').$newemail.'</div>';
+
+	$rep = '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("EMail"), 'object_email.png').' ':'').$newemail.'</div>';
+	if ($hookmanager) {
+		$parameters = array('cid' => $cid, 'socid' => $socid,'addlink' => $addlink, 'picto' => $withpicto);
+		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
+		$rep.=$hookmanager->resPrint;
+	}
+
+	return $rep;
 }
 
 /**
@@ -2535,12 +2543,12 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 	$rep='';
 
 	if ($hookmanager) {
-            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
-            $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
-            $rep.=$hookmanager->resPrint;
-        }
-	 if (empty($reshook))
-        {
+		$parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
+		$reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
+		$rep.=$hookmanager->resPrint;
+	}
+	if (empty($reshook))
+	{
 		$picto = '';
 		if($withpicto){
 			if($withpicto=='fax'){
