@@ -18,34 +18,23 @@
 
 /**
  *      \file       test/unit/TicketsupTest.php
-*		\ingroup    test
-*      \brief      PHPUnit test
-*		\remarks	To run this script as CLI:  phpunit filename.php
-*/
-namespace test\unit;
+ *		\ingroup    test
+ *      \brief      PHPUnit test
+ *		\remarks	To run this script as CLI:  phpunit filename.php
+ */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-$res = false;
-if (file_exists(dirname(__FILE__).'/../../../../htdocs/master.inc.php')) {
-	$res = require_once dirname(__FILE__).'/../../../../htdocs/master.inc.php';
-} elseif (file_exists(dirname(__FILE__).'/../../../../../htdocs/master.inc.php')) {
-	$res = require_once dirname(__FILE__).'/../../../../../htdocs/master.inc.php';
-} else {
-	die('Include of mains fails');
-}
-
-
-require_once dirname(__FILE__).'/../../class/ticketsup.class.php';
-
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/usergroup.class.php';
+require_once dirname(__FILE__).'/../../htdocs/ticketsup/class/ticketsup.class.php';
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
+	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
 
@@ -56,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class TicketsupTest extends \PHPUnit_Framework_TestCase
+class TicketsupTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -140,22 +129,21 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		// Try to create one with bad values
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$localobject->initAsSpecimen();
-		$localobject->fk_statut = '\'1=1';
+		$localobject->ref = '';
 		$result=$localobject->create($user);
-		
+
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, -1);
-		
+		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
+
 		// Try to create one with correct values
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0);
-		
+		$this->assertGreaterThan(0, $result, $localobject->error.join(',', $localobject->errors));
 
 		return $result;
 	}
@@ -177,11 +165,11 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 
 		return $localobject;
 	}
@@ -206,10 +194,10 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$result=$localobject->markAsRead($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
-	
+
 	/**
 	 * testTicketsupsetProject
 	 *
@@ -226,16 +214,16 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		
+
 		$project_id = 1;
-	
+
 		$result=$localobject->setProject($project_id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	
-		$this->assertLessThan($result, 0);
+
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
-	
+
 	/**
 	 * testTicketsupsetContract
 	 *
@@ -252,16 +240,16 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-	
+
 		$contract_id = 1;
-	
+
 		$result=$localobject->setContract($contract_id);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	
-		$this->assertLessThan($result, 0);
+
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
-	
+
 	/**
 	 * testTicketsupsetProgression
 	 *
@@ -278,16 +266,16 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-	
+
 		$percent = 80;
 
 		$result=$localobject->setProgression($percent);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	
-		$this->assertLessThan($result, 0);
+
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
-	
+
 	/**
 	 * testTicketsupassignUser
 	 *
@@ -304,17 +292,17 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-	
+
 		$user_id_to_assign = 1;
-	
+
 		$result=$localobject->assignUser($user, $user_id_to_assign);
         ;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	
-		$this->assertLessThan($result, 0);
+
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
-	
+
 	/**
 	 * testTicketsupassignUserOther
 	 *
@@ -331,17 +319,17 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-	
+
 		$user_id_to_assign = 2;
-	
+
 		$result=$localobject->assignUser($user, $user_id_to_assign);
 		;
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	
-		$this->assertLessThan($result, 0);
+
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
-	
+
 	/**
 	 * testTicketsupcreateTicketLog
 	 *
@@ -358,14 +346,14 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-	
-		
+
+
 		$message = 'Test ticket log';
 		$noemail = 1;
 		$result=$localobject->createTicketLog($user, $message, $noemail);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	
-		$this->assertLessThan($result, 0);
+
+		$this->assertGreaterThan(0, $result);
 		return $localobject;
 	}
 
@@ -385,15 +373,15 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-	
+
 		$result=$localobject->close();
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	
-		$this->assertLessThan($result, 0);
+
+		$this->assertGreaterThan(0, $result);
 		return $localobject->id;
 	}
-	
-	
+
+
 	/**
 	 * testTicketsupDelete
 	 *
@@ -405,19 +393,18 @@ class TicketsupTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testTicketsupDelete($id)
 	{
-		
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new \Ticketsup($this->savdb);
+		$localobject=new Ticketsup($this->savdb);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertGreaterThan(0, $result);
 		return $result;
 	}
 }

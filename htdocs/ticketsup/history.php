@@ -36,7 +36,7 @@ if (!class_exists('Contact')) {
 // Load traductions files requiredby by page
 $langs->load("companies");
 $langs->load("other");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -88,7 +88,7 @@ if ($action == 'view') {
             accessforbidden('', 0);
         }
 
-        if ($object->dao->fk_soc > 0) {
+        if ($socid > 0) {
             $object->dao->fetch_thirdparty();
             $head = societe_prepare_head($object->dao->thirdparty);
             dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
@@ -102,7 +102,7 @@ if ($action == 'view') {
             $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
         }
         $head = ticketsup_prepare_head($object->dao);
-        dol_fiche_head($head, 'tabTicketLogs', $langs->trans("Ticket"), 0, 'ticketsup@ticketsup');
+        dol_fiche_head($head, 'tabTicketLogs', $langs->trans("Ticket"), 0, 'ticketsup');
         $object->dao->label = $object->dao->ref;
         // Author
         if ($object->dao->fk_user_create > 0) {

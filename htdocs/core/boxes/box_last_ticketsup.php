@@ -18,9 +18,9 @@
  */
 
 /**
- *     \file        ticketsup/core/boxes/ticketsup_latest.php
- *     \ingroup    ticketsup
- *     \brief        This box shows latest tickets
+ *     \file        core/boxes/box_ticketsup_latest.php
+ *     \ingroup     ticketsup
+ *     \brief       This box shows latest created tickets
  */
 require_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
 
@@ -31,7 +31,7 @@ class box_last_ticketsup extends ModeleBoxes
 {
 
     public $boxcode = "box_last_ticketsup";
-    public $boximg = "ticketsup@ticketsup";
+    public $boximg = "ticketsup";
     public $boxlabel;
     public $depends = array("ticketsup");
     public $db;

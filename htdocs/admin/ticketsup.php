@@ -18,14 +18,15 @@
 
 /**
  *     \file        admin/ticketsup.php
- *     \ingroup    ticketsup
- *     \brief        This file is a module setup page
+ *     \ingroup     ticketsup
+ *     \brief       This file is a module setup page
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticketsup/class/ticketsup.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
+
 // Translations
 $langs->load("ticketsup");
 
@@ -214,9 +215,12 @@ if ($action == 'setvarother') {
     }
 }
 
+
+
 /*
  * View
  */
+
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $form = new Form($db);
@@ -226,27 +230,21 @@ $page_name = "TicketsupSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
-. $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans($page_name), $linkback);
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = ticketsupAdminPrepareHead();
-dol_fiche_head(
-    $head,
-    'settings',
-    $langs->trans("Module110120Name"),
-    0,
-    "ticketsup@ticketsup"
-);
 
-print '<div class="info"><p>' . $langs->trans("TicketsupSetupDictionaries") . ' : <a href="' . dol_buildpath('/admin/dict.php', 1) . '" >' . dol_buildpath('/admin/dict.php', 2) . '</a></p></div>';
+dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticketsup");
 
-print '<p>' . $langs->trans("TicketsupPublicAccess") . ' : <a href="' . dol_buildpath('/ticketsup/public/index.php', 1) . '" target="_blank" >' . dol_buildpath('/ticketsup/public/index.php', 2) . '</a></p>';
+print $langs->trans("TicketsupSetupDictionaries") . ' : <a href="' . dol_buildpath('/admin/dict.php', 1) . '" >' . dol_buildpath('/admin/dict.php', 2) . '</a><br>';
 
-//print '<p>'.  $langs->trans("TicketsupSetupPage").'</p>';
+print $langs->trans("TicketsupPublicAccess") . ' : <a href="' . dol_buildpath('/ticketsup/public/index.php', 1) . '" target="_blank" >' . dol_buildpath('/ticketsup/public/index.php', 2) . '</a>';
 
 dol_fiche_end();
+
 
 /*
  * Projects Numbering model
@@ -546,7 +544,7 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 // Email d'envoi des notifications
 print '<tr class="pair"><td>' . $langs->trans("TicketEmailNotificationFrom") . '</td>';
 print '<td align="left">';
-print '<input type="text"   name="TICKETS_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
+print '<input type="text" name="TICKETS_NOTIFICATION_EMAIL_FROM" value="' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '" size="20" ></td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';

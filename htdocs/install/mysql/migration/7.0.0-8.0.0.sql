@@ -119,6 +119,10 @@ ALTER TABLE llx_societe_rib ADD COLUMN starting_date date;
 ALTER TABLE llx_societe_rib ADD COLUMN total_amount_of_all_payments double(24,8);
 ALTER TABLE llx_societe_rib ADD COLUMN stripe_card_ref varchar(128);
 ALTER TABLE llx_societe_rib ADD COLUMN status integer NOT NULL DEFAULT 1;
+
+UPDATE llx_societe_rib set type = 'ban' where type = '' OR type IS NULL;
+-- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY COLUMN type varchar(32) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN type SET NOT NULL;
    
 CREATE TABLE llx_ticketsup
 (
@@ -143,9 +147,11 @@ CREATE TABLE llx_ticketsup
 	datec datetime,
 	date_read datetime,
 	date_close datetime,
+	notify_tiers_at_create tinyint,
 	tms timestamp
 )ENGINE=innodb;
 
+ALTER TABLE llx_ticketsup ADD COLUMN notify_tiers_at_create integer;
 ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_rowid_track_id (rowid, track_id);
 ALTER TABLE llx_ticketsup ADD INDEX id_ticketsup_track_id (track_id);
 
@@ -183,24 +189,13 @@ CREATE TABLE llx_ticketsup_extrafields
   import_key       varchar(14)
 )ENGINE=innodb;
 
-ALTER TABLE llx_c_ticketsup_category ADD INDEX idx_code (code);
 
-CREATE TABLE llx_c_ticketsup_category
+
+-- Create dictionaries tables for ticket
+create table llx_c_ticketsup_severity
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
-  code			varchar(32)				NOT NULL,
-  pos			varchar(32)				NOT NULL,
-  label			varchar(128)			NOT NULL,
-  active		integer DEFAULT 1,
-  use_default	integer DEFAULT 1,
-  description	varchar(255)
-)ENGINE=innodb;
-
-ALTER TABLE llx_c_ticketsup_severity ADD INDEX idx_code (code);
-
-CREATE TABLE llx_c_ticketsup_severity
-(
-  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
   code			varchar(32)				NOT NULL,
   pos			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
@@ -210,11 +205,10 @@ CREATE TABLE llx_c_ticketsup_severity
   description	varchar(255)
 )ENGINE=innodb;
 
-ALTER TABLE llx_c_ticketsup_type ADD INDEX idx_code (code);
-
-CREATE TABLE llx_c_ticketsup_type
+create table llx_c_ticketsup_type
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
   code			varchar(32)				NOT NULL,
   pos			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
@@ -223,3 +217,88 @@ CREATE TABLE llx_c_ticketsup_type
   description	varchar(255)
 )ENGINE=innodb;
 
+create table llx_c_ticketsup_category
+(
+  rowid			integer AUTO_INCREMENT PRIMARY KEY,
+  entity		integer DEFAULT 1,
+  code			varchar(32)				NOT NULL,
+  pos			varchar(32)				NOT NULL,
+  label			varchar(128)			NOT NULL,
+  active		integer DEFAULT 1,
+  use_default	integer DEFAULT 1,
+  description	varchar(255)
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_ticketsup_category ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticketsup_severity ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticketsup_type     ADD UNIQUE INDEX uk_code (code, entity);
+
+
+
+-- Load data
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('LOW',      '10', 'Low',                 '', 1, 0, NULL);
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('NORMAL',   '20', 'Normal',              '', 1, 1, NULL);
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('HIGH',     '30', 'High',                '', 1, 0, NULL);
+INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('BLOCKING', '40', 'Critical / blocking', '', 1, 0, NULL);
+
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 1, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem'  ,            1, 0, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('REQUEST', '25', 'Change or enhancement request', 1, 0, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project', 0, 0, NULL);
+INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',   1, 0, NULL);
+
+INSERT INTO llx_c_ticketsup_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
+
+
+
+
+
+ALTER TABLE llx_facturedet_rec ADD COLUMN date_start_fill integer DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN date_end_fill integer DEFAULT 0;
+
+
+
+CREATE TABLE llx_societe_account(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity	integer DEFAULT 1, 
+	key_account       varchar(128),
+	login             varchar(128) NOT NULL, 
+    pass_encoding     varchar(24),
+    pass_crypted      varchar(128),
+    pass_temp         varchar(128),			    -- temporary password when asked for forget password
+    fk_soc integer,
+	site              varchar(128),
+	fk_website        integer,
+	note_private      text,
+    date_last_login   datetime,
+    date_previous_login datetime,
+	date_creation datetime NOT NULL, 
+	tms timestamp NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status integer 
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+-- VMYSQL4.3 ALTER TABLE llx_societe_account MODIFY COLUMN pass_encoding varchar(24) NULL;
+
+ALTER TABLE llx_societe_account ADD COLUMN key_account varchar(128);
+
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_rowid (rowid);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_login (login);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_status (status);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_website (fk_website);
+ALTER TABLE llx_societe_account ADD INDEX idx_societe_account_fk_soc (fk_soc);
+
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website_soc(entity, fk_soc, login, site, fk_website);
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_key_account_soc(entity, fk_soc, key_account, site, fk_website);
+
+ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_website FOREIGN KEY (fk_website) REFERENCES llx_website(rowid);
+ALTER TABLE llx_societe_account ADD CONSTRAINT llx_societe_account_fk_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
+
+
+ALTER TABLE llx_societe_rib MODIFY COLUMN max_total_amount_of_all_payments double(24,8);
+ALTER TABLE llx_societe_rib MODIFY COLUMN total_amount_of_all_payments double(24,8);
+  

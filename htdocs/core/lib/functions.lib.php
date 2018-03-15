@@ -3052,18 +3052,26 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 	}
 	else
 	{
+		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
+		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'resize', 'switch_off', 'switch_on')))
 		{
-			$fakey = $picto; $facolor=''; $fasize='';
-			if ($picto == 'switch_off') { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
-			if ($picto == 'switch_on')  { $fakey = 'fa-toggle-on';  $facolor='#227722'; $fasize='2em'; }
-			if ($picto == 'off') { $fakey = 'fa-square-o'; $fasize='1.3em'; }
-			if ($picto == 'on')  { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
-			$enabledisablehtml='';
-			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
+			$fakey = $pictowithoutext; $facolor=''; $fasize='';
+			if ($pictowithoutext == 'switch_off')     { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
+			elseif ($pictowithoutext == 'switch_on')  { $fakey = 'fa-toggle-on';  $facolor='#227722'; $fasize='2em'; }
+			elseif ($pictowithoutext == 'off')        { $fakey = 'fa-square-o';   $fasize='1.3em'; }
+			elseif ($pictowithoutext == 'on')         { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
+			elseif ($pictowithoutext == 'delete')     { $fakey = 'fa-trash';      $facolor='#444'; }
+			elseif ($pictowithoutext == 'edit')       { $fakey = 'fa-pencil';     $facolor='#444'; }
+			elseif ($pictowithoutext == 'resize')     { $fakey = 'fa-crop';       $facolor='#444'; }
+			else { $fakey = 'fa-'.$pictowithoutext; $facolor='#999'; }
+
+			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) { $morecss.=($morecss?' ':'').$reg[1]; }
+			$enabledisablehtml ='<span class="fa '.$fakey.' marginleftonly valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
 			$enabledisablehtml.='</span>';
+
 			return $enabledisablehtml;
 		}
 
@@ -3306,6 +3314,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
 	return img_picto($titlealt, 'delete.png', $other);
+	//return '<span class="fa fa-trash fa-2x fa-fw" style="font-size: 1.7em;" title="'.$titlealt.'"></span>';
 }
 
 /**
@@ -3525,6 +3534,24 @@ function img_allow($allow, $titlealt = 'default')
 	return '-';
 }
 
+/**
+ *	Return image of a credit card according to its brand name
+ *
+ *	@param	string	$brand		Brand name of credit card
+ *	@return string     			Return img tag
+ */
+function img_credit_card($brand)
+{
+	if ($brand == 'Visa') {$brand='cc-visa';}
+	elseif ($brand == 'MasterCard') {$brand='cc-mastercard';}
+	elseif ($brand == 'American Express') {$brand='cc-amex';}
+	elseif ($brand == 'Discover') {$brand='cc-discover';}
+	elseif ($brand == 'JCB') {$brand='cc-jcb';}
+	elseif ($brand == 'Diners Club') {$brand='cc-diners-club';}
+	elseif (! in_array($brand, array('cc-visa','cc-mastercard','cc-amex','cc-discover','cc-jcb','cc-diners-club'))) {$brand='credit-card';}
+
+	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+}
 
 /**
  *	Show MIME img of a file
@@ -6149,12 +6176,19 @@ function setEventMessage($mesgs, $style='mesgs')
  */
 function setEventMessages($mesg, $mesgs, $style='mesgs')
 {
-	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
-	if (empty($mesgs)) setEventMessage($mesg, $style);
+	if (empty($mesg) && empty($mesgs))
+	{
+		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
+	}
 	else
 	{
-		if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
-		setEventMessage($mesgs, $style);
+		if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
+		if (empty($mesgs)) setEventMessage($mesg, $style);
+		else
+		{
+			if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
+			setEventMessage($mesgs, $style);
+		}
 	}
 }
 

@@ -356,6 +356,12 @@ source_file = htdocs/langs/en_US/supplier_proposal.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.ticketsup]
+file_filter = htdocs/langs/<lang>/ticketsup.lang
+source_file = htdocs/langs/en_US/ticketsup.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.trips]
 file_filter = htdocs/langs/<lang>/trips.lang
 source_file = htdocs/langs/en_US/trips.lang

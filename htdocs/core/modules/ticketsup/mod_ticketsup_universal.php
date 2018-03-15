@@ -43,7 +43,7 @@ class mod_ticketsup_universal extends ModeleNumRefTicketsup
     {
         global $conf, $langs;
 
-        $langs->load("ticketsup@ticketsup");
+        $langs->load("ticketsup");
         $langs->load("admin");
 
         $form = new Form($this->db);

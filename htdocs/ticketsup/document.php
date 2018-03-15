@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 
 $langs->load("companies");
 $langs->load('other');
+$langs->load("ticketsup");
 
 $action = GETPOST('action');
 $confirm = GETPOST('confirm');
@@ -108,7 +109,7 @@ if ($object->id) {
     }
 
     $form = new Form($db);
-    if ($object->fk_soc > 0) {
+    if ($socid > 0) {
         $object->fetch_thirdparty();
         $head = societe_prepare_head($object->thirdparty);
         dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
@@ -122,7 +123,7 @@ if ($object->id) {
         $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
     }
     $head = ticketsup_prepare_head($object);
-    dol_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticketsup@ticketsup');
+    dol_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticketsup');
     $object->label = $object->ref;
     // Author
     if ($object->fk_user_create > 0) {

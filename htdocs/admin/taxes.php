@@ -141,7 +141,7 @@ else
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
 	print '<input name="tva" id="intra_vat" class="minwidth200" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
@@ -169,28 +169,29 @@ else
 
 	print '</table>';
 
-	print "<br>\n";
+	print '<br>';
 
 	print '<table class="noborder" width="100%">';
 
 	// Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
 	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
+	print '<td class="titlefield">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";
 	print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
-	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDefaultDesc'));
+	print '<td>'.nl2br($langs->trans('OptionVatDefaultDesc'));
 	print "</td></tr>\n";
 	print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
-	print '<td colspan="2">'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
+	print '<td>'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
 
 	print "</table>\n";
 
 	print '<br>';
-	print load_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
+	print ' -> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault");
 	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
+
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
 
 	// Products
 	print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
@@ -235,12 +236,18 @@ else
 
 print "<br>\n";
 
+
+
 /*
  *  Others params
  */
+
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
+print '<td class="titlefield">' . $langs->trans('Parameters') . '</td>';
+print '<td><td>';
 print "</tr>\n";
 
 foreach ($list as $key)

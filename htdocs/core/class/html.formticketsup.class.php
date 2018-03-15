@@ -122,7 +122,7 @@ class FormTicketsup
 
         $langs->load("other");
         $langs->load("mails");
-        $langs->load("ticketsup@ticketsup");
+        $langs->load("ticketsup");
 
         $form = new Form($this->db);
         $formcompany = new FormCompany($this->db);
@@ -148,18 +148,19 @@ class FormTicketsup
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
+        print '<div class="tabBar tabBarWithBottom">';
         print '<table class="border"  width="' . $width . '">';
 
 
         if ($this->withref) {
             // Ref
             $defaultref = $ticketstat->getDefaultRef();
-            print '<tr><td><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
+            print '<tr><td class="titlefield"><span class="fieldrequired">' . $langs->trans("Ref") . '</span></td><td><input size="18" type="text" name="ref" value="' . (GETPOST("ref", 'alpha') ? GETPOST("ref", 'alpha') : $defaultref) . '"></td></tr>';
         }
 
         // FK_USER_CREATE
         if ($this->withusercreate > 0 && $this->fk_user_create) {
-            print '<tr><td width="35%">' . $langs->trans("CreatedBy") . '</td><td>';
+            print '<tr><td class="titlefield">' . $langs->trans("CreatedBy") . '</td><td>';
             $langs->load("users");
             $fuser = new User($this->db);
 
@@ -177,7 +178,7 @@ class FormTicketsup
             // altairis: force company and contact id for external user
             if (empty($user->socid)) {
                 // Company
-                print '<tr><td>' . $langs->trans("Customer") . '</td><td>';
+                print '<tr><td class="titlefield">' . $langs->trans("Customer") . '</td><td>';
                 $events = array();
                 $events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
                 print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events);
@@ -194,7 +195,7 @@ class FormTicketsup
                                 }
                             });
                         });
-            
+
                         function runJsCodeForEvent'.$htmlname.'(obj) {
                             console.log("Run runJsCodeForEvent'.$htmlname.'");
                             var id = $("#'.$htmlname.'").val();
@@ -244,7 +245,7 @@ class FormTicketsup
                 $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external');
                 print '</td></tr>';
             } else {
-                print '<tr><td><input type="hidden" name="socid" value="' . $user->socid . '"/></td>';
+                print '<tr><td class="titlefield"><input type="hidden" name="socid" value="' . $user->socid . '"/></td>';
                 print '<td><input type="hidden" name="contactid" value="' . $user->contactid . '"/></td>';
                 print '<td><input type="hidden" name="type" value="Z"/></td></tr>';
             }
@@ -252,8 +253,8 @@ class FormTicketsup
 
         // TITLE
         if ($this->withemail) {
-            print '<tr><td width="35%"><label for="email"><span class="fieldrequired">' . $langs->trans("Email") . '</span></label></td><td>';
-            print '<input  class="text" size="40" id="email" name="email" value="' . (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $subject) . '" />';
+            print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">' . $langs->trans("Email") . '</span></label></td><td>';
+            print '<input  class="text minwidth200" id="email" name="email" value="' . (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $subject) . '" />';
             print '</td></tr>';
         }
 
@@ -281,7 +282,7 @@ class FormTicketsup
         }
 
         // Type
-        print '<tr><td><span class="fieldrequired"><label for="selecttype_code">' . $langs->trans("TicketTypeRequest") . '</span></label></td><td>';
+        print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">' . $langs->trans("TicketTypeRequest") . '</span></label></td><td>';
         print $this->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $this->type_code), 'type_code', '', '2');
         print '</td></tr>';
 
@@ -392,6 +393,7 @@ class FormTicketsup
         }
 
         print '</table>';
+        print '</div>';
 
         print '<center>';
         print '<input class="button" type="submit" name="add_ticket" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
@@ -416,9 +418,10 @@ class FormTicketsup
      *      @param  int    $empty       1=peut etre vide, 0 sinon
      *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
+     *      @param	string	$morecss	More CSS
      *      @return void
      */
-    public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+    public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
     {
         global $langs, $user;
 
@@ -434,7 +437,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheTypesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_tickettype" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat select_tickettype'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -499,8 +502,10 @@ class FormTicketsup
         }
         print '</select>';
         if ($user->admin && !$noadmininfo) {
-            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"), 1);
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
+
+        print ajax_combobox('select'.$htmlname);
     }
 
     /**
@@ -511,11 +516,12 @@ class FormTicketsup
      *      @param  string $filtertype  To filter on field type in llx_c_ticketsup_category (array('code'=>xx,'label'=>zz))
      *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int    $empty       1=peut etre vide, 0 sinon
-     *         @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
+     *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *         @return void
+     *      @param	string	$morecss	More CSS
+     *      @return void
      */
-    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+    public function selectCategoriesTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
     {
         global $langs, $user;
 
@@ -531,7 +537,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheCategoriesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketcategory" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat select_ticketcategory'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -597,8 +603,10 @@ class FormTicketsup
         }
         print '</select>';
         if ($user->admin && !$noadmininfo) {
-            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"), 1);
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
+
+        print ajax_combobox('select'.$htmlname);
     }
 
     /**
@@ -609,11 +617,12 @@ class FormTicketsup
      *      @param  string $filtertype  To filter on field type in llx_c_ticketsup_severity (array('code'=>xx,'label'=>zz))
      *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
      *      @param  int    $empty       1=peut etre vide, 0 sinon
-     *         @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
+     *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
      *      @param  int    $maxlength   Max length of label
-     *         @return void
+     *      @param	string	$morecss	More CSS
+     *      @return void
      */
-    public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0)
+    public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss='')
     {
         global $langs, $user;
 
@@ -629,7 +638,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheSeveritiesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketseverity" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat select_ticketseverity'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -694,8 +703,10 @@ class FormTicketsup
         }
         print '</select>';
         if ($user->admin && !$noadmininfo) {
-            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"), 1);
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
+
+        print ajax_combobox('select'.$htmlname);
     }
 
     /**

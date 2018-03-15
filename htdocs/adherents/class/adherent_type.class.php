@@ -265,7 +265,7 @@ class AdherentType extends CommonObject
 	{
 		$sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-		$sql .= " WHERE d.rowid = ".$rowid;
+		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
 		dol_syslog("Adherent_type::fetch", LOG_DEBUG);
 

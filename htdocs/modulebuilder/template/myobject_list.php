@@ -220,6 +220,7 @@ if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity(
 else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
+	if ($key == 'status' && $search[$key] == -1) continue;
 	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
 	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
 }

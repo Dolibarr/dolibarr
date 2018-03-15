@@ -121,20 +121,9 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	    if ($line->fk_product > 0)
 		{
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
-
-			// Show range
-			echo get_date_range($line->date_start, $line->date_end, $format);
-
-			// Add description in form
-			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-			{
-				print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-			}
-
 		}
 		else
 		{
-
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
 
@@ -145,9 +134,24 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 				echo $text.' '.dol_htmlentitiesbr($line->description);
 			}
+		}
 
-			// Show range
-			echo get_date_range($line->date_start,$line->date_end, $format);
+		// Show date range
+		if ($line->element == 'facturedetrec') {
+			if ($line->date_start_fill || $line->date_end_fill) echo '<br><br><div class="nowraponall">';
+			if ($line->date_start_fill) echo $langs->trans('AutoFillDateFromShort').': '.yn($line->date_start_fill);
+			if ($line->date_start_fill && $line->date_end_fill) echo ' - ';
+			if ($line->date_end_fill) echo $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
+			if ($line->date_start_fill || $line->date_end_fill) echo '</div>';
+		}
+		else {
+			echo get_date_range($line->date_start, $line->date_end, $format);
+		}
+
+		// Add description in form
+		if ($line->fk_product > 0 && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		{
+			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
 	}
 	?>

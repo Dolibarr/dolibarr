@@ -349,6 +349,8 @@ class CMailFile
 
             require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
 
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Exception/InvalidEmail.php';
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/Exception/NoDomainPart.php';
             require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailParser.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailLexer.php';
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/egulias/email-validator/EmailValidator/EmailValidator.php';
@@ -384,12 +386,30 @@ class CMailFile
 
 			// Set the From address with an associative array
 			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
-			if (! empty($from)) $this->message->setFrom($this->getArrayAddress($from));
+			if (! empty($from)) {
+                try {
+                    $this->message->setFrom($this->getArrayAddress($from));
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
 
 			// Set the To addresses with an associative array
-			if (! empty($to)) $this->message->setTo($this->getArrayAddress($to));
+			if (! empty($to)) {
+                try {
+                    $this->message->setTo($this->getArrayAddress($to));
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
 
-			if (! empty($replyto)) $this->message->SetReplyTo($this->getArrayAddress($replyto));
+			if (! empty($replyto)) {
+                try {
+                    $this->message->SetReplyTo($this->getArrayAddress($replyto));
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
 
 			$this->message->setCharSet($conf->file->character_set_client);
 

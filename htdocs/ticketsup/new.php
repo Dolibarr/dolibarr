@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2016    Jean-François FERRY    <hello@librethic.io>
- *                    2016            Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2016 Jean-François FERRY <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,13 +50,19 @@ if (!$user->rights->ticketsup->read || !$user->rights->ticketsup->write) {
 
 $object = new ActionsTicketsup($db);
 
+
+/*
+ * Actions
+ */
+
 $object->doActions($action);
 
-/***************************************************
- * PAGE
- *
- * Put here all code to build page
- ****************************************************/
+
+
+/*
+ * View
+ */
+
 $help_url = 'FR:DocumentationModuleTicket';
 $page_title = $object->getTitle($action);
 llxHeader('', $page_title, $help_url);
@@ -66,7 +72,7 @@ $form = new Form($db);
 if ($action == 'create_ticket') {
     $formticket = new FormTicketsup($db);
 
-    print load_fiche_titre($langs->trans('NewTicket'), '', 'img/ticketsup-32.png', 1);
+    print load_fiche_titre($langs->trans('NewTicket'), '', 'title_ticketsup');
 
     $formticket->withfromsocid = $socid ? $socid : $user->societe_id;
     $formticket->withfromcontactid = $contactid ? $contactid : '';
@@ -85,11 +91,6 @@ if ($action == 'create_ticket') {
     $formticket->showForm();
 }
 
-/***************************************************
- * LINKED OBJECT BLOCK
- *
- * Put here code to view linked object
- ****************************************************/
 //$somethingshown=$object->showLinkedObjectBlock();
 
 // End of page

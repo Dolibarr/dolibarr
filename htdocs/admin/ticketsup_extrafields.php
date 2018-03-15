@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 $langs->load("admin");
 
 $extrafields = new ExtraFields($db);
@@ -47,14 +47,14 @@ if (!$user->admin) {
     accessforbidden();
 }
 
+
 /*
  * Actions
  */
-if (versioncompare(versiondolibarrarray(), array(3, 5, 0)) > 0) {
-    include DOL_DOCUMENT_ROOT . '/core/actions_extrafields.inc.php';
-} elseif (versioncompare(versiondolibarrarray(), array(3, 4, 0)) > 0) {
-    include DOL_DOCUMENT_ROOT . '/core/admin_extrafields.inc.php';
-}
+
+include DOL_DOCUMENT_ROOT . '/core/actions_extrafields.inc.php';
+
+
 
 /*
  * View
@@ -67,17 +67,11 @@ $page_name = "TicketsupSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans("TicketsupSetup"), $linkback, 'setup');
+print load_fiche_titre($langs->trans("TicketsupSetup"), $linkback, 'title_setup');
 
 $head = ticketsupAdminPrepareHead();
 
-dol_fiche_head(
-    $head,
-    'attributes',
-    $langs->trans("Module110120Name"),
-    0,
-    "ticketsup@ticketsup"
-);
+dol_fiche_head($head, 'attributes', $langs->trans("Module56000Name"), -1, "ticketsup");
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

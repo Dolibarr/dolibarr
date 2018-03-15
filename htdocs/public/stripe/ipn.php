@@ -323,7 +323,7 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 }
 elseif ($event->type == 'customer.deleted') {
 	$db->begin();
-	$sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_stripe WHERE fk_key = '".$event->data->object->id."' ";
+	$sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$event->data->object->id."' and site='stripe' ";
 	dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
 	$db->query($sql);
 	$db->commit();

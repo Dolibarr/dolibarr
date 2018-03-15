@@ -96,7 +96,7 @@ class Ticketsuplogs// extends CommonObject
         $sql .= ") VALUES (";
 
         $sql .= " " . (!isset($this->fk_track_id) ? 'NULL' : "'" . $this->db->escape($this->fk_track_id) . "'") . ",";
-        $sql .= " " . (!isset($this->fk_user_create) ? 'NULL' : "'" . $this->fk_user_create . "'") . ",";
+        $sql .= " " . (!isset($this->fk_user_create) ? 'NULL' : "'" . $this->db->escape($this->fk_user_create) . "'") . ",";
         $sql .= " " . (!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'" . $this->db->idate($this->datec). "'") . ",";
         $sql .= " " . (!isset($this->message) ? 'NULL' : "'" . $this->db->escape($this->message) . "'") . "";
 
@@ -217,7 +217,7 @@ class Ticketsuplogs// extends CommonObject
         $sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup_logs SET";
 
         $sql .= " fk_track_id=" . (isset($this->fk_track_id) ? "'" . $this->db->escape($this->fk_track_id) . "'" : "null") . ",";
-        $sql .= " fk_user_create=" . (isset($this->fk_user_create) ? $this->fk_user_create : "null") . ",";
+        $sql .= " fk_user_create=" . ($this->fk_user_create > 0 ? $this->fk_user_create : "null") . ",";
         $sql .= " datec=" . (dol_strlen($this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ",";
         $sql .= " message=" . (isset($this->message) ? "'" . $this->db->escape($this->message) . "'" : "null") . "";
 

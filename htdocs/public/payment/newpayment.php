@@ -542,7 +542,7 @@ if (! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBO
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
 }
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
+if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
 }
@@ -1384,7 +1384,7 @@ if (preg_match('/^dopayment/',$action))
 		/*
 		print '<script src="https://checkout.stripe.com/checkout.js"
 		class="stripe-button"
-		data-key="'.$stripe['publishable_key'].'"
+		data-key="'.$stripearrayofkeys['publishable_key'].'"
 		data-amount="'.$ttc.'"
 		data-currency="'.$conf->currency.'"
 		data-description="'.$ref.'">
@@ -1469,7 +1469,7 @@ if (preg_match('/^dopayment/',$action))
 		?>
 
 	    // Create a Stripe client
-	    var stripe = Stripe('<?php echo $stripe['publishable_key']; ?>');
+	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
 	    // Create an instance of Elements
 	    var elements = stripe.elements();

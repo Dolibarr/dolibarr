@@ -35,13 +35,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load traductions files requiredby by page
-// Load traductions files requiredby by page
-$langs->loadLangs(
-    array(
-        "ticketsup",
-        "companies",
-         "other")
-    );
+$langs->loadLangs(array("ticketsup","companies","other"));
 
 
 // Get parameters
@@ -60,7 +54,7 @@ $id			= GETPOST('id','int');
 $msg_id = GETPOST('msg_id', 'int');
 $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
-
+$search_fk_status = GETPOST('search_fk_status', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
 // Load variable for pagination
@@ -144,8 +138,6 @@ $url_page_current = dol_buildpath('/ticketsup/list.php', 1);
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "$action" parameter
  */
 
 if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
@@ -186,24 +178,20 @@ if (empty($reshook))
 }
 
 
-/***************************************************
- * PAGE
- *
- * Put here all code to build page
- ****************************************************/
+
+/*
+ * View
+ */
+
 $help_url = 'FR:DocumentationModuleTicket';
 llxHeader('', $langs->trans('TicketList'), $help_url);
 
 $form = new Form($db);
-
 $formTicket = new FormTicketsup($db);
 
 $user_assign = new User($db);
 $user_create = new User($db);
 $socstatic = new Societe($db);
-
-
-$search_fk_status = GETPOST('search_fk_status', 'alpha');
 
 
 // Build and execute select
@@ -226,8 +214,9 @@ if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity(
 else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
+	if ($key == 'fk_statut' && $search[$key] == -1) continue;
     $mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
-    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
+    if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 
@@ -313,8 +302,13 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
     $socstat = new Societe($db);
     $res = $socstat->fetch($socid);
     if ($res > 0) {
+
+    	$tmpobject = $object;
+    	$object = $socstat;		// $object must be of type Societe when calling societe_prepare_head
         $head = societe_prepare_head($socstat);
-        dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
+		$object = $tmpobject;
+
+        dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), -1, 'company');
 
         dol_banner_tab($socstat, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
 
@@ -325,7 +319,7 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
 
         // Customer code
         if ($socstat->client && !empty($socstat->code_client)) {
-            print '<tr><td>';
+            print '<tr><td class="titlefield">';
             print $langs->trans('CustomerCode') . '</td><td colspan="' . (2 + (($showlogo || $showbarcode) ? 0 : 1)) . '">';
             print $socstat->code_client;
             if ($socstat->check_codeclient() != 0) {
@@ -365,7 +359,7 @@ if ($projectid) {
         $linkback = '<a href="' . DOL_URL_ROOT . '/projet/list.php">' . $langs->trans("BackToList") . '</a>';
 
         // Ref
-        print '<tr><td width="30%">' . $langs->trans('Ref') . '</td><td colspan="3">';
+        print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td><td>';
         // Define a complementary filter for search of next/prev ref.
         if (!$user->rights->projet->all->lire) {
             $objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
@@ -379,7 +373,7 @@ if ($projectid) {
 
         // Customer
         print "<tr><td>" . $langs->trans("ThirdParty") . "</td>";
-        print '<td colspan="3">';
+        print '<td>';
         if ($projectstat->thirdparty->id > 0) {
             print $projectstat->thirdparty->getNomUrl(1);
         } else {
@@ -443,11 +437,12 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="' . $mode . '" >';
 
+$buttontocreate = '<div class="inline-block divButAction"><a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a></div>';
 
-print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'img/ticketsup-32.png', 1);
+print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticketsup', 0, $buttontocreate, '', $limit);
 
 if ($mode == 'my_assign') {
-    print '<div class="info">' . $langs->trans('TicketAssignedToMeInfos') . '</div>';
+    print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';
 }
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendTicketsupRef";
@@ -509,25 +504,24 @@ foreach($object->fields as $key => $val)
     if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
     if ($key == 'status') $align.=($align?' ':'').'center';
     if (! empty($arrayfields['t.'.$key]['checked'])) {
-        if ($key == 'fk_statut') {
+        if ($key == 'type_code') {
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            $object->printSelectStatus(dol_escape_htmltag($search[$key]));
-            print '</td>';
-
-        } elseif ($key == 'type_code') {
-            print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            $formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1);
+            $formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, 'maxwidth200');
             print '</td>';
         } elseif ($key == 'category_code') {
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            $formTicket->selectCategoriesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1);
+            $formTicket->selectCategoriesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, 'maxwidth200');
             print '</td>';
         } elseif ($key == 'severity_code') {
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            $formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1);
+            $formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, 'maxwidth200');
             print '</td>';
-        } else {
-
+        } elseif ($key == 'fk_statut') {
+        	print '<td class="liste_titre'.($align?' '.$align:'').'">';
+        	$object->printSelectStatus(dol_escape_htmltag($search[$key]));
+        	print '</td>';
+        }
+        else {
             print '<td class="liste_titre'.($align?' '.$align:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
         }
     }
@@ -681,10 +675,6 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-
-print '<div class="tabsAction">';
-print '<div class="inline-block divButAction"><a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a></div>';
-print '</div>';
 
 
 if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))

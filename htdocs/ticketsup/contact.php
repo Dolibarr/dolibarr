@@ -19,9 +19,9 @@
  */
 
 /**
- *       \file       ticketsup/contacts.php
+ *       \file       ticketsup/contact.php
  *        \ingroup    ticketsup
- *        \brief      Contacts des tickets
+ *        \brief      Contacts of tickets
  */
 
 require '../main.inc.php';
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 
 // Load traductions files requiredby by page
 $langs->load("companies");
-$langs->load("ticketsup@ticketsup");
+$langs->load("ticketsup");
 
 // Get parameters
 $socid = GETPOST("socid", 'int');
@@ -61,7 +61,7 @@ if ($user->societe_id > 0) {
 }
 
 // Store current page url
-$url_page_current = dol_buildpath('/ticketsup/contacts.php', 1);
+$url_page_current = dol_buildpath('/ticketsup/contact.php', 1);
 
 $object = new Ticketsup($db);
 
@@ -129,8 +129,9 @@ $userstatic = new User($db);
 /* *************************************************************************** */
 
 if ($id > 0 || !empty($track_id) || !empty($ref)) {
-    if ($object->fetch($id, $track_id, $ref) > 0) {
-        if ($object->fk_soc > 0) {
+    if ($object->fetch($id, $track_id, $ref) > 0)
+    {
+        if ($socid > 0) {
             $object->fetch_thirdparty();
             $head = societe_prepare_head($object->thirdparty);
             dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
@@ -143,8 +144,11 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
         } elseif ($user->societe_id > 0) {
             $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
         }
+
         $head = ticketsup_prepare_head($object);
-        dol_fiche_head($head, 'tabTicketContacts', $langs->trans("Ticket"), 0, 'ticketsup@ticketsup');
+
+        dol_fiche_head($head, 'contact', $langs->trans("Ticket"), -1, 'ticketsup');
+
         $object->label = $object->ref;
         // Author
         if ($object->fk_user_create > 0) {
@@ -155,10 +159,11 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
             $object->label .= $fuser->getNomUrl(0);
         }
         $linkback = '<a href="' . dol_buildpath('/ticketsup/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
-        $object->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
+        $object->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback, 1);
 
         dol_fiche_end();
-        print '<br>';
+
+        //print '<br>';
 
         $permission = $user->rights->ticketsup->write;
 

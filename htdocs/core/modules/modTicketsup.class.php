@@ -74,7 +74,7 @@ class modTicketsup extends DolibarrModules
         // use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png
         // use this->picto='pictovalue@module'
-        $this->picto = 'ticketsup@ticketsup'; // mypicto@ticketsup
+        $this->picto = 'ticketsup'; // mypicto@ticketsup
         // Defined all module parts (triggers, login, substitutions, menus, css, etc...)
         // for default path (eg: /ticketsup/core/xxxxx) (0=disable, 1=enable)
         // for specific path of parts (eg: /ticketsup/core/modules/barcode)
@@ -135,7 +135,7 @@ class modTicketsup extends DolibarrModules
             $conf->ticketsup->enabled=0;
         }
         $this->dictionaries = array(
-            'langs' => 'ticketsup@ticketsup',
+            'langs' => 'ticketsup',
             'tabname' => array(MAIN_DB_PREFIX . "c_ticketsup_type", MAIN_DB_PREFIX . "c_ticketsup_category", MAIN_DB_PREFIX . "c_ticketsup_severity"),
             'tablib' => array("TicketsupDictType", "TicketsupDictCategory", "TicketsupDictSeverity"),
             'tabsql' => array('SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticketsup_type as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticketsup_category as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticketsup_severity as f'),
@@ -153,17 +153,16 @@ class modTicketsup extends DolibarrModules
         $r = 0;
         // Example:
 
-        $this->boxes[$r][1] = "box_last_ticketsup@ticketsup";
+        $this->boxes[$r][1] = "box_last_ticketsup";
         $r++;
 
-        $this->boxes[$r][1] = "box_last_modified_ticketsup@ticketsup";
+        $this->boxes[$r][1] = "box_last_modified_ticketsup";
         $r++;
 
         // Permissions
         $this->rights = array(); // Permission array used by this module
-        $r = 0;
 
-        $r++;
+        $r=0;
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
@@ -209,9 +208,9 @@ class modTicketsup extends DolibarrModules
             'mainmenu' => 'ticketsup',
             'leftmenu' => '1', // Use 1 if you also want to add left menu entries using this descriptor.
             'url' => '/ticketsup/index.php',
-            'langs' => 'ticketsup@ticketsup', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs' => 'ticketsup', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position' => 100,
-            'enabled' => '1', // Define condition to show or hide menu entry. Use '$conf->ticketsup->enabled' if entry must be visible if module is enabled.
+            'enabled' => '$conf->ticketsup->enabled', // Define condition to show or hide menu entry. Use '$conf->ticketsup->enabled' if entry must be visible if module is enabled.
             'perms' => '$user->rights->ticketsup->read', // Use 'perms'=>'$user->rights->ticketsup->level1->level2' if you want your menu with a permission rules
             'target' => '',
             'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
@@ -223,9 +222,9 @@ class modTicketsup extends DolibarrModules
             'mainmenu' => 'ticketsup',
             'leftmenu' => 'ticketsup',
             'url' => '/ticketsup/index.php',
-            'langs' => 'ticketsup@ticketsup',
+            'langs' => 'ticketsup',
             'position' => 101,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 2);
@@ -236,9 +235,9 @@ class modTicketsup extends DolibarrModules
             'titre' => 'NewTicket',
             'mainmenu' => 'ticketsup',
             'url' => '/ticketsup/new.php?action=create_ticket',
-            'langs' => 'ticketsup@ticketsup',
+            'langs' => 'ticketsup',
             'position' => 102,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->write',
             'target' => '',
             'user' => 2);
@@ -250,9 +249,9 @@ class modTicketsup extends DolibarrModules
             'mainmenu' => 'ticketsup',
             'leftmenu' => 'ticketsuplist',
             'url' => '/ticketsup/list.php',
-            'langs' => 'ticketsup@ticketsup',
+            'langs' => 'ticketsup',
             'position' => 103,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 2);
@@ -264,9 +263,9 @@ class modTicketsup extends DolibarrModules
             'mainmenu' => 'ticketsup',
             'leftmenu' => 'ticketsuplist',
             'url' => '/ticketsup/list.php?search_fk_status=non_closed',
-            'langs' => 'ticketsup@ticketsup',
+            'langs' => 'ticketsup',
             'position' => 104,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 2);
@@ -278,9 +277,9 @@ class modTicketsup extends DolibarrModules
             'mainmenu' => 'ticketsup',
             'leftmenu' => 'ticketsupmy',
             'url' => '/ticketsup/list.php?mode=my_assign',
-            'langs' => 'ticketsup@ticketsup',
+            'langs' => 'ticketsup',
             'position' => 105,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 0);
@@ -291,9 +290,9 @@ class modTicketsup extends DolibarrModules
             'titre' => 'MenuTicketsupMyAssignNonClosed',
             'mainmenu' => 'ticketsup',
             'url' => '/ticketsup/list.php?mode=my_assign&search_fk_status=non_closed',
-            'langs' => 'ticketsup@ticketsup',
+            'langs' => 'ticketsup',
             'position' => 106,
-            'enabled' => 1,
+            'enabled' => '$conf->ticketsup->enabled',
             'perms' => '$user->rights->ticketsup->read',
             'target' => '',
             'user' => 0);
@@ -301,13 +300,12 @@ class modTicketsup extends DolibarrModules
     }
 
     /**
-     * Function called when module is enabled.
-     * The init function add constants, boxes, permissions and menus
-     * (defined in constructor) into Dolibarr database.
-     * It also creates data directories
+     *	Function called when module is enabled.
+     *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *	It also creates data directories
      *
-     *     @param  string $options Options when enabling module ('', 'noboxes')
-     *     @return int                    1 if OK, 0 if KO
+     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+     *	@return     int             	1 if OK, 0 if KO
      */
     public function init($options = '')
     {
@@ -317,40 +315,10 @@ class modTicketsup extends DolibarrModules
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticketsup',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticketsup',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1),
             array("sql" => "insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticketsup',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1),
-            array("sql" => "insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values ('','TICKETMESSAGE_SENTBYMAIL','Envoi message de réponse par mail','Executed when a response is made on a ticket','ticketsup','');", "ignoreerror" => 1),
-
+            array("sql" => "insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values ('','TICKETMESSAGE_SENTBYMAIL','Send email for ticket','Executed when a response is made on a ticket','ticketsup','');", "ignoreerror" => 1),
         );
-
-        $result = $this->loadTables();
 
         return $this->_init($sql, $options);
     }
 
-    /**
-     * Function called when module is disabled.
-     * Remove from database constants, boxes and permissions from Dolibarr database.
-     * Data directories are not deleted
-     *
-     *     @param  string $options Options when enabling module ('', 'noboxes')
-     *     @return int                    1 if OK, 0 if KO
-     */
-    public function remove($options = '')
-    {
-        $sql = array();
-
-        return $this->_remove($sql, $options);
-    }
-
-    /**
-     * Create tables, keys and data required by module
-     * Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-     * and create data commands must be stored in directory /ticketsup/sql/
-     * This function is called by this->init
-     *
-     *     @return int        <=0 if KO, >0 if OK
-     */
-    private function loadTables()
-    {
-        return $this->_load_tables('/ticketsup/sql/');
-    }
 }

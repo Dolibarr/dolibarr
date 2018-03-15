@@ -55,11 +55,11 @@ class ActionsStripeconnect
 	{
 		$this->db = $db;
 	}
-  
+
 
 	/**
 	 * formObjectOptions
-	 * 
+	 *
 	 * @param	array	$parameters		Parameters
 	 * @param	Object	$object			Object
 	 * @param	string	$action			Action
@@ -68,7 +68,7 @@ class ActionsStripeconnect
 	{
 		global $db,$conf,$user,$langs,$form;
 
-		if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
+		if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 		{
 			$service = 'StripeTest';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
@@ -85,7 +85,7 @@ class ActionsStripeconnect
 				$key=$value;
 			}
 		}
-		
+
 
 		if (is_object($object) && $object->element == 'societe')
 		{
@@ -99,14 +99,14 @@ class ActionsStripeconnect
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
 			if ($stripe->getStripeAccount($service)&&$object->client!=0) {
-				$customer=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
+				$customer=$stripe->customerStripe($object,$stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {
 				$this->resprints.= $langs->trans("NoStripe");
 			}
 			$this->resprints.= '</td></tr>';
-				
+
 		}
 		elseif (is_object($object) && $object->element == 'member'){
 			$this->resprints.= '<tr><td>';
@@ -117,15 +117,16 @@ class ActionsStripeconnect
 			$this->resprints.= '</td>';
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
-			if ($stripe->getStripeAccount($service)&&$object->fk_soc>'0') {
-				$customer=$stripe->customerStripe($object->fk_soc,$stripe->getStripeAccount($service));
+			if ($stripe->getStripeAccount($service) && $object->fk_soc > 0) {
+				$object->fetch_thirdparty();
+				$customer=$stripe->customerStripe($object->thirdparty, $stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {
 				$this->resprints.= $langs->trans("NoStripe");
 			}
 			$this->resprints.= '</td></tr>';
-			 
+
 			$this->resprints.= '<tr><td>';
 			$this->resprints.= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints.= $langs->trans('SubscriptionStripe');
@@ -135,7 +136,8 @@ class ActionsStripeconnect
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
 			if (7==4) {
-				$customer=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
+				$object->fetch_thirdparty();
+				$customer=$stripe->customerStripe($object,$stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {
@@ -154,7 +156,8 @@ class ActionsStripeconnect
 			$this->resprints.= '<td colspan="3">';
 			$stripe=new Stripe($db);
 			if (7==4) {
-				$customer=$stripe->customerStripe($object->id,$stripe->getStripeAccount($service));
+				$object->fetch_thirdparty();
+				$customer=$stripe->customerStripe($object,$stripe->getStripeAccount($service));
 				$this->resprints.= $customer->id;
 			}
 			else {
@@ -167,7 +170,7 @@ class ActionsStripeconnect
 
 	/**
 	 * addMoreActionsButtons
-	 * 
+	 *
 	 * @param arra	 	$parameters	Parameters
 	 * @param Object	$object		Object
 	 * @param string	$action		action

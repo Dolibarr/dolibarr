@@ -1,4 +1,4 @@
--- Copyright (C) 2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -11,13 +11,10 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see http://www.gnu.org/licenses/.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
+--
+--
+-- Contenu de la table llx_c_ticketsup_category
+--
 
-CREATE TABLE llx_website_account_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
+INSERT INTO llx_c_ticketsup_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);

@@ -18,7 +18,7 @@ CREATE TABLE llx_ticketsup
 (
 	rowid       integer AUTO_INCREMENT PRIMARY KEY,
 	entity		integer DEFAULT 1,
-        ref         varchar(128) NOT NULL,
+	ref			varchar(128) NOT NULL,
 	track_id    varchar(128) NOT NULL,
 	fk_soc		integer DEFAULT 0,
 	fk_project	integer DEFAULT 0,
@@ -37,5 +37,6 @@ CREATE TABLE llx_ticketsup
 	datec datetime,
 	date_read datetime,
 	date_close datetime,
+	notify_tiers_at_create tinyint,
 	tms timestamp
 )ENGINE=innodb;

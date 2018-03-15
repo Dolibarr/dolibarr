@@ -31,7 +31,7 @@ function ticketsupAdminPrepareHead()
 {
     global $langs, $conf;
 
-    $langs->load("ticketsup@ticketsup");
+    $langs->load("ticketsup");
 
     $h = 0;
     $head = array();
@@ -75,15 +75,18 @@ function ticketsup_prepare_head($object)
     $head[$h][2] = 'tabTicketsup';
     $h++;
 
-    if (empty($user->socid)) {
-    	$head[$h][0] = DOL_URL_ROOT.'/ticketsup/contacts.php?track_id=' . $object->track_id;
-        $head[$h][1] = $langs->trans('Contacts');
-        $head[$h][2] = 'tabTicketContacts';
-        $h++;
+
+    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && empty($user->socid))
+    {
+    	$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+    	$head[$h][0] = DOL_URL_ROOT.'/ticketsup/contact.php?track_id='.$object->track_id;
+    	$head[$h][1] = $langs->trans('ContactsAddresses');
+    	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+    	$head[$h][2] = 'contact';
+    	$h++;
     }
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticketsup');
-
 
     // Attached files
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';

@@ -864,6 +864,7 @@ Project=Project
 Projects=Projects
 Rights=Permissions
 LineNb=Line nb
+IncotermLabel=Incoterms
 # Week day
 Monday=Monday
 Tuesday=Tuesday
@@ -932,3 +933,6 @@ PayedTo=Payed to
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
+Local=Local
+Remote=Remote
+LocalAndRemote=Local and Remote

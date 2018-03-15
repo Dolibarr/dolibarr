@@ -283,6 +283,18 @@ else {
 	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
 	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
 	$doleditor->Create();
+
+	// Show autofill date for recuring invoices
+	if (! empty($conf->service->enabled) && $object->element == 'facturerec')
+	{
+		echo '<div class="divlinefordates"><br>';
+		echo $langs->trans('AutoFillDateFrom').' ';
+		echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+		echo ' - ';
+		echo $langs->trans('AutoFillDateTo').' ';
+		echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+		echo '</div>';
+	}
 	?>
 	</td>
 
@@ -594,8 +606,17 @@ jQuery(document).ready(function() {
    				if (editor) { editor.focus(); }
 			}
 		}
-		if (jQuery('#select_type').val() == '0') jQuery('#trlinefordates').hide();
-		else jQuery('#trlinefordates').show();
+		console.log("Hide/show date according to product type");
+		if (jQuery('#select_type').val() == '0')
+		{
+			jQuery('#trlinefordates').hide();
+			jQuery('.divlinefordates').hide();
+		}
+		else
+		{
+			jQuery('#trlinefordates').show();
+			jQuery('.divlinefordates').show();
+		}
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
@@ -799,7 +820,7 @@ function setforfree() {
 	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
-	console.log("Call setforpredef. We hide some fields");
+	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
 
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
@@ -820,6 +841,9 @@ function setforpredef() {
 	jQuery(".np_marginRate").hide();	// May no exists
 	jQuery(".np_markRate").hide();	// May no exists
 	jQuery("#units, #title_units").hide();
+
+	jQuery('#trlinefordates').show();
+	jQuery('.divlinefordates').show();
 }
 
 </script>
