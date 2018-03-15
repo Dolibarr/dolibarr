@@ -178,7 +178,7 @@ class pdf_crabe extends ModelePDFFactures
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 		
 		// Translations
-		$langs->loadLangs(array("main", "bills", "products", "dict", "companies"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 		$nblignes = count($object->lines);
 
