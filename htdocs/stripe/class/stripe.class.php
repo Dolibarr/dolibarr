@@ -203,7 +203,7 @@ class Stripe extends CommonObject
 	{
 		global $conf, $user;
 
-		$customer = null;
+		$card = null;
 
 		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn";			// stripe_card_ref is card_....
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_rib as sa";
@@ -292,13 +292,13 @@ class Stripe extends CommonObject
 	/**
 	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
 	 *
-	 * @param int $amount				Amount to pay
-	 * @param string $currency			EUR, GPB...
-	 * @param string $origin			order, invoice, contract...
-	 * @param int $item				    if of element to pay
-	 * @param string $source			src_xxxxx or card_xxxxx
-	 * @param string $customer			Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param string $account			Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
+	 * @param int 		$amount			Amount to pay
+	 * @param string 	$currency		EUR, GPB...
+	 * @param string 	$origin			Object type to pay (order, invoice, contract...)
+	 * @param int 		$item			Object id to pay
+	 * @param string 	$source			src_xxxxx or card_xxxxx
+	 * @param string 	$customer		Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param string 	$account		Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
 	 * @param	int		$status			Status (0=test, 1=live)
 	 * @return Stripe
 	 */
@@ -309,7 +309,7 @@ class Stripe extends CommonObject
 		if (empty($status)) $service = 'StripeTest';
 		else $service = 'StripeLive';
 
-		$sql = "SELECT sa.key_account as key_account, sa.entity";
+		$sql = "SELECT sa.key_account as key_account, sa.fk_soc, sa.entity";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
 		$sql.= " WHERE sa.key_account = '" . $this->db->escape($customer) . "'";
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
@@ -328,9 +328,12 @@ class Stripe extends CommonObject
 			$key = NULL;
 		}
 
-		$stripeamount = round($amount * 100);
+		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (! in_array($currency, $arrayzerounitcurrency)) $stripeamount=$amount * 100;
+		else $stripeamount = $amount;
+
 		$societe = new Societe($this->db);
-		$societe->fetch($fksoc);
+		if ($key > 0) $societe->fetch($key);
 
 		if ($origin == order) {
 			$order = new Commande($this->db);
@@ -345,24 +348,28 @@ class Stripe extends CommonObject
 		}
 
 		$metadata = array(
-		"source" => "" . $origin . "",
-		"idsource" => "" . $item . "",
-		"idcustomer" => "" . $societe->id . ""
+			"dol_id" => "" . $item . "",
+			"dol_type" => "" . $origin . "",
+			"dol_thirdparty_id" => "" . $societe->id . "",
+			'dol_version'=>DOL_VERSION,
+			'dol_entity'=>$conf->entity,
+			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
 		);
 		$return = new Stripe($this->db);
 		try {
-			if ($stripeamount >= 100) {
-				if ($entite == '1' or empty($conf->stripeconnect->enabled)) {
-					if (preg_match('/acct_/i', $source)) {
-						$charge = \Stripe\Charge::create(array(
+			if (empty($conf->stripeconnect->enabled))
+			{
+				if (preg_match('/acct_/i', $source))
+				{
+					$charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
 						// "statement_descriptor" => " ",
 						"metadata" => $metadata,
 						"source" => "$source"
-						));
-					} else {
-						$charge = \Stripe\Charge::create(array(
+					));
+				} else {
+					$charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
 						// "statement_descriptor" => " ",
@@ -371,31 +378,32 @@ class Stripe extends CommonObject
 						"receipt_email" => $societe->email,
 						"source" => "$source",
 						"customer" => "$customer"
-						), array(
-						"idempotency_key" => "$ref"
-						));
-					}
-				} else {
-					$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
-					if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
-						$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
-					}
-					$charge = \Stripe\Charge::create(array(
-					"amount" => "$stripeamount",
-					"currency" => "$currency",
-					// "statement_descriptor" => " ",
-					"description" => "$description",
-					"metadata" => $metadata,
-					"source" => "$source",
-					"customer" => "$customer",
-					"application_fee" => "$fee"
 					), array(
-					"idempotency_key" => "$ref",
-					"stripe_account" => "$account"
+					"idempotency_key" => "$ref"
 					));
 				}
-				if (isset($charge->id)) {}
+			} else {
+
+				$fee = round(($amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE) * 100);
+				if ($fee < ($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100)) {
+					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
+				}
+
+				$charge = \Stripe\Charge::create(array(
+				"amount" => "$stripeamount",
+				"currency" => "$currency",
+				// "statement_descriptor" => " ",
+				"description" => "$description",
+				"metadata" => $metadata,
+				"source" => "$source",
+				"customer" => "$customer",
+				"application_fee" => "$fee"
+				), array(
+				"idempotency_key" => "$ref",
+				"stripe_account" => "$account"
+				));
 			}
+			if (isset($charge->id)) {}
 
 			$return->statut = 'success';
 			$return->id = $charge->id;
