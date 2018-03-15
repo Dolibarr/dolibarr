@@ -64,11 +64,10 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("trips");
-		$langs->load("projects");
+		global $conf, $langs, $mysoc;
+		
+		// Translations
+		$langs->loadLangs(array("main", "trips", "projects"));
 
 		$this->db = $db;
 		$this->name = "";
