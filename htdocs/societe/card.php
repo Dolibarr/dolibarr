@@ -181,12 +181,12 @@ if (empty($reshook))
 
 				// Merge categories
 				$static_cat = new Categorie($db);
-				
+
 				$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
 				$custcats = $static_cat->containing($object->id, 'customer', 'id');
 				$custcats = array_merge($custcats,$custcats_ori);
 				$object->setCategories($custcats, 'customer');
-				
+
 				$suppcats_ori = $static_cat->containing($soc_origin->id, 'supplier', 'id');
 				$suppcats = $static_cat->containing($object->id, 'supplier', 'id');
 				$suppcats = array_merge($suppcats,$suppcats_ori);
@@ -1266,7 +1266,7 @@ else
         // Vat is used
         print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td>';
         print '<td>';
-        print $form->selectyesno('assujtva_value',(isset($conf->global->THIRDPARTY_DEFAULT_USEVAT)?$conf->global->THIRDPARTY_DEFAULT_USEVAT:1),1);     // Assujeti par defaut en creation
+        print $form->selectyesno('assujtva_value', GETPOST('assujtva_value','int'), 1);     // Assujeti par defaut en creation
         print '</td>';
         print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
