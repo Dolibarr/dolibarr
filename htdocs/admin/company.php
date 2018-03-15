@@ -341,18 +341,18 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 	//if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // By default, country of localization
-	print $form->select_country($mysoc->country_id,'country_id');
+	print $form->select_country($mysoc->country_id, 'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>'."\n";
 
 
 	print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
-	$formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_STATE,$mysoc->country_code,'state_id');
+	$formcompany->select_departement($conf->global->MAIN_INFO_SOCIETE_STATE, $mysoc->country_code, 'state_id');
 	print '</td></tr>'."\n";
 
 
 	print '<tr class="oddeven"><td><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
-	print $form->selectCurrency($conf->currency,"currency");
+	print $form->selectCurrency($conf->currency, "currency");
 	print '</td></tr>'."\n";
 
 

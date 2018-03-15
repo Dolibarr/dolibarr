@@ -298,33 +298,33 @@ if (empty($reshook))
 			$object->oldcopy = clone $object;
 
 			// Change values
-			$object->civility_id = trim($_POST["civility_id"]);
-			$object->firstname   = trim($_POST["firstname"]);
-			$object->lastname    = trim($_POST["lastname"]);
-			$object->login       = trim($_POST["login"]);
-			$object->pass        = trim($_POST["pass"]);
+			$object->civility_id = trim(GETPOST("civility_id",'alpha'));
+			$object->firstname   = trim(GETPOST("firstname",'alpha'));
+			$object->lastname    = trim(GETPOST("lastname",'alpha'));
+			$object->login       = trim(GETPOST("login",'alpha'));
+			$object->pass        = trim(GETPOST("pass",'alpha'));
 
-			$object->societe     = trim($_POST["societe"]);
-			$object->company     = trim($_POST["societe"]);
+			$object->societe     = trim(GETPOST("societe",'alpha'));
+			$object->company     = trim(GETPOST("societe",'alpha'));
 
-			$object->address     = trim($_POST["address"]);
-			$object->zip         = trim($_POST["zipcode"]);
-			$object->town        = trim($_POST["town"]);
-			$object->state_id    = $_POST["state_id"];
-			$object->country_id  = $_POST["country_id"];
+			$object->address     = trim(GETPOST("address",'alpha'));
+			$object->zip         = trim(GETPOST("zipcode",'alpha'));
+			$object->town        = trim(GETPOST("town",'alpha'));
+			$object->state_id    = GETPOST("state_id",'int');
+			$object->country_id  = GETPOST("country_id",'int');
 
-			$object->phone       = trim($_POST["phone"]);
-			$object->phone_perso = trim($_POST["phone_perso"]);
-			$object->phone_mobile= trim($_POST["phone_mobile"]);
-			$object->email       = trim($_POST["member_email"]);
-			$object->skype       = trim($_POST["skype"]);
+			$object->phone       = trim(GETPOST("phone",'alpha'));
+			$object->phone_perso = trim(GETPOST("phone_perso",'alpha'));
+			$object->phone_mobile= trim(GETPOST("phone_mobile",'alpha'));
+			$object->email       = trim(GETPOST("member_email",'alpha'));
+			$object->skype       = trim(GETPOST("skype",'alpha'));
 			$object->birth       = $birthdate;
 
 			$object->typeid      = GETPOST("typeid",'int');
-			//$object->note        = trim($_POST["comment"]);
+			//$object->note        = trim(GETPOST("comment","alpha"));
 			$object->morphy      = GETPOST("morphy",'alpha');
 
-			if (GETPOST('deletephoto')) $object->photo='';
+			if (GETPOST('deletephoto','alpha')) $object->photo='';
 			elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 
 			// Get status and public property
@@ -469,8 +469,8 @@ if (empty($reshook))
 		$subscription=GETPOST("subscription",'alpha');
 		$public=GETPOST("public",'alpha');
 
-		$userid=$_POST["userid"];
-		$socid=$_POST["socid"];
+		$userid=GETPOST("userid",'int');
+		$socid=GETPOST("socid",'int');
 
 		$object->civility_id = $civility_id;
 		$object->firstname   = $firstname;

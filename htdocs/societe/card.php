@@ -11,6 +11,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,9 +181,15 @@ if (empty($reshook))
 
 				// Merge categories
 				$static_cat = new Categorie($db);
-				$custcats = $static_cat->containing($soc_origin->id, 'customer', 'id');
+				
+				$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
+				$custcats = $static_cat->containing($object->id, 'customer', 'id');
+				$custcats = array_merge($custcats,$custcats_ori);
 				$object->setCategories($custcats, 'customer');
-				$suppcats = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+				
+				$suppcats_ori = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+				$suppcats = $static_cat->containing($object->id, 'supplier', 'id');
+				$suppcats = array_merge($suppcats,$suppcats_ori);
 				$object->setCategories($suppcats, 'supplier');
 
 				// If thirdparty has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
@@ -210,7 +217,7 @@ if (empty($reshook))
 					$objects = array(
 						'Adherent' => '/adherents/class/adherent.class.php',
 						'Societe' => '/societe/class/societe.class.php',
-						'Categorie' => '/categories/class/categorie.class.php',
+						//'Categorie' => '/categories/class/categorie.class.php',
 						'ActionComm' => '/comm/action/class/actioncomm.class.php',
 						'Propal' => '/comm/propal/class/propal.class.php',
 						'Commande' => '/commande/class/commande.class.php',
