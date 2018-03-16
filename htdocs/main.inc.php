@@ -225,13 +225,13 @@ session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on s
 if (! defined('NOSESSION'))
 {
 	session_start();
-	if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
+	/*if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
 	{
 		foreach ($_SESSION as $key=>$value)
 		{
 			if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
 		}
-	}
+	}*/
 }
 
 // Init the 5 global objects, this include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc
@@ -499,7 +499,9 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
+		$allowedmethodtopostusername = 2;
+		if (defined('MAIN_AUTHENTICATION_POST_METHOD')) $allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');
+		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",$allowedmethodtopostusername));
 		$passwordtotest	= GETPOST('password','none',2);
 		$entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
@@ -507,7 +509,7 @@ if (! defined('NOLOGIN'))
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
 		if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
-		if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
+		if (GETPOST("username","alpha",$allowedmethodtopostusername) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
 		if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
 		{
