@@ -181,17 +181,12 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 				$numrows=$db->num_rows($resql);
 				if ($numrows == 0)
 				{
-					$salt = dol_print_date(dol_now(), 'dayhourlog');
-
 					// Define default setup for password encryption
-					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
-					dolibarr_set_const($db, "MAIN_SECURITY_SALT", $salt, 'chaine', 0, '', 0);      // All entities
+					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);  // Not All entities ?!
+					dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0);      // All entities
 					dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                               // All entities
 
-					// Update of $conf->global
-					$conf->global->DATABASE_PWD_ENCRYPTED = 1;
-					$conf->global->MAIN_SECURITY_SALT = $salt;
-					$conf->global->MAIN_SECURITY_HASH_ALGO = 'sha1md5';
+					dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
 				}
 			}
 
