@@ -496,10 +496,8 @@ if ($resql)
         $event->datef=$datep2;
         $event->type_code=$obj->code;
         $event->type_color=$obj->color;
-        //$event->libelle=$obj->label;				// deprecated
         $event->label=$obj->label;
         $event->percentage=$obj->percent;
-        //$event->author->id=$obj->fk_user_author;	// user id of creator
         $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
         $event->priority=$obj->priority;
@@ -511,8 +509,6 @@ if ($resql)
 
         $event->socid=$obj->fk_soc;
         $event->contactid=$obj->fk_contact;
-        //$event->societe->id=$obj->fk_soc;			// deprecated
-        //$event->contact->id=$obj->fk_contact;		// deprecated
 
         $event->fk_element=$obj->fk_element;
         $event->elementtype=$obj->elementtype;
@@ -624,9 +620,9 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while($currentdaytoshow<$lastdaytoshow) {
-	
+
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
-	
+
 	echo '<tr class="liste_titre">';
 	echo '<td></td>';
 	$i=0;	// 0 = sunday,
@@ -646,7 +642,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$i++;
 	}
 	echo "</tr>\n";
-	
+
 	echo '<tr class="liste_titre">';
 	echo '<td></td>';
 	$i=0;
@@ -667,8 +663,8 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$i++;
 	}
 	echo "</tr>\n";
-	
-	
+
+
 	// Define $usernames
 	$usernames = array(); //init
 	$usernamesid = array();
@@ -722,7 +718,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$result=$tmpuser->fetch($id);
 		$usernames[]=$tmpuser;
 	}
-	
+
 	/*
 	if ($filtert > 0)
 	{
@@ -742,7 +738,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 		//$tmpgroup->fetch($usergroup); No fetch, we want all users for all groups
 		$usernames = $tmpgroup->listUsersForGroup();
 	}*/
-	
+
 	// Load array of colors by type
 	$colorsbytype=array();
 	$labelbytype=array();
@@ -753,7 +749,7 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$colorsbytype[$obj->code]=$obj->color;
 		$labelbytype[$obj->code]=$obj->libelle;
 	}
-	
+
 	// Loop on each user to show calendar
 	$todayarray=dol_getdate($now,'fast');
 	$sav = $tmpday;
@@ -767,42 +763,42 @@ while($currentdaytoshow<$lastdaytoshow) {
 		print $username->getNomUrl(-1,'',0,0,20,1,'');
 		print '</td>';
 		$tmpday = $sav;
-	
+
 		// Lopp on each day of week
 		$i = 0;
 		for ($iter_day = 0; $iter_day < 8; $iter_day++)
 		{
-			
+
 			if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 			{
 				$i++;
 				continue;
 			}
-	
+
 	        // Show days of the current week
 			$curtime = dol_time_plus_duree($currentdaytoshow, $iter_day, 'd');
 			$tmparray = dol_getdate($curtime,'fast');
 			$tmpday = $tmparray['mday'];
 			$tmpmonth = $tmparray['mon'];
 			$tmpyear = $tmparray['year'];
-	
+
 			$style='cal_current_month';
 			if ($iter_day == 6) $style.=' cal_other_month';
 			$today=0;
 			if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
 			if ($today) $style='cal_today_peruser';
-	
+
 			show_day_events2($username, $tmpday, $tmpmonth, $tmpyear, $monthshown, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, $showheader, $colorsbytype, $var);
-	
+
 			$i++;
 		}
 		echo "</tr>\n";
 		$showheader = false;
 	}
-	
+
 	echo "</table>\n";
 	echo "<br>";
-	
+
 	$currentdaytoshow =  dol_time_plus_duree($currentdaytoshow, 7, 'd');
 
 }
@@ -921,7 +917,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	$colorindexused[$user->id] = 0;			// Color index for current user (user->id) is always 0
 	$nextindextouse=count($colorindexused);	// At first run this is 0, so first user has 0, next 1, ...
 	//if ($username->id && $day==1) var_dump($eventarray);
-	
+
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused)
 	{

@@ -592,7 +592,6 @@ class ActionComm extends CommonObject
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
                 $this->datef				= $this->db->jdate($obj->datep2);
-//				$this->durationp			= $this->durationp;					// deprecated
 
                 $this->datec   				= $this->db->jdate($obj->datec);
                 $this->datem   				= $this->db->jdate($obj->datem);

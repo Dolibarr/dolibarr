@@ -2529,21 +2529,6 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Class invoiced the Propal
-	 *
-	 *	@return     int     	<0 si ko, >0 si ok
-	 *  @deprecated
-	 *  @see classifyBilled()
-	 */
-	function classer_facturee()
-	{
-		global $user;
-		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-		return $this->classifyBilled($user);
-	}
-
-	/**
 	 *	Set draft status
 	 *
 	 *	@param		User	$user		Object user that modify

@@ -93,11 +93,11 @@ if ($resql)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;				
-			
+			$shipment->ref_customer=$obj->ref_customer;
+
 			print '<tr class="oddeven"><td class="nowrap">';
 			print $shipment->getNomUrl(1);
 			print "</td>";
@@ -148,11 +148,11 @@ if ($resql)
 			$orderstatic->ref=$obj->ref;
 			$orderstatic->ref_customer=$obj->ref_customer;
 			$orderstatic->statut=$obj->fk_statut;
-			$orderstatic->facturee=0;
-			
+			$orderstatic->billed=0;
+
 			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;			
-			
+			$companystatic->id=$obj->socid;
+
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 			print $orderstatic->getNomUrl(1);
@@ -203,16 +203,16 @@ if ( $resql )
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			
+
 		    $orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
 			$orderstatic->ref_customer=$obj->ref_customer;
 			$orderstatic->statut=$obj->status;
-            $orderstatic->facturee=$obj->billed;
-			
+            $orderstatic->billed=$obj->billed;
+
             $companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;				
-			
+			$companystatic->id=$obj->socid;
+
 			print '<tr class="oddeven"><td>';
 			print $orderstatic->getNomUrl(1);
 			print '</td>';
@@ -262,11 +262,11 @@ if ($resql)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-		    
+
 			$shipment->id=$obj->rowid;
 			$shipment->ref=$obj->ref;
-			$shipment->ref_customer=$obj->ref_customer;				
-			
+			$shipment->ref_customer=$obj->ref_customer;
+
 			print '<tr class="oddeven"><td>';
 			print $shipment->getNomUrl(1);
 			print '</td>';

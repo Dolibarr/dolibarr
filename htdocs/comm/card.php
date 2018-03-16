@@ -751,7 +751,7 @@ if ($object->id > 0)
 			{
 				// Check if there are orders billable
 				$sql2 = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
-				$sql2.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
+				$sql2.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as billed';
 				$sql2.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 				$sql2.= ', '.MAIN_DB_PREFIX.'commande as c';
 				$sql2.= ' WHERE c.fk_soc = s.rowid';
@@ -779,14 +779,16 @@ if ($object->id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 
+				$commande_static->id = $objp->cid;
+				$commande_static->ref = $objp->ref;
+				$commande_static->ref_client=$objp->ref_client;
+				$commande_static->total_ht = $objp->total_ht;
+				$commande_static->total_tva = $objp->total_tva;
+				$commande_static->total_ttc = $objp->total_ttc;
+				$commande_static->billed = $objp->billed;
+
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
-                $commande_static->id = $objp->cid;
-                $commande_static->ref = $objp->ref;
-                $commande_static->ref_client=$objp->ref_client;
-                $commande_static->total_ht = $objp->total_ht;
-                $commande_static->total_tva = $objp->total_tva;
-                $commande_static->total_ttc = $objp->total_ttc;
                 print $commande_static->getNomUrl(1);
 				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';

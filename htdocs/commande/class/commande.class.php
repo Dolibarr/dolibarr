@@ -79,10 +79,9 @@ class Commande extends CommonOrder
 	 */
     public $statut;
 	/**
-	 * @deprecated
-	 * @see billed
+	 * Billed
+	 * @var int
 	 */
-    public $facturee;
     public $billed;		// billed or not
 
     public $brouillon;
@@ -545,7 +544,6 @@ class Commande extends CommonOrder
         {
         	$this->statut = self::STATUS_VALIDATED;
         	$this->billed = 0;
-        	$this->facturee = 0; // deprecated
 
             $this->db->commit();
             return 1;
@@ -1624,7 +1622,6 @@ class Commande extends CommonOrder
                 $this->remise_percent		= $obj->remise_percent;
                 $this->remise_absolue		= $obj->remise_absolue;
                 $this->source				= $obj->source;
-                $this->facturee				= $obj->billed;			// deprecated
                 $this->billed				= $obj->billed;
                 $this->note					= $obj->note_private;	// deprecated
                 $this->note_private			= $obj->note_private;
@@ -2701,7 +2698,6 @@ class Commande extends CommonOrder
 			if (! $error)
 			{
 				$this->oldcopy= clone $this;
-				$this->facturee=1; // deprecated
 				$this->billed=1;
 			}
 
@@ -2738,21 +2734,6 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * Classify the order as invoiced
-	 *
-	 * @return     int     <0 if ko, >0 if ok
-	 * @deprecated
-	 * @see classifyBilled()
-	 */
-	function classer_facturee()
-	{
-	    global $user;
-		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-		return $this->classifyBilled($user);
-	}
-
-	/**
 	 * Classify the order as not invoiced
 	 *
 	 * @return     int     <0 if ko, >0 if ok
@@ -2773,7 +2754,6 @@ class Commande extends CommonOrder
 	    	if (! $error)
 	    	{
 	    		$this->oldcopy= clone $this;
-	    		$this->facturee=1; // deprecated
 	    		$this->billed=1;
 	    	}
 
@@ -2784,7 +2764,6 @@ class Commande extends CommonOrder
 
 	        if (! $error)
 	        {
-	            $this->facturee=0; // deprecated
 	            $this->billed=0;
 
 	            $this->db->commit();
@@ -3319,7 +3298,6 @@ class Commande extends CommonOrder
      */
     function getLibStatut($mode)
     {
-        if ($this->facturee && empty($this->billed)) $this->billed=$this->facturee; // For backward compatibility
         return $this->LibStatut($this->statut, $this->billed, $mode);
     }
 
