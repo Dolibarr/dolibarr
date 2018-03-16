@@ -48,34 +48,6 @@ abstract class ActionsAdherentCardCommon
 
 
 	/**
-	 * 	Instantiation of DAO class. Init ->object
-	 *
-	 * 	@return	int		0
-	 *  @deprecated		Using getInstanceDao should not be used.
-	 */
-	private function getInstanceDao()
-	{
-		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-		if (! is_object($this->object))
-		{
-			$modelclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
-	        if (file_exists($modelclassfile))
-	        {
-	            // Include dataservice class (model)
-	            $ret = require_once $modelclassfile;
-	            if ($ret)
-	            {
-	            	// Instantiate dataservice class (model)
-	            	$modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
-	            	$this->object = new $modelclassname($this->db);
-	            }
-	        }
-		}
-		return 0;
-	}
-
-	/**
      *  Get object
 	 *
      *  @param	int		$id		Object id

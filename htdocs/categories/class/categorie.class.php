@@ -653,18 +653,6 @@ class Categorie extends CommonObject
 
 		if ($this->id == -1) return -2;
 
-		// For backward compatibility
-		if ($type == 'societe')
-		{
-			$type = 'customer';
-			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
-		}
-		elseif ($type == 'fournisseur')
-		{
-			$type = 'supplier';
-			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
-		}
-
         $this->db->begin();
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];

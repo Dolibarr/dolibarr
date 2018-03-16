@@ -44,34 +44,6 @@ abstract class ActionsCardCommon
 
 
 	/**
-	 * 	Instantiation of DAO class
-	 *
-	 * 	@return	int		0
-	 *  @deprecated		Using getInstanceDao should not be used.
-	 */
-	private function getInstanceDao()
-	{
-		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-		if (! is_object($this->object))
-		{
-			$modelclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/dao_'.$this->targetmodule.'_'.$this->canvas.'.class.php');
-	        if (file_exists($modelclassfile))
-	        {
-	            // Include dataservice class (model)
-	            $ret = require_once $modelclassfile;
-	            if ($ret)
-	            {
-	            	// Instantiate dataservice class (model)
-	            	$modelclassname = 'Dao'.ucfirst($this->targetmodule).ucfirst($this->canvas);
-	            	$this->object = new $modelclassname($this->db);
-	            }
-	        }
-		}
-    	return 0;
-	}
-
-	/**
      *  Get object from id or ref and save it into this->object
 	 *
      *  @param		int		$id			Object id

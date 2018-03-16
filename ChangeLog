@@ -15,7 +15,8 @@ Following changes may create regressions for some external modules, but were nec
 * Remove triggers *_CLONE. The trigger CREATE with context 'createfromclone' is already called so this is 
   a duplicated feature. Cloning is not a business event, the business event is CREATE, so no trigger required.
 * PHP 5.3 is no more supported. Minimum PHP is now 5.4+
-* Remove the old deprecated code of doActions in canvas. The doActions of hooks are already available and are better.
+* Remove the old deprecated code of doActions and getInstanceDao in canvas. The doActions of standard hooks are
+  already available and are better.
 
 
 
