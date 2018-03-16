@@ -172,39 +172,56 @@ class InterfaceStripe
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+			$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
+			$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
 
-			$thirdparty=new Societe($this->db);
-			$thirdparty->fetch($object->fk_soc);
+			if ($stripecu) {
+				// Get customer (required to get a card)
+				if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+					$customer = \Stripe\Customer::retrieve($stripecu);
+				} else {
+					$customer = \Stripe\Customer::retrieve($stripecu, array("stripe_account" => $stripeacc));
+				}
 
-			if ($object->client != 0) {
-				$card = $stripe->cardStripe($thirdparty, $object, $stripeacc, $servicestatus);
-				if (card) {
-					/*if (! empty($object->email))
-					{
-						$customer->email = $object->email;
+				if ($customer)
+				{
+					$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
+					if ($card) {
+						$card->metadata=array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']));
+						try {
+							$card->save($dataforcard);
+						}
+						catch(Exception $e)
+						{
+							$this->error = $e->getMessages();
+						}
 					}
-					$customer->description = $object->name;
-					// TODO More data
-					//$customer->vat = $object->tva_intra
-
-					card->save();
-					*/
 				}
 			}
 		}
 		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+			$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
+			$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
 
-			$thirdparty=new Societe($this->db);
-			$thirdparty->fetch($object->fk_soc);
+			if ($stripecu)
+			{
+				// Get customer (required to get a card)
+				if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+					$customer = \Stripe\Customer::retrieve($stripecu);
+				} else {
+					$customer = \Stripe\Customer::retrieve($stripecu, array("stripe_account" => $stripeacc));
+				}
 
-			$card = $stripe->cardStripe($thirdparty, $object, $stripeacc, $servicestatus);
-			if ($card) {
-				if (method_exists($card, 'detach')) $card->detach();
-				else $card->delete();
+				if ($customer)
+				{
+					$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
+					if ($card) {
+						if (method_exists($card, 'detach')) $card->detach();
+						else $card->delete();
+					}
+				}
 			}
 		}
 

@@ -210,7 +210,7 @@ if (empty($reshook))
 			$companypaymentmode->exp_date_month  = GETPOST('exp_date_month','int');
 			$companypaymentmode->exp_date_year   = GETPOST('exp_date_year','int');
 			$companypaymentmode->cvn             = GETPOST('cvn','alpha');
-			$companypaymentmode->country_code    = $mysoc->country_code;
+			$companypaymentmode->country_code    = $object->country_code;
 
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref','alpha');
 
