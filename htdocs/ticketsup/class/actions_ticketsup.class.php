@@ -809,12 +809,12 @@ class ActionsTicketsup
 
                 return 1;
             } else {
-                return -1;
                 setEventMessages($this->dao->error, $this->dao->errors, 'errors');
+                return -1;
             }
         } else {
-            return -1;
             setEventMessages($this->error, $this->errors, 'errors');
+            return -1;
         }
     }
 
@@ -1485,7 +1485,7 @@ class ActionsTicketsup
 
         // If status is new, don't show link which allow mark ticket as read
         // Specific method exists to mark a ticket as read
-        if ($this->dao->fk_statut === '0') {
+        if ($this->dao->fk_statut == '0') {
             $exclude_status = array_merge($exclude_status, array(1));
         }
 

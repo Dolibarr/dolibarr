@@ -28,8 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/main.inc.php';
  */
 class DictionaryTicketsupCategories extends DolibarrApi
 {
-    private $translations = null;
-
     /**
      * Constructor
      */
@@ -96,5 +94,5 @@ class DictionaryTicketsupCategories extends DolibarrApi
         return $list;
     }
 
-  
+
 }
