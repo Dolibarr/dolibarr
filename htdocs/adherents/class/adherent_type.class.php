@@ -46,12 +46,6 @@ class AdherentType extends CommonObject
 	/** @var string Label */
 	public $label;
 	/**
-	 * @var bool
-	 * @deprecated Use subscription
-	 * @see subscription
-	 */
-	public $cotisation;
-	/**
 	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
 	 */

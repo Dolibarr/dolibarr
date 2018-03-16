@@ -275,8 +275,6 @@ class MembersTypes extends DolibarrApi
 
         $object = parent::_cleanObjectDatas($object);
 
-        unset($object->cotisation);
-
         unset($object->array_options);
         unset($object->linkedObjectsIds);
         unset($object->context);
