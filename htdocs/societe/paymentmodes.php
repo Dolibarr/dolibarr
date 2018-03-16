@@ -69,9 +69,6 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('thirdpartybancard','globalcard'));
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartybancard'));
-
 if (! empty($conf->stripe->enabled))
 {
 	$service = 'StripeTest';
@@ -368,8 +365,8 @@ if (empty($reshook))
 			$companypaymentmode->datec           = dol_now();
 			$companypaymentmode->default_rib     = 0;
 			$companypaymentmode->type            = 'card';
-			$companypaymentmode->country_code    = $mysoc->country_code;
-			$companypaymentmode->status          = 1;
+			$companypaymentmode->country_code    = $object->country_code;
+			$companypaymentmode->status          = $servicestatus;
 
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref','alpha');
 

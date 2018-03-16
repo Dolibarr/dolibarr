@@ -123,46 +123,88 @@ class InterfaceStripe
 		$stripe = new Stripe($db);
 		if (empty($conf->stripe->enabled)) return 0;
 
-		if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-		{
-			$service = 'StripeTest';
-		}
-		else
+		$service = 'StripeTest';
+		$servicestatus = 0;
+		if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha'))
 		{
 			$service = 'StripeLive';
+			$servicestatus = 1;
 		}
 
+		// If customer is linked to Strip, we update/delete Stripe too
 		if ($action == 'COMPANY_MODIFY') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-			if ($stripe->getStripeAccount($service) && $object->client != 0) {
-				$cu = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
-				if ($cu) {
-					if ($conf->entity == '1') {
-						$customer = \Stripe\Customer::retrieve("$cu->id");
-					} else {
-						$customer = \Stripe\Customer::retrieve("$cu->id", array(
-						"stripe_account" => $stripe->getStripeAccount($service)
-						));
+
+			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+
+			if ($object->client != 0) {
+				$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+				if ($customer) {
+					if (! empty($object->email))
+					{
+						$customer->email = $object->email;
 					}
-					if (! empty($object->email)) {
-						$customer->email = "$object->email";
-					}
-					$customer->description = "$object->name";
+					$customer->description = $object->name;
+					// TODO More data
+					//$customer->vat = $object->tva_intra
+
 					$customer->save();
 				}
 			}
-		} elseif ($action == 'COMPANY_DELETE') {
+		}
+		if ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-			$cu = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
-			if ($cu) {
-				if ($conf->entity == 1) {
-					$customer = \Stripe\Customer::retrieve("$cu->id");
-				} else {
-					$customer = \Stripe\Customer::retrieve("$cu->id", array(
-					"stripe_account" => $stripe->getStripeAccount($service)
-					));
-				}
+
+			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+
+			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+			if ($customer) {
 				$customer->delete();
+			}
+		}
+
+		// If payment mode is linked to Strip, we update/delete Stripe too
+		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
+
+			// For creation of credit card, we do not create in Stripe automatically
+
+		}
+		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
+			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+
+			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+
+			$thirdparty=new Societe($this->db);
+			$thirdparty->fetch($object->fk_soc);
+
+			if ($object->client != 0) {
+				$card = $stripe->cardStripe($thirdparty, $object, $stripeacc, $servicestatus);
+				if (card) {
+					/*if (! empty($object->email))
+					{
+						$customer->email = $object->email;
+					}
+					$customer->description = $object->name;
+					// TODO More data
+					//$customer->vat = $object->tva_intra
+
+					card->save();
+					*/
+				}
+			}
+		}
+		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card') {
+			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+
+			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
+
+			$thirdparty=new Societe($this->db);
+			$thirdparty->fetch($object->fk_soc);
+
+			$card = $stripe->cardStripe($thirdparty, $object, $stripeacc, $servicestatus);
+			if ($card) {
+				if (method_exists($card, 'detach')) $card->detach();
+				else $card->delete();
 			}
 		}
 

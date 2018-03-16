@@ -55,7 +55,7 @@ class Stripe extends CommonObject
 	 * Return main company OAuth Connect stripe account
 	 *
 	 * @param 	string	$mode		'StripeTest' or 'StripeLive'
-	 * @return 	string				Stripe account 'acc_....'
+	 * @return 	string				Stripe account 'acc_....' or '' if no OAuth token found
 	 */
 	public function getStripeAccount($mode='StripeTest')
 	{
