@@ -513,7 +513,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
         $sql.= " VALUES (";
         $sql.= $db->encrypt($name,1);
         $sql.= ", ".$db->encrypt($value,1);
-        $sql.= ",'".$type."',".$visible.",'".$db->escape($note)."',".$entity.")";
+        $sql.= ",'".$db->escape($type)."',".$visible.",'".$db->escape($note)."',".$entity.")";
 
         //print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
         //print "xx".$db->escape($value);
