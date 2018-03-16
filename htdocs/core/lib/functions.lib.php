@@ -1318,6 +1318,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE))
     	{
 	       	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+    	} else {
+    		$morehtmlstatus.='<span class="statusrefactiv">'.$object->getLibStatut(5,0).'</span>';
     	}
 	}
 	elseif ($object->element == 'product')
