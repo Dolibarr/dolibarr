@@ -14,7 +14,8 @@ Following changes may create regressions for some external modules, but were nec
   CONTRACT_SERVICE_CLOSE into LINECONTRACT_CLOSE
 * Remove triggers *_CLONE. The trigger CREATE with context 'createfromclone' is already called so this is 
   a duplicated feature. Cloning is not a business event, the business event is CREATE, so no trigger required.
- 
+* PHP 5.3 is no more supported. Minimum PHP is now 5.4+
+
 
 ***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:
