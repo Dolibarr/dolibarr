@@ -61,8 +61,8 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT tokenstring";
-		$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
+		$sql = "SELECT key_account, type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."stripeconnect ";
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND service = '".$mode."'";
 
@@ -73,13 +73,10 @@ class Stripe extends CommonObject
 			if ($this->db->num_rows($result))
 			{
 				$obj = $this->db->fetch_object($result);
-    			$tokenstring=$obj->tokenstring;
-
-    			$tmparray = dol_json_decode($tokenstring);
-    			$key = $tmparray->stripe_user_id;
+    			$key = $obj->key_account;
     		}
     		else {
-    			$tokenstring='';
+    			$key='';
     		}
     	}
     	else {
@@ -89,7 +86,7 @@ class Stripe extends CommonObject
     	dol_syslog("No dedicated Stipe Connect account available for entity".$conf->entity);
 		return $key;
 	}
-
+	
 	/**
 	 * getStripeCustomerAccount
 	 *
