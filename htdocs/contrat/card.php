@@ -1640,13 +1640,14 @@ else
 					print '<td align="right" class="nowrap">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
 					{
-						print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+						print '<!-- link to move service line into another contract -->';
+						print '<a class="reposition" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
 						print '</a>';
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
