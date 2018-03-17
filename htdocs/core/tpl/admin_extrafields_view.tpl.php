@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		if (! empty($conf->multicompany->enabled))  {
 			print '<td align="center">'.($extrafields->attributes[$elementtype]['entityid'][$key]==0?$langs->trans("All"):$extrafields->attributes[$elementtype]['entitylabel'][$key]).'</td>';
 		}
-		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
+		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
 		print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
 		print "</tr>";
 	}
