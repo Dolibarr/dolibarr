@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_contacts.php
- *	\ingroup    societes
+ *	\ingroup    contacts
  *	\brief      Module to show box of contacts
  */
 
@@ -57,7 +58,7 @@ class box_contacts extends ModeleBoxes
 
 	    $this->db=$db;
 
-	    $this->hidden=! ($user->rights->societe->lire);
+	    $this->hidden=! ($user->rights->societe->lire && $user->rights->societe->contact->lire);
 	}
 
 	/**
@@ -75,12 +76,12 @@ class box_contacts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts",$max));
 
-		if ($user->rights->societe->lire)
+		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
 		{
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile";
 			$sql.= ", s.nom as socname, s.name_alias";
-            $sql.= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+			$sql.= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -91,98 +92,97 @@ class box_contacts extends ModeleBoxes
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-            if ($result) {
+			if ($result) {
 				$num = $db->num_rows($result);
 
 				$contactstatic=new Contact($db);
 				$societestatic=new Societe($db);
 
 				$line = 0;
-                while ($line < $num)
-                {
+				while ($line < $num)
+				{
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
 					$datem=$db->jdate($objp->tms);
 
-                    $contactstatic->id=$objp->id;
+					$contactstatic->id=$objp->id;
 					$contactstatic->lastname=$objp->lastname;
-                    $contactstatic->firstname=$objp->firstname;
-                    $contactstatic->civility_id=$objp->civility_id;
+					$contactstatic->firstname=$objp->firstname;
+					$contactstatic->civility_id=$objp->civility_id;
 					$contactstatic->statut=$objp->status;
-                    $contactstatic->phone_pro = $objp->phone;
-                    $contactstatic->phone_perso = $objp->phone_perso;
-                    $contactstatic->phone_mobile = $objp->phone_mobile;
-                    $contactstatic->address = $objp->address;
-                    $contactstatic->zip = $objp->zip;
-                    $contactstatic->town = $objp->town;
+					$contactstatic->phone_pro = $objp->phone;
+					$contactstatic->phone_perso = $objp->phone_perso;
+					$contactstatic->phone_mobile = $objp->phone_mobile;
+					$contactstatic->address = $objp->address;
+					$contactstatic->zip = $objp->zip;
+					$contactstatic->town = $objp->town;
 
 					$societestatic->id = $objp->fk_soc;
-                    $societestatic->name = $objp->socname;
-                    $societestatic->name_alias = $objp->name_alias;
-                    $societestatic->code_client = $objp->code_client;
-                    $societestatic->code_fournisseur = $objp->code_fournisseur;
-                    $societestatic->client = $objp->client;
-                    $societestatic->fournisseur = $objp->fournisseur;
+					$societestatic->name = $objp->socname;
+					$societestatic->name_alias = $objp->name_alias;
+					$societestatic->code_client = $objp->code_client;
+					$societestatic->code_fournisseur = $objp->code_fournisseur;
+					$societestatic->client = $objp->client;
+					$societestatic->fournisseur = $objp->fournisseur;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $contactstatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => $contactstatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datem, "day"),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($datem, "day"),
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="nowrap" width="18"',
-                        'text' => $contactstatic->getLibStatut(3),
-                        'asis'=>1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'align="right" class="nowrap" width="18"',
+						'text' => $contactstatic->getLibStatut(3),
+						'asis'=>1,
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num==0)
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
-                        'text'=>$langs->trans("NoRecordedContacts"),
-                    );
+				if ($num==0)
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'align="center"',
+						'text'=>$langs->trans("NoRecordedContacts"),
+					);
 
-                $db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
-
-    }
+				$db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'align="left" class="nohover opacitymedium"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	array	$head		Array with properties of box title
+	 *	@param  array	$contents	Array with properties of box lines
+	 *	@param	int	$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
-    {
+	function showBox($head = null, $contents = null, $nooutput=0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
