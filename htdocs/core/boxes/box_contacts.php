@@ -37,7 +37,7 @@ class box_contacts extends ModeleBoxes
 	var $boxcode="lastcontacts";
 	var $boximg="object_contact";
 	var $boxlabel="BoxLastContacts";
-	var $depends = array("societe","contact");
+	var $depends = array("societe");
 
 	var $db;
 	var $param;
@@ -58,7 +58,7 @@ class box_contacts extends ModeleBoxes
 
 	    $this->db=$db;
 
-	    $this->hidden=! ($user->rights->societe->lire && $user->rights->contact->lire);
+	    $this->hidden=! ($user->rights->societe->lire && $user->rights->societe->contact->lire);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class box_contacts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts",$max));
 
-		if ($user->rights->societe->lire && $user->rights->contact->lire)
+		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
 		{
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile";
