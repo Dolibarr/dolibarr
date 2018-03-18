@@ -1617,6 +1617,33 @@ function phpinfo_array()
  *
  *  @return	array   	    		    head array with tabs
  */
+function company_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/company.php";
+	$head[$h][1] = $langs->trans("Company");
+	$head[$h][2] = 'company';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
+	$head[$h][1] = $langs->trans("Accountant");
+	$head[$h][2] = 'accountant';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'company_admin','remove');
+
+	return $head;
+}
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	    		    head array with tabs
+ */
 function email_admin_prepare_head()
 {
 	global $langs, $conf, $user;
