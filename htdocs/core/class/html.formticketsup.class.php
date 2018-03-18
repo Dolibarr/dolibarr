@@ -178,7 +178,7 @@ class FormTicketsup
             // altairis: force company and contact id for external user
             if (empty($user->socid)) {
                 // Company
-                print '<tr><td class="titlefield">' . $langs->trans("Thirdparty") . '</td><td>';
+                print '<tr><td class="titlefield">' . $langs->trans("ThirdParty") . '</td><td>';
                 $events = array();
                 $events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
                 print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events);
@@ -297,8 +297,8 @@ class FormTicketsup
         print '</td></tr>';
 
         // Notify thirdparty at creation
-        print '<tr><td><label for="not_notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
-        print '<input type="checkbox" id="not_notify_tiers_at_create" name="not_notify_tiers_at_create"'.($this->withnotnotifytiersatcreate?'':' checked="checked"').'>';
+        print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
+        print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
         print '</td></tr>';
 
         // TITLE

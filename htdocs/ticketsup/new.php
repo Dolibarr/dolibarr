@@ -38,7 +38,7 @@ $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 $contactid = GETPOST('contactid', 'int');
 $msg_id = GETPOST('msg_id', 'int');
-$notNotifyTiers = GETPOST("not_notify_tiers_at_create", 'alpha');
+$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
 $action = GETPOST('action', 'alpha', 3);
 
@@ -78,7 +78,7 @@ if ($action == 'create_ticket') {
     $formticket->withfromsocid = $socid ? $socid : $user->societe_id;
     $formticket->withfromcontactid = $contactid ? $contactid : '';
     $formticket->withtitletopic = 1;
-    $formticket->withnotnotifytiersatcreate = $notnotifytiersatcreate?1:0;
+    $formticket->withnotifytiersatcreate = ($notifyTiers?1:0);
     $formticket->withusercreate = 1;
     $formticket->withref = 1;
     $formticket->fk_user_create = $user->id;

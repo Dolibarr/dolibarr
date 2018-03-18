@@ -152,15 +152,15 @@ class ActionsTicketsup
                 $object->track_id = generate_random_id(16);
 
                 $object->ref = GETPOST("ref", 'alpha');
-                $object->fk_soc = GETPOST("socid", 'int');
+                $object->fk_soc = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
                 $object->subject = GETPOST("subject", 'alpha');
                 $object->message = GETPOST("message");
 
                 $object->type_code = GETPOST("type_code", 'alpha');
                 $object->category_code = GETPOST("category_code", 'alpha');
                 $object->severity_code = GETPOST("severity_code", 'alpha');
-                $notNotifyTiers = GETPOST("not_notify_tiers_at_create", 'alpha');
-                $object->notify_tiers_at_create = empty($notNotifyTiers) ? 1 : 0;
+                $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
+                $object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
                 $extrafields = new ExtraFields($this->db);
                 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -174,7 +174,8 @@ class ActionsTicketsup
                     $action = 'create_ticket';
                 }
 
-                if (!$error && $id > 0) {
+                if (!$error && $id > 0)
+                {
                     $this->db->commit();
 
                     // File transfer
@@ -189,7 +190,7 @@ class ActionsTicketsup
                     }
 
                     // altairis: link ticket to project
-                    if (GETPOST('projectid')) {
+                    if (GETPOST('projectid') > 0) {
                         $object->setProject(GETPOST('projectid'));
                     }
 
@@ -216,7 +217,8 @@ class ActionsTicketsup
                     }
 
                     // Auto create fiche intervention
-                    if ($conf->global->TICKETS_AUTO_CREATE_FICHINTER_CREATE) {
+                    if ($conf->global->TICKETS_AUTO_CREATE_FICHINTER_CREATE)
+                    {
                         $fichinter = new Fichinter($this->db);
                         $fichinter->socid = $object->fk_soc;
                         $fichinter->fk_project = GETPOST('projectid', 'int');
@@ -623,6 +625,8 @@ class ActionsTicketsup
         $contactstatic = new Contact($this->db);
 
         $error = 0;
+
+        $object = new Ticketsup($this->db);
         $ret = $object->fetch('', GETPOST('track_id'));
         $object->socid = $object->fk_soc;
         $object->fetch_thirdparty();

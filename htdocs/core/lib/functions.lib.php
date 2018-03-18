@@ -1340,6 +1340,25 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			//}
 		}
 	}
+	elseif ($object->element == 'ticketsup')
+	{
+		$width=80; $cssclass='photoref';
+		$showimage=$object->is_photo_available($conf->ticketsup->dir_output.'/'.$object->track_id);
+		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
+		if ($conf->browser->phone) $maxvisiblephotos=1;
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->ticketsup->dir_output,'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		else
+		{
+			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {
+				$nophoto='';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			}
+			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			$nophoto='/public/theme/common/nophoto.png';
+			$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			//}
+		}
+	}
 	else
 	{
 		if ($showimage)
@@ -3063,7 +3082,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow')))
+		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow')))
 		{
 			$fakey = $pictowithoutext; $facolor=''; $fasize='';
 			if ($pictowithoutext == 'switch_off')     { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
@@ -3072,6 +3091,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'on')         { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
 			elseif ($pictowithoutext == 'delete')     { $fakey = 'fa-trash';      $facolor='#444'; }
 			elseif ($pictowithoutext == 'edit')       { $fakey = 'fa-pencil';     $facolor='#444'; }
+			elseif ($pictowithoutext == 'printer')    { $fakey = 'fa-print';      $fasize='1.2em'; $facolor='#444'; }
 			elseif ($pictowithoutext == 'resize')     { $fakey = 'fa-crop';       $facolor='#444'; }
 			elseif ($pictowithoutext == 'uparrow')    { $fakey = 'fa-mail-forward';       $facolor='#555'; }
 			elseif ($pictowithoutext == 'unlink')     { $fakey = 'fa-chain-broken';       $facolor='#555'; }

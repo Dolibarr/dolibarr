@@ -203,6 +203,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         } elseif ($socid > 0) {
             $object->fetch_thirdparty();
             $head = societe_prepare_head($object->thirdparty);
+
             dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
             dol_banner_tab($object->thirdparty, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
             dol_fiche_end();
@@ -218,22 +219,26 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 
         dol_fiche_head($head, 'tabTicketsup', $langs->trans("Ticket"), -1, 'ticketsup');
 
-        $object->label = $object->ref;
+        $morehtmlref ='<div class="refidno">';
+        $morehtmlref.= $object->subject;
         // Author
         if ($object->fk_user_create > 0) {
-            $object->label .= ' - ' . $langs->trans("CreatedBy") . '  ';
+        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  ';
 
             $langs->load("users");
             $fuser = new User($db);
             $fuser->fetch($object->fk_user_create);
-            $object->label .= $fuser->getNomUrl(0);
+            $morehtmlref .= $fuser->getNomUrl(0);
         }
         if (!empty($object->origin_email)) {
-            $object->label .= ' - ' . $langs->trans("CreatedBy") . ' ';
-            $object->label .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' ';
+        	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
         }
+        $morehtmlref.='</div>';
+
         $linkback = '<a href="' . dol_buildpath('/ticketsup/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
-        $object->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
+
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref);
 
         print '<div class="fichecenter"><div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
