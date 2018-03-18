@@ -80,7 +80,7 @@ if ($action == 'add_payment')
         setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("AccountToDebit")), null, 'errors');
         $error++;
     }
-    
+
 	if (! $error)
 	{
 		$paymentid = 0;
@@ -190,19 +190,19 @@ if ($action == 'create' || empty($action))
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
-	
+
     dol_fiche_head(null, '0', '', -1);
 
     $linkback = '';
     // $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
-    
+
     dol_banner_tab($expensereport, 'ref', $linkback, 1, 'ref', 'ref', '');
-    
+
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border centpercent">'."\n";
-    
+
 	print '<tr><td class="titlefield">'.$langs->trans("Period").'</td><td>'.get_date_range($expensereport->date_debut,$expensereport->date_fin,"",$langs,0).'</td></tr>';
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($expensereport->total_ttc,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
@@ -221,13 +221,13 @@ if ($action == 'create' || empty($action))
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
     print '</table>';
-    
+
     print '<br>';
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border centpercent">'."\n";
-	
+
     print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
@@ -248,7 +248,7 @@ if ($action == 'create' || empty($action))
     	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$expensereport->accountid, "accountid", 0, '',1);  // Show open bank account list
     	print '</td></tr>';
 	}
-	
+
 	// Number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -263,7 +263,7 @@ if ($action == 'create' || empty($action))
 	print '</table>';
 
 	print '</div>';
-	
+
     dol_fiche_end();
 
 	// List of expenses ereport not already paid completely
@@ -304,7 +304,7 @@ if ($action == 'create' || empty($action))
 		print "</td>";
 
 		print "</tr>\n";
-		
+
 		$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
 		$totalrecu+=$objp->am;

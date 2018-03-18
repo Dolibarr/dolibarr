@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Presupuestos de proveedor
 supplier_proposalDESC=Gestionar presupuestos de proveedor
-SupplierProposalNew=Nueva petición
+SupplierProposalNew=Nuevo presupuesto
 CommRequest=Presupuesto
 CommRequests=Presupuestos
 SearchRequest=Buscar un presupuesto
@@ -47,7 +47,7 @@ CommercialAsk=Presupuesto
 DefaultModelSupplierProposalCreate=Modelo por defecto
 DefaultModelSupplierProposalToBill=Modelo por defecto al cerrar un presupuesto (aceptado)
 DefaultModelSupplierProposalClosed=Modelo por defecto al cerrar un presupuesto (rechazado)
-ListOfSupplierProposal=Listado de presupuestos de proveedores
+ListOfSupplierProposals=Listado de presupuestos de proveedores
 ListSupplierProposalsAssociatedProject=Listado de presupuestos de proveedores asociados al proyecto
 SupplierProposalsToClose=Presupuestos de proveedor a cerrar
 SupplierProposalsToProcess=Presupuestos de proveedor a procesar

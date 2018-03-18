@@ -1,5 +1,8 @@
 <?php
-/* Copyright (C) 2016		ATM Consulting			<support@atm-consulting.fr>
+/* Copyright (C) 2007-2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,698 +19,457 @@
  */
 
 /**
- *	\file       htdocs/inventory/class/product.class.php
- *	\ingroup    product
- *	\brief      File of class to manage predefined products stock
+ * \file        product/inventory/class/inventory.class.php
+ * \ingroup     inventory
+ * \brief       This file is a CRUD class file for Inventory (Create/Read/Update/Delete)
  */
- 
-require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- *	Class to manage inventories
+ * Class for Inventory
  */
-class Inventory extends CoreObject
+class Inventory extends CommonObject
 {
-	public $element='inventory';
-	public $table_element='inventory';
-	public $fk_element='fk_inventory';
-	protected $childtables=array('inventorydet');    // To test if we can delete object
-	protected $isnolinkedbythird = 1;     // No field fk_soc
-	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	
 	/**
-	 * Warehouse Id
-	 * @var int
+	 * @var string ID to identify managed object
 	 */
-	public $fk_warehouse;
+	public $element = 'inventory';
 	/**
-	 * Entity Id
-	 * @var int
+	 * @var string Name of table without prefix where object is stored
 	 */
-	public $entity;
-	
-	/**
-	 * Status
-	 * @var int
-	 */
-	public $status;
-	/**
-	 * Inventory Date
-	 * @var date
-	 */
-	public $date_inventory;
-	/**
-	 * Inventory Title
-	 * @var string
-	 */
-	public $title;
+	public $table_element = 'inventory';
 
-    /**
-     * Attribute object linked with database
-     * @var array
-     */
-	protected $fields=array(
-		'fk_warehouse'=>array('type'=>'integer','index'=>true)
-	    ,'ref'=>array('type'=>'string','index'=>true)
-		,'entity'=>array('type'=>'integer','index'=>true)
-		,'status'=>array('type'=>'integer','index'=>true)
-		,'date_inventory'=>array('type'=>'date')
-		,'title'=>array('type'=>'string')
+	/**
+	 * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 */
+	public $ismultientitymanaged = 1;
+	/**
+	 * @var string String with name of icon for inventory
+	 */
+	public $picto = 'stock';
+
+
+	/**
+	 *  'type' if the field format.
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'position' is the sort order of field.
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'help' is a string visible as a tooltip on field
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+	 *  'showoncombobox' if field must be shown into the label of combobox
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property
+	 */
+	public $fields=array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
+		'ref' => array('type'=>'varchar(64)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Reference of object', 'css'=>'maxwidth200'),
+		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
+		'title' => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300'),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'index'=>1, 'help'=>'LinkToThirparty'),
+		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>1,),
+
+		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>502,),
+		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512,),
+
+		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'Todo', 1=>'Done', -1=>'Cancel')),
 	);
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
-	public function __construct(DoliDB &$db) 
+	public $rowid;
+	public $ref;
+	public $entity;
+	public $fk_warehouse;
+	public $date_inventory;
+	public $title;
+	public $status;
+	public $date_creation;
+	public $date_validation;
+	public $tms;
+	public $fk_user_creat;
+	public $fk_user_modif;
+	public $fk_user_valid;
+	public $import_key;
+	// END MODULEBUILDER PROPERTIES
+
+
+
+	// If this object has a subtable with lines
+
+	/**
+	 * @var int    Name of subtable line
+	 */
+	//public $table_element_line = 'inventorydet';
+	/**
+	 * @var int    Field with ID of parent key if this field has a parent
+	 */
+	//public $fk_element = 'fk_inventory';
+	/**
+	 * @var int    Name of subtable class that manage subtable lines
+	 */
+	//public $class_element_line = 'Inventoryline';
+	/**
+	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 */
+	//protected $childtables=array('inventorydet');
+	/**
+	 * @var InventoryLine[]     Array of subtable lines
+	 */
+	//public $lines = array();
+
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
 	{
 		global $conf;
 
-        parent::__construct($db);
-		parent::init();
-		
-       	$this->status = 0;
-		$this->entity = $conf->entity;
-		$this->errors = array();
-		$this->amount = 0;
+		$this->db = $db;
+
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
+		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
 	}
 
-    /**
-     * Function to sort children object
-     */
-	public function sortDet()
+
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false)
 	{
-		if(!empty($this->Inventorydet))	usort($this->Inventorydet, array('Inventory', 'customSort'));
+		return $this->createCommon($user, $notrigger);
 	}
 
-    /**
-     *	Get object and children from database
-     *
-     *	@param      int			$id       		Id of object to load
-     * 	@param		bool		$loadChild		used to load children from database
-     *	@return     int         				>0 if OK, <0 if KO, 0 if not found
-     */
-	public function fetch($id, $loadChild = true)
+	/**
+	 * Clone and object into another one
+	 *
+	 * @param  	User 	$user      	User that creates
+	 * @param  	int 	$fromid     Id of object to clone
+	 * @return 	mixed 				New object created, <0 if KO
+	 */
+	public function createFromClone(User $user, $fromid)
 	{
-        if(!$loadChild) $this->withChild = false;
-        
-		$res = parent::fetch($id, $loadChild);
-
-		if ($res > 0)
-		{
-			$this->sortDet();
-			$this->amount = 0;
-			if(!empty($this->Inventorydet ))
-			{
-				foreach($this->Inventorydet as &$det)
-				{
-					$this->amount += $det->qty_view * $det->pmp;
-				}
-			}
-		}
-				
-		return $res;
-	}
-
-    /**
-     * Custom function call by usort
-     *
-     * @param   Inventorydet    $objA   first Inventorydet object
-     * @param   Inventorydet    $objB   second Inventorydet object
-     * @return                          int
-     */
-	private function customSort(&$objA, &$objB)
-	{
-		$r = strcmp(strtoupper(trim($objA->product->ref)), strtoupper(trim($objB->product->ref)));
-		
-		if ($r < 0) $r = -1;
-		elseif ($r > 0) $r = 1;
-		else $r = 0;
-		
-		return $r;
-	}
-
-    /**
-     * @param   User    $user   user object
-     * @return                  int
-     */
-    public function changePMP(User &$user)
-    {
-        $error = 0;
-        $this->db->begin();
-
-		if(!empty($this->Inventorydet))
-		{
-			foreach ($this->Inventorydet as $k => &$Inventorydet)
-			{
-				if($Inventorydet->new_pmp>0)
-				{
-					$Inventorydet->pmp = $Inventorydet->new_pmp; 
-					$Inventorydet->new_pmp = 0;
-				
-					$res = $this->db->query('UPDATE '.MAIN_DB_PREFIX.'product as p SET pmp = '.$Inventorydet->pmp.' WHERE rowid = '.$Inventorydet->fk_product );
-					if (!$res)
-                    {
-                        $error++;
-                        $this->error = $this->db->lasterror();
-                        $this->errors[] = $this->db->lasterror();
-                    }
-				}
-			}
-		}
-		
-		$res = parent::update($user);
-        if (!$res)
-        {
-            $error++;
-            $this->error = $this->db->lasterror();
-            $this->errors[] = $this->db->lasterror();
-        }
-
-
-        if (!$error)
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->db->rollback();
-            return -1;
-        }
-	}
-
-    /**
-     * Function to update object or create or delete if needed
-     *
-     * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
-     */
-	public function update(User &$user)
-	{
+		global $hookmanager, $langs;
 		$error = 0;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$object = new self($this->db);
+
 		$this->db->begin();
 
-        // if we valid the inventory we save the stock at the same time
-		if ($this->status)
-		{
-		    $res = $this->regulate();
-            if ($res < 0)
+		// Load source object
+		$object->fetchCommon($fromid);
+		// Reset some properties
+		unset($object->id);
+		unset($object->fk_user_creat);
+		unset($object->import_key);
+
+		// Clear fields
+		$object->ref = "copy_of_".$object->ref;
+		$object->title = $langs->trans("CopyOf")." ".$object->title;
+		// ...
+
+		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->createCommon($user);
+		if ($result < 0) {
+			$error++;
+			$this->error = $object->error;
+			$this->errors = $object->errors;
+		}
+
+		// End
+		if (!$error) {
+			$this->db->commit();
+			return $object;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param int    $id   Id object
+	 * @param string $ref  Ref
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null)
+	{
+		$result = $this->fetchCommon($id, $ref);
+		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		return $result;
+	}
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	/*public function fetchLines()
+	 {
+	 $this->lines=array();
+
+	 // Load lines with object MyObjectLine
+
+	 return count($this->lines)?1:0;
+	 }*/
+
+	/**
+	 * Update object into database
+	 *
+	 * @param  User $user      User that modifies
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = false)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete object in database
+	 *
+	 * @param User $user       User that deletes
+	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = false)
+	{
+		return $this->deleteCommon($user, $notrigger);
+	}
+
+	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option						On what the link point to
+     *  @param	int  	$notooltip					1=Disable tooltip
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	{
+		global $db, $conf, $langs;
+        global $dolibarr_main_authentication, $dolibarr_main_demo;
+        global $menumanager;
+
+        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+
+        $result = '';
+        $companylink = '';
+
+        $label = '<u>' . $langs->trans("Inventory") . '</u>';
+        $label.= '<br>';
+        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+
+        $url = dol_buildpath('/product/inventory/card.php',1).'?id='.$this->id;
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $error++;
-                $this->error = $this->db->lasterror();
-                $this->errors[] = $this->db->lasterror();
+                $label=$langs->trans("ShowInventory");
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-		}
+            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
-        $res = parent::update($user);
-        if (!$res)
-        {
-            $error++;
-            $this->error = $this->db->lasterror();
-            $this->errors[] = $this->db->lasterror();
-        }
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
 
-		if (!$error)
-        {
-            $this->db->commit();
-            return $this->id;
-        }
-        else
-        {
-            $this->db->rollback();
-            return -1;
-        }
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		return $result;
 	}
 
-    /**
-     * Function to update current object
-     *
-     * @param   array   $Tab    Array of values
-     * @return                  int
-     */
-	public function setValues(&$Tab)
+	/**
+	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->status,$mode);
+	}
+
+	/**
+	 *  Return the status
+	 *
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto, 6=Long label + Picto
+	 *  @return string 			       	Label of status
+	 */
+	static function LibStatut($status,$mode=0)
 	{
 		global $langs;
-		
-		if (isset($Tab['qty_to_add']))
+
+		if ($mode == 0)
 		{
-			foreach ($Tab['qty_to_add'] as $k => $qty)
+			$prefix='';
+			if ($status == 0) return $langs->trans('Draft');
+			if ($status == 1) return $langs->trans('Enabled');
+			if ($status == -1) return $langs->trans('Canceled');
+		}
+		if ($mode == 1)
+		{
+			if ($status == 0) return $langs->trans('Draft');
+			if ($status == 1) return $langs->trans('Enabled');
+			if ($status == -1) return $langs->trans('Canceled');
+		}
+		if ($mode == 2)
+		{
+			if ($status == 0) return img_picto($langs->trans('Draft'),'statut5').' '.$langs->trans('Draft');
+			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($status == -1) return img_picto($langs->trans('Canceled'),'statut6').' '.$langs->trans('Canceled');
+		}
+		if ($mode == 3)
+		{
+			if ($status == 0) return img_picto($langs->trans('Draft'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
+			if ($status == -1) return img_picto($langs->trans('Canceled'),'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($status == 0) return img_picto($langs->trans('Draft'),'statut5').' '.$langs->trans('Draft');
+			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+			if ($status == -1) return img_picto($langs->trans('Canceled'),'statut6').' '.$langs->trans('Canceled');
+		}
+		if ($mode == 5)
+		{
+			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
+			if ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'),'statut6');
+		}
+		if ($mode == 6)
+		{
+			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
+			if ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'),'statut6');
+		}
+	}
+
+	/**
+	 *	Charge les informations d'ordre info dans l'objet commande
+	 *
+	 *	@param  int		$id       Id of order
+	 *	@return	void
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
+		$sql.= ' fk_user_creat, fk_user_modif';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql.= ' WHERE t.rowid = '.$id;
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
 			{
-				$qty = (float) price2num($qty);
-				
-				if ($qty < 0) 
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
 				{
-					$this->errors[] = $langs->trans('inventoryErrorQtyAdd');
-					return -1;
-				} 
-				
-				$product = new Product($this->db);
-				$product->fetch($this->Inventorydet[$k]->fk_product);
-				
-				$this->Inventorydet[$k]->pmp = $product->pmp;
-				$this->Inventorydet[$k]->qty_view += $qty;
-			}	
-		}
-		
-		return parent::setValues($Tab);
-	}
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation   = $cuser;
+				}
 
-    /**
-     * Function to delete all Inventorydet
-     *
-     * @param   User    $user   user object
-     * @return                  < 0 if ko, > 0 if ok
-     */
-    public function deleteAllLine(User &$user)
-    {
-        foreach($this->Inventorydet as &$det)
-        {
-            $det->to_delete = true;
-        }
-        
-        $res = $this->update($user);
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation = $vuser;
+				}
 
-        if ($res > 0) $this->Inventorydet = array();
-        else return -1;
-    }
+				if ($obj->fk_user_cloture)
+				{
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_cloture);
+					$this->user_cloture   = $cluser;
+				}
 
-    /**
-     * Function to add Inventorydet
-     *
-     * @param   int     $fk_product     fk_product of Inventorydet
-     * @param   int     $fk_warehouse   fk_warehouse target
-     * @return                          bool
-     */
-    public function addProduct($fk_product, $fk_warehouse=0)
-    {
-        $k = $this->addChild('Inventorydet');
-        $det =  &$this->Inventorydet[$k];
-        
-        $det->fk_inventory = $this->id;
-        $det->fk_product = $fk_product;
-		$det->fk_warehouse = empty($fk_warehouse) ? $this->fk_warehouse : $fk_warehouse;
-        
-        $det->load_product();
-                
-        $date = $this->getDate('date_inventory', 'Y-m-d');
-        if(empty($date)) $date = $this->getDate('datec', 'Y-m-d');
-        $det->setStockDate($date, $fk_warehouse);
-        
-        return true;
-    }
-
-    /**
-     *  Duplication method product to add datem
-     *  Adjust stock in a warehouse for product
-     *
-     *  @param  	int     $fk_product     id of product
-     *  @param  	int		$fk_warehouse   id of warehouse
-     *  @param  	double	$nbpiece        nb of units
-     *  @param  	int		$movement       0 = add, 1 = remove
-     * 	@param		string	$label			Label of stock movement
-     * 	@param		double	$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
-     *  @param		string	$inventorycode	Inventory code
-     * 	@return     int     				<0 if KO, >0 if OK
-     */
-    public function correctStock($fk_product, $fk_warehouse, $nbpiece, $movement, $label='', $price=0, $inventorycode='')
-	{
-		global $conf, $user;
-
-		if ($fk_warehouse)
-		{
-			$this->db->begin();
-
-			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
-
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
-
-			$datem = empty($conf->global->INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT) ? dol_now() : $this->date_inventory;
-
-			$movementstock=new MouvementStock($this->db);
-			$movementstock->origin = new stdClass();
-			$movementstock->origin->element = 'inventory';
-			$movementstock->origin->id = $this->id;
-			$result=$movementstock->_create($user,$fk_product,$fk_warehouse,$op[$movement],$movement,$price,$label,$inventorycode, $datem);
-			
-			if ($result >= 0)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-			    $this->error=$movementstock->error;
-			    $this->errors=$movementstock->errors;
-
-				$this->db->rollback();
-				return -1;
-			}
-		}
-	}
-
-    /**
-     * Function to regulate stock
-     *
-     * @return      int
-     */
-	public function regulate()
-	{
-		global $langs,$conf;
-		
-		if($conf->global->INVENTORY_DISABLE_VIRTUAL)
-		{
-			$pdt_virtuel = false;
-			// Test if virtual product is enabled
-			if($conf->global->PRODUIT_SOUSPRODUITS)
-			{
-				$pdt_virtuel = true;
-				$conf->global->PRODUIT_SOUSPRODUITS = 0;
-			}
-		}
-		
-		foreach ($this->Inventorydet as $k => $Inventorydet)
-		{
-			$product = new Product($this->db);
-			$product->fetch($Inventorydet->fk_product);
-
-			if ($Inventorydet->qty_view != $Inventorydet->qty_stock)
-			{
-				$Inventorydet->qty_regulated = $Inventorydet->qty_view - $Inventorydet->qty_stock;
-				$nbpiece = abs($Inventorydet->qty_regulated);
-				$movement = (int) ($Inventorydet->qty_view < $Inventorydet->qty_stock); // 0 = add ; 1 = remove
-						
-				//$href = dol_buildpath('/inventory/inventory.php?id='.$this->id.'&action=view', 1);
-				
-				$res = $this->correctStock($product->id, $Inventorydet->fk_warehouse, $nbpiece, $movement, $langs->trans('inventoryMvtStock'));
-				if ($res < 0) return -1;
-			}
-		}
-
-		if($conf->global->INVENTORY_DISABLE_VIRTUAL)
-		{
-            // Test if virtual product was enabled before regulate
-			if($pdt_virtuel) $conf->global->PRODUIT_SOUSPRODUITS = 1;
-		}
-		
-		return 1;
-	}
-
-    /**
-     * Get the title
-     * @return  string
-     */
-	public function getTitle()
-    {
-		global $langs;
-		
-		return !empty($this->title) ? $this->title : $langs->trans('inventoryTitle').' '.$this->id;
-	}
-
-
-    /**
-     * Return clicable link of object (with eventually picto)
-     *
-     * @param   int     $withpicto  Add picto into link
-     * @return                      string
-     */
-	public function getNomUrl($withpicto = 1)
-    {
-        return '<a href="'.DOL_URL_ROOT.'/product/inventory/card.php?id='.$this->id.'">'.($withpicto ? img_picto('','object_list.png','',0).' ' : '').$this->getTitle().'</a>';
-	}
-
-    /**
-     * Function to add products by default from warehouse and children
-     *
-     * @param int $fk_warehouse         id of warehouse
-     * @param int $fk_category          id of category
-     * @param int $fk_supplier          id of supplier
-     * @param int $only_prods_in_stock  only product with stock
-     *
-     * @return int
-     */
-	public function addProductsFor($fk_warehouse,$fk_category=0,$fk_supplier=0,$only_prods_in_stock=0)
-    {
-        $warehouse = new Entrepot($this->db);
-        $warehouse->fetch($fk_warehouse);
-		$TChildWarehouses = array($fk_warehouse);
-        $warehouse->get_children_warehouses($fk_warehouse, $TChildWarehouses);
-			
-		$sql = 'SELECT ps.fk_product, ps.fk_entrepot';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock ps';
-        $sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ps.fk_product)';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product cp ON (cp.fk_product = p.rowid)';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid)';
-        $sql.= ' WHERE ps.fk_entrepot IN ('.implode(', ', $TChildWarehouses).')';
-			
-		if ($fk_category>0) $sql.= ' AND cp.fk_categorie='.$fk_category;
-		if ($fk_supplier>0) $sql.= ' AND pfp.fk_soc = '.$fk_supplier;
-		if (!empty($only_prods_in_stock)) $sql.= ' AND ps.reel > 0';
-			
-		$sql.=' GROUP BY ps.fk_product, ps.fk_entrepot ORDER BY p.ref ASC,p.label ASC';
-		 
-		$res = $this->db->query($sql);
-		if($res)
-		{
-			while($obj = $this->db->fetch_object($res))
-            {
-				$this->addProduct($obj->fk_product, $obj->fk_entrepot);
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
-			return 1;
+			$this->db->free($result);
+
 		}
 		else
-        {
-            $this->error = $this->db->lasterror();
-            $this->errors[] = $this->db->lasterror();
-            return -1;
-        }
-	}
-
-    /**
-     * Return clicable link of inventory object
-     *
-     * @param   int     $id         id of inventory
-     * @param   int     $withpicto  Add picto into link
-     * @return  string
-     */
-    static function getLink($id, $withpicto=1)
-    {
-        global $langs,$db;
-        
-        $inventory = new Inventory($db);
-        if($inventory->fetch($id, false) > 0) return $inventory->getNomUrl($withpicto);
-        else return $langs->trans('InventoryUnableToFetchObject');
-    }
-
-    /**
-     * Function to get the sql select of inventory
-     * 
-     * @param   string  $type   'All' to get all data
-     * @return  string
-     */
-	static function getSQL($type)
-    {
-		global $conf;
-
-        $sql = '';
-		if($type == 'All')
 		{
-			$sql = 'SELECT i.rowid,i.title, e.label, i.date_inventory, i.fk_warehouse, i.datec, i.tms, i.status';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'inventory i';
-            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot e ON (e.rowid = i.fk_warehouse)';
-            $sql.= ' WHERE i.entity IN ('.getEntity('inventory').')';
+			dol_print_error($this->db);
 		}
-	
-		return $sql;	
 	}
+
+	/**
+	 * Initialise object with example values
+	 * Id must be 0 if object instance is a specimen
+	 *
+	 * @return void
+	 */
+	public function initAsSpecimen()
+	{
+		$this->initAsSpecimenCommon();
+	}
+
 }
 
-class Inventorydet extends CoreObject
+/**
+ * Class InventoryObjectLine
+ */
+class InventoryObjectLine
 {
-	public $element='inventorydet';
-	public $table_element='inventorydet';
-	protected $isnolinkedbythird = 1;     // No field fk_soc
-	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	
-	public $fk_inventory;
-	public $fk_warehouse;
-	public $fk_product;
-	public $entity;
-	public $qty_view;
-	public $qty_stock;
-	public $qty_regulated;
-	public $pmp;
-	public $pa;
-	public $new_pmp;
-	
-	protected $fields=array(
-		'fk_inventory'=>array('type'=>'int')
-		,'fk_warehouse'=>array('type'=>'int')
-		,'fk_product'=>array('type'=>'int')
-		,'entity'=>array('type'=>'int')
-		,'qty_view'=>array('type'=>'float')
-		,'qty_stock'=>array('type'=>'float')
-		,'qty_regulated'=>array('type'=>'float')
-		,'pmp'=>array('type'=>'float')
-		,'pa'=>array('type'=>'float')
-		,'new_pmp'=>array('type'=>'float')
-	);
-
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
-	function __construct(DoliDB &$db)
-	{
-		global $conf;
-
-		parent::__construct($db);
-		parent::init();
-				
-		$this->entity = $conf->entity;
-		$this->errors = array();
-		
-		$this->product = null;
-		$this->current_pa = 0;
-	}
-
-    /**
-     * Get object and children from database
-     *
-     * @param   int   $id           id of inventorydet object
-     * @param   bool  $loadChild    load children
-     * @return  int
-     */
-	function fetch($id, $loadChild = true)
-	{
-		$res = parent::fetch($id);
-		$this->load_product();
-        $this->fetch_current_pa();
-			
-		return $res;
-	}
-
-    /**
-     * Function to get the unit buy price
-     *
-     * @return bool
-     */
-    function fetch_current_pa()
-    {
-		global $db,$conf;
-		
-		if(empty($conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA)) return false;
-		
-		if($this->pa > 0)
-		{
-			$this->current_pa = $this->pa;
-		}
-		else
-        {
-			dol_include_once('/fourn/class/fournisseur.product.class.php');
-			$p= new ProductFournisseur($db);
-			$p->find_min_price_product_fournisseur($this->fk_product);
-			
-			if($p->fourn_qty>0)	$this->current_pa = $p->fourn_price / $p->fourn_qty;
-		}
-
-		return true;
-	}
-
-    /**
-     * Function to set pa attribute from date en fk_warehouse
-     *
-     * @param   date    $date           date value
-     * @param   int     $fk_warehouse   fk_warehouse target
-     */
-    function setStockDate($date, $fk_warehouse)
-    {
-		list($pmp, $stock) = $this->getPmpStockFromDate($date, $fk_warehouse);
-
-        $this->qty_stock = $stock;
-        $this->pmp = $pmp;
-
-        $last_pa = 0;
-        $sql = 'SELECT price FROM '.MAIN_DB_PREFIX.'stock_mouvement';
-        $sql.= ' WHERE fk_entrepot = '.$fk_warehouse;
-        $sql.= ' AND fk_product = '.$this->fk_product;
-        $sql.= ' AND (origintype=\'order_supplier\' || origintype=\'invoice_supplier\')';
-        $sql.= ' AND price > 0';
-        $sql.= ' AND datem <= \''.$date.' 23:59:59\'';
-        $sql.= ' ORDER BY datem DESC LIMIT 1';
-
-        $res = $this->db->query($sql);
-        if($res && $obj = $this->db->fetch_object($res))
-        {
-            $last_pa = $obj->price;
-        }
-
-        $this->pa = $last_pa;
-    }
-
-
-    /**
-     * Get the last pmp and last stock from date and warehouse
-     *
-     * @param   date    $date           date to check
-     * @param   int     $fk_warehouse   id of warehouse
-     * @return array
-     */
-    function getPmpStockFromDate($date, $fk_warehouse)
-    {
-		$res = $this->product->load_stock();
-		
-		if($res>0)
-		{
-			$stock = isset($this->product->stock_warehouse[$fk_warehouse]->real) ? $this->product->stock_warehouse[$fk_warehouse]->real : 0;
-            $pmp = $this->product->pmp;
-		}
-		
-		//All Stock mouvement between now and inventory date
-		$sql = 'SELECT value, price';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'stock_mouvement';
-        $sql.= ' WHERE fk_product = '.$this->product->id;
-        $sql.= ' AND fk_entrepot = '.$fk_warehouse;
-        $sql.= ' AND datem > \''.date('Y-m-d 23:59:59', strtotime($date)).'\'';
-        $sql.= ' ORDER BY datem DESC';
-
-		$res = $this->db->query($sql);
-		
-		$laststock = $stock;
-		$lastpmp = $pmp;
-		
-		if($res)
-		{
-			while($mouvement = $this->db->fetch_object($res))
-            {
-				$price = ($mouvement->price > 0 && $mouvement->value > 0) ? $mouvement->price : $lastpmp;
-				$stock_value = $laststock * $lastpmp;
-				$laststock -= $mouvement->value;
-				$last_stock_value = $stock_value - ($mouvement->value * $price);
-				$lastpmp = ($laststock != 0) ? $last_stock_value / $laststock : $lastpmp;
-			}
-		}
-		
-		return array($lastpmp, $laststock);
-	}
-
-    /**
-     * Fetch the product linked with the line
-     * @return  void
-     */
-	function load_product() 
-	{
-		global $db;
-		
-		if($this->fk_product>0)
-		{
-			$this->product = new Product($db);
-			$this->product->fetch($this->fk_product);
-		}
-	}
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	/**
+	 * @var mixed Sample line property 1
+	 */
+	public $prop1;
+	/**
+	 * @var mixed Sample line property 2
+	 */
+	public $prop2;
 }

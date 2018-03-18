@@ -55,7 +55,7 @@ if ($action == 'setvalue' && $user->admin)
 	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
     if ($result < 0) $error++;
 
-    if (! $error)
+    if (! $error && is_array($_POST))
     {
     	//var_dump($_POST);
 	    foreach($_POST as $key => $val)
@@ -115,7 +115,7 @@ $notify = new Notify($db);
 
 llxHeader('',$langs->trans("NotificationSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
 
 print $langs->trans("NotificationsDesc").'<br>';
@@ -172,7 +172,7 @@ $var=true;
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    
+
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
@@ -183,14 +183,16 @@ foreach($listofnotifiedevents as $notifiedevent)
 
     if ($i) print ', ';
     print $label;
-     
+
     $i++;
 }
 print '</td></tr>';
 
 print '</table>';
+print '<div class="opacitymedium">';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
 if (! empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+print '</div>';
 print '<br><br>';
 
 
@@ -213,7 +215,7 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 $var=true;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-    
+
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');

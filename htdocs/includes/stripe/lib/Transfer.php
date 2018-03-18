@@ -12,63 +12,27 @@ namespace Stripe;
  * @property string $balance_transaction
  * @property int $created
  * @property string $currency
- * @property int $date
- * @property mixed $destination
- * @property mixed $destination_payment
+ * @property string $destination
+ * @property string $destination_payment
  * @property bool $livemode
- * @property mixed $metadata
- * @property mixed $reversals
+ * @property StripeObject $metadata
+ * @property Collection $reversals
  * @property bool $reversed
- * @property mixed $source_transaction
+ * @property string $source_transaction
+ * @property string $source_type
+ * @property string $transfer_group
  *
  * @package Stripe
  */
 class Transfer extends ApiResource
 {
-    /**
-     * @param string $id The ID of the transfer to retrieve.
-     * @param array|string|null $opts
-     *
-     * @return Transfer
-     */
-    public static function retrieve($id, $opts = null)
-    {
-        return self::_retrieve($id, $opts);
-    }
+    use ApiOperations\All;
+    use ApiOperations\Create;
+    use ApiOperations\NestedResource;
+    use ApiOperations\Retrieve;
+    use ApiOperations\Update;
 
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Collection of Transfers
-     */
-    public static function all($params = null, $opts = null)
-    {
-        return self::_all($params, $opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Transfer The created transfer.
-     */
-    public static function create($params = null, $opts = null)
-    {
-        return self::_create($params, $opts);
-    }
-
-    /**
-     * @param string $id The ID of the transfer to update.
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return Transfer The updated transfer.
-     */
-    public static function update($id, $params = null, $options = null)
-    {
-        return self::_update($id, $params, $options);
-    }
+    const PATH_REVERSALS = '/reversals';
 
     /**
      * @return TransferReversal The created transfer reversal.
@@ -93,12 +57,52 @@ class Transfer extends ApiResource
     }
 
     /**
+     * @param array|null $id The ID of the transfer on which to create the reversal.
+     * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return Transfer The saved transfer.
+     * @return TransferReversal
      */
-    public function save($opts = null)
+    public static function createReversal($id, $params = null, $opts = null)
     {
-        return $this->_save($opts);
+        return self::_createNestedResource($id, static::PATH_REVERSALS, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the transfer to which the reversal belongs.
+     * @param array|null $reversalId The ID of the reversal to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return TransferReversal
+     */
+    public static function retrieveReversal($id, $reversalId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_REVERSALS, $reversalId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the transfer to which the reversal belongs.
+     * @param array|null $reversalId The ID of the reversal to update.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return TransferReversal
+     */
+    public static function updateReversal($id, $reversalId, $params = null, $opts = null)
+    {
+        return self::_updateNestedResource($id, static::PATH_REVERSALS, $reversalId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the transfer on which to retrieve the reversals.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return TransferReversal
+     */
+    public static function allReversals($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_REVERSALS, $params, $opts);
     }
 }

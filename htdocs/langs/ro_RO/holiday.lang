@@ -16,7 +16,7 @@ CancelCP=Şters
 RefuseCP=Refuzat
 ValidatorCP=Aprobator
 ListeCP=Listă cereri de concedii
-ReviewedByCP=Va fi aprobat de
+ReviewedByCP=Will be approved by
 DescCP=Descriere
 SendRequestCP=Crează o cerere de concediu
 DelayToRequestCP=Cererile pentru concediu trebuiesc făcute cu cel puţin <b>%s zi(le)</b> înainte.
@@ -79,6 +79,8 @@ HolidaysCancelation=Anulare cerere concediu
 EmployeeLastname=Employee last name
 EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

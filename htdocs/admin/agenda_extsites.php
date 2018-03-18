@@ -48,9 +48,11 @@ $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 // List of aviable colors
 $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5');
 
+
 /*
  * Actions
  */
+
 if ($actionsave)
 {
     $db->begin();
@@ -125,11 +127,11 @@ $formother=new FormOther($db);
 $arrayofjs=array();
 $arrayofcss=array();
 
-llxHeader('',$langs->trans("AgendaSetup"),'','',0,0,$arrayofjs,$arrayofcss);
+$wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+llxHeader('',$langs->trans("AgendaSetup"),$wikihelp,'',0,0,$arrayofjs,$arrayofcss);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
-print '<br>';
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -210,7 +212,7 @@ while ($i <= $MAXAGENDA)
 	$color='AGENDA_EXT_COLOR'.$key;
 	$enabled='AGENDA_EXT_ENABLED'.$key;
 
-	
+
 	print '<tr class="oddeven">';
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb",$key)."</td>";

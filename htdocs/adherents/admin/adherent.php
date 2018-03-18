@@ -53,7 +53,7 @@ if ($action == 'updateall')
 {
     $db->begin();
     $res1=$res2=$res3=$res4=$res5=$res6=0;
-    $res1=dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res1=dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha')?0:1, 'chaine', 0, '', $conf->entity);
     $res2=dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res3=dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res4=dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -141,7 +141,7 @@ $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Mie
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 
@@ -162,7 +162,7 @@ print "</tr>\n";
 
 // Login/Pass required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1), 1);
 print "</td></tr>\n";
 
 // Mail required for members
@@ -203,7 +203,7 @@ if ($conf->facture->enabled)
 		print '</td>';
 	}
 	print "</tr>\n";
-	
+
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
@@ -240,9 +240,9 @@ $constantes=array(
 print load_fiche_titre($langs->trans("MembersCards"),'','');
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-$helptext.='%YEAR%, %MONTH%, %DAY%';
+$helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext.='__YEAR__, __MONTH__, __DAY__';
 
 form_constantes($constantes, 0, $helptext);
 
@@ -257,43 +257,9 @@ $constantes=array('ADHERENT_ETIQUETTE_TYPE','ADHERENT_ETIQUETTE_TEXT');
 print load_fiche_titre($langs->trans("MembersTickets"),'','');
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-$helptext.='%YEAR%, %MONTH%, %DAY%';
-
-form_constantes($constantes, 0, $helptext);
-
-print '<br>';
-
-
-/*
- * Editing global variables not related to a specific theme
- */
-$constantes=array(
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
-		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_MAIL',
-		'ADHERENT_MAIL_VALID_SUBJECT',
-		'ADHERENT_MAIL_VALID',
-		'ADHERENT_MAIL_COTIS_SUBJECT',
-		'ADHERENT_MAIL_COTIS',
-		'ADHERENT_MAIL_RESIL_SUBJECT',
-		'ADHERENT_MAIL_RESIL',
-		'ADHERENT_MAIL_FROM',
-		);
-
-print load_fiche_titre($langs->trans("Other"),'','');
-
-$helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-$helptext.='%YEAR%, %MONTH%, %DAY%';
-
-$helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
-$helptext.='%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %BIRTH%, %PHOTO%, %TYPE%, ';
-//$helptext.='%YEAR%, %MONTH%, %DAY%';	// Not supported
+$helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext.='__YEAR__, __MONTH__, __DAY__';
 
 form_constantes($constantes, 0, $helptext);
 

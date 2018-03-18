@@ -90,15 +90,15 @@ $arrayfields=array();
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
     $search_ref = '';
     $search_label = '';
@@ -136,17 +136,25 @@ if ($action == 'update') {
 			$accounting = new AccountingAccount($db);
 
 			//$msg .= '<div><span  class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
+			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0; $ok = 0; $ko = 0;
-			foreach ( $chk_prod as $productid ) {
-
+			foreach ( $chk_prod as $productid )
+			{
 				$accounting_account_id = GETPOST('codeventil_' . $productid);
 
-				$result = $accounting->fetch($accounting_account_id, null, 1);
-				if ($result < 0) {
+				$result = 0;
+				if ($accounting_account_id > 0)
+				{
+					$arrayofdifferentselectedvalues[$accounting_account_id]=$accounting_account_id;
+					$result = $accounting->fetch($accounting_account_id, null, 1);
+				}
+				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
 					$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : id=' . $accounting_account_id . '<br/> <pre>' . $sql . '</pre></font></div>';
+					$ko++;
 				} else {
+					$db->begin();
 
 					$sql = " UPDATE " . MAIN_DB_PREFIX . "product";
 					if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
@@ -158,23 +166,23 @@ if ($action == 'update') {
 					$sql .= " WHERE rowid = " . $productid;
 
 					dol_syslog("/accountancy/admin/productaccount.php sql=" . $sql, LOG_DEBUG);
-					if ($db->query($sql)) {
+					if ($db->query($sql))
+					{
 					    $ok++;
-						//$msg .= '<div><font color="green">' . $langs->trans("Product") . ' ' . $productid . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '</font></div>';
+					    $db->commit();
 					} else {
 					    $ko++;
-						//$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+					    $db->rollback();
 					}
 				}
 
-				$cpt ++;
+				$cpt++;
 			}
-		} else {
-			//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("AnyLineVentilate") . '</span></div>';
+
 		}
+
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');
 		if ($ok) setEventMessages($langs->trans("XLineSuccessfullyBinded", $ok), null, 'mesgs');
-		//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("EndProcessing") . '</span></div>';
 	}
 }
 
@@ -312,6 +320,7 @@ if ($result)
 	$texte=$langs->trans("ListOfProductsServices");
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
+	print '<div class="div-table-responsive">';
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print '<tr class="liste_titre_filter">';
@@ -336,17 +345,17 @@ if ($result)
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-    if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("OnSell"), $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
-   	print_liste_field_titre($langs->trans("OnBuy"), $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
+    if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
+   	print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
    	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
    	    $fieldtosortaccount="p.accountancy_code_buy";
    	}
    	else $fieldtosortaccount="p.accountancy_code_sell";
-   	print_liste_field_titre($langs->trans("CurrentDedicatedAccountingAccount"), $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AssignDedicatedAccountingAccount"));
+   	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco=$form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($clickpitco, '', '', '', '', 'align="center"');
 	print '</tr>';
@@ -448,6 +457,7 @@ if ($result)
 		$i ++;
 	}
 	print '</table>';
+	print '</div>';
 
 	// Example : Adding jquery code
 	print '<script type="text/javascript" language="javascript">

@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - agenda
+PropalClosedSignedInDolibarr=Quotation %s signed
+PropalClosedRefusedInDolibarr=Quotation %s refused
+PropalValidatedInDolibarr=Quotation %s validated
+PropalClassifiedBilledInDolibarr=Quotation %s classified billed
+ProposalSentByEMail=Quotation %s sent by EMail

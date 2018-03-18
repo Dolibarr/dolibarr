@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("bills");
 $langs->load("compta");
 
 // Security check
-$facid =GETPOST('facid','int');
-$socid =GETPOST('socid','int');
-$userid=GETPOST('userid','int');
+$facid	= GETPOST('facid','int');
+$socid	= GETPOST('socid','int');
+$userid	= GETPOST('userid','int');
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
@@ -77,7 +79,7 @@ $extrafields = new ExtraFields($db);
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_account="";
@@ -113,11 +115,9 @@ if (GETPOST("orphelins"))
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
-    $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p,";
-    $sql.= " ".MAIN_DB_PREFIX."c_paiement as c)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE p.fk_paiement = c.id";
-    $sql.= " AND p.entity = ".$conf->entity;
+    $sql.= " WHERE p.entity IN (" . getEntity('facture').")";
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -129,7 +129,7 @@ else
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql.= " p.statut, p.num_paiement,";
     $sql.= " c.code as paiement_code,";
-    $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.accountancy_journal as accountancy_journal,";
+    $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
     $sql.= " s.rowid as socid, s.nom as name";
 	// Add fields for extrafields
 	foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -137,7 +137,8 @@ else
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
-    $sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement as p)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
@@ -147,8 +148,7 @@ else
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE p.fk_paiement = c.id";
-    $sql.= " AND p.entity = ".$conf->entity;
+    $sql.= " WHERE p.entity IN (" . getEntity('facture') . ")";
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
@@ -177,7 +177,7 @@ else
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
-    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1); 
+    if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
 	$parameters=array();
@@ -211,7 +211,7 @@ if ($resql)
     $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
     $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
     if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-    
+
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -220,9 +220,9 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-    
+
     print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords,'title_accountancy.png', 0, '', '', $limit);
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -266,26 +266,26 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
     if (! empty($conf->banque->enabled))
     {
-        print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+        print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
     }
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
-    
+    print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
+    //print_liste_field_titre("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
+
     $parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
+
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"p.statut","",$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
-    
+
     while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
@@ -314,7 +314,7 @@ if ($resql)
 
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).'</td>';
-        
+
         // Payment number
         print '<td>'.$objp->num_paiement.'</td>';
 
@@ -329,7 +329,11 @@ if ($resql)
 	            $accountstatic->label=$objp->blabel;
 	            $accountstatic->number=$objp->number;
 	            $accountstatic->account_number=$objp->account_number;
-	            $accountstatic->accountancy_journal=$objp->accountancy_journal;
+
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($objp->accountancy_journal);
+				$accountstatic->accountancy_journal = $accountingjournal->code;
+
 	            print $accountstatic->getNomUrl(1);
 	        }
 	        else print '&nbsp;';

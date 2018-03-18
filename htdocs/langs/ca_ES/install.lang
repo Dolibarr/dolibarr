@@ -53,10 +53,10 @@ AdminLogin=Usuari de l'administrador de la base de dades Dolibarr.
 PasswordAgain=Verificació de la contrasenya
 AdminPassword=Contrasenya de l'administrador de la base de dades Dolibarr.
 CreateDatabase=Crear la base de dades
-CreateUser=Crear el propietari
+CreateUser=Crea el propietari o concedeix-li permís en la base de dades
 DatabaseSuperUserAccess=Base de dades - Accés super usuari
 CheckToCreateDatabase=Seleccioneu aquesta opció si la base de dades no existeix i s'ha de crear. En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
-CheckToCreateUser=Seleccioneu aquesta opció si l'usuari no existeix i s'ha de crear.<br>En aquest cas, cal indicar usuari/contrasenya de superusuari, més endavant en aquesta pàgina.
+CheckToCreateUser=Marca la casella de verificació si el propietari de la base de dades no existeix i s'ha de crear, o si existeix, però la base de dades no existeix i els permisos s'han de concedir. <br>En aquest cas, has de triar el seu nom d'usuari i contrasenya i també omplir el nom d'usuari i contrasenya del compte superusuari al final d'aquesta pàgina.  Si aquesta casella no està activada, el propietari de la base de dades i les seves contrasenyes han d'existir.
 DatabaseRootLoginDescription=Usuari de la base que té els drets de creació de bases de dades o compte per a la base de dades, inútil si la base de dades i el seu usuari ja existeixen (com quan estan en un amfitrió).
 KeepEmptyIfNoPassword=Deixa-ho en blanc si l'usuari no té contrasenya (evita-ho)
 SaveConfigurationFile=Gravació del fitxer de configuració
@@ -132,13 +132,16 @@ MigrationFinished=Acabada l'actualització
 LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
 ActivateModule=Activació del mòdul %s
 ShowEditTechnicalParameters=Premi aquí per veure/editar els paràmetres tècnics (mode expert)
-WarningUpgrade=Atenció:\nVas fer una còpia de seguretat de la base de dades abans?\nAixò és altament recomanable: per exemple, degut a alguns problemes dels sistemes de base de dades (per exemple mysql versió 5.5.40/41/42/43), alguna dada o taules poden perdre's durant aquest procés, així doncs és molt recomanable tenir un bolcat de la teva base de dades abans de començar la migració.\n\nClica OK per a començar el procés de migració.... 
+WarningUpgrade=Atenció:\nVas fer una còpia de seguretat de la base de dades abans?\nAixò és altament recomanable: per exemple, degut a alguns problemes dels sistemes de base de dades (per exemple mysql versió 5.5.40/41/42/43), alguna dada o taules poden perdre's durant aquest procés, així doncs és molt recomanable tenir un bolcat de la teva base de dades abans de començar la migració.\n\nClica OK per a començar el procés de migració....
 ErrorDatabaseVersionForbiddenForMigration=La versió de la seva base de dades és %s. Aquesta te un error crític i es poden perdre dades si es fa un canvi a l'estructura de la base de dades i per fer l'actualització necessita fer aquests canvis. Per aquesta raó, la migració no es permetrà fins que s'actualitzi la seva base de dades a una versió estable i/o superior (llista de versions afectades: %s)
 KeepDefaultValuesWamp=Estàs utilitzant l'assistent d'instal·lació de DoliWamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesDeb=Estàs utilitzant l'assistent d'instal·lació Dolibarr d'un paquet Linux (Ubuntu, Debian, Fedora...) amb els valors proposats més òptims. Només cal completar la contrasenya del propietari de la base de dades a crear. Canvia els altres paràmetres només si estàs segur del que estàs fent.
 KeepDefaultValuesMamp=Estàs utilitzant l'assistent d'instal·lació de DoliMamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesProxmox=Estàs utilitzant l'assistent d'instal·lació de Dolibarr des d'una màquina virtual Proxmox amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
-
+UpgradeExternalModule=Executa el procés d'actualització dedicat de mòduls externs
+SetAtLeastOneOptionAsUrlParameter=Estableix com a mínim una opció com a paràmetre a l'URL. Per exemple: '... repair.php?standard=confirmed'
+NothingToDelete=Res per netejar / esborrar
+NothingToDo=No hi ha res a fer
 #########
 # upgrade
 MigrationFixData=Correcció de dades desnormalitzades
@@ -190,9 +193,11 @@ MigrationActioncommElement=Actualització de les dades de accions sobre elements
 MigrationPaymentMode=Actualització de les formes de pagament
 MigrationCategorieAssociation=Actualització de les categories
 MigrationEvents=Migració d'esdeveniments per afegir propietari a la taula d'asignació
+MigrationEventsContact=Migració d'esdeveniments per afegir contacte d'esdeveniments a la taula d'assignacions
 MigrationRemiseEntity=Actualitza el valor del camp entity de llx_societe_remise
 MigrationRemiseExceptEntity=Actualitza el valor del camp entity de llx_societe_remise_except
 MigrationReloadModule=Recarrega el mòdul %s
+MigrationResetBlockedLog=Restablir el mòdul BlockedLog per l'algoritme v7
 ShowNotAvailableOptions=Mostra opcions no disponibles
 HideNotAvailableOptions=Amaga opcions no disponibles
 ErrorFoundDuringMigration=S'ha reportat un error durant el procés de migració, de manera que el proper pas no està disponible. Per ignorar els errors, pots fer <a href="%s">clic aqui</a>, però l'aplicació o algunes funcionalitats podrien no funcionar correctament fins que no es corregeixi.

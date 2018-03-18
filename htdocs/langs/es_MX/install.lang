@@ -40,7 +40,6 @@ PasswordAgain=Vuelva a escribir la contraseña por segunda vez
 AdminPassword=Contraseña para el propietario de la base de datos de Dolibarr.
 DatabaseSuperUserAccess=Servidor de base de datos - acceso de Superusuario
 CheckToCreateDatabase=Marque la casilla si no existe base de datos y se debe crear.<br>En este caso, debe llenar el login/contraseña de la cuenta de superusuario en la parte inferior de esta página.
-CheckToCreateUser=Marque la casilla si el propietario de base de datos no existe y debe ser creado.<br>En este caso, debe elegir su nombre de usuario y contraseña y también llenar el login/contraseña de la cuenta de superusuario en la parte inferior de esta página. Si esta casilla no está marcada, el propietario de la base de datos y su contraseña deben existir.
 DatabaseRootLoginDescription=Login del usuario con permisos para crear nuevas bases de datos o nuevos usuarios, obligatorio si su base de datos o su propietario no existen.
 KeepEmptyIfNoPassword=Deje en blanco si el usuario no tiene contraseña (evite esto)
 SaveConfigurationFile=Guardar valores

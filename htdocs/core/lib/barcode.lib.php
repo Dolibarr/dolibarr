@@ -27,9 +27,9 @@
 /* ******************************************************************** */
 /*                          COLORS                                      */
 /* ******************************************************************** */
-$bar_color=Array(0,0,0);
-$bg_color=Array(255,255,255);
-$text_color=Array(0,0,0);
+$bar_color=array(0,0,0);
+$bg_color=array(255,255,255);
+$text_color=array(0,0,0);
 
 
 /* ******************************************************************** */
@@ -37,7 +37,7 @@ $text_color=Array(0,0,0);
 /* ******************************************************************** */
 if (defined('DOL_DEFAULT_TTF_BOLD')) $font_loc=constant('DOL_DEFAULT_TTF_BOLD');
 // Automatic-Detection of Font if running Windows
-// DOL_CHANGE LDR
+// @CHANGE LDR
 if (isset($_SERVER['WINDIR']) && @file_exists($_SERVER['WINDIR'])) $font_loc=$_SERVER['WINDIR'].'\Fonts\arialbd.ttf';
 if (empty($font_loc)) die('DOL_DEFAULT_TTF_BOLD must de defined with full path to a TTF font.');
 

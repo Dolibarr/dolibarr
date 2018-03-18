@@ -53,10 +53,10 @@ AdminLogin=Είσοδος ιδιοκτήτη της βάσης δεδομένω�
 PasswordAgain=Ξαναγράψτε τον κωδικό
 AdminPassword=Κωδικός ιδιοκτήτη της βάσης δεδομένων Dolibarr.
 CreateDatabase=Δημιουργία βάσης δεδομένων
-CreateUser=Δημιουργία ιδιοκτήτη
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Database server - Superuser access
 CheckToCreateDatabase=Check box if database does not exist and must be created.<br>In this case, you must fill the login/password for superuser account at the bottom of this page.
-CheckToCreateUser=Check box if database owner does not exist and must be created.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Login of the user allowed to create new databases or new users, useless if your database and your database login already exists (like when you're hosted by a web hosting provider).
 KeepEmptyIfNoPassword=Leave empty if user has no password (avoid this)
 SaveConfigurationFile=Αποθήκευση τιμών
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Χρησιμοποιείτε τον οδηγό εγκατ�
 KeepDefaultValuesDeb=Χρησιμοποιείτε τον οδηγό εγκατάστασης του Dolibarr από ένα πακέτο Linux (Ubuntu, Debian, Fedora...), οπότε οι προτεινόμενες ρυθμίσεις είναι ήδη προεπιλεγμένες. Μόνο ο κωδικός του ιδιοκτήτη της βάσης δεδομένων που θα δημιουργηθεί πρέπει να συμπληρωθεί. Αλλάξτε τις υπόλοιπες παραμέτρους μόνο σε περίπτωση που γνωρίζετε ακριβώς τι κάνετε.
 KeepDefaultValuesMamp=Χρησιμοποιείτε τον οδηγό εγκατάστασης του Dolibarr από το DoliMamp, οπότε οι προτεινόμενες ρυθμίσεις είναι ήδη προεπιλεγμένες. Αλλάξτε τις μόνο σε περίπτωση που γνωρίζετε ακριβώς τι κάνετε.
 KeepDefaultValuesProxmox=Χρησιμοποιείτε τον οδηγό εγκατάστασης του Dolibarr από μία εικονική συσκευή Proxmox, οπότε οι προτεινόμενες ρυθμίσεις είναι ήδη προεπιλεγμένες. Αλλάξτε τις μόνο σε περίπτωση που γνωρίζετε ακριβώς τι κάνετε.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix for denormalized data
@@ -190,9 +193,11 @@ MigrationActioncommElement=Ενημέρωση στοιχεία για τις δ�
 MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
 MigrationCategorieAssociation=Μετακίνηση των κατηγοριών
 MigrationEvents=Μετακίνηση γεγονότων για να προσθέσετε ιδιοκτήτη γεγονότων σε πίνακα εκχώρησης
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Ενημέρωση φορέα τιμών πεδίου στον πίνακα llx_societe_remise
 MigrationRemiseExceptEntity=Ενημέρωση φορέα τιμών πεδίου στον πίνακα llx_societe_remise_except
 MigrationReloadModule=Επαναφόρτωση ενθεμάτων %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Εμφάνιση μη διαθέσιμων επιλογών
 HideNotAvailableOptions=Απόκρυψη μη μη διαθέσιμων επιλογών
 ErrorFoundDuringMigration=Αναφέρθηκε σφάλμα κατά τη διαδικασία μεταφοράς, οπότε το επόμενο βήμα δεν είναι δυνατό. Για να αγνοήστε το σφάλμα, μπορείτε να <a href="%s">πατήσετε εδώ</a>, αλλά η εφαρμογή ή κάποιες λειτουργείες μπορεί να μην λειτουργού σωστά μέχρι να διορθωθεί.

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -25,14 +25,12 @@
  *		\brief      Index page of VAT reports
  */
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("other");
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+$langs->loadLangs(array("other","compta","banks","bills","companies"));
 
 $year=GETPOST("year","int");
 if ($year == 0)
@@ -52,7 +50,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
+if (isset($_GET["modetax"])) $modetax=GETPOST("modetax",'alpha');
 
 
 /**
@@ -68,8 +66,7 @@ function pt ($db, $sql, $date)
     global $conf, $bc,$langs;
 
     $result = $db->query($sql);
-    if ($result)
-    {
+    if ($result) {
         $num = $db->num_rows($result);
         $i = 0;
         $total = 0;
@@ -79,11 +76,10 @@ function pt ($db, $sql, $date)
         print '<td align="right">'.$langs->trans("Amount").'</td>';
         print '<td>&nbsp;</td>'."\n";
         print "</tr>\n";
-        $var=True;
-        while ($i < $num)
-        {
+
+        while ($i < $num) {
             $obj = $db->fetch_object($result);
-            
+
             print '<tr class="oddeven">';
             print '<td class="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
@@ -108,19 +104,25 @@ function pt ($db, $sql, $date)
  * View
  */
 
-llxHeader();
-
 $tva = new Tva($db);
+
+$name = $langs->trans("ReportByMonth");
+$description = $langs->trans("VATSummary");
+$calcmode = $langs->trans("VATReportBuildWithOptionDefinedInModule").' ';
+$calcmode.= '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+$builddate=dol_now();
+
+llxHeader('', $name);
 
 
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 
-print $conf->dol_optimize_smallscreen;
-print load_fiche_titre($langs->trans("VAT"), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
+//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
 
-print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
-print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
+report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
+
+
 print '<br>';
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -140,21 +142,20 @@ print '</tr>'."\n";
 $y = $year_current ;
 
 
-$var=True;
 $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
     $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
     $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
-    
+
     $action = "tva";
     $object = array(&$coll_listsell, &$coll_listbuy);
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
     $parameters["type"] = 'vat';
-    
+
     // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
     $hookmanager->initHooks(array('externalbalance'));
     $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -171,7 +172,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
         break;
     }
 
-    
+
     print '<tr class="oddeven">';
     print '<td class="nowrap"><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
 
@@ -220,21 +221,66 @@ print '</table>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
+
 print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
 /*
  * Payed
  */
 
-$sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
+$sql = "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
-$sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-$sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+$sql.= " AND f.datep >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+$sql.= " AND f.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
 $sql.= " GROUP BY dm ORDER BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 
+
+print '<br>';
+
+
+
+if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+{
+    /*
+     * Recap
+     */
+
+    print load_fiche_titre($langs->trans("VATRecap"), '', ''); // need to add translation
+
+    $sql1 = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y') as dm";
+    $sql1 .= " FROM " . MAIN_DB_PREFIX . "tva as f";
+    $sql1 .= " WHERE f.entity = " . $conf->entity;
+    $sql1 .= " AND f.datev >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
+    $sql1 .= " AND f.datev <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+    $sql1 .= " GROUP BY dm ORDER BY dm ASC";
+
+    $result = $db->query($sql1);
+    if ($result) {
+        $obj = $db->fetch_object($result);
+        print '<table class="noborder" width="100%">';
+
+        print "<tr>";
+        print '<td align="right">' . $langs->trans("VATDue") . '</td>'; // need to add translation
+        print '<td class="nowrap" align="right">' . price(price2num($total, 'MT')) . '</td>';
+        print "</tr>\n";
+
+        print "<tr>";
+        print '<td align="right">' . $langs->trans("VATPaid") . '</td>';
+        print '<td class="nowrap" align="right">' . price(price2num($obj->mm, 'MT')) . "</td>\n";
+        print "</tr>\n";
+
+        $restopay = $total - $obj->mm;
+        print "<tr>";
+        print '<td align="right">' . $langs->trans("VATRestopay") . '</td>'; // need to add translation
+        print '<td class="nowrap" align="right">' . price(price2num($restopay, 'MT')) . '</td>';
+        print "</tr>\n";
+
+        print '</table>';
+    }
+}
 
 print '</div></div>';
 

@@ -53,10 +53,10 @@ AdminLogin=Đăng nhập cho chủ sở hữu cơ sở dữ liệu Dolibarr.
 PasswordAgain=Nhập lại mật khẩu một lần thứ hai
 AdminPassword=Mật khẩu cho chủ sở hữu cơ sở dữ liệu Dolibarr.
 CreateDatabase=Tạo cơ sở dữ liệu
-CreateUser=Tạo chủ sở hữu
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Máy chủ cơ sở dữ liệu - truy cập superuser
 CheckToCreateDatabase=Kiểm tra hộp nếu cơ sở dữ liệu không tồn tại và phải được tạo ra. <br> Trong trường hợp này, bạn phải điền tên đăng nhập / mật khẩu cho tài khoản superuser ở dưới cùng của trang này.
-CheckToCreateUser=Kiểm tra hộp nếu chủ sở hữu cơ sở dữ liệu không tồn tại và phải được tạo ra. <br> Trong trường hợp này, bạn phải chọn tên đăng nhập và mật khẩu của mình và cũng có thể điền tên đăng nhập / mật khẩu cho tài khoản superuser ở dưới cùng của trang này. Nếu hộp này được đánh dấu, cơ sở dữ liệu và mật khẩu chủ sở hữu của nó phải tồn tại.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Đăng nhập của người dùng được phép để tạo ra cơ sở dữ liệu mới hoặc người dùng mới, bắt buộc nếu cơ sở dữ liệu của bạn hoặc chủ sở hữu của nó không đã tồn tại.
 KeepEmptyIfNoPassword=Để trống nếu người dùng không có mật khẩu (tránh điều này)
 SaveConfigurationFile=Lưu giá trị
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Bạn sử dụng các hướng dẫn cài đặt Dolibarr
 KeepDefaultValuesDeb=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ một gói phần mềm Linux (Ubuntu, Debian, Fedora ...), do đó giá trị đề xuất ở đây đã được tối ưu hóa. Chỉ có mật khẩu của chủ sở hữu cơ sở dữ liệu để tạo ra phải được hoàn tất. Thay đổi các thông số khác chỉ khi bạn biết những gì bạn làm.
 KeepDefaultValuesMamp=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ DoliMamp, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
 KeepDefaultValuesProxmox=Bạn sử dụng các hướng dẫn cài đặt Dolibarr từ một thiết bị ảo Proxmox, vì vậy giá trị đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn làm.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Sửa chữa cho các dữ liệu denormalized
@@ -190,9 +193,11 @@ MigrationActioncommElement=Cập nhật dữ liệu về các hoạt động
 MigrationPaymentMode=Di chuyển dữ liệu cho phương thức thanh toán
 MigrationCategorieAssociation=Di chuyển các loại
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Hiển thị tùy chọn không có sẵn
 HideNotAvailableOptions=Ẩn các tùy chọn không có sẵn
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

@@ -53,10 +53,10 @@ AdminLogin=Логин Dolibarr для администратора базы да
 PasswordAgain=Введите пароль еще раз
 AdminPassword=Пароль Dolibarr для администратора базы данных. Держите пустым, если вы подключаетесь в анонимном
 CreateDatabase=Создание базы данных
-CreateUser=Создать пользователя
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=База данных - Superuser доступа
 CheckToCreateDatabase=Флажок, если база данных не существует, и должен быть создан. <br> В этом случае, вы должны заполнить логин и пароль для учетной записи суперпользователя в нижней части этой страницы.
-CheckToCreateUser=Флажок, если логин не существует и должна быть создана. <br> В этом случае, вы должны заполнить логин и пароль для учетной записи суперпользователя в нижней части этой страницы.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Войти на пользователя разрешается создавать новые базы данных и новых пользователей, бесполезны, если ваша база данных, и ваша база данных логин уже существует (например, когда вы Хостинг провайдер веб-хостинга).
 KeepEmptyIfNoPassword=Оставьте пустым, если пользователь не имеет пароля (избежать этого)
 SaveConfigurationFile=Сохранить значения
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Вы можете использовать мастер н
 KeepDefaultValuesDeb=Du bruker Dolibarr konfigurasjonsveiviseren fra en Ubuntu eller Debian-pakke, så verdiene foreslått her allerede er optimalisert. Bare passordet til databasen eieren til å opprette må fullføres. Endre andre parametere bare hvis du vet hva du gjør.
 KeepDefaultValuesMamp=Вы можете использовать мастер настройки DoliMamp, поэтому ценности предлагаемого здесь уже оптимизирован. Изменить их только, если вы знаете, что вы делаете.
 KeepDefaultValuesProxmox=Вы можете использовать мастер установки из Dolibarr прибор Proxmox виртуальные, поэтому значения предлагаемых здесь уже оптимизированы. Изменение их, только если вы знаете, что вы делаете.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fastsette for denormalized data
@@ -190,9 +193,11 @@ MigrationActioncommElement=Обновление данных о действия
 MigrationPaymentMode=Миграция данных для оплаты режим
 MigrationCategorieAssociation=Миграция категорий
 MigrationEvents=Перенос событий для добавления владельца в таблицу присваиванья
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Перегрузите модуль %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Показать недоступные опции
 HideNotAvailableOptions=Скрыть недоступные опции
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

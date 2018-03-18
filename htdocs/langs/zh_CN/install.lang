@@ -53,10 +53,10 @@ AdminLogin=这里填写Dolibarr数据库的账号。
 PasswordAgain=确认密码
 AdminPassword=这里填写Dolibarr数据库的密码。
 CreateDatabase=创建数据库
-CreateUser=创建账号
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=数据库服务器 - 超级用户
 CheckToCreateDatabase=勾选此选项则表示如果数据库不存在则创建数据库。<br>在这种情况下, 勾选之后会在页底显示填写超级数据库账号和密码的输入框。
-CheckToCreateUser=如果数据库所有者复选框不存在，必须创建。 <br>在这种情况下，必须选择自己的登录名和密码，并填写在本页面底部的登陆/为超级用户帐户的密码。如果此框未被选中，用户的数据库及其密码必须存在。
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=选中此项表示使用有创建数据库并且可创建数据库登陆账号的权限，前提是假如填写的数据库不存在。
 KeepEmptyIfNoPassword=如果账号无需密码则保留空白不填写(最好避免空密码这种情况不安全呀)
 SaveConfigurationFile=保存参数
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=您使用从DoliWamp Dolibarr安装向导，所以这里�
 KeepDefaultValuesDeb=您使用从Ubuntu或者Debian软件包的Dolibarr安装向导，所以这里建议值已经进行了优化。只有数据库的所有者创建的密码必须完成。其他参数的变化，如果你只知道你做什么。
 KeepDefaultValuesMamp=您使用从DoliMamp Dolibarr安装向导，所以这里建议值已经进行了优化。他们唯一的变化，如果你知道你做什么。
 KeepDefaultValuesProxmox=您使用Proxmox的虚拟设备的Dolibarr安装向导，因此，这里提出的价值已经优化。改变他们，只有当你知道你做什么。
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=修正了非规范化数据
@@ -190,9 +193,11 @@ MigrationActioncommElement=更新动作数据
 MigrationPaymentMode=付款方式的数据迁移
 MigrationCategorieAssociation=迁移类别
 MigrationEvents=迁移事件数据：将事件所有者数据添加到任务列表
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=更新 llx_societe_remise 的实际栏位参数值
 MigrationRemiseExceptEntity=更新 llx_societe_remise_except 的实际栏位参数值
 MigrationReloadModule=重载模块%s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=显示不可用的选项
 HideNotAvailableOptions=隐藏不可用的选项
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

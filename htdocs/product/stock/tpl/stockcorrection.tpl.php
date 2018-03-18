@@ -15,8 +15,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * $object must be defined
- * $backtopage 
+ * $backtopage
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
@@ -50,7 +58,7 @@
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
         dol_fiche_head();
-        
+
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -60,8 +68,8 @@
 		print '<tr>';
 		if ($object->element == 'product')
 		{
-			print '<td width="20%" class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
-			print '<td width="30%">';
+			print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
+			print '<td>';
 			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')), 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
     		print ' &nbsp; <select name="mouvement" id="mouvement">';
     		print '<option value="0">'.$langs->trans("Add").'</option>';
@@ -71,34 +79,34 @@
 		}
 		if ($object->element == 'stock')
 		{
-			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Product").'</td>';
-	        print '<td width="30%">';
-	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1);
+			print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
+	        print '<td>';
+	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
     		print ' &nbsp; <select name="mouvement" id="mouvement">';
     		print '<option value="0">'.$langs->trans("Add").'</option>';
     		print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';
     		print '</select>';
 	        print '</td>';
 		}
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
-		print '<td width="30%"><input name="nbpiece" id="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
+		print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
+		print '<td><input name="nbpiece" id="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
 		print '</tr>';
 
 		// Purchase price
 		print '<tr>';
-		print '<td width="25%">'.$langs->trans("UnitPurchaseValue").'</td>';
+		print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
 		print '<td colspan="'.(!empty($conf->projet->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
 		if (! empty($conf->projet->enabled))
 		{
 			print '<td>'.$langs->trans('Project').'</td>';
 			print '<td>';
-			$formproject->select_projects();
-			print '</td>';	
+			$formproject->select_projects(0, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
+			print '</td>';
 		}
 		print '</tr>';
 
 		// Serial / Eat-by date
-		if (! empty($conf->productbatch->enabled) && 
+		if (! empty($conf->productbatch->enabled) &&
 		    (($object->element == 'product' && $object->hasbatch())
 		    || ($object->element == 'stock'))
 		)
@@ -125,21 +133,21 @@
 		print '<tr>';
 		print '<td>'.$langs->trans("MovementLabel").'</td>';
 		print '<td>';
-		print '<input type="text" name="label" size="60" value="'.$valformovementlabel.'">';
+		print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 		print '</td>';
-		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.GETPOST("inventorycode").'"></td>';
+		print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(isset($_POST["inventorycode"])?GETPOST("inventorycode",'alpha'):dol_print_date(dol_now(),'%y%m%d%H%M%S')).'"></td>';
 		print '</tr>';
 
 		print '</table>';
 
         dol_fiche_end();
-        
+
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '</div>';
-		
+
 		print '</form>';
 ?>
 <!-- END PHP STOCKCORRECTION.TPL.PHP -->

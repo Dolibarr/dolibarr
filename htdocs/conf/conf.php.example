@@ -238,6 +238,15 @@ $dolibarr_main_prod='0';
 //
 $dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
 
+// $dolibarr_main_restrict_ip
+// To restrict access to backoffice to some ip addresses only.
+// Note: Pages that does not need login (like public pages, web site) are not protected with this.
+// Default value: ''
+// Examples:
+// $dolibarr_main_restrict_ip='127.0.0.1, 192.168.0.1';
+//
+$dolibarr_main_restrict_ip='';
+
 // dolibarr_nocsrfcheck
 // This parameter can be used to disable CSRF protection.
 // This might be required if you access Dolibarr behind a proxy that make
@@ -283,16 +292,6 @@ $dolibarr_nocsrfcheck='0';
 // Default value: 0 (use database value if exist)
 // Examples:
 // $dolibarr_strict_mode=0;
-
-// dolibarr_pdf_force_fpdf
-// Set this to 1 to use the libray FPDF instead of TCPDF. FPDF is not embedded with Dolibarr, 
-// so you also have to uncomment line $dolibarr_lib_FPDF_PATH to provide path to FPDF library.
-// Warning: FPDF does not support all features supported by TCPDF used by default. So using
-// this library instead of TCPF will break some features like transparent logo, cyrillic, arab,
-// and asiatic languages, total number of pages, ...
-// Default value: 0
-// Examples:
-// $dolibarr_pdf_force_fpdf=1;
 
 
 

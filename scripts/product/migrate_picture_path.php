@@ -104,7 +104,8 @@ function migrate_product_photospath($product)
 	global $conf;
 
 	$dir = $conf->product->multidir_output[$product->entity];
-	$origin = $dir .'/'. get_exdir($product->id,2) . $product->id ."/photos";
+	$conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO = 1;
+	$origin = $dir .'/'. get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos";
 	$destin = $dir.'/'.dol_sanitizeFileName($product->ref);
 
 	$error = 0;

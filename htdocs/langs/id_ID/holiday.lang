@@ -16,7 +16,7 @@ CancelCP=Dibatalkan
 RefuseCP=Ditolak
 ValidatorCP=Penyetuju
 ListeCP=Daftar yang Cuti
-ReviewedByCP=Akan dicek oleh
+ReviewedByCP=Will be approved by
 DescCP=Keterangan
 SendRequestCP=Buat permintaan cuti
 DelayToRequestCP=Permintaan cuti harus dilakukan setidaknya <b>%s day(s)</b> sebelum mereka.
@@ -79,6 +79,8 @@ HolidaysCancelation=Leave request cancelation
 EmployeeLastname=Employee last name
 EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

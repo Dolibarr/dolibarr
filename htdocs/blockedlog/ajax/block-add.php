@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/blockedlog/ajax/block-add.php
  *      \ingroup    blockedlog
- *      \brief      Block-add
+ *      \brief      block-add
  */
 
 

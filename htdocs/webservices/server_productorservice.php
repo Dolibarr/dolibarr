@@ -134,7 +134,8 @@ $productorservice_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('product',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -146,7 +147,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
-$productorservice_fields=array_merge($productorservice_fields,$extrafield_array);
+if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields,$extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -424,7 +425,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
             	//Get extrafield values
-            	$product->fetch_optionals($product->id,$extralabels);
+            	$product->fetch_optionals();
 
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
@@ -1095,7 +1096,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 							$extrafields=new ExtraFields($db);
 							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 							//Get extrafield values
-							$obj->fetch_optionals($obj->id,$extralabels);
+							$obj->fetch_optionals();
 
 							foreach($extrafields->attribute_label as $key=>$label)
 							{

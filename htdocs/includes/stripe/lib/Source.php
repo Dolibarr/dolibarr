@@ -5,72 +5,39 @@ namespace Stripe;
 /**
  * Class Source
  *
+ * @property string $id
+ * @property string $object
+ * @property int $amount
+ * @property string $client_secret
+ * @property mixed $code_verification
+ * @property int $created
+ * @property string $currency
+ * @property string $flow
+ * @property bool $livemode
+ * @property StripeObject $metadata
+ * @property mixed $owner
+ * @property mixed $receiver
+ * @property mixed $redirect
+ * @property string $statement_descriptor
+ * @property string $status
+ * @property string $type
+ * @property string $usage
+ *
  * @package Stripe
  */
 class Source extends ApiResource
 {
-    /**
-     * @param string $id The ID of the Source to retrieve.
-     * @param array|string|null $opts
-     *
-     * @return Source
-     */
-    public static function retrieve($id, $opts = null)
-    {
-        return self::_retrieve($id, $opts);
-    }
+    use ApiOperations\Create;
+    use ApiOperations\Retrieve;
+    use ApiOperations\Update;
 
     /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Collection of Sources
-     */
-    public static function all($params = null, $opts = null)
-    {
-        return self::_all($params, $opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Source The created Source.
-     */
-    public static function create($params = null, $opts = null)
-    {
-        return self::_create($params, $opts);
-    }
-
-    /**
-     * @param string $id The ID of the source to update.
      * @param array|null $params
      * @param array|string|null $options
      *
-     * @return Source The updated source.
+     * @return Source The detached source.
      */
-    public static function update($id, $params = null, $options = null)
-    {
-        return self::_update($id, $params, $options);
-    }
-
-    /**
-     * @param array|string|null $opts
-     *
-     * @return Source The saved source.
-     */
-    public function save($opts = null)
-    {
-        return $this->_save($opts);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Source The deleted source.
-     */
-    public function delete($params = null, $options = null)
+    public function detach($params = null, $options = null)
     {
         self::_validateParams($params);
 
@@ -92,9 +59,8 @@ class Source extends ApiResource
             $this->refreshFrom($response, $opts);
             return $this;
         } else {
-            $message = "Source objects cannot be deleted, they can only be "
-               . "detached from customer objects. This source object does not "
-               . "appear to be currently attached to a customer object.";
+            $message = "This source object does not appear to be currently attached "
+               . "to a customer object.";
             throw new Error\Api($message);
         }
     }
@@ -103,7 +69,35 @@ class Source extends ApiResource
      * @param array|null $params
      * @param array|string|null $options
      *
-     * @return BankAccount The verified bank account.
+     * @return Source The detached source.
+     *
+     * @deprecated Use the `detach` method instead.
+     */
+    public function delete($params = null, $options = null)
+    {
+        $this->detach($params, $options);
+    }
+
+    /**
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return Collection The list of source transactions.
+     */
+    public function sourceTransactions($params = null, $options = null)
+    {
+        $url = $this->instanceUrl() . '/source_transactions';
+        list($response, $opts) = $this->_request('get', $url, $params, $options);
+        $obj = Util\Util::convertToStripeObject($response, $opts);
+        $obj->setLastResponse($response);
+        return $obj;
+    }
+
+    /**
+     * @param array|null $params
+     * @param array|string|null $options
+     *
+     * @return Source The verified source.
      */
     public function verify($params = null, $options = null)
     {

@@ -388,7 +388,7 @@ EOF;
 }
 
 
-// DOL_CHANGE
+// @CHANGE
 
 // This is the function that sends the results of the uploading process to CKE.
 /**

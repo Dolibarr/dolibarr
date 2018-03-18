@@ -140,14 +140,14 @@ if ($result > 0)
     dol_fiche_head($head, 'notify', $langs->trans("User"), -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
-    
+
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', '', '', 0, '', '', 0, '');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
-    
+
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
     if (! empty($object->ldap_sid) && $object->statut==0)
@@ -159,7 +159,7 @@ if ($result > 0)
         print '<td>'.$object->login.'</td>';
     }
     print '</tr>'."\n";
-            
+
     /*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
     print '<td colspan="3">';
     $nbofrecipientemails=0;
@@ -171,23 +171,23 @@ if ($result > 0)
     }
     print $nbofrecipientemails;
     print '</td></tr>';*/
-    
+
     print '</table>';
-    
+
     print '</div>';
-    
+
     dol_fiche_end();
 
     print "\n";
-    
+
     // Help
     print '<br>'.$langs->trans("NotificationsDesc");
     print '<br>'.$langs->trans("NotificationsDescUser");
     print '<br>'.$langs->trans("NotificationsDescContact");
     print '<br>'.$langs->trans("NotificationsDescGlobal");
-    
+
     print '<br><br><br>'."\n";
-    
+
 
     // Add notification form
     print_fiche_titre($langs->trans("AddNewNotification"),'','');
@@ -201,9 +201,9 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
+    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -266,7 +266,7 @@ if ($result > 0)
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND c.rowid = n.fk_user";
     $sql.= " AND c.rowid = ".$object->id;
-    
+
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -276,7 +276,7 @@ if ($result > 0)
     {
         dol_print_error($db);
     }
-    
+
     // List of active notifications
     print_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
     $var=true;
@@ -284,9 +284,9 @@ if ($result > 0)
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
+    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'"width="35%"',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'"width="10%"',$sortfield,$sortorder);
     print_liste_field_titre('','','');
     print '</tr>';
 
@@ -389,8 +389,8 @@ if ($result > 0)
     }*/
 
     print '</table>';
-    
-    
+
+
     print '<br><br>'."\n";
 
 
@@ -404,7 +404,7 @@ if ($result > 0)
     $sql.= " WHERE a.rowid = n.fk_action";
     $sql.= " AND n.fk_user = ".$object->id;
     $sql.= $db->order($sortfield, $sortorder);
-    
+
     // Count total nb of records
     $nbtotalofrecords = '';
     if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -412,9 +412,9 @@ if ($result > 0)
         $result = $db->query($sql);
         $nbtotalofrecords = $db->num_rows($result);
     }
-    
+
     $sql.= $db->plimit($limit+1, $offset);
-    
+
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -424,11 +424,11 @@ if ($result > 0)
     {
         dol_print_error($db);
     }
-    
+
     $param='&id='.$object->id;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    
+
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -437,18 +437,18 @@ if ($result > 0)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="id" value="'.$object->id.'">';
-    
+
     // List of notifications done
     print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
-    
+
     // Line with titles
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Target"),$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"n.type",'',$param,'',$sortfield,$sortorder);
-    //print_liste_field_titre($langs->trans("Object"),$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"n.daten",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"c.lastname,c.firstname",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Action",$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"n.type",'',$param,'',$sortfield,$sortorder);
+    //print_liste_field_titre("Object",$_SERVER["PHP_SELF"],"",'',$param,'"',$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"n.daten",'',$param,'align="right"',$sortfield,$sortorder);
     print '</tr>';
 
     if ($num)
@@ -501,7 +501,7 @@ if ($result > 0)
     }
 
     print '</table>';
-    
+
     print '</form>';
 }
 else dol_print_error('','RecordNotFound');

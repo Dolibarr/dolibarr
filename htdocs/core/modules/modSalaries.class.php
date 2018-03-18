@@ -48,7 +48,7 @@ class modSalaries extends DolibarrModules
 		global $conf;
 
 		$this->db = $db;
-		$this->numero = 510;
+		$this->numero = 510; // Perms from 501..519
 
 		$this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -60,14 +60,14 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='bill';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
 
 		// Config pages
-		$this->config_page_url = array('salaries.php');
+		//$this->config_page_url = array('salaries.php');
+		$this->config_page_url = array();
 
 		// Dependencies
 		$this->depends = array();
@@ -97,7 +97,7 @@ class modSalaries extends DolibarrModules
 		$r=0;
 
 		$r++;
-		$this->rights[$r][0] = 511;
+		$this->rights[$r][0] = 501;
 		$this->rights[$r][1] = 'Read employee contracts/salaries';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -105,21 +105,29 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][5] = '';
 
 		$r++;
-		$this->rights[$r][0] = 512;
+		$this->rights[$r][0] = 502;
 		$this->rights[$r][1] = 'Create/modify employee contracts/salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
-		
+
 		$r++;
-		$this->rights[$r][0] = 513;
+		$this->rights[$r][0] = 511;
+		$this->rights[$r][1] = 'Read payment of salaries';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'payment';
+		$this->rights[$r][5] = 'read';
+
+		$r++;
+		$this->rights[$r][0] = 512;
 		$this->rights[$r][1] = 'Create/modify payment of salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'write';
-		$this->rights[$r][5] = '';
-		
+		$this->rights[$r][4] = 'payment';
+		$this->rights[$r][5] = 'write';
+
 		$r++;
 		$this->rights[$r][0] = 514;
 		$this->rights[$r][1] = 'Delete contracts/salaries';
@@ -127,6 +135,13 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$this->rights[$r][5] = '';
+
+		$this->rights[$r][0] = 515;
+		$this->rights[$r][1] = 'Read all salaries';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'payment';
+		$this->rights[$r][5] = 'readall';
 
 		$r++;
 		$this->rights[$r][0] = 517;
@@ -140,8 +155,8 @@ class modSalaries extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;

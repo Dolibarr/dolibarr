@@ -16,10 +16,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-if (GETPOST('dol_hide_topmenu')) $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_topmenu')) $conf->dol_hide_topmenu=1;
 if (GETPOST('dol_hide_leftmenu')) $conf->dol_hide_leftmenu=1;
 if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
@@ -31,11 +39,13 @@ if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
 $php_self = $_SERVER['PHP_SELF'];
 $php_self.= dol_escape_htmltag($_SERVER["QUERY_STRING"])?'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]):'';
 
-print top_htmlhead('',$langs->trans('SendNewPassword'));
+$titleofpage=$langs->trans('SendNewPassword');
+
+print top_htmlhead('', $titleofpage);
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
 
-<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file='.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
 
 <?php if (empty($conf->dol_use_jmobile)) { ?>
 <script type="text/javascript">
@@ -71,8 +81,10 @@ if ($disablenofollow) echo '</a>';
 <div id="login_line1">
 
 <div id="login_left">
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
+<img alt="" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </div>
+
+<br>
 
 <div id="login_right">
 
@@ -81,20 +93,27 @@ if ($disablenofollow) echo '</a>';
 <!-- Login -->
 <tr>
 <td valign="bottom" class="nowrap center">
-<span class="span-icon-user">
+<!-- <span class="span-icon-user">-->
+<span class="fa fa-user">
 <input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user" size="20" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </span>
 </td>
 </tr>
 
 <?php
-if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $format => $option)
-	{
-		if ($format == 'table') {
-			echo '<!-- Option by hook -->';
-			echo $option;
+if (! empty($morelogincontent)) {
+	if (is_array($morelogincontent)) {
+		foreach ($morelogincontent as $format => $option)
+		{
+			if ($format == 'table') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
+	}
+	else {
+		echo '<!-- Option by hook -->';
+		echo $morelogincontent;
 	}
 }
 ?>
@@ -109,9 +128,10 @@ if (! empty($hookmanager->resArray['options'])) {
 	<tr>
 	<td class="tdtop nowrap none center">
 
-	<table class="login_table_securitycode centpercent"><tr>
+	<table class="login_table_securitycode centpercent"><tr class="valignmiddle">
 	<td>
-	<span class="span-icon-security">
+	<!-- <span class="span-icon-security"> -->
+	<span class="nofa">
 	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security" type="text" size="12" maxlength="5" name="code" tabindex="3" />
 	</span>
 	</td>
@@ -132,7 +152,7 @@ if (! empty($hookmanager->resArray['options'])) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button" name="password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div align="center" style="margin-top: 8px;">
@@ -154,11 +174,11 @@ if (! empty($hookmanager->resArray['options'])) {
 </form>
 
 
-<div class="center login_main_home" style="max-width: 70%">
+<div class="center login_main_home paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || ! $disabled) { ?>
-	<font style="font-size: 12px;">
+	<span class="passwordmessagedesc">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
-	</font>
+	</span>
 <?php }else{ ?>
 	<div class="warning" align="center">
 	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
@@ -175,6 +195,20 @@ if (! empty($hookmanager->resArray['options'])) {
 	</div>
 <?php } ?>
 
+<?php if (! empty($morelogincontent) && is_array($morelogincontent)) {
+	foreach ($morelogincontent as $format => $option)
+	{
+		if ($format == 'js') {
+			echo "\n".'<!-- Javascript by hook -->';
+			echo $option."\n";
+		}
+	}
+}
+else if (! empty($moreloginextracontent)) {
+	echo '<!-- Javascript by hook -->';
+	echo $moreloginextracontent;
+}
+?>
 
 </div>
 </div>	<!-- end of center -->

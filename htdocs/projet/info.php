@@ -78,7 +78,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
     $actioncode='';
     $search_agenda_label='';
@@ -156,42 +156,32 @@ if ($permok)
 }
 
 
-print '<div class="tabsAction">';
-
+//print '<div class="tabsAction">';
+$morehtmlcenter='';
 if (! empty($conf->agenda->enabled))
 {
     if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
     }
     else
     {
-        print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
 
-print '</div>';
-
+//print '</div>';
 
 if (!empty($object->id))
 {
-    $param='&id='.$object->id;
+	print '<br>';
+
+	$param='&id='.$object->id;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-    print load_fiche_titre($langs->trans("ActionsOnProject"),'','');
-    
-    // List of actions on element
-    /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-    $formactions=new FormActions($db);
-    $somethingshown=$formactions->showactions($object,'project',0);*/
-    
-    // List of todo actions
-    //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
-    
-    // List of done actions
-    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
-    
+    print_barre_liste($langs->trans("ActionsOnProject"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+
     // List of all actions
     $filters=array();
     $filters['search_agenda_label']=$search_agenda_label;

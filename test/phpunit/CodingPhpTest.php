@@ -155,13 +155,32 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             print 'Check php file '.$file['fullname']."\n";
             $filecontent=file_get_contents($file['fullname']);
 
+
             $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/=\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/(..)\s*\.\s*\$this->db->idate\(/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'db->' && $val[1] != 'esca')
+            	if ($val[1] != '\'"' && $val[1] != '\'\'')
+            	{
+            		$ok=false;
+            		break;
+            	}
+            	//if ($reg[0] != 'db') $ok=false;
+            }
+            //print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+            $this->assertTrue($ok, 'Found a $this->db->idate to forge a sql request without quotes around this date field '.$file['fullname'].' :: '.$val[0]);
+            //exit;
+
+
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/(=|sql.+)\s*\'"\s*\.\s*\$this->(....)/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+                if ($val[2] != 'db->' && $val[2] != 'esca')
                 {
                     $ok=false;
                     break;
@@ -172,36 +191,50 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
             $this->assertTrue($ok, 'Found non escaped string in building of a sql request '.$file['fullname'].' ('.$val[0].'). Bad.');
             //exit;
 
+
             // Test that output of $_SERVER\[\'QUERY_STRING\'\] is escaped.
             $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/(...................)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/(..............)\$_SERVER\[\'QUERY_STRING\'\]/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'dol_escape_htmltag(')
+            	if ($val[1] != 'scape_htmltag(' && $val[1] != 'ing_nohtmltag(' && $val[1] != 'dol_escape_js(')
                 {
                     $ok=false;
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
+            $this->assertTrue($ok, 'Found a $_SERVER[\'QUERY_STRING\'] without dol_escape_htmltag neither dol_string_nohtmltag around it, in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'QUERY_STRING\']). Bad.');
 
-            // Test that output of $_SERVER\[\'PHP_SELF\'\] is escaped (not done for the moment, did not found a way to forge value of $_SERVER['PHP_SELF'] by extern access).
-            /*$ok=true;
+
+            // Test that first param of print_liste_field_titre is a translation key and not the translated value
+            $ok=true;
             $matches=array();
             // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
-            preg_match_all('/(...................)\$_SERVER\[\'PHP_SELF\'\]/', $filecontent, $matches, PREG_SET_ORDER);
+            preg_match_all('/print_liste_field_titre\(\$langs/', $filecontent, $matches, PREG_SET_ORDER);
             foreach($matches as $key => $val)
             {
-                if ($val[1] != 'dol_escape_htmltag(')
+           		$ok=false;
+           		break;
+            }
+            $this->assertTrue($ok, 'Found a use of print_liste_field_titre with fist parameter that is a translated value instead of just the translation key in file '.$file['fullname'].'. Bad.');
+
+
+            // Test we don't have <br />
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/<br \/>/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+            	if ($file['name'] != 'functions.lib.php')
                 {
                     $ok=false;
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a $_SERVER[\'PHP_SELF\'] without dol_escape_htmltag around in file '.$file['fullname'].' ('.$val[1].'$_SERVER[\'PHP_SELF\']). Bad.');
-            */
+            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['fullname'].' You may use <br> instead.');
         }
 
         return;

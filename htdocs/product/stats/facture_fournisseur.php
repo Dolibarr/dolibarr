@@ -63,7 +63,7 @@ if (! $sortfield) $sortfield = "f.datef";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -102,7 +102,7 @@ if ($id > 0 || ! empty($ref))
         print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -202,13 +202,13 @@ if ($id > 0 || ! empty($ref))
                 print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
-				print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("SupplierCode"), $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("DateInvoice"), $_SERVER["PHP_SELF"], "f.datef", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"], "f.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("SupplierCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "f.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if ($num > 0)
@@ -229,7 +229,7 @@ if ($id > 0 || ! empty($ref))
 						print '<td>' . $societestatic->getNomUrl(1) . '</td>';
 						print "<td>" . $objp->code_client . "</td>\n";
                    		print '<td align="center">';
-						print dol_print_date($db->jdate($objp->datef)) . "</td>";
+						print dol_print_date($db->jdate($objp->datef), 'dayhour') . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
 						print '<td align="right">' . $supplierinvoicestatic->LibStatut($objp->paye, $objp->statut, 5) . '</td>';

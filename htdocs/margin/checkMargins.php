@@ -34,6 +34,13 @@ $langs->load("bills");
 $langs->load("products");
 $langs->load("margins");
 
+$action     = GETPOST('action','alpha');
+$massaction = GETPOST('massaction','alpha');
+$toselect   = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'margindetail';   // To manage different context of search
+$backtopage = GETPOST('backtopage','alpha');
+$optioncss  = GETPOST('optioncss','alpha');
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -68,8 +75,8 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -103,7 +110,7 @@ if (empty($reshook))
     }
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
     {
         $search_ref='';
         $search_array_options=array();
@@ -143,13 +150,10 @@ llxHeader('', $title);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if (! empty($startdate)) {
-    $param .= '&startdatemonth=' . GETPOST('startdatemonth', 'int') . '&startdateday=' . GETPOST('startdateday', 'int') . '&startdateyear=' . GETPOST('startdateyear', 'int');
-}
-if (! empty($enddate)) {
-    $param .= '&enddatemonth=' . GETPOST('enddatemonth', 'int') . '&enddateday=' . GETPOST('enddateday', 'int') . '&enddateyear=' . GETPOST('enddateyear', 'int');
-}
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($search_ref != '')   $param.='&search_ref='.urlencode($search_ref);
+if (! empty($startdate)) $param .= '&startdatemonth=' . GETPOST('startdatemonth', 'int') . '&startdateday=' . GETPOST('startdateday', 'int') . '&startdateyear=' . GETPOST('startdateyear', 'int');
+if (! empty($enddate))   $param .= '&enddatemonth=' . GETPOST('enddatemonth', 'int') . '&enddateday=' . GETPOST('enddateday', 'int') . '&enddateyear=' . GETPOST('enddateyear', 'int');
+if ($optioncss != '')    $param.='&optioncss='.$optioncss;
 
 // Show tabs
 $head = marges_prepare_head($user);
@@ -189,7 +193,7 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "facture as f ";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as d  ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut > 0";
-$sql .= " AND f.entity = " . getEntity('facture');
+$sql .= " AND f.entity IN (" . getEntity('facture') . ") ";
 if (! empty($startdate)) $sql .= " AND f.datef >= '" . $db->idate($startdate) . "'";
 if (! empty($enddate))   $sql .= " AND f.datef <= '" . $db->idate($enddate) . "'";
 if ($search_ref) $sql.=natural_search('f.facnumber', $search_ref);
@@ -218,9 +222,9 @@ if ($result) {
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice=$langs->trans('BuyingPrice');
+	    $labelcostprice='BuyingPrice';
 	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice=$langs->trans('CostPrice');
+	    $labelcostprice='CostPrice';
 
 	$moreforfilter='';
 
@@ -246,12 +250,12 @@ if ($result) {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Description"), $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("UnitPriceHT"), $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
+	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 

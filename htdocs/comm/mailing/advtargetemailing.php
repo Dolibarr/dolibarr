@@ -22,6 +22,8 @@
  *       \brief      Page to define emailing targets
  */
 
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/comm/mailing/class/mailing.class.php';
@@ -43,13 +45,13 @@ if (! empty($conf->categorie->enabled)) {
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
 	accessforbidden();
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
-$offset = $conf->liste_limit * $page;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder)
@@ -66,7 +68,7 @@ $search_email = GETPOST("search_email");
 $template_id = GETPOST('template_id', 'int');
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x")) {
+if (GETPOST('button_removefilter_x','alpha')) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';
@@ -404,14 +406,8 @@ if ($_POST["button_removefilter"]) {
  * View
  */
 
-$extrajs = array (
-		'/includes/jquery/plugins/multiselect/js/ui.multiselect.js'
-);
-$extracss = array (
-		'/includes/jquery/plugins/multiselect/css/ui.multiselect.css',
-);
 
-llxHeader('', $langs->trans("MailAdvTargetRecipients"), '', '', '', '', $extrajs, $extracss);
+llxHeader('', $langs->trans("MailAdvTargetRecipients"));
 
 print '<script type="text/javascript" language="javascript">
 	$(document).ready(function() {

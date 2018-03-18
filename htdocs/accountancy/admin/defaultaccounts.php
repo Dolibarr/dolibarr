@@ -42,7 +42,7 @@ $langs->load("salaries");
 $langs->load("loan");
 
 // Security check
-if (! empty($user->rights->accountancy->chartofaccount))
+if (empty($user->rights->accounting->chartofaccount))
 {
 	accessforbidden();
 }
@@ -77,7 +77,7 @@ $list_account = array (
  * Actions
  */
 
-$accounting_mode = defined('ACCOUNTING_MODE') ? ACCOUNTING_MODE : 'RECETTES-DEPENSES';
+$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 
 if (GETPOST('change_chart'))

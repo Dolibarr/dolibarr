@@ -3,8 +3,8 @@
  * Copyright (C) 2012-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014-2017	Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 $myparam = GETPOST("myparam");
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
-$userid = GETPOST('userid')?GETPOST('userid'):$user->id;
+$fuserid = (GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id);
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -61,7 +61,8 @@ if ($action == 'create')
 	$object = new Holiday($db);
 
     // If no right to create a request
-    if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
+    $fuserid = GETPOST('fuserid','int');
+    if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
     	$error++;
     	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
@@ -86,7 +87,6 @@ if ($action == 'create')
 
 	    $valideur = GETPOST('valideur');
 	    $description = trim(GETPOST('description'));
-	    $userID = GETPOST('userID');
 
     	// If no type
 	    if ($type <= 0)
@@ -119,7 +119,7 @@ if ($action == 'create')
 	    }
 
 	    // Check if there is already holiday for this period
-	    $verifCP = $object->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
+	    $verifCP = $object->verifDateHolidayCP($fuserid, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
 	        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
@@ -145,23 +145,26 @@ if ($action == 'create')
 
 	    $result = 0;
 
-	    $result = 0;
-
 	    if (! $error)
 	    {
-    	    $object->fk_user = $userid;
+    	    $object->fk_user = $fuserid;
     	    $object->description = $description;
-    	    $object->date_debut = $date_debut;
-    	    $object->date_fin = $date_fin;
     	    $object->fk_validator = $valideur;
-    		$object->halfday = $halfday;
     		$object->fk_type = $type;
+    		$object->date_debut = $date_debut;
+    		$object->date_fin = $date_fin;
+    		$object->halfday = $halfday;
 
     		$result = $object->create($user);
+    		if ($result <= 0)
+    		{
+    			setEventMessages($object->error, $object->errors, 'errors');
+    			$error++;
+    		}
 	    }
 
 	    // If no SQL error we redirect to the request card
-	    if (! $error && $result > 0)
+	    if (! $error)
 	    {
 			$db->commit();
 
@@ -279,8 +282,8 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 
 	$canedit=(($user->id == $object->fk_user && $user->rights->holiday->write) || ($user->id != $object->fk_user && $user->rights->holiday->write_all));
 
-    // If this is a rough draft
-	if ($object->statut == 1 || $object->statut == 3)
+    // If this is a rough draft, approved, canceled or refused
+	if ($object->statut == 1 || $object->statut == 4 || $object->statut == 5)
 	{
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
 		if ($canedit)
@@ -296,7 +299,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	if (! $error)
 	{
 		$db->commit();
-		header('Location: list.php');
+		header('Location: list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
@@ -383,7 +386,9 @@ if ($action == 'confirm_send')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
@@ -469,12 +474,14 @@ if ($action == 'confirm_valid')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
 
-            if(!$result) {
+            if (!$result) {
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=mail&error_content='.$mail->error);
                 exit;
             }
@@ -544,7 +551,9 @@ if ($action == 'confirm_refuse')
 	            $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
                 $message.= "\n";
 
-                $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+	            $trackid='leav'.$object->id;
+
+	            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
                 // Envoi du mail
                 $result=$mail->sendfile();
@@ -681,7 +690,9 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             $message.= "- ".$langs->transnoentitiesnoconv("Link")." : ".$dolibarr_main_url_root."/holiday/card.php?id=".$object->id."\n\n";
             $message.= "\n";
 
-            $mail = new CMailFile($subject,$emailTo,$emailFrom,$message);
+            $trackid='leav'.$object->id;
+
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
@@ -722,7 +733,7 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
 {
     // Si l'utilisateur n'a pas le droit de faire une demande
-    if (($userid == $user->id && empty($user->rights->holiday->write)) || ($userid != $user->id && empty($user->rights->holiday->write_all)))
+    if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
         $errors[]=$langs->trans('CantCreateCP');
     }
@@ -802,9 +813,8 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
-        print '<input type="hidden" name="userID" value="'.$userid.'" />'."\n";
 
-        dol_fiche_head();
+        dol_fiche_head('', '', '', -1);
 
         $out='';
         $typeleaves=$object->getTypes(1,1);
@@ -822,7 +832,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         dol_fiche_head();
 
-        //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br /><br />';
+        //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
         print '<table class="border" width="100%">';
         print '<tbody>';
@@ -833,10 +843,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers($userid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-        	print '<input type="hidden" name="userid" value="'.$userid.'">';
+        	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+        	print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
+        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id,'fuserid',0,'',0);
         print '</td>';
         print '</tr>';
 
@@ -1043,7 +1053,7 @@ else
 
                 dol_fiche_head($head, 'card', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
-                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
+                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
                 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
 
@@ -1079,7 +1089,7 @@ else
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>'.dol_print_date($object->date_debut,'day');
 			        print ' &nbsp; &nbsp; ';
-                    print $langs->trans($listhalfday[$starthalfday]);
+			        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
                 }
@@ -1101,7 +1111,7 @@ else
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>'.dol_print_date($object->date_fin,'day');
                     print ' &nbsp; &nbsp; ';
-                    print $langs->trans($listhalfday[$endhalfday]);
+                    print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
                 }
@@ -1170,6 +1180,7 @@ else
 	                print '</tr>';
                 }
 
+                // Validator
                 if (!$edit) {
                     print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
@@ -1179,7 +1190,7 @@ else
                     print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>';
-        			print $form->select_dolusers($object->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
+        			print $form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
                     print '</td>';
                     print '</tr>';
                 }
@@ -1244,7 +1255,7 @@ else
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
-                    if ($user->rights->holiday->delete && $object->statut == 1)	// If draft
+                    if ($user->rights->holiday->delete && ($object->statut == 1 || $object->statut == 4 || $object->statut == 5))	// If draft or canceled or refused
                     {
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
@@ -1280,14 +1291,14 @@ else
             } else {
                 print '<div class="tabBar">';
                 print $langs->trans('ErrorUserViewCP');
-                print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+                print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
                 print '</div>';
             }
 
         } else {
             print '<div class="tabBar">';
             print $langs->trans('ErrorIDFicheCP');
-            print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+            print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
             print '</div>';
         }
 

@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Tag/Catégorie
 Rubriques=Tags/Catégories
+RubriquesTransactions=Tags/catégories des transactions
 categories=tags/catégories
 NoCategoryYet=Aucun tag/catégorie de ce type n'a été créé
 In=Dans
@@ -84,3 +85,4 @@ CategorieRecursivHelp=Si activé : quand un élément est ajouté dans une cat�
 AddProductServiceIntoCategory=Ajouter le produit/service suivant
 ShowCategory=Afficher tag/catégorie
 ByDefaultInList=Par défaut dans la liste
+ChooseCategory=Choisissez les catégories

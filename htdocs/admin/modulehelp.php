@@ -35,7 +35,8 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');			// If there is n
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -162,8 +163,6 @@ foreach ($modulesdir as $dir)
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	if (!is_array($familyinfo)) $familyinfo=array();
@@ -179,13 +178,11 @@ foreach ($modulesdir as $dir)
 		    			                $moduleposition = 800;
 		    			            }
 
-		    			            if ($special == 1) $familykey='interface';
-
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -239,7 +236,6 @@ foreach($orders as $tmpkey => $tmpvalue)
     $i++;
 }
 $value = $orders[$key];
-$special = $objMod->special;
 $tab=explode('_',$value);
 $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 
@@ -269,7 +265,7 @@ if ($objMod->isCoreOrExternalModule() == 'external')
 $modulename=$objMod->getName();
 $moduledesc=$objMod->getDesc();
 $moduleauthor=$objMod->getPublisher();
-
+$moduledir=strtolower(preg_replace('/^mod/i','',get_class($objMod)));
 
 
 print '<div class="centpercent">';
@@ -365,24 +361,26 @@ if ($mode == 'desc')
 if ($mode == 'feature')
 {
     $text.='<br><strong>'.$langs->trans("DependsOn").':</strong> ';
-    if (count($objMod->requiredby)) $text.=join(',', $objMod->depends);
+    if (count($objMod->depends)) $text.=join(',', $objMod->depends);
 	else $text.=$langs->trans("None");
     $text.='<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
 	if (count($objMod->requiredby)) $text.=join(',', $objMod->requiredby);
 	else $text.=$langs->trans("None");
 
-    $text.='<br><br><br>';
+    $text.='<br><br>';
 
-    $text.='<strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
-    if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
+    $text.='<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
+	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
+    if (count($sqlfiles) > 0)
     {
-        $i=0;
-        foreach($objMod->tabs as $val)
-        {
-            $tmp=explode(':',$val,3);
-            $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
-            $i++;
-        }
+    	$text.=$langs->trans("Yes").' (';
+    	$i=0;
+    	foreach($sqlfiles as $val)
+    	{
+    		$text.=($i?', ':'').preg_replace('/\.sql$/','',preg_replace('/llx_/','',$val['name']));
+    		$i++;
+    	}
+    	$text.=')';
     }
     else $text.=$langs->trans("No");
 
@@ -402,14 +400,29 @@ if ($mode == 'feature')
 
     $text.='<br>';
 
-    $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
-    if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
+    $text.='<br><strong>'.$langs->trans("AddData").':</strong> ';
+    $filedata = dol_buildpath($moduledir.'/sql/data.sql');
+    if (dol_is_file($filedata))
+    {
+        $text.=$langs->trans("Yes").' ('.$moduledir.'/sql/data.sql'.')';
+    }
+    else $text.=$langs->trans("No");
+
+    $text.='<br>';
+
+    $text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
+    if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
     {
         $i=0;
-        foreach($objMod->boxes as $val)
+        foreach($objMod->tabs as $val)
         {
-            $text.=($i?', ':'').($val['file']?$val['file']:$val[0]);
-            $i++;
+        	if (is_array($val)) $val=$val['data'];
+        	if (is_string($val))
+        	{
+            	$tmp=explode(':',$val,3);
+            	$text.=($i?', ':'').$tmp[0].':'.$tmp[1];
+           		$i++;
+        	}
         }
     }
     else $text.=$langs->trans("No");
@@ -449,9 +462,40 @@ if ($mode == 'feature')
     $text.='<br>';
 
     $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
+    $moreinfoontriggerfile='';
     if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
     {
-        $text.=$langs->trans("Yes");
+    	$yesno='Yes';
+    }
+    else
+    {
+    	$yesno='No';
+    }
+    require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+    $interfaces = new Interfaces($db);
+    $triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external')?'/'.$moduledir:'').'/core/triggers'));
+	foreach($triggers as $triggercursor)
+	{
+		if ($triggercursor['module'] == $moduledir)
+		{
+			$yesno='Yes';
+			$moreinfoontriggerfile=' ('.$triggercursor['relpath'].')';
+		}
+	}
+
+    $text.=$langs->trans($yesno).$moreinfoontriggerfile;
+
+    $text.='<br>';
+
+    $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
+    if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
+    {
+        $i=0;
+        foreach($objMod->boxes as $val)
+        {
+            $text.=($i?', ':'').($val['file']?$val['file']:$val[0]);
+            $i++;
+        }
     }
     else $text.=$langs->trans("No");
 
@@ -463,10 +507,10 @@ if ($mode == 'feature')
     	$i=0;
         foreach($objMod->module_parts['hooks'] as $key => $val)
         {
-        	if ($key == 'entity') continue;
+        	if ($key === 'entity') continue;
 
         	// For special values
-        	if ($key == 'data')
+        	if ($key === 'data')
         	{
         		if (is_array($val))
         		{

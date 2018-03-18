@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Rapport de dépenses
-ExpenseReports=Note de frais
 ShowExpenseReport=Afficher le rapport de dépenses
 TripsAndExpenses=Rapports sur les dépenses
 TripsAndExpensesStatistics=Statistiques des rapports de dépenses
@@ -48,6 +46,7 @@ DATE_REFUS=Déni de date
 DATE_CANCEL=Date d'annulation
 DATE_PAIEMENT=Date de règlement
 BROUILLONNER=Rouvrir
+ExpenseReportRef=Réf. rapport de dépenses
 ValidateAndSubmit=Validez et soumettez pour approbation
 NOT_AUTHOR=Vous n'êtes pas l'auteur de ce rapport de dépenses. Fonctionnement annulé.
 ConfirmRefuseTrip=Êtes-vous sûr de vouloir refuser ce rapport de dépenses?
@@ -66,3 +65,4 @@ ExpenseReportsToApprove=Rapports de dépenses à approuver
 ExpenseReportsToPay=Rapports de dépenses à payer
 CloneExpenseReport=Rapport de dépenses de clones
 ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir cloner ce rapport de dépenses?
+ExpenseReportDateEnd=Date de fin

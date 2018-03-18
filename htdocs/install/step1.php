@@ -312,14 +312,25 @@ if (! $error && $db->connected)
 // Define $defaultCharacterSet and $defaultDBSortingCollation
 if (! $error && $db->connected)
 {
-    if (!empty($db_create_database)) { // If we create database, we force default value
-    	$defaultCharacterSet=$db->forcecharset;
+    if (!empty($db_create_database))    // If we create database, we force default value
+    {
+        // Default values come from the database handler
+
+        $defaultCharacterSet=$db->forcecharset;
     	$defaultDBSortingCollation=$db->forcecollate;
     }
     else	// If already created, we take current value
     {
         $defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
         $defaultDBSortingCollation=$db->getDefaultCollationDatabase();
+    }
+
+    // Force to avoid utf8mb4 because index on field char 255 reach limit of 767 char for indexes (example with mysql 5.6.34 = mariadb 10.0.29)
+    // TODO Remove this when utf8mb4 is supported
+    if ($defaultCharacterSet == 'utf8mb4' || $defaultDBSortingCollation == 'utf8mb4_unicode_ci')
+    {
+        $defaultCharacterSet = 'utf8';
+        $defaultDBSortingCollation = 'utf8_unicode_ci';
     }
 
     print '<input type="hidden" name="dolibarr_main_db_character_set" value="'.$defaultCharacterSet.'">';
@@ -334,11 +345,14 @@ if (! $error && $db->connected)
 if (! $error && $db->connected && $action == "set")
 {
     umask(0);
-    foreach($_POST as $key => $value)
+    if (is_array($_POST))
     {
-        if (! preg_match('/^db_pass/i', $key)) {
-			dolibarr_install_syslog("step1: choice for " . $key . " = " . $value);
-		}
+        foreach($_POST as $key => $value)
+        {
+            if (! preg_match('/^db_pass/i', $key)) {
+    			dolibarr_install_syslog("step1: choice for " . $key . " = " . $value);
+    		}
+        }
     }
 
     // Show title of step
@@ -407,15 +421,15 @@ if (! $error && $db->connected && $action == "set")
             }
 
             // Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre telecharges en passant outre l'authentification
-            $dir[0] = $main_data_dir."/mycompany";
-            $dir[1] = $main_data_dir."/users";
-            $dir[2] = $main_data_dir."/custom";
-            $dir[3] = $main_data_dir."/facture";
-            $dir[4] = $main_data_dir."/propale";
-            $dir[5] = $main_data_dir."/ficheinter";
-            $dir[6] = $main_data_dir."/produit";
-            $dir[7] = $main_data_dir."/doctemplates";
-            $dir[7] = $main_data_dir."/extensions";
+            $dir=array();
+            $dir[] = $main_data_dir."/mycompany";
+            $dir[] = $main_data_dir."/medias";
+            $dir[] = $main_data_dir."/users";
+            $dir[] = $main_data_dir."/facture";
+            $dir[] = $main_data_dir."/propale";
+            $dir[] = $main_data_dir."/ficheinter";
+            $dir[] = $main_data_dir."/produit";
+            $dir[] = $main_data_dir."/doctemplates";
 
             // Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
             $num=count($dir);
@@ -443,6 +457,13 @@ if (! $error && $db->connected && $action == "set")
                 }
             }
 
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+            // Copy directory medias
+            $srcroot=$main_dir.'/install/medias';
+            $destroot=$main_data_dir.'/medias';
+            dolCopyDir($srcroot, $destroot, 0, 0);
+
             if ($error)
             {
                 print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
@@ -455,19 +476,22 @@ if (! $error && $db->connected && $action == "set")
             else
             {
             	//ODT templates
-            	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             	$srcroot=$main_dir.'/install/doctemplates';
             	$destroot=$main_data_dir.'/doctemplates';
-            	$docs=array('contracts' => 'contract'
-            		, 'thirdparties' => 'thirdparty'
-            		, 'products' => 'product'
-            		, 'proposals' => 'proposal'
-            		, 'orders' => 'order'
-            		, 'invoices' => 'invoice'
-            		, 'projects' => 'project'
-            		, 'tasks' => 'task_summary'
-            		, 'users' => 'user'
-            		, 'usergroups' => 'usergroups'
+            	$docs=array(
+            		'contracts' => 'contract',
+            		'invoices' => 'invoice',
+            		'orders' => 'order',
+            		'products' => 'product',
+            		'projects' => 'project',
+            		'proposals' => 'proposal',
+            		'shipment' => 'shipment',
+            		'supplier_proposal' => 'supplier_proposal',
+            		'tasks' => 'task_summary',
+            		'thirdparties' => 'thirdparty',
+            		'usergroups' => 'usergroups',
+            		'users' => 'user',
+            		'usergroups' => 'usergroups',
             	);
             	foreach($docs as $cursordir => $cursorfile)
             	{
@@ -504,10 +528,6 @@ if (! $error && $db->connected && $action == "set")
         $error+=write_conf_file($conffile);
     }
 
-    // Write main.inc.php and master.inc.php into documents/custom dir
-    //$error+=write_main_file($main_data_dir.'/custom/main.inc.php',$main_dir);
-    //$error+=write_master_file($main_data_dir.'/custom/master.inc.php',$main_dir);
-
     // Create database and admin user database
     if (! $error)
     {
@@ -520,7 +540,7 @@ if (! $error && $db->connected && $action == "set")
         print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
         // Si creation utilisateur admin demandee, on le cree
-        if (isset($db_create_user) && $db_create_user == "on") {
+        if (isset($db_create_user) && ($db_create_user == "1" || $db_create_user == "on")) {
             dolibarr_install_syslog("step1: create database user: " . $dolibarr_main_db_user);
 
             //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->port;
@@ -624,7 +644,7 @@ if (! $error && $db->connected && $action == "set")
 
 
         // If database creation is asked, we create it
-        if (!$error && (isset($db_create_database) && $db_create_database == "on")) {
+        if (!$error && (isset($db_create_database) && ($db_create_database == "1" || $db_create_database == "on"))) {
             dolibarr_install_syslog("step1: create database: " . $dolibarr_main_db_name . " " . $dolibarr_main_db_character_set . " " . $dolibarr_main_db_collation . " " . $dolibarr_main_db_user);
         	$newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
             //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
@@ -641,9 +661,10 @@ if (! $error && $db->connected && $action == "set")
                     print '</td>';
                     print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
 
+                    $newdb->select_db($dolibarr_main_db_name);
                     $check1=$newdb->getDefaultCharacterSetDatabase();
                     $check2=$newdb->getDefaultCollationDatabase();
-                    dolibarr_install_syslog('step1: note that default server was charset=' . $check1 . ' collation=' . $check2);
+                    dolibarr_install_syslog('step1: new database is using charset=' . $check1 . ' collation=' . $check2);
 
                     // If values differs, we save conf file again
                     //if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('step1: value for character_set is not the one asked for database creation', LOG_WARNING);

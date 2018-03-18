@@ -81,12 +81,12 @@ if ($socid)
 
 	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-	
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
@@ -119,33 +119,32 @@ if ($socid)
 
 	dol_fiche_end();
 
-	
+
     /*
      * Barre d'action
      */
 
-    print '<div class="tabsAction">';
+    /*print '<div class="tabsAction">';
 
     if (! empty($conf->projet->enabled))
     {
     	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
-    	{
-        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-    	}
+    	{*/
+        	$addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+    /*	}
     	else
     	{
         	print '<a class="butActionRefused" href="#">'.$langs->trans("AddProject").'</a>';
     	}
     }
 
-    print '</div>';
-    
-	
+    print '</div>'; */
+
     print '<br>';
 
-    
-    // Projects list
-    $result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
+
+	// Projects list
+	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
 }
 
 

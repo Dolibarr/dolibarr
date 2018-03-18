@@ -35,6 +35,9 @@ $langs->load("margins");
 
 // Security check
 $socid = GETPOST('socid','int');
+$TSelectedProducts = GETPOST('products', 'array');
+$TSelectedCats = GETPOST('categories', 'array');
+
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 $result = restrictedArea($user,'margins');
@@ -132,6 +135,29 @@ if (! $sortfield)
 	}
 }
 
+// Products
+$TRes = $form->select_produits_list('','','',20,0,'',1,2,1,0,'', 1);
+
+$TProducts = array();
+foreach($TRes as $prod) {
+	$TProducts[$prod['key']] = $prod['label'];
+}
+
+print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
+print '<td class="maxwidthonsmartpone" colspan="4">';
+print $form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
+print '</td></tr>';
+
+// Categories
+$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+
+print '<tr>';
+print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="maxwidthonsmartphone" colspan="4">';
+print $form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'minwidth500');
+print '</td>';
+print '</tr>';
+
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
@@ -180,26 +206,37 @@ $sql = "SELECT";
 $sql.= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 if ($client) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
-// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
+// Note: qty and buy_price_ht is always positive (if not, your database may be corrupted, you can update this)
 $sql.= " sum(".$db->ifsql('d.total_ht < 0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
 $sql.= " sum(".$db->ifsql('d.total_ht < 0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
+if(! empty($TSelectedCats)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
+}
+
+if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE f.fk_soc = s.rowid";
+if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
+if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND f.fk_statut > 0";
 $sql.= ' AND s.entity IN ('.getEntity('societe').')';
 $sql.= " AND d.fk_facture = f.rowid";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
-if ($client)
-  $sql.= " AND f.fk_soc = ".$socid;
+if(! empty($TSelectedProducts)) {
+	$sql .= ' AND d.fk_product IN ('.implode(',', $TSelectedProducts) . ')';
+}
+if(! empty($TSelectedCats)) {
+	$sql .= ' AND cp.fk_categorie IN ('.implode(',', $TSelectedCats) . ')';
+}
 if (!empty($startdate))
-  $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
+$sql.= " AND f.datef >= '".$db->idate($startdate)."'";
 if (!empty($enddate))
-  $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
+$sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
-	$sql .= " AND d.buy_price_ht <> 0";
+$sql .= " AND d.buy_price_ht <> 0";
 if ($client) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
 else $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client";
 $sql.=$db->order($sortfield,$sortorder);
@@ -216,27 +253,27 @@ if ($result)
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice=$langs->trans('BuyingPrice');
+	    $labelcostprice='BuyingPrice';
 	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice=$langs->trans('CostPrice');
+	    $labelcostprice='CostPrice';
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
 	if (! empty($client)) {
-  		print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$socid,'',$sortfield,$sortorder);
-  		print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$socid,'align="center"',$sortfield,$sortorder);
+  		print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$socid,'',$sortfield,$sortorder);
+  		print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$socid,'align="center"',$sortfield,$sortorder);
 	}
 	else
-  		print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=".$socid,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+  		print_liste_field_titre("Customer",$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=".$socid,'',$sortfield,$sortorder);
+	print_liste_field_titre("SellingPrice",$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($labelcostprice,$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$cumul_achat = 0;

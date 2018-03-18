@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,8 +66,9 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE',GETPOST("fieldphone"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE_PERSO',GETPOST("fieldphoneperso"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
-    if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_COMPANY',GETPOST("fieldcompany"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ADDRESS',GETPOST("fieldaddress"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ZIP',GETPOST("fieldzip"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_TOWN',GETPOST("fieldtown"),'chaine',0,'',$conf->entity)) $error++;
@@ -84,22 +85,22 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE',   GETPOST("fieldlastsubscriptiondate"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT', GETPOST("fieldlastsubscriptionamount"),'chaine',0,'',$conf->entity)) $error++;
 
-    // This one must be after the others
-    $valkey='';
-    $key=GETPOST("key");
-    if ($key) $valkey=$conf->global->$key;
-    if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS',$valkey,'chaine',0,'',$conf->entity)) $error++;
+	// This one must be after the others
+	$valkey='';
+	$key=GETPOST("key");
+	if ($key) $valkey=$conf->global->$key;
+	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS',$valkey,'chaine',0,'',$conf->entity)) $error++;
 
-    if (! $error)
-    {
-    	$db->commit();
-    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-    	$db->rollback();
-    	dol_print_error($db);
-    }
+	if (! $error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		$db->rollback();
+		dol_print_error($db);
+	}
 }
 
 
@@ -111,7 +112,7 @@ if ($action == 'setvalue' && $user->admin)
 $form=new Form($db);
 
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
 
@@ -279,6 +280,14 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
 print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_MEMBER_FIELD_FAX.'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
+print '<td align="right">&nbsp;</td>';
+print '</tr>';
+
+// Company
+
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
+print '<input size="25" type="text" name="fieldcompany" value="'.$conf->global->LDAP_MEMBER_FIELD_COMPANY.'">';
+print '</td><td>'.$langs->trans("LDAPFieldCompanyExample").'</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 

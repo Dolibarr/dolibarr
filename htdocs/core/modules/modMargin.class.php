@@ -57,8 +57,6 @@ class modMargin extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=other)
-		$this->special = 2;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
 		$this->picto='margin';
@@ -104,10 +102,10 @@ class modMargin extends DolibarrModules
 
 		// left menu entry
 		$this->menu[$r]=array(
-				'fk_menu'=>'fk_mainmenu=accountancy',			// Put 0 if this is a top menu
+				'fk_menu'=>'fk_mainmenu=billing',			// Put 0 if this is a top menu
     			'type'=>'left',			// This is a Top menu entry
     			'titre'=>'Margins',
-    			'mainmenu'=>'accountancy',
+    			'mainmenu'=>'billing',
     			'leftmenu'=>'margins',
     			'url'=>'/margin/index.php',
     			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

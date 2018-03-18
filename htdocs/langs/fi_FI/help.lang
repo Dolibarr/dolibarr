@@ -11,7 +11,7 @@ TypeOfSupport=Tuen lähde
 TypeSupportCommunauty=Yhteisössä (vapaa)
 TypeSupportCommercial=Kaupalliset
 TypeOfHelp=Tyyppi
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=Tarvitsetko apua tai tukea?
 Efficiency=Tehokkuus
 TypeHelpOnly=Ohje vain
 TypeHelpDev=Ohje + kehittämisen
@@ -22,5 +22,5 @@ ToGetHelpGoOnSparkAngels2=Joskus ei ole yhtiön käytettävissä tällä hetkell
 BackToHelpCenter=Muussa tapauksessa, klikkaa tästä ja mennä <a href="%s">takaisin ohjekeskukseen kotisivu.</a>
 LinkToGoldMember=Voit soittaa yksi valmentaja valittua on Dolibarr for your language ( %s) napsauttamalla hänen Widget (status ja enimmäishinta päivittyvät automaattisesti):
 PossibleLanguages=Tuetut kielet
-SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Auta Dolibarr projektia, tilaa 
+SeeOfficalSupport=Virallinen Dolibarr tuki omalla kielellä: <br><b><a href="%s" target="_blank">%s</a></b>

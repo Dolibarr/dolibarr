@@ -57,3 +57,4 @@ ErrorInsertingComment=Il y a eu une erreur à l'enregistrement de votre commenta
 MoreChoices=Entrez plus de choix pour les votants
 SurveyExpiredInfo=Le sondage a été fermé ou le délai de vote est expiré
 EmailSomeoneVoted=%s a rempli une ligne.\nVous pouvez trouver le sondage via le lien:\n%s
+ShowSurvey=Afficher le sondage

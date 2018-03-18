@@ -69,7 +69,7 @@ $establishmenttmp=new Establishment($db);
 dol_htmloutput_mesg($mesg);
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
@@ -90,12 +90,12 @@ if ($result)
 
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Address"),$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Zipcode"),$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"e.name","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Address",$_SERVER["PHP_SELF"],"e.address","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Zipcode",$_SERVER["PHP_SELF"],"e.zip","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Town",$_SERVER["PHP_SELF"],"e.town","","","",$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$var=true;
@@ -107,12 +107,12 @@ if ($result)
 		while ($i < min($num,$limit))
 		{
             $obj = $db->fetch_object($result);
-            
+
 			$establishmentstatic->id=$obj->rowid;
 			$establishmentstatic->name=$obj->name;
 			$establishmentstatic->status=$obj->status;
-			
-			
+
+
 			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
             print '<td align="left">'.$obj->address.'</td>';

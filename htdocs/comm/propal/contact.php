@@ -155,16 +155,16 @@ if ($object->id > 0)
 
 
 	// Proposal card
-	
-	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
-	
+
+	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -199,12 +199,12 @@ if ($object->id > 0)
 	    }
 	}
 	$morehtmlref.='</div>';
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	dol_fiche_end();
-	
-	
+
+
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 	foreach($dirtpls as $reldir)

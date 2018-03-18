@@ -51,13 +51,13 @@ $hookmanager->initHooks(array (
 
 $mesg = '';
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
-$offset = $conf->liste_limit * $page;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder)
@@ -67,7 +67,7 @@ if (! $sortfield)
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -107,7 +107,7 @@ if ($id > 0 || ! empty($ref)) {
         print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -210,13 +210,13 @@ if ($id > 0 || ! empty($ref)) {
                 print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
-				print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("SupplierCode"), $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("OrderDate"), $_SERVER["PHP_SELF"], "c.date_commande", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("SupplierCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("OrderDate", $_SERVER["PHP_SELF"], "c.date_commande", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if ($num > 0) {
@@ -236,7 +236,7 @@ if ($id > 0 || ! empty($ref)) {
 						print '<td>' . $societestatic->getNomUrl(1) . '</td>';
 						print "<td>" . $objp->code_client . "</td>\n";
 						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->date_commande)) . "</td>";
+						print dol_print_date($db->jdate($objp->date_commande), 'dayhour') . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
 						print '<td align="right">' . $supplierorderstatic->getLibStatut(4) . '</td>';

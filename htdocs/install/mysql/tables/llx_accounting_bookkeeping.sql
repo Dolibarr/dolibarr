@@ -32,22 +32,25 @@ CREATE TABLE llx_accounting_bookkeeping
   numero_compte         varchar(32) NOT NULL,		-- FEC:CompteNum	| account number
   label_compte          varchar(255) NOT NULL,		-- FEC:CompteLib	| label of account
   label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
-  debit                 double NOT NULL,			-- FEC:Debit
-  credit                double NOT NULL,			-- FEC:Credit
-  montant               double NOT NULL,			-- FEC:Montant (Not necessary)
+  debit                 double(24,8) NOT NULL,		-- FEC:Debit
+  credit                double(24,8) NOT NULL,		-- FEC:Credit
+  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
-  multicurrency_amount  double,						-- FEC:Montantdevise
+  multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
+  date_lim_reglement    datetime DEFAULT NULL,		-- 					| date limite de reglement
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
   tms                   timestamp,					--					| date last modification 
-  import_key            varchar(14),
+  fk_user               integer NULL,               -- The id of user that validate the accounting source document
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
-  piece_num             integer NOT NULL,			-- FEC:EcritureNum
+  piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting source document
   validated             tinyint DEFAULT 0 NOT NULL,	-- 					| 0 line not validated / 1 line validated (No deleting / No modification) 
-  date_validated        datetime					-- FEC:ValidDate
+  date_validated        datetime,					-- FEC:ValidDate
+  import_key            varchar(14),
+  extraparams	        varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;

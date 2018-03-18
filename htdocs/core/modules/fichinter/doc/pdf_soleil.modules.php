@@ -112,11 +112,9 @@ class pdf_soleil extends ModelePDFFicheinter
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("interventions");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
 
 		if ($conf->ficheinter->dir_output)
 		{
@@ -211,6 +209,10 @@ class pdf_soleil extends ModelePDFFicheinter
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if ($notetoshow)
 				{
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);
@@ -277,7 +279,15 @@ class pdf_soleil extends ModelePDFFicheinter
 						$curX = $this->posxdesc-1;
 
 						// Description of product line
-						$txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+                                                if (empty($conf->global->FICHINTER_DATE_WITHOUT_HOUR))
+                                                {
+						        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true);
+                                                }
+                                                else
+                                                {
+                                                        $txt=$outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'day',false,$outputlangs,true);
+                                                }
+
 						if ($objectligne->duration > 0)
 						{
 							$txt.=" - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration);
@@ -294,7 +304,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pageposafter=$pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
 							$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-							$pdf->writeHTMLCell(0, 0, $curX, $curY, $txt.'<br>'.$desc, LR, 1, 0);
+							$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
 							$pageposafter=$pdf->getPage();
 							$posyafter=$pdf->GetY();
 							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
@@ -391,6 +401,8 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+				$this->result = array('fullpath'=>$file);
 
 				return 1;
 			}
@@ -570,7 +582,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
 
-			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;

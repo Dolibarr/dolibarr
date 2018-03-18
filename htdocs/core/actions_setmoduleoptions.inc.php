@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,42 @@
  */
 
 /**
- *	\file			htdocs/core/actions_setnotes.inc.php
+ *	\file			htdocs/core/actions_setmoduleoptions.inc.php
  *  \brief			Code for actions on setting notes of object page
  */
 
 
 // $action must be defined
-// $_FILES may be defined
+// $arrayofparameters must be set for action 'update'
+// $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
+
+if ($action == 'update' && is_array($arrayofparameters))
+{
+	$db->begin();
+
+	$ok=True;
+	foreach($arrayofparameters as $key => $val)
+	{
+		$result=dolibarr_set_const($db,$key,GETPOST($key, 'alpha'),'chaine',0,'',$conf->entity);
+		if ($result < 0)
+		{
+			$ok=False;
+			break;
+		}
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		$db->rollback();
+		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
+	}
+}
 
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
 if ($action == 'setModuleOptions')
@@ -32,16 +60,19 @@ if ($action == 'setModuleOptions')
     $db->begin();
 
     // Process common param fields
-    foreach($_POST as $key => $val)
+    if (is_array($_POST))
     {
-        if (preg_match('/^param(\d*)$/', $key, $reg))    // Works for POST['param'], POST['param1'], POST['param2'], ...
+        foreach($_POST as $key => $val)
         {
-            $param=GETPOST("param".$reg[1],'alpha');
-            $value=GETPOST("value".$reg[1],'alpha');
-            if ($param)
+            if (preg_match('/^param(\d*)$/', $key, $reg))    // Works for POST['param'], POST['param1'], POST['param2'], ...
             {
-                $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
-                if (! $res > 0) $error++;
+                $param=GETPOST("param".$reg[1],'alpha');
+                $value=GETPOST("value".$reg[1],'alpha');
+                if ($param)
+                {
+                    $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+                    if (! $res > 0) $error++;
+                }
             }
         }
     }

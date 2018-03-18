@@ -144,15 +144,15 @@ class Menubase
         $sql.= "enabled,";
         $sql.= "usertype";
         $sql.= ") VALUES (";
-        $sql.= " '".$this->menu_handler."',";
-        $sql.= " '".$conf->entity."',";
-        $sql.= " '".$this->module."',";
-        $sql.= " '".$this->type."',";
-        $sql.= " ".($this->mainmenu?"'".$this->mainmenu."'":"''").",";    // Can't be null
-        $sql.= " ".($this->leftmenu?"'".$this->leftmenu."'":"null").",";
-        $sql.= " '".$this->fk_menu."',";
-        $sql.= " ".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
-        $sql.= " ".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
+        $sql.= " '".$this->db->escape($this->menu_handler)."',";
+        $sql.= " '".$this->db->escape($conf->entity)."',";
+        $sql.= " '".$this->db->escape($this->module)."',";
+        $sql.= " '".$this->db->escape($this->type)."',";
+        $sql.= " ".($this->mainmenu?"'".$this->db->escape($this->mainmenu)."'":"''").",";    // Can't be null
+        $sql.= " ".($this->leftmenu?"'".$this->db->escape($this->leftmenu)."'":"null").",";
+        $sql.= " '".$this->db->escape($this->fk_menu)."',";
+        $sql.= " ".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
+        $sql.= " ".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
         $sql.= " '".(int) $this->position."',";
         $sql.= " '".$this->db->escape($this->url)."',";
         $sql.= " '".$this->db->escape($this->target)."',";
@@ -160,7 +160,7 @@ class Menubase
         $sql.= " '".$this->db->escape($this->langs)."',";
         $sql.= " '".$this->db->escape($this->perms)."',";
         $sql.= " '".$this->db->escape($this->enabled)."',";
-        $sql.= " '".$this->user."'";
+        $sql.= " '".$this->db->escape($this->user)."'";
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -220,8 +220,8 @@ class Menubase
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
         $sql.= " fk_menu='".$this->db->escape($this->fk_menu)."',";
-        $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
-        $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
+        $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->db->escape($this->fk_mainmenu)."'":"null").",";
+        $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->db->escape($this->fk_leftmenu)."'":"null").",";
         $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
         $sql.= " url='".$this->db->escape($this->url)."',";
         $sql.= " target='".$this->db->escape($this->target)."',";
@@ -402,7 +402,8 @@ class Menubase
     }
 
     /**
-     * 	Load entries found from database in this->newmenu array.
+     * 	Load entries found from database (and stored into $tabMenu) in $this->newmenu array.
+     *  Warning: Entries in $tabMenu must have child after parent
      *
      * 	@param	Menu	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
      * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION["mainmenu"])
@@ -435,10 +436,10 @@ class Menubase
         // We initialize newmenu with first already found menu entries
         $this->newmenu = $newmenu;
 
-        // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed, using the fk_menu link (old method)
+        // Now complete $this->newmenu->list to add entries found into $tabMenu that are childs of mainmenu=$menutopid, using the fk_menu link that is int (old method)
         $this->recur($tabMenu, $menutopid, 1);
 
-        // Now update this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
+        // Now complete $this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
         foreach($tabMenu as $key => $val)
         {
         	//var_dump($tabMenu);
@@ -479,6 +480,10 @@ class Menubase
         			}
         			//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
         			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
+        			else {
+        			    dol_syslog("Error. Modules ".$val['module']." has defined a menu entry with a parent='fk_mainmenu=".$val['fk_leftmenu'].",fk_leftmenu=".$val['fk_leftmenu']."' and position=".$val['position'].'. The parent was not found. May be you forget it into your definition of menu, or may be the parent has a "position" that is after the child (fix field "position" of parent or child in this case).', LOG_WARNING);
+        			    //print "Parent menu not found !!<br>";
+        			}
         		}
         	}
         }
@@ -494,7 +499,7 @@ class Menubase
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
      *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-     *  @param  array	$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
+     *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
     function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -515,8 +520,8 @@ class Menubase
         $sql.= " ORDER BY m.position, m.rowid";
 		//print $sql;
 
-//$tmp1=microtime(true);
-//print '>>> 1 0<br>';
+		//$tmp1=microtime(true);
+		//print '>>> 1 0<br>';
         dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
@@ -553,7 +558,8 @@ class Menubase
                 // Define $title
                 if ($enabled)
                 {
-                	$title = $langs->trans($menu['titre']);
+                	$title = $langs->trans($menu['titre']);		// If $menu['titre'] start with $, a dol_eval is done.
+                	//var_dump($title.'-'.$menu['titre']);
                     if ($title == $menu['titre'])   // Translation not found
                     {
                         if (! empty($menu['langs']))    // If there is a dedicated translation file
@@ -561,6 +567,9 @@ class Menubase
                         	//print 'Load file '.$menu['langs'].'<br>';
                             $langs->load($menu['langs']);
                         }
+
+                        $substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+                        $menu['titre'] = make_substitutions($menu['titre'], $substitarray);
 
                         if (preg_match("/\//",$menu['titre'])) // To manage translation when title is string1/string2
                         {
@@ -579,8 +588,8 @@ class Menubase
                             $title = $langs->trans($menu['titre']);
                         }
                     }
-//$tmp4=microtime(true);
-//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
+					//$tmp4=microtime(true);
+					//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
 
                     // We complete tabMenu
                     $tabMenu[$b]['rowid']       = $menu['rowid'];
@@ -610,6 +619,11 @@ class Menubase
                 $a++;
             }
             $this->db->free($resql);
+
+            // Currently $tabMenu is sorted on position.
+            // If a child have a position lower that its parent, we can make a loop to fix this here, but we prefer to show a warning
+            // into the leftMenuCharger later to avoid useless operations.
+
             return 1;
         }
         else
@@ -622,7 +636,7 @@ class Menubase
     /**
      *  Complete this->newmenu with menu entry found in $tab
      *
-     *  @param  array	$tab			Tab array
+     *  @param  array	$tab			Tab array with all menu entries
      *  @param  int		$pere			Id of parent
      *  @param  int		$level			Level
      *  @return	void

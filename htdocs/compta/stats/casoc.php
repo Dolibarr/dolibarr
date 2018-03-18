@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("companies");
 $langs->load("categories");
@@ -63,18 +63,18 @@ if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta'
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
 // Date range
-$year=GETPOST("year");
-$month=GETPOST("month");
-$search_societe = GETPOST("search_societe");
-$search_zip = GETPOST("search_zip");
-$search_town = GETPOST("search_town");
-$search_country = GETPOST("search_country");
-$date_startyear = GETPOST("date_startyear");
-$date_startmonth = GETPOST("date_startmonth");
-$date_startday = GETPOST("date_startday");
-$date_endyear = GETPOST("date_endyear");
-$date_endmonth = GETPOST("date_endmonth");
-$date_endday = GETPOST("date_endday");
+$year=GETPOST("year",'int');
+$month=GETPOST("month",'int');
+$search_societe = GETPOST("search_societe",'alpha');
+$search_zip = GETPOST("search_zip",'alpha');
+$search_town = GETPOST("search_town",'alpha');
+$search_country = GETPOST("search_country",'alpha');
+$date_startyear = GETPOST("date_startyear",'alpha');
+$date_startmonth = GETPOST("date_startmonth",'alpha');
+$date_startday = GETPOST("date_startday",'alpha');
+$date_endyear = GETPOST("date_endyear",'alpha');
+$date_endmonth = GETPOST("date_endmonth",'alpha');
+$date_endday = GETPOST("date_endday",'alpha');
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -85,8 +85,8 @@ if (empty($year))
 	$month_current = strftime("%m",dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
+$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
@@ -165,7 +165,7 @@ $formother = new FormOther($db);
 // Show report header
 if ($modecompta=="CREANCES-DETTES")
 {
-	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeDebt");
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -173,27 +173,29 @@ if ($modecompta=="CREANCES-DETTES")
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } else {
-	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
-if (! empty($conf->accounting->enabled))
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
     print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
+
+$name=array();
 
 // Show Array
 $catotal=0;
@@ -201,7 +203,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
 	$sql.= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-	if ($selected_cat === -2)	// Without any category 
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
@@ -219,7 +221,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 	    $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-	if ($selected_cat === -2)	// Without any category  
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.=" AND cs.fk_soc is null";
 	}
@@ -239,7 +241,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if ($selected_cat === -2)	// Without any category 
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
 	}
@@ -253,7 +255,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 	    $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
-	if ($selected_cat === -2)	// Without any category  
+	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql.=" AND cs.fk_soc is null";
 	}
@@ -360,7 +362,28 @@ print '<td colspan="7" align="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
-    // Array titles
+
+print '<tr class="liste_titre">';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print $form->select_country($search_country, 'search_country');
+//print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
+print '</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '</tr>';
+
+// Array titles
 print "<tr class='liste_titre'>";
 print_liste_field_titre(
 	$langs->trans("Company"),
@@ -442,27 +465,6 @@ print_liste_field_titre(
 	);
 print "</tr>\n";
 
-print '<tr class="liste_titre">';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
-print '</td>';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
-print '</td>';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
-print '</td>';
-print '<td class="liste_titre" align="left">';
-print $form->select_country($search_country, 'search_country');
-//print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
-print '</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '</tr>';
-
-$var=true;
 
 if (count($amount)) {
 	$arrayforsort=$name;
@@ -517,7 +519,7 @@ if (count($amount)) {
 	}
 
 	foreach($arrayforsort as $key=>$value) {
-		
+
 		print '<tr class="oddeven">';
 
 		// Third party

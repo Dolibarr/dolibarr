@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - mails
+MailCard=Ficha de Mailing
 MailRecipients=Dsetinatarios
 MailRecipient=Destinatário
 MailTitle=Descrição
@@ -40,8 +41,6 @@ ActivateCheckReadKey=Chave usada para criptografar URL usado para "confirmação
 EMailSentToNRecipients=E-mail enviado para %s destinatarios.
 EMailSentForNElements=E-mail enviado para %s elementos.
 XTargetsAdded=<b>%s </b> destinatários adicionados à lista de destino
-OnlyPDFattachmentSupported=Se o documento PDF já foi gerado para o objeto a ser enviado, ele será anexado ao e-mail. Se não, nenhum e-mail será (além disso, note que somente os documentos PDF são suportados como anexo no envio em massa nesta versão).
-AllRecipientSelected=Todos os endereços de e-mails dos representantes selecionados
 ResultOfMailSending=Resultado de envio em massa de e-mails
 LineInFile=Linha %s em arquivo
 RecipientSelectionModules=Módulos de seleção dos destinatários
@@ -58,12 +57,9 @@ NbOfEMailingsSend=E-mails em massa enviados
 YouCanUseCommaSeparatorForSeveralRecipients=Pode usar o caracter0 de separação <b>coma </b> para especificar multiplos destinatários.
 TagCheckMail=Seguir quando o e-mail sera lido
 TagUnsubscribe=Atalho para se desenscrever
-TagSignature=Assinatura do remetente
 EMailRecipient=E-mail destinatario
 TagMailtoEmail=Destinatário do E-mail (incluindo o link HTML "mailto:")
 NoEmailSentBadSenderOrRecipientEmail=Nenhum e-mail enviado. Bad remetente ou destinatário de e-mail. Verifique perfil de usuário.
-AddNewNotification=Ativar uma nova notificação email para alvo
-ListOfActiveNotifications=Lista de todos os destinatários para a notificação por e-mail
 ListOfNotificationsDone=Listar todas as notificações de e-mail enviadas
 MailSendSetupIs=Configuração do envio de e-mails foi configurado a '%s'. Este modo não pode ser usado para envios de massa de e-mails.
 MailSendSetupIs2=Voçê precisa primeiramente acessar com uma conta de Administrador o menu %sInicio - Configurações - EMails%s para mudar o parametro <strong>'%s'</strong> para usar o modo '%s'. Neste modo voçê pode entrar a configuração do servidor SMTP fornecido pelo seu Provedor de Acesso a Internet e usar a funcionalidade de envios de massa de EMails.

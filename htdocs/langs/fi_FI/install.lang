@@ -53,10 +53,10 @@ AdminLogin=Kirjautumistunnuksen Dolibarr tietokannan ylläpitäjä. Pidä tyhjä
 PasswordAgain=Kirjoita salasana uudelleen toisen kerran
 AdminPassword=Salasana Dolibarr tietokannan ylläpitäjä. Pidä tyhjä jos kytket nimettömässä
 CreateDatabase=Luo tietokanta
-CreateUser=Luo käyttäjä
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Tietokanta - SuperUser pääsy
 CheckToCreateDatabase=Valintaruutu, jos tietokanta ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
-CheckToCreateUser=Valintaruutu, jos kirjautuminen ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Kirjaudu että käyttäjä voi luoda uusia tietokantoja tai uusia käyttäjiä, hyödytön, jos tietokanta ja tietokanta on jo olemassa (kuten silloin, kun olet isännöi Web hosting-palvelujen tarjoaja).
 KeepEmptyIfNoPassword=Jätä tyhjä, jos käyttäjä ei ole salasanaa (välttää)
 SaveConfigurationFile=Tallenna arvot
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Voit käyttää DoliWamp ohjattua, joten arvojen suhteen t
 KeepDefaultValuesDeb=Voit käyttää Dolibarr ohjatun peräisin Ubuntu tai Debian-pakettien, joten ehdottamat arvot tässä on jo optimoitu. Vain salasanan tietokannan omistajan luoda on täytettävä. Muuta muut parametrit vain, jos tiedät mitä teet.
 KeepDefaultValuesMamp=Voit käyttää DoliMamp ohjattua, joten arvojen suhteen täällä on jo optimoitu. Muuttaa vain, jos tiedät mitä teet.
 KeepDefaultValuesProxmox=Käytät Dolibarr ohjatun päässä Proxmox virtuaalinen laite, joten ehdotetut arvot tässä on jo optimoitu. Muuta niitä vain, jos tiedät mitä teet.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Korjaus denormalized tiedot
@@ -190,9 +193,11 @@ MigrationActioncommElement=Päivitä tiedot toimista
 MigrationPaymentMode=Tiedot muuttoliike maksua tilassa
 MigrationCategorieAssociation=Kategorioiden siirto 
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Näytä ei saatavilla olevat valinnat
 HideNotAvailableOptions=Piilota ei saatavilla olevat valinnat
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

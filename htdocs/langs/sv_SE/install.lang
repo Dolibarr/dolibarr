@@ -53,10 +53,10 @@ AdminLogin=Logga in för Dolibarr databas ägaren.
 PasswordAgain=Skriv lösenordet en andra gång
 AdminPassword=Lösenord för Dolibarr databas ägaren.
 CreateDatabase=Skapa databas
-CreateUser=Skapa ägare
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Databasserver - superanvändare tillgång
 CheckToCreateDatabase=Kryssrutan om databasen inte existerar och måste skapas. <br> I så fall måste du fylla i login / lösenord för superanvändare konto längst ner på denna sida.
-CheckToCreateUser=Kryssrutan om databas ägaren inte existerar och måste skapas. <br> I så fall måste du välja sin inloggning och lösenord och fylla i användarnamn / lösenord för superanvändaren konto längst ner på denna sida. Om denna ruta är markerad, ägare databas och lösenord måste finns.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Logga in på användaren möjlighet att skapa nya databaser eller nya användare, värdelösa om din databas och databasen inloggning redan finns (som när du är värd ett webbhotell leverantör).
 KeepEmptyIfNoPassword=Lämna tomt om användaren har inget lösenord (undvik detta)
 SaveConfigurationFile=Spara värden
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Du använder Dolibarr inställningsguiden från DoliWamp, 
 KeepDefaultValuesDeb=Du använder Dolibarr inställningsguiden från en Ubuntu eller Debian, så värden som här föreslås är redan optimerade. Endast lösenord i databasen ägaren för att skapa måste fyllas. Ändra andra parametrar om du vet vad du gör.
 KeepDefaultValuesMamp=Du använder Dolibarr inställningsguiden från DoliMamp, värden så som här föreslås är redan optimerade. Ändra dem bara om du vet vad du gör.
 KeepDefaultValuesProxmox=Du använder Dolibarr inställningsguiden från en Proxmox virtuell apparat, så som föreslås här är redan optimerade. Ändra dem bara om du vet vad du gör.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix för denormalized data
@@ -190,9 +193,11 @@ MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 MigrationPaymentMode=Datamigrering betalning mode
 MigrationCategorieAssociation=Migreringskategorier
 MigrationEvents=Överföring av händelser för att lägga till händelseägaren i uppdragslista
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Visa ej tillgängliga val
 HideNotAvailableOptions=Dölj ej tillgängliga val
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

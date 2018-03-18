@@ -535,7 +535,7 @@ a:hover {
 		<li><a href="?lang={$langues[$langue]['autreLangueLien1']}">{$langues[$langue]['autreLangue1']}</a>
 		- <a href="?lang={$langues[$langue]['autreLangueLien2']}">{$langues[$langue]['autreLangue2']}</a></li>
 		<br><br>
-		<li>Provided by <a href="http://www.nltechno.com" targer="_blank">NLTechno</a></li>
+		<li>Provided by <a href="https://www.nltechno.com" targer="_blank">NLTechno</a></li>
 	</ul>
 </td></tr></table>
 <hr>
@@ -580,7 +580,7 @@ a:hover {
 
 
 	<ul id="foot">
-		<li><a href="http://www.nltechno.com/pages/dolibarrwinbin.php">DoliWamp project</a> was built from modified sources of <a href="http://www.wampserver.com">WampServer project</a> from Anaska</li>
+		<li><a href="https://www.nltechno.com/pages/dolibarrwinbin.php">DoliWamp project</a> was built from modified sources of <a href="http://www.wampserver.com">WampServer project</a> from Anaska</li>
 	</ul>
 </body>
 </html>

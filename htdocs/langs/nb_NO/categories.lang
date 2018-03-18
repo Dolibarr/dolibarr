@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Merke/Kategori
 Rubriques=Merker/Kategorier
+RubriquesTransactions=Etiketter/Kategorier av transaksjoner
 categories=merker/kategorier
 NoCategoryYet=Ingen merker/kategorier av denne typen er opprettet
 In=I

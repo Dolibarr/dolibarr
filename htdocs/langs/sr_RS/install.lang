@@ -53,10 +53,10 @@ AdminLogin=Login za vlasnika Dolibarr baze.
 PasswordAgain=Ponovo unesite password
 AdminPassword=Password za vlasnika Dolibarr baze.
 CreateDatabase=Kreiraj bazu
-CreateUser=Kreiraj vlasnika
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Server baze - superuser access
 CheckToCreateDatabase=Selektirajte ovu opciju ukoliko baza ne postoji i mora biti kreirana.<br> U ovom slučaju, morate ispuniti login/lozinku superuser-a na dnu ove strane.
-CheckToCreateUser=Selektujte ovu opciju ukoliko baza ne postoji i mora biti kreirana.<br> U ovom slučaju, morate ispuniti login/lozinku superuser-a na dnu ove strane. Ako je odčekirano, vlasnik baze i šifra moraju postojati.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Prijava korisnika dozvoljena da kreira novu bazu ili korisnike, obavezno ako Vaša baza nema svog vlasnika ili ne postoji.
 KeepEmptyIfNoPassword=Ostavite prazno ako user nema password (izbegavajte ovo)
 SaveConfigurationFile=Sačuvaj vrednosti
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Koristite Dolibarr čarobnjaka za instalaciju iz DoliWamp-
 KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
 KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
 KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix za denormalizovane podatke
@@ -190,9 +193,11 @@ MigrationActioncommElement=Ažuriranje podataka akcija
 MigrationPaymentMode=Migracija podataka načina plaćanja
 MigrationCategorieAssociation=Migracija kategorija
 MigrationEvents=Migracija događaja i dodavanje vlasnika događaja u assignment tabelu
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Ponovo učitavanje modula %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Prikaži nedostupne opcije
 HideNotAvailableOptions=Sakrij nedostupne opcije
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

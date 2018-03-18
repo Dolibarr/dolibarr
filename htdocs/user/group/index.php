@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Herve Prot			<herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
@@ -40,7 +41,7 @@ if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global-
 
 $langs->load("users");
 
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_group=GETPOST('search_group');
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -68,8 +69,8 @@ $fieldstosearchall = array(
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
@@ -81,7 +82,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
         $search_label="";
         $search_date_creation="";
@@ -98,7 +99,7 @@ if (empty($reshook))
 
 llxHeader();
 
-$sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
+$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
@@ -114,7 +115,7 @@ if (! empty($search_group))
     $sql .= " AND (g.nom LIKE '%".$db->escape($search_group)."%' OR g.note LIKE '%".$db->escape($search_group)."%')";
 }
 if ($sall) $sql.= " AND (g.nom LIKE '%".$db->escape($sall)."%' OR g.note LIKE '%".$db->escape($sall)."%')";
-$sql.= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
+$sql.= " GROUP BY g.rowid, g.nom, g.note, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
 $resql = $db->query($sql);
@@ -164,24 +165,29 @@ if ($resql)
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre("Group",$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany
     if(! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1)
     {
-    	print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
+    	print_liste_field_titre("Entity",$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     }
-    print_liste_field_titre($langs->trans("NbOfUsers"),$_SERVER["PHP_SELF"],"nb",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("NbOfUsers",$_SERVER["PHP_SELF"],"nb",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("DateCreationShort",$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
-    $var=True;
+    $grouptemp = new UserGroup($db);
+
     while ($i < $num)
     {
         $obj = $db->fetch_object($resql);
 
+        $grouptemp->id = $obj->rowid;
+        $grouptemp->name = $obj->name;
+        $grouptemp->note = $obj->note;
 
         print '<tr class="oddeven">';
-        print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->name.'</a>';
+        print '<td>';
+        print $grouptemp->getNomUrl(1);
         if (! $obj->entity)
         {
         	print img_picto($langs->trans("GlobalGroup"),'redstar');

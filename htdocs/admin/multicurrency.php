@@ -78,34 +78,54 @@ if (preg_match('/del_(.*)/',$action,$reg))
 
 if ($action == 'add_currency')
 {
+	$error=0;
+
 	$langs->loadCacheCurrencies('');
 
 	$code = GETPOST('code', 'alpha');
-	$rate = GETPOST('rate', 'alpha');
+	$rate = price2num(GETPOST('rate', 'alpha'));
 	$currency = new MultiCurrency($db);
 	$currency->code = $code;
 	$currency->name = !empty($langs->cache_currencies[$code]['label']) ? $langs->cache_currencies[$code]['label'].' ('.$langs->getCurrencySymbol($code).')' : $code;
 
-	if ($currency->create($user) > 0)
+	if (empty($rate))
 	{
-		if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
-		else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
+		$error++;
 	}
-	else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+	if (! $error)
+	{
+		if ($currency->create($user) > 0)
+		{
+			if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
+			else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
+		}
+		else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+	}
 }
 elseif ($action == 'update_currency')
 {
+	$error = 0;
+
 	$submit = GETPOST('submit', 'alpha');
 
 	if ($submit == $langs->trans('Modify'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
-		$rate = GETPOST('rate', 'float');
+		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
-		if ($currency->fetch($fk_multicurrency) > 0)
+		if (empty($rate))
 		{
-			$currency->updateRate($rate);
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
+			$error++;
+		}
+		if (! $error)
+		{
+			if ($currency->fetch($fk_multicurrency) > 0)
+			{
+				$currency->updateRate($rate);
+			}
 		}
 	}
 	elseif ($submit == $langs->trans('Delete'))
@@ -159,7 +179,7 @@ $page_name = "MultiCurrencySetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
@@ -178,7 +198,7 @@ print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useRateOnDocumentDate").'</td>';
+print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="400">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -235,7 +255,7 @@ print '</td></tr>';
 */
 
 print '</table>';
-print '<br />';
+print '<br>';
 
 if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 {
@@ -279,7 +299,6 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</form>';
 	print '</td></tr>';
 
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';
 	print '<td align="center" width="20">&nbsp;</td>';
@@ -293,7 +312,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</td></tr>';
 
 	print '</table>';
-	print '<br />';
+	print '<br>';
 }
 
 
@@ -325,8 +344,7 @@ print '</td></form></tr>';
 
 foreach ($TCurrency as &$currency)
 {
-	if($currency->code == $conf->currency) continue;
-
+	if ($currency->code == $conf->currency) continue;
 
 	print '<tr class="oddeven">';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';

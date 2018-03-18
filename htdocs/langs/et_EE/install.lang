@@ -53,10 +53,10 @@ AdminLogin=Dolibarri andmebaasi omaniku kasutajanimi.
 PasswordAgain=Korda parooli
 AdminPassword=Dolibarri andmebaasi omaniku parool.
 CreateDatabase=Loo andmebaas
-CreateUser=Loo omanik
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Andmebaasi server - administraatori ligipääs
 CheckToCreateDatabase=Märgista ruut, kui andmebaasi ei ole veel olemas ja see tuleb luua. <br>Sellisel juhul tuleb antud lehe alumises osas täita andmebaasi administraatori kasutajanimi ja parool.
-CheckToCreateUser=Märgista ruut, kui andmebaasi omanikku ei ole veel olemas ja see tuleb luua. <br>Sellisel juhul tuleb talle valida kasutajanimi ja parool ning täita antud lehe alumises osas asuvad andmebaasi administraatori kasutajanime ja parooli väljad. Kui antud ruut on märgistamata, peavad andmebaasi omanik, andmebaas ja parool juba seadistatud olema.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Kui andmebaasi või selle omanikku ei ole olemas, peab siia sisestama sellise kasutaja kasutajanime, kellel on lubatud luua uusi andmebaase või kasutajaid.
 KeepEmptyIfNoPassword=Jäta tühjaks, kui kasutajal pole parooli (väldi seda)
 SaveConfigurationFile=Salvesta väärtused
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Kasutad DoliWampist pärit Dolibarri paigaldusabimeest, se
 KeepDefaultValuesDeb=Kasutad Linuxi (Ubuntu, Debian, Fedora, ...) pakist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Pead sisestama vaid loodava andmebaasi omaniku parooli. Muuda teisi parameetreid vaid siis, kui tead täpselt, mida teed.
 KeepDefaultValuesMamp=Kasutad DoliMampist pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
 KeepDefaultValuesProxmox=Kasutad Proxmoxi virtuaalrakendusest pärit Dolibarri paigaldusabimeest, seega on siin pakutud väärtused juba optimeeritud. Muuda neid vaid siis, kui tead täpselt, mida teed.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Paranda denormaliseeritud andmed
@@ -190,9 +193,11 @@ MigrationActioncommElement=Uuenda tegevuste andmec
 MigrationPaymentMode=Maksete režiimi andmete migreerimine
 MigrationCategorieAssociation=Kategooriate migreerimine
 MigrationEvents=Sündmuste migreerimine sündmuse omaniku lisamiseks seoste tabelisse
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Näita mitte saadaval olevaid lisavalikuid
 HideNotAvailableOptions=Peida mitte saadaval olevad lisavalikud
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

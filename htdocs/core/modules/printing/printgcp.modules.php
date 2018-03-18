@@ -47,7 +47,7 @@ class printing_printgcp extends PrintingDriver
     var $db;
 
     private $OAUTH_SERVICENAME_GOOGLE = 'Google';
-    
+
     const LOGIN_URL = 'https://accounts.google.com/o/oauth2/token';
     const PRINTERS_SEARCH_URL = 'https://www.google.com/cloudprint/search';
     const PRINTERS_GET_JOBS = 'https://www.google.com/cloudprint/jobs';
@@ -68,11 +68,11 @@ class printing_printgcp extends PrintingDriver
         //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
         $this->db = $db;
-        
+
         if (!$conf->oauth->enabled) {
             $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"), 'type'=>'info');
         } else {
-         
+
         	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
         	$this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
         	// Token storage
@@ -95,7 +95,7 @@ class printing_printgcp extends PrintingDriver
             	$token_ok = false;
         	}
         	//var_dump($this->errors);exit;
-        
+
         	$expire = false;
         	// Is token expired or will token expire in the next 30 seconds
         	if ($token_ok) {
@@ -119,9 +119,9 @@ class printing_printgcp extends PrintingDriver
                 $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
                 if ($token_ok) {
                     $expiredat='';
-                    
+
                     $refreshtoken = $token->getRefreshToken();
-                    
+
                     $endoflife=$token->getEndOfLife();
 
                     if ($endoflife == $token::EOL_NEVER_EXPIRES)
@@ -136,7 +136,7 @@ class printing_printgcp extends PrintingDriver
                     {
                         $expiredat=dol_print_date($endoflife, "dayhour");
                     }
-                    
+
                     $this->conf[] = array('varname'=>'TOKEN_REFRESH',   'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'TOKEN_EXPIRED',   'info'=>($expire?'Yes':'No'), 'type'=>'info');
                     $this->conf[] = array('varname'=>'TOKEN_EXPIRE_AT', 'info'=>($expiredat), 'type'=>'info');
@@ -284,7 +284,7 @@ class printing_printgcp extends PrintingDriver
     {
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        global $conf, $user, $db;
+        global $conf, $user;
         $error = 0;
 
         $fileprint=$conf->{$module}->dir_output;
@@ -293,7 +293,7 @@ class printing_printgcp extends PrintingDriver
         $mimetype = dol_mimetype($fileprint);
         // select printer uri for module order, propal,...
         $sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$module."' AND driver='printgcp' AND userid=".$user->id;
-        $result = $db->query($sql);
+        $result = $this->db->query($sql);
         if ($result)
         {
             $obj = $this->db->fetch_object($result);
@@ -315,10 +315,10 @@ class printing_printgcp extends PrintingDriver
                 }
             }
         }
-        else dol_print_error($db);
+        else dol_print_error($this->db);
 
         $ret = $this->sendPrintToPrinter($printer_id, $file, $fileprint, $mimetype);
-        $this->errors = 'PRINTGCP: '.mb_convert_encoding($ret['errormessage'], "UTF-8");
+        $this->error = 'PRINTGCP: '.$ret['errormessage'];
         if ($ret['status']!=1) $error++;
         return $error;
     }
@@ -399,7 +399,7 @@ class printing_printgcp extends PrintingDriver
     function list_jobs()
     {
         global $conf, $db, $langs, $bc;
-        
+
         $error = 0;
         $html = '';
         // Token storage
@@ -489,9 +489,9 @@ class printing_printgcp extends PrintingDriver
         }
         $html .= '</table>';
         $html .= '</div>';
-        
+
         $this->resprint = $html;
-        
+
         return $error;
     }
 

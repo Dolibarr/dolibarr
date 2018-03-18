@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2015	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2011-2015	Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ if (!$user->admin) accessforbidden();
 $value = GETPOST('value','alpha');
 $action = GETPOST('action','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='project';
 
 
@@ -58,6 +58,7 @@ if ($action == 'setmainoptions')
 	if (GETPOST('PROJECT_USE_OPPORTUNITIES')) dolibarr_set_const($db, "PROJECT_USE_OPPORTUNITIES",GETPOST('PROJECT_USE_OPPORTUNITIES'),'chaine',0,'',$conf->entity);
 	else dolibarr_del_const($db, "PROJECT_USE_OPPORTUNITIES", $conf->entity);
 
+	// Warning, the constant saved and used in code is PROJECT_HIDE_TASKS
 	if (GETPOST('PROJECT_USE_TASKS')) dolibarr_del_const($db, "PROJECT_HIDE_TASKS", $conf->entity);
 	else dolibarr_set_const($db, "PROJECT_HIDE_TASKS",1,'chaine',0,'',$conf->entity);
 }
@@ -274,6 +275,12 @@ elseif ($action == 'updateoptions')
 		}
 	}
 }
+else if ($action == "linkOtherCompany")
+{
+	$projectToSelect = GETPOST('projectToSelect');
+
+	dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity);	//Allow to disable this configuration if empty value
+}
 
 
 /*
@@ -286,7 +293,7 @@ llxHeader("",$langs->trans("ProjectsSetup"));
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
 
 $head=project_admin_prepare_head();
@@ -645,7 +652,7 @@ foreach ($dirmodels as $reldir)
 								if (in_array($name, $def))
 								{
 									print "<td align=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 									print img_picto($langs->trans("Enabled"),'switch_on');
 									print '</a>';
 									print "</td>";
@@ -653,7 +660,7 @@ foreach ($dirmodels as $reldir)
 								else
 								{
 									print "<td align=\"center\">\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -665,7 +672,7 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 								}
 								print '</td>';
 
@@ -804,7 +811,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									if (in_array($name, $def))
 									{
 										print "<td align=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deltask&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deltask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 										print img_picto($langs->trans("Enabled"),'switch_on');
 										print '</a>';
 										print "</td>";
@@ -812,7 +819,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									else
 									{
 										print "<td align=\"center\">\n";
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=settask&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=settask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 										print "</td>";
 									}
 
@@ -824,7 +831,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									}
 									else
 									{
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 									}
 									print '</td>';
 
@@ -912,16 +919,16 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
-print '<td align="center" width="300">';
-echo ajax_constantonoff('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY');
+print '<td align="right" width="60" colspan="2">';
+print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
+print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
+print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '</tr>';
 
-print '</table></form>';
+print '</table>';
 
 
-
+print '</form>';
 
 llxFooter();
 $db->close();

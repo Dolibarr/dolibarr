@@ -63,7 +63,7 @@ ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 
 
-ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT '2001-01-01 00:00:00';
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT '2001-01-01 00:00:00';
 
 -- Clean corrupted values for tms
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
@@ -74,7 +74,7 @@ ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT '2001-01-
 -- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
 
-ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
@@ -204,8 +204,13 @@ CREATE TABLE llx_payment_salary (
   fk_user_modif integer
 )ENGINE=innodb;
 
+
+DELETE FROM llx_product_batch where fk_product_stock NOT IN (SELECT rowid from llx_product_stock);
+
 ALTER TABLE llx_product_batch ADD INDEX idx_fk_product_stock (fk_product_stock);
 ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
+
+DELETE FROM llx_expeditiondet_batch where fk_expeditiondet NOT IN (SELECT rowid from llx_expeditiondet);
 
 ALTER TABLE llx_expeditiondet_batch ADD INDEX idx_fk_expeditiondet (fk_expeditiondet);
 ALTER TABLE llx_expeditiondet_batch ADD CONSTRAINT fk_expeditiondet_batch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet(rowid);

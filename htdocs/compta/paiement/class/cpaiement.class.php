@@ -42,7 +42,7 @@ class Cpaiement
 
 	/**
 	 */
-	
+
 	public $code;
 	public $libelle;
 	public $type;
@@ -52,7 +52,7 @@ class Cpaiement
 
 	/**
 	 */
-	
+
 
 	/**
 	 * Constructor
@@ -79,7 +79,7 @@ class Cpaiement
 		$error = 0;
 
 		// Clean parameters
-		
+
 		if (isset($this->code)) {
 			 $this->code = trim($this->code);
 		}
@@ -99,15 +99,15 @@ class Cpaiement
 			 $this->module = trim($this->module);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
-		$sql.= 'id,';
+
+		$sql.= 'entity,';
 		$sql.= 'code,';
 		$sql.= 'libelle,';
 		$sql.= 'type,';
@@ -115,10 +115,10 @@ class Cpaiement
 		$sql.= 'accountancy_code,';
 		$sql.= 'module';
 
-		
+
 		$sql .= ') VALUES (';
-		
-		$sql .= ' '.(! isset($this->id)?'NULL':$this->id).',';
+
+		$sql .= ' '.(! isset($this->entity)?getEntity('c_paiement'):$this->entity).',';
 		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(! isset($this->type)?'NULL':$this->type).',';
@@ -126,7 +126,7 @@ class Cpaiement
 		$sql .= ' '.(! isset($this->accountancy_code)?'NULL':"'".$this->db->escape($this->accountancy_code)."'").',';
 		$sql .= ' '.(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'");
 
-		
+
 		$sql .= ')';
 
 		$this->db->begin();
@@ -186,7 +186,8 @@ class Cpaiement
 		$sql .= " t.module";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
-			$sql .= ' WHERE t.code = ' . '\'' . $ref . '\'';
+			$sql .= ' WHERE t.entity IN ('.getEntity('c_paiement').')';
+			$sql .= ' AND t.code = ' . '\'' . $ref . '\'';
 		} else {
 			$sql .= ' WHERE t.id = ' . $id;
 		}
@@ -198,7 +199,7 @@ class Cpaiement
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->id;
-				
+
 				$this->code = $obj->code;
 				$this->libelle = $obj->libelle;
 				$this->type = $obj->type;
@@ -206,7 +207,7 @@ class Cpaiement
 				$this->accountancy_code = $obj->accountancy_code;
 				$this->module = $obj->module;
 
-				
+
 			}
 			$this->db->free($resql);
 
@@ -238,7 +239,7 @@ class Cpaiement
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		// Clean parameters
-		
+
 		if (isset($this->code)) {
 			 $this->code = trim($this->code);
 		}
@@ -258,7 +259,7 @@ class Cpaiement
 			 $this->module = trim($this->module);
 		}
 
-		
+
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -356,8 +357,8 @@ class Cpaiement
 			return 1;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
@@ -367,7 +368,7 @@ class Cpaiement
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		
+
 		$this->code = '';
 		$this->libelle = '';
 		$this->type = '';
@@ -375,7 +376,7 @@ class Cpaiement
 		$this->accountancy_code = '';
 		$this->module = '';
 
-		
+
 	}
 
 }

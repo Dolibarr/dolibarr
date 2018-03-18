@@ -35,7 +35,7 @@ if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 
-$id=GETPOST("id");
+$id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
 $title=GETPOST("title","alpha");
 $url=GETPOST("url","alpha");
@@ -63,9 +63,9 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	$error = 0;
 
-	if (GETPOST("cancel"))
+	if (GETPOST('cancel','alpha'))
 	{
-		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -98,7 +98,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 		if ($res > 0)
 		{
-			if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+			if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
 			header("Location: ".$backtopage);
 			exit;
 		}

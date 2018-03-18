@@ -44,7 +44,6 @@ abstract class CommonDocGenerator
 	*/
 	public function __construct($db) {
 		$this->db = $db;
-		return 1;
 	}
 
 
@@ -203,7 +202,7 @@ abstract class CommonDocGenerator
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
         	$extralabels = $extrafields->fetch_name_optionals_label('societe',true);
-        	$object->fetch_optionals($object->id,$extralabels);
+        	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
         	{
@@ -274,7 +273,7 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
-		$object->fetch_optionals($object->id, $extralabels);
+		$object->fetch_optionals();
 
 		foreach($extrafields->attribute_label as $key => $label)
 		{
@@ -316,36 +315,16 @@ abstract class CommonDocGenerator
    			'current_server_datehour_locale'=>dol_print_date($now,'dayhour','tzserver',$outputlangs),
     	);
 
+
+    	foreach($conf->global as $key => $val)
+    	{
+    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
+    		else $newval = $val;
+    		$array_other['__['.$key.']__'] = $newval;
+    	}
+
     	return $array_other;
     }
-	
-	
-
-    /**
-     * Define array with couple subtitution key => subtitution value
-     *
-     * @param   Object		$object    		Dolibarr Object
-     * @param   Translate	$outputlangs    Language object for output
-     * @param   boolean		$recursive    	Want to fetch child array or child object
-     * @return	array						Array of substitution key->code
-     */
-	function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
-		$array_other = array();
-		if(!empty($object)) {
-			foreach($object as $key => $value) {
-				if(!empty($value)) {
-					if(!is_array($value) && !is_object($value)) {
-			    		$array_other['object_'.$key] = $value;
-					}
-					if(is_array($value) && $recursive){
-						$array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value,$outputlangs,false);
-					}
-				}
-		    }
-	    }
-	    return $array_other;
-	}
-
 
 
 	/**
@@ -373,17 +352,19 @@ abstract class CommonDocGenerator
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
+		$date = ($object->element == 'contrat' ? $object->date_contrat : $object->date);
+
 		$resarray=array(
 		$array_key.'_id'=>$object->id,
 		$array_key.'_ref'=>$object->ref,
 		$array_key.'_ref_ext'=>$object->ref_ext,
-		$array_key.'_ref_customer'=>$object->ref_client,
-		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
+		$array_key.'_ref_customer'=>(! empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
+		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
-        $array_key.'_hour'=>dol_print_date($object->date,'hour'),
-		$array_key.'_date'=>dol_print_date($object->date,'day'),
-		$array_key.'_date_rfc'=>dol_print_date($object->date,'dayrfc'),
+        $array_key.'_hour'=>dol_print_date($date,'hour'),
+		$array_key.'_date'=>dol_print_date($date,'day'),
+		$array_key.'_date_rfc'=>dol_print_date($date,'dayrfc'),
 		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement,'day'):''),
 	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite,'day'):''),
 		$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
@@ -402,18 +383,26 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
 		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
-		$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
+
 		$array_key.'_total_ht'=>price2num($object->total_ht),
 		$array_key.'_total_vat'=>(! empty($object->total_vat)?price2num($object->total_vat):price2num($object->total_tva)),
 		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
-		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
+
+		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
+		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
+	    $array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
+	    $array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
+		$array_key.'_multicurrency_total_ttc' => price2num($object->multicurrency_total_ttc),
+		$array_key.'_multicurrency_total_ht_locale' => price($object->multicurrency_total_ht, 0, $outputlangs),
+		$array_key.'_multicurrency_total_tva_locale' => price($object->multicurrency_total_tva, 0, $outputlangs),
+		$array_key.'_multicurrency_total_ttc_locale' => price($object->multicurrency_total_ttc, 0, $outputlangs),
 
 		$array_key.'_note_private'=>$object->note,
 		$array_key.'_note_public'=>$object->note_public,
 		$array_key.'_note'=>$object->note_public,			// For backward compatibility
-		
+
 		// Payments
 		$array_key.'_already_payed_locale'=>price($sumpayed, 0, $outputlangs),
 		$array_key.'_already_payed'=>price2num($sumpayed),
@@ -421,27 +410,53 @@ abstract class CommonDocGenerator
 		$array_key.'_already_deposit'=>price2num($sumdeposit),
 		$array_key.'_already_creditnote_locale'=>price($sumcreditnote, 0, $outputlangs),
 		$array_key.'_already_creditnote'=>price2num($sumcreditnote),
-		
+
 		$array_key.'_already_payed_all_locale'=>price(price2num($sumpayed + $sumdeposit + $sumcreditnote, 'MT'), 0, $outputlangs),
-		$array_key.'already_payed_all'=> price2num(($sumpayed + $sumdeposit + $sumcreditnote), 'MT'),
-		    
+		$array_key.'_already_payed_all'=> price2num(($sumpayed + $sumdeposit + $sumcreditnote), 'MT'),
+
 		// Remain to pay with all know infrmation (except open direct debit requests)
 		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT'), 0, $outputlangs),
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed - $sumdeposit - $sumcreditnote, 'MT')
 		);
 
-		// Add vat by rates
-		foreach ($object->lines as $line)
+		if (method_exists($object, 'getTotalDiscount')) {
+			$resarray[$array_key.'_total_discount_ht_locale'] = price($object->getTotalDiscount(), 0, $outputlangs);
+			$resarray[$array_key.'_total_discount_ht'] = price2num($object->getTotalDiscount());
+		} else {
+			$resarray[$array_key.'_total_discount_ht_locale'] = '';
+			$resarray[$array_key.'_total_discount_ht'] = '';
+		}
+
+		// Fetch project information if there is a project assigned to this object
+		if ($object->element != "project" && ! empty($object->fk_project) && $object->fk_project > 0)
 		{
-		    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
-			if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
-			$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
-			$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
-		    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
-			$vatformated=vatrate($line->tva_tx);
-			if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
-			$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
-			$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+			if (! is_object($object->project))
+			{
+				$object->fetch_projet();
+			}
+
+			$resarray[$array_key.'_project_ref'] = $object->project->ref;
+			$resarray[$array_key.'_project_title'] = $object->project->title;
+			$resarray[$array_key.'_project_description'] = $object->project->description;
+			$resarray[$array_key.'_project_date_start'] = dol_print_date($object->project->date_start, 'day');
+			$resarray[$array_key.'_project_date_end'] = dol_print_date($object->project->date_end, 'day');
+		}
+
+		// Add vat by rates
+		if (is_array($object->lines) && count($object->lines)>0)
+		{
+			foreach ($object->lines as $line)
+			{
+			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
+				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
+				$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+				$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
+			    // $vatformated is vat without not expected chars (so 20, or 8.5 or 5.99 for example)
+				$vatformated=vatrate($line->tva_tx);
+				if (empty($resarray[$array_key.'_total_vat_'.$vatformated])) $resarray[$array_key.'_total_vat_'.$vatformated]=0;
+				$resarray[$array_key.'_total_vat_'.$vatformated]+=$line->total_tva;
+				$resarray[$array_key.'_total_vat_locale_'.$vatformated]=price($resarray[$array_key.'_total_vat_'.$vatformated]);
+			}
 		}
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
@@ -451,7 +466,7 @@ abstract class CommonDocGenerator
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-			$object->fetch_optionals($object->id,$extralabels);
+			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
 		}
@@ -493,7 +508,24 @@ abstract class CommonDocGenerator
 		    'line_date_end'=>dol_print_date($line->date_end, 'day', 'tzuser'),
 		    'line_date_end_locale'=>dol_print_date($line->date_end, 'day', 'tzuser', $outputlangs),
 		    'line_date_end_rfc'=>dol_print_date($line->date_end, 'dayrfc', 'tzuser'),
+
+		    'line_multicurrency_code' => price2num($line->multicurrency_code),
+		    'line_multicurrency_subprice' => price2num($line->multicurrency_subprice),
+		    'line_multicurrency_total_ht' => price2num($line->multicurrency_total_ht),
+		    'line_multicurrency_total_tva' => price2num($line->multicurrency_total_tva),
+		    'line_multicurrency_total_ttc' => price2num($line->multicurrency_total_ttc),
+		    'line_multicurrency_subprice_locale' => price($line->multicurrency_subprice, 0, $outputlangs),
+		    'line_multicurrency_total_ht_locale' => price($line->multicurrency_total_ht, 0, $outputlangs),
+		    'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
+		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
+
+		    // Units
+		if ($conf->global->PRODUCT_USE_UNITS)
+		{
+		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
+		      $resarray['line_unit_short']=$outputlangs->trans($line->getLabelOfUnit('short'));
+		}
 
 		// Retrieve extrafields
 		$extrafieldkey=$line->element;
@@ -501,9 +533,18 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-		$line->fetch_optionals($line->rowid,$extralabels);
+		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+
+		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
+		if (isset($line->fk_product) && $line->fk_product > 0)
+		{
+			$tmpproduct = new Product($this->db);
+			$result = $tmpproduct->fetch($line->fk_product);
+			foreach($tmpproduct->array_options as $key=>$label)
+				$resarray["line_".$key] = $label;
+		}
 
 		return $resarray;
 	}
@@ -560,7 +601,7 @@ abstract class CommonDocGenerator
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
     		$extralabels = $extrafields->fetch_name_optionals_label('shipment',true);
-    		$object->fetch_optionals($object->id,$extralabels);
+    		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
     	}*/
@@ -600,6 +641,33 @@ abstract class CommonDocGenerator
 	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
     	);
     }
+
+
+    /**
+     * Define array with couple subtitution key => subtitution value
+     *
+     * @param   Object		$object    		Dolibarr Object
+     * @param   Translate	$outputlangs    Language object for output
+     * @param   boolean		$recursive    	Want to fetch child array or child object
+     * @return	array						Array of substitution key->code
+     */
+    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
+        $array_other = array();
+        if(!empty($object)) {
+            foreach($object as $key => $value) {
+                if(!empty($value)) {
+                    if(!is_array($value) && !is_object($value)) {
+                        $array_other['object_'.$key] = $value;
+                    }
+                    if(is_array($value) && $recursive){
+                        $array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value,$outputlangs,false);
+                    }
+                }
+            }
+        }
+        return $array_other;
+    }
+
 
     /**
      *	Fill array with couple extrafield key => extrafield value

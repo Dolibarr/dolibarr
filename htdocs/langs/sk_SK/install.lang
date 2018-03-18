@@ -53,10 +53,10 @@ AdminLogin=Prihlásenie pre vlastníka databázy Dolibarr.
 PasswordAgain=Zadajte heslo ešte raz
 AdminPassword=Heslo pre vlastníka databázy Dolibarr.
 CreateDatabase=Vytvoriť databázu
-CreateUser=Vytvoriť majiteľa
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Databázový server - prístup Superuser
 CheckToCreateDatabase=Zaškrtnite, ak databáza neexistuje a musí byť vytvorená.<br>V tom prípade musíte zadať prihlasovacie meno / heslo pre administrátora v dolnej časti tejto stránky.
-CheckToCreateUser=Zaškrtnite, ak vlastník databázy neexistuje a musí byť vytvorený.<br>V tomto prípade je nutné zvoliť si prihlasovacie meno a heslo a tiež vyplniť login / heslo administrátora v dolnej časti tejto stránky. Ak toto políčko nie je začiarknuté, vlastník databázy a jeho heslá musia existovať.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Prihlásenie užívateľa oprávneného vytvárať nové databázy alebo nových užívateľov - povinné, ak vaša databáza alebo jej majiteľ ešte neexistuje.
 KeepEmptyIfNoPassword=Ponechajte prázdne, ak užívateľ nemá heslo (neodporúčané)
 SaveConfigurationFile=Uložiť hodnoty
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Používate Dolibarr inštalátor z DoliWamp čiže hodnot
 KeepDefaultValuesDeb=Používate Dolibarr inštalátor z Linux balíčka (Ubuntu, Debian, Fedora...), čiže hodnoty sú už optimalizované. Iba nastavenia hesla databáze su potrebné. Ostatné parametrezmente iba v prípade, že viete čo robíte.
 KeepDefaultValuesMamp=Používate Dolibarr inštalátor z DoliMamp čiže hodnoty sú už optimalizované. Zmenite ich iba v prípade, že viete čo robíte.
 KeepDefaultValuesProxmox=Používate Dolibarr inštalátor z Proxmox čiže hodnoty sú už optimalizované. Zmenite ich iba v prípade, že viete čo robíte.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Oprava pre denormalized dát
@@ -190,9 +193,11 @@ MigrationActioncommElement=Aktualizovať údaje o činnosti
 MigrationPaymentMode=Migrácia dát platobného režimu
 MigrationCategorieAssociation=Migrácia kategórií
 MigrationEvents=Migrácia udalostí za účelom pridania vlastníka udalosti do priraďovacej tabuľky
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Aktualizácia hodnoty llx_societe_remise
 MigrationRemiseExceptEntity=Aktualizácia hodnoty llx_societe_remise_except
 MigrationReloadModule=Znovu načítať modul %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Zobraziť nedostupné možnosti
 HideNotAvailableOptions=Skryť nedostupné možnosti
 ErrorFoundDuringMigration=Počas migrácies sa vyskytol problém preto nasledujúci krok nie je dostupný. Pre ignorovanie chýb môžete <a href="%s">kliknúť tu</a>, ale niektoré funkcie aplikácie nebudu fungovať správne pokial ich neopravíte.

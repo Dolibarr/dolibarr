@@ -1,20 +1,19 @@
 <?php
 /* Copyright (C) 2014  Florian Henry   <florian.henry@open-concept.pro>
-*
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * \file    comm/mailing/class/html.formadvtragetemaling.class.php
@@ -50,31 +49,31 @@ class FormAdvTargetEmailing extends Form
 	 */
 	function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status') {
 		global $conf, $langs;
-		$options_array = array ();
+		$options_array = array();
 
 		$sql = "SELECT code, label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
-		dol_syslog ( get_class ( $this ) . '::multiselectProspectionStatus sql=' . $sql, LOG_DEBUG );
-		$resql = $this->db->query ( $sql );
+		dol_syslog ( get_class( $this ) . '::multiselectProspectionStatus sql=' . $sql, LOG_DEBUG );
+		$resql = $this->db->query( $sql );
 		if ($resql) {
-			$num = $this->db->num_rows ( $resql );
+			$num = $this->db->num_rows( $resql );
 			$i = 0;
 			while ( $i < $num ) {
-				$obj = $this->db->fetch_object ( $resql );
+				$obj = $this->db->fetch_object( $resql );
 
-				$level = $langs->trans ( $obj->code );
+				$level = $langs->trans( $obj->code );
 				if ($level == $obj->code)
-					$level = $langs->trans ( $obj->label );
-				$options_array [$obj->code] = $level;
+					$level = $langs->trans( $obj->label );
+				$options_array[$obj->code] = $level;
 
 				$i ++;
 			}
 		} else {
-			dol_print_error ( $this->db );
+			dol_print_error($this->db);
 		}
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
 	}
 
 	/**
@@ -89,7 +88,7 @@ class FormAdvTargetEmailing extends Form
 
 		$langs->load("dict");
 		$maxlength = 0;
-		
+
 		$out = '';
 		$countryArray = array();
 		$label = array ();
@@ -211,11 +210,12 @@ class FormAdvTargetEmailing extends Form
 	 *
 	 *  @return	string HTML combo
 	 */
-	function advMultiselectarraySelllist($htmlname, $sqlqueryparam = array(), $selected_array = array()) {
+	function advMultiselectarraySelllist($htmlname, $sqlqueryparam = array(), $selected_array = array())
+	{
+		$options_array=array();
 
-		if (is_array ( $sqlqueryparam )) {
-			$options_array=array();
-
+		if (is_array($sqlqueryparam))
+		{
 			$param_list = array_keys ( $sqlqueryparam );
 			$InfoFieldList = explode ( ":", $param_list [0] );
 
@@ -251,8 +251,6 @@ class FormAdvTargetEmailing extends Form
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
-			$options_array = array();
-			
 			dol_syslog(get_class($this) . "::".__METHOD__,LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -335,49 +333,8 @@ class FormAdvTargetEmailing extends Form
 	function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0) {
 		global $conf, $langs;
 
-		$return = '';
-		$return .= '<script type="text/javascript" language="javascript">
-						$(document).ready(function() {
-							$.extend($.ui.multiselect.locale, {
-								addAll:\'' . $langs->transnoentities ( "AddAll" ) . '\',
-								removeAll:\'' . $langs->transnoentities ( "RemoveAll" ) . '\',
-								itemsCount:\'' . $langs->transnoentities ( "ItemsCount" ) . '\'
-							});
-
-							$(function(){
-								$("#' . $htmlname . '").addClass("' . $htmlname . '").attr("multiple","multiple").attr("name","' . $htmlname . '[]");
-								$(".multiselect").multiselect({sortable: false, searchable: false});
-							});
-						});
-					</script>';
-		$return .= '<select id="' . $htmlname . '" class="multiselect" multiple="multiple" name="' . $htmlname . '[]" style="display: none;">';
-        //$return .= '<select id="' . $htmlname . '" class="multiselect" multiple="multiple" name="' . $htmlname . '[]">';
-        
-		if ($showempty)
-			$return .= '<option value="">&nbsp;</option>';
-
-		// Find if keys is in selected array value
-		if (is_array($selected_array) && count($selected_array)>0) {
-			$intersect_array = array_intersect_key($options_array, array_flip($selected_array));
-		} else {
-			$intersect_array=array();
-		}
-
-		if (count($options_array) > 0) {
-			foreach ($options_array as $keyoption => $valoption) {
-				// If key is in intersect table then it have to e selected
-				$selected = '';
-			    if (count ( $intersect_array ) > 0) {
-					if (array_key_exists ( $keyoption, $intersect_array )) {
-						$selected = ' selected="selected"';
-					}
-				}
-				$return .= '<option' . $selected . ' value="' . $keyoption . '">' . $valoption . '</option>';
-			}
-		}
-
-		$return .= '</select>';
-
+		$form=new Form($this->db);
+		$return = $form->multiselectarray($htmlname, $options_array, $selected_array,0,0,'',0,295);
 		return $return;
 	}
 
@@ -448,7 +405,7 @@ class FormAdvTargetEmailing extends Form
 			dol_print_error($this->db);
 		}
 
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray( $htmlname, $options_array, $selected_array );
 	}
 
 	/**

@@ -100,7 +100,7 @@ $date_endyear = $tmp['year'];
 $now=dol_now();
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     $date_start=-1;
     $date_end=-1;
@@ -260,11 +260,11 @@ if ($result)
 
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Code"),$_SERVER["PHP_SELF"],"e.type","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("IP"),$_SERVER["PHP_SELF"],"e.ip","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"u.login","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"e.description","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"e.dateevent","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Code",$_SERVER["PHP_SELF"],"e.type","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("IP",$_SERVER["PHP_SELF"],"e.ip","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("User",$_SERVER["PHP_SELF"],"u.login","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Description",$_SERVER["PHP_SELF"],"e.description","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 

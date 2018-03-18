@@ -53,10 +53,10 @@ AdminLogin=Innskráning fyrir Dolibarr gagnasafn eigandi.
 PasswordAgain=Sláðu lykilorðið inn aftur í annað sinn
 AdminPassword=Lykilorð fyrir Dolibarr gagnasafn eigandi.
 CreateDatabase=Búa til gagnasafn
-CreateUser=Búa til eiganda
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Gagnasafn framreiðslumaður - Ofurpaur aðgang
 CheckToCreateDatabase=Hakaðu í reitinn ef gagnagrunnur er ekki til og því þarf að skapa. <br> Í þessum tilfellum verður þú að fylla tenging / lykilorð til Ofurpaur reikning neðst á þessari síðu.
-CheckToCreateUser=Hakaðu í reitinn ef gagnasafn eigandi er ekki til og því þarf að skapa. <br> Í þessum tilfellum verður þú að velja notandanafn og lykilorð og einnig fylla tenging / lykilorð til að Ofurpaur reikning neðst á þessari síðu. Ef þessi kassi er valið, eigandi gagnagrunn og lykilorð hans verður að vera til.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Innskráning á notanda leyft að búa til nýja gagnagrunna eða nýr notandi, gagnslaus ef gagnasafninu og gagnasafn innskráningu þegar til (eins og þegar þú ert haldin af vefþjónusta fyrir hendi).
 KeepEmptyIfNoPassword=Leyfi tómur ef notandi hefur ekki aðgangsorð (forðast þetta)
 SaveConfigurationFile=Vista gildi
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Þú notar Dolibarr skipulag töframaður frá DoliWamp, s
 KeepDefaultValuesDeb=Þú notar Dolibarr skipulag töframaður frá Ubuntu eða Debian pakka, þannig gildi lagt hér eru nú þegar bjartsýni. Aðeins lykilorð gagnagrunninum eigandi að búa verður að vera lokið. Breyta aðrar breytur aðeins ef þú veist hvað þú gerir.
 KeepDefaultValuesMamp=Þú notar Dolibarr skipulag töframaður frá DoliMamp, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
 KeepDefaultValuesProxmox=Þú notar Dolibarr uppsetningarhjálpina frá Proxmox raunverulegur tæki, svo gildi lagt hér eru nú þegar bjartsýni. Breyta þeim aðeins ef þú veist hvað þú gerir.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Festa fyrir denormalized gögn
@@ -190,9 +193,11 @@ MigrationActioncommElement=Uppfæra upplýsingar um aðgerðir
 MigrationPaymentMode=Gögn fólksflutninga í ham greiðslu
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

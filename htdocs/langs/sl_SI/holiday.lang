@@ -16,7 +16,7 @@ CancelCP=Preklicano
 RefuseCP=Zavrnjeno
 ValidatorCP=Odobril
 ListeCP=Seznam dopustov
-ReviewedByCP=Pregledal
+ReviewedByCP=Will be approved by
 DescCP=Opis
 SendRequestCP=Ustvari zahtevek za dopust
 DelayToRequestCP=Zahtevek za dopust mora biti vložen vsaj <b>%s dan(dni)</b> prej.
@@ -79,6 +79,8 @@ HolidaysCancelation=Preklic zahtevka za dopust
 EmployeeLastname=Employee last name
 EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

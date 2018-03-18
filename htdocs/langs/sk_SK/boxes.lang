@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=Login information
 BoxLastRssInfos=Rss informácie
 BoxLastProducts=Najnovšie %s produkty/služby
 BoxProductsAlertStock=Upozornenia skladu pre produkt
@@ -76,9 +77,10 @@ BoxTitleLastModifiedSupplierBills=Najnovšie %s upravené dodávatelské účten
 BoxTitleLatestModifiedSupplierOrders=Najnovšie %s upravené dodávatelské objednávky
 BoxTitleLastModifiedCustomerBills=Najnovšie %s upravené zákaznícke účtenky
 BoxTitleLastModifiedCustomerOrders=Najnovšie %s upravené zákaznícke objednávky
-BoxTitleLastModifiedPropals=Najnovšie %s upravené ponuky
+BoxTitleLastModifiedPropals=Nedávno %s upravené ponuky
 ForCustomersInvoices=Zákazníci faktúry
 ForCustomersOrders=Zákazníci objednávky
 ForProposals=Návrhy
 LastXMonthRolling=Posledný %s mesiac postupu
 ChooseBoxToAdd=Pridať blok na nástenku
+BoxAdded=Widget was added in your dashboard

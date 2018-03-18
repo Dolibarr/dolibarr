@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013	   Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2015       Bahfir Abbes        <bafbes@gmail.com>
+/* Copyright (C) 2005-2017	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +62,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		// Module not active, we do nothing
-        if (empty($conf->agenda->enabled)) {
-	        return 0;
-        }
+        if (empty($conf->agenda->enabled)) return 0;     // Module not active, we do nothing
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
 
@@ -113,6 +110,21 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $object->actionmsg=$langs->transnoentities("ContractValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
 
             $object->sendtoid=0;
+		}
+		elseif ($action == 'CONTRACT_SENTBYMAIL')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("contract");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ContractSentByEMail",$object->ref);
+			if (empty($object->actionmsg))
+			{
+				$object->actionmsg=$langs->transnoentities("ContractSentByEMail",$object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
 		}
 		elseif ($action == 'PROPAL_VALIDATE')
         {
@@ -337,7 +349,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("interventions");
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
-            $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            if (empty($object->actionmsg))
+            {
+            	$object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
+            }
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
@@ -406,6 +421,54 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_VALIDATE')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+			$object->actionmsg=$langs->transnoentities("PropalValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_SENTBYMAIL')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+			if (empty($object->actionmsg))
+			{
+				$object->actionmsg=$langs->transnoentities("ProposalSentByEMail",$object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_SIGNED')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+
+			$object->sendtoid=0;
+		}
+		elseif ($action == 'PROPOSAL_SUPPLIER_CLOSE_REFUSED')
+		{
+			$langs->load("agenda");
+			$langs->load("other");
+			$langs->load("propal");
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+
+			$object->sendtoid=0;
 		}
 		elseif ($action == 'ORDER_SUPPLIER_CREATE')
         {
@@ -572,8 +635,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("other");
             $langs->load("members");
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
-            $object->actionmsg=$langs->transnoentities("MemberValidatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberValidatedInDolibarr",$object->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberValidatedInDolibarr",$object->getFullName($langs));
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
 
@@ -585,27 +648,60 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("other");
             $langs->load("members");
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberModifiedInDolibarr",$object->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberModifiedInDolibarr",$object->getFullName($langs));
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
 
             $object->sendtoid=0;
 		}
-        elseif ($action == 'MEMBER_SUBSCRIPTION')
+        elseif ($action == 'MEMBER_SUBSCRIPTION_CREATE')
         {
             $langs->load("agenda");
             $langs->load("other");
             $langs->load("members");
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref,$object->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref,$object->getFullName($langs));
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
             $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
             $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
 
 			$object->sendtoid=0;
+			if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
+        }
+        elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY')
+        {
+        	$langs->load("agenda");
+        	$langs->load("other");
+        	$langs->load("members");
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->ref,$object->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionModifiedInDolibarr",$object->ref,$object->getFullName($langs));
+        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
+        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
+
+        	$object->sendtoid=0;
+        	if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
+        }
+        elseif ($action == 'MEMBER_SUBSCRIPTION_DELETE')
+        {
+        	$langs->load("agenda");
+        	$langs->load("other");
+        	$langs->load("members");
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->ref,$object->getFullName($langs));
+        	$object->actionmsg=$langs->transnoentities("MemberSubscriptionDeletedInDolibarr",$object->ref,$object->getFullName($langs));
+        	$object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+        	$object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+        	$object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
+        	$object->actionmsg.="\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start,'day').' - '.dol_print_date($object->last_subscription_date_end,'day');
+
+        	$object->sendtoid=0;
+        	if ($object->fk_soc > 0) $object->socid=$object->fk_soc;
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
@@ -613,8 +709,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("other");
             $langs->load("members");
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberResiliatedInDolibarr",$object->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberResiliatedInDolibarr",$object->getFullName($langs));
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
 
@@ -626,8 +722,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("other");
             $langs->load("members");
 
-            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("MemberDeletedInDolibarr",$object->getFullName($langs));
+            $object->actionmsg=$langs->transnoentities("MemberDeletedInDolibarr",$object->getFullName($langs));
             $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
             $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
 
@@ -651,25 +747,25 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("agenda");
             $langs->load("other");
             $langs->load("projects");
-        
+
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("ProjectValidatedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Project").': '.$object->ref;
-        
+
             $object->sendtoid=0;
         }
         elseif($action == 'PROJECT_MODIFY') {
             $langs->load("agenda");
             $langs->load("other");
             $langs->load("projects");
-        
+
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("ProjectModifieddInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
-        
+
             $object->sendtoid=0;
         }
-        
+
 		// Project tasks
 		elseif($action == 'TASK_CREATE') {
             $langs->load("agenda");
@@ -708,18 +804,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		// TODO Merge all previous cases into this generic one
 		else {
-		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function) 
+		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function)
 		    $langs->load("agenda");
 		    $langs->load("other");
-		    
+
 		    if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities($action."InDolibarr",$object->ref);
 		    $object->actionmsg=$langs->transnoentities($action."InDolibarr",$object->ref);
-		    
+
 		    $object->sendtoid=0;
 		}
-		
+
 		$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
-		
+
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         // Add entry in event table
@@ -750,6 +846,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Set societeforaction.
         if ($object->socid > 0)    $societeforaction->fetch($object->socid);
 
+        $projectid = isset($object->fk_project)?$object->fk_project:0;
+        if ($object->element == 'project') $projectid = $object->id;
+
+        $elementid = $object->id;
+        $elementtype = $object->element;
+        if ($object->element == 'subscription')
+        {
+        	$elementid = $object->fk_adherent;
+        	$elementtype = 'member';
+        }
+
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
@@ -757,7 +864,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
 		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
-		$actioncomm->fk_project  = isset($object->fk_project)?$object->fk_project:0;
+		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
@@ -779,11 +886,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->email_subject = $object->email_subject;
 		$actioncomm->errors_to   = $object->errors_to;
 
-		$actioncomm->fk_element  = $object->id;
-		$actioncomm->elementtype = $object->element;
+		$actioncomm->fk_element  = $elementid;
+		$actioncomm->elementtype = $elementtype;
 
 		$ret=$actioncomm->create($user);       // User creating action
-		
+
 		if ($ret > 0 && $conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)
 		{
 			if (is_array($object->attachedfiles) && array_key_exists('paths',$object->attachedfiles) && count($object->attachedfiles['paths'])>0) {
@@ -798,9 +905,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 			}
 		}
-		
+
 		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
-		
+
 		if ($ret > 0)
 		{
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;

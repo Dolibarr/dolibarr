@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Đã xóa tài nguyên thành công
 DictionaryResourceType=Loại tài nguyên
 
 SelectResource=Chọn tài nguyên
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Tài nguyên

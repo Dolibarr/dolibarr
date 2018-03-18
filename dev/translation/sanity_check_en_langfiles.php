@@ -25,7 +25,7 @@ $path=dirname(__FILE__).'/';
 $web=0;
 
 // Test if batch mode
-if (substr($sapi_type, 0, 3) == 'cgi') 
+if (substr($sapi_type, 0, 3) == 'cgi')
 {
     $web=1;
 }
@@ -35,9 +35,9 @@ if ($web)
 {
     echo "<html>";
     echo "<head>";
-    
+
     echo "<STYLE type=\"text/css\">
-    
+
     table {
     	background: #f5f5f5;
     	border-collapse: separate;
@@ -48,7 +48,7 @@ if ($web)
     	text-align: left;
     	width: 800px;
     }
-    
+
     th {
     	background-color: #777;
     	border-left: 1px solid #555;
@@ -61,7 +61,7 @@ if ($web)
     	position: relative;
     	text-shadow: 0 1px 0 #000;
     }
-    
+
     td {
     	border-right: 1px solid #fff;
     	border-left: 1px solid #e8e8e8;
@@ -70,19 +70,19 @@ if ($web)
     	padding: 10px 15px;
     	position: relative;
     }
-    
-    
+
+
     tr {
     	background-color: #f1f1f1;
-    
+
     }
-    
+
     tr:nth-child(odd) td {
     	background-color: #f1f1f1;
     }
-    
+
     </STYLE>";
-    
+
     echo "<body>";
 }
 
@@ -142,9 +142,9 @@ foreach ($files AS $file) {
 	}
 }
 
-foreach ($langstrings_3d AS $filename => $file) 
+foreach ($langstrings_3d AS $filename => $file)
 {
-	foreach ($file AS $linenum => $value) 
+	foreach ($file AS $linenum => $value)
 	{
 		$keys = array_keys($langstrings_full, $value);
 		if (count($keys)>1)
@@ -173,11 +173,11 @@ $sininstallandadmin='';
 $sother='';
 
 $count = 0;
-foreach ($dups as $string => $pages) 
+foreach ($dups as $string => $pages)
 {
 	$count++;
 	$s='';
-	
+
 	// Keyword $string
 	if ($web) $s.="<tr>";
 	if ($web) $s.="<td align=\"center\">";
@@ -188,32 +188,32 @@ foreach ($dups as $string => $pages)
 	if ($web) $s.="</td>";
 	if ($web) $s.="<td>";
 	if (! $web) $s.= ' : ';
-	
+
 	// Loop on each files keyword was found
     $duplicateinsamefile=0;
 	$inmain=0;
     $inadmin=0;
-	foreach ($pages AS $file => $lines) 
+	foreach ($pages AS $file => $lines)
 	{
         if ($file == 'main.lang') { $inmain=1; $inadmin=0; }
         if ($file == 'admin.lang' && ! $inmain) { $inadmin=1; }
-        
+
 	    $s.=$file." ";
-	    
+
 	    // Loop on each line keword was found into file.
 	    $listoffilesforthisentry=array();
-	    foreach ($lines as $line => $translatedvalue) 
+	    foreach ($lines as $line => $translatedvalue)
 		{
             if (! empty($listoffilesforthisentry[$file])) $duplicateinsamefile=1;
             $listoffilesforthisentry[$file]=1;
-        
+
 			$s.= "(".$line." - ".htmlentities($translatedvalue).") ";
 		}
 		if ($web) $s.="<br>";
 	}
 	if ($web) $s.="</td></tr>";
 	$s.="\n";
-	
+
 	if ($duplicateinsamefile) $sduplicateinsamefile .= $s;
 	else if ($inmain) $sinmainandother .= $s;
 	else if ($inadmin) $sininstallandadmin .= $s;
@@ -252,7 +252,7 @@ if ($web)
 if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true'))
 {
     print "***** Strings in en_US that are never used:\n";
-    
+
     $unused=array();
 	foreach ($langstrings_dist AS $value => $line)
 	{
@@ -288,7 +288,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^JuridicalStatus/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^CalcMode/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^newLT/', $value)) $qualifiedforclean=0;
-	    if (preg_match('/^LT\d/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^LT[0-9]/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^TypeContact_contrat_/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^ErrorPriceExpression/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^Language_/', $value)) $qualifiedforclean=0;
@@ -315,7 +315,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    // orders
 	    if (preg_match('/^OrderSource/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^TypeContact_/', $value)) $qualifiedforclean=0;
-        // other.lang	    
+        // other.lang
 	    if (preg_match('/^Notify_/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^PredefinedMail/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^DemoCompany/', $value)) $qualifiedforclean=0;
@@ -336,17 +336,17 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/OppStatus/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/AvailabilityType/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/CardProduct/', $value)) $qualifiedforclean=0;
-	    
+
 	    if (preg_match('/sms/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/TF_/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/WithBankUsing/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/descWORKFLOW_/i', $value)) $qualifiedforclean=0;
-	    
+
 	    if (! $qualifiedforclean)
 	    {
-            continue;	        
+            continue;
 	    }
-	    
+
 	    //$search = '\'trans("'.$value.'")\'';
 	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\' -e "('.$value.')" -e "('.$value.',"';
 		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'* '.$scripts.'*';
@@ -356,7 +356,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
    			$unused[$value] = $line;
        		echo $line;        // $trad contains the \n
 		}
-		else 
+		else
 		{
 		    unset($output);
 		    //print 'X'.$output.'Y';
@@ -364,7 +364,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	}
 
 	if (empty($unused)) print "No string not used found.\n";
-	else 
+	else
 	{
         $filetosave='/tmp/'.($argv[2]?$argv[2]:"").'notused.lang';
         print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";

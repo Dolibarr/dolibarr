@@ -53,10 +53,10 @@ AdminLogin=ورود برای صاحب پایگاه داده Dolibarr.
 PasswordAgain=تکرار گذرواژه بار دوم
 AdminPassword=رمز عبور برای صاحب پایگاه داده Dolibarr.
 CreateDatabase=ایجاد پایگاه داده
-CreateUser=ایجاد صاحب
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=بانک اطلاعات سرور - دسترسی به کاربران بالاتر را میدهد
 CheckToCreateDatabase=جعبه چک کنید اگر پایگاه داده وجود ندارد و باید ایجاد شود. <br> در این مورد، شما باید وارد شوید / رمز عبور برای نام کاربر مدیر در پایین این صفحه را پر کنید.
-CheckToCreateUser=جعبه چک کنید اگر صاحب پایگاه داده وجود ندارد و باید ایجاد شود. <br> در این مورد، شما باید نام کاربری و رمز عبور خود را انتخاب کنید و همچنین ورود / رمز عبور در پایین این صفحه را پر کنید برای حساب کاربر مدیر. اگر این جعبه خالی، پایگاه داده مالک و کلمه عبور خود را باید وجود داشته باشد.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=ورود از کاربر مجاز به ایجاد پایگاه داده جدید و یا کاربران جدید، اجباری اگر بانک اطلاعاتی شما و یا صاحب آن می کند در حال حاضر وجود ندارد.
 KeepEmptyIfNoPassword=دیدگاهتان را خالی اگر کاربر هیچ رمز عبور (جلوگیری از این)
 SaveConfigurationFile=صرفه جویی در مقدار
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=شما با استفاده از جادوگر در راه �
 KeepDefaultValuesDeb=شما با استفاده از جادوگر Dolibarr راه اندازی از یک بسته لینوکس (اوبونتو، دبیان، فدورا ...)، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تنها رمز صاحب پایگاه داده برای ایجاد باید پر شوند. تغییر پارامترهای دیگر تنها در صورتی شما می دانید آنچه شما انجام دهد.
 KeepDefaultValuesMamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliMamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 KeepDefaultValuesProxmox=شما با استفاده از جادوگر در راه اندازی Dolibarr از یک دستگاه مجازی بورس، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=ثابت برای داده های denormalized
@@ -190,9 +193,11 @@ MigrationActioncommElement=به روز کردن اطلاعات در مورد ا�
 MigrationPaymentMode=اطلاعات مهاجرت برای حالت پرداخت
 MigrationCategorieAssociation=مهاجرت از دسته
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=نمایش گزینه های در دسترس نیست
 HideNotAvailableOptions=پنهان کردن گزینه های در دسترس نیست
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

@@ -121,7 +121,7 @@ function limitChars(textarea, limit, infodiv)
 </script>';
 
         if ($showform) print "<form method=\"POST\" name=\"smsform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
-        
+
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         foreach ($this->param as $key=>$value)
         {
@@ -130,7 +130,7 @@ function limitChars(textarea, limit, infodiv)
         print "<table class=\"border centpercent\">\n";
 
         // Substitution array
-        if ($this->withsubstit)
+        if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
         {
             print "<tr><td colspan=\"2\">";
             $help="";
@@ -147,7 +147,7 @@ function limitChars(textarea, limit, infodiv)
         {
             if ($this->withfromreadonly)
             {
-                print '<tr><td class="'.$morecss.'">'.$langs->trans("SmsFrom");
+                print '<tr><td class="titlefield '.$morecss.'">'.$langs->trans("SmsFrom");
                 print '<input type="hidden" name="fromsms" value="'.$this->fromsms.'">';
                 print "</td><td>";
                 if ($this->fromtype == 'user')
@@ -205,8 +205,16 @@ function limitChars(textarea, limit, infodiv)
                     try
                     {
                         $classname=ucfirst($classfile);
-                        $sms = new $classname($this->db);
-                        $resultsender = $sms->SmsSenderList();
+                        if (class_exists($classname))
+                        {
+                        	$sms = new $classname($this->db);
+                        	$resultsender = $sms->SmsSenderList();
+                        }
+                        else
+                        {
+                        	$sms = new stdClass();
+                        	$sms->error='The SMS manager '.$classfile.' defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                        }
                     }
                     catch(Exception $e)
                     {
@@ -223,7 +231,7 @@ function limitChars(textarea, limit, infodiv)
 
                 if (is_array($resultsender) && count($resultsender) > 0)
                 {
-                    print '<select name="fromsms" id="valid" class="flat">';
+                    print '<select name="fromsms" id="fromsms" class="flat">';
                     foreach($resultsender as $obj)
                     {
                         print '<option value="'.$obj->number.'">'.$obj->number.'</option>';
@@ -244,7 +252,7 @@ function limitChars(textarea, limit, infodiv)
         // To (target)
         if ($this->withto || is_array($this->withto))
         {
-            print '<tr><td width="180">';
+            print '<tr><td>';
             //$moretext=$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients");
             $moretext='';
             print $form->textwithpicto($langs->trans("SmsTo"),$moretext);
@@ -259,7 +267,7 @@ function limitChars(textarea, limit, infodiv)
                 if (! empty($this->withtosocid) && $this->withtosocid > 0)
                 {
                     $liste=array();
-                    foreach ($soc->thirdparty_and_contact_phone_array() as $key=>$value)
+                    foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value)
                     {
                         $liste[$key]=$value;
                     }
@@ -285,7 +293,7 @@ function limitChars(textarea, limit, infodiv)
             $defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
             print "<tr>";
-            print "<td width=\"180\" valign=\"top\">".$langs->trans("SmsText")."</td>";
+            print '<td class="tdtop">'.$langs->trans("SmsText")."</td>";
             print "<td>";
             if ($this->withbodyreadonly)
             {
@@ -306,7 +314,7 @@ function limitChars(textarea, limit, infodiv)
             <td> <input name="deferred" id="deferred" size="4" value="0"></td></tr>
 
            <tr><td>'.$langs->trans("Priority").' :</td><td>
-           <select name="priority" id="valid" class="flat">
+           <select name="priority" id="priority" class="flat">
            <option value="0">high</option>
            <option value="1">medium</option>
            <option value="2" selected>low</option>
@@ -314,17 +322,23 @@ function limitChars(textarea, limit, infodiv)
            </select></td></tr>
 
            <tr><td>'.$langs->trans("Type").' :</td><td>
-           <select name="class" id="valid" class="flat">
+           <select name="class" id="class" class="flat">
            <option value="0">Flash</option>
            <option value="1" selected>Standard</option>
            <option value="2">SIM</option>
            <option value="3">ToolKit</option>
+           </select></td></tr>
+
+           <tr><td>'.$langs->trans("DisableStopIfSupported").' :</td><td>
+           <select name="disablestop" id="disablestop" class="flat">
+           <option value="0" selected>No</option>
+           <option value="1" selected>Yes</option>
            </select></td></tr>';
 
         print "</table>\n";
 
-        
-        if ($showform) 
+
+        if ($showform)
         {
             print '<div class="center">';
             print '<input class="button" type="submit" name="sendmail" value="'.dol_escape_htmltag($langs->trans("SendSms")).'">';
@@ -334,10 +348,10 @@ function limitChars(textarea, limit, infodiv)
                 print '<input class="button" type="submit" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
             }
             print '</div>';
-    
+
             print "</form>\n";
         }
-        
+
         print "<!-- End form SMS -->\n";
     }
 

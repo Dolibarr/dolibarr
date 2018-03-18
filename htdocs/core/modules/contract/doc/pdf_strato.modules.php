@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
- * Copyright (C) 2013       Philippe Grand	            <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,6 +83,7 @@ class pdf_strato extends ModelePDFContract
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
+
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
@@ -125,11 +126,9 @@ class pdf_strato extends ModelePDFContract
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("contracts");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
 		if ($conf->contrat->dir_output)
 		{
@@ -396,6 +395,8 @@ class pdf_strato extends ModelePDFContract
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;
 			}
 			else
@@ -463,17 +464,20 @@ class pdf_strato extends ModelePDFContract
 
 		if (empty($hidebottom))
 		{
-			$pdf->SetXY(20,230);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name),0,'L',0);
+			$posmiddle = $this->marge_gauche + round(($this->page_largeur - $this->marge_gauche - $this->marge_droite)/2);
+			$posy = $tab_top + $tab_height + 3 + 3;
 
-			$pdf->SetXY(20,235);
-			$pdf->MultiCell(80,25, '', 1);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$pdf->MultiCell($posmiddle - $this->marge_gauche - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name),0,'L',0);
 
-			$pdf->SetXY(110,230);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name),0,'L',0);
+			$pdf->SetXY($this->marge_gauche, $posy + 5);
+			$pdf->MultiCell($posmiddle - $this->marge_gauche - 5, 20, '', 1);
 
-			$pdf->SetXY(110,235);
-			$pdf->MultiCell(80,25, '', 1);
+			$pdf->SetXY($posmiddle + 5, $posy);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite - $posmiddle - 5, 5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name),0,'L',0);
+
+			$pdf->SetXY($posmiddle + 5, $posy + 5);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite - $posmiddle - 5, 20, '', 1);
 		}
 	}
 
@@ -577,7 +581,7 @@ class pdf_strato extends ModelePDFContract
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 			}
 
-			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;

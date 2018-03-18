@@ -115,14 +115,14 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST("cancel") && ! empty($backtopage))
+    if (GETPOST('cancel','alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
 
     // Purge search criteria
-    if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
         $actioncode='';
         $search_agenda_label='';
@@ -190,7 +190,8 @@ else
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        $res=$object->fetch_optionals();
+        if ($res < 0) { dol_print_error($db,$object->error); exit; }
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -210,8 +211,8 @@ else
 
         dol_fiche_head($head, 'agenda', $title, -1, 'contact');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
-        
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
         $morehtmlref='<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
@@ -223,69 +224,72 @@ else
             else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
         }
         $morehtmlref.='</div>';
-        
+
         dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-        
+
         print '<div class="fichecenter">';
-        
+
         print '<div class="underbanner clearboth"></div>';
- 
+
         $object->info($id);
         print dol_print_object_info($object, 1);
-        
+
         print '</div>';
-                
+
         print dol_fiche_end();
 
-            
+
     	// Actions buttons
-    	
+
         $objcon=$object;
         $object->fetch_thirdparty();
         $objthirdparty=$object->thirdparty;
-    	
+
         $out='';
         $permok=$user->rights->agenda->myactions->create;
         if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
         {
             //$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-            if (get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
+            if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') $out.='&amp;socid='.$objthirdparty->id;
             $out.=(! empty($objcon->id)?'&amp;contactid='.$objcon->id:'').'&amp;backtopage=1&amp;percentage=-1';
         	//$out.=$langs->trans("AddAnAction").' ';
         	//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
         	//$out.="</a>";
     	}
-    
-    	
-    	print '<div class="tabsAction">';
-    
+
+
+    	//print '<div class="tabsAction">';
+        //print '</div>';
+
+
+    	$morehtmlcenter='';
         if (! empty($conf->agenda->enabled))
         {
         	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
         	{
-            	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+            	$morehtmlcenter.= '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
         	}
         	else
         	{
-            	print '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
+            	$morehtmlcenter.= '<a class="butActionRefused" href="#">'.$langs->trans("AddAction").'</a>';
         	}
         }
-    
-        print '</div>';
-    
+
+
         if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
        	{
+       		print '<br>';
+
             $param='&id='.$id;
             if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
             if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-           	    
-        
-            print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
-    
+
+            print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
+
             // List of all actions
     		$filters=array();
         	$filters['search_agenda_label']=$search_agenda_label;
-        	
+
             show_actions_done($conf,$langs,$db,$objthirdparty,$object,0,$actioncode, '', $filters, $sortfield, $sortorder);
         }
     }

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,9 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 
 $langs->load("companies");
@@ -72,16 +76,16 @@ $form = new Form($db);
 if ($id > 0 || ! empty($ref))
 {
 	$object->fetch_thirdparty();
-	
+
 	$head = commande_prepare_head($object);
-	
+
 	dol_fiche_head($head, 'note', $langs->trans("CustomerOrder"), -1, 'order');
 
 	// Order card
-	
-	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
-	
+
+	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
 	$morehtmlref='<div class="refidno">';
 	// Ref customer
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -122,20 +126,20 @@ if ($id > 0 || ! empty($ref))
 	    }
 	}
 	$morehtmlref.='</div>';
-	
-	
+
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
-	
+
+
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 }
 

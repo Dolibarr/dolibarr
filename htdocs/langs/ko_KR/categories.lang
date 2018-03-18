@@ -1,8 +1,9 @@
 # Dolibarr language file - Source file is en_US - categories
-Rubrique=Tag/Category
-Rubriques=Tags/Categories
-categories=tags/categories
-NoCategoryYet=No tag/category of this type created
+Rubrique=분류/범주
+Rubriques=분류/범주
+RubriquesTransactions=Tags/Categories of transactions
+categories=분류/범주
+NoCategoryYet=해당 분류/범주가 없습니다. 
 In=In
 AddIn=Add in
 modify=modify
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=This category already exists with this ref
 ContentsVisibleByAllShort=Contents visible by all
 ContentsNotVisibleByAllShort=Contents not visible by all
 DeleteCategory=Delete tag/category
-ConfirmDeleteCategory=Are you sure you want to delete this tag/category ?
+ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=No tag/category defined
 SuppliersCategoryShort=Suppliers tag/category
 CustomersCategoryShort=Customers tag/category

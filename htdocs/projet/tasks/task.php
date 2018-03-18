@@ -125,7 +125,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 
 		if ($object->delete($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':''));
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject?'&withproject=1':''));
 			exit;
 		}
 		else
@@ -194,7 +194,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 
 /*
  * View
-*/
+ */
 
 
 llxHeader('', $langs->trans("Task"));
@@ -207,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
 	{
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 			// Tabs for project
 			$tab='tasks';
 			$head=project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
+			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'), 0, '', '');
 
 			$param=($mode=='mine'?'&mode=mine':'');
 
@@ -262,9 +262,12 @@ if ($id > 0 || ! empty($ref))
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-            print dol_print_date($projectstatic->date_start,'day');
-            $end=dol_print_date($projectstatic->date_end,'day');
-            if ($end) print ' - '.$end;
+            $start = dol_print_date($projectstatic->date_start,'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end,'day');
+            print ' - ';
+            print ($end?$end:'?');
+            if ($projectstatic->hasDelay()) print img_warning("Late");
             print '</td></tr>';
 
             // Budget
@@ -279,6 +282,7 @@ if ($id > 0 || ! empty($ref))
             print '</table>';
 
             print '</div>';
+
             print '<div class="fichehalfright">';
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
@@ -348,17 +352,17 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
 
 			print '<table class="border" width="100%">';
 
 			// Ref
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-			print '<td><input size="12" name="taskref" value="'.$object->ref.'"></td></tr>';
+			print '<td><input class="minwidth100" name="taskref" value="'.$object->ref.'"></td></tr>';
 
 			// Label
 			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-			print '<td><input size="30" name="label" value="'.$object->label.'"></td></tr>';
+			print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
 
 			// Project
 			if (empty($withproject))
@@ -375,7 +379,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Task parent
-			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			print '<tr><td>'.$langs->trans("ChildOfProjectTask").'</td><td>';
 			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
 			print '</td></tr>';
 
@@ -433,7 +437,7 @@ if ($id > 0 || ! empty($ref))
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>':'';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask');
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 			if ($action == 'delete')
 			{
@@ -459,16 +463,29 @@ if ($id > 0 || ! empty($ref))
 
 			    // Third party
 			    $morehtmlref.=$langs->trans("ThirdParty").': ';
-			    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+			    if (!empty($projectstatic->thirdparty)) {
+                    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+			    }
 			    $morehtmlref.='</div>';
 			}
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
+
+			// Task parent
+			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			if ($object->fk_task_parent > 0)
+			{
+				$tasktmp=new Task($db);
+				$tasktmp->fetch($object->fk_task_parent);
+				print $tasktmp->getNomUrl(1);
+			}
+			print '</td></tr>';
 
 			// Date start - Date end
 			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
@@ -488,8 +505,21 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td></tr>';
 
+			// Description
+			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+			print nl2br($object->description);
+			print '</td></tr>';
+
+			print '</table>';
+			print '</div>';
+
+			print '<div class="fichehalfright"><div class="ficheaddleft">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border" width="100%">';
+
 			// Progress declared
-			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 			if ($object->progress != '')
 			{
 				print $object->progress.' %';
@@ -504,12 +534,7 @@ if ($id > 0 || ! empty($ref))
 				if ($tmparray['total_duration'] > 0 && ! empty($object->planned_workload)) print round($tmparray['total_duration'] / $object->planned_workload * 100, 2).' %';
 				else print '0 %';
 			}
-			else print '';
-			print '</td></tr>';
-
-			// Description
-			print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-			print nl2br($object->description);
+			else print '<span class="opacitymedium">'.$langs->trans("WorkloadNotDefined").'</span>';
 			print '</td></tr>';
 
 			// Other attributes
@@ -520,6 +545,10 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			print '</div>';
+			print '</div>';
+
+			print '</div>';
+			print '<div class="clearboth"></div>';
 
 			dol_fiche_end();
 		}
@@ -557,7 +586,7 @@ if ($id > 0 || ! empty($ref))
 				    }
 				    else
 				    {
-				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("ProjecHasChild").'">'.$langs->trans('Delete').'</a>';
+				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }
 				}
 				else
@@ -585,6 +614,11 @@ if ($id > 0 || ! empty($ref))
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
 
 			print '</div></div></div>';
 		}

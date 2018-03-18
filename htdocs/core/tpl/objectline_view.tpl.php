@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,17 @@
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
- * 
+ *
  * $type, $text, $description, $line
  */
+
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
@@ -55,7 +64,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php echo $line->id; ?>"></div>
-	<?php 
+	<?php
 	if (($line->info_bits & 2) == 2) {
 	?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
@@ -64,6 +73,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 		print img_object($langs->trans("ShowReduc"),'reduc').' ';
 		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
 		elseif ($line->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
+		elseif ($line->description == '(EXCESS PAID)') $txt=$langs->trans("ExcessPaid");
 		//else $txt=$langs->trans("Discount");
 		print $txt;
 		?>
@@ -83,7 +93,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
 				// Add date of deposit
-				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) 
+				if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE))
 				    echo ' ('.dol_print_date($discount->datec).')';
 			}
 			elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
@@ -91,6 +101,12 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 				$discount=new DiscountAbsolute($this->db);
 				$discount->fetch($line->fk_remise_except);
 				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+			}
+			elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
 			}
 			else
 			{
@@ -101,24 +117,13 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	else
 	{
 		$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE?'dayhour':'day';
-		
+
 	    if ($line->fk_product > 0)
 		{
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
-			
-			// Show range
-			echo get_date_range($line->date_start, $line->date_end, $format);
-
-			// Add description in form
-			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-			{
-				print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-			}
-
 		}
 		else
 		{
-
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
 
@@ -129,26 +134,55 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 				echo $text.' '.dol_htmlentitiesbr($line->description);
 			}
+		}
 
-			// Show range
-			echo get_date_range($line->date_start,$line->date_end, $format);
+		// Show date range
+		if ($line->element == 'facturedetrec') {
+			if ($line->date_start_fill || $line->date_end_fill) echo '<br><br><div class="nowraponall">';
+			if ($line->date_start_fill) echo $langs->trans('AutoFillDateFromShort').': '.yn($line->date_start_fill);
+			if ($line->date_start_fill && $line->date_end_fill) echo ' - ';
+			if ($line->date_end_fill) echo $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
+			if ($line->date_start_fill || $line->date_end_fill) echo '</div>';
+		}
+		else {
+			echo get_date_range($line->date_start, $line->date_end, $format);
+		}
+
+		// Add description in form
+		if ($line->fk_product > 0 && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		{
+			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
 	}
 	?>
 	</td>
-	<?php if ($object->element == 'supplier_proposal') { ?>
-		<td class="linecolrefsupplier" align="right"><?php echo $line->ref_fourn; ?></td>
-	<?php } 
+	<?php
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+	?>
+		<td class="linecolrefsupplier"><?php
+		echo ($line->ref_fourn?$line->ref_fourn:$line->ref_supplier);
+		?></td>
+	<?php
+	}
 	// VAT Rate
 	?>
-	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits); ?></td>
+	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php
+	$positiverates='';
+	if (price2num($line->tva_tx))          $positiverates.=($positiverates?'/':'').price2num($line->tva_tx);
+	if (price2num($line->total_localtax1)) $positiverates.=($positiverates?'/':'').price2num($line->localtax1_tx);
+	if (price2num($line->total_localtax2)) $positiverates.=($positiverates?'/':'').price2num($line->localtax2_tx);
+	if (empty($positiverates)) $positiverates='0';
+	echo vatrate($positiverates.($line->vat_src_code?' ('.$line->vat_src_code.')':''), '%', $line->info_bits);
+	//echo vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
+	?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
-	
+
 	<?php if (!empty($conf->multicurrency->enabled)) { ?>
 	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
 	<?php } ?>
-	
+
 	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
@@ -194,7 +228,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
   	{
 		$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   		?>
-  		
+
   	<?php if (!empty($user->rights->margins->creer)) { ?>
   	<td align="right" class="linecolmargin1 nowrap margininfos"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
   	<?php } ?>
@@ -220,7 +254,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
         <?php } ?>
 
 
-	<?php 
+	<?php
 	if ($this->statut == 0  && ($object_rights->creer)) { ?>
 	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
@@ -241,7 +275,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 		?>
 	</td>
 
-	<?php 
+	<?php
 	if ($num > 1 && empty($conf->browser->phone) && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) { ?>
 	<td align="center" class="linecolmove tdlineupdown"><?php $coldisplay++; ?>
 		<?php if ($i > 0) { ?>

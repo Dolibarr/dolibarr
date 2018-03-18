@@ -53,10 +53,10 @@ AdminLogin=Prisijungimas Dolibarr duomenų bazės savininkui.
 PasswordAgain=Pakartokite slaptažodį antrą kartą
 AdminPassword=Slaptažodis Dolibarr duomenų bazės savininkui.
 CreateDatabase=Sukurti duomenų bazę
-CreateUser=Sukurti savininką
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Duomenų bazės serveris - Superuser prieiga
 CheckToCreateDatabase=Žymėti langelį, jei duomenų bazės nėra ir ji turi būti sukurta. <br>Tokiu atveju, turite užpildyti prisijungimo/slaptažodį superuser sąskaitai šio puslapio apačioje.
-CheckToCreateUser=Žymėti langelį, jei duomenų bazės savininko nėra ir jis turi būti sukurtas. <br>Šiuo atveju, jūs turite pasirinkti jo prisijungimo vardą ir slaptažodį ir užpildyti prisijungimo/slaptažodžio superuser sąskaitai šio puslapio apačioje. Jei šis langelis nepažymėtas, savininko duomenų bazė ir jos slaptažodis jau egzistuoja.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Prisijungimas vartotojui leidžia kurti naujas duomenų bazes arba naujus vartotojus. Tai privaloma, jei Jūsų duomenų bazė ar jos savininkas dar neegzistuoja.
 KeepEmptyIfNoPassword=Palikite tuščią, jei vartotojas neturi slaptažodžio (praleisti)
 SaveConfigurationFile=Išsaugoti reikšmes
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Jūs naudojate Dolibarr nustatymų vedlį iš DoliWamp, to
 KeepDefaultValuesDeb=Naudojate Dolibarr vedlį iš Linux paketo (Ubuntu, Debian, Fedora ...), todėl čia siūlomos reikšmės jau yra optimizuotos. Tik duomenų bazės savininko slaptažodis turi būti pilnai sukurtas. Keiskite kitus parametrus tik jei tikrai žinote, ką darote.
 KeepDefaultValuesMamp=Naudojate Dolibarr vedlį iš DoliMamp, todėl čia siūlomos reikšmės jau yra optimizuotos. Keiskite juos tik jei tikrai žinote, ką darote.
 KeepDefaultValuesProxmox=Naudojate Dolibarr vedlį iš Proxmox virtualaus prietaiso, todėl čia siūlomos reikšmės jau yra optimizuotos. keiskite juos tik jei tikrai žinote, ką darote.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fiksuoti pažeistus duomenis
@@ -190,9 +193,11 @@ MigrationActioncommElement=Atnaujinti veiksmų duomenis
 MigrationPaymentMode=Duomenų perkėlimas mokėjimo būdui
 MigrationCategorieAssociation=Kategorijų perkėlimas
 MigrationEvents=Įvykių migracija pridedant įvykio savininką į užduočių lentelę
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Perkrauti modulį %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Parodyti negalimas opcijas
 HideNotAvailableOptions=Paslėpti negalimas opcijas
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

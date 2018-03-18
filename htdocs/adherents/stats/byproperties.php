@@ -101,7 +101,7 @@ else
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title

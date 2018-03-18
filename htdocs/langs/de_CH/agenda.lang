@@ -1,7 +1,10 @@
 # Dolibarr language file - Source file is en_US - agenda
+Agenda=Terminplanung
 ToUserOfGroup=Für alle Benutzer in der Gruppe
 MenuDoneActions=Alle abgeschl. Termine
 MenuDoneMyActions=Meine abgeschl. Termine
+ViewCal=Kalenderansicht
+ViewPerUser=Benutzeransicht
 ViewPerType=Ansicht pro Typ
 AgendaAutoActionDesc=Definieren Sie hier Ereignisse für die Dolibarr einen Kalendereintrag erstellen soll. Ist nichts aktviert, umfasst der Terminkalender nur manuell eingetragene Termine. Automatisch generierte Aktionen die durch Module erstellt werden (Freigabe, Statuswechsel,...), werden nicht im Kalender gespeichert.
 ShipmentValidatedInDolibarr=Versand %s in Dolibarr geprüft

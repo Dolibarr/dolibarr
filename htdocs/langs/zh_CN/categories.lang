@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=标签/分类
 Rubriques=标签/分类
+RubriquesTransactions=Tags/Categories of transactions
 categories=标签/分类
 NoCategoryYet=创建的类型无标签/分类
 In=在
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=此类别已存在此号
 ContentsVisibleByAllShort=所有内容可见
 ContentsNotVisibleByAllShort=所有内容不可见
 DeleteCategory=删除标签/分类
-ConfirmDeleteCategory=您确定想删除此标签/分类吗？
+ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=标签/分类未定义
 SuppliersCategoryShort=供应商标签/分类
 CustomersCategoryShort=客户标签/分类

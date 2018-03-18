@@ -41,4 +41,4 @@ rateMustBeNumeric=Stawka musi być wartością liczbową
 markRateShouldBeLesserThan100=Stopa znak powinien być niższy niż 100
 ShowMarginInfos=Pokaż informacje o marżę
 CheckMargins=Szczegóły marż
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.
+MarginPerSaleRepresentativeWarning=Raport marży na użytkownika wykorzystuje powiązanie między kontrahentami a przedstawicielami handlowymi w celu obliczenia marży każdego przedstawiciela handlowego. Ze względu na to, że niektórzy kontrahenci mogą nie posiadać przedstawiciela handlowego, a niektórzy mogą być powiązani z kilkoma, niektóre kwoty mogą nie zostać uwzględnione w tym raporcie (jeśli nie ma przedstawiciela sprzedaży), a niektóre mogą pojawić się w różnych wierszach (dla każdego przedstawiciela sprzedaży).

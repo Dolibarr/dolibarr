@@ -90,9 +90,9 @@ class Paiement extends CommonObject
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
 		$sql.= ' p.num_paiement, p.note,';
 		$sql.= ' b.fk_account';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
-		$sql.= ' WHERE p.fk_paiement = c.id';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+		$sql.= ' WHERE p.entity IN (' . getEntity('facture').')';
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
@@ -141,13 +141,13 @@ class Paiement extends CommonObject
 	/**
 	 *    Create payment of invoices into database.
 	 *    Use this->amounts to have list of invoices for the payment.
-	 *    For payment of a customer invoice, amounts are postive, for payment of credit note, amounts are negative
+	 *    For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
 	 *
 	 *    @param	User	$user                	Object user
 	 *    @param    int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
 	 *    @return   int                 			id of created payment, < 0 if error
 	 */
-	function create($user,$closepaidinvoices=0)
+	function create($user, $closepaidinvoices=0)
 	{
 		global $conf, $langs;
 
@@ -190,6 +190,7 @@ class Paiement extends CommonObject
 		// Check parameters
         if (empty($totalamount) && empty($atleastonepaymentnotnull))	 // We accept negative amounts for withdraw reject but not empty arrays
         {
+        	$this->errors[]='TotalAmountEmpty';
         	$this->error='TotalAmountEmpty';
         	return -1;
         }
@@ -208,9 +209,10 @@ class Paiement extends CommonObject
 			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			$mtotal = $totalamount;
 		}
+		$note = ($this->note_public?$this->note_public:$this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($note)."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -232,11 +234,12 @@ class Paiement extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
+						$invoice=new Facture($this->db);
+						$invoice->fetch($facid);
+
 						// If we want to closed payed invoices
 					    if ($closepaidinvoices)
 					    {
-					        $invoice=new Facture($this->db);
-					        $invoice->fetch($facid);
                             $paiement = $invoice->getSommePaiement();
                             $creditnotes=$invoice->getSumCreditNotesUsed();
                             $deposits=$invoice->getSumDepositsUsed();
@@ -339,6 +342,23 @@ class Paiement extends CommonObject
                                 }
                             }
 					    }
+
+					    // Regenerate documents of invoices
+                        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+                        {
+                            $outputlangs = $langs;
+                            if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+                            if (! empty($newlang)) {
+                            	$outputlangs = new Translate("", $conf);
+                            	$outputlangs->setDefaultLang($newlang);
+                            }
+                            $ret = $invoice->fetch($facid); // Reload to get new records
+                            $result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+                            if ($result < 0) {
+                            	setEventMessages($invoice->error, $invoice->errors, 'errors');
+                            	$error++;
+                            }
+                        }
 					}
 					else
 					{
@@ -488,12 +508,12 @@ class Paiement extends CommonObject
 
 
     /**
-     *      Add a record into bank for payment with links between this bank record and invoices of payment.
+     *      Add a record into bank for payment + links between this bank record and sources of payment.
      *      All payment properties (this->amount, this->amounts, ...) must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
      *      @param  string	$mode               'payment', 'payment_supplier'
-     *      @param  string	$label              Label to use in bank record
+     *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
      *      @param  int		$accountid          Id of bank account to do link with
      *      @param  string	$emetteur_nom       Name of transmitter
      *      @param  string	$emetteur_banque    Name of bank
@@ -577,10 +597,11 @@ class Paiement extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                if (! $error  && $label != '(WithdrawalPayment)')
+                //if (! $error && $label != '(WithdrawalPayment)')
+                if (! $error)
                 {
                     $linkaddedforthirdparty=array();
-                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    foreach ($this->amounts as $key => $value)  // We should have invoices always for same third party but we loop in case of.
                     {
                         if ($mode == 'payment')
                         {
@@ -1022,18 +1043,21 @@ class Paiement extends CommonObject
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
+     *  @param	int  	$notooltip		1=Disable tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
+	function getNomUrl($withpicto=0, $option='', $mode='withlistofinvoices', $notooltip=0)
 	{
-		global $langs;
+		global $conf, $langs;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
         $label = $langs->trans("ShowPayment").': '.$this->ref;
         if ($mode == 'withlistofinvoices')
         {
             $arraybill = $this->getBillsArray();
-            if (count($arraybill) > 0)
+            if (is_array($arraybill) && count($arraybill) > 0)
             {
             	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             	$facturestatic=new Facture($this->db);
@@ -1044,12 +1068,31 @@ class Paiement extends CommonObject
             	}
             }
         }
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowMyObject");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+        $url = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id;
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto) $result.=($link.img_object($langs->trans("ShowPayment"), 'payment', 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.($this->ref?$this->ref:$this->id).$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto && $withpicto != 2) $result.= ($this->ref?$this->ref:$this->id);
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -1114,4 +1157,29 @@ class Paiement extends CommonObject
 		return '';
 	}
 
+	/**
+	 *    	Load the third party of object, from id into this->thirdparty
+	 *
+	 *		@param		int		$force_thirdparty_id	Force thirdparty id
+	 *		@return		int								<0 if KO, >0 if OK
+	 */
+	function fetch_thirdparty($force_thirdparty_id=0)
+	{
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
+		if (empty($force_thirdparty_id))
+		{
+			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first supplier invoice to get him
+			if (!empty($billsarray))
+			{
+				$invoice = new Facture($this->db);
+				if ($invoice->fetch($billsarray[0]) > 0)
+				{
+					$force_thirdparty_id = $invoice->fk_soc;
+				}
+			}
+		}
+
+		return parent::fetch_thirdparty($force_thirdparty_id);
+	}
 }

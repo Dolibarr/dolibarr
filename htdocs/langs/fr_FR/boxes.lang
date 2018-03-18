@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=Informations de connexion
 BoxLastRssInfos=Flux d'information RSS
 BoxLastProducts=Les %s derniers produits/services enregistrés
 BoxProductsAlertStock=Produits en alerte de stock
@@ -82,3 +83,4 @@ ForCustomersOrders=Commandes clients
 ForProposals=Propositions commerciales
 LastXMonthRolling=Les %s derniers mois tournant
 ChooseBoxToAdd=Ajouter le widget au tableau de bord
+BoxAdded=Le widget a été ajouté dans votre tableau de bord

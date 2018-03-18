@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro     <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2016 Philippe Grand	 	 <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2018 Philippe Grand	 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,11 +64,10 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("trips");
-		$langs->load("projects");
+		global $conf, $langs, $mysoc;
+		
+		// Translations
+		$langs->loadLangs(array("main", "trips", "projects"));
 
 		$this->db = $db;
 		$this->name = "";
@@ -108,8 +107,8 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxdate=88;
 		$this->posxtype=107;
 		$this->posxprojet=120;
-		$this->posxtva=136;
-		$this->posxup=152;
+		$this->posxtva=138;
+		$this->posxup=154;
 		$this->posxqty=168;
 		$this->postotalttc=178;
         if (empty($conf->projet->enabled)) {
@@ -154,11 +153,9 @@ class pdf_standard extends ModeleExpenseReport
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("trips");
-		$outputlangs->load("projects");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
 		$nblignes = count($object->lines);
 
@@ -262,10 +259,14 @@ class pdf_standard extends ModeleExpenseReport
 				}
 				if ($notetoshow)
 				{
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+
 					$tab_top = 95;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-               		$pdf->writeHTMLCell(190, 3, $this->posxpiece-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxpiece-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -299,7 +300,7 @@ class pdf_standard extends ModeleExpenseReport
                     $curY = $nexY;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-					
+
                     // Accountancy piece
                     $pdf->SetXY($this->posxpiece, $curY);
                     $pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
@@ -324,10 +325,18 @@ class pdf_standard extends ModeleExpenseReport
                         $nextColumnPosX = $this->posxprojet;
                     }
 
-					$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, dol_trunc($outputlangs->transnoentities($object->lines[$i]->type_fees_code), 12), 0, 'C');
+                    $expensereporttypecode = $object->lines[$i]->type_fees_code;
+                    $expensereporttypecodetoshow = $outputlangs->transnoentities($expensereporttypecode);
+                    if ($expensereporttypecodetoshow == $expensereporttypecode)
+                    {
+                    	$expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
+                    }
+                    $expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);	// 10 is too much
+
+                    $pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
                     // Project
-					if (! empty($conf->projet->enabled)) 
+					if (! empty($conf->projet->enabled))
 					{
                         $pdf->SetFont('','', $default_font_size - 1);
                         $pdf->SetXY($this->posxprojet, $curY);
@@ -429,7 +438,7 @@ class pdf_standard extends ModeleExpenseReport
 				}
 
 				$pdf->SetFont('','', 10);
-				
+
             	// Show total area box
 				$posy=$bottomlasttab+5;
 				$pdf->SetXY(100, $posy);
@@ -473,6 +482,8 @@ class pdf_standard extends ModeleExpenseReport
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+				$this->result = array('fullpath'=>$file);
 
 				return 1;   // Pas d'erreur
 			}
@@ -583,7 +594,7 @@ class pdf_standard extends ModeleExpenseReport
    		$pdf->SetFont('','B', $default_font_size + 2);
    		$pdf->SetTextColor(111,81,124);
 		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $object->getLibStatut(0), '', 'R');
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
@@ -729,7 +740,7 @@ class pdf_standard extends ModeleExpenseReport
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
 		global $conf;
-		
+
 		// Force to disable hidetop and hidebottom
 		$hidebottom=0;
 		if ($hidetop) $hidetop=-1;
@@ -787,7 +798,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 		}
 
-        if (!empty($conf->projet->enabled)) 
+        if (!empty($conf->projet->enabled))
         {
             // Project
             $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);

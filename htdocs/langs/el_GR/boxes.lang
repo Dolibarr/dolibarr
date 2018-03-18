@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=Login information
 BoxLastRssInfos=Πληροφορίες Rss
 BoxLastProducts=Latest %s products/services
 BoxProductsAlertStock=Stock alerts for products
@@ -19,7 +20,7 @@ BoxLastMembers=Τελευταία μέλη
 BoxFicheInter=Τελευταίες παρεμβάσεις
 BoxCurrentAccounts=Άνοιξε το ισοζύγιο των λογαριασμών
 BoxTitleLastRssInfos=Τα %s πιο πρόσφατα νέα από %s
-BoxTitleLastProducts=Latest %s modified products/services
+BoxTitleLastProducts=%s τελευταία τροποποιημένα Προϊόντα/Υπηρεσίες
 BoxTitleProductsAlertStock=Προειδοποίηση προϊόντων σε απόθεμα
 BoxTitleLastSuppliers=Latest %s recorded suppliers
 BoxTitleLastModifiedSuppliers=Latest %s modified suppliers
@@ -76,9 +77,10 @@ BoxTitleLastModifiedSupplierBills=Latest %s modified supplier bills
 BoxTitleLatestModifiedSupplierOrders=Latest %s modified supplier orders
 BoxTitleLastModifiedCustomerBills=Latest %s modified customer bills
 BoxTitleLastModifiedCustomerOrders=Latest %s modified customer orders
-BoxTitleLastModifiedPropals=Latest %s modified propals
+BoxTitleLastModifiedPropals=Latest %s modified proposals
 ForCustomersInvoices=Τιμολόγια Πελάτη
 ForCustomersOrders=Παραγγελίες πελατών
 ForProposals=Προσφορές
 LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
+BoxAdded=Widget was added in your dashboard

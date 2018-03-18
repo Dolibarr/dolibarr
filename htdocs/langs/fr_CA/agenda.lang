@@ -5,6 +5,7 @@ NewCompanyToDolibarr=Le tiers %s a été créé
 PropalClassifiedBilledInDolibarr=Proposition %s classée facturée
 InvoicePaidInDolibarr=La facture %s a changé en payé
 MemberValidatedInDolibarr=Membre %s validé
+MemberModifiedInDolibarr=Membre %s modifié
 MemberResiliatedInDolibarr=Membre %s terminé
 MemberDeletedInDolibarr=Membre %s supprimé
 MemberSubscriptionAddedInDolibarr=L'abonnement au membre %s a ajouté
@@ -16,6 +17,7 @@ OrderDeliveredInDolibarr=Commande %s classée Délivrée
 ShippingSentByEMail=Bon expédition %s envoyé par EMail
 InterventionSentByEMail=Intervention %s envoyée par EMail
 ProposalDeleted=Proposition supprimée
+AgendaModelModule=Modèles de document pour l'événement
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux écévements associés au projet <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Afficher les dates d'anniversaire des contacts
 AgendaHideBirthdayEvents=Cacher les dates d'anniversaire des contacts

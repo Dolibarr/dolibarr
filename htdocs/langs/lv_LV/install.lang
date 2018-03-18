@@ -53,10 +53,10 @@ AdminLogin=Dolibarr datu bāzes īpašnieka lietotājvārds
 PasswordAgain=Atkārtot paroli otrreiz
 AdminPassword=Parole Dolibarr datu bāzes īpašniekam.
 CreateDatabase=Izveidot datubāzi
-CreateUser=Izveidot īpašnieku
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Datu bāzes serveris - superlietotājs piekļuve
 CheckToCreateDatabase=Ieķeksējiet, ja datu bāze neeksistē, un tā ir jāizveido. <br> Tādā gadījumā, jums ir jāaizpilda pieteikšanās / paroli SuperUser kontā šīs lapas apakšā.
-CheckToCreateUser=Ieķeksējiet, ja datu bāzes īpašnieks neeksistē, un ir jāizveidots. <br> Tādā gadījumā, jums ir jāizvēlas savu lietotājvārdu un paroli, kā arī aizpildīt pieteikšanās / paroli superlietotājs kontā šīs lapas apakšā. Ja šī rūtiņa ir neieķeksēta , datubāzes īpašniekam un parolei jau ir jābūt.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Lietotāja vārds, kas var izveidot datubāzes vai jaunos lietotājus. Obligāti jāaizpilda, ja datubāze vai tās īpašnieks jau neeksistē.
 KeepEmptyIfNoPassword=Atstājiet tukšu, ja lietotājam nav vajadzīga parole (izvairieties no bezparoles lietotāja vārda)
 SaveConfigurationFile=Saglabā vērtības
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliWamp,
 KeepDefaultValuesDeb=Jūs izmantojat Dolibarr iestatīšanas vedni no Linux paketi (Ubuntu, Debian, Fedora ...), tāpēc vērtības ierosinātās šeit jau ir optimizēta. Tikai datu bāzes īpašnieks, lai izveidotu paroli jāpabeidz. Mainītu citus parametrus tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesMamp=Jūs izmantojat Dolibarr iestatīšanas vedni no DoliMamp, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
 KeepDefaultValuesProxmox=Jūs izmantojat Dolibarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc vērtības ierosinātās šeit jau ir optimizēta. Mainīt tikai tad, ja jūs zināt, ko jūs darāt.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Noteikt, denormalized datiem
@@ -190,9 +193,11 @@ MigrationActioncommElement=Atjaunināt informāciju par pasākumiem
 MigrationPaymentMode=Datu migrācija uz maksājumu režīmā
 MigrationCategorieAssociation=Kategoriju migrācija
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Rādīt nepieejamās iespējas
 HideNotAvailableOptions=Slēpt nepieejamās iespējas
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

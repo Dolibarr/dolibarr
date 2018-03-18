@@ -109,6 +109,11 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	    if (empty($conf->global->SYSLOG_FILE)) $tmp=DOL_DATA_ROOT.'/dolibarr.log';
 	    else $tmp=str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
 
+	    if (! empty($conf->global->SYSLOG_FILE_ONEPERSESSION))	// file depend on session name (Note that session name is same for all users and is not a per user value)
+	    {
+	        $suffixinfilename = '_'.session_name();
+	    }
+
 	    return $suffixinfilename?preg_replace('/\.log$/i', $suffixinfilename.'.log', $tmp):$tmp;
 	}
 

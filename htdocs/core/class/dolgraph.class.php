@@ -25,9 +25,9 @@
 
 /**
  * Class to build graphs.
- * Usage is: 
+ * Usage is:
  *    $dolgraph=new DolGraph();
- *    $dolgraph->SetTitle($langs->transnoentities('Tracking_Projects_Pourcent').'<br>'.$langs->transnoentities('Tracking_IndicatorDefGraph').'%');
+ *    $dolgraph->SetTitle($langs->transnoentities('MyTitle').'<br>'.$langs->transnoentities('MyTitlePercent').'%');
  *    $dolgraph->SetMaxValue(50);
  *    $dolgraph->SetData($data);
  *    $dolgraph->setShowLegend(1);
@@ -35,7 +35,7 @@
  *    $dolgraph->SetType(array('pie'));
  *    $dolgraph->setWidth('100%');
  *    $dolgraph->draw('idofgraph');
- *    print $dolgraph->show();
+ *    print $dolgraph->show($total?0:1);
  */
 class DolGraph
 {
@@ -81,14 +81,16 @@ class DolGraph
 
 	/**
 	 * Constructor
+	 *
+	 * @param	string	$library		'jflot' (default) or 'artichow' (no more supported)
 	 */
-	function __construct()
+	function __construct($library='jflot')
 	{
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 
 		// To use old feature
-		if (isset($conf->global->MAIN_GRAPH_LIBRARY) && $conf->global->MAIN_GRAPH_LIBRARY == 'artichow')
+		if ($library == 'artichow')
 		{
 			$this->_library='artichow';
 
@@ -570,6 +572,7 @@ class DolGraph
 	function GetFloorMinValue()
 	{
 		$min = $this->GetMinValueInData();
+		if ($min == '') $min=0;
 		if ($min != 0) $min--;
 		$size=dol_strlen(abs(floor($min)));
 		$factor=1;
@@ -585,13 +588,13 @@ class DolGraph
 	}
 
 	/**
-	 * Build a graph onto disk using correct library
+	 * Build a graph into memory using correct library  (may also be wrote on disk, depending on library used)
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	integer|null
 	 */
-	function draw($file,$fileurl='')
+	function draw($file, $fileurl='')
 	{
 		if (empty($file))
 		{
@@ -599,11 +602,16 @@ class DolGraph
 			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
 			return -2;
 		}
-		if (! is_array($this->data) || count($this->data) < 1)
+		if (! is_array($this->data))
 		{
 			$this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
 			dol_syslog(get_class($this)."::draw ".$this->error, LOG_ERR);
 			return -1;
+		}
+		if (count($this->data) < 1)
+		{
+			$this->error="Call to draw method was made but SetData was is an empty dataset";
+			dol_syslog(get_class($this)."::draw ".$this->error, LOG_WARNING);
 		}
 		$call = "draw_".$this->_library;
 		call_user_func_array(array($this,$call), array($file,$fileurl));
@@ -793,7 +801,7 @@ class DolGraph
 	 * Build a graph using JFlot library. Input when calling this method should be:
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA),  array('labelxB',yB));
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // or when there is n series to show for each x
-	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// TODO Syntax not supported. Removed when dol_print_graph_removed
+	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// Syntax deprecated
 	 *  $this->legend= array("Val1",...,"Valn");													// list of n series name
 	 *  $this->type  = array('bars',...'lines'); or array('pie')
 	 *  $this->mode = 'depth' ???
@@ -819,7 +827,7 @@ class DolGraph
 
 		$legends=array();
 		$nblot=count($this->data[0])-1;    // -1 to remove legend
-		if ($nblot < 0) dol_print_error('', 'Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw');
+		if ($nblot < 0) dol_syslog('Bad value for property ->data. Must be set by mydolgraph->SetData before calling mydolgrapgh->draw', LOG_WARNING);
 		$firstlot=0;
 		// Works with line but not with bars
 		//if ($nblot > 2) $firstlot = ($nblot - 2);        // We limit nblot to 2 because jflot can't manage more than 2 bars on same x
@@ -868,7 +876,7 @@ class DolGraph
 		  return;
 		}
 		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
-		
+
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;
@@ -1038,10 +1046,20 @@ class DolGraph
 	/**
 	 * Output HTML string to show graph
 	 *
-	 * @return	string		HTML string to show graph
+	 * @param	int			$shownographyet 	Show graph to say there is not enough data
+	 * @return	string							HTML string to show graph
 	 */
-	function show()
+	function show($shownographyet=0)
 	{
+		global $langs;
+
+		if ($shownographyet)
+		{
+			$s= '<div class="nographyet" style="width:'.(preg_match('/%/',$this->width)?$this->width:$this->width.'px').'; height:'.(preg_match('/%/',$this->height)?$this->height:$this->height.'px').';"></div>';
+			$s.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+			return $s;
+		}
+
 		return $this->stringtoshow;
 	}
 

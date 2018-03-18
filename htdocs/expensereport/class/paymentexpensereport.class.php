@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,9 @@ class PaymentExpenseReport extends CommonObject
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
+        //Unknow field
+        var $chid;
+        var $total;
 
 	/**
 	 *	Constructor
@@ -104,6 +108,9 @@ class PaymentExpenseReport extends CommonObject
 
 		$this->db->begin();
 
+                //Fix me fields
+                $this->chid = $this->fk_expensereport;
+        
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
@@ -165,9 +172,10 @@ class PaymentExpenseReport extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_expensereport as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
+		$sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -447,7 +455,7 @@ class PaymentExpenseReport extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 	    global $langs;
-	
+
 	    return '';
 	}
 
@@ -504,9 +512,12 @@ class PaymentExpenseReport extends CommonObject
             $acc = new Account($this->db);
             $acc->fetch($accountid);
 
-            $total=$this->total;
-            if ($mode == 'payment_expensereport') $amount=$total;
+            //Fix me field
+            $this->total = $this->amount;
+            $total = $this->total;
             
+            if ($mode == 'payment_expensereport') $amount=$total;
+
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
@@ -543,25 +554,25 @@ class PaymentExpenseReport extends CommonObject
                         dol_print_error($this->db);
                     }
                 }
-                
+
                 // Add link 'user' in bank_url between user and bank transaction
                 if (! $error)
                 {
-                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    foreach ($this->amounts as $key => $value)  // We should have always same user but we loop in case of.
                     {
                     	if ($mode == 'payment_expensereport')
                         {
-                        	$er = new ExpenseReport($this->db);
-                            $er->fetch($key);
-                            $er->fetch_user($er->fk_user_author);
+                        	$fuser = new User($this->db);
+                            $fuser->fetch($key);
+
                             $result=$acc->add_url_line(
                                 $bank_line_id,
-                                $er->user->id,
+                                $fuser->id,
                                 DOL_URL_ROOT.'/user/card.php?id=',
-                                $er->user->getFullName($langs),
+                                $fuser->getFullName($langs),
                                 'user'
                             );
-                            if ($result <= 0) 
+                            if ($result <= 0)
                             {
                             	$this->error=$this->db->lasterror();
                             	dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);

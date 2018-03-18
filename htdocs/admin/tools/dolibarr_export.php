@@ -116,7 +116,7 @@ print load_fiche_titre($langs->trans("Backup"),'','title_setup');
 print '<div class="center">';
 print $langs->trans("BackupDesc",DOL_DATA_ROOT);
 print '</div>';
-print '<br><br>';
+print '<br>';
 
 ?>
 
@@ -214,10 +214,13 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 
 			</div>
 
+			<?php if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) { ?>
 			<div class="formelementrow"><input type="checkbox" name="disable_fk"
 				value="yes" id="checkbox_disable_fk" checked /> <label
 				for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
 			</div>
+			<?php } ?>
+
 			<label for="select_sql_compat"> <?php echo $langs->trans("ExportCompatibility"); ?></label>
 
 			<select name="sql_compat" id="select_sql_compat" class="flat">
@@ -286,11 +289,12 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
                                         for="checkbox_use_transaction"> <?php echo $langs->trans("UseTransactionnalMode"); ?></label>
 
                                 </div>
-
+								<?php if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) { ?>
                                 <div class="formelementrow"><input type="checkbox" name="nobin_disable_fk"
                                         value="yes" id="checkbox_disable_fk" checked /> <label
                                         for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')); ?></label>
                                 </div>
+								<?php } ?>
                             </fieldset>
 
                             <br>
@@ -463,15 +467,32 @@ if (! empty($_SESSION["commandbackuplastdone"]))
 	$_SESSION["commandbackuptorun"]='';
 	$_SESSION["commandbackupresult"]='';
 }
+if (! empty($_SESSION["commandbackuptorun"]))
+{
+	print '<br><font class="warning">'.$langs->trans("YouMustRunCommandFromCommandLineAfterLoginToUser",$dolibarr_main_db_user,$dolibarr_main_db_user).':</font><br>'."\n";
+	print '<textarea id="commandbackuptoruntext" rows="'.ROWS_2.'" class="centpercent">'.$_SESSION["commandbackuptorun"].'</textarea><br>'."\n";
+	print ajax_autoselect("commandbackuptoruntext", 0);
+	print '<br>';
+
+	//print $paramclear;
+
+	$_SESSION["commandbackuplastdone"]='';
+	$_SESSION["commandbackuptorun"]='';
+	$_SESSION["commandbackupresult"]='';
+}
 ?>
 
-</div>
+</div> <!-- end div center button -->
 
 <?php
-print '</td></tr></table>';
+print '</td></tr>';
+print '</table>';
+
+
 ?>
 
-</div>
+</div> 	<!-- end div fichehalfleft -->
+
 <div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">
 <div class="ficheaddleft">
 
@@ -480,6 +501,7 @@ $filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sort
 $result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
 print '<br>';
 ?>
+
 
 </div>
 </div>

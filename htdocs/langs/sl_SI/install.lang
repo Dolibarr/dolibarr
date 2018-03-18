@@ -53,10 +53,10 @@ AdminLogin=Uporabniško ime za lastnika Dolibarr baze podatkov.
 PasswordAgain=Ponoven vnos gesla
 AdminPassword=Geslo za lastnika Dolibarr baze podatkov.
 CreateDatabase=Ustvari bazo podatkov
-CreateUser=Ustvari uporabnika
+CreateUser=Create owner or grant him permission on database
 DatabaseSuperUserAccess=Strežnik za bazo podatkov – »Super uporabnik« dostop
 CheckToCreateDatabase=Označite kvadratek, če baza podatkov ne obstaja in jo je potrebno ustvariti.<br>V tem primeru morate vnesti uporabniško ime/geslo za račun »Super uporabnik« na dnu te strani.
-CheckToCreateUser=Označite kvadratek, če lastnik ne obstaja in ga je potrebno ustvariti.<br>V tem primeru morate izbrati njegovo uporabniško ime in geslo in vnesti tudi uporabniško ime/geslo za račun »Super uporabnik« na dnu te strani. Če ta kvadratek ni označen, morata obstajati lastnikova baza podatkov in njegovo geslo.
+CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
 DatabaseRootLoginDescription=Uporabniško ime uporabnika omogoča kreiranje nove baze podatkov ali novega uporabnika, razen če vaša baza podatkov in vaše uporabniško ime že obstajata (na primer če gostujete pri spletnem ponudniku).
 KeepEmptyIfNoPassword=Pustite prazno, če uporabnik nima gesla (temu se izogibajte)
 SaveConfigurationFile=Shrani vrednosti
@@ -138,7 +138,10 @@ KeepDefaultValuesWamp=Za namestitev Dolibarr uporabljate čarovnika DoliWamp, za
 KeepDefaultValuesDeb=Za namestitev Dolibarr uporabljate čarovnika iz paketov, podobnih Ubuntu ali Debian, zato so predlagane vrednosti že optimizirane. Spremenite jih le, če veste kaj počnete.
 KeepDefaultValuesMamp=Za namestitev Dolibarr uporabljate čarovnika DoliMamp, zato so predlagane vrednosti že optimizirane. Spremenite jih le, če veste kaj počnete.
 KeepDefaultValuesProxmox=Za namestitev Dolibarr uporabljate čarovnika Proxmox virtual appliance, zato so predlagane vrednosti že optimizirane. Spremenite jih le, če veste kaj počnete.
-
+UpgradeExternalModule=Run dedicated upgrade process of external modules
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Popravek denormaliziranih podatkov
@@ -190,9 +193,11 @@ MigrationActioncommElement=Posodobitev podatkov o aktivnostih
 MigrationPaymentMode=Podatki, migracije za način plačila
 MigrationCategorieAssociation=Migracija kategorij
 MigrationEvents=Migracija dogodkov za dodajanje lastnika dogodka v dodelitveno tabelo
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Ponovno naložite modul %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Prikaži opcije, ki niso na voljo
 HideNotAvailableOptions=Skrij opcije, ki niso na voljo
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

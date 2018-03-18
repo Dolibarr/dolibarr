@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxLoginInformation=Login information
 BoxLastRssInfos=RSS Informacije
 BoxLastProducts=Zadnjih %s proizvoda/usluga
 BoxProductsAlertStock=Upozorenja stanja zaliha za proizvode
@@ -76,9 +77,10 @@ BoxTitleLastModifiedSupplierBills=Zadnjih %s izmjenjenih računa dobavljača
 BoxTitleLatestModifiedSupplierOrders=Zadnjih %s izmjenjenih narudžbi dobavljača
 BoxTitleLastModifiedCustomerBills=Zadnjih %s izmjenjenih računa kupca
 BoxTitleLastModifiedCustomerOrders=Zadnjih %s izmjenjenih narudžbi kupca
-BoxTitleLastModifiedPropals=Zadnjih %s izmjenjenih prijedloga
+BoxTitleLastModifiedPropals=Zadnjih %s izmjenjenih ponuda
 ForCustomersInvoices=Računi kupaca
 ForCustomersOrders=Narudžbe kupaca
 ForProposals=Prijedlozi
 LastXMonthRolling=Zadnjih %s tekučih mjeseci
 ChooseBoxToAdd=Dodaj dodatak na kontrolnu ploču
+BoxAdded=Widget was added in your dashboard
