@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$langs->loadLangs(array("companies","commercial","banks","bills"));
+$langs->loadLangs(array("companies","commercial","banks","bills",'paypal','stripe'));
 
 
 // Security check
