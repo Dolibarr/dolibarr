@@ -134,7 +134,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  int				$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param  int				$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price','phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length of attribute
 	 *  @param  string			$elementtype        Element type ('member', 'product', 'thirdparty', ...)
