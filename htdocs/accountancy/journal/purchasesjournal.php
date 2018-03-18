@@ -627,8 +627,8 @@ if ($action == 'exportcsv') {
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 				print '"' . $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-				print '"' . $langs->trans("Code_tiers") . '"' . $sep;
-				print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
+				print '"' . $langs->trans("Thirdparty") . '"' . $sep;
+				print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("Thirdparty") . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
 				print '"' . $journal . '"' ;
@@ -694,7 +694,7 @@ if ($action == 'exportcsv') {
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-						print '"' . $langs->trans("Code_tiers") . '"' . $sep;
+						print '"' . $langs->trans("Thirdparty") . '"' . $sep;
 						print '"' . utf8_decode ( dol_trunc($companystatic->name, 16) ) . ' - ' . $val["refsuppliersologest"] . ' - ' . $langs->trans("VAT") . ' NPR"' . $sep;
 						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"'. $sep;
