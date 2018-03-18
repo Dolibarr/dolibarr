@@ -191,8 +191,23 @@ class Ticketsup extends CommonObject
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
-	    'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted'))
+	    'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted'))
     );
+
+    /**
+     * Status
+     */
+    const STATUS_NOT_READ = 0;
+    const STATUS_READ = 1;
+    const STATUS_ANSWERED = 3;
+    const STATUS_ASSIGNED = 4;
+    const STATUS_IN_PROGRESS = 5;
+    const STATUS_WAITING = 6;
+    const STATUS_CLOSED = 8;
+    const STATUS_CANCELED = 9;
+
+
+
 
     /**
      *  Constructor
@@ -203,8 +218,8 @@ class Ticketsup extends CommonObject
     {
         $this->db = $db;
 
-        $this->statuts_short = array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
-        $this->statuts = array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
+        $this->statuts_short = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
+        $this->statuts = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
     }
 
     /**
@@ -422,7 +437,7 @@ class Ticketsup extends CommonObject
         global $langs;
 
         // Check parameters
-        if (!$id && !$track_id && !$ref) {
+        if (! $id && ! $track_id && ! $ref) {
             $this->error = 'ErrorWrongParameters';
             dol_print_error(get_class($this) . "::fetch " . $this->error);
             return -1;

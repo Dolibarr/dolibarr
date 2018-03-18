@@ -49,25 +49,33 @@ if (!$user->rights->ticketsup->read) {
     accessforbidden();
 }
 
-$object = new ActionsTicketsup($db);
-
-$object->doActions($action);
-
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->dao->table_element);
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 if (!$action) {
-    $action = 'view';
+	$action = 'view';
 }
 
-/***************************************************
- * PAGE
- *
- * Put here all code to build page
- ****************************************************/
+$object = new Ticketsup($db);
+$object->fetch($id, $track_id, $ref);
+
+
+/*
+ * Actions
+ */
+
+$actionobject = new ActionsTicketsup($db);
+
+$actionobject->doActions($action, $object);
+
+
+
+/*
+ * View
+ */
 
 $help_url = 'FR:DocumentationModuleTicket';
-$page_title = $object->getTitle($action);
+$page_title = $actionobject->getTitle($action);
 llxHeader('', $page_title, $help_url);
 
 $userstat = new User($db);
@@ -79,20 +87,20 @@ if ($action == 'view') {
 
     if ($res > 0) {
         // restrict access for externals users
-        if ($user->societe_id > 0 && ($object->dao->fk_soc != $user->societe_id)
+        if ($user->societe_id > 0 && ($object->fk_soc != $user->societe_id)
         ) {
             accessforbidden('', 0);
         }
         // or for unauthorized internals users
-        if (!$user->societe_id && ($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY && $object->dao->fk_user_assign != $user->id) && !$user->rights->ticketsup->manage) {
+        if (!$user->societe_id && ($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticketsup->manage) {
             accessforbidden('', 0);
         }
 
         if ($socid > 0) {
-            $object->dao->fetch_thirdparty();
-            $head = societe_prepare_head($object->dao->thirdparty);
+            $object->fetch_thirdparty();
+            $head = societe_prepare_head($object->thirdparty);
             dol_fiche_head($head, 'ticketsup', $langs->trans("ThirdParty"), 0, 'company');
-            dol_banner_tab($object->dao->thirdparty, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+            dol_banner_tab($object->thirdparty, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
             dol_fiche_end();
         }
 
@@ -101,26 +109,28 @@ if ($action == 'view') {
         } elseif ($user->societe_id > 0) {
             $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
         }
-        $head = ticketsup_prepare_head($object->dao);
+        $head = ticketsup_prepare_head($object);
         dol_fiche_head($head, 'tabTicketLogs', $langs->trans("Ticket"), 0, 'ticketsup');
-        $object->dao->label = $object->dao->ref;
+        $object->label = $object->ref;
         // Author
-        if ($object->dao->fk_user_create > 0) {
-            $object->dao->label .= ' - ' . $langs->trans("CreatedBy") . '  ';
+        if ($object->fk_user_create > 0) {
+            $object->label .= ' - ' . $langs->trans("CreatedBy") . '  ';
             $langs->load("users");
             $fuser = new User($db);
-            $fuser->fetch($object->dao->fk_user_create);
-            $object->dao->label .= $fuser->getNomUrl(0);
+            $fuser->fetch($object->fk_user_create);
+            $object->label .= $fuser->getNomUrl(0);
         }
         $linkback = '<a href="' . dol_buildpath('/ticketsup/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
-        $object->dao->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
+
+        // TODO Merge this with dol_banner_tab
+        $object->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback);
 
         dol_fiche_end();
 
         print '<div class="fichecenter">';
         // Logs list
         print load_fiche_titre($langs->trans('TicketHistory'), '', 'history@ticketsup');
-        $object->viewTimelineTicketLogs();
+        $actionobject->viewTimelineTicketLogs(true, $object);
         print '</div><!-- fichecenter -->';
         print '<br style="clear: both">';
     }

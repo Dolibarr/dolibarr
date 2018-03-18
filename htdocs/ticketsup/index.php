@@ -53,7 +53,7 @@ $year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
 $startyear = $year - 1;
 $endyear = $year;
 
-$object = new ActionsTicketsup($db);
+$object = new Ticketsup($db);
 
 
 /*
@@ -180,7 +180,7 @@ if ($result) {
     if ((round($tick['unread']) ? 1 : 0) +(round($tick['read']) ? 1 : 0) +(round($tick['answered']) ? 1 : 0) +(round($tick['assigned']) ? 1 : 0) +(round($tick['inprogress']) ? 1 : 0) +(round($tick['waiting']) ? 1 : 0) +(round($tick['closed']) ? 1 : 0) +(round($tick['deleted']) ? 1 : 0) >= 2
     ) {
         $dataseries = array();
-        $dataseries[] = array('label' => $langs->trans("NotRead"), 'data' => round($tick['unread']));
+        $dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
         $dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
         $dataseries[] = array('label' => $langs->trans("Answered"), 'data' => round($tick['answered']));
         $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));

@@ -3063,7 +3063,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'resize', 'switch_off', 'switch_on', 'uparrow')))
+		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow')))
 		{
 			$fakey = $pictowithoutext; $facolor=''; $fasize='';
 			if ($pictowithoutext == 'switch_off')     { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
@@ -3074,6 +3074,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'edit')       { $fakey = 'fa-pencil';     $facolor='#444'; }
 			elseif ($pictowithoutext == 'resize')     { $fakey = 'fa-crop';       $facolor='#444'; }
 			elseif ($pictowithoutext == 'uparrow')    { $fakey = 'fa-mail-forward';       $facolor='#555'; }
+			elseif ($pictowithoutext == 'unlink')     { $fakey = 'fa-chain-broken';       $facolor='#555'; }
 			else { $fakey = 'fa-'.$pictowithoutext; $facolor='#999'; }
 
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) { $morecss.=($morecss?' ':'').$reg[1]; }
