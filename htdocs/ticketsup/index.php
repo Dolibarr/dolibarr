@@ -300,6 +300,8 @@ if ($result) {
     $i = 0;
 
     $transRecordedType = $langs->trans("LatestNewTickets", $max);
+
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>' . $transRecordedType . '</th>';
     print '<th>' . $langs->trans('Ref') . '</th>';
@@ -355,6 +357,7 @@ if ($result) {
     }
 
     print "</table>";
+    print '</div>';
 } else {
     dol_print_error($db);
 }

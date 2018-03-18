@@ -464,7 +464,7 @@ class ActionsTicketsup
             if ($this->fetch(GETPOST('id', 'int'), GETPOST('track_id', 'alpha')) >= 0) {
                 if ($object->delete($user) > 0) {
                     setEventMessages('<div class="confirm">' . $langs->trans('TicketDeletedSuccess') . '</div>', null, 'mesgs');
-                    Header("Location: index.php");
+                    Header("Location: ".DOL_URL_ROOT."/ticketsup/list.php");
                     exit;
                 } else {
                     $langs->load("errors");

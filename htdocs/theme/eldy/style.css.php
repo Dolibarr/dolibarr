@@ -830,6 +830,9 @@ div.fiche>form>div.div-table-responsive {
 div.fiche>div.tabBar>form>div.div-table-responsive {
     min-height: 392px;
 }
+div.fiche {
+	text-align: justify;
+}
 
 .flexcontainer {
     <?php if (in_array($conf->browser->name, array('chrome','firefox'))) echo 'display: inline-flex;'."\n"; ?>
@@ -3117,8 +3120,8 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 {
 	.boxstats, .boxstats130 {
 		margin: 3px;
-	    border: 1px solid #ccc;
-    	box-shadow: none;
+	    /*border: 1px solid #ccc;
+    	box-shadow: none; */
     }
     .boxstats130 {
     	text-align: <?php echo $left; ?>
