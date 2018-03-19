@@ -191,8 +191,23 @@ class Ticketsup extends CommonObject
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
-	    'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted'))
+	    'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted'))
     );
+
+    /**
+     * Status
+     */
+    const STATUS_NOT_READ = 0;
+    const STATUS_READ = 1;
+    const STATUS_ANSWERED = 3;
+    const STATUS_ASSIGNED = 4;
+    const STATUS_IN_PROGRESS = 5;
+    const STATUS_WAITING = 6;
+    const STATUS_CLOSED = 8;
+    const STATUS_CANCELED = 9;
+
+
+
 
     /**
      *  Constructor
@@ -203,8 +218,8 @@ class Ticketsup extends CommonObject
     {
         $this->db = $db;
 
-        $this->statuts_short = array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
-        $this->statuts = array(0 => 'NotRead', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
+        $this->statuts_short = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
+        $this->statuts = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
     }
 
     /**
@@ -337,8 +352,8 @@ class Ticketsup extends CommonObject
             $sql .= ") VALUES (";
             $sql .= " " . (!isset($this->ref) ? '' : "'" . $this->db->escape($this->ref) . "'") . ",";
             $sql .= " " . (!isset($this->track_id) ? 'NULL' : "'" . $this->db->escape($this->track_id) . "'") . ",";
-            $sql .= " " . (!isset($this->fk_soc) ? '0' : "'" . $this->db->escape($this->fk_soc) . "'") . ",";
-            $sql .= " " . (!isset($this->fk_project) ? '0' : "'" . $this->db->escape($this->fk_project) . "'") . ",";
+            $sql .= " " . ($this->fk_soc > 0 ? $this->db->escape($this->fk_soc) : "null") . ",";
+            $sql .= " " . ($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "null") . ",";
             $sql .= " " . (!isset($this->origin_email) ? 'NULL' : "'" . $this->db->escape($this->origin_email) . "'") . ",";
             $sql .= " " . ($this->fk_user_create > 0 ? $this->fk_user_create : ($user->id > 0 ? $user->id : 'NULL')) . ",";
             $sql .= " " . ($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL') . ",";
@@ -422,7 +437,7 @@ class Ticketsup extends CommonObject
         global $langs;
 
         // Check parameters
-        if (!$id && !$track_id && !$ref) {
+        if (! $id && ! $track_id && ! $ref) {
             $this->error = 'ErrorWrongParameters';
             dol_print_error(get_class($this) . "::fetch " . $this->error);
             return -1;
@@ -2397,78 +2412,6 @@ class Ticketsup extends CommonObject
         return $defaultref;
     }
 
-    /**
-	 *  Show tab footer of a card
-	 *
-	 *  @param  string $paramid       Name of parameter to use to name the id into the URL next/previous link
-	 *  @param  string $morehtml      More html content to output just before the nav bar
-	 *  @param  int    $shownav       Show Condition (navigation is shown if value is 1)
-	 *  @param  string $fieldid       Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
-	 *  @param  string $fieldref      Nom du champ objet ref (object->ref) a utiliser pour select next et previous
-	 *  @param  string $morehtmlref   More html to show after ref
-	 *  @param  string $moreparam     More param to add in nav link url.
-	 *  @param  int    $nodbprefix    Do not include DB prefix to forge table name
-	 *  @param  string $morehtmlleft  More html code to show before ref
-	 *  @param  string $morehtmlright More html code to show before navigation arrows
-	 *  @param	string	$onlybanner		1
-	 *  @return void
-	 */
-    public function ticketsupBannerTab($paramid, $morehtml = '', $shownav = 1, $fieldid = 'id', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlright = '', $onlybanner=0)
-    {
-        global $conf, $form, $user, $langs;
-
-        $maxvisiblephotos = 1;
-        $showimage = 1;
-        $showbarcode = empty($conf->barcode->enabled) ? 0 : ($this->barcode ? 1 : 0);
-        if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
-            $showbarcode = 0;
-        }
-
-        $modulepart = 'ticketsup';
-        print '<div class="'.($onlybanner?'arearefnobottom':'arearef').' heightref valignmiddle" width="100%">';
-
-        $width = 80;
-        $height = 70;
-        $cssclass = 'photoref';
-        //$showimage=$this->is_photo_available($conf->ticketsup->multidir_output[$this->entity]);
-        $showimage = $this->is_photo_available($conf->ticketsup->dir_output . '/' . $this->track_id);
-        $maxvisiblephotos = (isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO) ? $conf->global->PRODUCT_MAX_VISIBLE_PHOTO : $maxvisiblephotos);
-        if ($conf->browser->phone) {
-            $maxvisiblephotos = 1;
-        }
-
-        if ($showimage) {
-            $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'
-            . $this->show_photos($conf->ticketsup->dir_output, 'small', $maxvisiblephotos, 0, 0, 0, $height, $width, 0)
-                . '</div>';
-        } else {
-            $nophoto = '/public/theme/common/nophoto.png';
-            $morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="No photo" border="0"' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
-        }
-        $morehtmlright .= $this->getLibStatut(2);
-
-        if (!empty($this->name_alias)) {
-            $morehtmlref .= '<div class="refidno">' . $this->name_alias . '</div>';
-        }
-        // For thirdparty
-        if (!empty($this->label)) {
-            $morehtmlref .= '<div class="refidno">' . $this->label . '</div>';
-        }
-        // For product
-        if ($this->element != 'product') {
-            $morehtmlref .= '<div class="refidno">';
-            $morehtmlref .= $this->getBannerAddress('refaddress', $this);
-            $morehtmlref .= '</div>';
-        }
-        if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
-            $morehtmlref .= '<div style="clear: both;"></div><div class="refidno">';
-            $morehtmlref .= $langs->trans("TechnicalID") . ': ' . $this->id;
-            $morehtmlref .= '</div>';
-        }
-        print $form->showrefnav($this, 'ref', $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
-        print '</div>';
-        print '<div class="underrefbanner clearboth"></div>';
-    }
 
     /**
 	 *  Return if at least one photo is available

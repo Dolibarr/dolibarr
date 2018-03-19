@@ -223,15 +223,17 @@ class Stripe extends CommonObject
 				{
 					try {
 						if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-							$card = \Stripe\Card::retrieve("$cardref");
+							$card = $cu->sources->retrieve($cardref);
 						} else {
-							$card = \Stripe\Card::retrieve("$cardref", array("stripe_account" => $key));
+							$card = $cu->sources->retrieve($cardref, array("stripe_account" => $key));
 						}
 					}
 					catch(Exception $e)
 					{
 						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
 					}
+
 				}
 				elseif ($createifnotlinkedtostripe)
 				{
@@ -277,6 +279,7 @@ class Stripe extends CommonObject
 					catch(Exception $e)
 					{
 						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
 					}
 				}
 			}

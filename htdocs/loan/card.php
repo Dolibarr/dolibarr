@@ -182,8 +182,8 @@ if (empty($reshook))
 				$object->datestart	= $datestart;
 				$object->dateend	= $dateend;
 				$object->capital	= $capital;
-				$object->nbterm		= GETPOST("nbterm");
-				$object->rate		= GETPOST("rate");
+				$object->nbterm		= GETPOST("nbterm",'int');
+				$object->rate		= price2num(GETPOST("rate",'alpha'));
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');

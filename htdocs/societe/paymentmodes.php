@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$langs->loadLangs(array("companies","commercial","banks","bills"));
+$langs->loadLangs(array("companies","commercial","banks","bills",'paypal','stripe'));
 
 
 // Security check
@@ -210,7 +210,7 @@ if (empty($reshook))
 			$companypaymentmode->exp_date_month  = GETPOST('exp_date_month','int');
 			$companypaymentmode->exp_date_year   = GETPOST('exp_date_year','int');
 			$companypaymentmode->cvn             = GETPOST('cvn','alpha');
-			$companypaymentmode->country_code    = $mysoc->country_code;
+			$companypaymentmode->country_code    = $object->country_code;
 
 			$companypaymentmode->stripe_card_ref = GETPOST('stripe_card_ref','alpha');
 

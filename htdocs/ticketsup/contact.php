@@ -149,17 +149,26 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
         dol_fiche_head($head, 'contact', $langs->trans("Ticket"), -1, 'ticketsup');
 
-        $object->label = $object->ref;
+        $morehtmlref ='<div class="refidno">';
+        $morehtmlref.= $object->subject;
         // Author
         if ($object->fk_user_create > 0) {
-            $object->label .= ' - ' . $langs->trans("CreatedBy") . '  ';
-            $langs->load("users");
-            $fuser = new User($db);
-            $fuser->fetch($object->fk_user_create);
-            $object->label .= $fuser->getNomUrl(0);
+        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . '  ';
+
+        	$langs->load("users");
+        	$fuser = new User($db);
+        	$fuser->fetch($object->fk_user_create);
+        	$morehtmlref .= $fuser->getNomUrl(0);
         }
+        if (!empty($object->origin_email)) {
+        	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' ';
+        	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+        }
+        $morehtmlref.='</div>';
+
         $linkback = '<a href="' . dol_buildpath('/ticketsup/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
-        $object->ticketsupBannerTab('ref', '', ($user->societe_id ? 0 : 1), 'ref', 'subject', '', '', '', $morehtmlleft, $linkback, 1);
+
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref);
 
         dol_fiche_end();
 

@@ -996,7 +996,7 @@ class FormMail extends Form
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param	int			$id				Id of template to find, or -1 for first found with lower position, or 0 for first found whatever is position
+	 *      @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position or -2 for exact match with label (no aswer if not found)
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @param	string		$label			Label of template
 	 *      @return ModelMail
@@ -1005,14 +1005,20 @@ class FormMail extends Form
 	{
 		$ret = new ModelMail();
 
+		if ($id == -2 && empty($label))
+		{
+			$this->error = 'LabelIsMandatoryWhenIdIs-2';
+			return -1;
+		}
+
 		$sql = "SELECT label, topic, joinfiles, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
-		if ($label) $sql.=" AND label ='".$this->db->escape($label)."'";
-		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		if ($label) $sql.=" AND label ='".$db->escape($label)."'";
+		if (is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
 		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
@@ -1034,8 +1040,11 @@ class FormMail extends Form
 				$ret->content_lines = $obj->content_lines;
 				$ret->joinfiles = $obj->joinfiles;
 			}
-			else								// If there is no template at all
-			{
+			elseif($id == -2) {
+				// Not found with the provided label
+				return -1;
+			}
+			else {	// If there is no template at all
 				$defaultmessage='';
 				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
 				elseif ($type_template=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }

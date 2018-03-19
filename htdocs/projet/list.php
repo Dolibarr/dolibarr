@@ -195,6 +195,52 @@ if (empty($reshook))
 	$permtodelete = $user->rights->projet->supprimer;
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+    // Close records
+    if (! $error && $massaction == 'close' && $user->rights->projet->creer)
+    {
+        $db->begin();
+
+        $objecttmp=new $objectclass($db);
+        $nbok = 0;
+        foreach($toselect as $toselectid)
+        {
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $userWrite  = $object->restrictedProjectArea($user,'write');
+                if ($userWrite > 0 && $objecttmp->statut == 1) {
+                    $result = $objecttmp->setClose($user);
+                    if ($result <= 0) {
+                        setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                        $error++;
+                        break;
+                    } else $nbok++;
+                } elseif($userWrite <= 0) {
+                    setEventMessages($langs->trans("DontHavePermissionForCloseProject", $objecttmp->ref), null, 'warnings');
+                } else {
+                    setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
+                }
+            }
+            else
+            {
+                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                $error++;
+                break;
+            }
+        }
+
+        if (! $error)
+        {
+            if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+            else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+        }
+    }
 }
 
 
@@ -390,7 +436,9 @@ $arrayofmassactions =  array(
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->projet->creer) $arrayofmassactions['close']=$langs->trans("Close");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

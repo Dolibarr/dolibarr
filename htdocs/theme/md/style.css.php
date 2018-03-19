@@ -1339,7 +1339,8 @@ table.noborder tr.liste_titre td {
 .pictowarning {
     vertical-align: text-bottom;
 }
-.fiche img.pictoedit, .fiche span.pictoedit {
+.fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
+.fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit {
     opacity: 0.9;
 }
 img.hideonsmartphone.pictoactionview {

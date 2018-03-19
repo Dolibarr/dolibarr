@@ -44,8 +44,8 @@ TicketSeverityShortBLOCKING=Critical/Blocking
 
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketsupMyAssign=My tickets
-MenuTicketsupMyAssignNonClosed=My tickets non closed
-MenuListNonClosed=Non closed tickets
+MenuTicketsupMyAssignNonClosed=My open tickets
+MenuListNonClosed=Open tickets
 
 TypeContact_ticketsup_internal_CONTRIBUTOR=Contributor
 TypeContact_ticketsup_internal_SUPPORTTEC=Assigned user
@@ -123,7 +123,7 @@ TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketSupNumberingModules=Tickets numbering module
-TicketNotNotifyTiersAtCreate=Do not notify the company to the creation
+TicketNotifyTiersAtCreation=Notify thirdparty at creation
 
 #
 # About page
@@ -143,8 +143,8 @@ TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list which are assigned to current user
 NoTicketsFound=No ticket found
 TicketViewAllTickets=View all tickets
-TicketViewNonClosedOnly=View only non closed tickets
-TicketStatByStatus=Tickets par statut
+TicketViewNonClosedOnly=View only open tickets
+TicketStatByStatus=Tickets by status
 
 #
 # Ticket card
@@ -180,7 +180,7 @@ TicketMessageSuccessfullyAdded=Message successfully added
 TicketMessagesList=Message list
 NoMsgForThisTicket=No message for this ticket
 Properties=Classification
-LatestNewTickets=Last %s tickets newest (not read)
+LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Severity
 ShowTicket=See ticket
 RelatedTickets=Related tickets
@@ -224,7 +224,7 @@ TicketEmailOriginIssuer=Issuer at origin of the tickets
 InitialMessage=Initial Message
 LinkToAContract=Link to a contract
 TicketSupPleaseSelectAContract=Select a contract
-UnableToCreateInterIfNoSocid=Can not create a response file without defining a thirdparty
+UnableToCreateInterIfNoSocid=Can not create an intervention when no third party are defined
 TicketMailExchanges=Mail exchanges
 TicketInitialMessageModified=Initial message modified
 TicketMessageSuccesfullyUpdated=Message successfully updated

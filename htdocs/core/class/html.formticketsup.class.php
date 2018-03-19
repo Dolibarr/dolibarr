@@ -173,12 +173,12 @@ class FormTicketsup
             print "</td></tr>\n";
         }
 
-        // Customer
+        // Customer or supplier
         if ($this->withcompany) {
             // altairis: force company and contact id for external user
             if (empty($user->socid)) {
                 // Company
-                print '<tr><td class="titlefield">' . $langs->trans("Customer") . '</td><td>';
+                print '<tr><td class="titlefield">' . $langs->trans("ThirdParty") . '</td><td>';
                 $events = array();
                 $events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
                 print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events);
@@ -242,7 +242,7 @@ class FormTicketsup
                 // If no socid, set to first one (id=1) to avoid full contacts list
                 $selectedCompany = $this->withfromsocid > 0 ? $this->withfromsocid : 1;
                 $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid',  0, '', '', 0, 'minwidth200');
-                $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external');
+                $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
                 print '</td></tr>';
             } else {
                 print '<tr><td class="titlefield"><input type="hidden" name="socid" value="' . $user->socid . '"/></td>';
@@ -296,9 +296,9 @@ class FormTicketsup
         print $this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', '2');
         print '</td></tr>';
 
-        // Not notify tiers at create
-        print '<tr><td><label for="not_notify_tiers_at_create">' . $langs->trans("TicketNotNotifyTiersAtCreate") . '</label></td><td>';
-        print '<input type="checkbox" id="not_notify_tiers_at_create" name="not_notify_tiers_at_create"'.($this->withnotnotifytiersatcreate?' checked="checked"':'').'>';
+        // Notify thirdparty at creation
+        print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
+        print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
         print '</td></tr>';
 
         // TITLE

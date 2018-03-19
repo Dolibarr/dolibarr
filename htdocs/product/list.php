@@ -698,6 +698,7 @@ else
 				$product_static->type = $obj->fk_product_type;
 				$product_static->status_buy = $obj->tobuy;
 				$product_static->status     = $obj->tosell;
+				$product_static->status_batch = $obj->tobatch;
 				$product_static->entity = $obj->entity;
 				$product_static->pmp = $obj->pmp;
 
