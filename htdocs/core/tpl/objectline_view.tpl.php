@@ -286,7 +286,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 <?php } ?>
 
 <?php 
-	if (! empty($conf->accounting->enabled))
+	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
 	{
 		$accountingaccount=new AccountingAccount($this->db);
 		$accountingaccount->fetch($line->fk_accounting_account);
