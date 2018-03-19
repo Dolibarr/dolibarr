@@ -3495,6 +3495,18 @@ class Facture extends CommonInvoice
 
 		$return = array();
 
+		
+		// Select the last situation invoice
+		$sqlSit = 'SELECT MAX(fs.rowid)';
+		$sqlSit.= " FROM ".MAIN_DB_PREFIX."facture as fs";
+		$sqlSit.= " WHERE fs.entity = ".$conf->entity;
+		$sqlSit.= " AND fs.type != ".self::TYPE_SITUATION;
+		$sqlSit.= " AND fs.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
+		$sqlSit.= " GROUP BY fs.situation_cycle_ref";
+		$sqlSit.= " ORDER BY fs.situation_counter";
+		
+		
+		
 		$sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut, f.type, f.paye, pf.fk_paiement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
@@ -3506,6 +3518,7 @@ class Facture extends CommonInvoice
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
 		$sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
 		$sql.= " AND f.type != ".self::TYPE_CREDIT_NOTE;				// Type non 2 si facture non avoir
+		//$sql.= " AND ( f.type != ".self::TYPE_SITUATION . " OR f.rowid IN (".$sqlSit.") )";				    // Type non 5 si facture non avoir
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 

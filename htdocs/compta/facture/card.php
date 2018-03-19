@@ -913,7 +913,7 @@ if (empty($reshook))
 				// Proprietes particulieres a facture avoir
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
 				$object->type = Facture::TYPE_CREDIT_NOTE;
-
+				
 				$id = $object->create($user);
 
 				if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
@@ -922,6 +922,11 @@ if (empty($reshook))
 					if ($facture_source->fetch($object->fk_facture_source)>0)
 					{
 						$fk_parent_line = 0;
+						if ($facture_source->type == Facture::TYPE_SITUATION)
+						{
+						    $facture_source->fetchPreviousNextSituationInvoice();
+						}
+						
 
 						foreach($facture_source->lines as $line)
 						{
@@ -935,10 +940,51 @@ if (empty($reshook))
 							if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 								$fk_parent_line = 0;
 							}
-
+							
+							
+							
+							
+							if($facture_source->type == Facture::TYPE_SITUATION)
+							{
+							    if(!empty($facture_source->tab_previous_situation_invoice))
+							    {
+							        $lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
+							        $maxPrevSituationPercent = 0;
+							        foreach($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
+							        {
+							            if($prevLine->id == $line->fk_prev_id)
+							            {
+							                $maxPrevSituationPercent = max($maxPrevSituationPercent,$prevLine->situation_percent);
+							                
+							                //$line->subprice  = $line->subprice - $prevLine->subprice;
+							                $line->total_ht  = $line->total_ht - $prevLine->total_ht;
+							                $line->total_tva = $line->total_tva - $prevLine->total_tva;
+							                $line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
+							                $line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
+							                $line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
+							                
+							                $line->multicurrency_subprice  = $line->multicurrency_subprice  - $prevLine->multicurrency_subprice;
+							                $line->multicurrency_total_ht  = $line->multicurrency_total_ht  - $prevLine->multicurrency_total_ht;
+							                $line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
+							                $line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
+							                
+							               
+							            }
+							        }
+							        
+							        // prorata
+							        $line->qty = $line->qty * $maxPrevSituationPercent / 100;
+							    }
+							    
+							   
+							    
+							    // $sql.= ", situation_cycle_ref, situation_counter, situation_final";
+							    // situation_percent
+							}
+							
 							$line->fk_facture = $object->id;
 							$line->fk_parent_line = $fk_parent_line;
-
+							
 							$line->subprice = -$line->subprice; // invert price for object
 							$line->pa_ht = $line->pa_ht;       // we choosed to have buy/cost price always positive, so no revert of sign here
 							$line->total_ht = -$line->total_ht;
@@ -946,7 +992,7 @@ if (empty($reshook))
 							$line->total_ttc = -$line->total_ttc;
 							$line->total_localtax1 = -$line->total_localtax1;
 							$line->total_localtax2 = -$line->total_localtax2;
-
+							
 							$line->multicurrency_subprice = -$line->multicurrency_subprice;
 							$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
 							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
