@@ -154,14 +154,14 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
 	}
-		
+
 	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
 	{
 		$accountingaccount=new AccountingAccount($this->db);
 		$accountingaccount->fetch($line->fk_accounting_account);
-		echo '<br>' . $langs->trans('AccountingAffectation') . ': ' . $accountingaccount->getNomUrl(0,1,1);
+		echo '<div class="clearboth"></div><br><span class="opacitymedium">' . $langs->trans('AccountingAffectation') . ' : </span>' . $accountingaccount->getNomUrl(0,1,1);
 	}
-		
+
 	?>
 	</td>
 	<?php
@@ -311,7 +311,7 @@ if (!empty($extrafieldsline))
 	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
 }
 ?>
-	
+
 </tr>
 
 <!-- END PHP TEMPLATE objectline_view.tpl.php -->
