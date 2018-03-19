@@ -91,7 +91,10 @@ LastHolidays=Latest %s leave requests
 AllHolidays=All leave requests
 HalfDay=Half day
 NotTheAssignedApprover=You are not the assigned approver
-
+LEAVE_PAID=Paid vacation
+LEAVE_SICK=Sick leave
+LEAVE_OTHER=Other leave
+LEAVE_PAID_FR=Paid vacation
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation
 MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation

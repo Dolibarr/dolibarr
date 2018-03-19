@@ -814,21 +814,27 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
 
-        dol_fiche_head('', '', '', -1);
+        if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+        {
+	        dol_fiche_head('', '', '', -1);
 
-        $out='';
-        $typeleaves=$object->getTypes(1,1);
-    	foreach($typeleaves as $key => $val)
-		{
-			$nb_type = $object->getCPforUser($user->id, $val['rowid']);
-			$nb_holiday += $nb_type;
-			$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
-		}
-        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
-		print $out;
+	        $out='';
+	        $typeleaves=$object->getTypes(1,1);
+	    	foreach($typeleaves as $key => $val)
+			{
+				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
+				$nb_holiday += $nb_type;
+				$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+			}
+	        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+			print $out;
 
-        dol_fiche_end();
-
+	        dol_fiche_end();
+        }
+        elseif(! is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+        {
+        	print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
+        }
 
         dol_fiche_head();
 
@@ -846,7 +852,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
         	print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id,'fuserid',0,'',0);
+        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', 0, 0, 0, 'AND employee = 1');
         print '</td>';
         print '</tr>';
 
@@ -858,11 +864,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         $arraytypeleaves=array();
         foreach($typeleaves as $key => $val)
         {
-        	$labeltoshow = $val['label'];
+        	$labeltoshow = ($langs->trans($val['code'])!=$val['code'] ? $langs->trans($val['code']) : $val['label']);
         	$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 			$arraytypeleaves[$val['rowid']]=$labeltoshow;
         }
-        print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+        print $form->selectarray('type', $arraytypeleaves, (GETPOST('type','alpha')?GETPOST('type','alpha'):''), 1);
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '</tr>';
@@ -878,11 +884,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         if (! GETPOST('date_debut_')) {
             $form->select_date(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month','int'), GETPOST('date_debut_day','int'), GETPOST('date_debut_year','int'));
             $form->select_date($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
-        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
+        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday','alpha')?GETPOST('starthalfday','alpha'):'morning'));
         print '</td>';
         print '</tr>';
 
@@ -897,11 +903,11 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         if (! GETPOST('date_fin_')) {
             $form->select_date(-1,'date_fin_', 0, 0, 0, '', 1, 1);
         } else {
-            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+            $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month','int'), GETPOST('date_fin_day','int'), GETPOST('date_fin_year','int'));
             $form->select_date($tmpdate,'date_fin_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
-        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday','alpha')?GETPOST('endhalfday','alpha'):'afternoon'));
         print '</td>';
         print '</tr>';
 
@@ -909,7 +915,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
         print '<td>';
-        print $form->select_dolusers((GETPOST('valideur')>0?GETPOST('valideur'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
+        print $form->select_dolusers((GETPOST('valideur','int')>0?GETPOST('valideur','int'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
         print '</td>';
         print '</tr>';
 
@@ -917,7 +923,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td class="tdtop">';
-        $doleditor = new DolEditor('description', GETPOST('description'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+        $doleditor = new DolEditor('description', GETPOST('description','none'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
         print $doleditor->Create(1);
         print '</td></tr>';
 
@@ -1076,7 +1082,8 @@ else
 		        print '<td>'.$langs->trans("Type").'</td>';
 		        print '<td>';
 		        $typeleaves=$object->getTypes(1,-1);
-		        print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $typeleaves[$object->fk_type]['label'];
+		        $labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code'])!=$typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+		        print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $labeltoshow;
 		        print '</td>';
 		        print '</tr>';
 
@@ -1086,7 +1093,7 @@ else
                 if(!$edit)
                 {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+                    print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>'.dol_print_date($object->date_debut,'day');
 			        print ' &nbsp; &nbsp; ';
 			        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
@@ -1096,7 +1103,7 @@ else
                 else
                 {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
+                    print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
                     $form->select_date($object->date_debut,'date_debut_');
 			        print ' &nbsp; &nbsp; ';
@@ -1108,7 +1115,7 @@ else
                 if (!$edit)
                 {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+                    print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>'.dol_print_date($object->date_fin,'day');
                     print ' &nbsp; &nbsp; ';
                     print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
@@ -1118,7 +1125,7 @@ else
                 else
                 {
                     print '<tr>';
-                    print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
+                    print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
                     $form->select_date($object->date_fin,'date_fin_');
 			        print ' &nbsp; &nbsp; ';
@@ -1183,11 +1190,14 @@ else
                 // Validator
                 if (!$edit) {
                     print '<tr>';
-                    print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+                    print '<td class="titlefield">';
+                    if ($object->statut == 3 || $object->statut == 4) print $langs->trans('ApprovedBy');
+                    else print $langs->trans('ReviewedByCP');
+                    print '</td>';
                     print '<td>'.$valideur->getNomUrl(-1).'</td>';
                     print '</tr>';
                 } else {
-                    print '<tr>';
+                	print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>';
         			print $form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
@@ -1199,10 +1209,10 @@ else
                 print '<td>'.$langs->trans('DateCreateCP').'</td>';
                 print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
                 print '</tr>';
-                if ($object->statut == 3) {
+                if ($object->statut == 3 || $object->statut == 4) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateValidCP').'</td>';
-                    print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';
+                    print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';		// warning: date_valid is approval date on holiday module
                     print '</tr>';
                 }
                 if ($object->statut == 4) {

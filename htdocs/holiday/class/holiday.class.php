@@ -957,10 +957,11 @@ class Holiday extends CommonObject
 	/**
 	 *   Affiche un select HTML des statuts de congés payés
 	 *
-	 *   @param 	int		$selected   int du statut séléctionné par défaut
-	 *   @return    string				affiche le select des statuts
+	 *   @param 	int		$selected   	Id of preselected status
+	 *   @param		string	$select_statut	Name of HTML select field
+	 *   @return    string					Show select of status
 	 */
-	function selectStatutCP($selected='') {
+	function selectStatutCP($selected='', $htmlname='select_statut') {
 
 		global $langs;
 
@@ -969,7 +970,7 @@ class Holiday extends CommonObject
 		$nb = count($name)+1;
 
 		// Select HTML
-		$statut = '<select name="select_statut" class="flat">'."\n";
+		$statut = '<select name="'.$htmlname.'" class="flat">'."\n";
 		$statut.= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts
