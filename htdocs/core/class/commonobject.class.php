@@ -4338,8 +4338,10 @@ abstract class CommonObject
 							if ($useonlinesignature) $setsharekey=true;
 							if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
 						}
-						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))    $setsharekey=true;
-						if ($this->element == 'facture'  && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))  $setsharekey=true;
+						if ($this->element == 'commande'     && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))        $setsharekey=true;
+						if ($this->element == 'facture'      && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))      $setsharekey=true;
+						if ($this->element == 'bank_account' && ! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+
 						if ($setsharekey)
 						{
 							if (empty($ecmfile->share))	// Because object not found or share not set yet
