@@ -1226,7 +1226,7 @@ class FormFile
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
 
 							$disablecrop=1;
-							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','project','ticketsup','user'))) $disablecrop=0;
+							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
 
 							if (! $disablecrop && image_format_supported($file['name']) > 0)
 							{
