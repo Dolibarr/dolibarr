@@ -221,7 +221,7 @@ if ($action == 'charge')
     dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
     $stripeToken = GETPOST("stripeToken",'alpha');
-    $email = GETPOST("stripeEmail",'alpha');
+    $email = GETPOST("email",'alpha');
     $vatnumber = GETPOST('vatnumber','alpha');
 
     dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
@@ -1151,6 +1151,7 @@ if (preg_match('/^dopayment/',$action))
     print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
     print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
     print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
+    print '<input type="hidden" name="email" value="'.GETPOST('email','alpha').'" />';
 
     print '
     <table id="dolpaymenttable" summary="Payment form" class="center">
