@@ -831,6 +831,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
 	        dol_fiche_end();
         }
+        elseif(! is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+        {
+        	print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
+        }
 
         dol_fiche_head();
 
