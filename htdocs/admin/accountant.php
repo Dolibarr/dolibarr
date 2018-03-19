@@ -52,25 +52,13 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 || ($action == 'updateedit') )
 {
-	$tmparray=getCountry(GETPOST('country_id','int'),'all',$db,$langs,0);
-	if (! empty($tmparray['id']))
-	{
-		$mysoc->country_id   =$tmparray['id'];
-		$mysoc->country_code =$tmparray['code'];
-		$mysoc->country_label=$tmparray['label'];
-
-		$s=$mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
-		dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_COUNTRY", $s,'chaine',0,'',$conf->entity);
-
-		activateModulesRequiredByCountry($mysoc->country_code);
-	}
-
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NAME", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ADDRESS", GETPOST("address",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_TOWN", GETPOST("town",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ZIP", GETPOST("zipcode",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_STATE", GETPOST("state_id",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_REGION", GETPOST("region_code",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_COUNTRY", GETPOST('country_id','int'), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_PHONE", GETPOST("tel",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_FAX", GETPOST("fax",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_MAIL", GETPOST("mail",'alpha'),'chaine',0,'',$conf->entity);
@@ -144,12 +132,12 @@ if ($action == 'edit' || $action == 'updateedit')
 	// Country
 	print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 	//if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // By default, country of localization
-	print $form->select_country($mysoc->country_id, 'country_id');
+	print $form->select_country($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>'."\n";
 
 	print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
-	$formcompany->select_departement($conf->global->MAIN_INFO_ACCOUNTANT_STATE, $mysoc->country_code, 'state_id');
+	$formcompany->select_departement($conf->global->MAIN_INFO_ACCOUNTANT_STATE, $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'state_id');
 	print '</td></tr>'."\n";
 
 	print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
@@ -216,13 +204,14 @@ else
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CompanyCountry").'</td><td>';
-	if ($mysoc->country_code)
+	if (! empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY))
 	{
-		$img=picto_from_langcode($mysoc->country_code);
+		$code = getCountry($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 2);
+		$img=picto_from_langcode($code);
 		print $img?$img.' ':'';
-		print getCountry($mysoc->country_code,1);
+		print getCountry($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY,1);
 	}
-	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Country")).'</font>';
 	print '</td></tr>';
 
 

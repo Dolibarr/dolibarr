@@ -1154,7 +1154,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
 }
 
 /**
- *  Activate external modules mandatroy when country is country_code
+ *  Activate external modules mandatory when country is country_code
  *
  * 	@param		string		$country_code	CountryCode
  * 	@return		int			1
