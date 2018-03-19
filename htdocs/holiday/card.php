@@ -1190,11 +1190,14 @@ else
                 // Validator
                 if (!$edit) {
                     print '<tr>';
-                    print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+                    print '<td class="titlefield">';
+                    if ($object->statut == 3 || $object->statut == 4) print $langs->trans('ApprovedBy');
+                    else print $langs->trans('ReviewedByCP');
+                    print '</td>';
                     print '<td>'.$valideur->getNomUrl(-1).'</td>';
                     print '</tr>';
                 } else {
-                    print '<tr>';
+                	print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>';
         			print $form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
@@ -1206,10 +1209,10 @@ else
                 print '<td>'.$langs->trans('DateCreateCP').'</td>';
                 print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
                 print '</tr>';
-                if ($object->statut == 3) {
+                if ($object->statut == 3 || $object->statut == 4) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateValidCP').'</td>';
-                    print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';
+                    print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';		// warning: date_valid is approval date on holiday module
                     print '</tr>';
                 }
                 if ($object->statut == 4) {
