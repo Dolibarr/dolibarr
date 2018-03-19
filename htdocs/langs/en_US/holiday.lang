@@ -59,6 +59,7 @@ DateRefusCP=Date of refusal
 DateCancelCP=Date of cancellation
 DefineEventUserCP=Assign an exceptional leave for a user
 addEventToUserCP=Assign leave
+NotTheAssignedApprover=You are not the assigned approver
 MotifCP=Reason
 UserCP=User
 ErrorAddEventToUserCP=An error occurred while adding the exceptional leave.
