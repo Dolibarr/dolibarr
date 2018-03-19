@@ -143,6 +143,14 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 			echo get_date_range($line->date_start,$line->date_end, $format);
 		}
 	}
+		
+	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
+	{
+		$accountingaccount=new AccountingAccount($this->db);
+		$accountingaccount->fetch($line->fk_accounting_account);
+		echo '<br>' . $langs->trans('AccountingAffectation') . ': ' . $accountingaccount->getNomUrl(0,1,1);
+	}
+		
 	?>
 	</td>
 	<?php
@@ -285,15 +293,6 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
 <?php } ?>
 
-<?php 
-	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
-	{
-		$accountingaccount=new AccountingAccount($this->db);
-		$accountingaccount->fetch($line->fk_accounting_account);
-		echo '<tr><td colspan=' . $coldisplay . '>' . $langs->trans('AccountingAffectation') . ': ' . $accountingaccount->getNomUrl(0,1,1) . '</td></tr>';
-	}
-?>
-
 <?php
 //Line extrafield
 if (!empty($extrafieldsline))
@@ -301,6 +300,7 @@ if (!empty($extrafieldsline))
 	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
 }
 ?>
-
+	
 </tr>
+
 <!-- END PHP TEMPLATE objectline_view.tpl.php -->
