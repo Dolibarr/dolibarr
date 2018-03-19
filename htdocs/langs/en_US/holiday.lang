@@ -81,7 +81,10 @@ EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
 LastHolidays=Latest %s leave requests
 AllHolidays=All leave requests
-
+LEAVE_PAID=Paid vacationxx
+LEAVE_SICK=Sick leave
+LEAVE_OTHER=Other leave
+LEAVE_PAID_FR=Paid vacation
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation
 MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation

@@ -286,7 +286,8 @@ else
     {
         foreach($typeleaves as $key => $val)
         {
-        	print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
+        	$labeltype = ($langs->trans($val['code'])!=$val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
+        	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', 'align="center"');
         }
     }
     else

@@ -858,7 +858,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         $arraytypeleaves=array();
         foreach($typeleaves as $key => $val)
         {
-        	$labeltoshow = $val['label'];
+        	$labeltoshow = ($langs->trans($val['code'])!=$val['code'] ? $langs->trans($val['code']) : $val['label']);
         	$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 			$arraytypeleaves[$val['rowid']]=$labeltoshow;
         }
@@ -1076,7 +1076,8 @@ else
 		        print '<td>'.$langs->trans("Type").'</td>';
 		        print '<td>';
 		        $typeleaves=$object->getTypes(1,-1);
-		        print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $typeleaves[$object->fk_type]['label'];
+		        $labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code'])!=$typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+		        print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved",$object->fk_type) : $labeltoshow;
 		        print '</td>';
 		        print '</tr>';
 

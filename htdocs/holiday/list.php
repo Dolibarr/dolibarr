@@ -423,7 +423,7 @@ $typeleaves=$holidaystatic->getTypes(1,-1);
 $arraytypeleaves=array();
 foreach($typeleaves as $key => $val)
 {
-    $labeltoshow = $val['label'];
+	$labeltoshow = ($langs->trans($val['code'])!=$val['code'] ? $langs->trans($val['code']) : $val['label']);
     //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
     $arraytypeleaves[$val['rowid']]=$labeltoshow;
 }
@@ -516,7 +516,8 @@ if (! empty($holiday->holiday))
 		print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 		print '<td>'.$approbatorstatic->getNomUrl(-1).'</td>';
 		print '<td>';
-		print empty($typeleaves[$infos_CP['fk_type']]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$infos_CP['fk_type']) : $typeleaves[$infos_CP['fk_type']]['label'];
+		$labeltypeleavetoshow = ($langs->trans($typeleaves[$infos_CP['fk_type']]['code'])!=$typeleaves[$infos_CP['fk_type']]['code'] ? $langs->trans($typeleaves[$infos_CP['fk_type']]['code']) : $typeleaves[$infos_CP['fk_type']]['label']);
+		print empty($typeleaves[$infos_CP['fk_type']]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$infos_CP['fk_type']) : $labeltypeleavetoshow;
 		print '</td>';
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
