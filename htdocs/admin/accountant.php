@@ -211,7 +211,6 @@ else
 		print $img?$img.' ':'';
 		print getCountry($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY,1);
 	}
-	else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Country")).'</font>';
 	print '</td></tr>';
 
 
