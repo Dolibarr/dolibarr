@@ -814,21 +814,23 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
         print '<input type="hidden" name="action" value="create" />'."\n";
 
-        dol_fiche_head('', '', '', -1);
+        if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+        {
+	        dol_fiche_head('', '', '', -1);
 
-        $out='';
-        $typeleaves=$object->getTypes(1,1);
-    	foreach($typeleaves as $key => $val)
-		{
-			$nb_type = $object->getCPforUser($user->id, $val['rowid']);
-			$nb_holiday += $nb_type;
-			$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
-		}
-        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
-		print $out;
+	        $out='';
+	        $typeleaves=$object->getTypes(1,1);
+	    	foreach($typeleaves as $key => $val)
+			{
+				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
+				$nb_holiday += $nb_type;
+				$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+			}
+	        print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+			print $out;
 
-        dol_fiche_end();
-
+	        dol_fiche_end();
+        }
 
         dol_fiche_head();
 
