@@ -1226,14 +1226,14 @@ class FormFile
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
 
 							$disablecrop=1;
-							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','project','user'))) $disablecrop=0;
+							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','project','ticketsup','user'))) $disablecrop=0;
 
 							if (! $disablecrop && image_format_supported($file['name']) > 0)
 							{
 								if ($permtoeditline)
 								{
 	   								// Link to resize
-	   						   		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),'resize','class="paddingrightonly"').'</a>';
+	   						   		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"),'resize','class="paddingrightonly"').'</a>';
 								}
 							}
 
