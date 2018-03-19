@@ -739,8 +739,7 @@ class Ldap
 	function serverPing($host, $port=389, $timeout=1)
 	{
 		// Replace ldaps:// by ssl://
-		if (preg_match('/^ldaps/',$host)) {
-			preg_match('/^ldaps:\/\/([^\/]+)\/?$/', $host, $regs);
+		if (preg_match('/^ldaps:\/\/([^\/]+)\/?$/',$host, $regs)) {
 			$host = 'ssl://'.$regs[1];
 		}
 		$op = @fsockopen($host, $port, $errno, $errstr, $timeout);
