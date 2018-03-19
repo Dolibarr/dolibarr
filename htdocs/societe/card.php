@@ -46,11 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("banks");
-$langs->load("users");
+$langs->loadLangs(array("companies","commercial","bills","banks","users"));
 if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
