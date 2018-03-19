@@ -1509,7 +1509,7 @@ class Adherent extends CommonObject
 					$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,$datesubend,0,0,'','TTC',$amount,1);
+				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,'',0,0,'','TTC',$amount,1);
 				if ($result <= 0)
 				{
 					$this->error=$invoice->error;
@@ -1577,7 +1577,7 @@ class Adherent extends CommonObject
 					}
 				}
 
-				if (! $error)
+				if (! $error && !empty($bank_line_id))
 				{
 					// Update fk_bank into subscription table
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
@@ -1614,7 +1614,7 @@ class Adherent extends CommonObject
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
 				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 
-				$invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$invoice->generateDocument($invoice->modelpdf, $outputlangs);
 			}
 		}
 
