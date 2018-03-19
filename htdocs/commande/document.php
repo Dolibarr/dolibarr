@@ -69,6 +69,7 @@ $object = new Commande($db);
 /*
  * Actions
  */
+
 if ($object->fetch($id))
 {
 	$object->fetch_thirdparty();

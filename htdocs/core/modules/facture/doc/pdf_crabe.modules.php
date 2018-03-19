@@ -80,9 +80,9 @@ class pdf_crabe extends ModelePDFFactures
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "crabe";
@@ -176,12 +176,9 @@ class pdf_crabe extends ModelePDFFactures
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 		$nblignes = count($object->lines);
 
@@ -828,7 +825,7 @@ class pdf_crabe extends ModelePDFFactures
 		$sql = "SELECT p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 		$sql.= " cp.code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id AND cp.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
 		$sql.= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
 		//$sql.= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = 1";
 		$sql.= " ORDER BY p.datep";
@@ -1688,11 +1685,11 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$top_shift = $pdf->getY() - $current_y;
 		}
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;

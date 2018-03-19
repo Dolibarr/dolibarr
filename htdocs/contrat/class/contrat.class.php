@@ -899,17 +899,20 @@ class Contrat extends CommonObject
 			if ($result > 0)
 			{
 				$modCodeContract = new $module();
-			}
 
-			if (!empty($modCodeContract->code_auto)) {
-				// Mise a jour ref
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-				if ($this->db->query($sql))
-				{
-					if ($this->id)
+				if (!empty($modCodeContract->code_auto)) {
+					// Mise a jour ref
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+					if ($this->db->query($sql))
 					{
-						$this->ref="(PROV".$this->id.")";
+						if ($this->id)
+						{
+							$this->ref="(PROV".$this->id.")";
+						}
 					}
+				} else {
+					$error++;
+					$this->error='Failed to get PROV number';
 				}
 			}
 
@@ -1336,6 +1339,7 @@ class Contrat extends CommonObject
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0.0, $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null, $rang=0)
 	{
 		global $user, $langs, $conf, $mysoc;
+		$error=0;
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits, $rang");
 
@@ -1543,6 +1547,8 @@ class Contrat extends CommonObject
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0.0, $localtax2tx=0.0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0, $fk_fournprice=null, $pa_ht = 0,$array_options=0, $fk_unit = null)
 	{
 		global $user, $conf, $langs, $mysoc;
+
+		$error=0;
 
 		// Clean parameters
 		$qty=trim($qty);

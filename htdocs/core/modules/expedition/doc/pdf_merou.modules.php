@@ -91,16 +91,9 @@ class pdf_merou extends ModelePdfExpedition
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("propal");
-		$outputlangs->load("deliveries");
-		$outputlangs->load("sendings");
-		$outputlangs->load("productbatch");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 		
 		if ($conf->expedition->dir_output)
 		{
@@ -542,7 +535,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 
 		// Sender properties
-		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetXY($blSocX,$blSocY+4);

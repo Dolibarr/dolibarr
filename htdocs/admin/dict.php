@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
@@ -41,14 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("main");
-$langs->load("companies");
-$langs->load("resource");
-$langs->load("holiday");
-$langs->load("accountancy");
-$langs->load("hrm");
+$langs->loadLangs(array("errors","admin","main","companies","resource","holiday","accountancy","hrm","orders","contracts","projects","propal","bills","interventions"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -383,8 +376,8 @@ $tabrowid[8] = "id";
 $tabrowid[9] = "code_iso";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
-$tabrowid[12]= "rowid";
-$tabrowid[13]= "id";
+$tabrowid[12]= "";
+$tabrowid[13]= "";
 $tabrowid[14]= "";
 $tabrowid[15]= "";
 $tabrowid[16]= "code";
@@ -543,33 +536,27 @@ $elementList = array();
 $sourceList=array();
 if ($id == 11)
 {
-	$langs->load("orders");
-	$langs->load("contracts");
-	$langs->load("projects");
-	$langs->load("propal");
-	$langs->load("bills");
-	$langs->load("interventions");
 	$elementList = array(
 			''				    => '',
             'societe'           => $langs->trans('ThirdParty'),
 //			'proposal'          => $langs->trans('Proposal'),
 //			'order'             => $langs->trans('Order'),
 //			'invoice'           => $langs->trans('Bill'),
-			'invoice_supplier'  => $langs->trans('SupplierBill'),
+			'supplier_proposal' => $langs->trans('SupplierProposal'),
 			'order_supplier'    => $langs->trans('SupplierOrder'),
+			'invoice_supplier'  => $langs->trans('SupplierBill'),
 //			'intervention'      => $langs->trans('InterventionCard'),
 //			'contract'          => $langs->trans('Contract'),
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
 			'agenda'			=> $langs->trans('Agenda'),
+			'resource'           => $langs->trans('Resource'),
 			// old deprecated
-			'contrat'           => $langs->trans('Contract'),
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
 			'facture'           => $langs->trans('Bill'),
-			'resource'           => $langs->trans('Resource'),
-//			'facture_fourn'     => $langs->trans('SupplierBill'),
-			'fichinter'         => $langs->trans('InterventionCard')
+			'fichinter'         => $langs->trans('InterventionCard'),
+			'contrat'           => $langs->trans('Contract')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 

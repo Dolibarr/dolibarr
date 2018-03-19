@@ -96,7 +96,7 @@ $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
 
-$option = GETPOST('option');
+$option = GETPOST('search_option');
 if ($option == 'late') {
 	$search_status = '1';
 }
@@ -276,7 +276,7 @@ if ($massaction == 'withdrawrequest')
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
 				}
-				if(!($objecttmp->statut > Facture::STATUS_DRAFT)){
+				if (!($objecttmp->statut > Facture::STATUS_DRAFT)){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
 				}
@@ -298,11 +298,11 @@ if ($massaction == 'withdrawrequest')
 					$numprlv = $db->num_rows($result_sql);
 				}
 
-				if($numprlv>0){
+				if ($numprlv>0){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
 				}
-				if(!empty($objecttmp->mode_reglement_id ) && $objecttmp->mode_reglement_id != 3){
+				if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
 				}
@@ -560,7 +560,7 @@ if ($resql)
 	if ($search_status != '') $param.='&search_status='.urlencode($search_status);
 	if ($search_paymentmode > 0) $param.='search_paymentmode='.urlencode($search_paymentmode);
 	if ($show_files)         $param.='&show_files=' .$show_files;
-	if ($option)             $param.="&option=".$option;
+	if ($option)             $param.="&search_option=".$option;
 	if ($optioncss != '')    $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -714,7 +714,7 @@ if ($resql)
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_lim" value="'.dol_escape_htmltag($month_lim).'">';
 		$formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
-		print '<br><input type="checkbox" name="option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
+		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
 		print '</td>';
 	}
 	// Project

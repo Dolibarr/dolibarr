@@ -283,8 +283,8 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid AND payterm.entity IN ('.getEntity('c_payment_term').')';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id AND paymode.entity IN ('.getEntity('c_paiement').')';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
 		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';

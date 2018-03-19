@@ -38,12 +38,10 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';
-/* included into config.php
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
-*/
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
 if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
@@ -221,7 +219,7 @@ if ($action == 'charge')
     dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
     $stripeToken = GETPOST("stripeToken",'alpha');
-    $email = GETPOST("stripeEmail",'alpha');
+    $email = GETPOST("email",'alpha');
     $vatnumber = GETPOST('vatnumber','alpha');
 
     dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
@@ -1096,7 +1094,7 @@ if (preg_match('/^dopayment/',$action))
     /*
      print '<script src="https://checkout.stripe.com/checkout.js"
      class="stripe-button"
-     data-key="'.$stripe['publishable_key'].'"
+     data-key="'.$stripearrayofkeys['publishable_key'].'"
      data-amount="'.$ttc.'"
      data-currency="'.$conf->currency.'"
      data-description="'.$ref.'">
@@ -1151,6 +1149,8 @@ if (preg_match('/^dopayment/',$action))
     print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
     print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
     print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
+    print '<input type="hidden" name="email" value="'.GETPOST('email','alpha').'" />';
+    print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id','int').'" />';
 
     print '
     <table id="dolpaymenttable" summary="Payment form" class="center">
@@ -1182,7 +1182,7 @@ if (preg_match('/^dopayment/',$action))
     ?>
 
     // Create a Stripe client
-    var stripe = Stripe('<?php echo $stripe['publishable_key']; ?>');
+    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; ?>');
 
     // Create an instance of Elements
     var elements = stripe.elements();

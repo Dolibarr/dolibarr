@@ -415,7 +415,7 @@ $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
-$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type, p.entity,";
+$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
 $sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
@@ -891,6 +891,7 @@ if ($resql)
         $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
         $productstatic->entity=$objp->entity;
+        $productstatic->status_batch=$objp->tobatch; 
 
         $productlot->id = $objp->lotid;
         $productlot->batch= $objp->batch;

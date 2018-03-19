@@ -1078,9 +1078,10 @@ class Contact extends CommonObject
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
      *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param		int			$notooltip					1=Disable tooltip
 	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1, $notooltip=0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1112,15 +1113,18 @@ class Contact extends CommonObject
 
         $linkstart = '<a href="'.$url.'"';
         $linkclose="";
-    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-        {
-            $label=$langs->trans("ShowContact");
-            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-        }
-       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-       	$linkclose.= ' class="classfortooltip">';
+		if (empty($notooltip)) {
+	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+    	    {
+        	    $label=$langs->trans("ShowContact");
+            	$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+    	   	$linkclose.= ' class="classfortooltip"';
+		}
+		$linkclose.='>';
 
-		if (! is_object($hookmanager))
+		/*if (! is_object($hookmanager))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager=new HookManager($this->db);
@@ -1128,7 +1132,7 @@ class Contact extends CommonObject
 		$hookmanager->initHooks(array('contactdao'));
 		$parameters=array('id'=>$this->id);
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;*/
 
 		$linkstart.=$linkclose;
 		$linkend='</a>';
@@ -1139,11 +1143,22 @@ class Contact extends CommonObject
 			$linkend='</a>';
 		}
 
-
 		$result.=$linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
 		$result.=$linkend;
+
+		global $action;
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('contactdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}

@@ -222,8 +222,8 @@ class FormCompany
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
-		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$country_codeid."'";
-		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$country_codeid."'";
+		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$this->db->escape($country_codeid)."'";
+		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$this->db->escape($country_codeid)."'";
 		$sql .= " ORDER BY c.code, d.code_departement";
 
 		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
@@ -265,16 +265,26 @@ class FormCompany
 						{
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
+
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2) {
-							$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
-						}
-						else if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
-							$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						if(!empty($conf->global->MAIN_SHOW_STATE_CODE) &&
+						($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')) {
+							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+							else {
+								$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
 						}
 						else {
-							$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
+								$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
+							else {
+								$out.= ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+							}
 						}
+
 						$out.= '</option>';
 					}
 					$i++;

@@ -81,7 +81,7 @@ class MyObject extends CommonObject
 	    'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
 	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
 	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
-		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
+		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>0, 'help'=>'LinkToThirparty'),
 		'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
@@ -142,12 +142,21 @@ class MyObject extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible']=0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled']=0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible']=0;
+		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled']=0;
+
+		// Unset fields that are disabled
+		foreach($this->fields as $key => $val)
+		{
+			if (isset($val['enabled']) && empty($val['enabled']))
+			{
+				unset($this->fields[$key]);
+			}
+		}
 	}
 
 	/**
@@ -452,10 +461,11 @@ class MyObject extends CommonObject
 
 	/**
 	 * Action executed by scheduler
-	 * CAN BE A CRON TASK
+	 * CAN BE A CRON TASK. In such a case, paramerts come from the schedule job setup field 'Parameters'
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
+	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;

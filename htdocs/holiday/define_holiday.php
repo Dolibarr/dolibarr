@@ -216,8 +216,9 @@ if (empty($user->rights->holiday->read_all))
 	$userchilds=$user->getAllChildIds(1);
 	$filters.=' AND u.rowid IN ('.join(', ',$userchilds).')';
 }
-
-$filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
+if (!empty($search_name)) {
+	$filters.=natural_search(array('u.firstname','u.lastname'), $search_name);
+}
 if ($search_supervisor > 0) $filters.=natural_search(array('u.fk_user'), $search_supervisor, 2);
 
 $listUsers = $holiday->fetchUsers(false, true, $filters);

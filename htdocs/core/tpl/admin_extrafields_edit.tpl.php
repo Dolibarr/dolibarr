@@ -131,8 +131,8 @@ $langs->load("modulebuilder");
     });
 </script>
 
-
-<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>" method="post">
+<!-- Form to edit an extra field -->
+<form action="<?php echo $_SERVER["PHP_SELF"]; ?>?attrname=<?php echo $attrname; ?>" id="formeditextrafield" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">

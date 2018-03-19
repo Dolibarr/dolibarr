@@ -44,7 +44,6 @@ abstract class CommonDocGenerator
 	*/
 	public function __construct($db) {
 		$this->db = $db;
-		return 1;
 	}
 
 

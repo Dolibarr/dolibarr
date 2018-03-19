@@ -13,6 +13,7 @@
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2017      Rui Strecht		<rui.strecht@aliartalentos.com>
  * Copyright (C) 2018      Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -197,7 +198,32 @@ abstract class CommonObject
 	 * @var string
 	 * @see getFullAddress(), isInEEC(), country
 	 */
-	public $country_code;
+    public $country_code;
+    /**
+	 * @var string
+	 * @see getFullAddress()
+	 */
+	public $state;
+	/**
+	 * @var int
+	 * @see getFullAddress(), state
+	 */
+	public $state_id;
+	/**
+	 * @var string
+	 * @see getFullAddress(), state
+	 */
+    public $state_code;
+    /**
+	 * @var string
+	 * @see getFullAddress(), region
+	 */
+	public $region;
+	/**
+	 * @var string
+	 * @see getFullAddress(), region
+	 */
+    public $region_code;
 
 	/**
 	 * @var int
@@ -422,9 +448,10 @@ abstract class CommonObject
 	 *
 	 * 	@param		int			$withcountry		1=Add country into address string
 	 *  @param		string		$sep				Separator to use to build string
+	 *  @param		int		$withregion			1=Add region into address string
 	 *	@return		string							Full address string
 	 */
-	function getFullAddress($withcountry=0,$sep="\n")
+	function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
 	{
 		if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
 		{
@@ -433,6 +460,16 @@ abstract class CommonObject
 			$this->country_code=$tmparray['code'];
 			$this->country     =$tmparray['label'];
 		}
+
+        if ($withregion && $this->state_id && (empty($this->state_code) || empty($this->state) || empty($this->region) || empty($this->region_cpde)))
+    	{
+    		require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
+    		$tmparray=getState($this->state_id,'all',0,1);
+			$this->state_code   =$tmparray['code'];
+			$this->state        =$tmparray['label'];
+			$this->region_code  =$tmparray['region_code'];
+			$this->region       =$tmparray['region'];
+        }
 
 		return dol_format_address($this, $withcountry, $sep);
 	}
@@ -471,7 +508,7 @@ abstract class CommonObject
 		$out='<!-- BEGIN part to show address block -->';
 
 		$outdone=0;
-		$coords = $this->getFullAddress(1,', ');
+		$coords = $this->getFullAddress(1,', ',$conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 		if ($coords)
 		{
 			if (! empty($conf->use_javascript_ajax))
@@ -489,7 +526,12 @@ abstract class CommonObject
 		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
 				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state)
 		{
-			$out.=($outdone?' - ':'').$this->state;
+            if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
+                $out.=($outdone?' - ':'').$this->region.' - '.$this->state;
+            }
+            else {
+                $out.=($outdone?' - ':'').$this->state;
+            }
 			$outdone++;
 		}
 
@@ -3984,6 +4026,12 @@ abstract class CommonObject
 				$discount->fetch($line->fk_remise_except);
 				$this->tpl['description'] = $langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
 			}
+			elseif ($line->desc == '(EXCESS PAID)')
+			{
+				$discount=new DiscountAbsolute($this->db);
+				$discount->fetch($line->fk_remise_except);
+				$this->tpl['description'] = $langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
+			}
 			else
 			{
 				$this->tpl['description'] = dol_trunc($line->desc,60);
@@ -4290,8 +4338,10 @@ abstract class CommonObject
 							if ($useonlinesignature) $setsharekey=true;
 							if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
 						}
-						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))    $setsharekey=true;
-						if ($this->element == 'facture'  && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))  $setsharekey=true;
+						if ($this->element == 'commande'     && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD))        $setsharekey=true;
+						if ($this->element == 'facture'      && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD))      $setsharekey=true;
+						if ($this->element == 'bank_account' && ! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+
 						if ($setsharekey)
 						{
 							if (empty($ecmfile->share))	// Because object not found or share not set yet
@@ -5985,7 +6035,7 @@ abstract class CommonObject
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
-				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var val = $("select[name="+parent_list+"]").val();
 				    		var parentVal = parent_list + ":" + val;
 							if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
@@ -6197,7 +6247,7 @@ abstract class CommonObject
 	{
 		if(is_array($info))
 		{
-			if(isset($info['type']) && ($info['type']=='int' || $info['type']=='integer' )) return true;
+			if(isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i',$info['type']) ) ) return true;
 			else return false;
 		}
 		else return false;
@@ -6475,19 +6525,21 @@ abstract class CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param	int    $id				Id object
+	 * @param	string $ref				Ref
+	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchCommon($id, $ref = null)
+	public function fetchCommon($id, $ref = null, $morewhere = '')
 	{
 		if (empty($id) && empty($ref)) return false;
 
 		$sql = 'SELECT '.$this->get_field_list();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
-		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
+		if (!empty($id)) $sql.= ' WHERE rowid = '.$id;
 		else $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
+		if ($morewhere) $sql.=$morewhere;
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -6668,6 +6720,9 @@ abstract class CommonObject
 
 		// TODO...
 	}
+
+
+	/* Part for comments */
 
 	/**
 	 * Load comments linked with current task

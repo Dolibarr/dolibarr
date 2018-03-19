@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,8 +68,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("bills");
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "muscadet";
@@ -1211,7 +1211,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;

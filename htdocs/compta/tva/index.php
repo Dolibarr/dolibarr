@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -25,14 +25,12 @@
  *		\brief      Index page of VAT reports
  */
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("other");
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+$langs->loadLangs(array("other","compta","banks","bills","companies"));
 
 $year=GETPOST("year","int");
 if ($year == 0)
@@ -52,7 +50,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
+if (isset($_GET["modetax"])) $modetax=GETPOST("modetax",'alpha');
 
 
 /**
@@ -68,8 +66,7 @@ function pt ($db, $sql, $date)
     global $conf, $bc,$langs;
 
     $result = $db->query($sql);
-    if ($result)
-    {
+    if ($result) {
         $num = $db->num_rows($result);
         $i = 0;
         $total = 0;
@@ -79,9 +76,8 @@ function pt ($db, $sql, $date)
         print '<td align="right">'.$langs->trans("Amount").'</td>';
         print '<td>&nbsp;</td>'."\n";
         print "</tr>\n";
-        $var=True;
-        while ($i < $num)
-        {
+
+        while ($i < $num) {
             $obj = $db->fetch_object($result);
 
             print '<tr class="oddeven">';
@@ -108,19 +104,25 @@ function pt ($db, $sql, $date)
  * View
  */
 
-llxHeader();
-
 $tva = new Tva($db);
+
+$name = $langs->trans("ReportByMonth");
+$description = $langs->trans("VATSummary");
+$calcmode = $langs->trans("VATReportBuildWithOptionDefinedInModule").' ';
+$calcmode.= '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+$builddate=dol_now();
+
+llxHeader('', $name);
 
 
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 
-print $conf->dol_optimize_smallscreen;
-print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
+//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
 
-print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
-print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
+report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
+
+
 print '<br>';
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -140,7 +142,6 @@ print '</tr>'."\n";
 $y = $year_current ;
 
 
-$var=True;
 $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )

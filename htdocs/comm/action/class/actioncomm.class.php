@@ -164,6 +164,7 @@ class ActionComm extends CommonObject
 
     // Properties for links to other objects
     var $fk_element;    // Id of record
+    var $elementid;    // Id of record alternative for API
     var $elementtype;   // Type of record. This if property ->element of object linked to.
 
     // Ical
@@ -550,7 +551,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_user_author, a.fk_user_mod,";
         $sql.= " a.fk_user_action, a.fk_user_done,";
         $sql.= " a.fk_contact, a.percent as percentage,";
-        $sql.= " a.fk_element, a.elementtype,";
+        $sql.= " a.fk_element as elementid, a.elementtype,";
         $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
         $sql.= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
         $sql.= " s.nom as socname,";
@@ -591,7 +592,6 @@ class ActionComm extends CommonObject
                 $this->label				= $obj->label;
                 $this->datep				= $this->db->jdate($obj->datep);
                 $this->datef				= $this->db->jdate($obj->datep2);
-//				$this->durationp			= $this->durationp;					// deprecated
 
                 $this->datec   				= $this->db->jdate($obj->datec);
                 $this->datem   				= $this->db->jdate($obj->datem);
@@ -624,7 +624,8 @@ class ActionComm extends CommonObject
                 $this->societe->id			= $obj->fk_soc;			// deprecated
                 $this->contact->id			= $obj->fk_contact;		// deprecated
 
-                $this->fk_element			= $obj->fk_element;
+                $this->fk_element			= $obj->elementid;
+		$this->elementid			= $obj->elementid;
                 $this->elementtype			= $obj->elementtype;
 
                 $this->fetchResources();
@@ -1271,7 +1272,7 @@ class ActionComm extends CommonObject
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
 		    $linkclose.=' class="'.$classname.' classfortooltip"';
 
-		    if (! is_object($hookmanager))
+		    /*if (! is_object($hookmanager))
 		    {
 		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		        $hookmanager=new HookManager($this->db);
@@ -1280,6 +1281,7 @@ class ActionComm extends CommonObject
 		    $parameters=array('id'=>$this->id);
 		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		    $linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
+		    */
 		}
 		else $linkclose.=' class="'.$classname.'"';
 
@@ -1324,6 +1326,18 @@ class ActionComm extends CommonObject
         if ($withpicto)	$result.=img_object(($notooltip?'':$langs->trans("ShowAction").': '.$libelle), ($overwritepicto?$overwritepicto:'action'), ($notooltip?'class="'.(($withpicto != 2) ? 'paddingright ' : '').'valigntextbottom"':'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
         $result.=$libelleshort;
         $result.=$linkend;
+
+        global $action;
+        if (! is_object($hookmanager))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+        	$hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('actiondao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
         return $result;
     }

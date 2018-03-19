@@ -128,13 +128,7 @@ class modStock extends DolibarrModules
 		$this->rights[6][1] = 'inventoryCreatePermission';	// Permission label
 		$this->rights[6][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[6][4] = 'advance_inventory';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[6][5] = 'create';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
-		$this->rights[7][0] = 1013;
-		$this->rights[7][1] = 'inventoryWritePermission';	// Permission label
-		$this->rights[7][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[7][4] = 'advance_inventory';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[7][5] = 'write';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[6][5] = 'write';			// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
 		$this->rights[8][0] = 1014;
 		$this->rights[8][1] = 'inventoryValidatePermission';	// Permission label

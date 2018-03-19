@@ -12,6 +12,7 @@
  * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,6 +116,13 @@ class Societe extends CommonObject
 	var $state_id;
 	var $state_code;
 	var $state;
+
+	/**
+	 * Id of region
+	 * @var int
+	 */
+	var $region_code;
+	var $region;
 
 	/**
 	 * State code
@@ -234,6 +242,7 @@ class Societe extends CommonObject
 	var $forme_juridique;
 
 	var $remise_percent;
+	var $remise_supplier_percent;
 	var $mode_reglement_supplier_id;
 	var $cond_reglement_supplier_id;
 	var $fk_prospectlevel;
@@ -990,10 +999,10 @@ class Societe extends CommonObject
 				$sql .= ", code_fournisseur = ".(! empty($this->code_fournisseur)?"'".$this->db->escape($this->code_fournisseur)."'":"null");
 				$sql .= ", code_compta_fournisseur = ".(! empty($this->code_compta_fournisseur)?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
 			}
-			$sql .= ", fk_user_modif = ".(! empty($user->id)?"'".$user->id."'":"null");
+			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id:"null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
-			$sql .= ', multicurrency_code = \''.$this->db->escape($this->multicurrency_code)."'";
-			$sql .= " WHERE rowid = '" . $id ."'";
+			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
+			$sql .= " WHERE rowid = " . (int) $id;
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1144,7 +1153,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
+		$sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
@@ -1277,6 +1286,7 @@ class Societe extends CommonObject
 				$this->prefix_comm = $obj->prefix_comm;
 
 				$this->remise_percent		= $obj->remise_client;
+				$this->remise_supplier_percent		= $obj->remise_supplier;
 				$this->mode_reglement_id 	= $obj->mode_reglement;
 				$this->cond_reglement_id 	= $obj->cond_reglement;
 				$this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
@@ -1662,15 +1672,77 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 *  Definit la societe comme un client
+	 *
+	 *  @param	float	$remise		Valeur en % de la remise
+	 *  @param  string	$note		Note/Motif de modification de la remise
+	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
+	function set_remise_supplier($remise, $note, User $user)
+	{
+		global $conf, $langs;
+
+		// Nettoyage parametres
+		$note=trim($note);
+		if (! $note)
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("NoteReason"));
+			return -2;
+		}
+
+		dol_syslog(get_class($this)."::set_remise_supplier ".$remise.", ".$note.", ".$user->id);
+
+		if ($this->id)
+		{
+			$this->db->begin();
+
+			$now=dol_now();
+
+			// Positionne remise courante
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
+			$sql.= " SET remise_supplier = '".$this->db->escape($remise)."'";
+			$sql.= " WHERE rowid = " . $this->id;
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
+
+			// Ecrit trace dans historique des remises
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_supplier";
+			$sql.= " (entity, datec, fk_soc, remise_supplier, note, fk_user_author)";
+			$sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
+			$sql.= " '".$this->db->escape($note)."',";
+			$sql.= " ".$user->id;
+			$sql.= ")";
+
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
 	 *    	Add a discount for third party
 	 *
-	 *    	@param	float	$remise     Amount of discount
-	 *    	@param  User	$user       User adding discount
-	 *    	@param  string	$desc		Reason of discount
-	 *      @param  float	$tva_tx     VAT rate
+	 *    	@param	float	$remise     	Amount of discount
+	 *    	@param  User	$user       	User adding discount
+	 *    	@param  string	$desc			Reason of discount
+	 *      @param  float	$tva_tx     	VAT rate
+	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *		@return	int					<0 if KO, id of discount record if OK
 	 */
-	function set_remise_except($remise, User $user, $desc, $tva_tx=0)
+	function set_remise_except($remise, User $user, $desc, $tva_tx=0, $discount_type=0)
 	{
 		global $langs;
 
@@ -1696,11 +1768,13 @@ class Societe extends CommonObject
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
+			$discount->discount_type=$discount_type;
 			$discount->amount_ht=price2num($remise,'MT');
 			$discount->amount_tva=price2num($remise*$tva_tx/100,'MT');
 			$discount->amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
 			$discount->tva_tx=price2num($tva_tx,'MT');
 			$discount->description=$desc;
+
 			$result=$discount->create($user);
 			if ($result > 0)
 			{
@@ -1718,17 +1792,18 @@ class Societe extends CommonObject
 	/**
 	 *  Renvoie montant TTC des reductions/avoirs en cours disponibles de la societe
 	 *
-	 *	@param	User	$user		Filtre sur un user auteur des remises
-	 * 	@param	string	$filter		Filtre autre
-	 * 	@param	integer	$maxvalue	Filter on max value for discount
+	 *	@param	User	$user			Filtre sur un user auteur des remises
+	 * 	@param	string	$filter			Filtre autre
+	 * 	@param	integer	$maxvalue		Filter on max value for discount
+	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *	@return	int					<0 if KO, Credit note amount otherwise
 	 */
-	function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
+	function getAvailableDiscounts($user='',$filter='',$maxvalue=0,$discount_type=0)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue);
+		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue,$discount_type);
 		if ($result >= 0)
 		{
 			return $result;
@@ -1970,7 +2045,7 @@ class Societe extends CommonObject
 		else if ($option == 'ban')
 		{
 			$label.= '<u>' . $langs->trans("ShowBan") . '</u>';
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$this->id;
+			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 
 		// By default
@@ -2020,15 +2095,16 @@ class Societe extends CommonObject
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.=' class="classfortooltip refurl"';
 
-		 	if (! is_object($hookmanager))
+		 	/*if (! is_object($hookmanager))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 				$hookmanager=new HookManager($this->db);
 			}
-			$hookmanager->initHooks(array('societedao'));
+			$hookmanager->initHooks(array('thirdpartydao'));
 			$parameters=array('id'=>$this->id);
 			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			*/
 		}
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
@@ -2044,6 +2120,18 @@ class Societe extends CommonObject
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.=($maxlen?dol_trunc($name,$maxlen):$name);
 		$result.=$linkend;
+
+		global $action;
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('thirdpartydao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}
@@ -2366,7 +2454,7 @@ class Societe extends CommonObject
 	function get_all_rib()
 	{
 		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE fk_soc = ".$this->id;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type='ban' AND fk_soc = ".$this->id;
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$this->error++;
@@ -2784,27 +2872,23 @@ class Societe extends CommonObject
 			$chaine=trim($this->idprof1);
 			$chaine=preg_replace('/(\s)/','',$chaine);
 
+			if (!is_numeric($chaine)) return -1;
 			if (dol_strlen($chaine) != 9) return -1;
 
-			$sum = 0;
+			// on prend chaque chiffre un par un
+			// si son index (position dans la chaîne en commence à 0 au premier caractère) est impair
+			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
+			// on ajoute cette valeur à la somme totale
 
-			for ($i = 0 ; $i < 10 ; $i = $i+2)
+			for ($index = 0; $index < 9; $index ++)
 			{
-				$sum = $sum + substr($this->idprof1, (8 - $i), 1);
+				$number = (int) $siren[$index];
+				if (($index % 2) != 0) { if (($number *= 2) > 9) $number -= 9; }
+				$sum += $number;
 			}
 
-			for ($i = 1 ; $i < 9 ; $i = $i+2)
-			{
-				$ps = 2 * substr($this->idprof1, (8 - $i), 1);
-
-				if ($ps > 9)
-				{
-					$ps = substr($ps, 0,1) + substr($ps, 1, 1);
-				}
-				$sum = $sum + $ps;
-			}
-
-			if (substr($sum, -1) != 0) return -1;
+			// le numéro est valide si la somme des chiffres est multiple de 10
+			if (($sum % 10) != 0) return -1;
 		}
 
 		// Verifie SIRET si pays FR
@@ -2813,7 +2897,23 @@ class Societe extends CommonObject
 			$chaine=trim($this->idprof2);
 			$chaine=preg_replace('/(\s)/','',$chaine);
 
+			if (!is_numeric($chaine)) return -1;
 			if (dol_strlen($chaine) != 14) return -1;
+
+			// on prend chaque chiffre un par un
+			// si son index (position dans la chaîne en commence à 0 au premier caractère) est pair
+			// on double sa valeur et si cette dernière est supérieure à 9, on lui retranche 9
+			// on ajoute cette valeur à la somme totale
+
+			for ($index = 0; $index < 14; $index ++)
+			{
+				$number = (int) $chaine[$index];
+				if (($index % 2) == 0) { if (($number *= 2) > 9) $number -= 9; }
+				$sum += $number;
+			}
+
+			// le numéro est valide si la somme des chiffres est multiple de 10
+			if (($sum % 10) != 0) return -1;
 		}
 
 		//Verify CIF/NIF/NIE if pays ES
@@ -3176,15 +3276,7 @@ class Societe extends CommonObject
 		$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
 		$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
-
-		/* Disabled: we don't want any SQL request into method setMySoc. This method set object from env only.
-        If we need label, label must be loaded by output that need it from id (label depends on output language)
-        require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
-        if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
-            $this->state_id= $conf->global->MAIN_INFO_SOCIETE_STATE;
-            $this->state = getState($this->state_id);
-        }
-		*/
+		$this->region_code=empty($conf->global->MAIN_INFO_SOCIETE_REGION)?'':$conf->global->MAIN_INFO_SOCIETE_REGION;
 
 		$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 

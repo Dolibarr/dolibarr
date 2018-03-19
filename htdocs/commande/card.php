@@ -56,15 +56,7 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
-$langs->load('orders');
-$langs->load('sendings');
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('propal');
-$langs->load('deliveries');
-$langs->load('sendings');
-$langs->load('products');
-$langs->load('other');
+$langs->loadLangs(array('orders','sendings','companies','bills','propal','deliveries','products','other'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
@@ -1450,7 +1442,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->thirdparty;
-			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0)); // TODO maybe add default value option
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
@@ -1558,17 +1550,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Ligne info remises tiers
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
-		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
-		print '. ';
+
 		$absolute_discount = $soc->getAvailableDiscounts();
-		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency" . $conf->currency));
-		else
-			print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print '.';
+
+		$thirdparty = $soc;
+		$discount_type = 0;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?socid=' . $thirdparty->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid'));
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 		print '</td></tr>';
 	}
 	// Date
@@ -2040,12 +2029,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Relative and absolute discounts
 		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final
-																 // invoice
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
-			$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')";
-			$filtercreditnote = "fk_facture_source IS NOT NULL AND description NOT LIKE '(DEPOSIT)%'";
+			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
 		$addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
@@ -2053,29 +2041,17 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture/card.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 
 		print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
-		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
-		else
-			print $langs->trans("CompanyHasNoRelativeDiscount");
-		print '. ';
-		$absolute_discount = $soc->getAvailableDiscounts('', 'fk_facture_source IS NULL');
-		$absolute_creditnote = $soc->getAvailableDiscounts('', 'fk_facture_source IS NOT NULL');
+
+		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount);
+		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
-		if ($absolute_discount) {
-			if ($object->statut > Commande::STATUS_DRAFT) {
-				print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
-			} else {
-				// Remise dispo de type remise fixe (not credit note)
-				print '<br>';
-				$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?id=' . $object->id, 0, 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, 0, '', 1);
-			}
-		}
-		if ($absolute_creditnote) {
-			print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '. ';
-		}
-		if (! $absolute_discount && ! $absolute_creditnote)
-			print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
+
+		$thirdparty = $soc;
+		$discount_type = 0;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 		print '</td></tr>';
 
 		// Date
@@ -2506,9 +2482,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 				// Send
 				if ($object->statut > Commande::STATUS_DRAFT) {
 					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send)) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Valid

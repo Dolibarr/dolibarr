@@ -33,7 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -439,8 +439,8 @@ class Adherent extends CommonObject
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", public = '".$this->db->escape($this->public)."'";
-		$sql.= ", statut = ".$this->statut;
-		$sql.= ", fk_adherent_type = ".$this->typeid;
+		$sql.= ", statut = ".$this->db->escape($this->statut);
+		$sql.= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
 		if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
@@ -1330,25 +1330,27 @@ class Adherent extends CommonObject
 	/**
 	 *	Do complementary actions after subscription recording.
 	 *
-	 *	@param	int			$subscriptionid		Id of created subscription
-	 *  @param	string		$option				Which action ('bankdirect', 'invoiceonly', ...)
-	 *	@param	int			$accountid			Id bank account
-	 *	@param	int			$datesubscription	Date of subscription
-	 *	@param	int			$paymentdate		Date of payment
-	 *	@param	string		$operation			Code of type of operation (if Id bank account provided). Example 'CB', ...
-	 *	@param	string		$label				Label operation (if Id bank account provided)
-	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
-	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
-	 *	@param	string		$emetteur_nom		Name of cheque writer
-	 *	@param	string		$emetteur_banque	Name of bank of cheque
+	 *	@param	int			$subscriptionid			Id of created subscription
+	 *  @param	string		$option					Which action ('bankdirect', 'invoiceonly', ...)
+	 *	@param	int			$accountid				Id bank account
+	 *	@param	int			$datesubscription		Date of subscription
+	 *	@param	int			$paymentdate			Date of payment
+	 *	@param	string		$operation				Code of type of operation (if Id bank account provided). Example 'CB', ...
+	 *	@param	string		$label					Label operation (if Id bank account provided)
+	 *	@param	double		$amount     			Amount of subscription (0 accepted for some members)
+	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
+	 *	@param	string		$emetteur_nom			Name of cheque writer
+	 *	@param	string		$emetteur_banque		Name of bank of cheque
 	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty.
-	 *	@return int         					<0 if KO, >0 if OK
+	 *	@return int									<0 if KO, >0 if OK
 	 */
 	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
 	{
 		global $conf, $langs, $user, $mysoc;
 
 		$error = 0;
+
+		$this->invoice = null;	// This will contains invoice if an invoice is created
 
 		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
 		if ($option == 'bankdirect' && $accountid)
@@ -1427,8 +1429,8 @@ class Adherent extends CommonObject
 						$result=$customer->create_from_member($this, $companyname, $companyalias);
 						if ($result < 0)
 						{
-							$this->error = $company->error;
-							$this->errors = $company->errors;
+							$this->error = $customer->error;
+							$this->errors = $customer->errors;
 							$error++;
 						}
 						else
@@ -1489,6 +1491,10 @@ class Adherent extends CommonObject
 					$this->errors=$invoice->errors;
 					$error++;
 				}
+				else
+				{
+					$this->invoice = $invoice;
+				}
 			}
 
 			if (! $error)
@@ -1503,7 +1509,7 @@ class Adherent extends CommonObject
 					$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,$datesubend,0,0,'','TTC',$amount,1);
+				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,'',0,0,'','TTC',$amount,1);
 				if ($result <= 0)
 				{
 					$this->error=$invoice->error;
@@ -1522,6 +1528,11 @@ class Adherent extends CommonObject
 					$this->errors=$invoice->errors;
 					$error++;
 				}
+			}
+
+			if (! $error)
+			{
+				// TODO Link invoice with subscription ?
 			}
 
 			// Add payment onto invoice
@@ -1566,7 +1577,7 @@ class Adherent extends CommonObject
 					}
 				}
 
-				if (! $error)
+				if (! $error && !empty($bank_line_id))
 				{
 					// Update fk_bank into subscription table
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
@@ -1584,25 +1595,26 @@ class Adherent extends CommonObject
 					// Set invoice as paid
 					$invoice->set_paid($user);
 				}
+			}
 
-				if (! $error)
-				{
-					// Define output language
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-						$newlang = $_REQUEST['lang_id'];
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-						$newlang = $customer->default_lang;
-					if (! empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-					}
-					// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-					//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-
-					$invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (! $error)
+			{
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				$lang_id=GETPOST('lang_id');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($lang_id))
+					$newlang = $lang_id;
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $customer->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
 				}
+				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
+				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+
+				$invoice->generateDocument($invoice->modelpdf, $outputlangs);
 			}
 		}
 

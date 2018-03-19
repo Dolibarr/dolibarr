@@ -715,8 +715,11 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     global $conf,$user;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
-    else if($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
+    else if ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
     else $valueforccc=$objsoc->code_client;
+
+    $sharetable = $table;
+    if ($table == 'facture' || $table == 'invoice') $sharetable = 'invoicenumber'; // for getEntity function
 
     // Clean parameters
     if ($date == '') $date=dol_now();	// We use local year and month of PHP server to search numbers
@@ -979,7 +982,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
 	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
     if ($bentityon) // only if entity enable
-    	$sql.= " AND entity IN (".getEntity($table, 1).")";
+    	$sql.= " AND entity IN (".getEntity($sharetable).")";
 
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
@@ -1027,7 +1030,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
     	if ($bentityon) // only if entity enable
-        	$sql.= " AND entity IN (".getEntity($table, 1).")";
+        	$sql.= " AND entity IN (".getEntity($sharetable).")";
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -1081,7 +1084,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             //$sql.= " WHERE ".$field." not like '(%'";
             $maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
             if ($bentityon) // only if entity enable
-            	$maskrefclient_sql.= " AND entity IN (".getEntity($table, 1).")";
+            	$maskrefclient_sql.= " AND entity IN (".getEntity($sharetable).")";
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
             $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
@@ -1448,7 +1451,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     foreach ($tab as $key => $value)
     {
         if ($i > 0) $sql.=',';
-        $sql.="'".$key."'";
+        $sql.="'".$db->escape($key)."'";
         $i++;
     }
     $sql.= ")";
@@ -1469,7 +1472,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";
-            $sql.= " '".$key."','".$db->escape($value)."')";
+            $sql.= " '".$db->escape($key)."','".$db->escape($value)."')";
 
             dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
             $result=$db->query($sql);

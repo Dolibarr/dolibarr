@@ -43,6 +43,15 @@ function supplier_proposal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$head[$h][0] = DOL_URL_ROOT.'/supplier_proposal/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

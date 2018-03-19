@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,14 +23,12 @@
  *      \brief      Index page of IRPF reports
  */
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("other");
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+$langs->loadLangs(array("other","compta","banks","bills","companies"));
 
 $localTaxType=GETPOST('localTaxType', 'int');
 
@@ -45,22 +44,21 @@ if ($year == 0)
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id) 
-    $socid=$user->societe_id;
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if (isset($_GET["modetax"])) 
-    $modetax=$_GET["modetax"];
+if (isset($_GET["modetax"])) $modetax=GETPOST("modetax",'alpha');
+
 
 /**
  * print function
  *
- * @param   DoliDB $db          Database
- * @param   string $sql     sql
- * @param   string $date    date
+ * @param   DoliDB $db          Database handler
+ * @param   string $sql     	SQL Request
+ * @param   string $date    	Date
  * @return  void
  */
 function pt ($db, $sql, $date)
@@ -78,10 +76,10 @@ function pt ($db, $sql, $date)
         print '<td align="right">'.$langs->trans("Amount").'</td>';
         print '<td>&nbsp;</td>'."\n";
         print "</tr>\n";
-        $var=True;
+
         while ($i < $num) {
             $obj = $db->fetch_object($result);
-            
+
             print '<tr class="oddeven">';
             print '<td class="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
@@ -95,7 +93,8 @@ function pt ($db, $sql, $date)
 
         print "</table>";
         $db->free($result);
-    } else {
+    }
+    else {
         dol_print_error($db);
     }
 }
@@ -105,7 +104,7 @@ function pt ($db, $sql, $date)
  * View
  */
 
-llxHeader();
+$tva = new Tva($db);
 
 if($localTaxType==1) {
 	$LT='LT1';
@@ -124,14 +123,24 @@ if($localTaxType==1) {
 }
 
 
+$name = $langs->trans("ReportByMonth");
+$description = $langs->trans($LT);
+$calcmode = $langs->trans("LTReportBuildWithOptionDefinedInModule").' ';
+$calcmode.= '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')<br>';
+$builddate=dol_now();
+
+llxHeader('', $name);
+
 $textprevyear="<a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'title_accountancy.png');
+//print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'title_accountancy.png');
 
-print $langs->trans("LTReportBuildWithOptionDefinedInModule").'<br>';
-print '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')<br>';
+report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
+
 print '<br>';
+
+//print load_fiche_titre($langs->trans("Summary"), '', '');
 
 print '<table width="100%" class="notopnoleftnoright">';
 print '<tr><td class="notopnoleft width="50%">';
@@ -162,7 +171,6 @@ print "</tr>\n";
 
 $y = $year_current ;
 
-$var=True;
 $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ ) {

@@ -815,13 +815,14 @@ class FormOther
     /**
      *      Return HTML combo list of month
      *
-     *      @param  string      $selected          Preselected value
-     *      @param  string      $htmlname          Name of HTML select object
-     *      @param  int         $useempty          Show empty in list
-     *      @param  int         $longlabel         Show long label
+     *      @param  string      $selected          	Preselected value
+     *      @param  string      $htmlname          	Name of HTML select object
+     *      @param  int         $useempty          	Show empty in list
+     *      @param  int         $longlabel         	Show long label
+     *      @param	string		$morecss			More Css
      *      @return string
      */
-    function select_month($selected='',$htmlname='monthid',$useempty=0,$longlabel=0)
+    function select_month($selected='', $htmlname='monthid', $useempty=0, $longlabel=0, $morecss='')
     {
         global $langs;
 
@@ -830,7 +831,7 @@ class FormOther
         if ($longlabel) $montharray = monthArray($langs, 0);	// Get array
         else $montharray = monthArray($langs, 1);
 
-        $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+        $select_month = '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
         {
             $select_month .= '<option value="0">&nbsp;</option>';

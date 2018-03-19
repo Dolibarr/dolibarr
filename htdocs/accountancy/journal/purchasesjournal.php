@@ -882,7 +882,7 @@ if (empty($action) || $action == 'view') {
 				else print $accountoshow;
 				print '</td>';
 				print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-				print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+				print '<td align="right">'. ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
 			//}
@@ -976,7 +976,7 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					print '</td>';
 					print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT") . " NPR (counterpart)</td>";
-					print '<td align="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+					print '<td align="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 					print '<td align="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}

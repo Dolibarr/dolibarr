@@ -81,9 +81,10 @@ class Form
 	 * @param	string	$moreparam		More param to add on a href URL.
 	 * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
+	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @return	string					HTML edit field
 	 */
-	function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0)
+	function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0, $paramid='id')
 	{
 		global $conf,$langs;
 
@@ -117,7 +118,7 @@ class Form
 			if (! empty($notabletag)) $ret.=' ';
 			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
 			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
-			if ($htmlname && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+			if ($htmlname && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			if (! empty($notabletag) && $notabletag == 1) $ret.=' : ';
 			if (! empty($notabletag) && $notabletag == 3) $ret.=' ';
 			if (empty($notabletag) && GETPOST('action','aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
@@ -139,12 +140,13 @@ class Form
 	 * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
 	 * @param	object	$extObject		External object
 	 * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
-	 * @param	string	$moreparam		More param to add on a href URL
+	 * @param	string	$moreparam		More param to add on the form action href URL
 	 * @param   int     $notabletag     Do no output table tags
 	 * @param	string	$formatfunc		Call a specific function to output field
+	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @return  string					HTML edit field
 	 */
-	function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0, $formatfunc='')
+	function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0, $formatfunc='', $paramid='id')
 	{
 		global $conf,$langs,$db;
 
@@ -166,7 +168,7 @@ class Form
 				$ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam?'?'.$moreparam:'').'">';
 				$ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
 				$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				$ret.='<input type="hidden" name="id" value="'.$object->id.'">';
+				$ret.='<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				if (empty($notabletag)) $ret.='<tr><td>';
 				if (preg_match('/^(string|email)/',$typeofdata))
@@ -1236,6 +1238,7 @@ class Form
 					if (preg_match('/\(CREDIT_NOTE\)/', $desc)) $desc=preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $desc);
 					if (preg_match('/\(DEPOSIT\)/', $desc)) $desc=preg_replace('/\(DEPOSIT\)/', $langs->trans("Deposit"), $desc);
 					if (preg_match('/\(EXCESS RECEIVED\)/', $desc)) $desc=preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $desc);
+					if (preg_match('/\(EXCESS PAID\)/', $desc)) $desc=preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $desc);
 
 					$selectstring='';
 					if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected';
@@ -2481,6 +2484,10 @@ class Form
 				$opt = '<option value="'.$outkey.'"';
 				if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt.=' disabled';
+				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0)
+				{
+					$opt.= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqpercent="'.$objp->remise_percent.'"';
+				}
 				$opt.= '>';
 
 				$objRef = $objp->ref;
@@ -2793,7 +2800,7 @@ class Form
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
-		$sql.= " WHERE entity = " . getEntity('c_payment_term');
+		$sql.= " WHERE entity IN (".getEntity('c_payment_term').")";
 		$sql.= " AND active > 0";
 		$sql.= " ORDER BY sortorder";
 
@@ -4220,9 +4227,10 @@ class Form
 	 * 	@param	int		$maxvalue		Max value for lines that can be selected
 	 *  @param  string	$more           More string to add
 	 *  @param  int     $hidelist       1=Hide list
+	 *  @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *  @return	void
 	 */
-	function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='', $hidelist=0)
+	function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='', $hidelist=0, $discount_type=0)
 	{
 		global $conf,$langs;
 		if ($htmlname != "none")
@@ -4231,28 +4239,51 @@ class Form
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<div class="inline-block">';
-			if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
-			{
-				if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));    // If we want deposit to be substracted to payments only and not to total of final invoice
-				else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
+			if(! empty($discount_type)) {
+				if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
+				{
+					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL") $translationKey = 'HasAbsoluteDiscountFromSupplier';    // If we want deposit to be substracted to payments only and not to total of final invoice
+					else $translationKey = 'HasCreditNoteFromSupplier';
+				}
+				else
+				{
+					if (! $filter || $filter=="fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") $translationKey = 'HasAbsoluteDiscountFromSupplier';
+					else $translationKey = 'HasCreditNoteFromSupplier';
+				}
+			} else {
+				if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
+				{
+					if (! $filter || $filter=="fk_facture_source IS NULL") $translationKey = 'CompanyHasAbsoluteDiscount';    // If we want deposit to be substracted to payments only and not to total of final invoice
+					else $translationKey = 'CompanyHasCreditNote';
+				}
+				else
+				{
+					if (! $filter || $filter=="fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')") $translationKey = 'CompanyHasAbsoluteDiscount';
+					else $translationKey = 'CompanyHasCreditNote';
+				}
 			}
-			else
-			{
-				if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND (description LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%'))") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency));
-				else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency));
-			}
+			print $langs->trans($translationKey,price($amount,0,$langs,0,0,-1,$conf->currency));
 			if (empty($hidelist)) print ': ';
 			print '</div>';
 			if (empty($hidelist))
 			{
 				print '<div class="inline-block" style="padding-right: 10px">';
-				$newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
+				$newfilter = 'discount_type='.intval($discount_type);
+				if(! empty($discount_type)) {
+					$newfilter.= ' AND fk_invoice_supplier IS NULL AND fk_invoice_supplier_line IS NULL'; // Supplier discounts available
+				} else {
+					$newfilter.= ' AND fk_facture IS NULL AND fk_facture_line IS NULL'; // Customer discounts available
+				}
 				if ($filter) $newfilter.=' AND ('.$filter.')';
 				$nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
 				if ($nbqualifiedlines > 0)
 				{
 					print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
-					if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
+					if(! empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')")
+						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
+					if(empty($discount_type) && $filter && $filter != "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')")
+						print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
+
 					print '>';
 				}
 				print '</div>';
@@ -4749,7 +4780,7 @@ class Form
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 * 	@return	string|null						Nothing or string if nooutput is 1
-	 *  @see	form_date
+	 *  @see	form_date, select_month, select_year, select_dayofweek
 	 */
 	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
 	{
@@ -6259,8 +6290,8 @@ class Form
 
 			// accesskey is for Windows or Linux:  ALT + key for chrome, ALT + SHIFT + KEY for firefox
 			// accesskey is for Mac:               CTRL + key for all browsers
-			$previous_ref = $object->ref_previous?'<a accesskey="p" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
-			$next_ref     = $object->ref_next?'<a accesskey="n" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
+			$previous_ref = $object->ref_previous?'<a accesskey="p" title="'.$langs->trans("KeyboardShortcut").' ALT+p|ALT+SHIFT+p|CTRL+p" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_previous).$moreparam.'"><i class="fa fa-chevron-left"></i></a>':'<span class="inactive"><i class="fa fa-chevron-left opacitymedium"></i></span>';
+			$next_ref     = $object->ref_next?'<a accesskey="n" title="'.$langs->trans("KeyboardShortcut").' ALT+n|ALT+SHIFT+n|CTRL+n" href="'.$navurl.'?'.$paramid.'='.urlencode($object->ref_next).$moreparam.'"><i class="fa fa-chevron-right"></i></a>':'<span class="inactive"><i class="fa fa-chevron-right opacitymedium"></i></span>';
 		}
 
 		//print "xx".$previous_ref."x".$next_ref;

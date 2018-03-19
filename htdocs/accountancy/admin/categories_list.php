@@ -152,7 +152,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     {
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
 		if ($value == 'range_account' && empty($_POST['range_account'])) continue;
-		if ($value == 'country') continue;								// country_id required but not country
+		if ($value == 'country' || $value == 'country_id') continue;
 		if (! isset($_POST[$value]) || $_POST[$value]=='')
         {
             $ok=0;
@@ -175,16 +175,12 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         	$ok=0;
     		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
         }
-        /*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
-    	{
-	    	$ok = 0;
-	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
-	    }*/
     }
-    if (isset($_POST["country"]) && ($_POST["country"] <= 0))
+    if (! is_numeric(GETPOST('position','alpha')))
     {
-       	$ok=0;
-       	setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")), null, 'errors');
+    	$langs->load("errors");
+   		$ok=0;
+   		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
     }
 
 	// Clean some parameters
@@ -193,7 +189,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"]='';	// If empty, we force to null
 
     // Si verif ok et action add, on ajoute la ligne
-    if ($ok && GETPOST('actionadd'))
+    if ($ok && GETPOST('actionadd','alpha'))
     {
         if ($tabrowid[$id])
         {
@@ -214,15 +210,13 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$id]." (";
         // List of fields
-        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
-        	$sql.= $tabrowid[$id].",";
+        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert)) $sql.= $tabrowid[$id].",";
         $sql.= $tabfieldinsert[$id];
         $sql.=",active)";
         $sql.= " VALUES(";
 
         // List of values
-        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
-        	$sql.= $newid.",";
+        if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert)) $sql.= $newid.",";
         $i=0;
         foreach ($listfieldinsert as $f => $value)
         {
@@ -306,7 +300,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
     if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+    $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = '".$this->db->escape($rowid)."'";
 
     dol_syslog("delete", LOG_DEBUG);
     $result = $db->query($sql);
@@ -330,10 +324,10 @@ if ($action == $acts[0])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = '".$this->db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code = '".$this->db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -350,10 +344,10 @@ if ($action == $acts[1])
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = '".$this->db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code = '".$this->db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -370,10 +364,10 @@ if ($action == 'activate_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = '".$this->db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 1 WHERE code = '".$this->db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -390,10 +384,10 @@ if ($action == 'disable_favorite')
     else { $rowidcol="rowid"; }
 
     if ($rowid) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol."='".$rowid."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = '".$this->db->escape($rowid)."'";
     }
     elseif ($code) {
-        $sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code='".$code."'";
+    	$sql = "UPDATE ".$tabname[$id]." SET favorite = 0 WHERE code = '".$this->db->escape($code)."'";
     }
 
     $result = $db->query($sql);
@@ -440,7 +434,7 @@ if ($id)
     {
         if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
         else $sql.=" WHERE ";
-        $sql.= " c.rowid = ".$search_country_id;
+        $sql.= " (a.fk_country = ".$search_country_id." OR a.fk_country = 0)";
     }
 
     if ($sortfield)
