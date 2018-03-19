@@ -1451,7 +1451,7 @@ class Form
 	 *  @param	int		$force_entity	0 or Id of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	string	$morefilter		Add more filters into sql request
+	 *  @param	string	$morefilter		Add more filters into sql request (Example: 'employee = 1')
 	 *  @param	integer	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
 	 *  @param	string	$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 *  @param	string	$morecss		More css
@@ -1523,7 +1523,6 @@ class Form
 		}else{
 			$sql.= " ORDER BY u.lastname ASC";
 		}
-
 
 		dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
 		$resql=$this->db->query($sql);
