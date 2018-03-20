@@ -1071,6 +1071,7 @@ else
                 print '<table class="border centpercent">';
                 print '<tbody>';
 
+                // User
                 print '<tr>';
                 print '<td class="titlefield">'.$langs->trans("User").'</td>';
         		print '<td>';
@@ -1133,6 +1134,7 @@ else
                     print '</td>';
                     print '</tr>';
                 }
+                // Nb of days
                 print '<tr>';
                 print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
                 print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';

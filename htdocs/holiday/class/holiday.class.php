@@ -50,7 +50,7 @@ class Holiday extends CommonObject
 	var $date_fin='';			// Date end in PHP server TZ
 	var $date_debut_gmt='';		// Date start in GMT
 	var $date_fin_gmt='';		// Date end in GMT
-	var $halfday='';
+	var $halfday='';			// 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 	var $statut='';				// 1=draft, 2=validated, 3=approved
 	var $fk_validator;
 	var $date_valid='';

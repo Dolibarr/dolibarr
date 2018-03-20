@@ -490,7 +490,7 @@ print_liste_field_titre("DateCreateCP",$_SERVER["PHP_SELF"],"cp.date_create","",
 print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("ValidatorCP",$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("NbUseDaysCPShort",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("DateDebCP",$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("DateFinCP",$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
@@ -536,7 +536,7 @@ if (! empty($holiday->holiday))
 
 		print '<tr class="oddeven">';
 		print '<td>';
-		print $holidaystatic->getNomUrl(1);
+		print $holidaystatic->getNomUrl(1, 1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
