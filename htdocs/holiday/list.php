@@ -48,6 +48,8 @@ $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectl
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
+$childis = $user->getAllChildIds(1);
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0)	// Protection if external user
@@ -56,6 +58,7 @@ if ($user->societe_id > 0)	// Protection if external user
 	accessforbidden();
 }
 $result = restrictedArea($user, 'holiday', $id, '');
+$id = GETPOST('id','int');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -80,7 +83,6 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 if (! $sortfield) $sortfield="cp.rowid";
 if (! $sortorder) $sortorder="DESC";
 
-$id = GETPOST('id','int');
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref          = GETPOST('search_ref','alpha');
@@ -413,25 +415,30 @@ $morefilter = 'AND employee = 1';
 if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
 // User
-if (! empty($user->rights->holiday->write_all))
+$disabled=0;
+// If into the tab holiday of a user ($id is set in such a case)
+if ($id && ! GETPOSTISSET('search_employee'))
 {
-	$defaultuserid = -1;
-	if (GETPOSTISSET('search_employee')) $defaultuserid=GETPOST('search_employee','int');
+	$search_employee=$id;
+	$disabled=1;
+}
+if (! empty($user->rights->holiday->read_all))	// Can see all
+{
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
 	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($defaultuserid, "search_employee", 1, "", 0, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
 {
-	$defaultuserid = $user->id;
-	if (GETPOSTISSET('search_employee')) $defaultuserid=GETPOST('search_employee','int');
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($defaultuserid, "search_employee", 1, "", 0, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
+    print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 
 // Approve
-if($user->rights->holiday->write_all)
+if ($user->rights->holiday->read_all)
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
 
@@ -504,8 +511,16 @@ print "</tr>\n";
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
+
+// If we ask a dedicated card and not allow to see it, we forc on user.
+if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childids))
+{
+	$langs->load("errors");
+	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
+	$result = 0;
+}
 // Lines
-if (! empty($holiday->holiday))
+elseif (! empty($holiday->holiday))
 {
 	$userstatic = new User($db);
 	$approbatorstatic = new User($db);
