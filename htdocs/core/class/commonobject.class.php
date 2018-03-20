@@ -5908,15 +5908,15 @@ abstract class CommonObject
 	/**
 	 * Function to show lines of extrafields with output datas
 	 *
-	 * @param Extrafields   $extrafields    Extrafield Object
-	 * @param string        $mode           Show output (view) or input (edit) for extrafield
-	 * @param array         $params         Optional parameters
-	 * @param string        $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param string        $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
-	 *
-	 * @return string
+	 * @param 	Extrafields $extrafields    Extrafield Object
+	 * @param 	string      $mode           Show output (view) or input (edit) for extrafield
+	 * @param 	array       $params         Optional parameters
+	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param	string		$onetrtd		All fields in same tr td
+	 * @return 	string
 	 */
-	function showOptionals($extrafields, $mode='view', $params=null, $keysuffix='', $keyprefix='')
+	function showOptionals($extrafields, $mode='view', $params=null, $keysuffix='', $keyprefix='', $onetrtd=0)
 	{
 		global $_POST, $conf, $langs, $action;
 
@@ -5980,15 +5980,13 @@ abstract class CommonObject
 							$csstyle=$params['style'];
 						}
 					}
-					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
+
+					$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
+					if (empty($onetrtd))
 					{
-						$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
-						$colspan='0';
+						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
 					}
-					else
-					{
-						$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
-					}
+
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
@@ -6006,10 +6004,17 @@ abstract class CommonObject
 					{
 						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
 					}
-					$out .= '<td>'.$labeltoshow.'</td>';
+					
+					if (empty($onetrtd)) $out .= '<td>';
+					else $out .= '<td'.($colspan?' colspan="'.($colspan+1).'"':'').'>';
+
+					$out .= $labeltoshow;
+
+					if (empty($onetrtd)) $out .= '</td><td'.($colspan?' colspan="'.($colspan).'"':'').'>';
+					else $out.=' ';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
+					$out .='<span id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'">';
 
 					switch($mode) {
 						case "view":
@@ -6021,9 +6026,8 @@ abstract class CommonObject
 					}
 
 					$out .= '</td>';
+					$out .= '</tr>';
 
-					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
-					else $out .= '</tr>';
 					$e++;
 				}
 			}

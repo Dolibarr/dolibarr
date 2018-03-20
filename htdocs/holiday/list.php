@@ -107,6 +107,7 @@ $fieldstosearchall = array(
     'uu.firstname'=>'EmployeeFirstname'
 );
 
+$childids = $user->getAllChildIds(1);
 
 
 /*
@@ -170,9 +171,6 @@ $formother = new FormOther($db);
 $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 $fuser = new User($db);
-
-$childids = $user->getAllChildIds();
-$childids[]=$user->id;
 
 // Update sold
 $result = $holiday->updateBalance();
@@ -313,7 +311,7 @@ if ($search_year_create)         $param.='&search_year_create='.urlencode($searc
 if ($search_search_day_start)    $param.='&search_day_start='.urlencode($search_day_start);
 if ($search_month_start)         $param.='&search_month_start='.urlencode($search_month_start);
 if ($search_year_start)          $param.='&search_year_start='.urlencode($search_year_start);
-if ($day_end)             $param.='&day_end='.urlencode($day_end);
+if ($search_day_end)             $param.='&search_day_end='.urlencode($search_day_end);
 if ($search_month_end)           $param.='&search_month_end='.urlencode($search_month_end);
 if ($search_year_end)            $param.='&search_year_end='.urlencode($search_year_end);
 if ($search_employee > 0) $param.='&search_employee='.urlencode($search_employee);
@@ -412,6 +410,10 @@ print '<input class="flat" type="text" size="1" maxlength="2" name="search_month
 $formother->select_year($search_year_create,'search_year_create',1, $min_year, 0);
 print '</td>';
 
+
+$morefilter = 'AND employee = 1';
+if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+
 // User
 $disabled=0;
 // If into the tab holiday of a user ($id is set in such a case)
@@ -422,15 +424,16 @@ if ($id && ! GETPOSTISSET('search_employee'))
 }
 if (! empty($user->rights->holiday->read_all))	// Can see all
 {
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employee,"search_employee",1,"",$disabled,'','',0,0,0,'',0,'','maxwidth200');
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
+	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
 {
-    //print '<td class="liste_titre">&nbsp;</td>';
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employee,"search_employee",1,"",$disabled,'hierarchyme','',0,0,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 
@@ -444,7 +447,7 @@ if ($user->rights->holiday->read_all)
     $valideurobjects = $validator->listUsersForGroup($excludefilter);
     $valideurarray = array();
     foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 0, 0, '', 0, '', 'maxwidth200');
+    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
@@ -510,9 +513,10 @@ $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->tran
 
 
 // If we ask a dedicated card and not allow to see it, we forc on user.
-if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childis))
+if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childids))
 {
-	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermission").'</td></tr>';
+	$langs->load("errors");
+	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 	$result = 0;
 }
 // Lines

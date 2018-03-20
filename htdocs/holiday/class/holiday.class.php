@@ -958,7 +958,7 @@ class Holiday extends CommonObject
 	 *   Affiche un select HTML des statuts de congés payés
 	 *
 	 *   @param 	int		$selected   	Id of preselected status
-	 *   @param		string	$select_statut	Name of HTML select field
+	 *   @param		string	$htmlname		Name of HTML select field
 	 *   @return    string					Show select of status
 	 */
 	function selectStatutCP($selected='', $htmlname='select_statut') {

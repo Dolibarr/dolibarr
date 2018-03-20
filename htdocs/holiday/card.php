@@ -50,6 +50,18 @@ $now=dol_now();
 
 $langs->load("holiday");
 
+$childids = $user->getAllChildIds(1);
+
+$cancreate = 0;
+if (! empty($user->rights->holiday->write_all)) $cancreate=1;
+if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate=1;
+
+$candelete = 0;
+if (! empty($user->rights->holiday->delete)) $candelete=1;
+
+$morefilter = 'AND employee = 1';
+if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+
 
 /*
  * Actions
@@ -61,8 +73,7 @@ if ($action == 'create')
 	$object = new Holiday($db);
 
     // If no right to create a request
-    $fuserid = GETPOST('fuserid','int');
-    if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
+    if (! $cancreate)
     {
     	$error++;
     	setEventMessages($langs->trans('CantCreateCP'), null, 'errors');
@@ -201,13 +212,11 @@ if ($action == 'update')
     $object = new Holiday($db);
     $object->fetch($id);
 
-	$canedit=(($user->id == $object->fk_user && $user->rights->holiday->write) || ($user->id != $object->fk_user && $user->rights->holiday->write_all));
-
 	// If under validation
     if ($object->statut == 1)
     {
         // If this is the requestor or has read/write rights
-        if ($canedit)
+        if ($cancreate)
         {
             $valideur = $_POST['valideur'];
             $description = trim($_POST['description']);
@@ -280,13 +289,11 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 	$object = new Holiday($db);
 	$object->fetch($id);
 
-	$canedit=(($user->id == $object->fk_user && $user->rights->holiday->write) || ($user->id != $object->fk_user && $user->rights->holiday->write_all));
-
     // If this is a rough draft, approved, canceled or refused
 	if ($object->statut == 1 || $object->statut == 4 || $object->statut == 5)
 	{
 		// Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
-		if ($canedit)
+		if ($candelete)
 		{
 			$result=$object->delete($user);
 		}
@@ -314,10 +321,8 @@ if ($action == 'confirm_send')
     $object = new Holiday($db);
     $object->fetch($id);
 
-    $canedit=(($user->id == $object->fk_user && $user->rights->holiday->write) || ($user->id != $object->fk_user && $user->rights->holiday->write_all));
-
     // Si brouillon et créateur
-    if($object->statut == 1 && $canedit)
+    if($object->statut == 1 && $cancreate)
     {
         $object->statut = 2;
 
@@ -615,7 +620,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
     $object->fetch($id);
 
     // Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
-    if (($object->statut == 2 || $object->statut == 3) && ($user->id == $object->fk_validator || $user->id == $object->fk_user || ! empty($user->rights->holiday->write_all)))
+    if (($object->statut == 2 || $object->statut == 3) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || ! empty($user->rights->holiday->write_all)))
     {
     	$db->begin();
 
@@ -849,10 +854,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers($fuserid, 'useridbis', 0, '', 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-        	print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
+        	print $form->select_dolusers(($fuserid?$fuserid:$user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        	//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', 0, 0, 0, 'AND employee = 1');
+        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth300');
         print '</td>';
         print '</tr>';
 
@@ -957,8 +962,6 @@ else
         {
             $object->fetch($id);
 
-			$canedit=(($user->id == $object->fk_user && $user->rights->holiday->write) || ($user->id != $object->fk_user && $user->rights->holiday->write_all));
-
             $valideur = new User($db);
             $valideur->fetch($object->fk_validator);
 
@@ -1005,7 +1008,7 @@ else
             }
 
             // On vérifie si l'utilisateur à le droit de lire cette demande
-            if ($canedit)
+            if ($cancreate)
             {
                 if ($action == 'delete')
                 {
@@ -1244,7 +1247,7 @@ else
                 if ($action == 'edit' && $object->statut == 1)
                 {
                     print '<div align="center">';
-                    if ($canedit && $object->statut == 1)
+                    if ($cancreate && $object->statut == 1)
                     {
                         print '<input type="submit" value="'.$langs->trans("Save").'" class="button">';
                     }
@@ -1259,11 +1262,11 @@ else
 		            print '<div class="tabsAction">';
 
                     // Boutons d'actions
-                    if ($canedit && $object->statut == 1)
+                    if ($cancreate && $object->statut == 1)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
                     }
-                    if ($canedit && $object->statut == 1)
+                    if ($cancreate && $object->statut == 1)		// If draft
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
@@ -1272,7 +1275,7 @@ else
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
 
-                    if ($object->statut == 2)
+                    if ($object->statut == 2)	// If validated
                     {
                         if ($user->id == $object->fk_validator)
                         {
@@ -1286,13 +1289,13 @@ else
                         }
                     }
 
-                    if (($user->id == $object->fk_validator || $user->id == $object->fk_user || ! empty($user->rights->holiday->write_all)) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
+                    if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || ! empty($user->rights->holiday->write_all)) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
                     {
                     	if (($object->date_debut > dol_now()) || $user->admin) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     	else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
                     }
 
-                    if ($canedit && $object->statut == 4)
+                    if ($cancreate && $object->statut == 4)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
                     }
