@@ -48,6 +48,15 @@ $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectl
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
+// Security check
+$socid=0;
+if ($user->societe_id > 0)	// Protection if external user
+{
+	//$socid = $user->societe_id;
+	accessforbidden();
+}
+$result = restrictedArea($user, 'holiday', $id, '');
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
