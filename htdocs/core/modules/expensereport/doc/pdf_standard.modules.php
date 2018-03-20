@@ -38,10 +38,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+
+	/**
+     * @var string model name
+     */
+    public $name;
+
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+    
+	/**
+     * @var string document type
+     */
+    public $type;
 
     var $phpmin = array(4,3,0); // Minimum version of PHP required by module
     var $version = 'dolibarr';
@@ -512,10 +527,10 @@ class pdf_standard extends ModeleExpenseReport
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$hookmanager;
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "companies"));
 
-		$outputlangs->load("main");
-		$outputlangs->load("trips");
-		$outputlangs->load("companies");
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
