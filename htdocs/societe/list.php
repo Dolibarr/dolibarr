@@ -1091,7 +1091,8 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.phone']['checked']))
 	{
-		print "<td>".$obj->phone."</td>\n";
+		$tmpcode=getCountry($obj->fk_pays,2);
+       		print "<td>".dol_print_phone($obj->phone, $tmpcode,0,$obj->rowid)."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.url']['checked']))
