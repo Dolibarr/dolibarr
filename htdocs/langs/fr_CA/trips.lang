@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - trips
-ExpenseReport=Rapport de dépenses
-ExpenseReports=Note de frais
 ShowExpenseReport=Afficher le rapport de dépenses
 TripsAndExpenses=Rapports sur les dépenses
 TripsAndExpensesStatistics=Statistiques des rapports de dépenses
@@ -67,3 +65,4 @@ ExpenseReportsToApprove=Rapports de dépenses à approuver
 ExpenseReportsToPay=Rapports de dépenses à payer
 CloneExpenseReport=Rapport de dépenses de clones
 ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir cloner ce rapport de dépenses?
+ExpenseReportDateEnd=Date de fin

@@ -66,7 +66,7 @@ dol_fiche_head($head, 'info', $langs->trans("Contract"), -1, 'contract');
 
 // Contract card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 $morehtmlref='';

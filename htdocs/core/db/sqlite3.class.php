@@ -946,6 +946,22 @@ class DoliDBSqlite3 extends DoliDB
     }
 
     /**
+     *	Drop a table into database
+     *
+     *	@param	    string	$table 			Name of table
+     *	@return	    int						<0 if KO, >=0 if OK
+     */
+    function DDLDropTable($table)
+    {
+    	$sql = "DROP TABLE ".$table;
+
+    	if (! $this->query($sql))
+    		return -1;
+    	else
+    		return 1;
+    }
+
+    /**
 	 *	Return a pointer of line with description of a table or field
      *
 	 *	@param	string		$table	Name of table

@@ -48,7 +48,7 @@ $result=restrictedArea($user,'produit|service');
 $action = GETPOST('action','alpha');
 $sref = GETPOST('sref', 'alpha');
 $snom = GETPOST('snom', 'alpha');
-$sall = GETPOST('sall', 'alphanohtml');
+$sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
@@ -158,6 +158,8 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $line->total_ttc = $line->total_ht + $line->total_tva;
 						$line->remise_percent = $obj->remise_percent;
 	                    $line->ref_fourn = $obj->ref_fourn;
+						$line->type = $product->type;
+						$line->fk_unit = $product->fk_unit;
 	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
                 	}
                 }
@@ -202,7 +204,13 @@ if ($action == 'order' && isset($_POST['valid']))
                         $line->remise_percent,
                         'HT',
                         0,
-                        $line->info_bits
+                        $line->type,
+                        0,
+						false,
+						null,
+						null,
+						0,
+						$line->fk_unit
                     );
                 }
                 if ($result < 0) {
@@ -260,10 +268,11 @@ if ($action == 'order' && isset($_POST['valid']))
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+$prod = new Product($db);
 
 $title = $langs->trans('Status');
 
-if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sqldesiredtock=$db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
 	$sqlalertstock=$db->ifsql("pse.seuil_stock_alerte IS NULL", "p.seuil_stock_alerte", "pse.seuil_stock_alerte");
 } else {
@@ -357,17 +366,17 @@ if ($usevirtualstock)
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		$sql.= ' AND ('.$sqlalertstock.' > 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+		$sql.= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 		$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
 		$alertchecked = 'checked';
 	}
 } else {
-	$sql.= ' HAVING (('.$sqldesiredtock.' > 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
-	$sql.= ' OR ('.$sqlalertstock.' > 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
+	$sql.= ' HAVING (('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+	$sql.= ' OR ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		$sql.= ' AND ('.$sqlalertstock.' > 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
+		$sql.= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
 		$alertchecked = 'checked';
 	}
 }
@@ -427,9 +436,12 @@ print '<input type="hidden" name="snom" value="'.$snom.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
 print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
-print $langs->trans('Warehouse').' '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
-print '</div>';
+if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
+{
+	print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
+	print $langs->trans('Warehouse').' '.$formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
+	print '</div>';
+}
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
 print '</div>';
@@ -477,6 +489,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	);
 }
 
+print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="liste" width="100%">';
 
 $param = (isset($type)? '&type=' . $type : '');
@@ -532,9 +545,6 @@ print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', 'ali
 print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
-$prod = new Product($db);
-
-$var = True;
 while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$objp = $db->fetch_object($resql);
@@ -561,7 +571,6 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
-		$var =! $var;
 
 		if ($usevirtualstock)
 		{
@@ -662,34 +671,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	$i++;
 }
 print '</table>';
-
-
-if ($num > $conf->liste_limit)
-{
-	if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha'))
-	{
-		$filters = '&sref=' . $sref . '&snom=' . $snom;
-		$filters .= '&sall=' . $sall;
-		$filters .= '&salert=' . $salert;
-		$filters .= '&draftorder=' . $draftorder;
-		$filters .= '&mode=' . $mode;
-		$filters .= '&fk_supplier=' . $fk_supplier;
-		$filters .= '&fk_entrepot=' . $fk_entrepot;
-		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
-	}
-	else
-	{
-		$filters = '&sref=' . $sref . '&snom=' . $snom;
-		$filters .= '&fourn_id=' . $fourn_id;
-		$filters .= (isset($type)? '&type=' . $type : '');
-		$filters .= '&salert=' . $salert;
-		$filters .= '&draftorder=' . $draftorder;
-		$filters .= '&mode=' . $mode;
-		$filters .= '&fk_supplier=' . $fk_supplier;
-		$filters .= '&fk_entrepot=' . $fk_entrepot;
-		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
-	}
-}
+print '</div>';
 
 $db->free($resql);
 

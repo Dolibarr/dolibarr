@@ -274,7 +274,15 @@ class DoliDBPgsql extends DoliDB
     				$line.= "ALTER TABLE ".$reg[1]." ADD PRIMARY KEY (".$reg[3];
     			}
 
-                // Translate order to drop foreign keys
+                // Translate order to drop primary keys
+                // ALTER TABLE llx_dolibarr_modules DROP PRIMARY KEY pk_xxx
+                if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+PRIMARY\s+KEY\s*([^;]+)$/i',$line,$reg))
+                {
+                    $line = "-- ".$line." replaced by --\n";
+                    $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
+                }
+
+		        // Translate order to drop foreign keys
                 // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx
                 if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
                 {
@@ -650,7 +658,7 @@ class DoliDBPgsql extends DoliDB
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    string	$param      Date TMS to convert
-	 *   @return	string   			Date in a string YYYYMMDDHHMMSS
+	 *   @return	string   			Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	function idate($param)
 	{
@@ -992,6 +1000,22 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
+	 *	Drop a table into database
+	 *
+	 *	@param	    string	$table 			Name of table
+	 *	@return	    int						<0 if KO, >=0 if OK
+	 */
+	function DDLDropTable($table)
+	{
+		$sql = "DROP TABLE ".$table;
+
+		if (! $this->query($sql))
+			return -1;
+		else
+			return 1;
+	}
+
+	/**
 	 * 	Create a user to connect to database
 	 *
 	 *	@param	string	$dolibarr_main_db_host 		Ip server
@@ -1084,12 +1108,30 @@ class DoliDBPgsql extends DoliDB
 	{
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+		if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
 			$sql.="(".$field_desc['value'].")";
 		}
 
-		// TODO May not work with pgsql. May need to run a second request. If it works, just remove the comment
-		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') $sql.=" NOT NULL";
+		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')
+		{
+        	// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
+        	if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text')
+        	{
+        		$sqlbis="UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
+        		$this->query($sqlbis);
+        	}
+        	elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int')
+        	{
+        		$sqlbis="UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
+        		$this->query($sqlbis);
+        	}
+		}
+
+		if ($field_desc['default'] != '')
+		{
+			if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int') $sql.=" DEFAULT ".$this->escape($field_desc['default']);
+        	elseif ($field_desc['type'] == 'text') $sql.=" DEFAULT '".$this->escape($field_desc['default'])."'";							// Default not supported on text fields
+		}
 
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))

@@ -275,6 +275,158 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Return list of payments
+	 *
+	 *	@param		string	$filtertype		1 to filter on type of payment == 'PRE'
+	 *  @return     array					Array with list of payments
+	 */
+	function getListOfPayments($filtertype='')
+	{
+		$retarray=array();
+
+		$table='paiement_facture';
+		$table2='paiement';
+		$field='fk_facture';
+		$field2='fk_paiement';
+		$sharedentity='facture';
+		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+		{
+			$table='paiementfourn_facturefourn';
+			$table2='paiementfourn';
+			$field='fk_facturefourn';
+			$field2='fk_paiementfourn';
+			$sharedentity='facture_fourn';
+		}
+
+		$sql = 'SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
+		$sql.= ' WHERE pf.'.$field.' = '.$this->id;
+		//$sql.= ' WHERE pf.'.$field.' = 1';
+		$sql.= ' AND pf.'.$field2.' = p.rowid';
+		$sql.= ' AND p.fk_paiement = t.id';
+		$sql.= ' AND p.entity IN (' . getEntity($sharedentity).')';
+		if ($filtertype) $sql.=" AND t.code='PRE'";
+
+		dol_syslog(get_class($this)."::getListOfPayments", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num, 'ref'=>$obj->ref);
+				$i++;
+			}
+			$this->db->free($resql);
+			return $retarray;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_print_error($this->db);
+			return array();
+		}
+	}
+
+
+	/**
+	 *  Return if an invoice can be deleted
+	 *	Rule is:
+	 *  If invoice is draft and has a temporary ref -> yes
+	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on -> no (0)
+	 *  If invoice is dispatched in bookkeeping -> no (-1)
+	 *  If invoice has a definitive ref, is not last and INVOICE_CAN_ALWAYS_BE_REMOVED off -> no (-2)
+	 *  If invoice not last in a cycle -> no (-3)
+	 *  If there is payment -> no (-4)
+	 *
+	 *  @return    int         <=0 if no, >0 if yes
+	 */
+	function is_erasable()
+	{
+		global $conf;
+
+		// We check if invoice is a temporary number (PROVxxxx)
+		$tmppart = substr($this->ref, 1, 4);
+
+		if ($this->statut == self::STATUS_DRAFT && $tmppart === 'PROV') // If draft invoice and ref not yet defined
+		{
+			return 1;
+		}
+
+		if (! empty($conf->global->INVOICE_CAN_NEVER_BE_REMOVED)) return 0;
+
+		// If not a draft invoice and not temporary invoice
+		if ($tmppart !== 'PROV')
+		{
+			$ventilExportCompta = $this->getVentilExportCompta();
+			if ($ventilExportCompta != 0) return -1;
+
+			// Get last number of validated invoice
+			if ($this->element != 'invoice_supplier')
+			{
+				if (empty($this->thirdparty)) $this->fetch_thirdparty();	// We need to have this->thirdparty defined, in case of numbering rule use tags that depend on thirdparty (like {t} tag).
+				$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
+
+				// If there is no invoice into the reset range and not already dispatched, we can delete
+				// If invoice to delete is last one and not already dispatched, we can delete
+				if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $maxfacnumber != '' && $maxfacnumber != $this->ref) return -2;
+
+				// TODO If there is payment in bookkeeping, check payment is not dispatched in accounting
+				// ...
+
+				if ($this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle'))
+				{
+					$last = $this->is_last_in_cycle();
+					if (! $last) return -3;
+				}
+			}
+		}
+
+		// Test if there is at least one payment. If yes, refuse to delete.
+		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $this->getSommePaiement() > 0) return -4;
+
+		return 1;
+	}
+
+	/**
+	 *	Return if an invoice was dispatched into bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	public function getVentilExportCompta()
+	{
+		$alreadydispatched = 0;
+
+		$type = 'customer_invoice';
+		if ($this->element == 'invoice_supplier') $type = 'supplier_invoice';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$type."' AND ab.fk_doc = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$alreadydispatched = $obj->nb;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched)
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+
+	/**
 	 *	Return label of type of invoice
 	 *
 	 *	@return     string        Label of type of invoice
@@ -296,24 +448,24 @@ abstract class CommonInvoice extends CommonObject
 	 *
 	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-	 *  @return     string			        Label
+	 *  @return     string			        Label of status
 	 */
-	function getLibStatut($mode=0,$alreadypaid=-1)
+	function getLibStatut($mode=0, $alreadypaid=-1)
 	{
-		return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypaid,$this->type);
+		return $this->LibStatut($this->paye, $this->statut, $mode, $alreadypaid, $this->type);
 	}
 
 	/**
-	 *	Renvoi le libelle d'un statut donne
+	 *	Return label of a status
 	 *
 	 *	@param    	int  	$paye          	Status field paye
 	 *	@param      int		$status        	Id status
 	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, -1 otherwise)
 	 *	@param		int		$type			Type invoice
-	 *	@return     string        			Libelle du statut
+	 *	@return     string        			Label of status
 	 */
-	function LibStatut($paye,$status,$mode=0,$alreadypaid=-1,$type=0)
+	function LibStatut($paye, $status, $mode=0, $alreadypaid=-1, $type=0)
 	{
 		global $langs;
 		$langs->load('bills');
@@ -362,7 +514,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
 			}
@@ -380,7 +532,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3');
 			}
@@ -398,7 +550,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9').' '.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 				if ($alreadypaid <= 0) return img_picto($langs->trans('BillStatusNotPaid'),'statut1').' '.$langs->trans('BillStatusNotPaid');
 				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
 			}
@@ -417,7 +569,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				if ($status == 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusDraft').' </span>'.img_picto($langs->trans('BillStatusDraft'),'statut0');
 				if (($status == 3 || $status == 2) && $alreadypaid <= 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusCanceled').' </span>'.img_picto($langs->trans('BillStatusCanceled'),'statut5');
-				if (($status == 3 || $status == 2) && $alreadypaid > 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' </span>'.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut7');
+				if (($status == 3 || $status == 2) && $alreadypaid > 0) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusClosedPaidPartially').' </span>'.img_picto($langs->trans('BillStatusClosedPaidPartially'),'statut9');
 				if ($alreadypaid <= 0)
 				{
 				    if ($type == self::TYPE_CREDIT_NOTE) return '<span class="xhideonsmartphone">'.$langs->trans('Bill'.$prefix.'StatusNotRefunded').' </span>'.img_picto($langs->trans('StatusNotRefunded'),'statut1');
@@ -450,8 +602,9 @@ abstract class CommonInvoice extends CommonObject
 
 		$sqltemp = 'SELECT c.type_cdr,c.nbjour,c.decalage';
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
-		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
-		else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
+		$sqltemp.= " WHERE c.entity IN (" . getEntity('c_payment_term').")";
+		if (is_numeric($cond_reglement)) $sqltemp.= " AND c.rowid=".$cond_reglement;
+		else $sqltemp.= " AND c.code='".$this->db->escape($cond_reglement)."'";
 
 		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
 		$resqltemp=$this->db->query($sqltemp);

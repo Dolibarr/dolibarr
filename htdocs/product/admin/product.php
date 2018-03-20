@@ -36,8 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
-$langs->load("admin");
-$langs->load("products");
+$langs->loadLangs(array("admin","products"));
 
 // Security check
 if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
@@ -55,11 +54,10 @@ $select_pricing_rules=array(
 	'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),			// Several prices according to a customer level
 	'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer'),		// Different price for each customer
 );
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
-	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
-}
+$keyforparam='PRODUIT_CUSTOMER_PRICES_BY_QTY';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || ! empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';	// TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
+$keyforparam='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2 || ! empty($conf->global->$keyforparam)) $select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 
 // Clean param
 if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) {
@@ -275,7 +273,7 @@ else if (empty($conf->service->enabled))
 
 llxHeader('',$title);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title,$linkback,'title_setup');
 
 $head = product_admin_prepare_head();
@@ -555,7 +553,7 @@ $current_rule = 'PRODUCT_PRICE_UNIQ';
 if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
-if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) && (!empty($conf->global->PRODUIT_MULTIPRICES))) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES';
+if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) && (!empty($conf->global->PRODUIT_MULTIPRICES))) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule",$select_pricing_rules,$current_rule);
 if ( empty($conf->multicompany->enabled))
 {

@@ -36,7 +36,7 @@ class Login
 	 *
 	 * Request the API token for a couple username / password.
 	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
-	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: Tha API key (DOLAPIKEY) can be found/set on the user page.
+	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API key (DOLAPIKEY) can be found/set on the user page.
 	 *
 	 * @param   string  $login			User login
 	 * @param   string  $password		User password
@@ -44,7 +44,9 @@ class Login
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
      * @return  array                   Response status and user token
      *
-	 * @throws RestException
+	 * @throws 200
+	 * @throws 403
+	 * @throws 500
 	 *
 	 * @url GET /
 	 * @url POST /
@@ -57,11 +59,22 @@ class Login
 		if (empty($dolibarr_main_authentication))
 			$dolibarr_main_authentication = 'http,dolibarr';
 		// Authentication mode: forceuser
-		if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user))
-			$dolibarr_auto_user = 'auto';
+		if ($dolibarr_main_authentication == 'forceuser')
+		{
+			if (empty($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+			if ($dolibarr_auto_user != $login)
+			{
+				dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
+				throw new RestException(403, "Your instance is set to use the automatic login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
+			}
+		}
 		// Set authmode
 		$authmode = explode(',', $dolibarr_main_authentication);
 
+		if ($entity != '' && ! is_numeric($entity))
+		{
+			throw new RestException(403, "Bad value for entity, must be the numeric ID of company.");
+		}
 		if ($entity == '') $entity=1;
 
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
@@ -75,10 +88,20 @@ class Login
 
 		$tmpuser=new User($this->db);
 		$tmpuser->fetch(0, $login, 0, 0, $entity);
+		if (empty($tmpuser->id))
+		{
+			throw new RestException(500, 'Failed to load user');
+		}
 
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset)
 		{
+			$tmpuser->getrights();
+			if (empty($tmpuser->rights->user->self->creer))
+			{
+				throw new RestException(403, 'User need write permission on itself to reset its API token');
+			}
+
     		// Generate token for user
     		$token = dol_hash($login.uniqid().$conf->global->MAIN_API_KEY,1);
 

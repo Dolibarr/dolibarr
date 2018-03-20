@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=您使用从Ubuntu或者Debian软件包的Dolibarr安装向
 KeepDefaultValuesMamp=您使用从DoliMamp Dolibarr安装向导，所以这里建议值已经进行了优化。他们唯一的变化，如果你知道你做什么。
 KeepDefaultValuesProxmox=您使用Proxmox的虚拟设备的Dolibarr安装向导，因此，这里提出的价值已经优化。改变他们，只有当你知道你做什么。
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=修正了非规范化数据
@@ -191,9 +193,11 @@ MigrationActioncommElement=更新动作数据
 MigrationPaymentMode=付款方式的数据迁移
 MigrationCategorieAssociation=迁移类别
 MigrationEvents=迁移事件数据：将事件所有者数据添加到任务列表
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=更新 llx_societe_remise 的实际栏位参数值
 MigrationRemiseExceptEntity=更新 llx_societe_remise_except 的实际栏位参数值
 MigrationReloadModule=重载模块%s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=显示不可用的选项
 HideNotAvailableOptions=隐藏不可用的选项
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

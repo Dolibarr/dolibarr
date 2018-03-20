@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $langs->load('admin');
+$langs->load("products");
 
 if (!$user->admin) accessforbidden();
 
@@ -112,13 +113,14 @@ if ($action == 'update') {
  */
 
 llxHeader();
-$form=new Form($db);
-if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$form=new Form($db);
+if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'),$linkback,'title_setup');
 
-dol_fiche_head();
+dol_fiche_head(null, '0', '', -1);
 
 if (empty($mysoc->tva_assuj))
 {
@@ -126,6 +128,8 @@ if (empty($mysoc->tva_assuj))
 }
 else
 {
+	print '<br>';
+
     print '<table class="noborder" width="100%">';
 
     // Cas des parametres TAX_MODE_SELL/BUY_SERVICE/PRODUCT
@@ -145,7 +149,7 @@ else
     print "</table>\n";
 
     print '<br>';
-    print load_fiche_titre($langs->trans("SummaryOfVatExigibilityUsedByDefault"),'','');
+    print ' -> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault");
     //print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
     print '<table class="noborder" width="100%">';
@@ -194,22 +198,27 @@ else
 
 print "<br>\n";
 
+
+
 /*
  *  Others params
  */
+
+print load_fiche_titre($langs->trans("OtherOptions"),'','');
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
+print '<td colspan="3">' . $langs->trans('Parameters') . '</td>';
 print "</tr>\n";
 
 foreach ($list as $key)
 {
-	
+
 
 	print '<tr class="oddeven value">';
 
 	// Param
-	$label = $langs->trans($key); 
+	$label = $langs->trans($key);
 	print '<td><label for="'.$key.'">'.$label.'</label></td>';
 
 	// Value

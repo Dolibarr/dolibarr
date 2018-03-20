@@ -262,7 +262,7 @@ if ($resql)
 		$totalbefore = $total;
 		$total = $total + $objp->amount;
 
-		
+
 
 		// Date operation
 		$dateop=$db->jdate($objp->do);
@@ -289,22 +289,28 @@ if ($resql)
 			{
 				$paymentstatic->fetch($links[$key]['url_id']);
 				$tmparray=$paymentstatic->getBillsArray('');
-				foreach($tmparray as $key => $val)
+				if (is_array($tmparray))
 				{
-					$invoicestatic->fetch($val);
-					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$invoicestatic->ref;
+					foreach($tmparray as $key => $val)
+					{
+						$invoicestatic->fetch($val);
+						if ($accountelem) $accountelem.= ', ';
+						$accountelem.=$invoicestatic->ref;
+					}
 				}
 			}
 			elseif ($links[$key]['type']=='payment_supplier')
 			{
 				$paymentsupplierstatic->fetch($links[$key]['url_id']);
 				$tmparray=$paymentsupplierstatic->getBillsArray('');
-				foreach($tmparray as $key => $val)
+				if (is_array($tmparray))
 				{
-					$invoicesupplierstatic->fetch($val);
-					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$invoicesupplierstatic->ref;
+					foreach($tmparray as $key => $val)
+					{
+						$invoicesupplierstatic->fetch($val);
+						if ($accountelem) $accountelem.= ', ';
+						$accountelem.=$invoicesupplierstatic->ref;
+					}
 				}
 			}
 			elseif ($links[$key]['type']=='payment_sc')

@@ -125,7 +125,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 
 		if ($object->delete($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':''));
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject?'&withproject=1':''));
 			exit;
 		}
 		else
@@ -194,7 +194,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 
 /*
  * View
-*/
+ */
 
 
 llxHeader('', $langs->trans("Task"));
@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 			// Tabs for project
 			$tab='tasks';
 			$head=project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
+			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'), 0, '', '');
 
 			$param=($mode=='mine'?'&mode=mine':'');
 
@@ -262,9 +262,12 @@ if ($id > 0 || ! empty($ref))
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-            print dol_print_date($projectstatic->date_start,'day');
-            $end=dol_print_date($projectstatic->date_end,'day');
-            if ($end) print ' - '.$end;
+            $start = dol_print_date($projectstatic->date_start,'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end,'day');
+            print ' - ';
+            print ($end?$end:'?');
+            if ($projectstatic->hasDelay()) print img_warning("Late");
             print '</td></tr>';
 
             // Budget
@@ -349,17 +352,17 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
 
 			print '<table class="border" width="100%">';
 
 			// Ref
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
-			print '<td><input size="12" name="taskref" value="'.$object->ref.'"></td></tr>';
+			print '<td><input class="minwidth100" name="taskref" value="'.$object->ref.'"></td></tr>';
 
 			// Label
 			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-			print '<td><input size="30" name="label" value="'.$object->label.'"></td></tr>';
+			print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
 
 			// Project
 			if (empty($withproject))
@@ -376,7 +379,7 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			// Task parent
-			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			print '<tr><td>'.$langs->trans("ChildOfProjectTask").'</td><td>';
 			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
 			print '</td></tr>';
 
@@ -434,7 +437,7 @@ if ($id > 0 || ! empty($ref))
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>':'';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask');
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 			if ($action == 'delete')
 			{
@@ -473,6 +476,16 @@ if ($id > 0 || ! empty($ref))
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border" width="100%">';
+
+			// Task parent
+			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+			if ($object->fk_task_parent > 0)
+			{
+				$tasktmp=new Task($db);
+				$tasktmp->fetch($object->fk_task_parent);
+				print $tasktmp->getNomUrl(1);
+			}
+			print '</td></tr>';
 
 			// Date start - Date end
 			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';

@@ -53,10 +53,10 @@ AdminLogin=Login per amministratore del database. Da lasciare vuoto se ci si col
 PasswordAgain=Conferma la password una seconda volta
 AdminPassword=Password per amministratore del database. Da lasciare vuoto se ci si collega in forma anonima
 CreateDatabase=Crea database
-CreateUser=Create owner or grant him permission on database
+CreateUser=Crea un proprietario o concedigli i permessi all'interno del database
 DatabaseSuperUserAccess=Accesso superutente al database
 CheckToCreateDatabase=Seleziona questa opzione se il database non esiste e deve essere creato.<br>Sarà necessario indicare login e password dell'account di root in fondo a questa pagina.
-CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
+CheckToCreateUser=Flegga se l'admin del database non esiste e deve essere creato, o se esiste ma il database non esiste e i permessi devono ancora essere concessi. <br>in questo caso, devi scegliere login e password e riempirli con login/password del superutente in fondo a questa pagina. Se non è fleggato, l'admin del database e la sua password esistono già.
 DatabaseRootLoginDescription=Login utente con permesso di creare nuovi database o nuovi utenti. Non è necessario se il database esiste già.
 KeepEmptyIfNoPassword=Lasciare vuoto se l'utente non ha alcuna password (da evitare per motivi di sicurezza)
 SaveConfigurationFile=Salva file
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Si sta utilizzando la configurazione guidata di un pacchett
 KeepDefaultValuesMamp=Si sta utilizzando la configurazione guidata DoliMamp, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
 KeepDefaultValuesProxmox=Si sta utilizzando la configurazione guidata di una virtual appliance Proxmox, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix per i dati denormalizzati
@@ -191,9 +193,11 @@ MigrationActioncommElement=Aggiornare i dati sulle azioni
 MigrationPaymentMode=Migrazione dei dati delle modalità di pagamento
 MigrationCategorieAssociation=Migrazione delle categorie
 MigrationEvents=Migrazione degli eventi per aggiungere i proprietari nella tabella degli utilizzatori assegnati
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Ricarica modulo %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Mostra opzioni non disponibili
 HideNotAvailableOptions=Nascondi opzioni non disponibili
 ErrorFoundDuringMigration=L'errore si è verificato durante il processo di migrazione quindi il prossimo step non sarà disponibile. Per ignorare gli errori puoi <a href="%s">cliccare qui</a>, ma l'applicazione o qualche funzionalità potrebbe non funzionare correttamente fino alla correzione dell'errore.

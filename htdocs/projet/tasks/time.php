@@ -41,9 +41,9 @@ $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
 
-$search_dateday=GETPOST('search_dateday');
-$search_datemonth=GETPOST('search_datemonth');
-$search_dateyear=GETPOST('search_dateyear');
+$search_day=GETPOST('search_day','int');
+$search_month=GETPOST('search_month','int');
+$search_year=GETPOST('search_year','int');
 $search_datehour='';
 $search_datewithhour='';
 $search_note=GETPOST('search_note','alpha');
@@ -98,7 +98,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_date='';
+	$search_day='';
+	$search_month='';
+	$search_year='';
+	$search_date='';
     $search_datehour='';
     $search_datewithhour='';
     $search_note='';
@@ -346,9 +349,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-            print dol_print_date($projectstatic->date_start,'day');
-            $end=dol_print_date($projectstatic->date_end,'day');
-            if ($end) print ' - '.$end;
+            $start = dol_print_date($projectstatic->date_start,'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end,'day');
+            print ' - ';
+            print ($end?$end:'?');
+            if ($projectstatic->hasDelay()) print img_warning("Late");
             print '</td></tr>';
 
             // Budget
@@ -428,7 +434,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	if (empty($projectidforalltimes))
 	{
 		$head=task_prepare_head($object);
-		dol_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask');
+		dol_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 		if ($action == 'deleteline')
 		{
@@ -520,6 +526,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		dol_fiche_end();
 
+		print '<!-- List of time spent for task -->'."\n";
 
 		/*
 		 * Form to add time spent
@@ -534,6 +541,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -588,7 +596,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 			print '</td></tr>';
 
-			print '</table></form>';
+			print '</table>';
+			print '</div>';
+
+			print '</form>';
 
 			print '<br>';
 		}
@@ -596,7 +607,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	if ($projectstatic->id > 0)
 	{
-		if ($action == 'deleteline')
+		if ($action == 'deleteline' && ! empty($projectidforalltimes))
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
@@ -616,13 +627,13 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['author']=array('label'=>$langs->trans("By"), 'checked'=>1);
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
-	    $arrayfields['value']=array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>$conf->salaries->enabled);
+	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
 	        foreach($extrafields->attribute_label as $key => $val)
 	        {
-	            $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+				if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	        }
 	    }
 
@@ -643,9 +654,22 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($search_task_ref) $sql .= natural_search('pt.ref', $search_task_ref);
 		if ($search_task_label) $sql .= natural_search('pt.label', $search_task_label);
 		if ($search_user > 0) $sql .= natural_search('t.fk_user', $search_user);
+		if ($search_month > 0)
+		{
+			if ($search_year > 0 && empty($search_day))
+			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+			else if ($search_year > 0 && ! empty($search_day))
+			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
+			else
+			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
+		}
+		else if ($search_year > 0)
+		{
+			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
+		}
+
 		$sql .= $db->order($sortfield, $sortorder);
 
-		$var=true;
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -654,7 +678,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			if (! empty($projectidforalltimes))
 			{
-			    $title=$langs->trans("ListTaskTimeUserProject");
+				print '<!-- List of time spent for project -->'."\n";
+
+				$title=$langs->trans("ListTaskTimeUserProject");
 			    $linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
 			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 			    print load_fiche_titre($title,$linktotasks,'title_generic.png');
@@ -677,32 +703,33 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$arrayofselected=is_array($toselect)?$toselect:array();
 
-		$params='';
+		$param='';
 		if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-		if ($search_note != '') $params.= '&amp;search_note='.urlencode($search_note);
-		if ($search_duration != '') $params.= '&amp;search_field2='.urlencode($search_duration);
-		if ($optioncss != '') $param.='&optioncss='.$optioncss;
+		if ($search_month > 0) $param.= '&search_month='.urlencode($search_month);
+		if ($search_year > 0) $param.= '&search_year='.urlencode($search_year);
+		if ($search_user > 0) $param.= '&search_user='.urlencode($search_user);
+		if ($search_task_ref != '') $param.= '&search_task_ref='.urlencode($search_task_ref);
+		if ($search_task_label != '') $param.= '&search_task_label='.urlencode($search_task_label);
+		if ($search_note != '') $param.= '&search_note='.urlencode($search_note);
+		if ($search_duration != '') $param.= '&amp;search_field2='.urlencode($search_duration);
+		if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+		/*
 		// Add $param from extra fields
-		/*foreach ($search_array_options as $key => $val)
-		{
-		    $crit=$val;
-		    $tmpkey=preg_replace('/search_options_/','',$key);
-		    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-		}*/
-		if ($id) $params.='&amp;id='.$id;
-		if ($projectid) $params.='&amp;projectid='.$projectid;
-		if ($withproject) $params.='&amp;withproject='.$withproject;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+		*/
+		if ($id) $param.='&id='.urlencode($id);
+		if ($projectid) $param.='&projectid='.urlencode($projectid);
+		if ($withproject) $param.='&withproject='.urlencode($withproject);
 
 
 		$arrayofmassactions =  array(
 		    //'presend'=>$langs->trans("SendByMail"),
 		    //'builddoc'=>$langs->trans("PDFMerge"),
 		);
-		//if ($user->rights->projet->creer) $arrayofmassactions['delete']=$langs->trans("Delete");
-		if ($massaction == 'presend') $arrayofmassactions=array();
+		//if ($user->rights->projet->creer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-
 
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
@@ -742,44 +769,31 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		// Fields title search
 		print '<tr class="liste_titre_filter">';
 		// Date
-		if (! empty($arrayfields['t.task_date']['checked'])) print '<td class="liste_titre"></td>';
+		if (! empty($arrayfields['t.task_date']['checked']))
+		{
+			print '<td class="liste_titre">';
+			if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+			print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+			$formother->select_year($search_year,'search_year',1, 20, 5);
+			print '</td>';
+		}
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
             if (! empty($arrayfields['t.task_ref']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
             if (! empty($arrayfields['t.task_label']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
         }
         // Author
-        if (! empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers($search_user > 0 ? $search_user : -1, 'search_user', 1).'</td>';
+        if (! empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200').'</td>';
 		// Note
         if (! empty($arrayfields['t.note']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 		// Duration
         if (! empty($arrayfields['t.task_duration']['checked'])) print '<td class="liste_titre right"></td>';
 		// Value in currency
         if (! empty($arrayfields['value']['checked'])) print '<td class="liste_titre"></td>';
-		// Extra fields
 		/*
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-		    foreach($extrafields->attribute_label as $key => $val)
-		    {
-		        if (! empty($arrayfields["ef.".$key]['checked']))
-		        {
-		            $align=$extrafields->getAlignFlag($key);
-		            $typeofextrafield=$extrafields->attribute_type[$key];
-		            print '<td class="liste_titre'.($align?' '.$align:'').'">';
-		            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-		            {
-		                $crit=$val;
-		                $tmpkey=preg_replace('/search_options_/','',$key);
-		                $searchclass='';
-		                if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-		                if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-		                print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-		            }
-		            print '</td>';
-		        }
-		    }
-		}*/
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		*/
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields);
 		$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -792,31 +806,20 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '</tr>'."\n";
 
 		print '<tr class="liste_titre">';
-		if (! empty($arrayfields['t.task_date']['checked'])) print_liste_field_titre($arrayfields['t.task_date']['label'],$_SERVER['PHP_SELF'],'t.task_date,t.task_datehour,t.rowid','',$params,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.task_date']['checked'])) print_liste_field_titre($arrayfields['t.task_date']['label'],$_SERVER['PHP_SELF'],'t.task_date,t.task_datehour,t.rowid','',$param,'',$sortfield,$sortorder);
 		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
-            if (! empty($arrayfields['t.task_ref']['checked']))   print_liste_field_titre($arrayfields['t.task_ref']['label'],$_SERVER['PHP_SELF'],'pt.ref','',$params,'',$sortfield,$sortorder);
-            if (! empty($arrayfields['t.task_label']['checked'])) print_liste_field_titre($arrayfields['t.task_label']['label'],$_SERVER['PHP_SELF'],'pt.label','',$params,'',$sortfield,$sortorder);
+            if (! empty($arrayfields['t.task_ref']['checked']))   print_liste_field_titre($arrayfields['t.task_ref']['label'],$_SERVER['PHP_SELF'],'pt.ref','',$param,'',$sortfield,$sortorder);
+            if (! empty($arrayfields['t.task_label']['checked'])) print_liste_field_titre($arrayfields['t.task_label']['label'],$_SERVER['PHP_SELF'],'pt.label','',$param,'',$sortfield,$sortorder);
         }
-        if (! empty($arrayfields['author']['checked'])) print_liste_field_titre($arrayfields['author']['label'],$_SERVER['PHP_SELF'],'','',$params,'',$sortfield,$sortorder);
-		if (! empty($arrayfields['t.note']['checked'])) print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$params,'',$sortfield,$sortorder);
-		if (! empty($arrayfields['t.task_duration']['checked'])) print_liste_field_titre($arrayfields['t.task_duration']['label'],$_SERVER['PHP_SELF'],'t.task_duration','',$params,'align="right"',$sortfield,$sortorder);
-		if (! empty($arrayfields['value']['checked'])) print_liste_field_titre($arrayfields['value']['label'],$_SERVER['PHP_SELF'],'','',$params,'align="right"',$sortfield,$sortorder);
-		// Extra fields
+        if (! empty($arrayfields['author']['checked'])) print_liste_field_titre($arrayfields['author']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.note']['checked'])) print_liste_field_titre($arrayfields['t.note']['label'],$_SERVER['PHP_SELF'],'t.note','',$param,'',$sortfield,$sortorder);
+		if (! empty($arrayfields['t.task_duration']['checked'])) print_liste_field_titre($arrayfields['t.task_duration']['label'],$_SERVER['PHP_SELF'],'t.task_duration','',$param,'align="right"',$sortfield,$sortorder);
+		if (! empty($arrayfields['value']['checked'])) print_liste_field_titre($arrayfields['value']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 		/*
-    	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-    	{
-    	   foreach($extrafields->attribute_label as $key => $val)
-    	   {
-               if (! empty($arrayfields["ef.".$key]['checked']))
-               {
-    				$align=$extrafields->getAlignFlag($key);
-        			$sortonfield = "ef.".$key;
-        			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-        			print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],$sortonfield,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
-               }
-    	   }
-    	}*/
+    	// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		*/
 	    // Hook fields
     	$parameters=array('arrayfields'=>$arrayfields);
         $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -961,8 +964,13 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			$totalarray['totalvalue'] += $value;
             }
 
+            /*
+            // Extra fields
+            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+            */
+
 			// Fields from hook
-			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$task_time);
 			$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -979,13 +987,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{
+					//$param = ($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'.($withproject?'&amp;withproject=1':'');
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.'">';
 					print img_edit();
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.'">';
 					print img_delete();
 					print '</a>';
 			    }

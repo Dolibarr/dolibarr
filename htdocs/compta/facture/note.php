@@ -78,14 +78,14 @@ if ($id > 0 || ! empty($ref))
 	$object->fetch_thirdparty();
 
     $head = facture_prepare_head($object);
-	
+
     $totalpaye = $object->getSommePaiement();
-    
+
     dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
     // Invoice content
 
-    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+    $linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
     $morehtmlref='<div class="refidno">';
     // Ref customer
@@ -134,8 +134,8 @@ if ($id > 0 || ! empty($ref))
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
-	
+
+
 	$cssclass="titlefield";
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

@@ -3,13 +3,15 @@
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI	    <info@inovea-conseil.com>
+ * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,10 +58,11 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
-$cancel     = GETPOST('cancel');
-$backtopage = GETPOST('backtopage','alpha');
-$confirm	= GETPOST('confirm');
-$socid		= GETPOST('socid','int');
+$cancel		= GETPOST('cancel','alpha');
+$backtopage	= GETPOST('backtopage','alpha');
+$confirm		= GETPOST('confirm');
+
+$socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 if (empty($socid) && $action == 'view') $action='create';
 
@@ -72,7 +75,9 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
 
-if ($action == 'view' && $object->fetch($socid)<=0)
+if ($socid > 0) $object->fetch($socid);
+
+if (! ($object->id > 0) && $action == 'view')
 {
 	$langs->load("errors");
 	print($langs->trans('ErrorRecordNotFound'));
@@ -92,7 +97,6 @@ if (! empty($canvas))
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
-
 
 
 /*
@@ -117,9 +121,7 @@ if (empty($reshook))
 
 	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer)
 	{
-		$object->fetch($socid);
-
-		$errors = 0;
+		$error = 0;
 		$soc_origin_id = GETPOST('soc_origin', 'int');
 		$soc_origin = new Societe($db);
 
@@ -131,13 +133,13 @@ if (empty($reshook))
 		}
 		else
 		{
-			if (!$errors && $soc_origin->fetch($soc_origin_id) < 1)
+			if (!$error && $soc_origin->fetch($soc_origin_id) < 1)
 			{
 				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
-				$errors++;
+				$error++;
 			}
 
-			if (!$errors)
+			if (!$error)
 			{
 			    // TODO Move the merge function into class of object.
 
@@ -147,15 +149,16 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-				    'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
-				    'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-				    'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
-				    'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
-				    'model_pdf', 'fk_projet'
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'url', 'barcode',
+					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
+					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
+					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
+					'model_pdf', 'fk_projet'
 				);
 				foreach ($listofproperties as $property)
 				{
-				    if (empty($object->$property)) $object->$property = $soc_origin->$property;
+					if (empty($object->$property)) $object->$property = $soc_origin->$property;
 				}
 
 				// Concat some data
@@ -176,51 +179,80 @@ if (empty($reshook))
 					}
 				}
 
-				// TODO Merge categories
+				// Merge categories
+				$static_cat = new Categorie($db);
+				
+				$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
+				$custcats = $static_cat->containing($object->id, 'customer', 'id');
+				$custcats = array_merge($custcats,$custcats_ori);
+				$object->setCategories($custcats, 'customer');
+				
+				$suppcats_ori = $static_cat->containing($soc_origin->id, 'supplier', 'id');
+				$suppcats = $static_cat->containing($object->id, 'supplier', 'id');
+				$suppcats = array_merge($suppcats,$suppcats_ori);
+				$object->setCategories($suppcats, 'supplier');
 
+				// If thirdparty has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
+				if ($soc_origin->code_client == $object->code_client
+					|| $soc_origin->code_fournisseur == $object->code_fournisseur
+					|| $soc_origin->barcode == $object->barcode)
+				{
+					dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
+					$soc_origin->code_client = '';
+					$soc_origin->code_fournisseur = '';
+					$soc_origin->barcode = '';
+					$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
+				}
 
-				$object->update($object->id, $user);
+				// Update
+				$object->update($object->id, $user, 0, 1, 1, 'merge');
+				if ($result < 0)
+				{
+					$error++;
+				}
 
 				// Move links
-				$objects = array(
-					'Adherent' => '/adherents/class/adherent.class.php',
-					'Societe' => '/societe/class/societe.class.php',
-					'Bookmark' => '/bookmarks/class/bookmark.class.php',
-					'Categorie' => '/categories/class/categorie.class.php',
-					'ActionComm' => '/comm/action/class/actioncomm.class.php',
-					'Propal' => '/comm/propal/class/propal.class.php',
-					'Commande' => '/commande/class/commande.class.php',
-					'Facture' => '/compta/facture/class/facture.class.php',
-					'FactureRec' => '/compta/facture/class/facture-rec.class.php',
-					'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
-					'Contact' => '/contact/class/contact.class.php',
-					'Contrat' => '/contrat/class/contrat.class.php',
-					'Expedition' => '/expedition/class/expedition.class.php',
-					'Fichinter' => '/fichinter/class/fichinter.class.php',
-					'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
-					'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
-					'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
-					'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-					'Livraison' => '/livraison/class/livraison.class.php',
-					'Product' => '/product/class/product.class.php',
-					'Project' => '/projet/class/project.class.php',
-					'User' => '/user/class/user.class.php',
-				);
-
-				//First, all core objects must update their tables
-				foreach ($objects as $object_name => $object_file)
+				if (! $error)
 				{
-					require_once DOL_DOCUMENT_ROOT.$object_file;
+					$objects = array(
+						'Adherent' => '/adherents/class/adherent.class.php',
+						'Societe' => '/societe/class/societe.class.php',
+						//'Categorie' => '/categories/class/categorie.class.php',
+						'ActionComm' => '/comm/action/class/actioncomm.class.php',
+						'Propal' => '/comm/propal/class/propal.class.php',
+						'Commande' => '/commande/class/commande.class.php',
+						'Facture' => '/compta/facture/class/facture.class.php',
+						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+						'LignePrelevement' => '/compta/prelevement/class/ligneprelevement.class.php',
+						'Contact' => '/contact/class/contact.class.php',
+						'Contrat' => '/contrat/class/contrat.class.php',
+						'Expedition' => '/expedition/class/expedition.class.php',
+						'Fichinter' => '/fichinter/class/fichinter.class.php',
+						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+						'Livraison' => '/livraison/class/livraison.class.php',
+						'Product' => '/product/class/product.class.php',
+						'Project' => '/projet/class/project.class.php',
+						'User' => '/user/class/user.class.php',
+					);
 
-					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
+					//First, all core objects must update their tables
+					foreach ($objects as $object_name => $object_file)
 					{
-						$errors++;
-						setEventMessages($db->lasterror(), null, 'errors');
+						require_once DOL_DOCUMENT_ROOT.$object_file;
+
+						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
+						{
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+						}
 					}
 				}
 
-				//External modules should update their ones too
-				if (!$errors)
+				// External modules should update their ones too
+				if (! $error)
 				{
 					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
@@ -230,20 +262,35 @@ if (empty($reshook))
 					if ($reshook < 0)
 					{
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-						$errors++;
+						$error++;
 					}
 				}
 
-				if (!$errors)
+
+				if (! $error)
+				{
+					$object->context=array('merge'=>1, 'mergefromid'=>$soc_origin->id);
+
+					// Call trigger
+					$result=$object->call_trigger('COMPANY_MODIFY',$user);
+					if ($result < 0)
+					{
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (!$error)
 				{
 					//We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1)
 					{
-						$errors++;
+						$error++;
 					}
 				}
 
-				if (!$errors)
+				if (!$error)
 				{
 					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
@@ -292,11 +339,17 @@ if (empty($reshook))
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
         if ($ret < 0) $error++;
+
         if (! $error)
         {
             $result = $object->insertExtraFields();
-            if ($result < 0) $error++;
+   			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
+
         if ($error) $action = 'edit_extras';
     }
 
@@ -310,191 +363,156 @@ if (empty($reshook))
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
             $error++;
-            $action='create';
         }
         if (GETPOST('client') < 0)
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
             $error++;
-            $action='create';
         }
         if (GETPOST('fournisseur') < 0)
         {
             setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
             $error++;
-            $action='create';
+
         }
 
-
-        if ($action == 'update')
+        if (! $error)
         {
-        	$ret=$object->fetch($socid);
-			$object->oldcopy = clone $object;
-        }
-		else $object->canvas=$canvas;
+        		if ($action == 'update')
+	        {
+	        		$ret=$object->fetch($socid);
+				$object->oldcopy = clone $object;
+	        }
+			else $object->canvas=$canvas;
 
-        if (GETPOST("private") == 1)
-        {
-            $object->particulier       = GETPOST("private");
+	        if (GETPOST("private") == 1)	// Ask to create a contact
+	        {
+	            $object->particulier			= GETPOST("private");
 
-            $object->name              = dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
-            $object->civility_id       = GETPOST('civility_id');	// Note: civility id is a code, not an int
-            // Add non official properties
-            $object->name_bis          = GETPOST('name','alpha');
-            $object->firstname         = GETPOST('firstname','alpha');
-        }
-        else
-        {
-            $object->name              = GETPOST('name', 'alpha');
-        }
-        $object->name_alias            = GETPOST('name_alias');
-        $object->address               = GETPOST('address');
-        $object->zip                   = GETPOST('zipcode', 'alpha');
-        $object->town                  = GETPOST('town', 'alpha');
-        $object->country_id            = GETPOST('country_id', 'int');
-        $object->state_id              = GETPOST('state_id', 'int');
-        $object->skype                 = GETPOST('skype', 'alpha');
-        $object->phone                 = GETPOST('phone', 'alpha');
-        $object->fax                   = GETPOST('fax','alpha');
-        $object->email                 = GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
-        $object->url                   = GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
-        $object->idprof1               = GETPOST('idprof1', 'alpha');
-        $object->idprof2               = GETPOST('idprof2', 'alpha');
-        $object->idprof3               = GETPOST('idprof3', 'alpha');
-        $object->idprof4               = GETPOST('idprof4', 'alpha');
-        $object->idprof5               = GETPOST('idprof5', 'alpha');
-        $object->idprof6               = GETPOST('idprof6', 'alpha');
-        $object->prefix_comm           = GETPOST('prefix_comm', 'alpha');
-        $object->code_client           = GETPOST('code_client', 'alpha');
-        $object->code_fournisseur      = GETPOST('code_fournisseur', 'alpha');
-        $object->capital               = GETPOST('capital', 'alpha');
-        $object->barcode               = GETPOST('barcode', 'alpha');
+	            $object->name				= dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('name','alpha'));
+	            $object->civility_id			= GETPOST('civility_id');	// Note: civility id is a code, not an int
+	            // Add non official properties
+	            $object->name_bis			= GETPOST('name','alpha');
+	            $object->firstname			= GETPOST('firstname','alpha');
+	        }
+	        else
+	        {
+	            $object->name				= GETPOST('name', 'alpha');
+	        }
+	        $object->entity					= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
+	        $object->name_alias				= GETPOST('name_alias');
+	        $object->address					= GETPOST('address');
+	        $object->zip						= GETPOST('zipcode', 'alpha');
+	        $object->town					= GETPOST('town', 'alpha');
+	        $object->country_id				= GETPOST('country_id', 'int');
+	        $object->state_id				= GETPOST('state_id', 'int');
+	        $object->skype					= GETPOST('skype', 'alpha');
+	        $object->phone					= GETPOST('phone', 'alpha');
+	        $object->fax						= GETPOST('fax','alpha');
+	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+	        $object->url						= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+	        $object->idprof1					= trim(GETPOST('idprof1', 'alpha'));
+	        $object->idprof2					= trim(GETPOST('idprof2', 'alpha'));
+	        $object->idprof3					= trim(GETPOST('idprof3', 'alpha'));
+	        $object->idprof4					= trim(GETPOST('idprof4', 'alpha'));
+	        $object->idprof5					= trim(GETPOST('idprof5', 'alpha'));
+	        $object->idprof6					= trim(GETPOST('idprof6', 'alpha'));
+	        $object->prefix_comm				= GETPOST('prefix_comm', 'alpha');
+	        $object->code_client				= GETPOST('code_client', 'alpha');
+	        $object->code_fournisseur		= GETPOST('code_fournisseur', 'alpha');
+	        $object->capital					= GETPOST('capital', 'alpha');
+	        $object->barcode					= GETPOST('barcode', 'alpha');
 
-        $object->tva_intra             = GETPOST('tva_intra', 'alpha');
-        $object->tva_assuj             = GETPOST('assujtva_value', 'alpha');
-        $object->status                = GETPOST('status', 'alpha');
+	        $object->tva_intra				= GETPOST('tva_intra', 'alpha');
+	        $object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
+	        $object->status					= GETPOST('status', 'alpha');
 
-        // Local Taxes
-        $object->localtax1_assuj       = GETPOST('localtax1assuj_value', 'alpha');
-        $object->localtax2_assuj       = GETPOST('localtax2assuj_value', 'alpha');
+	        // Local Taxes
+	        $object->localtax1_assuj			= GETPOST('localtax1assuj_value', 'alpha');
+	        $object->localtax2_assuj			= GETPOST('localtax2assuj_value', 'alpha');
 
-        $object->localtax1_value	   = GETPOST('lt1', 'alpha');
-        $object->localtax2_value	   = GETPOST('lt2', 'alpha');
+	        $object->localtax1_value			= GETPOST('lt1', 'alpha');
+	        $object->localtax2_value			= GETPOST('lt2', 'alpha');
 
-        $object->forme_juridique_code  = GETPOST('forme_juridique_code', 'int');
-        $object->effectif_id           = GETPOST('effectif_id', 'int');
-        $object->typent_id             = GETPOST('typent_id');
+	        $object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
+	        $object->effectif_id				= GETPOST('effectif_id', 'int');
+	        $object->typent_id				= GETPOST('typent_id','int');
 
-        $object->client                = GETPOST('client', 'int');
-        $object->fournisseur           = GETPOST('fournisseur', 'int');
+	        $object->typent_code				= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code');	// Force typent_code too so check in verify() will be done on new type
 
-        $object->commercial_id         = GETPOST('commercial_id', 'int');
-        $object->default_lang          = GETPOST('default_lang');
+	        $object->client					= GETPOST('client', 'int');
+	        $object->fournisseur				= GETPOST('fournisseur', 'int');
 
-        // Webservices url/key
-        $object->webservices_url       = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
-        $object->webservices_key       = GETPOST('webservices_key', 'san_alpha');
+	        $object->commercial_id			= GETPOST('commercial_id', 'int');
+	        $object->default_lang			= GETPOST('default_lang');
 
-		// Incoterms
-		if (!empty($conf->incoterm->enabled))
-		{
-			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
-			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
-		}
+	        // Webservices url/key
+	        $object->webservices_url			= GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
+	        $object->webservices_key			= GETPOST('webservices_key', 'san_alpha');
 
-		// Multicurrency
-		if (!empty($conf->multicurrency->enabled))
-		{
-			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-		}
+			// Incoterms
+			if (!empty($conf->incoterm->enabled))
+			{
+				$object->fk_incoterms		= GETPOST('incoterm_id', 'int');
+				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
+			}
 
-        // Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0)
-		{
-			 $error++;
-			 $action = ($action=='add'?'create':'edit');
-		}
+			// Multicurrency
+			if (!empty($conf->multicurrency->enabled))
+			{
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+			}
 
-        if (GETPOST('deletephoto')) $object->logo = '';
-        else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0)
+			{
+				 $error++;
+			}
 
-        // Check parameters
-        if (! GETPOST("cancel"))
-        {
-            if (! empty($object->email) && ! isValidEMail($object->email))
-            {
-                $langs->load("errors");
-                $error++; $errors[] = $langs->trans("ErrorBadEMail",$object->email);
-                $action = ($action=='add'?'create':'edit');
-            }
-            if (! empty($object->url) && ! isValidUrl($object->url))
-            {
-                $langs->load("errors");
-                $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->url);
-                $action = ($action=='add'?'create':'edit');
-            }
-            if ($object->fournisseur && ! $conf->fournisseur->enabled)
-            {
-                $langs->load("errors");
-                $error++; $errors[] = $langs->trans("ErrorSupplierModuleNotEnabled");
-                $action = ($action=='add'?'create':'edit');
-            }
-            if (! empty($object->webservices_url)) {
-                //Check if has transport, without any the soap client will give error
-                if (strpos($object->webservices_url, "http") === false)
-                {
-                    $object->webservices_url = "http://".$object->webservices_url;
-                }
-                if (! isValidUrl($object->webservices_url)) {
-                    $langs->load("errors");
-                    $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->webservices_url);
-                    $action = ($action=='add'?'create':'edit');
-                }
-            }
+	        if (GETPOST('deletephoto')) $object->logo = '';
+	        else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
-            // We set country_id, country_code and country for the selected country
-            $object->country_id=GETPOST('country_id')!=''?GETPOST('country_id'):$mysoc->country_id;
-            if ($object->country_id)
-            {
-            	$tmparray=getCountry($object->country_id,'all');
-            	$object->country_code=$tmparray['code'];
-            	$object->country=$tmparray['label'];
-            }
+	        // Check parameters
+	        if (! GETPOST('cancel','alpha'))
+	        {
+	            if (! empty($object->email) && ! isValidEMail($object->email))
+	            {
+	                $langs->load("errors");
+	                $error++;
+	                setEventMessages('', $langs->trans("ErrorBadEMail",$object->email), 'errors');
+	            }
+	            if (! empty($object->url) && ! isValidUrl($object->url))
+	            {
+	                $langs->load("errors");
+	                setEventMessages('', $langs->trans("ErrorBadUrl",$object->url), 'errors');
+	            }
+	            if ($object->fournisseur && ! $conf->fournisseur->enabled)
+	            {
+	                $langs->load("errors");
+	                setEventMessages('', $langs->trans("ErrorSupplierModuleNotEnabled"), 'errors');
+	            }
+	            if (! empty($object->webservices_url)) {
+	                //Check if has transport, without any the soap client will give error
+	                if (strpos($object->webservices_url, "http") === false)
+	                {
+	                    $object->webservices_url = "http://".$object->webservices_url;
+	                }
+	                if (! isValidUrl($object->webservices_url)) {
+	                    $langs->load("errors");
+	                    $error++; $errors[] = $langs->trans("ErrorBadUrl",$object->webservices_url);
+	                }
+	            }
 
-            // Check for duplicate or mandatory prof id
-            // Only for companies
-	        if (!($object->particulier || $private))
-        	{
-	        	for ($i = 1; $i <= 6; $i++)
-	        	{
-	        	    $slabel="idprof".$i;
-	    			$_POST[$slabel]=trim($_POST[$slabel]);
-	        	    $vallabel=$_POST[$slabel];
-	        		if ($vallabel && $object->id_prof_verifiable($i))
-					{
-						if($object->id_prof_exists($i,$vallabel,$object->id))
-						{
-							$langs->load("errors");
-	                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
-	                		$action = (($action=='add'||$action=='create')?'create':'edit');
-						}
-					}
-
-            		// Check for mandatory prof id (but only if country is than than ours)
-					if ($mysoc->country_id > 0 && $object->country_id == $mysoc->country_id)
-            		{
-    					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-    					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-    					{
-    						$langs->load("errors");
-    						$error++;
-    						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-    						$action = (($action=='add'||$action=='create')?'create':'edit');
-    					}
-            		}
-	        	}
-        	}
+	            // We set country_id, country_code and country for the selected country
+	            $object->country_id=GETPOST('country_id')!=''?GETPOST('country_id'):$mysoc->country_id;
+	            if ($object->country_id)
+	            {
+	            	$tmparray=getCountry($object->country_id,'all');
+	            	$object->country_code=$tmparray['code'];
+	            	$object->country=$tmparray['label'];
+	            }
+	        }
         }
 
         if (! $error)
@@ -509,26 +527,26 @@ if (empty($reshook))
                 $result = $object->create($user);
 
 				if ($result >= 0)
-                {
-                    if ($object->particulier)
-                    {
-                        dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
-                        $result=$object->create_individual($user);
-                        if (! $result >= 0)
-                        {
-                            $error=$object->error; $errors=$object->errors;
-                        }
-                    }
-				
-					
+				{
+					if ($object->particulier)
+					{
+						dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
+						$result=$object->create_individual($user);
+						if ($result < 0)
+						{
+							setEventMessages($object->error, $object->errors, 'errors');
+							$error++;
+						}
+					}
+
 					// Customer categories association
-					$custcats = GETPOST( 'custcats', 'array' );
+					$custcats = GETPOST('custcats', 'array');
 					$object->setCategories($custcats, 'customer');
 
 					// Supplier categories association
 					$suppcats = GETPOST('suppcats', 'array');
 					$object->setCategories($suppcats, 'supplier');
-					
+
                     // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
                     $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
@@ -579,7 +597,8 @@ if (empty($reshook))
 						$object->code_client = null;
 					}
 
-                    $error=$object->error; $errors=$object->errors;
+                    setEventMessages($object->error, $object->errors, 'errors');
+                   	$error++;
                 }
 
                 if ($result >= 0)
@@ -611,7 +630,7 @@ if (empty($reshook))
 
             if ($action == 'update')
             {
-                if (GETPOST("cancel"))
+                if (GETPOST('cancel','alpha'))
                 {
                 	if (! empty($backtopage))
                 	{
@@ -633,10 +652,12 @@ if (empty($reshook))
                 $result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
                 if ($result <=  0)
                 {
-                    $error = $object->error; $errors = $object->errors;
+                    setEventMessages($object->error, $object->errors, 'errors');
+                  	$error++;
                 }
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
-				if(!empty($user->rights->categorie->lire)){ 
+				if (!empty($user->rights->categorie->lire))
+				{
 					// Customer categories association
 					$categories = GETPOST( 'custcats', 'array' );
 					$object->setCategories($categories, 'customer');
@@ -645,6 +666,7 @@ if (empty($reshook))
 					$categories = GETPOST('suppcats', 'array');
 					$object->setCategories($categories, 'supplier');
 				}
+
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
@@ -688,7 +710,7 @@ if (empty($reshook))
                     }
                 }
                 else
-              {
+                {
 					switch($_FILES['photo']['error'])
 					{
 					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -718,7 +740,7 @@ if (empty($reshook))
 
                 if (! $error && ! count($errors))
                 {
-                    if (! empty($backtopage))
+                	if (! empty($backtopage))
                 	{
                		    header("Location: ".$backtopage);
                     	exit;
@@ -736,6 +758,10 @@ if (empty($reshook))
                 }
             }
         }
+        else
+        {
+        	$action = ($action=='add'?'create':'edit');
+        }
     }
 
     // Delete third party
@@ -746,13 +772,14 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/societe/list.php?delsoc=".urlencode($object->name));
+            header("Location: ".DOL_URL_ROOT."/societe/list.php?restore_lastsearch_values=1&delsoc=".urlencode($object->name));
             exit;
         }
         else
         {
             $langs->load("errors");
-            $error=$langs->trans($object->error); $errors = $object->errors;
+           	setEventMessages($object->error, $object->errors, 'errors');
+           	$error++;
             $action='';
         }
     }
@@ -771,8 +798,10 @@ if (empty($reshook))
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
     }
 
-    // Actions to send emails
     $id=$socid;
+    $object->fetch($socid);
+
+    // Actions to send emails
     $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
@@ -785,7 +814,6 @@ if (empty($reshook))
     $permissioncreate=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
-
 
 
 /*
@@ -1000,13 +1028,13 @@ else
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
-	        print '<label for="radiocompany">';
+	        print '<label for="radiocompany" class="radiocompany">';
             print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked').'>';
 	        print '&nbsp;';
             print $langs->trans("CreateThirdPartyOnly");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
-	        print '<label for="radioprivate">';
+	        print '<label for="radioprivate" class="radioprivate">';
             $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked':'').'>';
 	        $text.='&nbsp;';
 	        $text.= $langs->trans("CreateThirdPartyAndContact");
@@ -1019,13 +1047,13 @@ else
 
         dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
-        print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+        print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">';		// Chrome ignor autocomplete
 
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
-        print '<input type="hidden" name="type" value='.GETPOST("type").'>';
+        print '<input type="hidden" name="type" value='.GETPOST("type",'alpha').'>';
         print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
         print '<input type="hidden" name="ThirdPartyName" value="'.$langs->trans('ThirdPartyName').'">';
         if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
@@ -1071,7 +1099,7 @@ else
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
-	    $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
+	    $selected=GETPOST('client','int')!=''?GETPOST('client','int'):$object->client;
         print '<select class="flat" name="client" id="customerprospect">';
         if (GETPOST("type") == '') print '<option value="-1">&nbsp;</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
@@ -1098,7 +1126,7 @@ else
             print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
             $default = -1;
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
-            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
+            print $form->selectyesno("fournisseur", (GETPOST('fournisseur','int')!=''?GETPOST('fournisseur','int'):(GETPOST("type",'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type",'alpha') == '' ? 1 : 0));
             print '</td>';
             print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';
@@ -1127,7 +1155,7 @@ else
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'._ROWS_2.'" wrap="soft">';
+	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -1154,7 +1182,7 @@ else
         }
 
         // Email web
-        print '<tr><td>'.fieldLabel('EMail','email').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td>';
+        print '<tr><td>'.fieldLabel('EMail','email',$conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
@@ -1204,7 +1232,7 @@ else
         print '<td class="nowrap">';
         $s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
-        if (empty($conf->global->MAIN_DISABLEVATCHECK))
+        if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
         {
             $s.=' ';
 
@@ -1387,11 +1415,12 @@ else
          * Edition
          */
 
+
         //print load_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {
-            $res=$object->fetch_optionals($object->id,$extralabels);
+        	$res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
 	        $head = societe_prepare_head($object);
@@ -1434,7 +1463,7 @@ else
 
 			$object->oldcopy = clone $object;
 
-            if (GETPOST('name'))
+            if (GETPOSTISSET('name'))
             {
                 // We overwrite with values if posted
                 $object->name					= GETPOST('name', 'alpha');
@@ -1497,15 +1526,12 @@ else
                 }
             }
 
-            dol_htmloutput_errors($error,$errors);
-
             if($object->localtax1_assuj==0){
             	$sub=0;
             }else{$sub=1;}
             if($object->localtax2_assuj==0){
             	$sub2=0;
             }else{$sub2=1;}
-
 
             print "\n".'<script type="text/javascript">';
             print '$(document).ready(function () {
@@ -1623,12 +1649,12 @@ else
             }
             else if ($object->codeclient_modifiable())
             {
-                print '<input type="text" name="code_client" id="customer_code" size="16" value="'.$object->code_client.'" maxlength="15">';
+            	print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
             }
             else
             {
                 print $object->code_client;
-                print '<input type="hidden" name="code_client" value="'.$object->code_client.'">';
+                print '<input type="hidden" name="code_client" value="'.dol_escape_htmltag($object->code_client).'">';
             }
             print '</td><td>';
             $s=$modCodeClient->getToolTip($langs,$object,0);
@@ -1712,7 +1738,7 @@ else
             }
 
             // EMail / Web
-            print '<tr><td>'.fieldLabel('EMail','email',(! empty($conf->global->SOCIETE_MAIL_REQUIRED))).'</td>';
+            print '<tr><td>'.fieldLabel('EMail','email',(! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
 	        print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
             print '<tr><td>'.fieldLabel('Web','url').'</td>';
 	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
@@ -1742,7 +1768,7 @@ else
 	                if (($j % 2) == 0) print '<tr>';
 
 	                $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-	                if(empty($conf->global->$idprof_mandatory))
+	                if (empty($conf->global->$idprof_mandatory) || ! $object->isACompany())
 	                    print '<td>'.fieldLabel($idprof,$key).'</td><td>';
                     else
 	                    print '<td><span class="fieldrequired">'.fieldLabel($idprof,$key).'</td><td>';
@@ -1817,7 +1843,7 @@ else
             print '<td colspan="3">';
             $s ='<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
-            if (empty($conf->global->MAIN_DISABLEVATCHECK))
+            if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
             {
                 $s.=' &nbsp; ';
 
@@ -1880,6 +1906,7 @@ else
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
+					$arrayselected=array();
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
@@ -1894,6 +1921,7 @@ else
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, null, null, null, 1);
 					$c = new Categorie($db);
 					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
+					$arrayselected=array();
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
@@ -1973,7 +2001,7 @@ else
     }
     else
     {
-        /*
+    	/*
          * View
          */
 
@@ -2002,10 +2030,10 @@ else
 			    )
 		    );
 
-		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 200);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
 	    }
 
-        dol_htmloutput_errors($error,$errors);
+        dol_htmloutput_mesg(is_numeric($error)?'':$error, $errors, 'error');
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -2404,175 +2432,74 @@ else
         /*
          *  Actions
          */
-        print '<div class="tabsAction">'."\n";
+        if ($action != 'presend')
+        {
+	        print '<div class="tabsAction">'."\n";
 
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
-		{
-			$at_least_one_email_contact = false;
-			$TContact = $object->contact_array_objects();
-			foreach ($TContact as &$contact)
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
 			{
-				if (!empty($contact->email))
+				$at_least_one_email_contact = false;
+				$TContact = $object->contact_array_objects();
+				foreach ($TContact as &$contact)
 				{
-					$at_least_one_email_contact = true;
-					break;
+					if (!empty($contact->email))
+					{
+						$at_least_one_email_contact = true;
+						break;
+					}
 				}
+
+		        if (! empty($object->email) || $at_least_one_email_contact)
+		        {
+		        	$langs->load("mails");
+		        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+		        }
+		        else
+				{
+		        	$langs->load("mails");
+		       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+		        }
+
+		        if ($user->rights->societe->creer)
+		        {
+		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		        }
+
+		        if ($user->rights->societe->supprimer)
+		        {
+		        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+		        }
+
+		        if ($user->rights->societe->supprimer)
+		        {
+		            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
+		            {
+		                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+		            }
+		            else
+					{
+		                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+		            }
+		        }
 			}
 
-	        if (! empty($object->email) || $at_least_one_email_contact)
-	        {
-	        	$langs->load("mails");
-	        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
-	        }
-	        else
-			{
-	        	$langs->load("mails");
-	       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
-	        }
-
-	        if ($user->rights->societe->creer)
-	        {
-	            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
-	        }
-
-	        if ($user->rights->societe->supprimer)
-	        {
-	        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
-	        }
-
-	        if ($user->rights->societe->supprimer)
-	        {
-	            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
-	            {
-	                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-	            }
-	            else
-				{
-	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
-	            }
-	        }
-		}
-
-        print '</div>'."\n";
+	        print '</div>'."\n";
+        }
 
         //Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
 			$action = 'presend';
 		}
-		if ($action == 'presend')
+
+		if ($action != 'presend')
 		{
-			/*
-			 * Affiche formulaire mail
-			*/
-
-			// By default if $action=='presend'
-			$titreform='SendMail';
-			$topicmail='';
-			$action='send';
-			$modelmail='thirdparty';
-
-    		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-    		print '<div class="clearboth"></div>';
-    		print '<br>';
-			print load_fiche_titre($langs->trans($titreform));
-
-			dol_fiche_head();
-
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->default_lang;
-
-			// Cree l'objet formulaire mail
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
-            $formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
-
-            if($formmail->fromtype === 'user'){
-                $formmail->fromid = $user->id;
-
-            }
-			$formmail->trackid='thi'.$object->id;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-			{
-				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'thi'.$object->id);
-			}
-			$formmail->withfrom=1;
-			$formmail->withtopic=1;
-			$liste=array();
-			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
-			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
-			$formmail->withtofree=1;
-			$formmail->withtocc=$liste;
-			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withfile=2;
-			$formmail->withbody=1;
-			$formmail->withdeliveryreceipt=1;
-			$formmail->withcancel=1;
-			// Tableau des substitutions
-			//$formmail->setSubstitFromObject($object);
-			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;
-			$formmail->substit['__SIGNATURE__']=$user->signature;
-			$formmail->substit['__PERSONALIZED__']='';
-			$formmail->substit['__CONTACTCIVNAME__']='';
-
-			//Find the good contact adress
-			/*
-			$custcontact='';
-			$contactarr=array();
-			$contactarr=$object->liste_contact(-1,'external');
-
-			if (is_array($contactarr) && count($contactarr)>0)
-			{
-			foreach($contactarr as $contact)
-			{
-			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
-
-			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-
-			$contactstatic=new Contact($db);
-			$contactstatic->fetch($contact['id']);
-			$custcontact=$contactstatic->getFullName($langs,1);
-			}
-			}
-
-			if (!empty($custcontact)) {
-			$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
-			}
-			}*/
-
-
-			// Tableau des parametres complementaires du post
-			$formmail->param['action']=$action;
-			$formmail->param['models']=$modelmail;
-			$formmail->param['models_id']=GETPOST('modelmailselected','int');
-			$formmail->param['socid']=$object->id;
-			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
-
-			// Init list of files
-			if (GETPOST("mode")=='init')
-			{
-				$formmail->clear_attached_files();
-				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
-			}
-			print $formmail->get_form();
-
-			dol_fiche_end();
-		}
-		else
-		{
+			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
-				print '<div class="fichecenter"><div class="fichehalfleft">';
-	            print '<a name="builddoc"></a>'; // ancre
+				print '<a name="builddoc"></a>'; // ancre
 
 	            /*
 	             * Documents generes
@@ -2582,38 +2509,54 @@ else
 	            $genallowed=$user->rights->societe->lire;
 	            $delallowed=$user->rights->societe->creer;
 
-	            $var=true;
-
 	            print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
-
-				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-
-				print '</div></div></div>';
-
-	            print '<br>';
 	        }
 
-	        print '<div class="fichecenter"><br></div>';
+			// Subsidiaries list
+			if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
+			{
+				$result=show_subsidiaries($conf,$langs,$db,$object);
+			}
 
-	        // Subsidiaries list
-	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
-	        {
-	           $result=show_subsidiaries($conf,$langs,$db,$object);
-	        }
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	        // Contacts list
-	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-	        {
-	            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-	        }
+			$MAXEVENT = 10;
 
-	        // Addresses list
-	        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-	        {
-	        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-	        }
+			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id.'">';
+			$morehtmlright.= $langs->trans("SeeAll");
+			$morehtmlright.= '</a>';
+
+			// List of actions on element
+			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, '', $socid, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for thirdparty
+
+			print '</div></div></div>';
+
+			if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD))
+			{
+				// Contacts list
+				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+				{
+					$result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+
+				// Addresses list
+				if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+				{
+					$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+				}
+			}
 		}
+
+		// Presend form
+		$modelmail='thirdparty';
+		$defaulttopic='Information';
+		$diroutput = $conf->societe->dir_output;
+		$trackid = 'thi'.$object->id;
+
+		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+
     }
 }
 

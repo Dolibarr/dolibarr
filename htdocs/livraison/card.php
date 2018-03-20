@@ -54,7 +54,7 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage');
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -165,7 +165,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	{
 		$db->commit();
 		if (! empty($backtopage)) header("Location: ".$backtopage);
-		else header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+		else header("Location: ".DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
@@ -207,7 +207,9 @@ if ($action == 'update_extras')
 		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook)) {
 			$result = $object->insertExtraFields();
-			if ($result < 0) {
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		} else if ($reshook < 0)
@@ -380,7 +382,7 @@ else
 			}
 
 			// Shipment card
-			$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlref='<div class="refidno">';
 			// Ref customer shipment

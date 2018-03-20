@@ -26,7 +26,7 @@
  *
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
- *  MEMBER_NEWFORM_EDITAMOUNT           Amount can be edited
+ *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
@@ -299,11 +299,39 @@ if ($action == 'add')
 
             if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
             {
-                if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
+                if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all')
+                {
+                    $urlback=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
+                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+                    {
+                        if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
+                        {
+                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        }
+                        else
+                        {
+                            $urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+                        }
+                    }
+                }
+            	else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+                    if (! empty($conf->global->PAYBOX_SECURITY_TOKEN))
+                    {
+                    	if (! empty($conf->global->PAYBOX_SECURITY_TOKEN_UNIQUE))
+                    	{
+                    		$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYBOX_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	}
+                    	else
+                    	{
+                    		$urlback.='&securekey='.urlencode($conf->global->PAYBOX_SECURITY_TOKEN);
+                    	}
+                    }
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
@@ -544,7 +572,7 @@ foreach($extrafields->attribute_label as $key=>$value)
 // Comments
 print '<tr>';
 print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private')).'</textarea></td>';
+print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private','none')).'</textarea></td>';
 print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example

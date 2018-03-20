@@ -78,7 +78,7 @@ if ($id > 0 || ! empty($ref))
 
     // Contract card
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
     $morehtmlref='';
@@ -143,7 +143,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border" width="100%">';
 
-     
+
     // Ligne info remises tiers
     print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
     if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
@@ -165,9 +165,9 @@ if ($id > 0 || ! empty($ref))
     print '</tr>';
 
 	print "</table>";
-	
+
 	print '</div>';
-	
+
 	//print '<br>';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';

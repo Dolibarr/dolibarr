@@ -57,3 +57,4 @@ ErrorInsertingComment=كان هناك خطأ أثناء إدخال تعليقك
 MoreChoices=إدخال المزيد من الخيارات للناخبين
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=قد ملأت%s خط. يمكنك العثور على استطلاع الرأي الخاص بك على الرابط:٪ الصورة
+ShowSurvey=Show survey

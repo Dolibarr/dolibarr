@@ -32,10 +32,11 @@ $servicename='PayBox';
 $langs->load("admin");
 $langs->load("other");
 $langs->load("paybox");
+$langs->load("paypal");
 
 if (!$user->admin)
   accessforbidden();
-  
+
 $action = GETPOST('action','alpha');
 
 
@@ -53,17 +54,24 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",GETPOST('PAYBOX_PBX_IDENTIFIANT','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYBOX_CREDITOR",GETPOST('PAYBOX_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",GETPOST('PAYBOX_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_OK",GETPOST('PAYBOX_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK",GETPOST('ONLINE_PAYMENT_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_KO",GETPOST('PAYBOX_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO",GETPOST('ONLINE_PAYMENT_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_PAYONLINE_SENDEMAIL",GETPOST('PAYBOX_PAYONLINE_SENDEMAIL'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL",GETPOST('ONLINE_PAYMENT_SENDEMAIL'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	
+	// Payment token for URL
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN",GETPOST('PAYMENT_SECURITY_TOKEN','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE",GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE','alpha'),'chaine',0,'',$conf->entity);
+	if (! $result > 0) $error++;
+
     if (! $error)
   	{
   		$db->commit();
@@ -90,7 +98,7 @@ if (empty($conf->global->PAYBOX_IBS_DEVISE)) $conf->global->PAYBOX_IBS_DEVISE=$I
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'title_setup');
 
 $h = 0;
@@ -170,36 +178,55 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("VendorName").'</td><td>';
-print '<input size="64" type="text" name="PAYBOX_CREDITOR" value="'.$conf->global->PAYBOX_CREDITOR.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.$conf->global->ONLINE_PAYMENT_CREDITOR.'">';
 print '<br>'.$langs->trans("Example").': '.$mysoc->name;
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="PAYBOX_CSS_URL" value="'.$conf->global->PAYBOX_CSS_URL.'">';
+print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
 print '<br>'.$langs->trans("Example").': http://mysite/mycss.css';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
+print $langs->trans("MessageForm").'</td><td>';
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM',$conf->global->ONLINE_PAYMENT_MESSAGE_FORM,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor->Create();
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('PAYBOX_MESSAGE_OK',$conf->global->PAYBOX_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK',$conf->global->ONLINE_PAYMENT_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('PAYBOX_MESSAGE_KO',$conf->global->PAYBOX_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO',$conf->global->ONLINE_PAYMENT_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("PAYBOX_PAYONLINE_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="PAYBOX_PAYONLINE_SENDEMAIL" value="'.$conf->global->PAYBOX_PAYONLINE_SENDEMAIL.'">';
+print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
+print '<input size="32" type="email" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '</td></tr>';
+
+// Payment token for URL
+print '<tr class="oddeven"><td>';
+print $langs->trans("SecurityToken").'</td><td>';
+print '<input size="48" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.$conf->global->PAYMENT_SECURITY_TOKEN.'">';
+if (! empty($conf->use_javascript_ajax))
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("SecurityTokenIsUnique").'</td><td>';
+print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE),1);
 print '</td></tr>';
 
 print '</table>';
@@ -212,33 +239,7 @@ print '</form>';
 
 print '<br><br>';
 
-print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
-print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
-print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?amount=<i>9.99</i>&tag=<i>your_free_tag</i></b>'."<br>\n";
-if (! empty($conf->commande->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=order&ref=<i>order_ref</i></b>'."<br>\n";
-}
-if (! empty($conf->facture->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=invoice&ref=<i>invoice_ref</i></b>'."<br>\n";
-//	print $langs->trans("SetupPayBoxToHavePaymentCreatedAutomatically",$langs->transnoentitiesnoconv("FeatureNotYetAvailable"))."<br>\n";
-}
-if (! empty($conf->contrat->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=contractline&ref=<i>contractline_ref</i></b>'."<br>\n";
-}
-if (! empty($conf->adherent->enabled))
-{
-	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
-	print '<b>'.DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?source=membersubscription&ref=<i>member_ref</i></b>'."<br>\n";
-}
-
-print info_admin($langs->trans("YouCanAddTagOnUrl"));
+include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
 llxFooter();
-
 $db->close();

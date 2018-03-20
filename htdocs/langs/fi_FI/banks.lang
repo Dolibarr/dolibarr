@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Pankki
 MenuBankCash=Pankki / Käteinen
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Pankin nimi
 FinancialAccount=Tili
 BankAccount=Pankkitili
@@ -87,6 +89,7 @@ AccountIdShort=Numero
 LineRecord=Tapahtuma
 AddBankRecord=Lisää merkintä
 AddBankRecordLong=Lisää mernkintä manuaalisesti
+Conciliated=Täsmäytetty
 ConciliatedBy=Sovetteli
 DateConciliating=Sovittelupäivä
 BankLineConciliated=Merkintä täsmäytetty
@@ -155,3 +158,6 @@ NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
 ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

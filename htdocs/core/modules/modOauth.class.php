@@ -52,7 +52,8 @@ class modOauth extends DolibarrModules
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable OAuth authentication";
-        $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+        $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
         $this->special = 1;
@@ -138,6 +139,8 @@ class modOauth extends DolibarrModules
         // Clean before activation
         $this->remove($options);
 
-        return $this->_init($sql,$options);
+        $sql = array();
+
+        return $this->_init($sql, $options);
     }
 }

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Modul de configurare a Stripe
-StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Plătiți cu cardul de credit sau Stripe
 FollowingUrlAreAvailableToMakePayments=Ca urmare a URL-uri sunt disponibile pentru a oferi o pagină de la un client pentru a face o plată pe Dolibarr obiecte
 PaymentForm=Formă de plată
@@ -12,7 +12,7 @@ YourEMail=E-mail de confirmare de plată
 STRIPE_PAYONLINE_SENDEMAIL=E-mail pentru avertizare după o plată (realizată sau nu)
 Creditor=Creditor
 PaymentCode=Cod Plata
-StripeDoPayment=Du-te la plată
+StripeDoPayment=Pay with Credit or Debit Card (Stripe)
 YouWillBeRedirectedOnStripe=Veți fi redirecționat pe pagina Stripe securizată pentru a vă introduce informațiile despre cardul de credit
 Continue=Următor
 ToOfferALinkForOnlinePayment=URL-ul pentru plata %s
@@ -31,8 +31,6 @@ InformationToFindParameters=Ajutor pentru a găsi informaţiile dvs. de cont %s
 STRIPE_CGI_URL_V2=Adresa URL a modulului CGI Stripe pentru plată
 VendorName=Numele vânzătorului
 CSSUrlForPaymentForm=CSS foaie de URL-ul de stil pentru forma de plată
-MessageOK=Mesaj de pe pagina de întoarcere a platii validate
-MessageKO=Mesaj de pe pagina anulat schimbul de plată
 NewStripePaymentReceived=Plata noua Stripe incasata
 NewStripePaymentFailed=Plata noua Stripe incercata dar esuata
 STRIPE_TEST_SECRET_KEY=Cheie de testare secreta

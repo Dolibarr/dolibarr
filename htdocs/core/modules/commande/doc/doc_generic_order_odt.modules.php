@@ -163,7 +163,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
    			}
    			$texte.='<div id="div_'.get_class($this).'">';
 		}
-		
+
 		$texte.= '</td>';
 
 		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
@@ -275,9 +275,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				dol_mkdir($conf->commande->dir_temp);
 
 
-				// If BILLING contact defined on invoice, we use it
+				// If CUSTOMER contact defined on order, we use it
 				$usecontact=false;
-				$arrayidcontact=$object->getIdContact('external','BILLING');
+				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 				if (count($arrayidcontact) > 0)
 				{
 					$usecontact=true;
@@ -289,7 +289,11 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				{
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->thirdparty;
+					else {
+                        $socobject = $object->thirdparty;
+               			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+            			$contactobject = $object->contact;
+                    }
 				}
 				else
 				{
@@ -356,11 +360,15 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
+                // retrieve contact information for use in order as contact_xxx tags
+        		$array_thirdparty_contact = array();
+        		if ($usecontact)
+            			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other);
+				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
-				
+
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -384,30 +392,42 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				// Replace tags of lines
 				try
 				{
-					$listlines = $odfHandler->setSegment('lines');
-					foreach ($object->lines as $line)
-					{
-						$tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
-						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
-						// Call the ODTSubstitutionLine hook
-						$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
-						$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-						foreach($tmparray as $key => $val)
-						{
-							try
-							{
-								$listlines->setVars($key, $val, true, 'UTF-8');
-							}
-							catch(OdfException $e)
-							{
-							}
-							catch(SegmentException $e)
-							{
-							}
-						}
-						$listlines->merge();
+					$foundtagforlines = 1;
+					try {
+						$listlines = $odfHandler->setSegment('lines');
 					}
-					$odfHandler->mergeSegment($listlines);
+					catch(OdfException $e)
+					{
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					}
+					if ($foundtagforlines)
+					{
+						foreach ($object->lines as $line)
+						{
+							$tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
+							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+							// Call the ODTSubstitutionLine hook
+							$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
+							$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+							foreach($tmparray as $key => $val)
+							{
+								try
+								{
+									$listlines->setVars($key, $val, true, 'UTF-8');
+								}
+								catch(OdfException $e)
+								{
+								}
+								catch(SegmentException $e)
+								{
+								}
+							}
+							$listlines->merge();
+						}
+						$odfHandler->mergeSegment($listlines);
+					}
 				}
 				catch(OdfException $e)
 				{
@@ -458,6 +478,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$odfHandler=null;	// Destroy object
+
+				$this->result = array('fullpath'=>$file);
 
 				return 1;   // Success
 			}

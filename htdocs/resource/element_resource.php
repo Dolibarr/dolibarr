@@ -108,7 +108,7 @@ if ($action == 'add_element_resource' && ! $cancel)
 }
 
 // Update ressource
-if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel') )
+if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel','alpha') )
 {
 	$res = $object->fetch_element_resource($lineid);
 	if($res)
@@ -201,18 +201,17 @@ else
 			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
-			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
+			$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out='';
-			$out.=img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
-			$out.='<br>';
-			$out.=img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
-			$out.=img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
-			$out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
+			$out.='</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
 			$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 
 			$linkback.=$out;
@@ -238,13 +237,13 @@ else
 		        }
 			}
 			$morehtmlref.='</div>';
-			
+
 			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
 			print '<div class="fichecenter">';
-				
+
 			print '<div class="underbanner clearboth"></div>';
-				
+
 			print '<table class="border" width="100%">';
 
 			// Type
@@ -301,21 +300,23 @@ else
 					$listofuserid=json_decode($_SESSION['assignedtouser'], true);
 				}
 			}
+			$listofcontactid=array();	// not used yet
+			$listofotherid=array();	// not used yet
 			print '<div class="assignedtouser">';
-			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($act->datep != $act->datef)?1:0, $listofuserid, $listofcontactid, $listofotherid);
 			print '</div>';
-			if (in_array($user->id,array_keys($listofuserid)))
+			/*if (in_array($user->id,array_keys($listofuserid)))
 			{
 				print '<div class="myavailability">';
 				print $langs->trans("MyAvailability").': '.(($act->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 				print '</div>';
-			}
+			}*/
 			print '	</td></tr>';
 
 			print '</table>';
 
 			print '</div>';
-			
+
 			dol_fiche_end();
 		}
 	}
@@ -364,16 +365,16 @@ else
         $fichinter = new Fichinter($db);
         $fichinter->fetch($element_id, $element_ref);
         $fichinter->fetch_thirdparty();
-        
-		if (is_object($fichinter)) 
+
+		if (is_object($fichinter))
 		{
 			$head=fichinter_prepare_head($fichinter);
 			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"), -1, 'intervention');
 
 			// Intervention card
 			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-			
-			
+
+
 			$morehtmlref='<div class="refidno">';
 			// Ref customer
 			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -414,9 +415,9 @@ else
 				}
 			}
 			$morehtmlref.='</div>';
-			
+
 			dol_banner_tab($fichinter, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '&element='.$element, 0, '', '', 1);
-			
+
 			dol_fiche_end();
 		}
 	}
@@ -440,7 +441,7 @@ else
 		{
 			$element_prop = getElementProperties($resource_obj);
 
-			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
+			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br>';
 
 			$path = '';
 			if(strpos($resource_obj,'@'))

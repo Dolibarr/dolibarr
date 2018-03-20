@@ -531,7 +531,11 @@ class modFournisseur extends DolibarrModules
 					case 'sellist':
 						$tmp='';
 						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+							$tmpparam_param_key=array_keys($tmpparam['options']);
+							$tmp=array_shift($tmpparam_param_key);
+						}
 						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 						break;
 				}

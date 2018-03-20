@@ -35,7 +35,7 @@ $allowinstall = 0;
 $allowupgrade = false;
 $checksok = 1;
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):$langs->getDefaultLang();
+$setuplang=GETPOST("selectlang",'az09',3)?GETPOST("selectlang",'az09',3):$langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
@@ -345,6 +345,10 @@ else
 			$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 			$conf->setValues($db);
+			// Reset forced setup after the setValues
+			if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+			$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
 			$dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL)?$conf->global->MAIN_VERSION_LAST_INSTALL:''));
@@ -365,7 +369,7 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
-        print '<br /><br />';
+        print '<br><br>';
 
 		$foundrecommandedchoice=0;
 
@@ -424,7 +428,8 @@ else
 		                        array('from'=>'3.8.0', 'to'=>'3.9.0'),
 		                        array('from'=>'3.9.0', 'to'=>'4.0.0'),
 		                        array('from'=>'4.0.0', 'to'=>'5.0.0'),
-		                        array('from'=>'5.0.0', 'to'=>'6.0.0')
+		                        array('from'=>'5.0.0', 'to'=>'6.0.0'),
+		                        array('from'=>'6.0.0', 'to'=>'7.0.0')
 		);
 
 		$count=0;
@@ -533,13 +538,13 @@ else
 
         if (count($notavailable_choices)) {
 
-            print '<br />';
+            print '<br>';
             print '<div id="AShowChoices">';
             print '<img src="../theme/eldy/img/1downarrow.png"> <a href="#">'.$langs->trans('ShowNotAvailableOptions').'</a>';
             print '</div>';
 
             print '<div id="navail_choices" style="display:none">';
-            print '<br />';
+            print '<br>';
             print '<table width="100%" class="listofchoices">';
             foreach ($notavailable_choices as $choice) {
                 print $choice;

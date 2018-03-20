@@ -18,313 +18,297 @@
  */
 
 /**
- * \file      accountancy/class/bookkeeping.class.php
- * \ingroup   Accounting Expert
- * \brief     Fichier de la classe des comptes comptable
+ * \file accountancy/class/bookkeeping.class.php
+ * \ingroup Advanced accountancy
+ * \brief 	File of class for lettering
  */
-
-include_once DOL_DOCUMENT_ROOT."/accountancy/class/bookkeeping.class.php";
-include_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
-include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
-
+include_once DOL_DOCUMENT_ROOT . "/accountancy/class/bookkeeping.class.php";
+include_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
+include_once DOL_DOCUMENT_ROOT . "/core/lib/date.lib.php";
 
 /**
  * Class lettering
  */
 class lettering extends BookKeeping
 {
-    /**
-     * lettrageTiers
-     *
-     * @param   int   $socid      Thirdparty id
-     * @return  void
-     */
-	public function lettrageTiers($socid) {
+	/**
+	 * lettrageTiers
+	 *
+	 * @param int $socid Thirdparty id
+	 * @return void
+	 */
+	public function lettrageTiers($socid)
+	{
+		global $conf;
 
-		$db = $this->db;
+		$error = 0;
 
 		$object = new Societe($this->db);
 		$object->id = $socid;
 		$object->fetch($socid);
 
-
-		if( $object->code_compta == '411CUSTCODE')
+		if ($object->code_compta == '411CUSTCODE') {
 			$object->code_compta = '';
-
-		if( $object->code_compta_fournisseur == '401SUPPCODE')
-			$object->code_compta_fournisseur = '';
-
-
-
-		$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.lettering_code, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
-			$sql .= " WHERE code_journal = 'BQ' AND  ( ";
-		if(!empty($object->code_compta)  )
-			$sql .= "  bk.code_tiers = '" . $object->code_compta . "'  ";
-		if(!empty($object->code_compta) &&  !empty($object->code_compta_fournisseur) )
-			$sql .= "  OR  ";
-		if(!empty($object->code_compta_fournisseur)  )
-		$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
-
-		$sql .= " ) AND ( bk.date_lettering ='' OR bk.date_lettering IS NULL ) AND bk.lettering_code  !='' ";
-
-		$sql .= " GROUP BY bk.lettering_code  ";
-
-
-		$resql = $db->query ( $sql );
-		if ($resql) {
-			$num = $db->num_rows ( $resql );
-			$i = 0;
-
-			while ( $i < $num ) {
-				$obj = $db->fetch_object ( $resql );
-				$i++;
-
-					$sql = "SELECT  bk.rowid  ";
-					$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
-					$sql .= " WHERE  bk.lettering_code = '".$obj->lettering_code."' ";
-										$sql .= " AND ( ";
-						if(!empty($object->code_compta)  )
-							$sql .= "  bk.code_tiers = '" . $object->code_compta . "'  ";
-						if(!empty($object->code_compta) &&  !empty($object->code_compta_fournisseur) )
-							$sql .= "  OR  ";
-						if(!empty($object->code_compta_fournisseur)  )
-							$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
-						$sql .= " )  ";
-// echo $sql;
-					$resql2 = $db->query ( $sql );
-					if ($resql2) {
-						$num2 = $db->num_rows ( $resql2 );
-						$i2 = 0;
-						$ids = array();
-						while ( $i2 < $num2 ) {
-							$obj2 = $db->fetch_object ( $resql2 );
-							$i2++;
-							$ids[] = $obj2->rowid;
-						}
-
-
-						if(count($ids)  > 1 ){
-							$result =  $this->updatelettrage($ids);
-
-						// 	var_dump($result);
-// 							if( $result < 0 ){
-// 								setEventMessages('', $BookKeeping->errors, 'errors' );
-// 								$error++;
-//
-// 							}
-						}
-					}
-			}
 		}
 
+		if ($object->code_compta_fournisseur == '401SUPPCODE') {
+			$object->code_compta_fournisseur = '';
+		}
 
 		/**
-			Prise en charge des lettering complexe avec prelevment , virement
-		*/
-		$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering, bu.url_id , bu.type ";
+		 * Prise en charge des lettering complexe avec prelevment , virement
+		 */
+		$sql = "SELECT DISTINCT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.subledger_account, ";
+		$sql .= " bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant ";
+		$sql .= " , bk.sens , bk.code_journal , bk.piece_num, bk.date_lettering, bu.url_id , bu.type ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  " . MAIN_DB_PREFIX . "bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
-		$sql .= " WHERE code_journal = 'BQ' AND  ( ";
-		if(!empty($object->code_compta)  )
-			$sql .= "  bk.code_tiers = '" . $object->code_compta . "'  ";
-		if(!empty($object->code_compta) &&  !empty($object->code_compta_fournisseur) )
+		$sql .= " WHERE   ( ";
+		if (! empty($object->code_compta))
+			$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
+		if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur))
 			$sql .= "  OR  ";
-		if(!empty($object->code_compta_fournisseur)  )
-		$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
+		if (! empty($object->code_compta_fournisseur))
+			$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 
-		$sql .= " ) AND date_lettering ='' ";
-		$sql .= " GROUP BY bk.lettering_code  ";
+		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
+		$sql .= "  AND (bk.lettering_code != '' OR bk.lettering_code IS NULL) ";
+		$sql .= $this->db->order('bk.doc_date', 'DESC');
 
-// 		echo $sql;
-//
-		$resql = $db->query ( $sql );
+		// echo $sql;
+		//
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows ( $resql );
-			$i = 0;
+			$num = $this->db->num_rows($resql);
 
-			while ( $i < $num ) {
-				$obj = $db->fetch_object ( $resql );
+			while ($obj = $this->db->fetch_object($resql) ) {
 				$ids = array();
-				$i++;
+				$ids_fact = array();
 
-	// 			print_r($obj);
-
-
-
-					if($obj->type =='payment_supplier' ) {
-						$ids[] = $obj->rowid;
-
-					$sql= 'SELECT bk.rowid, facf.ref, facf.ref_supplier, payf.fk_bank ';
-					$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
-					$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
-					$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
-					$sql.= " INNER JOIN " .MAIN_DB_PREFIX .  "accounting_bookkeeping as bk ON(  bk.fk_doc = facf.ref) ";
-	// 				$sqlmid.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as soc ON  soc.rowid=facf.fk_soc";
-	// 				$sqlmid.= " INNER JOIN " . MAIN_DB_PREFIX . "c_paiement as payc ON  payc.id=payf.fk_paiement";
-						$sql .= " WHERE 1   ";
-						$sql .= "   AND  fk_paiementfourn = '".$obj->url_id."' ";
-	// 					$sql .= " AND (bk.numero_compte = '" . $object->code_compta . "' OR  bk.numero_compte = '" . $object->code_compta_fournisseur . "') ";
-						$sql .= " AND ( ";
-						if(!empty($object->code_compta)  )
-							$sql .= "  bk.code_tiers = '" . $object->code_compta . "'  ";
-						if(!empty($object->code_compta) &&  !empty($object->code_compta_fournisseur) )
-							$sql .= "  OR  ";
-						if(!empty($object->code_compta_fournisseur)  )
-							$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
-						$sql .= " )  ";
-	// 					echo $sql;
-	// 					exit;
+				if ($obj->type == 'payment_supplier')
+				{
+					$sql = 'SELECT DISTINCT bk.rowid, facf.ref, facf.ref_supplier, payf.fk_bank, facf.rowid as fact_id';
+					$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = payf.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
+					$sql .= " WHERE payfacf.fk_paiementfourn = '" . $obj->url_id . "' ";
+					$sql .= " AND facf.entity = ".$conf->entity;
+					$sql .= " AND code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
+					$sql .= " AND ( ";
+					if (! empty($object->code_compta)) {
+						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 					}
-					elseif($obj->type =='payment' ){
-						$ids[] = $obj->rowid;
-
-						$sql= 'SELECT bk.rowid,fac.facnumber , pay.fk_bank ';
-						$sql.= " FROM " . MAIN_DB_PREFIX . "facture fac ";
-						$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
-						$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
-						$sql.= " INNER JOIN " .MAIN_DB_PREFIX .  "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid) ";
-						$sql .= " WHERE 1   ";
-						$sql .= "   AND   payfac.fk_paiement = '".$obj->url_id."' ";
-						$sql .= " AND ( ";
-						if(!empty($object->code_compta)  )
-							$sql .= "  bk.code_tiers = '" . $object->code_compta . "'  ";
-						if(!empty($object->code_compta) &&  !empty($object->code_compta_fournisseur) )
-							$sql .= "  OR  ";
-						if(!empty($object->code_compta_fournisseur)  )
-							$sql .= "   bk.code_tiers = '" . $object->code_compta_fournisseur . "' ";
-						$sql .= " )  ";
-
-	// 					echo $sql;
+					if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+						$sql .= "  OR  ";
 					}
+					if (! empty($object->code_compta_fournisseur)) {
+						$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
+					}
+					$sql .= " )  ";
 
-
-
-					$resql2 = $db->query ( $sql );
+					$resql2 = $this->db->query($sql);
 					if ($resql2) {
-						$num2 = $db->num_rows ( $resql2 );
-						$i2 = 0;
-
-						while ( $i2 < $num2 ) {
-							$obj2 = $db->fetch_object ( $resql2 );
-							$i2++;
-							$ids[] = $obj2->rowid;
+						while ( $obj2 = $this->db->fetch_object($resql2) ) {
+							$ids[$obj2->rowid] = $obj2->rowid;
+							$ids_fact[] = $obj2->fact_id;
 						}
-
-	// 					print_r($ids);
-	// 					exit;
-						if(count($ids)  > 1 ){
-							$result =  $this->updatelettrage($ids);
-
-	// 						var_dump($result);
-// 							if( $result < 0 ){
-// 								setEventMessages('', $BookKeeping->errors, 'errors' );
-// 								$error++;
-//
-// 							}
-						}
-
-	// 					exit;
+					} else {
+						$this->errors[] = $this->db->lasterror;
+						return - 1;
 					}
+					if (count($ids_fact)) {
+						$sql = 'SELECT bk.rowid, facf.ref, facf.ref_supplier ';
+						$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn facf ";
+						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (" . implode(',', $ids_fact) . "))";
+						$sql .= " WHERE bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
+						$sql .= " AND facf.entity = ".$conf->entity;
+						$sql .= " AND ( ";
+						if (! empty($object->code_compta)) {
+							$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
+						}
+						if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+							$sql .= "  OR  ";
+						}
+						if (! empty($object->code_compta_fournisseur)) {
+							$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
+						}
+						$sql .= " )  ";
+
+						$resql2 = $this->db->query($sql);
+						if ($resql2) {
+							while ( $obj2 = $this->db->fetch_object($resql2) ) {
+								$ids[$obj2->rowid] = $obj2->rowid;
+							}
+						} else {
+							$this->errors[] = $this->db->lasterror;
+							return - 1;
+						}
+					}
+				} elseif ($obj->type == 'payment') {
+
+					$sql = 'SELECT DISTINCT bk.rowid, fac.ref, fac.ref, pay.fk_bank, fac.rowid as fact_id';
+					$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
+					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
+					$sql .= " WHERE payfac.fk_paiement = '" . $obj->url_id . "' ";
+					$sql .= " AND bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
+					$sql .= " AND fac.entity = ".$conf->entity;
+					$sql .= " AND ( ";
+					if (! empty($object->code_compta)) {
+						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
+					}
+					if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+						$sql .= "  OR  ";
+					}
+					if (! empty($object->code_compta_fournisseur)) {
+						$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
+					}
+					$sql .= " )  ";
+
+					$resql2 = $this->db->query($sql);
+					if ($resql2) {
+						while ( $obj2 = $this->db->fetch_object($resql2) ) {
+							$ids[$obj2->rowid] = $obj2->rowid;
+							$ids_fact[] = $obj2->fact_id;
+						}
+					} else {
+						$this->errors[] = $this->db->lasterror;
+						return - 1;
+					}
+					if (count($ids_fact)) {
+						$sql = 'SELECT bk.rowid, fac.ref, fac.ref_supplier ';
+						$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
+						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (" . implode(',', $ids_fact) . "))";
+						$sql .= " WHERE code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
+						$sql .= " AND fac.entity = ".$conf->entity;
+						$sql .= " AND ( ";
+						if (! empty($object->code_compta)) {
+							$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
+						}
+						if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+							$sql .= "  OR  ";
+						}
+						if (! empty($object->code_compta_fournisseur)) {
+							$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
+						}
+						$sql .= " )  ";
+
+						$resql2 = $this->db->query($sql);
+						if ($resql2) {
+							while ( $obj2 = $this->db->fetch_object($resql2) ) {
+								$ids[$obj2->rowid] = $obj2->rowid;
+							}
+						} else {
+							$this->errors[] = $this->db->lasterror;
+							return - 1;
+						}
+					}
+				}
+
+				if (count($ids) > 1) {
+					$result = $this->updatelettrage($ids);
+				}
 			}
 		}
-
-
+		if ($error) {
+			foreach ( $this->errors as $errmsg ) {
+				dol_syslog(get_class($this) . "::" . __METHOD__ . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
+			return - 1 * $error;
+		} else {
+			return 1;
+		}
 	}
 
-
-	public function updatelettrage($ids, $notrigger=false){
+	/**
+	 *
+	 * @param array $ids ids array
+	 * @param boolean $notrigger no trigger
+ 	 * @return number
+	 */
+	public function updateLettrage($ids = array(), $notrigger = false)
+	{
 		$error = 0;
+		$lettre = 'AAA';
 
-		$sql = "SELECT lettering_code FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
-		$sql .= " lettering_code != '' GROUP BY lettering_code ORDER BY lettering_code DESC limit 1;  ";
-// 		echo $sql;
-		$result = $this->db->query ( $sql );
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
+
+		$sql = "SELECT DISTINCT lettering_code FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
+		$sql .= " lettering_code != '' ORDER BY lettering_code DESC limit 1;  ";
+
+		$result = $this->db->query($sql);
 		if ($result) {
-			$obj = $this->db->fetch_object ( $result );
-			$lettre = (empty($obj->lettering_code)? 'AAA' : $obj->lettering_code );
-			if(!empty($obj->lettering_code))
+			$obj = $this->db->fetch_object($result);
+			$lettre = (empty($obj->lettering_code) ? 'AAA' : $obj->lettering_code);
+			if (! empty($obj->lettering_code))
 				$lettre++;
-		}
-		else{
-			$this->errors[] = 'Error'.$this->db->lasterror();;
+		} else {
+			$this->errors[] = 'Error' . $this->db->lasterror();
 			$error++;
 		}
-// 			var_dump(__line__, $error);
 
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
-		$sql .= " rowid IN (".implode(',', $ids).") ";
-		$result = $this->db->query ( $sql );
+		$sql .= " rowid IN (" . implode(',', $ids) . ") ";
+		$result = $this->db->query($sql);
 		if ($result) {
-			$obj = $this->db->fetch_object ( $result );
-// 			print_r($obj);
-			if( !(round(abs($obj->deb),2) === round(abs($obj->cred),2)) ){
-// 				echo $sql;
-// 				print_r($obj);
-				$this->errors[] = 'Total not exacts '.round(abs($obj->deb),2).' vs '. round(abs($obj->cred),2);
+			$obj = $this->db->fetch_object($result);
+			if (! (round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
+				$this->errors[] = 'Total not exacts ' . round(abs($obj->deb), 2) . ' vs ' . round(abs($obj->cred), 2);
 				$error++;
 			}
-		}
-		else{
-			$this->errors[] = 'Erreur sql'.$this->db->lasterror();;
+		} else {
+			$this->errors[] = 'Erreur sql' . $this->db->lasterror();
 			$error++;
 		}
-
 
 		// Update request
 
 		$now = dol_now();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-		$sql.= " lettering_code='".$lettre."'";
-		$sql.= " , date_lettering = " .$now ;  // todo correct date it's false
-		$sql.= "  WHERE rowid IN (".implode(',', $ids).") ";
-// 		echo $sql ;
-//
-// 		var_dump(__line__, $error);
-// 		print_r($this->errors);
-// 		exit;
-		$this->db->begin();
+		if (! $error)
+		{
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+			$sql .= " lettering_code='" . $lettre . "'";
+			$sql .= " , date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
+			$sql .= "  WHERE rowid IN (" . implode(',', $ids) . ") ";
+			$this->db->begin();
 
-			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+			if (! $resql) {
+				$error++;
+				$this->errors[] = "Error " . $this->db->lasterror();
+			}
+		}
 
-			if (! $error)
-			{
-				if (! $notrigger)
-				{
-					// Uncomment this and change MYOBJECT to your own tag if you
-					// want this action calls a trigger.
+		if (! $error) {
+			if (! $notrigger) {
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action calls a trigger.
 
-					//// Call triggers
-					//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					//$interface=new Interfaces($this->db);
-					//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-					//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					//// End call triggers
-				}
+				// // Call triggers
+				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				// $interface=new Interfaces($this->db);
+				// $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// // End call triggers
 			}
-// 				var_dump(__line__, $error);
-			// Commit or rollback
-			if ($error)
-			{
-// 				foreach($this->errors as $errmsg)
-// 				{
-// 					dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-// 					$this->error.=($this->error?', '.$errmsg:$errmsg);
-// 				}
-				$this->db->rollback();
-// 				echo $this->error;
-// 						var_dump(__line__, $error);
-				return -1*$error;
+		}
+		// Commit or rollback
+		if ($error) {
+			foreach ( $this->errors as $errmsg ) {
+				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
-			else
-			{
-				$this->db->commit();
-				return 1;
-			}
+			$this->db->rollback();
+			return - 1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
-
 }
 

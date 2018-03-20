@@ -104,10 +104,10 @@ class modMargin extends DolibarrModules
 
 		// left menu entry
 		$this->menu[$r]=array(
-				'fk_menu'=>'fk_mainmenu=accountancy',			// Put 0 if this is a top menu
+				'fk_menu'=>'fk_mainmenu=billing',			// Put 0 if this is a top menu
     			'type'=>'left',			// This is a Top menu entry
     			'titre'=>'Margins',
-    			'mainmenu'=>'accountancy',
+    			'mainmenu'=>'billing',
     			'leftmenu'=>'margins',
     			'url'=>'/margin/index.php',
     			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

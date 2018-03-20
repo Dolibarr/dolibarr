@@ -29,7 +29,8 @@ class AccountingJournal extends CommonObject
 	public $element='accounting_journal';
 	public $table_element='accounting_journal';
 	public $fk_element = '';
-	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $picto = 'generic';
 
 	var $rowid;
 
@@ -58,6 +59,8 @@ class AccountingJournal extends CommonObject
 	 */
 	function fetch($rowid = null, $journal_code = null)
 	{
+		global $conf;
+
 		if ($rowid || $journal_code)
 		{
 			$sql = "SELECT rowid, code, label, nature, active";
@@ -65,8 +68,11 @@ class AccountingJournal extends CommonObject
 			$sql .= " WHERE";
 			if ($rowid) {
 				$sql .= " rowid = " . (int) $rowid;
-			} elseif ($journal_code) {
+			}
+			elseif ($journal_code)
+			{
 				$sql .= " code = '" . $this->db->escape($journal_code) . "'";
+				$sql .= " AND entity  = " . $conf->entity;
 			}
 
 			dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
@@ -187,9 +193,6 @@ class AccountingJournal extends CommonObject
 
 		$url = DOL_URL_ROOT . '/accountancy/admin/journals_list.php?id=35';
 
-		$picto = 'billr';
-		$label='';
-
 		$label = '<u>' . $langs->trans("ShowAccountingJournal") . '</u>';
 		if (! empty($this->code))
 			$label .= '<br><b>'.$langs->trans('Code') . ':</b> ' . $this->code;
@@ -223,9 +226,11 @@ class AccountingJournal extends CommonObject
 		$label_link = $this->code;
 		if ($withlabel) $label_link .= ' - ' . $this->label;
 
-		if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-		if ($withpicto && $withpicto != 2) $result .= ' ';
-		if ($withpicto != 2) $result.=$linkstart . $label_link . $linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $label_link;
+		$result .= $linkend;
+
 		return $result;
 	}
 

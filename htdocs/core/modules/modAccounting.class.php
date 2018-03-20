@@ -35,12 +35,12 @@ class modAccounting extends DolibarrModules
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
-     */
+	 */
 	function __construct($db)
 	{
 		global $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 		$this->numero = 50400;
 
 		$this->family = "financial";
@@ -56,14 +56,11 @@ class modAccounting extends DolibarrModules
 		$this->special = 0;
 		$this->picto = 'accounting';
 
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		// $this->triggers = 1;
-
 		// Data directories to create when module is enabled
 		$this->dirs = array('/accounting/temp');
 
 		// Config pages
-		$this->config_page_url = array('index.php@accountancy');
+		$this->config_page_url = array();
 
 		// Dependencies
 		$this->depends = array("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
@@ -74,132 +71,88 @@ class modAccounting extends DolibarrModules
 		$this->langfiles = array("accountancy","compta");
 
 		// Constants
+		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
+		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
+		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
+		// );
 		$this->const = array();
 		$this->const[1] = array(
 				"MAIN_COMPANY_CODE_ALWAYS_REQUIRED",
 				"chaine",
 				"1",
-				"With this constants on, third party code is always required whatever is numbering module behaviour"
+				"With this constants on, third party code is always required whatever is numbering module behaviour", 0, 'current', 0
 		);
 		$this->const[2] = array(
 				"MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED",
 				"chaine",
 				"1",
-				"With this constants on, bank account number is always required"
-		);
-		$this->const[1] = array(
-				"ACCOUNTING_EXPORT_SEPARATORCSV",
-				"string",
-				","
-		);
-		$this->const[2] = array(
-				"ACCOUNTING_ACCOUNT_SUSPENSE",
-				"chaine",
-				"471"
+				"With this constants on, bank account number is always required", 0, 'current', 1
 		);
 		$this->const[3] = array(
-				"ACCOUNTING_SELL_JOURNAL",
+				"ACCOUNTING_ACCOUNT_SUSPENSE",
 				"chaine",
-				"VTE"
+				"471",
+				"", 0, 'current', 0
 		);
 		$this->const[4] = array(
-				"ACCOUNTING_PURCHASE_JOURNAL",
-				"chaine",
-				"ACH"
-		);
-		$this->const[5] = array(
-				"ACCOUNTING_SOCIAL_JOURNAL",
-				"chaine",
-				"SOC"
-		);
-		$this->const[6] = array(
-				"ACCOUNTING_MISCELLANEOUS_JOURNAL",
-				"chaine",
-				"OD"
-		);
-		$this->const[7] = array(
 				"ACCOUNTING_ACCOUNT_TRANSFER_CASH",
 				"chaine",
-				"58"
+				"58",
+				"", 0, 'current', 0
 		);
-		$this->const[8] = array(
+		$this->const[5] = array(
 				"CHARTOFACCOUNTS",
 				"chaine",
-				"2"
+				"2",
+				"", 0, 'current', 0
 		);
-		$this->const[9] = array(
+		$this->const[6] = array(
 				"ACCOUNTING_EXPORT_MODELCSV",
 				"chaine",
-				"1"
+				"1",
+				"", 0, 'current', 0
 		);
-		$this->const[10] = array(
+		$this->const[7] = array(
 				"ACCOUNTING_LENGTH_GACCOUNT",
 				"chaine",
-				""
+				"",
+				"", 0, 'current', 0
 		);
-		$this->const[11] = array(
+		$this->const[8] = array(
 				"ACCOUNTING_LENGTH_AACCOUNT",
 				"chaine",
-				""
+				"",
+				"", 0, 'current', 0
 		);
-		$this->const[13] = array(
+		$this->const[9] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",
-				"1"
+				"1",
+				"", 0, 'current', 0
 		);
-		$this->const[14] = array(
+		$this->const[10] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
 				"yesno",
-				"1"
+				"1",
+				"", 0, 'current', 0
 		);
-		/*
-		$this->const[15] = array (
-				"ACCOUNTING_GROUPBYACCOUNT",
-				"yesno",
-				"1"
-		);
-		*/
-		$this->const[16] = array (
+		$this->const[11] = array (
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
-				"%d%m%Y"
+				"%d%m%Y",
+				"", 0, 'current', 0
 		);
-		/*
-		$this->const[17] = array (
-				"ACCOUNTING_EXPORT_PIECE",
-				"yesno",
-				"1"
+		$this->const[12] = array(
+				"ACCOUNTING_EXPORT_SEPARATORCSV",
+				"string",
+				",",
+				"", 0, 'current', 0
 		);
-		$this->const[18] = array (
-				"ACCOUNTING_EXPORT_GLOBAL_ACCOUNT",
-				"yesno",
-				"1"
-		);
-		$this->const[19] = array (
-				"ACCOUNTING_EXPORT_LABEL",
-				"yesno",
-				"1"
-		);
-		$this->const[20] = array (
-				"ACCOUNTING_EXPORT_AMOUNT",
-				"yesno",
-				"1"
-		);
-		$this->const[21] = array (
-				"ACCOUNTING_EXPORT_DEVISE",
-				"yesno",
-				"1"
-		);
-		*/
-		$this->const[22] = array(
-				"ACCOUNTING_EXPENSEREPORT_JOURNAL",
-				"chaine",
-				"ER"
-		);
-		$this->const[23] = array(
+		$this->const[13] = array(
 				"ACCOUNTING_EXPORT_FORMAT",
 				"chaine",
-				"csv"
+				"csv",
+				"", 0, 'current', 0
 		);
 
 		// Tabs

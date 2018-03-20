@@ -97,16 +97,16 @@ $formother=new FormOther($db);
 $tva_static = new Tva($db);
 $bankstatic = new Account($db);
 
-$sql = "SELECT t.rowid, t.amount, t.label, t.datev as dv, t.datep as dp, t.fk_typepayment as type, t.num_payment, t.fk_bank, pst.code as payment_code,";
+$sql = "SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.fk_typepayment as type, t.num_payment, t.fk_bank, pst.code as payment_code,";
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id AND pst.entity IN (".getEntity('c_paiement').")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-$sql.= " WHERE t.entity = ".$conf->entity;
-if ($search_ref)	$sql.=" AND t.rowid=".$search_ref;
-if ($search_label) 	$sql.=" AND t.label LIKE '%".$db->escape($search_label)."%'";
-if ($search_amount) $sql.=" AND t.amount='".$db->escape(price2num(trim($search_amount)))."'";
+$sql.= " WHERE t.entity IN (".getEntity('tax').")";
+if ($search_ref)	$sql.= natural_search("t.rowid", $search_ref);
+if ($search_label) 	$sql.= natural_search("t.label", $search_label);
+if ($search_amount) $sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($month > 0)
 {
@@ -192,8 +192,8 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("DateValue",$_SERVER["PHP_SELF"],"dv","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("DateValue",$_SERVER["PHP_SELF"],"t.datev","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"t.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
 	if (! empty($conf->banque->enabled)) print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
@@ -217,10 +217,13 @@ if ($result)
 
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
+
+		// Ref
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
-        print "<td>".dol_trunc($obj->label,40)."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dv),'day')."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
+        // Label
+		print "<td>".dol_trunc($obj->label,40)."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datev),'day')."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
         // Type
 		print $type;
 		// Account

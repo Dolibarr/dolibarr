@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
@@ -37,6 +37,7 @@ $langs->load("members");
 $rowid  = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
+$backtopage = GETPOST('backtopage','alpha');
 
 $search_lastname	= GETPOST('search_lastname','alpha');
 $search_login		= GETPOST('search_login','alpha');
@@ -64,6 +65,8 @@ $mail_valid=GETPOST("mail_valid");
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'adherent_type');
 
+$object = new AdherentType($db);
+
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -87,73 +90,113 @@ $hookmanager->initHooks(array('membertypecard','globalcard'));
  *	Actions
  */
 
+if ($cancel) {
+
+	$action='';
+
+	if (! empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
+}
+
 if ($action == 'add' && $user->rights->adherent->configurer)
 {
-	if (! $cancel)
+	$object->label			= trim($label);
+	$object->subscription	= (int) trim($subscription);
+	$object->note			= trim($comment);
+	$object->mail_valid		= trim($mail_valid);
+	$object->vote			= (boolean) trim($vote);
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	if ($ret < 0) $error++;
+
+	if (empty($object->label)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), null, 'errors');
+	}
+	else {
+		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$result = $db->query($sql);
+		if ($result) {
+			$num = $db->num_rows($result);
+		}
+		if ($num) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists",$login), null, 'errors');
+		}
+	}
+
+	if (! $error)
 	{
-		$object = new AdherentType($db);
-
-		$object->label			= trim($label);
-		$object->subscription	= (int) trim($subscription);
-		$object->note			= trim($comment);
-		$object->mail_valid		= trim($mail_valid);
-		$object->vote			= (boolean) trim($vote);
-
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
-
-		if ($object->label)
+		$id=$object->create($user);
+		if ($id > 0)
 		{
-			$id=$object->create($user);
-			if ($id > 0)
-			{
-				header("Location: ".$_SERVER["PHP_SELF"]);
-				exit;
-			}
-			else
-			{
-				$mesg=$object->error;
-				$action = 'create';
-			}
+			header("Location: ".$_SERVER["PHP_SELF"]);
+			exit;
 		}
 		else
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
+	}
+	else
+	{
+		$action = 'create';
 	}
 }
 
 if ($action == 'update' && $user->rights->adherent->configurer)
 {
-	if (! $cancel)
+	$object->fetch($rowid);
+
+	$object->oldcopy = clone $object;
+
+	$object->label			= trim($label);
+	$object->subscription	= (int) trim($subscription);
+	$object->note			= trim($comment);
+	$object->mail_valid		= trim($mail_valid);
+	$object->vote			= (boolean) trim($vote);
+
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	if ($ret < 0) $error++;
+
+	$ret=$object->update($user);
+
+	if ($ret >= 0 && ! count($object->errors))
 	{
-		$object = new AdherentType($db);
-		$object->id             = $rowid;
-		$object->label        = trim($label);
-		$object->subscription   = (int) trim($subscription);
-		$object->note           = trim($comment);
-		$object->mail_valid     = trim($mail_valid);
-		$object->vote           = (boolean) trim($vote);
-
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		if ($ret < 0) $error++;
-
-		$object->update($user);
-
-		header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$_POST["rowid"]);
-		exit;
+		setEventMessages($langs->trans("MemberTypeModified"), null, 'mesgs');
 	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+	header("Location: ".$_SERVER["PHP_SELF"]."?rowid=".$object->id);
+	exit;
 }
 
-if ($action == 'delete' && $user->rights->adherent->configurer)
+if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
 {
-	$object = new AdherentType($db);
-	$object->delete($rowid);
-	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit;
+	$object->fetch($rowid);
+	$res=$object->delete();
+
+	if ($res > 0)
+	{
+		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		setEventMessages($langs->trans("MemberTypeCanNotBeDeleted"), null, 'errors');
+		$action='';
+	}
 }
 
 
@@ -161,9 +204,9 @@ if ($action == 'delete' && $user->rights->adherent->configurer)
  * View
  */
 
-llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
 $form=new Form($db);
+
+llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 // List of members type
@@ -173,7 +216,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
+	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -209,11 +252,21 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
+		$membertype = new AdherentType($db);
+
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
+
+			$membertype->id = $objp->rowid;
+			$membertype->ref = $objp->rowid;
+			$membertype->label = $objp->rowid;
+
 			print '<tr class="oddeven">';
-			print '<td><a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
+			print '<td>';
+			print $membertype->getNomUrl(1);
+			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
@@ -308,13 +361,21 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($rowid,$extralabels);
+		$object->fetch_optionals($object->id,$extralabels);
+
+		/*
+		 * Confirmation suppression
+		 */
+		if ($action == 'delete')
+		{
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id,$langs->trans("DeleteAMemberType"),$langs->trans("ConfirmDeleteMemberType",$object->label),"confirm_delete", '',0,1);
+		}
 
 		$head = member_type_prepare_head($object);
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'rowid', $linkback);
 
@@ -337,14 +398,13 @@ if ($rowid > 0)
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 		print nl2br($object->mail_valid)."</td></tr>";
 
-    	// Other attributes
-    	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		// Other attributes
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
-        print '</div>';
+		print '</div>';
 
 		dol_fiche_end();
-
 
 		/*
 		 * Buttons
@@ -359,7 +419,7 @@ if ($rowid > 0)
 		}
 
 		// Add
-		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'">'.$langs->trans("AddMember").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 
 		// Delete
 		if ($user->rights->adherent->configurer)
@@ -390,11 +450,11 @@ if ($rowid > 0)
 		}
 		if ($status != '')
 		{
-		    $sql.= " AND d.statut IN (".$db->escape($status).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+		    $sql.= natural_search('d.statut', $status, 2);
 		}
 		if ($action == 'search')
 		{
-			if (GETPOST('search'))
+			if (GETPOST('search','alpha'))
 			{
 		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search','alpha'));
 		  	}
@@ -459,7 +519,7 @@ if ($rowid > 0)
 				$titre.=" (".$membertype->label.")";
 		    }
 
-		    $param="&rowid=".$rowid;
+		    $param="&rowid=".$object->id;
 		    if (! empty($status))			$param.="&status=".$status;
 		    if (! empty($search_lastname))	$param.="&search_lastname=".$search_lastname;
 		    if (! empty($search_firstname))	$param.="&search_firstname=".$search_firstname;
@@ -473,7 +533,7 @@ if ($rowid > 0)
 		    }
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-			print '<input class="flat" type="hidden" name="rowid" value="'.$rowid.'" size="12"></td>';
+			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
 
 			print '<br>';
             print_barre_liste('',$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
@@ -593,12 +653,12 @@ if ($rowid > 0)
 		        print '<td align="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&return=list.php">'.img_edit().'</a>';
+					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
 				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign&return=list.php">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
+					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
 		        }
 				print "</td>";
 
@@ -631,15 +691,14 @@ if ($rowid > 0)
 	if ($action == 'edit')
 	{
 		$object = new AdherentType($db);
-		$object->id = $rowid;
 		$object->fetch($rowid);
-		$object->fetch_optionals($rowid,$extralabels);
+		$object->fetch_optionals($object->id,$extralabels);
 
 		$head = member_type_prepare_head($object);
 
-		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'">';
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 		print '<input type="hidden" name="action" value="update">';
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
@@ -706,7 +765,7 @@ if ($rowid > 0)
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print "</form>";
