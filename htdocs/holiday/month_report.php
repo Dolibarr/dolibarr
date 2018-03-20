@@ -96,9 +96,12 @@ if (empty($resql))
 
 $num = $db->num_rows($resql);
 
+print '</div>';
+
+
 print '<br>';
 
-
+print '<div class="div-table-responsive">';
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
