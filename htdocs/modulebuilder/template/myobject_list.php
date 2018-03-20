@@ -95,14 +95,14 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default search field. By default 1st field in definition.
 if (! $sortorder) $sortorder="ASC";
 
-// Protection if external user
+// Security check
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->societe_id > 0)	// Protection if external user
 {
 	//$socid = $user->societe_id;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'mymodule', $id,'');
+//$result = restrictedArea($user, 'mymodule', $id, '');
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));
