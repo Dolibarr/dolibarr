@@ -58,6 +58,37 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 $colspan = 3;	// Col total ht + col edit + col delete
 if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
+
+// Lines for extrafield
+$objectline = null;
+if (!empty($extrafieldsline))
+{
+	if ($this->table_element_line=='commandedet') {
+		$objectline = new OrderLine($this->db);
+	}
+	elseif ($this->table_element_line=='propaldet') {
+		$objectline = new PropaleLigne($this->db);
+	}
+	elseif ($this->table_element_line=='supplier_proposaldet') {
+		$objectline = new SupplierProposalLine($this->db);
+	}
+	elseif ($this->table_element_line=='facturedet') {
+		$objectline = new FactureLigne($this->db);
+	}
+	elseif ($this->table_element_line=='contratdet') {
+		$objectline = new ContratLigne($this->db);
+	}
+	elseif ($this->table_element_line=='commande_fournisseurdet') {
+		$objectline = new CommandeFournisseurLigne($this->db);
+	}
+	elseif ($this->table_element_line=='facture_fourn_det') {
+		$objectline = new SupplierInvoiceLine($this->db);
+	}
+	elseif ($this->table_element_line=='facturedet_rec') {
+		$objectline = new FactureLigneRec($this->db);
+	}
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -363,40 +394,13 @@ else {
 	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
-	<?php
-	// Lines for extrafield
-	if (!empty($extrafieldsline))
-	{
-		if ($this->table_element_line=='commandedet') {
-			$newline = new OrderLine($this->db);
-		}
-		elseif ($this->table_element_line=='propaldet') {
-			$newline = new PropaleLigne($this->db);
-		}
-		elseif ($this->table_element_line=='supplier_proposaldet') {
-			$newline = new SupplierProposalLine($this->db);
-		}
-		elseif ($this->table_element_line=='facturedet') {
-			$newline = new FactureLigne($this->db);
-		}
-		elseif ($this->table_element_line=='contratdet') {
-			$newline = new ContratLigne($this->db);
-		}
-		elseif ($this->table_element_line=='commande_fournisseurdet') {
-			$newline = new CommandeFournisseurLigne($this->db);
-		}
-		elseif ($this->table_element_line=='facture_fourn_det') {
-			$newline = new SupplierInvoiceLine($this->db);
-		}
-		elseif ($this->table_element_line=='facturedet_rec') {
-			$newline = new FactureLigneRec($this->db);
-		}
-		if (is_object($newline)) {
-			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
-		}
-	}
-	?>
 </tr>
+
+<?php
+if (is_object($objectline)) {
+	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+}
+?>
 
 <?php
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required

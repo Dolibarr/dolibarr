@@ -1680,11 +1680,9 @@ else
 
 					// Display lines extrafields
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
-						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid,$extralabelslines);
-						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
-						print '</tr>';
+						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 				}
 				// Ligne en mode update
@@ -1752,13 +1750,12 @@ else
 					print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
 					$form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
 					print '</td>';
+					print '</tr>';
 
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
-						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid,$extralabelslines);
-						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
-						print '</tr>';
+						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 
 					print '</tr>';
