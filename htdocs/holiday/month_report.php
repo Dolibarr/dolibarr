@@ -114,7 +114,7 @@ print '<td align="right">' . $langs->trans('NbUseDaysCPShort') . '</td>';
 print '<td align="center">' . $langs->trans('DateStartInMonth') . '</td>';
 print '<td align="center">' . $langs->trans('DateEndInMonth') . '</td>';
 print '<td align="right">' . $langs->trans('NbUseDaysCPShortInMonth') . '</td>';
-print '<td>' . $langs->trans('DescCP') . '</td>';
+print '<td class="maxwidth300">' . $langs->trans('DescCP') . '</td>';
 print '</tr>';
 
 if ($num == 0)
@@ -185,7 +185,7 @@ else
          print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfdayinmonth]).')</span>';
          print '</td>';
          print '<td align="right">' . num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth) . '</td>';
-         print '<td>' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
+         print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
       print '</tr>';
    }
 
