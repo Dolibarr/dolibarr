@@ -47,7 +47,7 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
+	 *  @param	string		$choice		Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	function purgeFiles($choice='tempfilesold')
@@ -129,7 +129,7 @@ class Utils
 				}
 				elseif ($filesarray[$key]['type'] == 'file')
 				{
-					// If (file that is not logfile) or (if logfile with option logfile)
+					// If (file that is not logfile) or (if mode is logfile)
 					if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
 					{
 						$result=dol_delete_file($filesarray[$key]['fullname'], 1, 1);
@@ -138,7 +138,10 @@ class Utils
 							$count++;
 							$countdeleted++;
 						}
-						else $counterror++;
+						else
+						{
+							$counterror++;
+						}
 					}
 				}
 			}
@@ -672,8 +675,8 @@ class Utils
 	/**
 	 * This saves syslog files and compresses older ones
 	 * Used from cronjob
-	 * 
-	 * @return	int		 0 if OK, < 0 if KO 
+	 *
+	 * @return	int						0 if OK, < 0 if KO
 	 */
 	function compressSyslogs() {
 		global $conf;
@@ -683,6 +686,7 @@ class Utils
 		}
 
 		if(! function_exists('gzopen')) {
+			$this->error = 'Support for gzopen not available in this PHP';
 			return -1;
 		}
 
@@ -690,7 +694,7 @@ class Utils
 
 		$nbSaves = ! empty($conf->global->SYSLOG_FILE_SAVES) ? intval($conf->global->SYSLOG_FILE_SAVES) : 14;
 
-		if(empty($conf->global->SYSLOG_FILE)) {
+		if (empty($conf->global->SYSLOG_FILE)) {
 			$mainlogdir = DOL_DATA_ROOT;
 			$mainlog = 'dolibarr.log';
 		} else {
@@ -707,7 +711,7 @@ class Utils
 			$logname = $file['name'];
 			$logpath = $file['path'];
 
-			// Handle already compressed files
+			// Handle already compressed files to rename them and add +1
 
 			$filter = '^'.preg_quote($logname, '/').'\.([0-9]+)\.gz$';
 
@@ -726,7 +730,7 @@ class Utils
 			krsort($gzfiles, SORT_NUMERIC);
 
 			foreach($gzfiles as $numsave => $dummy) {
-				if(dol_is_file($logpath.'/'.$logname.'.'.($numsave+1).'.gz')) {
+				if (dol_is_file($logpath.'/'.$logname.'.'.($numsave+1).'.gz')) {
 					return -2;
 				}
 
@@ -738,18 +742,19 @@ class Utils
 			}
 
 			// Compress last save
-
-			if(dol_is_file($logpath.'/'.$logname.'.1')) {
+			if (dol_is_file($logpath.'/'.$logname.'.1')) {
 				if($nbSaves > 1) {
 					$gzfilehandle = gzopen($logpath.'/'.$logname.'.2.gz', 'wb9');
 
-					if(empty($gzfilehandle)) {
+					if (empty($gzfilehandle)) {
+						$this->error = 'Failted to open file '.$logpath.'/'.$logname.'.2.gz';
 						return -3;
 					}
 
 					$sourcehandle = fopen($logpath.'/'.$logname.'.1', 'r');
 
-					if(empty($sourcehandle)) {
+					if (empty($sourcehandle)) {
+						$this->error = 'Failed to open file '.$logpath.'/'.$logname.'.1';
 						return -4;
 					}
 
@@ -766,14 +771,16 @@ class Utils
 
 			// Compress current file et recreate it
 
-			if(dol_is_file($logpath.'/'.$logname)) {
-				if(dol_move($logpath.'/'.$logname, $logpath.'/'.$logname.'.1', 0, 1, 0, 0)) {
+			if (dol_is_file($logpath.'/'.$logname)) {
+				if (dol_move($logpath.'/'.$logname, $logpath.'/'.$logname.'.1', 0, 1, 0, 0))
+				{
 					$newlog = fopen($logpath.'/'.$logname, 'a+');
 					fclose($newlog);
 				}
 			}
 		}
 
+		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES='.$nbSaves.' files) done.';
 		return 0;
 	}
 }

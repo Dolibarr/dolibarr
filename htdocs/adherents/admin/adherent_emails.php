@@ -157,6 +157,7 @@ print '<input type="hidden" name="action" value="updateall">';
  * Editing global variables not related to a specific theme
  */
 $constantes=array(
+		'ADHERENT_MAIL_FROM',
 		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
 		'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
 		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
@@ -167,7 +168,6 @@ $constantes=array(
 		'ADHERENT_MAIL_COTIS',
 		'ADHERENT_MAIL_RESIL_SUBJECT',
 		'ADHERENT_MAIL_RESIL',
-		'ADHERENT_MAIL_FROM',
 		);
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';

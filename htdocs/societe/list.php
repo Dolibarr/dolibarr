@@ -399,6 +399,7 @@ $sql.= " s.email, s.phone, s.url, s.siren as idprof1, s.siret as idprof2, s.ape 
 $sql.= " s.tms as date_update, s.datec as date_creation,";
 $sql.= " s.code_compta,s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
+$sql.= " country.code as country_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -1091,7 +1092,7 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.phone']['checked']))
 	{
-		print "<td>".$obj->phone."</td>\n";
+       		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid)."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.url']['checked']))

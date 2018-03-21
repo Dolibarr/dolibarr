@@ -311,8 +311,8 @@ if ($action == 'execute')
 $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
-	'enable'=>$langs->trans("Enable"),
-	'disable'=>$langs->trans("Disable"),
+	'enable'=>$langs->trans("CronStatusActiveBtn"),
+	'disable'=>$langs->trans("CronStatusInactiveBtn"),
 );
 if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -527,16 +527,16 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->execute)
 		{
-		    if (!empty($obj->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=execute".(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
-		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"playdisabled")."</a>";
+		    if (!empty($obj->status)) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute'.(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play").'</a>';
+		    else print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'),"playdisabled").'</a>';
 		} else {
-			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"playdisabled")."</a>";
+			print '<a href="#" class="cursornotallowed" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'),"playdisabled").'</a>';
 		}
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
 			$selected=0;
 			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print ' &nbsp; <input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+			print ' &nbsp; <input id="cb'.$obj->rowid.'" class="flat checkforselect valignmiddle" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
 		}
 		print '</td>';
 

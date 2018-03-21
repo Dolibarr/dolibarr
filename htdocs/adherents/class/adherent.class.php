@@ -2492,4 +2492,133 @@ class Adherent extends CommonObject
 		return $this->datefin < ($now - $conf->adherent->subscription->warning_delay);
 	}
 
+
+
+
+	/**
+	 * Send reminders by emails before subscription end
+	 * CAN BE A CRON TASK
+	 *
+	 * @param	int			$daysbeforeend		Nb of days before end of subscription (negative number = after subscription)
+	 * @return	int								0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiredSubscription($daysbeforeend=10)
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$this->output = '';
+		$this->error='';
+
+		$blockingerrormsg = '';
+
+		/*if (empty($conf->global->MEMBER_REMINDER_EMAIL))
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}*/
+
+		$now = dol_now();
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$tmp=dol_getdate($now);
+		$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), -1 * $daysbeforeend, 'd');
+
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
+		$sql.= " WHERE datefin = '".$this->db->idate($datetosearchfor)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $this->db->num_rows($resql);
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$adherent = new Adherent($this->db);
+			$formmail=new FormMail($db);
+
+			$i=0;
+			$nbok = 0;
+			$nbko = 0;
+			while ($i < $num_rows)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$adherent->fetch($obj->rowid);
+
+				if (empty($adherent->email))
+				{
+					$nbko++;
+				}
+				else
+				{
+					$adherent->fetch_thirdparty();
+
+					// Send reminder email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+					$outputlangs->loadLangs(array("main", "members"));
+
+					$arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, '(SendReminderForExpiredSubscriptionTitle)');
+
+					if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+					{
+						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $adherent);
+						//if (is_array($adherent->thirdparty)) $substitutionarraycomp = ...
+						complete_substitutions_array($substitutionarray, $outputlangs, $adherent);
+
+						$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+						$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+						$from = $conf->global->ADHERENT_MAIL_FROM;
+						$to = $adherent->email;
+
+						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+						$result = $cmail->sendfile();
+						if (! $result)
+						{
+							$error++;
+							$this->error = $cmail->error;
+							$this->errors += $cmail->errors;
+							$nbko++;
+						}
+						else
+						{
+							$nbok++;
+						}
+					}
+					else
+					{
+						$blockingerrormsg="Can't find email template '(SendReminderForExpiredSubscriptionTitle)'";
+						$nbko++;
+						break;
+					}
+				}
+
+				$i++;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		if ($blockingerrormsg)
+		{
+			$this->error = $blockingerrormsg;
+			return 1;
+		}
+		else
+		{
+			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
+			$this->output.= ' Send email successfuly to '.$nbok.' members';
+			if ($nbko) $this->output.= ' - Canceled for '.$nbko.' member (no email or email sending error)';
+		}
+
+		return 0;
+	}
+
 }

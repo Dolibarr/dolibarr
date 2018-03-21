@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
-$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox"));     // File with generic data
+$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox","paypal"));     // File with generic data
 
 $action=GETPOST('action','aZ09');
 
@@ -157,8 +157,6 @@ $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
 if (! empty($conf->paypal->enabled))
 {
-	$langs->load("paypal");
-
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 
@@ -867,7 +865,7 @@ if ($source == 'order')
 	{
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
-	print '<input type="hidden" name="thirdparty_id" value="'.$order->thirdparty->id.'">'."\n";
+	if (is_object($order->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$order->thirdparty->id.'">'."\n";
 	print '<input type="hidden" name="email" value="'.$order->thirdparty->email.'">'."\n";
 	print '<input type="hidden" name="vatnumber" value="'.$order->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Order").' '.$order->ref;
@@ -1002,7 +1000,7 @@ if ($source == 'invoice')
 	{
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
-	print '<input type="hidden" name="thirdparty_id" value="'.$invoice->thirdparty->id.'">'."\n";
+	if (is_object($invoice->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$invoice->thirdparty->id.'">'."\n";
 	print '<input type="hidden" name="email" value="'.$invoice->thirdparty->email.'">'."\n";
 	print '<input type="hidden" name="vatnumber" value="'.$invoice->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Invoice").' '.$invoice->ref;
@@ -1210,7 +1208,7 @@ if ($source == 'contractline')
 	{
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
-	print '<input type="hidden" name="thirdparty_id" value="'.$contract->thirdparty->id.'">'."\n";
+	if (is_object($contract->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$contract->thirdparty->id.'">'."\n";
 	print '<input type="hidden" name="email" value="'.$contract->thirdparty->email.'">'."\n";
 	print '<input type="hidden" name="vatnumber" value="'.$contract->thirdparty->tva_intra.'">'."\n";
 	$labeldesc=$langs->trans("Contract").' '.$contract->ref;
@@ -1236,8 +1234,8 @@ if ($source == 'membersubscription')
 	}
 	else
 	{
+		$member->fetch_thirdparty();
 		$object = $member;
-
 		$subscription=new Subscription($db);
 	}
 
@@ -1374,6 +1372,7 @@ if ($source == 'membersubscription')
 	{
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
+	if (is_object($member->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$member->thirdparty->id.'">'."\n";
 	print '<input type="hidden" name="email" value="'.$member->email.'">'."\n";
 	$labeldesc = $langs->trans("PaymentSubscription");
 	if (GETPOST('desc','alpha')) $labeldesc=GETPOST('desc','alpha');

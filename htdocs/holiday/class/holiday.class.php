@@ -276,12 +276,12 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *	List holidays for a particular user
+	 *	List holidays for a particular user or list of users
 	 *
-	 *  @param		int		$user_id    ID of user to list
-	 *  @param      string	$order      Sort order
-	 *  @param      string	$filter     SQL Filter
-	 *  @return     int      			-1 if KO, 1 if OK, 2 if no result
+	 *  @param		int|string		$user_id    ID of user to list, or comma separated list of IDs of users to list
+	 *  @param      string			$order      Sort order
+	 *  @param      string			$filter     SQL Filter
+	 *  @return     int      					-1 if KO, 1 if OK, 2 if no result
 	 */
 	function fetchByUser($user_id, $order='', $filter='')
 	{
@@ -321,8 +321,8 @@ class Holiday extends CommonObject
 
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
-		$sql.= " AND cp.fk_user = ".$user_id;
+		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
+		$sql.= " AND cp.fk_user IN (".$user_id.")";
 
 		// Filtre de séléction
 		if(!empty($filter)) {

@@ -3082,7 +3082,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow')))
+		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow')))
 		{
 			$fakey = $pictowithoutext; $facolor=''; $fasize='';
 			if ($pictowithoutext == 'switch_off')     { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
@@ -3095,7 +3095,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'resize')     { $fakey = 'fa-crop';       $facolor='#444'; }
 			elseif ($pictowithoutext == 'uparrow')    { $fakey = 'fa-mail-forward';       $facolor='#555'; }
 			elseif ($pictowithoutext == 'unlink')     { $fakey = 'fa-chain-broken';       $facolor='#555'; }
-			else { $fakey = 'fa-'.$pictowithoutext; $facolor='#999'; }
+			elseif ($pictowithoutext == 'playdisabled') { $fakey = 'fa-play';       $facolor='#ccc'; }
+			else { $fakey = 'fa-'.$pictowithoutext; $facolor='#444'; }
 
 			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) { $morecss.=($morecss?' ':'').$reg[1]; }
 			$enabledisablehtml ='<span class="fa '.$fakey.' marginleftonly valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
@@ -5728,11 +5729,31 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 	$substitutionarray=array();
 
-	if (empty($exclude) || ! in_array('system', $exclude))
+	if (empty($exclude) || ! in_array('user', $exclude))
 	{
-		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
-		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
+		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
+		// this will include signature content first and then replace var found into content of signature
+		$signature = $user->signature;
+		$substitutionarray=array_merge($substitutionarray, array(
+		'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
+		)
+			);
+		// For backward compatibility
+		if ($onlykey != 2)
+		{
+			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
+		}
+
+		$substitutionarray=array_merge($substitutionarray, array(
+		'__USER_ID__' => (string) $user->id,
+		'__USER_LOGIN__' => (string) $user->login,
+		'__USER_LASTNAME__' => (string) $user->lastname,
+		'__USER_FIRSTNAME__' => (string) $user->firstname,
+		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
+		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+		'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
+		)
+			);
 	}
 	if ((empty($exclude) || ! in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
@@ -5803,7 +5824,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 
-			// TODO USe this ?
+			// TODO Use this ?
 			$msgishtml = 0;
 
 			$birthday = dol_print_date($object->birth,'day');
@@ -5880,7 +5901,26 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 				}
 			}
 
-			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';
+			// Complete substitution array with the url to make online payment
+			$paymenturl='';
+			if (empty($substitutionarray['__REF__']))
+			{
+				$paymenturl='';
+			}
+			else
+			{
+				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				$outputlangs->load('paypal');
+				$typeforonlinepayment='free';
+				if (is_object($object) && $object->element == 'commande') $typeforonlinepayment='order';
+				if (is_object($object) && $object->element == 'facture')  $typeforonlinepayment='invoice';
+				if (is_object($object) && $object->element == 'member')   $typeforonlinepayment='member';
+				$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
+				$paymenturl=$url;
+			}
+
+			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
 		}
 	}
 	if (empty($exclude) || ! in_array('objectamount', $exclude))
@@ -5930,31 +5970,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		));
 	}
 
-	if (empty($exclude) || ! in_array('user', $exclude))
+	if (empty($exclude) || ! in_array('system', $exclude))
 	{
-		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
-		// this will also replace var found into content of signature
-		$signature = $user->signature;
-		$substitutionarray=array_merge($substitutionarray, array(
-			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
-		)
-			);
-		// For backward compatibility
-		if ($onlykey != 2)
-		{
-			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
-		}
-
-		$substitutionarray=array_merge($substitutionarray, array(
-			'__USER_ID__' => (string) $user->id,
-			'__USER_LOGIN__' => (string) $user->login,
-			'__USER_LASTNAME__' => (string) $user->lastname,
-			'__USER_FIRSTNAME__' => (string) $user->firstname,
-			'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-			'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
-			'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
-			)
-		);
+		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
+		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 	}
 	if (! empty($conf->multicompany->enabled))
 	{

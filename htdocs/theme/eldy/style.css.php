@@ -627,6 +627,9 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.cursordefault {
+	cursor: default;
+}
 .cursorpointer {
 	cursor: pointer;
 }
@@ -996,9 +999,14 @@ select.selectarrowonleft option {
     	width: 95%;
     }
 
+	select {
+		padding-top: 4px;
+		padding-bottom: 5px;
+	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
-    	min-height: 1.4em;
+		font-size: <?php print $fontsize+3; ?>px;
+    	/* min-height: 1.4em; */
     	/* line-height: 1.4em; */
     	/* padding: .4em .1em; */
     	/* border-bottom: 1px solid #BBB; */
