@@ -5631,6 +5631,123 @@ class Form
 	}
 
 	/**
+	 *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
+	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
+	 *
+	 *	@param	string	$htmlname       		Name of html select area
+	 *	@param	string	$array					Array (key=>array('text'=>'A text', 'url'=>'An url'), ...)
+	 *	@param	string	$id             		Preselected key
+	 *	@param  string	$moreparam      		Add more parameters onto the select tag
+	 *	@param	int		$disableFiltering		If set to 1, results are not filtered with searched string
+	 * 	@param	int		$disabled				Html select box is disabled
+	 *  @param	int		$minimumInputLength		Minimum Input Length
+	 *  @param	string	$morecss				Add more class to css styles
+	 *  @param  int     $callurlonselect        If set to 1, some code is added so an url return by the ajax is called when value is selected.
+	 *  @param  string  $placeholder            String to use as placeholder
+	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
+	 * 	@return	string   						HTML select string
+	 *  @see ajax_combobox in ajax.lib.php
+	 */
+	static function selectArrayFilter($htmlname, $array, $id='', $moreparam='', $disableFiltering=0, $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
+	{
+		global $conf, $langs;
+		global $delayedhtmlcontent;
+
+		// TODO Use an internal dolibarr component instead of select2
+		if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
+
+		$out='<select type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'"><option></option></select>';
+
+		$formattedarrayresult = array();
+
+		foreach($array as $key => $value) {
+			$o = new stdClass();
+			$o->id = $key;
+			$o->text = $value['text'];
+			$o->url = $value['url'];
+			$formattedarrayresult[] = $o;
+		}
+
+		$tmpplugin='select2';
+		$outdelayed="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+			<script type="text/javascript">
+			$(document).ready(function () {
+				var data = '.json_encode($formattedarrayresult).';
+
+				'.($callurlonselect ? 'var saveRemoteData = '.json_encode($array).';':'').'
+
+				$(".'.$htmlname.'").select2({
+					data: data,
+					language: select2arrayoflanguage,
+					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					placeholder: "'.dol_escape_js($placeholder).'",
+					escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
+					minimumInputLength: '.$minimumInputLength.',
+					formatResult: function(result, container, query, escapeMarkup) {
+						return escapeMarkup(result.text);
+					},
+					matcher: function (params, data) {
+
+						if(! data.id) return null;';
+
+		if($callurlonselect) {
+			$outdelayed.='
+
+						var urlBase = data.url;
+						var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
+
+						saveRemoteData[data.id].url = urlBase + separ + "sall=" + params.term;';
+		}
+
+		if(! $disableFiltering) {
+			$outdelayed.='
+
+						if(data.text.match(new RegExp(params.term))) {
+							return data;
+						}
+
+						return null;';
+		} else {
+			$outdelayed.='
+
+						return data;';
+		}
+
+		$outdelayed.='
+					}
+				});
+
+				'.($callurlonselect ? '
+				/* Code to execute a GET when we select a value */
+				$(".'.$htmlname.'").change(function() {
+					var selected = $(".'.$htmlname.'").val();
+					console.log("We select "+selected)
+
+					$(".'.$htmlname.'").val("");  /* reset visible combo value */
+					$.each( saveRemoteData, function( key, value ) {
+						if (key == selected)
+						{
+							console.log("selectArrayAjax - Do a redirect to "+value.url)
+							location.assign(value.url);
+						}
+					});
+				});' : '' ) . '
+
+			});
+			</script>';
+
+		if ($acceptdelayedhtml)
+		{
+			$delayedhtmlcontent.=$outdelayed;
+		}
+		else
+		{
+			$out.=$outdelayed;
+		}
+		return $out;
+	}
+
+	/**
 	 *	Show a multiselect form from an array.
 	 *
 	 *	@param	string	$htmlname		Name of select
