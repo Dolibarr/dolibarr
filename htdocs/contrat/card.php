@@ -886,6 +886,7 @@ if (empty($reshook))
 				$files = dol_dir_list($old_filedir);
 				if (!empty($files))
 				{
+					if (!is_dir($new_filedir)) dol_mkdir($new_filedir);
 					foreach ($files as $file)
 					{
 						dol_move($file['fullname'], $new_filedir.'/'.$file['name']);
