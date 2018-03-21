@@ -385,9 +385,9 @@ class pdf_merou extends ModelePdfExpedition
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		$langs->load("main");
-		$langs->load("bills");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		if (empty($hidetop))
 		{
