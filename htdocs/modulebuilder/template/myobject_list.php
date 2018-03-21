@@ -202,6 +202,7 @@ $help_url='';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("MyObjects"));
 
 
+// TODO : move this SQL request into fetchAll class method
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
