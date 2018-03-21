@@ -457,6 +457,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						if (is_array($attachedfiles) && count($attachedfiles)>0) {
 							$object->attachedfiles	= $attachedfiles;
 						}
+						if (is_array($sendtouserid) && count($sendtouserid)>0 && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+							$object->sendtouserid	= $sendtouserid;
+						}
 
 						// Call of triggers
 						if (! empty($trigger_name))

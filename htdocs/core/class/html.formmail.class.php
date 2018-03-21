@@ -335,7 +335,7 @@ class FormMail extends Form
 			$out.= "\n".'<!-- Begin form mail type='.$this->param["models"].' --><div id="mailformdiv"></div>'."\n";
 			if ($this->withform == 1)
 			{
-				$out.= '<form method="POST" name="mailform" id="mailform"  action="'.$this->param["returnurl"].'#formmail">'."\n";
+				$out.= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
 
 				$out.= '<a id="formmail" name="formmail"></a>';
 				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
